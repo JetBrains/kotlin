@@ -1,7 +1,7 @@
 // MODULE: m1
-// FILE: org/test/Foo.java
+// FILE: test/Foo.java
 
-package org.test;
+package test;
 
 class Foo {
     static Foo create() { return Foo(); }
@@ -11,7 +11,7 @@ class Foo {
 // MODULE: m2(m1)
 // FILE: test.kt
 
-package org.test
+package test
 
 fun test() {
     Foo()

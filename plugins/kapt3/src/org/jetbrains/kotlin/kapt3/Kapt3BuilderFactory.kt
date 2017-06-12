@@ -21,12 +21,8 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.org.objectweb.asm.ClassWriter
-import org.jetbrains.org.objectweb.asm.FieldVisitor
-import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.tree.ClassNode
-import org.jetbrains.org.objectweb.asm.tree.FieldNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.tree.*
 
 internal class Kapt3BuilderFactory : ClassBuilderFactory {
     internal val compiledClasses = mutableListOf<ClassNode>()
@@ -65,6 +61,12 @@ internal class Kapt3BuilderFactory : ClassBuilderFactory {
         ): MethodVisitor {
             val methodNode = super.newMethod(origin, access, name, desc, signature, exceptions) as MethodNode
             origins.put(methodNode, origin)
+
+            // ASM doesn't read information about local variables for the `abstract` methods so we need to get it manually
+            if ((access and Opcodes.ACC_ABSTRACT) != 0 && methodNode.localVariables == null) {
+                methodNode.localVariables = mutableListOf<LocalVariableNode>()
+            }
+
             return methodNode
         }
     }

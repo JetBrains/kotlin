@@ -23,8 +23,6 @@ import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilderImpl
-import com.intellij.debugger.engine.events.DebuggerCommandImpl
-import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.settings.NodeRendererSettings
 import com.intellij.debugger.ui.impl.watch.*
 import com.intellij.debugger.ui.tree.*
@@ -55,6 +53,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerTestBase
 import org.jetbrains.kotlin.idea.debugger.KotlinFrameExtraVariablesProvider
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractKotlinEvaluateExpressionTest.PrinterConfig.DescriptorViewOptions
+import org.jetbrains.kotlin.idea.debugger.invokeInManagerThread
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.*
 import org.junit.Assert
@@ -316,14 +315,14 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                 append(getPrefix(descriptor))
                 append(label)
                 if (config.shouldRenderSourcesPosition() && hasSourcePosition(descriptor)) {
-                    val sp = invokeInManagerThread {
+                    val sp = debugProcess.invokeInManagerThread {
                         SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext)
                     }
                     append(" (sp = ${render(sp)})")
                 }
 
                 if (config.shouldRenderExpression() && descriptor is ValueDescriptorImpl) {
-                    val expression = invokeInManagerThread {
+                    val expression = debugProcess.invokeInManagerThread {
                         descriptor.getTreeEvaluation((node as XValueNodeImpl).valueContainer as JavaValue, it) as? PsiExpression
                     }
 
@@ -338,7 +337,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                         val codeFragmentText = codeFragment.text
 
                         if (config.shouldComputeResultOfCreateExpression()) {
-                            invokeInManagerThread {
+                            debugProcess.invokeInManagerThread {
                                 it.suspendContext?.evaluate(
                                         TextWithImportsImpl(text.kind, codeFragmentText, codeFragment.importsToString(), text.fileType),
                                         null)
@@ -354,16 +353,6 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
             logDescriptor(descriptor, builder.toString())
 
             return false
-        }
-
-        private fun <T: Any> invokeInManagerThread(f: (DebuggerContextImpl) -> T?): T? {
-            var result: T? = null
-            debuggerContext.debugProcess!!.managerThread.invokeAndWait(object : DebuggerCommandImpl() {
-                override fun action() {
-                    result = runReadAction { f(debuggerContext) }
-                }
-            })
-            return result
         }
 
         private fun getPrefix(descriptor: NodeDescriptorImpl): String {

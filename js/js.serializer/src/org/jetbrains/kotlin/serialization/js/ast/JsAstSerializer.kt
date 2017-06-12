@@ -217,7 +217,7 @@ class JsAstSerializer {
             override fun visitFor(x: JsFor) {
                 val forBuilder = For.newBuilder()
                 when {
-                    x.initVars != null -> forBuilder.variables = serializeVars(x.initVars)
+                    x.initVars != null -> forBuilder.variables = serialize(x.initVars)
                     x.initExpression != null -> forBuilder.expression = serialize(x.initExpression)
                     else -> forBuilder.empty = EmptyInit.newBuilder().build()
                 }
@@ -271,7 +271,7 @@ class JsAstSerializer {
         val visitor = object : JsVisitor() {
             val builder = Expression.newBuilder()
 
-            override fun visitThis(x: JsLiteral.JsThisRef) {
+            override fun visitThis(x: JsThisRef) {
                 builder.thisLiteral = ThisLiteral.newBuilder().build()
             }
 
@@ -279,7 +279,7 @@ class JsAstSerializer {
                 builder.nullLiteral = NullLiteral.newBuilder().build()
             }
 
-            override fun visitBoolean(x: JsLiteral.JsBooleanLiteral) {
+            override fun visitBoolean(x: JsBooleanLiteral) {
                 if (x.value) {
                     builder.trueLiteral = TrueLiteral.newBuilder().build()
                 }
@@ -299,11 +299,11 @@ class JsAstSerializer {
                 builder.regExpLiteral = regExpBuilder.build()
             }
 
-            override fun visitInt(x: JsNumberLiteral.JsIntLiteral) {
+            override fun visitInt(x: JsIntLiteral) {
                 builder.intLiteral = x.value
             }
 
-            override fun visitDouble(x: JsNumberLiteral.JsDoubleLiteral) {
+            override fun visitDouble(x: JsDoubleLiteral) {
                 builder.doubleLiteral = x.value
             }
 
@@ -460,8 +460,10 @@ class JsAstSerializer {
         val varsBuilder = Vars.newBuilder()
         for (varDecl in vars.vars) {
             val declBuilder = VarDeclaration.newBuilder()
-            declBuilder.nameId = serialize(varDecl.name)
-            varDecl.initExpression?.let { declBuilder.initialValue = serialize(it) }
+            withLocation(varDecl, { declBuilder.fileId = it }, { declBuilder.location = it }) {
+                declBuilder.nameId = serialize(varDecl.name)
+                varDecl.initExpression?.let { declBuilder.initialValue = serialize(it) }
+            }
             varsBuilder.addDeclaration(declBuilder)
         }
 
@@ -564,9 +566,10 @@ class JsAstSerializer {
         var fileChanged = false
         if (location != null) {
             val lastFile = fileStack.peek()
-            fileChanged = lastFile != location.file
+            val newFile = location.file
+            fileChanged = lastFile != newFile && newFile != null
             if (fileChanged) {
-                fileConsumer(serialize(location.file))
+                fileConsumer(serialize(newFile!!))
                 fileStack.push(location.file)
             }
             val locationBuilder = Location.newBuilder()

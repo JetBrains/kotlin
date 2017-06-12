@@ -65,6 +65,7 @@ class KotlinFunctionFindUsagesOptions(project: Project): KotlinCallableFindUsage
 }
 
 class KotlinPropertyFindUsagesOptions(project: Project): KotlinCallableFindUsagesOptions, JavaVariableFindUsagesOptions(project) {
+    var isReadWriteAccess: Boolean = true
     override var searchOverrides: Boolean = false
 
     override fun toJavaOptions(project: Project): JavaVariableFindUsagesOptions {

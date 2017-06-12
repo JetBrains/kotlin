@@ -54,6 +54,12 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("copyClassToSamePackageWithRename/copyClassToSamePackageWithRename.test")
+    public void testCopyClassToSamePackageWithRename_CopyClassToSamePackageWithRename() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyClassToSamePackageWithRename/copyClassToSamePackageWithRename.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("copyClassWithCompanionRefs/copyClassWithCompanionRefs.test")
     public void testCopyClassWithCompanionRefs_CopyClassWithCompanionRefs() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyClassWithCompanionRefs/copyClassWithCompanionRefs.test");
@@ -159,6 +165,18 @@ public class CopyTestGenerated extends AbstractCopyTest {
     @TestMetadata("copyTopLevelPropertyWithRename/copyTopLevelPropertyWithRename.test")
     public void testCopyTopLevelPropertyWithRename_CopyTopLevelPropertyWithRename() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyTopLevelPropertyWithRename/copyTopLevelPropertyWithRename.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("refToImportJavaStaticField/refToImportedJavaStaticField.test")
+    public void testRefToImportJavaStaticField_RefToImportedJavaStaticField() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/refToImportJavaStaticField/refToImportedJavaStaticField.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("refToImportJavaStaticMethod/refToImportedJavaStaticMethod.test")
+    public void testRefToImportJavaStaticMethod_RefToImportedJavaStaticMethod() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/refToImportJavaStaticMethod/refToImportedJavaStaticMethod.test");
         doTest(fileName);
     }
 }

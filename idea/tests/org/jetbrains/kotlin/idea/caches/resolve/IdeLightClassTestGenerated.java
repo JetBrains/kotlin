@@ -236,6 +236,12 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/ideRegression"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("AllOpenAnnotatedClasses.kt")
+        public void testAllOpenAnnotatedClasses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/ideRegression/AllOpenAnnotatedClasses.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ImplementingCharSequenceAndNumber.kt")
         public void testImplementingCharSequenceAndNumber() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/ideRegression/ImplementingCharSequenceAndNumber.kt");

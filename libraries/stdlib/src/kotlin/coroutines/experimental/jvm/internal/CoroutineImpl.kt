@@ -35,7 +35,7 @@ abstract class CoroutineImpl(
     // label == -1 when coroutine cannot be started (it is just a factory object) or has already finished execution
     // label == 0 in initial part of the coroutine
     @JvmField
-    var label: Int = if (completion != null) 0 else -1
+    protected var label: Int = if (completion != null) 0 else -1
 
     private val _context: CoroutineContext? = completion?.context
 
@@ -70,36 +70,4 @@ abstract class CoroutineImpl(
     open fun create(value: Any?, completion: Continuation<*>): Continuation<Unit> {
         throw IllegalStateException("create(Any?;Continuation) has not been overridden")
     }
-}
-
-abstract class CoroutineImplForNamedFunction(
-       completion: Continuation<Any?>?
-) : CoroutineImpl(0, completion), Continuation<Any?> {
-    private companion object {
-        private const val LAST_BIT_MASK = 1 shl 31
-    }
-
-    @JvmField
-    var data: Any? = null
-
-    @JvmField
-    var exception: Throwable? = null
-
-    fun checkAndFlushLastBit(): Boolean {
-        if (label and LAST_BIT_MASK != 0) {
-            label -= LAST_BIT_MASK
-            return true
-        }
-
-        return false
-    }
-
-    override fun doResume(data: Any?, exception: Throwable?): Any? {
-        this.data = data
-        this.exception = exception
-        this.label = this.label or LAST_BIT_MASK
-        return doResume()
-    }
-
-    protected abstract fun doResume(): Any?
 }

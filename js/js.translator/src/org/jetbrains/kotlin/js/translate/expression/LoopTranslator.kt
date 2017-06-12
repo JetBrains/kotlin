@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,17 +51,18 @@ fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: Tr
             JsEmpty
 
     if (!conditionBlock.isEmpty) {
-        val breakIfConditionIsFalseStatement = JsIf(not(jsCondition), JsBreak())
+        val breakIfConditionIsFalseStatement = JsIf(not(jsCondition), JsBreak().apply { source = expression })
+                .apply { source = expression }
         val bodyBlock = convertToBlock(bodyStatement)
-        jsCondition = JsLiteral.TRUE
+        jsCondition = JsBooleanLiteral(true)
 
         if (doWhile) {
             // translate to: tmpSecondRun = false;
             // do { if(tmpSecondRun) { <expr> if(!tmpExprVar) break; } else tmpSecondRun=true; <body> } while(true)
-            val secondRun = context.defineTemporary(JsLiteral.FALSE)
+            val secondRun = context.defineTemporary(JsBooleanLiteral(false).source(expression))
             conditionBlock.statements.add(breakIfConditionIsFalseStatement)
-            val ifStatement = JsIf(secondRun, conditionBlock, assignment(secondRun, JsLiteral.TRUE).makeStmt())
-            bodyBlock.statements.add(0, ifStatement)
+            val ifStatement = JsIf(secondRun, conditionBlock, assignment(secondRun, JsBooleanLiteral(true)).source(expression).makeStmt())
+            bodyBlock.statements.add(0, ifStatement.apply { source = expression })
         }
         else {
             conditionBlock.statements.add(breakIfConditionIsFalseStatement)
@@ -74,7 +75,7 @@ fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: Tr
     val result = if (doWhile) JsDoWhile() else JsWhile()
     result.condition = jsCondition
     result.body = bodyStatement
-    return result.source(expression)!!
+    return result.source(expression)
 }
 
 fun translateForExpression(expression: KtForExpression, context: TranslationContext): JsStatement {
@@ -145,16 +146,17 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val rangeEnd = context.defineTemporary(rightExpression)
 
         val body = translateBody(null)
-        val conditionExpression = lessThanEq(parameterName.makeRef(), rangeEnd)
-        val incrementExpression = JsPostfixOperation(JsUnaryOperator.INC, parameterName.makeRef())
+        val conditionExpression = lessThanEq(parameterName.makeRef(), rangeEnd).source(expression)
+        val incrementExpression = JsPostfixOperation(JsUnaryOperator.INC, parameterName.makeRef()).source(expression)
+        val initVars = newVar(parameterName, rangeStart).apply { source = expression }
 
-        return JsFor(newVar(parameterName, rangeStart), conditionExpression, incrementExpression, body)
+        return JsFor(initVars, conditionExpression, incrementExpression, body)
     }
 
     fun translateForOverRange(): JsStatement {
         val rangeExpression = context.defineTemporary(Translation.translateAsExpression(loopRange, context))
 
-        fun getProperty(funName: String): JsExpression = JsNameRef(funName, rangeExpression)
+        fun getProperty(funName: String): JsExpression = JsNameRef(funName, rangeExpression).source(loopRange)
 
         val start = context.defineTemporary(getProperty("first"))
         val end = context.defineTemporary(getProperty("last"))
@@ -162,23 +164,24 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
 
         val body = translateBody(null)
 
-        val conditionExpression = lessThanEq(parameterName.makeRef(), end)
-        val incrementExpression = addAssign(parameterName.makeRef(), increment)
+        val conditionExpression = lessThanEq(parameterName.makeRef(), end).source(expression)
+        val incrementExpression = addAssign(parameterName.makeRef(), increment).source(expression)
+        val initVars = newVar(parameterName, start).apply { source = expression }
 
-        return JsFor(newVar(parameterName, start), conditionExpression, incrementExpression, body)
+        return JsFor(initVars, conditionExpression, incrementExpression, body)
     }
 
     fun translateForOverArray(): JsStatement {
         val rangeExpression = context.defineTemporary(Translation.translateAsExpression(loopRange, context))
         val length = ArrayFIF.LENGTH_PROPERTY_INTRINSIC.apply(rangeExpression, listOf<JsExpression>(), context)
         val end = context.defineTemporary(length)
-        val index = context.declareTemporary(context.program().getNumberLiteral(0))
+        val index = context.declareTemporary(JsIntLiteral(0))
 
-        val arrayAccess = JsArrayAccess(rangeExpression, index.reference())
+        val arrayAccess = JsArrayAccess(rangeExpression, index.reference()).source(expression)
         val body = translateBody(arrayAccess)
-        val initExpression = assignment(index.reference(), context.program().getNumberLiteral(0))
-        val conditionExpression = inequality(index.reference(), end)
-        val incrementExpression = JsPrefixOperation(JsUnaryOperator.INC, index.reference())
+        val initExpression = assignment(index.reference(), JsIntLiteral(0)).source(expression)
+        val conditionExpression = inequality(index.reference(), end).source(expression)
+        val incrementExpression = JsPrefixOperation(JsUnaryOperator.INC, index.reference()).source(expression)
 
         return JsFor(initExpression, conditionExpression, incrementExpression, body)
     }
@@ -216,15 +219,15 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         }
         else {
             bodyStatements += hasNextBlock.statements
-            bodyStatements += JsIf(notOptimized(hasNextInvocation), JsBreak())
-            JsLiteral.TRUE
+            bodyStatements += JsIf(notOptimized(hasNextInvocation), JsBreak().apply { source = expression }).apply { source = expression }
+            JsBooleanLiteral(true)
         }
         bodyStatements += nextBlock.statements
         bodyStatements += translateBody(nextInvoke)?.let(::flattenStatement).orEmpty()
         return JsWhile(exitCondition, bodyStatements.singleOrNull() ?: JsBlock(bodyStatements))
     }
 
-    return when {
+    val result = when {
         isForOverRangeLiteral() ->
             translateForOverLiteralRange()
 
@@ -237,4 +240,6 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         else ->
             translateForOverIterator()
     }
+
+    return result.apply { source = expression }
 }

@@ -42,17 +42,28 @@ class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
 
         // handle nested if's
         val pparent = parent.parent
-        if (pparent is KtIfExpression && block == pparent.then && statement is KtIfExpression && statement.`else` == null) {
-            // if outer if has else-branch and inner does not have it, do not remove braces otherwise else-branch will belong to different if!
-            if (pparent.`else` != null) return -1
+        if (pparent is KtIfExpression) {
+            if (block == pparent.then && statement is KtIfExpression && statement.`else` == null) {
+                // if outer if has else-branch and inner does not have it, do not remove braces otherwise else-branch will belong to different if!
+                if (pparent.`else` != null) return -1
 
-            return MergeIfsIntention.applyTo(pparent)
+                return MergeIfsIntention.applyTo(pparent)
+            }
+
+            if (block == pparent.`else`) {
+                val ifParent = pparent.parent
+                if (!(
+                        ifParent is KtBlockExpression ||
+                        ifParent is KtDeclaration ||
+                        KtPsiUtil.isAssignment(ifParent))) {
+                    return -1
+                }
+            }
         }
 
         val newStatement = block.replace(statement)
         return newStatement.textRange!!.startOffset
     }
 
-    override fun tryJoinLines(document: Document, file: PsiFile, start: Int, end: Int)
-            = - 1
+    override fun tryJoinLines(document: Document, file: PsiFile, start: Int, end: Int) = -1
 }

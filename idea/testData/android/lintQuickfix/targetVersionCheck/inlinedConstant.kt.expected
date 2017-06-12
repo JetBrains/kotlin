@@ -5,8 +5,10 @@ import android.os.Build
 
 class Test {
     fun foo(): Int {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return android.R.attr.windowTranslucentStatus
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            android.R.attr.windowTranslucentStatus
+        } else {
+            TODO("VERSION.SDK_INT < KITKAT")
         }
     }
 }

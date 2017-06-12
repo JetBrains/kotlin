@@ -8,6 +8,7 @@ inline fun inlineFun(capturedParam: String, lambda: () -> String = { capturedPar
 }
 
 // FILE: 2.kt
+// CHECK_CONTAINS_NO_CALLS: box
 
 import test.*
 

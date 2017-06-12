@@ -479,6 +479,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("intCompareTo.kt")
+        public void testIntCompareTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/intCompareTo.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kClassInAnnotation.kt")
         public void testKClassInAnnotation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/kClassInAnnotation.kt");
@@ -512,6 +518,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("kt7224.kt")
         public void testKt7224() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/kt7224.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("maxMinBy.kt")
+        public void testMaxMinBy() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/maxMinBy.kt");
             doTest(fileName);
         }
 
@@ -1727,6 +1739,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("expressionValueIsNotNull.kt")
+        public void testExpressionValueIsNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/expressionValueIsNotNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionValueIsNotNullAfterExclExcl.kt")
+        public void testExpressionValueIsNotNullAfterExclExcl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/expressionValueIsNotNullAfterExclExcl.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionValueIsNotNullTwice.kt")
+        public void testExpressionValueIsNotNullTwice() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/expressionValueIsNotNullTwice.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ifNullEqualsNull.kt")
         public void testIfNullEqualsNull() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/ifNullEqualsNull.kt");
@@ -1778,6 +1808,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("reifiedNullIs.kt")
         public void testReifiedNullIs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/reifiedNullIs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("trivialInstanceOf.kt")
+        public void testTrivialInstanceOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/trivialInstanceOf.kt");
             doTest(fileName);
         }
     }

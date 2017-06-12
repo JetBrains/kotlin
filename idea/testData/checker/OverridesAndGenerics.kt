@@ -14,7 +14,7 @@
     class MyChildClass : MyGenericClass<Int>() {}
     class MyChildClass1<T> : MyGenericClass<T>() {}
     class MyChildClass2<T> : MyGenericClass<T>() {
-        <error>fun foo(t: T)</error> = t
+        fun <error>foo</error>(t: T) = t
         override fun bar(t: T) = t
     }
 

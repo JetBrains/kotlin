@@ -66,7 +66,7 @@ object KotlinStatisticsInfo {
         startFromName = true
         receiverAfterName = true
         modifiers = emptySet()
-        renderDefaultValues = false
+        defaultParameterValueRenderer = null
         parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
     }
 

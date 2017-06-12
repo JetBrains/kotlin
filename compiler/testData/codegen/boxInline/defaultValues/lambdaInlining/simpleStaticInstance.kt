@@ -8,6 +8,7 @@ inline fun inlineFun(lambda: () -> String = { "OK" }): String {
 }
 
 // FILE: 2.kt
+// CHECK_CONTAINS_NO_CALLS: box
 
 import test.*
 

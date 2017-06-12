@@ -14,6 +14,7 @@ class A(val value: String) {
 
 import test.*
 
+// CHECK_CONTAINS_NO_CALLS: box
 fun box(): String {
     return A("OK").inlineFun()
 }

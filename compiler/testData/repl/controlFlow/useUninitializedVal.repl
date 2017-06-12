@@ -1,0 +1,12 @@
+>>> val a: String
+error: property must be initialized or be abstract
+val a: String
+^
+>>> a
+error: unresolved reference: a
+a
+^
+>>> val s: String = s
+error: variable 's' must be initialized
+val s: String = s
+                ^

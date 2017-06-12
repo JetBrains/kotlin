@@ -1,9 +1,9 @@
 internal class C {
     fun foo(b: Boolean): String? {
-        if (b) {
-            return "abc"
+        return if (b) {
+            "abc"
         } else {
-            return null
+            null
         }
     }
 }

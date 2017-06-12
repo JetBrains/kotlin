@@ -19,15 +19,14 @@ package org.jetbrains.kotlin.cli.common;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import kotlin.collections.ArraysKt;
-import org.fusesource.jansi.AnsiConsole;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
-import org.jetbrains.kotlin.cli.common.messages.*;
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
-import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
@@ -39,19 +38,12 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
 import static org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFallback;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
-public abstract class CLICompiler<A extends CommonCompilerArguments> {
-
-    @NotNull
-    public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
-        return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_RELATIVE_PATHS, args);
-    }
-
+public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLITool<A> {
     // Used in CompilerRunnerUtil#invokeExecMethod, in Eclipse plugin (KotlinCLICompiler) and in kotlin-gradle-plugin (GradleCompilerRunner)
     @NotNull
     public ExitCode execAndOutputXml(@NotNull PrintStream errStream, @NotNull Services services, @NotNull String... args) {
@@ -65,90 +57,9 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_FULL_PATHS, args);
     }
 
-    @Nullable
-    private A parseArguments(@NotNull MessageCollector messageCollector, @NotNull String[] args) {
-        try {
-            A arguments = createArguments();
-            parseArguments(args, arguments);
-            return arguments;
-        }
-        catch (IllegalArgumentException e) {
-            throw e;
-        }
-        catch (Throwable t) {
-            messageCollector.report(EXCEPTION, OutputMessageUtil.renderException(t), null);
-            return null;
-        }
-    }
-
-    // Used in kotlin-maven-plugin (KotlinCompileMojoBase) and in kotlin-gradle-plugin (KotlinJvmOptionsImpl, KotlinJsOptionsImpl)
-    public void parseArguments(@NotNull String[] args, @NotNull A arguments) {
-        ParseCommandLineArgumentsKt.parseCommandLineArguments(args, arguments);
-        String message = ParseCommandLineArgumentsKt.validateArguments(arguments.errors);
-        if (message != null) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-
     @NotNull
-    protected abstract A createArguments();
-
-    @NotNull
-    private ExitCode exec(
-            @NotNull PrintStream errStream,
-            @NotNull Services services,
-            @NotNull MessageRenderer messageRenderer,
-            @NotNull String[] args
-    ) {
-        K2JVMCompiler.Companion.resetInitStartTime();
-
-        MessageCollector parseArgumentsCollector = new PrintingMessageCollector(errStream, messageRenderer, false);
-        A arguments;
-        try {
-            arguments = parseArguments(parseArgumentsCollector, args);
-            if (arguments == null) return INTERNAL_ERROR;
-        }
-        catch (IllegalArgumentException e) {
-            parseArgumentsCollector.report(ERROR, e.getMessage(), null);
-            parseArgumentsCollector.report(INFO, "Use -help for more information", null);
-            return COMPILATION_ERROR;
-        }
-
-        if (arguments.help || arguments.extraHelp) {
-            Usage.print(errStream, this, arguments);
-            return OK;
-        }
-
-        MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
-
-        try {
-            if (PlainTextMessageRenderer.COLOR_ENABLED) {
-                AnsiConsole.systemInstall();
-            }
-
-            errStream.print(messageRenderer.renderPreamble());
-            return exec(collector, services, arguments);
-        }
-        finally {
-            errStream.print(messageRenderer.renderConclusion());
-
-            if (PlainTextMessageRenderer.COLOR_ENABLED) {
-                AnsiConsole.systemUninstall();
-            }
-        }
-    }
-
-    // Used in kotlin-maven-plugin (KotlinCompileMojoBase)
-    @NotNull
-    public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
-        printVersionIfNeeded(messageCollector, arguments);
-
-        if (arguments.suppressWarnings) {
-            messageCollector = new FilteringMessageCollector(messageCollector, Predicate.isEqual(WARNING));
-        }
-
-        reportArgumentParseProblems(messageCollector, arguments.errors);
-
+    @Override
+    public ExitCode execImpl(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
 
         CompilerConfiguration configuration = new CompilerConfiguration();
@@ -328,63 +239,10 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             @NotNull CompilerConfiguration configuration, @NotNull A arguments, @NotNull Services services
     );
 
-    private static void reportArgumentParseProblems(@NotNull MessageCollector collector, @NotNull ArgumentParseErrors errors) {
-        for (String flag : errors.getUnknownExtraFlags()) {
-            collector.report(STRONG_WARNING, "Flag is not supported by this version of the compiler: " + flag, null);
-        }
-        for (String argument : errors.getExtraArgumentsPassedInObsoleteForm()) {
-            collector.report(STRONG_WARNING, "Advanced option value is passed in an obsolete form. Please use the '=' character " +
-                                             "to specify the value: " + argument + "=...", null);
-        }
-        for (Map.Entry<String, String> argument : errors.getDuplicateArguments().entrySet()) {
-            collector.report(STRONG_WARNING, "Argument " + argument.getKey() + " is passed multiple times. " +
-                                             "Only the last value will be used: " + argument.getValue(), null);
-        }
-    }
-
     @NotNull
     protected abstract ExitCode doExecute(
             @NotNull A arguments,
             @NotNull CompilerConfiguration configuration,
             @NotNull Disposable rootDisposable
     );
-
-    private void printVersionIfNeeded(@NotNull MessageCollector messageCollector, @NotNull A arguments) {
-        if (arguments.version) {
-            messageCollector.report(
-                    CompilerMessageSeverity.INFO,
-                    executableScriptFileName() + " " + KotlinCompilerVersion.VERSION +
-                    " (JRE " + System.getProperty("java.runtime.version") + ")",
-                    null
-            );
-        }
-    }
-
-    @NotNull
-    public abstract String executableScriptFileName();
-
-    /**
-     * Useful main for derived command line tools
-     */
-    public static void doMain(@NotNull CLICompiler compiler, @NotNull String[] args) {
-        // We depend on swing (indirectly through PSI or something), so we want to declare headless mode,
-        // to avoid accidentally starting the UI thread
-        System.setProperty("java.awt.headless", "true");
-        ExitCode exitCode = doMainNoExit(compiler, args);
-        if (exitCode != OK) {
-            System.exit(exitCode.getCode());
-        }
-    }
-
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    @NotNull
-    public static ExitCode doMainNoExit(@NotNull CLICompiler compiler, @NotNull String[] args) {
-        try {
-            return compiler.exec(System.err, args);
-        }
-        catch (CompileEnvironmentException e) {
-            System.err.println(e.getMessage());
-            return INTERNAL_ERROR;
-        }
-    }
 }

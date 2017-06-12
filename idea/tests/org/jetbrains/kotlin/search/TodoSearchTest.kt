@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.search
 
 import com.intellij.psi.search.PsiTodoSearchHelper
+import com.intellij.psi.search.TodoItem
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -32,8 +33,13 @@ class TodoSearchTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testTodoCall() {
         val file = myFixture.configureByFile("todoCall.kt")
         val todoItems = PsiTodoSearchHelper.SERVICE.getInstance(myFixture.project).findTodoItems(file)
-        assertEquals(1, todoItems.size)
-        assertEquals("TODO(\"Fix me\")", todoItems[0].textRange.substring(todoItems[0].file.text))
+        assertEquals(2, todoItems.size)
+        verifyTodoItemText(todoItems[0], "TODO(\"Fix me\")")
+        verifyTodoItemText(todoItems[1], "TODO()")
+    }
+
+    private fun verifyTodoItemText(todoItem: TodoItem, s: String) {
+        assertEquals(s, todoItem.textRange.substring(todoItem.file.text))
     }
 
     fun testTodoDef() {

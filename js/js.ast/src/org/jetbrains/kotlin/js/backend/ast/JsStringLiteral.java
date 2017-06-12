@@ -4,24 +4,21 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
-    public static JsStringLiteral createCharZero() {
-        return new JsStringLiteral("\0");
-    }
+import org.jetbrains.annotations.NotNull;
 
+public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
     private final String value;
 
-    // These only get created by JsProgram so that they can be interned.
-    JsStringLiteral(String value) {
-    this.value = value;
-  }
+    public JsStringLiteral(String value) {
+        this.value = value;
+    }
 
     public String getValue() {
     return value;
   }
 
-  @Override
-  public void accept(JsVisitor v) {
+    @Override
+    public void accept(JsVisitor v) {
     v.visitString(this);
   }
 
@@ -29,5 +26,11 @@ public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
         v.visit(this, ctx);
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsStringLiteral deepCopy() {
+        return new JsStringLiteral(value).withMetadataFrom(this);
     }
 }

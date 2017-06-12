@@ -217,13 +217,14 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
         declarationGenerator.generateTypeParameterDeclarations(irFunction, irFunction.descriptor.typeParameters)
-        generateValueParameterDeclarations(irFunction, null, null)
+        generateValueParameterDeclarations(irFunction, null, null, withDefaultValues = false)
     }
 
     fun generateValueParameterDeclarations(
             irFunction: IrFunction,
             ktParameterOwner: KtElement?,
-            ktReceiverParameterElement: KtElement?
+            ktReceiverParameterElement: KtElement?,
+            withDefaultValues: Boolean = true
     ) {
         val functionDescriptor = irFunction.descriptor
 
@@ -238,14 +239,15 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val bodyGenerator = createBodyGenerator(irFunction.symbol)
         functionDescriptor.valueParameters.mapTo(irFunction.valueParameters) { valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            generateValueParameterDeclaration(valueParameterDescriptor, ktParameter, bodyGenerator)
+            generateValueParameterDeclaration(valueParameterDescriptor, ktParameter, bodyGenerator, withDefaultValues)
         }
     }
 
     private fun generateValueParameterDeclaration(
             valueParameterDescriptor: ValueParameterDescriptor,
             ktParameter: KtParameter?,
-            bodyGenerator: BodyGenerator
+            bodyGenerator: BodyGenerator,
+            withDefaultValues: Boolean
     ): IrValueParameter =
             context.symbolTable.declareValueParameter(
                     ktParameter.startOffsetOrUndefined,
@@ -253,8 +255,10 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                     IrDeclarationOrigin.DEFINED,
                     valueParameterDescriptor
             ).also {
-                it.defaultValue = ktParameter?.defaultValue?.let {
-                    bodyGenerator.generateExpressionBody(it)
+                if (withDefaultValues) {
+                    it.defaultValue = ktParameter?.defaultValue?.let {
+                        bodyGenerator.generateExpressionBody(it)
+                    }
                 }
             }
 

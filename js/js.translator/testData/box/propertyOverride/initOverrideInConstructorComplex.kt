@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 506
 // Test for KT-5673
 
 package foo

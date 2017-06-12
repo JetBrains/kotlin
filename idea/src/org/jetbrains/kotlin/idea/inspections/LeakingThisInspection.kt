@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext.LEAKING_THIS
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
@@ -88,6 +89,7 @@ class LeakingThisInspection : AbstractKotlinInspection() {
             declaration ?: return null
             val useScope = declaration.useScope
             if (DefinitionsScopedSearch.search(declaration, useScope).findFirst() != null) return null
+            if ((declaration.containingClassOrObject as? KtClass)?.isInterface() ?: false) return null
             return IntentionWrapper(AddModifierFix(declaration, KtTokens.FINAL_KEYWORD), declaration.containingFile)
         }
     }

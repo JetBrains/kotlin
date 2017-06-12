@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
   compileSdkVersion 23
-  buildToolsVersion "23.0.1"
+  buildToolsVersion "25.0.2"
   defaultConfig {
     applicationId "com.example.genclassesnotfound"
     minSdkVersion 19

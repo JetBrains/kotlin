@@ -126,6 +126,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("javaKeywordsInPackageNames.kt")
+    public void testJavaKeywordsInPackageNames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/javaKeywordsInPackageNames.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("jvmOverloads.kt")
     public void testJvmOverloads() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/jvmOverloads.kt");
@@ -177,6 +183,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("mapEntry.kt")
     public void testMapEntry() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/mapEntry.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("methodParameterNames.kt")
+    public void testMethodParameterNames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/methodParameterNames.kt");
         doTest(fileName);
     }
 

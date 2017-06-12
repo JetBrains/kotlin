@@ -91,10 +91,14 @@ task reflectShadowJar(type: ShadowJar) {
     from ("${core}/descriptor.loader.java/src") {
         include 'META-INF/services/**'
     }
+    from ("${core}/deserialization/src") {
+        include 'META-INF/services/**'
+    }
 
     configurations = [project.configurations.shadows]
     relocate 'org.jetbrains.kotlin', 'kotlin.reflect.jvm.internal.impl'
     relocate 'javax.inject', 'kotlin.reflect.jvm.internal.impl.javax.inject'
+    mergeServiceFiles()
 }
 
 createScriptTask(project, "stripMetadata") {

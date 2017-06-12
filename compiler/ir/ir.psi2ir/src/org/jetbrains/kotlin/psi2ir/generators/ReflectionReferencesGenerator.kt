@@ -25,8 +25,9 @@ import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi2ir.intermediate.TransientReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
@@ -51,24 +52,30 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
     fun generateCallableReference(ktCallableReference: KtCallableReferenceExpression): IrExpression {
         val resolvedCall = getResolvedCall(ktCallableReference.callableReference)!!
-        val irCallableRef = generateCallableReference(
-                ktCallableReference.startOffset, ktCallableReference.endOffset,
-                getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
-                resolvedCall.resultingDescriptor,
-                typeArguments = null
-        )
-        resolvedCall.dispatchReceiver?.let { dispatchReceiver ->
-            if (dispatchReceiver !is TransientReceiver) {
-                irCallableRef.dispatchReceiver = statementGenerator.generateReceiver(ktCallableReference, dispatchReceiver).load()
-            }
-        }
-        resolvedCall.extensionReceiver?.let { extensionReceiver ->
-            if (extensionReceiver !is TransientReceiver) {
-                irCallableRef.extensionReceiver = statementGenerator.generateReceiver(ktCallableReference, extensionReceiver).load()
-            }
-        }
 
-        return irCallableRef
+        val resultingDescriptor = resolvedCall.resultingDescriptor
+        val descriptorImportedFromObject = resultingDescriptor as? ImportedFromObjectCallableDescriptor<*>
+        val referencedDescriptor = descriptorImportedFromObject?.callableFromObject ?: resultingDescriptor
+
+        val startOffset = ktCallableReference.startOffset
+        val endOffset = ktCallableReference.endOffset
+
+        return statementGenerator.generateCallReceiver(
+                ktCallableReference,
+                resultingDescriptor,
+                resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
+                isSafe = false
+        ).call { dispatchReceiverValue, extensionReceiverValue ->
+            generateCallableReference(
+                    startOffset, endOffset,
+                    getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
+                    referencedDescriptor,
+                    typeArguments = null
+            ).also { irCallableReference ->
+                irCallableReference.dispatchReceiver = dispatchReceiverValue?.loadIfExists()
+                irCallableReference.extensionReceiver = extensionReceiverValue?.loadIfExists()
+            }
+        }
     }
 
     fun generateCallableReference(

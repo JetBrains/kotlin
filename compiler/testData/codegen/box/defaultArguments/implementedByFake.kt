@@ -1,6 +1,4 @@
-// TARGET_BACKEND: JS
-// This test causes JVM to generate incorrect bytecode
-// Could not use IGNORE_BACKEND directive, since it makes LightAnalysisModeCodegenTestsGenerated fail on this test
+// IGNORE_BACKEND: JVM
 
 interface I<T> {
     val prop: T

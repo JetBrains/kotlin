@@ -49,6 +49,11 @@ public class XmlMessageRenderer implements MessageRenderer {
     }
 
     @Override
+    public String renderUsage(@NotNull String usage) {
+        return render(CompilerMessageSeverity.STRONG_WARNING, usage, null);
+    }
+
+    @Override
     public String renderConclusion() {
         return "</MESSAGES>";
     }

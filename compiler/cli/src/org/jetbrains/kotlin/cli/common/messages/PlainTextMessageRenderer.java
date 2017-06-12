@@ -158,6 +158,11 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
     protected abstract String getPath(@NotNull CompilerMessageLocation location);
 
     @Override
+    public String renderUsage(@NotNull String usage) {
+        return usage;
+    }
+
+    @Override
     public String renderConclusion() {
         return "";
     }

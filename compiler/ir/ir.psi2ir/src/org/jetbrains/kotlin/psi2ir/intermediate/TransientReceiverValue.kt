@@ -23,4 +23,6 @@ class TransientReceiverValue(override val type: KotlinType): IntermediateValue {
     override fun load(): IrExpression {
         throw AssertionError("Transient receiver should not be instantiated")
     }
+
+    override fun loadIfExists(): IrExpression? = null
 }

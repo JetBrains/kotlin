@@ -20,7 +20,7 @@ internal class A {
     }
 
     fun bar() {
-        field5 = ArrayList<String>()
+        field5 = ArrayList()
         field7++
         field8++
         field9 = null

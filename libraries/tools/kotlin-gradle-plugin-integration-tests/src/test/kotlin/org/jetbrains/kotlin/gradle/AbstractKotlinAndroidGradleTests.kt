@@ -1,74 +1,97 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 
 
-class KotlinAndroidGradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersion = "2.3", androidGradlePluginVersion = "1.5.+")
+class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.0")
+class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.+")
 
-class KotlinAndroidWithJackGradleCLIOnly : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.+")
+class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "4.0-rc-1", androidGradlePluginVersion = "3.0.0-alpha2") {
+
+    @Test
+    fun testApplyWithFeaturePlugin() {
+        val project = Project("AndroidProject", gradleVersion)
+
+        project.setupWorkingDir()
+        File(project.projectDir, "Lib/build.gradle").modify { text ->
+            // Change the applied plugin to com.android.feature
+            text.replace("com.android.library", "com.android.feature").apply { assert(!equals(text)) }
+        }
+
+        // Check that Kotlin tasks were created for both lib and feature variants:
+        val kotlinTaskNames =
+                listOf("Debug", "Release").flatMap { buildType ->
+                    listOf("Flavor1", "Flavor2").flatMap { flavor ->
+                        listOf("", "Feature").map { isFeature -> ":Lib:compile$flavor$buildType${isFeature}Kotlin" }
+                    }
+                }
+
+        project.build(":Lib:assemble") {
+            assertSuccessful()
+            assertContains(*kotlinTaskNames.toTypedArray())
+        }
+    }
+}
+
+const val ANDROID_HOME_PATH = "../../../dependencies/androidSDK"
 
 abstract class AbstractKotlinAndroidGradleTests(
-        private val gradleVersion: String,
+        protected val gradleVersion: String,
         private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = File("../../../dependencies/android-sdk-for-tests"),
+            super.defaultBuildOptions().copy(androidHome = File(ANDROID_HOME_PATH),
                                              androidGradlePluginVersion = androidGradlePluginVersion)
 
     @Test
     fun testSimpleCompile() {
         val project = Project("AndroidProject", gradleVersion)
 
+        val modules = listOf("Android", "Lib")
+        val flavors = listOf("Flavor1", "Flavor2")
+        val buildTypes = listOf("Debug", "Release")
+
+        val tasks = arrayListOf<String>()
+        for (module in modules) {
+            for (flavor in flavors) {
+                for (buildType in buildTypes) {
+                    tasks.add(":$module:compile$flavor${buildType}Kotlin")
+                }
+            }
+        }
+
         project.build("build", "assembleAndroidTest") {
             assertSuccessful()
-            assertContains(":Lib:compileReleaseKotlin",
-                    ":Test:compileDebugKotlin",
-                    ":compileFlavor1DebugKotlin",
-                    ":compileFlavor2DebugKotlin",
-                    ":compileFlavor1JnidebugKotlin",
-                    ":compileFlavor1ReleaseKotlin",
-                    ":compileFlavor2JnidebugKotlin",
-                    ":compileFlavor2ReleaseKotlin",
-                    ":compileFlavor1Debug",
-                    ":compileFlavor2Debug",
-                    ":compileFlavor1Jnidebug",
-                    ":compileFlavor2Jnidebug",
-                    ":compileFlavor1Release",
-                    ":compileFlavor2Release",
-                    ":compileFlavor1DebugUnitTestKotlin",
-                    "InternalDummyTest PASSED",
-                    ":compileFlavor1DebugAndroidTestKotlin")
+            // Before 3.0 AGP test only modules are compiled only against one flavor and one build type,
+            // and contain only the compileDebugKotlin task.
+            // After 3.0 AGP test only modules contain a compile<Variant>Kotlin task for each variant.
+            tasks.addAll(findTasksByPattern(":Test:compile[\\w\\d]+Kotlin"))
+            assertTasksExecuted(tasks)
+            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+                // known bug: new AGP does not run Kotlin tests
+                // https://issuetracker.google.com/issues/38454212
+                // TODO: remove when the bug is fixed
+                assertContains("InternalDummyTest PASSED")
+            }
             checkKotlinGradleBuildServices()
         }
 
         // Run the build second time, assert everything is up-to-date
         project.build("build") {
             assertSuccessful()
-            assertContains(":Lib:compileReleaseKotlin UP-TO-DATE")
+            assertTasksUpToDate(tasks)
         }
 
         // Run the build third time, re-run tasks
 
         project.build("build", "--rerun-tasks") {
             assertSuccessful()
-            assertContains(":Lib:compileReleaseKotlin",
-                    ":Test:compileDebugKotlin",
-                    ":compileFlavor1DebugKotlin",
-                    ":compileFlavor2DebugKotlin",
-                    ":compileFlavor1JnidebugKotlin",
-                    ":compileFlavor1ReleaseKotlin",
-                    ":compileFlavor2JnidebugKotlin",
-                    ":compileFlavor2ReleaseKotlin",
-                    ":compileFlavor1Debug",
-                    ":compileFlavor2Debug",
-                    ":compileFlavor1Jnidebug",
-                    ":compileFlavor2Jnidebug",
-                    ":compileFlavor1Release",
-                    ":compileFlavor2Release")
+            assertTasksExecuted(tasks)
             checkKotlinGradleBuildServices()
         }
     }
@@ -80,8 +103,11 @@ abstract class AbstractKotlinAndroidGradleTests(
         // Execute 'assembleAndroidTest' first, without 'build' side effects
         project.build("assembleAndroidTest") {
             assertSuccessful()
-            assertContains(":copyFlavor1DebugKotlinClasses")
-            assertContains(":copyFlavor2DebugKotlinClasses")
+            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+                // with the new AGP we don't need copy classes tasks
+                assertContains(":copyFlavor1DebugKotlinClasses")
+                assertContains(":copyFlavor2DebugKotlinClasses")
+            }
         }
     }
 
@@ -90,7 +116,7 @@ abstract class AbstractKotlinAndroidGradleTests(
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true)
 
-        project.build("build", options = options) {
+        project.build("assembleDebug", options = options) {
             assertSuccessful()
         }
 
@@ -101,7 +127,7 @@ package foo
 fun getSomething() = 10
 """)
 
-        project.build("build", options = options) {
+        project.build("assembleDebug", options = options) {
             assertSuccessful()
             assertCompiledKotlinSources(listOf("app/src/main/kotlin/foo/KotlinActivity1.kt", "app/src/main/kotlin/foo/getSomething.kt"))
             assertCompiledJavaSources(listOf("app/src/main/java/foo/JavaActivity.java"), weakTesting = true)
@@ -112,8 +138,6 @@ fun getSomething() = 10
     fun testIncrementalBuildWithNoChanges() {
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val tasksToExecute = arrayOf(
-                ":app:prepareComAndroidSupportAppcompatV72311Library",
-                ":app:prepareComAndroidSupportSupportV42311Library",
                 ":app:compileDebugKotlin",
                 ":app:compileDebugJavaWithJavac"
         )
@@ -146,25 +170,12 @@ fun getSomething() = 10
         // rebuilt because BuildConfig.java was regenerated (timestamp was changed)
         val useBuildConfigJavaKt = project.projectDir.getFileByName("useBuildConfigJava.kt")
 
-        val stringsXml = project.projectDir.getFileByName("strings.xml")
-        stringsXml.modify { """
-            <resources>
-                <string name="app_name">kotlin</string>
-                <string name="app_name1">kotlin1</string>
-            </resources>
-        """ }
-        // rebuilt because R.java changed
-        val homeActivityKt = project.projectDir.getFileByName("HomeActivity.kt")
-        val useRJavaActivity = project.projectDir.getFileByName("UseRJavaActivity.kt")
-
         project.build(":app:assembleDebug", options = options) {
             assertSuccessful()
             assertCompiledKotlinSources(project.relativize(
                     androidModuleKt,
                     baseApplicationKt,
-                    useBuildConfigJavaKt,
-                    homeActivityKt,
-                    useRJavaActivity
+                    useBuildConfigJavaKt
             ))
         }
     }
@@ -203,7 +214,7 @@ fun getSomething() = 10
     fun testAndroidKaptChangingDependencies() {
         val project = Project("AndroidKaptChangingDependencies", gradleVersion)
 
-        project.build("build") {
+        project.build("assembleDebug") {
             assertSuccessful()
             assertNotContains("Changed dependencies of configuration .+ after it has been included in dependency resolution".toRegex())
         }
@@ -219,179 +230,16 @@ abstract class AbstractKotlinAndroidWithJackGradleTests(
     fun getEnvJDK_18() = System.getenv()["JDK_18"]
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = File("../../../dependencies/android-sdk-for-tests"),
+            super.defaultBuildOptions().copy(androidHome = File(ANDROID_HOME_PATH),
                     androidGradlePluginVersion = androidGradlePluginVersion, javaHome = File(getEnvJDK_18()))
-
-    @Test
-    fun testAndroidTestCompilation() {
-        val project = Project("AndroidJackProject", gradleVersion)
-
-        project.build("assembleAndroidTest") {
-            assertSuccessful()
-            assertFileExists("Android/build/tmp/kotlin-classes/flavor1Debug.jar")
-            assertFileExists("Android/build/tmp/kotlin-classes/flavor2Debug.jar")
-            assertFileExists("Android/build/tmp/kotlin-classes/flavor1DebugAndroidTest.jar")
-            assertFileExists("Android/build/tmp/kotlin-classes/flavor2DebugAndroidTest.jar")
-            assertFileExists("Android/build/outputs/apk/Android-flavor1-debug-androidTest.apk")
-            assertFileExists("Android/build/outputs/apk/Android-flavor2-debug-androidTest.apk")
-        }
-    }
 
     @Test
     fun testSimpleCompile() {
         val project = Project("AndroidJackProject", gradleVersion)
 
-        project.build("build", "test") {
-            assertSuccessful()
-            assertContains(
-                    ":Lib:compileReleaseKotlin",
-
-                    ":compileFlavor1DebugKotlin",
-                    ":zipKotlinClassesForFlavor1Debug",
-                    ":transformKotlinClassesWithJillForFlavor1Debug",
-
-                    ":compileFlavor2DebugKotlin",
-                    ":zipKotlinClassesForFlavor2Debug",
-                    ":transformKotlinClassesWithJillForFlavor2Debug",
-
-                    ":compileFlavor1JnidebugKotlin",
-                    ":zipKotlinClassesForFlavor1Jnidebug",
-                    ":transformKotlinClassesWithJillForFlavor1Jnidebug",
-
-                    ":compileFlavor1ReleaseKotlin",
-                    ":zipKotlinClassesForFlavor1Release",
-                    ":transformKotlinClassesWithJillForFlavor1Release",
-
-                    ":compileFlavor2JnidebugKotlin",
-                    ":zipKotlinClassesForFlavor2Jnidebug",
-                    ":transformKotlinClassesWithJillForFlavor2Jnidebug",
-
-                    ":compileFlavor2ReleaseKotlin",
-                    ":zipKotlinClassesForFlavor2Release",
-                    ":transformKotlinClassesWithJillForFlavor2Release",
-
-                    ":compileFlavor1DebugUnitTestKotlin",
-                    "InternalDummyTest PASSED"
-            )
-            checkKotlinGradleBuildServices()
-        }
-
-        // Run the build second time, assert everything is up-to-date
-        project.build("build") {
-            assertSuccessful()
-            assertContains(
-                    ":Lib:compileReleaseKotlin UP-TO-DATE",
-
-                    ":compileFlavor1DebugKotlin UP-TO-DATE",
-                    ":zipKotlinClassesForFlavor1Debug UP-TO-DATE",
-                    ":transformKotlinClassesWithJillForFlavor1Debug UP-TO-DATE",
-
-                    ":compileFlavor2DebugKotlin UP-TO-DATE",
-                    ":zipKotlinClassesForFlavor2Debug UP-TO-DATE",
-                    ":transformKotlinClassesWithJillForFlavor2Debug UP-TO-DATE",
-
-                    ":compileFlavor1JnidebugKotlin UP-TO-DATE",
-                    ":zipKotlinClassesForFlavor1Jnidebug UP-TO-DATE",
-                    ":transformKotlinClassesWithJillForFlavor1Jnidebug UP-TO-DATE",
-
-                    ":compileFlavor1ReleaseKotlin UP-TO-DATE",
-                    ":zipKotlinClassesForFlavor1Release UP-TO-DATE",
-                    ":transformKotlinClassesWithJillForFlavor1Release UP-TO-DATE",
-
-                    ":compileFlavor2JnidebugKotlin UP-TO-DATE",
-                    ":zipKotlinClassesForFlavor2Jnidebug UP-TO-DATE",
-                    ":transformKotlinClassesWithJillForFlavor2Jnidebug UP-TO-DATE",
-
-                    ":compileFlavor2ReleaseKotlin UP-TO-DATE",
-                    ":zipKotlinClassesForFlavor2Release UP-TO-DATE",
-                    ":transformKotlinClassesWithJillForFlavor2Release UP-TO-DATE"
-            )
-        }
-
-        project.build("build", "--rerun-tasks") {
-            assertSuccessful()
-            assertContains(
-                    ":Lib:compileReleaseKotlin",
-
-                    ":compileFlavor1DebugKotlin",
-                    ":zipKotlinClassesForFlavor1Debug",
-                    ":transformKotlinClassesWithJillForFlavor1Debug",
-
-                    ":compileFlavor2DebugKotlin",
-                    ":zipKotlinClassesForFlavor2Debug",
-                    ":transformKotlinClassesWithJillForFlavor2Debug",
-
-                    ":compileFlavor1JnidebugKotlin",
-                    ":zipKotlinClassesForFlavor1Jnidebug",
-                    ":transformKotlinClassesWithJillForFlavor1Jnidebug",
-
-                    ":compileFlavor1ReleaseKotlin",
-                    ":zipKotlinClassesForFlavor1Release",
-                    ":transformKotlinClassesWithJillForFlavor1Release",
-
-                    ":compileFlavor2JnidebugKotlin",
-                    ":zipKotlinClassesForFlavor2Jnidebug",
-                    ":transformKotlinClassesWithJillForFlavor2Jnidebug",
-
-                    ":compileFlavor2ReleaseKotlin",
-                    ":zipKotlinClassesForFlavor2Release",
-                    ":transformKotlinClassesWithJillForFlavor2Release",
-
-                    ":compileFlavor1DebugUnitTestKotlin",
-                    "InternalDummyTest PASSED"
-            )
-            checkKotlinGradleBuildServices()
-        }
-
-    }
-
-    @Test
-    fun testDagger() {
-        val project = Project("AndroidDaggerJackProject", gradleVersion)
-        val options = defaultBuildOptions().copy(incremental = false)
-
-        project.build("assembleDebug", options = options) {
-            assertSuccessful()
-            assertContains(
-                    ":kaptDebugKotlin",
-                    ":compileDebugKotlin",
-                    ":zipKotlinClassesForDebug",
-                    ":transformKotlinClassesWithJillForDebug",
-                    ":transformJackWithJackForDebug"
-            )
-        }
-    }
-
-    @Test
-    fun testAndroidExtensions() {
-        val project = Project("AndroidExtensionsJackProject", gradleVersion)
-        val options = defaultBuildOptions().copy(incremental = false)
-
-        project.build("assembleDebug", options = options) {
-            assertSuccessful()
-            assertContains(
-                    ":compileDebugKotlin",
-                    ":zipKotlinClassesForDebug",
-                    ":transformKotlinClassesWithJillForDebug",
-                    ":transformJackWithJackForDebug"
-            )
-        }
-    }
-
-    @Test
-    fun testIcepick() {
-        val project = Project("AndroidIcepickJackProject", gradleVersion)
-        val options = defaultBuildOptions().copy(incremental = false)
-
-        project.build("assembleDebug", options = options) {
-            assertSuccessful()
-            assertContains(
-                    ":kaptDebugKotlin",
-                    ":compileDebugKotlin",
-                    ":zipKotlinClassesForDebug",
-                    ":transformKotlinClassesWithJillForDebug",
-                    ":transformJackWithJackForDebug"
-            )
+        project.build("assemble") {
+            assertFailed()
+            assertContains("Kotlin Gradle plugin does not support the deprecated Jack toolchain")
         }
     }
 }

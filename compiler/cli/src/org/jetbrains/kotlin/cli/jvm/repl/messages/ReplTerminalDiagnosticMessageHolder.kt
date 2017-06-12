@@ -16,15 +16,25 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl.messages
 
-import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorBasedReporter
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.nio.ByteBuffer
 
-class ReplTerminalDiagnosticMessageHolder() : MessageCollectorBasedReporter, DiagnosticMessageHolder {
+class ReplTerminalDiagnosticMessageHolder : MessageCollectorBasedReporter, DiagnosticMessageHolder {
     private val outputStream = ByteArrayOutputStream()
-    override val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.WITHOUT_PATHS, false)
+
+    override val messageCollector: GroupingMessageCollector = GroupingMessageCollector(
+            PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.WITHOUT_PATHS, false)
+    )
 
     override val renderedDiagnostics: String
-        get() = Charsets.UTF_8.decode(ByteBuffer.wrap(outputStream.toByteArray())).toString()
+        get() {
+            messageCollector.flush()
+            val bytes = outputStream.toByteArray()
+            return Charsets.UTF_8.decode(ByteBuffer.wrap(bytes)).toString()
+        }
 }

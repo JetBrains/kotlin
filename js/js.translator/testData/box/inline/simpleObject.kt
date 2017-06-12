@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 502
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/simple/simpleObject.1.kt

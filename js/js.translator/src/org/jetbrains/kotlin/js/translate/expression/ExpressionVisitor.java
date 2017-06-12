@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
 import org.jetbrains.kotlin.js.translate.declaration.PropertyTranslatorKt;
@@ -72,7 +73,7 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFun
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     protected JsNode emptyResult(@NotNull TranslationContext context) {
-        return JsLiteral.NULL;
+        return new JsNullLiteral();
     }
 
     @Override
@@ -220,7 +221,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
         else if (isVarCapturedInClosure(context.bindingContext(), descriptor)) {
             JsNameRef alias = getCapturedVarAccessor(name.makeRef());
-            initializer = JsAstUtils.wrapValue(alias, initializer == null ? JsLiteral.NULL : initializer);
+            initializer = JsAstUtils.wrapValue(alias, initializer == null ? new JsNullLiteral() : initializer);
         }
 
         return newVar(name, initializer).source(expression);
@@ -319,7 +320,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitStringTemplateExpression(@NotNull KtStringTemplateExpression expression, @NotNull TranslationContext context) {
         JsStringLiteral stringLiteral = resolveAsStringConstant(expression, context);
         if (stringLiteral != null) {
-            return stringLiteral;
+            return stringLiteral.source(expression);
         }
         return resolveAsTemplate(expression, context).source(expression);
     }
@@ -339,7 +340,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
         assert value instanceof String : "Compile time constant template should be a String constant.";
         String constantString = (String) value;
-        return context.program().getStringLiteral(constantString);
+        return new JsStringLiteral(constantString);
     }
 
     @Override
@@ -363,7 +364,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
         String labelIdent = getReferencedName(expression.getTargetLabel());
 
-        JsName labelName = functionScope.enterLabel(labelIdent);
+        JsName labelName = functionScope.enterLabel(labelIdent, NameSuggestion.sanitizeName(labelIdent));
         JsStatement baseStatement = Translation.translateAsStatement(baseExpression, context);
         functionScope.exitLabel();
 
@@ -460,7 +461,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitLambdaExpression(@NotNull KtLambdaExpression expression, @NotNull TranslationContext context) {
-        return new LiteralFunctionTranslator(context).translate(expression.getFunctionLiteral());
+        return new LiteralFunctionTranslator(context).translate(expression.getFunctionLiteral()).source(expression);
     }
 
     @Override

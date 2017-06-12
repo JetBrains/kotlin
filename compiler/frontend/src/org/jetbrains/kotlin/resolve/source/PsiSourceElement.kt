@@ -33,4 +33,6 @@ class PsiSourceFile(val psiFile: PsiFile): SourceFile {
     override fun hashCode(): Int = psiFile.hashCode()
 
     override fun toString(): String = psiFile.virtualFile.path
+
+    override fun getName(): String? = psiFile.virtualFile?.name
 }

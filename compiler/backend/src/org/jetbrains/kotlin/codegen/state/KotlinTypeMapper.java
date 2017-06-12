@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.IrBuiltinsPackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
@@ -42,7 +43,6 @@ import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltinsPackageFragmentDescriptor;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -236,6 +236,7 @@ public class KotlinTypeMapper {
             if (facadeFqName != null) return facadeFqName;
         }
 
+        // TODO: drop this usage and move IrBuiltinsPackageFragmentDescriptor to IR modules; it shouldn't be used here
         if (descriptor.getContainingDeclaration() instanceof IrBuiltinsPackageFragmentDescriptor) {
             return descriptor.getContainingDeclaration().getName().asString();
         }
@@ -1029,7 +1030,21 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
+    public JvmMethodGenericSignature mapSignatureWithGeneric(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind, boolean hasSpecialBridge) {
+        return mapSignature(f, kind, false, hasSpecialBridge);
+    }
+
     private JvmMethodGenericSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind, boolean skipGenericSignature) {
+        return mapSignature(f, kind, skipGenericSignature, false);
+    }
+
+    @NotNull
+    private JvmMethodGenericSignature mapSignature(
+            @NotNull FunctionDescriptor f,
+            @NotNull OwnerKind kind,
+            boolean skipGenericSignature,
+            boolean hasSpecialBridge
+    ) {
         if (f.getInitialSignatureDescriptor() != null && f != f.getInitialSignatureDescriptor()) {
             // Overrides of special builtin in Kotlin classes always have special signature
             if (SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(f) == null ||
@@ -1050,7 +1065,7 @@ public class KotlinTypeMapper {
             return mapSignature(CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(f), kind, skipGenericSignature);
         }
 
-        return mapSignatureWithCustomParameters(f, kind, f.getValueParameters(), skipGenericSignature);
+        return mapSignatureWithCustomParameters(f, kind, f.getValueParameters(), skipGenericSignature, hasSpecialBridge);
     }
 
     @NotNull
@@ -1059,6 +1074,17 @@ public class KotlinTypeMapper {
             @NotNull OwnerKind kind,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             boolean skipGenericSignature
+    ) {
+        return mapSignatureWithCustomParameters(f, kind, valueParameters, skipGenericSignature, false);
+    }
+
+    @NotNull
+    public JvmMethodGenericSignature mapSignatureWithCustomParameters(
+            @NotNull FunctionDescriptor f,
+            @NotNull OwnerKind kind,
+            @NotNull List<ValueParameterDescriptor> valueParameters,
+            boolean skipGenericSignature,
+            boolean hasSpecialBridge
     ) {
         checkOwnerCompatibility(f);
 
@@ -1121,7 +1147,7 @@ public class KotlinTypeMapper {
 
         JvmMethodGenericSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f));
 
-        if (kind != OwnerKind.DEFAULT_IMPLS) {
+        if (kind != OwnerKind.DEFAULT_IMPLS && !hasSpecialBridge) {
             SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);
 
             if (specialSignatureInfo != null) {

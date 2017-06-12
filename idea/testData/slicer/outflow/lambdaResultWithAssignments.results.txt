@@ -1,0 +1,9 @@
+9 val y = foo { <bold>it</bold> }
+9 	val y = foo <bold>{ it }</bold>
+9 		[LAMBDA] val y = foo <bold>{ it }</bold>
+3 			[LAMBDA] fun foo(<bold>f: (Int) -> Int</bold>): Int {
+4 				[LAMBDA] val <bold>x = f</bold>
+5 					return <bold>x(1)</bold>
+3 						fun <bold>foo(f: (Int) -> Int): Int {</bold>
+9 							val y = <bold>foo { it }</bold>
+9 								val <bold>y = foo { it }</bold>

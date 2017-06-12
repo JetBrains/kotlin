@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1224
 package foo
 
 fun testFor(expected: Int, d: dynamic, case: String) {

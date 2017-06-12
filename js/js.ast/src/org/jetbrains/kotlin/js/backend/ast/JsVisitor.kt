@@ -39,7 +39,7 @@ abstract class JsVisitor {
     open fun visitBlock(x: JsBlock): Unit =
             visitElement(x)
 
-    open fun visitBoolean(x: JsLiteral.JsBooleanLiteral): Unit =
+    open fun visitBoolean(x: JsBooleanLiteral): Unit =
             visitElement(x)
 
     open fun visitBreak(x: JsBreak): Unit =
@@ -99,10 +99,10 @@ abstract class JsVisitor {
     open fun visitNull(x: JsNullLiteral): Unit =
             visitElement(x)
 
-    open fun visitInt(x: JsNumberLiteral.JsIntLiteral): Unit =
+    open fun visitInt(x: JsIntLiteral): Unit =
             visitElement(x)
 
-    open fun visitDouble(x: JsNumberLiteral.JsDoubleLiteral): Unit =
+    open fun visitDouble(x: JsDoubleLiteral): Unit =
             visitElement(x)
 
     open fun visitObjectLiteral(x: JsObjectLiteral): Unit =
@@ -135,7 +135,7 @@ abstract class JsVisitor {
     open fun visit(x: JsSwitch): Unit =
             visitElement(x)
 
-    open fun visitThis(x: JsLiteral.JsThisRef): Unit =
+    open fun visitThis(x: JsThisRef): Unit =
             visitElement(x)
 
     open fun visitThrow(x: JsThrow): Unit =

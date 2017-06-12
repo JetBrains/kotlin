@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOwnParametersWithDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.identity
 
 class ClassModelGenerator(val context: StaticContext) {
@@ -155,7 +156,7 @@ class ClassModelGenerator(val context: StaticContext) {
         // If one of overridden members is non-abstract, copy it.
         // When none found, we have nothing to copy, ignore.
         // When multiple found, our current class should provide implementation, ignore.
-        val memberToCopy = member.overriddenDescriptors
+        val memberToCopy = member.findNonRepeatingOverriddenDescriptors({ overriddenDescriptors }, { original })
                 .filter { it.modality != Modality.ABSTRACT }
                 .singleOrNull() ?: return null
 
@@ -170,7 +171,7 @@ class ClassModelGenerator(val context: StaticContext) {
         // If one of overridden members has parameters with default value, copy it.
         // When non found, we have nothing to copy, ignore.
         // When multiple found, our current class should provide implementation, ignore.
-        val memberToCopy = member.overriddenDescriptors
+        val memberToCopy = member.findNonRepeatingOverriddenDescriptors({ overriddenDescriptors }, { original })
                 .filter { it.hasOrInheritsParametersWithDefaultValue() }
                 .singleOrNull() ?: return null
 
@@ -179,6 +180,25 @@ class ClassModelGenerator(val context: StaticContext) {
 
         // If found member is fake itself, repeat search for it, until we find actual implementation
         return if (!memberToCopy.kind.isReal) findOptionalArgsMemberToCopy(memberToCopy) else memberToCopy
+    }
+
+    private fun <T : CallableMemberDescriptor> T.findNonRepeatingOverriddenDescriptors(
+            getTypedOverriddenDescriptors: T.() -> Collection<T>,
+            getOriginalDescriptor: T.() -> T
+    ): List<T> {
+        val allDescriptors = mutableSetOf<T>()
+        val repeatedDescriptors = mutableSetOf<T>()
+        fun walk(descriptor: T) {
+            val original = descriptor.getOriginalDescriptor()
+            if (!allDescriptors.add(original)) return
+            val overridden = original.getTypedOverriddenDescriptors().map { it.getOriginalDescriptor() }
+            repeatedDescriptors += overridden
+            overridden.forEach { walk(it) }
+        }
+
+        val directOverriddenDescriptors = getTypedOverriddenDescriptors()
+        directOverriddenDescriptors.forEach { walk(it) }
+        return directOverriddenDescriptors.filter { it.getOriginalDescriptor() !in repeatedDescriptors }
     }
 
     private fun generateBridgeMethods(descriptor: ClassDescriptor, model: JsClassModel) {
@@ -192,7 +212,9 @@ class ClassModelGenerator(val context: StaticContext) {
             val sourceName = context.getNameForDescriptor(key).ident
             val targetName = context.getNameForDescriptor(value).ident
             if (sourceName != targetName) {
-                model.postDeclarationBlock.statements += generateDelegateCall(descriptor, key, value, JsLiteral.THIS, translationContext)
+                val statement = generateDelegateCall(descriptor, key, value, JsThisRef(), translationContext, false,
+                                                     descriptor.source.getPsi())
+                model.postDeclarationBlock.statements += statement
             }
         }
     }
@@ -227,8 +249,8 @@ class ClassModelGenerator(val context: StaticContext) {
         }
 
         val translationContext = TranslationContext.rootContext(context)
-        model.postDeclarationBlock.statements += generateDelegateCall(descriptor, fromDescriptor, toDescriptor, JsLiteral.THIS,
-                                                                      translationContext)
+        model.postDeclarationBlock.statements += generateDelegateCall(descriptor, fromDescriptor, toDescriptor, JsThisRef(),
+                                                                      translationContext, false, descriptor.source.getPsi())
     }
 
     private fun copyMethod(
@@ -257,10 +279,10 @@ class ClassModelGenerator(val context: StaticContext) {
 
         val targetPrototype = prototypeOf(pureFqn(context.getInnerNameForDescriptor(targetDescriptor), null))
         val sourcePrototype = prototypeOf(pureFqn(context.getInnerNameForDescriptor(sourceDescriptor), null))
-        val nameLiteral = context.program.getStringLiteral(name)
+        val nameLiteral = JsStringLiteral(name)
 
         val getPropertyDescriptor = JsInvocation(JsNameRef("getOwnPropertyDescriptor", "Object"), sourcePrototype, nameLiteral)
-        val defineProperty = JsAstUtils.defineProperty(targetPrototype, name, getPropertyDescriptor, context.program)
+        val defineProperty = JsAstUtils.defineProperty(targetPrototype, name, getPropertyDescriptor)
 
         block.statements += defineProperty.makeStmt()
     }

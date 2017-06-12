@@ -3,11 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "21.1.2"
-
-    sourceSets {
-        main.kotlin.srcDirs += 'root/kotlin'
-    }
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         minSdkVersion 7
@@ -17,5 +13,18 @@ android {
     }
 
     targetProjectPath ':Android'
-    targetVariant 'flavor1Debug'
+    if (VersionNumber.parse(android_tools_version) < VersionNumber.parse("3.0.0-alpha1")) {
+        targetVariant 'flavor1Debug'
+    }
+    else {
+        flavorDimensions "myFlavor"
+        productFlavors {
+            flavor1 {
+                dimension "myFlavor"
+            }
+            flavor2 {
+                dimension "myFlavor"
+            }
+        }
+    }
 }

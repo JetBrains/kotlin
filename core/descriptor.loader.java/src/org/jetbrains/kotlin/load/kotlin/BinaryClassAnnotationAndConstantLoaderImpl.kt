@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
-import org.jetbrains.kotlin.serialization.deserialization.findNonGenericClassAcrossDependencies
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
 

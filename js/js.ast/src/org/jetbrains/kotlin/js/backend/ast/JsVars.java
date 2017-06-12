@@ -18,14 +18,14 @@ import java.util.*;
 public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterable<JsVars.JsVar> {
     private final List<JsVar> vars;
 
-    private final boolean multiline;
+    private boolean multiline;
 
     public JsVars() {
-        this(new SmartList<JsVar>(), false);
+        this(new SmartList<>(), false);
     }
 
     public JsVars(boolean multiline) {
-        this(new SmartList<JsVar>(), multiline);
+        this(new SmartList<>(), multiline);
     }
 
     public JsVars(List<JsVar> vars, boolean multiline) {
@@ -34,15 +34,19 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
     }
 
     public JsVars(JsVar var) {
-        this(new SmartList<JsVar>(var), false);
+        this(new SmartList<>(var), false);
     }
 
     public JsVars(JsVar... vars) {
-        this(new SmartList<JsVar>(vars), false);
+        this(new SmartList<>(vars), false);
     }
 
     public boolean isMultiline() {
         return multiline;
+    }
+
+    public void setMultiline(boolean multiline) {
+        this.multiline = multiline;
     }
 
     /**
@@ -138,6 +142,7 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
     }
 
     @Override
+    @NotNull
     public Iterator<JsVar> iterator() {
         return vars.iterator();
     }

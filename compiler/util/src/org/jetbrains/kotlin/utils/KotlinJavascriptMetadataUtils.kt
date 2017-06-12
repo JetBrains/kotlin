@@ -57,6 +57,7 @@ class JsMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 object KotlinJavascriptMetadataUtils {
     const val JS_EXT: String = ".js"
     const val META_JS_SUFFIX: String = ".meta.js"
+    const val JS_MAP_EXT: String = ".js.map"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME = "kotlin_module_metadata"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN = "\\.kotlin_module_metadata\\(".toPattern()
 
@@ -78,8 +79,8 @@ object KotlinJavascriptMetadataUtils {
     fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
         assert(file.exists()) { "Library $file not found" }
         val metadataList = arrayListOf<KotlinJavascriptMetadata>()
-        JsLibraryUtils.traverseJsLibrary(file) { content, _ ->
-            parseMetadata(content, metadataList)
+        JsLibraryUtils.traverseJsLibrary(file) { library ->
+            parseMetadata(library.content, metadataList)
         }
 
         return metadataList

@@ -1,4 +1,4 @@
-
+@kotlin.Metadata()
 public final class JvmStaticTest {
     private final byte three = (byte)3;
     private final char d = 'D';
@@ -23,6 +23,7 @@ public final class JvmStaticTest {
         return 0;
     }
 
+    @kotlin.Metadata()
     public static final class Companion {
 
         public static void one$annotations() {

@@ -20,17 +20,16 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement.KotlinIfSurrounder
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 
 class AddTargetVersionCheckQuickFix(val api: Int) : AndroidLintQuickFix {
-
-    companion object {
-        private val IF_SURROUNDER = KotlinIfSurrounder()
-    }
 
     override fun apply(startElement: PsiElement, endElement: PsiElement, context: AndroidQuickfixContexts.Context) {
         val targetExpression = getTargetExpression(startElement)
@@ -45,7 +44,8 @@ class AddTargetVersionCheckQuickFix(val api: Int) : AndroidLintQuickFix {
             return
         }
 
-        val conditionRange = IF_SURROUNDER.surroundElements(project, editor, arrayOf(targetExpression)) ?: return
+        val surrounder = getSurrounder(targetExpression, "\"VERSION.SDK_INT < ${getVersionField(api, false)}\"")
+        val conditionRange = surrounder.surroundElements(project, editor, arrayOf(targetExpression)) ?: return
         val conditionText = "android.os.Build.VERSION.SDK_INT >= ${getVersionField(api, true)}"
         document.replaceString(conditionRange.startOffset, conditionRange.endOffset, conditionText)
         documentManager.commitDocument(document)
@@ -60,19 +60,33 @@ class AddTargetVersionCheckQuickFix(val api: Int) : AndroidLintQuickFix {
 
     override fun getName(): String = "Surround with if (VERSION.SDK_INT >= VERSION_CODES.${getVersionField(api, false)}) { ... }"
 
-    // TODO: Delegated property, initializer, annotation parameter
-    private fun getTargetExpression(element: PsiElement): PsiElement? {
+    private fun getTargetExpression(element: PsiElement): KtElement? {
         var current = PsiTreeUtil.getParentOfType(element, KtExpression::class.java)
         while (current != null) {
             if (current.parent is KtBlockExpression ||
                 current.parent is KtContainerNode ||
                 current.parent is KtWhenEntry ||
-                current.parent is KtFunction) {
+                current.parent is KtFunction ||
+                current.parent is KtPropertyAccessor ||
+                current.parent is KtProperty ||
+                current.parent is KtReturnExpression ||
+                current.parent is KtDestructuringDeclaration) {
                 break
             }
             current = PsiTreeUtil.getParentOfType(current, KtExpression::class.java, true)
         }
 
         return current
+    }
+
+    private fun getSurrounder(element: KtElement, todoText: String?): KotlinIfSurrounder {
+        val used = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.USED_AS_EXPRESSION, element] ?: false
+        return if (used) {
+            object : KotlinIfSurrounder() {
+                override fun getCodeTemplate(): String = "if (a) { \n} else {\nTODO(${todoText ?: ""})\n}"
+            }
+        } else {
+            KotlinIfSurrounder()
+        }
     }
 }

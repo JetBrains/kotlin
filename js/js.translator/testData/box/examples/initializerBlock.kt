@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 489
 class C() {
     public var f: Int
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.assignmentToBackingField;
 
@@ -37,7 +38,9 @@ public final class InitializerUtils {
             @NotNull PropertyDescriptor descriptor,
             @NotNull JsExpression value
     ) {
-        return assignmentToBackingField(context, descriptor, value).makeStmt();
+        JsExpression assignment = assignmentToBackingField(context, descriptor, value);
+        assignment.setSource(KotlinSourceElementKt.getPsi(descriptor.getSource()));
+        return assignment.makeStmt();
     }
 
     @Nullable
@@ -46,6 +49,6 @@ public final class InitializerUtils {
             @NotNull JsExpression value
     ) {
         String name = descriptor.getName().asString();
-        return JsAstUtils.defineSimpleProperty(Namer.getDelegateName(name), value);
+        return JsAstUtils.defineSimpleProperty(Namer.getDelegateName(name), value, descriptor.getSource());
     }
 }

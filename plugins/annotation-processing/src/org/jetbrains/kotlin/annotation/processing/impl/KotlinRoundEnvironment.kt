@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.annotation.processing.impl
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.annotation.processing.RoundAnnotations
 import org.jetbrains.kotlin.java.model.toJeElement
+import org.jetbrains.kotlin.java.model.util.disposeAll
+import org.jetbrains.kotlin.java.model.util.toDisposable
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
@@ -30,7 +32,7 @@ internal class KotlinRoundEnvironment(
 ) : RoundEnvironment, Disposable {
     val roundAnnotations = roundAnnotations.toDisposable()
     
-    override fun dispose() = dispose(roundAnnotations)
+    override fun dispose() = disposeAll(roundAnnotations)
     
     private var isError = false
     

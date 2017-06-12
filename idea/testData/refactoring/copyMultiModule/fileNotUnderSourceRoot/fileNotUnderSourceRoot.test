@@ -1,0 +1,4 @@
+{
+  "mainFile": "A/foo/test.kt",
+  "targetDirectory": "A/bar"
+}

@@ -91,6 +91,13 @@ internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterprete
         descriptor1.addInsn(insn)
     }
 
+    override fun onCompareTo(insn: AbstractInsnNode, value1: BoxedBasicValue, value2: BoxedBasicValue) {
+        val descriptor1 = value1.descriptor
+        val descriptor2 = value2.descriptor
+        candidatesBoxedValues.merge(descriptor1, descriptor2)
+        descriptor1.addInsn(insn)
+    }
+
     override fun onMethodCallWithBoxedValue(value: BoxedBasicValue) {
         markValueAsDirty(value)
     }
@@ -133,6 +140,8 @@ internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterprete
                         true
                     Type.getInternalName(Number::class.java) ->
                         PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(value.descriptor.unboxedType.sort)
+                    "java/lang/Comparable" ->
+                        true
                     else ->
                         value.type.internalName == targetInternalName
                 }

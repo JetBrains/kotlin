@@ -113,6 +113,12 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
             doTest(fileName);
         }
 
+        @TestMetadata("topLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/requiresApi/topLevelProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/requiresApi/when.kt");
@@ -239,6 +245,12 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
             doTest(fileName);
         }
 
+        @TestMetadata("topLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetApi/topLevelProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetApi/when.kt");
@@ -266,6 +278,12 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
             doTest(fileName);
         }
 
+        @TestMetadata("destructuringDeclaration.kt")
+        public void testDestructuringDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetVersionCheck/destructuringDeclaration.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("expressionBody.kt")
         public void testExpressionBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetVersionCheck/expressionBody.kt");
@@ -275,6 +293,12 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetVersionCheck/functionLiteral.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("getterWIthExpressionBody.kt")
+        public void testGetterWIthExpressionBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetVersionCheck/getterWIthExpressionBody.kt");
             doTest(fileName);
         }
 

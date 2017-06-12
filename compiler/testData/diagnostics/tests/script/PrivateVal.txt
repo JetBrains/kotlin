@@ -1,0 +1,10 @@
+package
+
+public final class PrivateVal : kotlin.script.templates.standard.ScriptTemplateWithArgs {
+    public constructor PrivateVal(/*0*/ args: kotlin.Array<kotlin.String>)
+    public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
+    private final val s: kotlin.String = "Hello"
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

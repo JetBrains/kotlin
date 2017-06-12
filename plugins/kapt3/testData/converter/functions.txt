@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public final class FunctionsTest {
 
     @org.jetbrains.annotations.NotNull()

@@ -80,6 +80,7 @@ class KotlinFacetSettings {
         val DEFAULT_VERSION = 0
     }
 
+    var version = CURRENT_VERSION
     var useProjectSettings: Boolean = true
 
     var compilerArguments: CommonCompilerArguments? = null

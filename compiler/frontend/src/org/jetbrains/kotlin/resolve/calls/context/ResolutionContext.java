@@ -193,7 +193,9 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
 
     @Nullable
     public <T extends PsiElement> T getContextParentOfType(@NotNull KtExpression expression, @NotNull Class<? extends T>... classes) {
-        PsiElement current = expression.getParent();
+        KtExpression context = expressionContextProvider.invoke(expression);
+        PsiElement current = context != null ? context : expression.getParent();
+
         while (current != null) {
             for (Class<? extends T> klass : classes) {
                 if (klass.isInstance(current)) {
@@ -205,7 +207,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             if (current instanceof PsiFile) return null;
 
             if (current instanceof KtExpression) {
-                KtExpression context = expressionContextProvider.invoke((KtExpression) current);
+                context = expressionContextProvider.invoke((KtExpression) current);
                 if (context != null) {
                     current = context;
                     continue;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
@@ -83,9 +85,11 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             KtExpression defaultArgument = getDefaultArgument(valueParameter);
             JsBlock defaultArgBlock = new JsBlock();
             JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
-            JsStatement assignStatement = assignment(jsNameRef, defaultValue).makeStmt();
+            PsiElement psi = KotlinSourceElementKt.getPsi(valueParameter.getSource());
+            JsStatement assignStatement = assignment(jsNameRef, defaultValue).source(psi).makeStmt();
             JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);
             JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, Namer.getUndefinedExpression());
+            checkArgIsUndefined.source(KotlinSourceElementKt.getPsi(valueParameter.getSource()));
             JsIf jsIf = JsAstUtils.newJsIf(checkArgIsUndefined, thenStatement);
             result.add(jsIf);
         }
@@ -147,7 +151,8 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
                 node = JsAstUtils.charToBoxedChar((JsExpression) node);
             }
 
-            JsReturn jsReturn = new JsReturn((JsExpression)node);
+            JsReturn jsReturn = new JsReturn((JsExpression) node);
+            jsReturn.setSource(declaration.getBodyExpression());
             MetadataProperties.setReturnTarget(jsReturn, descriptor);
             return jsReturn;
         });

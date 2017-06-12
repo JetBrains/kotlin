@@ -55,7 +55,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
 
     private fun checkOptimizer(unoptimizedCode: String, optimizedCode: String) {
         val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
-        val unoptimizedAst = parse(unoptimizedCode, errorReporter, parserScope)
+        val unoptimizedAst = parse(unoptimizedCode, errorReporter, parserScope, "<unknown file>")
 
         updateMetadata(unoptimizedCode, unoptimizedAst)
 
@@ -63,7 +63,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
             process(statement)
         }
 
-        val optimizedAst = parse(optimizedCode, errorReporter, parserScope)
+        val optimizedAst = parse(optimizedCode, errorReporter, parserScope, "<unknown file>")
         Assert.assertEquals(astToString(optimizedAst), astToString(unoptimizedAst))
     }
 
@@ -96,7 +96,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
                 }
 
                 override fun visitIf(x: JsIf) {
-                    val line = x.getData<Int?>("line")
+                    val line = (x.source as? JsLocation)?.startLine
                     if (line != null && line in comments.indices && comments[line]) {
                         x.synthetic = true
                     }

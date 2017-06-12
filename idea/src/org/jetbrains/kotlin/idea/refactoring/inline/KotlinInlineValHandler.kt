@@ -29,137 +29,177 @@ import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.analysis.analyzeInContext
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
-import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
-import org.jetbrains.kotlin.idea.core.copied
+import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
+import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
-import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.idea.references.ReferenceAccess
+import org.jetbrains.kotlin.idea.references.readWriteAccess
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 class KotlinInlineValHandler : InlineActionHandler() {
 
     override fun isEnabledForLanguage(l: Language) = l == KotlinLanguage.INSTANCE
 
     override fun canInlineElement(element: PsiElement): Boolean {
-        if (element !is KtProperty) return false
-        return element.getter == null && element.receiverTypeReference == null
+        return element is KtProperty && element.name != null
     }
 
     override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {
         val declaration = element as KtProperty
+        val name = declaration.name!!
+
         val file = declaration.containingKtFile
-        val name = declaration.name ?: return
         if (file.isCompiled) {
             return showErrorHint(project, editor, "Cannot inline '$name' from a decompiled file")
         }
 
-        val references = ReferencesSearch.search(declaration)
-        val referenceExpressions = mutableListOf<KtExpression>()
-        val foreignUsages = mutableListOf<PsiElement>()
-        for (ref in references) {
-            val refElement = ref.element ?: continue
-            if (refElement !is KtElement) {
-                foreignUsages.add(refElement)
-                continue
-            }
-            referenceExpressions.addIfNotNull((refElement as? KtExpression)?.getQualifiedExpressionForSelectorOrThis())
+        val getter = declaration.getter?.takeIf { it.hasBody() }
+        val setter = declaration.setter?.takeIf { it.hasBody() }
+
+        if ((getter != null || setter != null) && declaration.initializer != null) {
+            return showErrorHint(project, editor, "Cannot inline property with accessor(s) and backing field")
         }
 
-        if (referenceExpressions.isEmpty()) {
+        val (referenceExpressions, conflicts) = findUsages(declaration)
+
+        if (referenceExpressions.isEmpty() && conflicts.isEmpty) {
             val kind = if (declaration.isLocal) "Variable" else "Property"
             return showErrorHint(project, editor, "$kind '$name' is never used")
         }
 
-        val assignments = hashSetOf<PsiElement>()
-        referenceExpressions.forEach { expression ->
-            val parent = expression.parent
-
-            val assignment = expression.getAssignmentByLHS()
-            if (assignment != null) {
-                assignments.add(parent)
-            }
-
-            if (parent is KtUnaryExpression && OperatorConventions.INCREMENT_OPERATIONS.contains(parent.operationToken)) {
-                assignments.add(parent)
-            }
-        }
-
-        val initializerInDeclaration = declaration.initializer
-        val initializer = if (initializerInDeclaration != null) {
-            if (!assignments.isEmpty()) return reportAmbiguousAssignment(project, editor, name, assignments)
-            initializerInDeclaration
-        }
-        else {
-            (assignments.singleOrNull() as? KtBinaryExpression)?.right
-            ?: return reportAmbiguousAssignment(project, editor, name, assignments)
-        }
-
         val referencesInOriginalFile = referenceExpressions.filter { it.containingFile == file }
-        val isHighlighting = referencesInOriginalFile.isNotEmpty()
+        val hasHighlightings = referencesInOriginalFile.isNotEmpty()
         highlightElements(project, editor, referencesInOriginalFile)
 
-        if (referencesInOriginalFile.size != referenceExpressions.size) {
-            preProcessInternalUsages(initializer, referenceExpressions)
-        }
-
-        val descriptor = element.resolveToDescriptor() as VariableDescriptor
-        val expectedType = if (element.typeReference != null)
-            descriptor.returnType ?: TypeUtils.NO_EXPECTED_TYPE
-        else
-            TypeUtils.NO_EXPECTED_TYPE
-
-        val initializerCopy = initializer.copied()
-        fun analyzeInitializerCopy(): BindingContext {
-            return initializerCopy.analyzeInContext(initializer.getResolutionScope(),
-                                                    contextExpression = initializer,
-                                                    expectedType = expectedType)
-        }
-
-        fun performRefactoring() {
-            val reference = editor?.let { TargetElementUtil.findReference(it, it.caretModel.offset) } as? KtSimpleNameReference
-            val replacementBuilder = CodeToInlineBuilder(descriptor, element.getResolutionFacade())
-            val replacement = replacementBuilder.prepareCodeToInline(initializerCopy, emptyList(), ::analyzeInitializerCopy)
-            val replacementStrategy = CallableUsageReplacementStrategy(replacement)
-
-            val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignments)
-
-            if (!ApplicationManager.getApplication().isUnitTestMode) {
-                dialog.show()
-                if (!dialog.isOK && isHighlighting) {
-                    val statusBar = WindowManager.getInstance().getStatusBar(project)
-                    statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
-                }
-            }
-            else {
-                dialog.doAction()
-            }
-        }
-
-        if (foreignUsages.isNotEmpty()) {
-            val conflicts = MultiMap<PsiElement, String>().apply {
-                putValue(null, "Property '$name' has non-Kotlin usages. They won't be processed by the Inline refactoring.")
-                foreignUsages.forEach { putValue(it, it.text) }
-            }
-            project.checkConflictsInteractively(conflicts) { performRefactoring() }
+        val readReplacement: CodeToInline?
+        val writeReplacement: CodeToInline?
+        val assignmentToDelete: KtBinaryExpression?
+        val descriptor = declaration.resolveToDescriptor() as ValueDescriptor
+        val isTypeExplicit = declaration.typeReference != null
+        if (getter == null && setter == null) {
+            val initialization = extractInitialization(declaration, referenceExpressions, project, editor) ?: return
+            readReplacement = buildCodeToInline(declaration, descriptor.type, isTypeExplicit, initialization.value, false, editor) ?: return
+            writeReplacement = null
+            assignmentToDelete = initialization.assignment
         }
         else {
-            performRefactoring()
+            readReplacement = getter?.let {
+                buildCodeToInline(getter, descriptor.type, isTypeExplicit, getter.bodyExpression!!, getter.hasBlockBody(), editor) ?: return
+            }
+            writeReplacement = setter?.let {
+                buildCodeToInline(setter, setter.builtIns.unitType, true, setter.bodyExpression!!, setter.hasBlockBody(), editor) ?: return
+            }
+            assignmentToDelete = null
+        }
+
+        if (!conflicts.isEmpty) {
+            val conflictsCopy = conflicts.copy()
+            val allOrSome = if (referenceExpressions.isEmpty()) "All" else "The following"
+            conflictsCopy.putValue(null, "$allOrSome usages are not supported by the Inline refactoring. They won't be processed.")
+
+            project.checkConflictsInteractively(conflictsCopy) {
+                performRefactoring(declaration, readReplacement, writeReplacement, assignmentToDelete, editor, hasHighlightings)
+            }
+        }
+        else {
+            performRefactoring(declaration, readReplacement, writeReplacement, assignmentToDelete, editor, hasHighlightings)
         }
     }
 
-    private fun reportAmbiguousAssignment(project: Project, editor: Editor?, name: String, assignments: Set<PsiElement>) {
+    private data class Usages(val referenceExpressions: Collection<KtExpression>, val conflicts: MultiMap<PsiElement, String>)
+
+    private fun findUsages(declaration: KtProperty): Usages {
+        val references = ReferencesSearch.search(declaration)
+        val referenceExpressions = mutableListOf<KtExpression>()
+        val conflictUsages = MultiMap.create<PsiElement, String>()
+        for (ref in references) {
+            val refElement = ref.element ?: continue
+            if (refElement !is KtElement) {
+                conflictUsages.putValue(refElement, "Non-Kotlin usage: ${refElement.text}")
+                continue
+            }
+
+            val expression = (refElement as? KtExpression)?.getQualifiedExpressionForSelectorOrThis()
+            //TODO: what if null?
+            if (expression != null) {
+                if (expression.readWriteAccess(useResolveForReadWrite = true) == ReferenceAccess.READ_WRITE) {
+                    conflictUsages.putValue(expression, "Unsupported usage: ${expression.parent.text}")
+                }
+                referenceExpressions.add(expression)
+            }
+        }
+        return Usages(referenceExpressions, conflictUsages)
+    }
+
+    private data class Initialization(val value: KtExpression, val assignment: KtBinaryExpression?)
+
+    private fun extractInitialization(
+            declaration: KtProperty,
+            referenceExpressions: Collection<KtExpression>,
+            project: Project,
+            editor: Editor?
+    ): Initialization? {
+        val writeUsages = referenceExpressions.filter { it.readWriteAccess(useResolveForReadWrite = true) != ReferenceAccess.READ }
+
+        val initializerInDeclaration = declaration.initializer
+        if (initializerInDeclaration != null) {
+            if (!writeUsages.isEmpty()) {
+                reportAmbiguousAssignment(project, editor, declaration.name!!, writeUsages)
+                return null
+            }
+            return Initialization(initializerInDeclaration, assignment = null)
+        }
+        else {
+            val assignment = writeUsages.singleOrNull()
+                    ?.getAssignmentByLHS()
+                    ?.takeIf { it.operationToken == KtTokens.EQ }
+            val initializer = assignment?.right
+            if (initializer == null) {
+                reportAmbiguousAssignment(project, editor, declaration.name!!, writeUsages)
+                return null
+            }
+            return Initialization(initializer, assignment)
+        }
+    }
+
+    private fun performRefactoring(
+            declaration: KtProperty,
+            readReplacement: CodeToInline?,
+            writeReplacement: CodeToInline?,
+            assignmentToDelete: KtBinaryExpression?,
+            editor: Editor?,
+            hasHighlightings: Boolean
+    ) {
+        val replacementStrategy = PropertyUsageReplacementStrategy(readReplacement, writeReplacement)
+
+        val reference = editor?.let { TargetElementUtil.findReference(it, it.caretModel.offset) } as? KtSimpleNameReference
+
+        val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignmentToDelete)
+
+        if (!ApplicationManager.getApplication().isUnitTestMode) {
+            dialog.show()
+            if (!dialog.isOK && hasHighlightings) {
+                val statusBar = WindowManager.getInstance().getStatusBar(declaration.project)
+                statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
+            }
+        }
+        else {
+            dialog.doAction()
+        }
+    }
+
+    private fun reportAmbiguousAssignment(project: Project, editor: Editor?, name: String, assignments: Collection<PsiElement>) {
         val key = if (assignments.isEmpty()) "variable.has.no.initializer" else "variable.has.no.dominating.definition"
         val message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(key, name))
         showErrorHint(project, editor, message)

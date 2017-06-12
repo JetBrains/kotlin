@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -118,9 +119,18 @@ class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeIntention<Kt
             val descriptorFqName = DescriptorUtils.getFqName(descriptor).toSafe()
             if (descriptorFqName != KotlinBuiltIns.FQ_NAMES.deprecated) continue
 
-            val replaceWithArguments = resolvedCall.valueArguments.entries
-                    .single { it.key.name.asString() == "replaceWith"/*TODO: kotlin.deprecated::replaceWith.name*/ }.value
-            return if (replaceWithArguments.arguments.isEmpty()) entry else null
+            val args = resolvedCall.valueArguments.mapKeys { it.key.name.asString() }
+            val replaceWithArguments = args["replaceWith"] /*TODO: kotlin.deprecated::replaceWith.name*/
+            val level = args["level"]
+
+            if (replaceWithArguments?.arguments?.isNotEmpty() ?: false) return null
+
+            if (level != null && level.arguments.isNotEmpty()) {
+                val levelDescriptor = level.arguments[0].getArgumentExpression().getResolvedCall(bindingContext)?.candidateDescriptor
+                if (levelDescriptor?.name?.asString() == "HIDDEN") return null
+            }
+
+            return entry
         }
         return null
     }

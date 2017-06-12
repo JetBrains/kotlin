@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+   <data>
+      <variable name="userProfile" type="com.example.databinding.UserProfile" />
+      <variable name="context" type="com.example.databinding.MainActivity" />
+   </data>
+
+   <LinearLayout
+      android:layout_width="match_parent" android:layout_height="match_parent"
+      android:orientation="vertical"
+      android:onClick="@{() -> context.clickHandler(userProfile)}"
+      android:onLongClick="@{() -> context.longClickHandler(userProfile)}"
+      >
+      <Spinner
+         android:id="@+id/genderPicker"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         app:selectionEnum="@={userProfile.gender}"
+         app:selectionChanged="@{(p, v, pos, id) -> context.selectionChanged()}"
+         />
+   </LinearLayout>
+
+</layout>

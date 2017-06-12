@@ -17,11 +17,11 @@ where possible options include:
   -java-parameters           Generate metadata for Java 1.8 reflection on method parameters
   -language-version <version> Provide source compatibility with specified language version
   -api-version <version>     Allow to use declarations only from the specified version of bundled libraries
-  -nowarn                    Generate no warnings
-  -verbose                   Enable verbose logging output
-  -version                   Display compiler version
-  -help (-h)                 Print a synopsis of standard options
-  -X                         Print a synopsis of advanced options
   -P plugin:<pluginId>:<optionName>=<value>
                              Pass an option to a plugin
+  -help (-h)                 Print a synopsis of standard options
+  -X                         Print a synopsis of advanced options
+  -version                   Display compiler version
+  -verbose                   Enable verbose logging output
+  -nowarn                    Generate no warnings
 OK

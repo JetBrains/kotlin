@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 893
 package foo
 
 // CHECK_NOT_CALLED_IN_SCOPE: scope=test function=even

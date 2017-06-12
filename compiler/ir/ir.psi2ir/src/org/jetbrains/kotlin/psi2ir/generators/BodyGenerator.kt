@@ -74,21 +74,19 @@ class BodyGenerator(
             statementGenerator.declareComponentVariablesInBlock(ktDestructuringDeclaration, irBlockBody, parameterValue)
         }
 
-        if (ktBody is KtBlockExpression) {
-            val ktBodyStatements = ktBody.statements
-            if (ktBodyStatements.isNotEmpty()) {
-                for (ktStatement in ktBodyStatements.dropLast(1)) {
-                    irBlockBody.statements.add(statementGenerator.generateStatement(ktStatement))
-                }
-                val ktReturnedValue = ktBodyStatements.last()
-                statementGenerator.generateReturnExpression(ktReturnedValue, irBlockBody)
+        val ktBodyStatements = ktBody.statements
+        if (ktBodyStatements.isNotEmpty()) {
+            for (ktStatement in ktBodyStatements.dropLast(1)) {
+                irBlockBody.statements.add(statementGenerator.generateStatement(ktStatement))
             }
-            else {
-                irBlockBody.statements.add(generateReturnExpression(
-                        ktBody.startOffset, ktBody.endOffset,
-                        IrGetObjectValueImpl(ktBody.startOffset, ktBody.endOffset, context.builtIns.unitType,
-                                             context.symbolTable.referenceClass(context.builtIns.unit))))
-            }
+            val ktReturnedValue = ktBodyStatements.last()
+            statementGenerator.generateReturnExpression(ktReturnedValue, irBlockBody)
+        }
+        else {
+            irBlockBody.statements.add(generateReturnExpression(
+                    ktBody.startOffset, ktBody.endOffset,
+                    IrGetObjectValueImpl(ktBody.startOffset, ktBody.endOffset, context.builtIns.unitType,
+                                         context.symbolTable.referenceClass(context.builtIns.unit))))
         }
 
         return irBlockBody

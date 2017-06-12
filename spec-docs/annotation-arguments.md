@@ -51,7 +51,7 @@ Also, we now load all array arguments as varargs, which may break for the same r
 
 ## Loading Java Annotations
 
-Fictitious constructors for Java annotations sould be built as follows:
+Fictitious constructors for Java annotations could be built as follows:
 * if there is an element named `value`, it is put first on the parameter list
 * if all other elements have default values, and `value` has an array type, it is marked `vararg` and has the type of the elements of the array
 * parameters corresponding to all elements but `value` can not be used positionally, only named arguments are allowed for them (this requires adding a platform-specific check to `frontend.java`)

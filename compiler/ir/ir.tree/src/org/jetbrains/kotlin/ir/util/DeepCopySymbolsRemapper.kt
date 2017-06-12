@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-class DeepCopySymbolsRemapper(
+open class DeepCopySymbolsRemapper(
         val descriptorsRemapper: DescriptorsRemapper = DescriptorsRemapper.DEFAULT
 ) : IrElementVisitorVoid, SymbolRemapper {
     private val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
@@ -42,7 +42,7 @@ class DeepCopySymbolsRemapper(
         element.acceptChildrenVoid(this)
     }
 
-    private inline fun <D : DeclarationDescriptor, B : IrSymbolOwner, reified S : IrBindableSymbol<D, B>>
+    protected inline fun <D : DeclarationDescriptor, B : IrSymbolOwner, reified S : IrBindableSymbol<D, B>>
             remapSymbol(map: MutableMap<S, S>, owner: B, createNewSymbol: (S) -> S) {
         val symbol = owner.symbol as S
         map[symbol] = createNewSymbol(symbol)

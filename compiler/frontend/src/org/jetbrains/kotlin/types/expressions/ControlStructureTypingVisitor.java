@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
@@ -513,11 +514,20 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
 
-        KotlinTypeInfo result = TypeInfoFactoryKt.noTypeInfo(context);
         KotlinTypeInfo tryResult = facade.getTypeInfo(tryBlock, context);
+        ExpressionTypingContext tryOutputContext = context.replaceExpectedType(NO_EXPECTED_TYPE);
+        if (!nothingInAllCatchBranches &&
+            facade.getComponents().languageVersionSettings.supportsFeature(LanguageFeature.SoundSmartCastsAfterTry)) {
+            PreliminaryLoopVisitor tryVisitor = PreliminaryLoopVisitor.visitTryBlock(expression);
+            tryOutputContext = tryOutputContext.replaceDataFlowInfo(
+                    tryVisitor.clearDataFlowInfoForAssignedLocalVariables(tryOutputContext.dataFlowInfo,
+                                                                          components.languageVersionSettings)
+            );
+        }
+
+        KotlinTypeInfo result = TypeInfoFactoryKt.noTypeInfo(tryOutputContext);
         if (finallyBlock != null) {
-            result = facade.getTypeInfo(finallyBlock.getFinalExpression(),
-                                        context.replaceExpectedType(NO_EXPECTED_TYPE));
+            result = facade.getTypeInfo(finallyBlock.getFinalExpression(), tryOutputContext);
         }
         else if (nothingInAllCatchBranches) {
             result = tryResult;

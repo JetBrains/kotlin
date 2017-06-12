@@ -20,7 +20,6 @@ abstract class BaseIncrementalGradleIT : BaseGradleIT() {
             srcDir.mkdirs()
             val sourceMapping = copyTestSources(resourcesRoot, srcDir, filePrefix = "")
             mapWorkingToOriginalFile.putAll(sourceMapping)
-            copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), projectDir)
             copyDirRecursively(File(resourcesRootFile, "incrementalGradleProject"), projectDir)
         }
     }

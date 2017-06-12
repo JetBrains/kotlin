@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.inline.InlineOptionsDialog
-import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtProperty
 
 class KotlinInlineValDialog(
         private val property: KtProperty,
         private val reference: KtSimpleNameReference?,
-        private val replacementStrategy: CallableUsageReplacementStrategy,
-        private val assignments: Set<PsiElement>
+        private val replacementStrategy: UsageReplacementStrategy,
+        private val assignmentToDelete: KtBinaryExpression?
  ) : InlineOptionsDialog(property.project, true, property) {
 
     private var occurrenceCount = initOccurrencesNumber(property)
@@ -69,7 +69,7 @@ class KotlinInlineValDialog(
                 KotlinInlineCallableProcessor(project, replacementStrategy, property, reference,
                                               inlineThisOnly = isInlineThisOnly,
                                               deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration,
-                                              assignments = assignments)
+                                              statementToDelete = assignmentToDelete)
         )
 
         val settings = JavaRefactoringSettings.getInstance()

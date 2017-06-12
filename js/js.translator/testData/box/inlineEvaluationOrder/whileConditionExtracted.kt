@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 493
 // See KT-8005
 package foo
 

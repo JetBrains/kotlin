@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
 
-internal class IncrementalPackagePartProvider(
+class IncrementalPackagePartProvider(
         private val parent: PackagePartProvider,
         incrementalCaches: List<IncrementalCache>,
         storageManager: StorageManager

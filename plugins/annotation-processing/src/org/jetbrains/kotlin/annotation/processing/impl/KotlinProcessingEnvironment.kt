@@ -23,6 +23,8 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.java.model.internal.JeElementRegistry
+import org.jetbrains.kotlin.java.model.util.disposeAll
+import org.jetbrains.kotlin.java.model.util.toDisposable
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.io.File
 import java.util.*
@@ -66,9 +68,9 @@ class KotlinProcessingEnvironment(
         types().dispose()
         elements().dispose()
         registry().dispose()
-        dispose(elements, types, messager, filer, processors,
-                project, psiManager, javaPsiFacade, projectScope, bindingContext,
-                appendJavaSourceRootsHandler, options)
+        disposeAll(elements, types, messager, filer, processors,
+                   project, psiManager, javaPsiFacade, projectScope, bindingContext,
+                   appendJavaSourceRootsHandler, options)
     }
 
     override fun getElementUtils() = elements()

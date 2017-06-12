@@ -9,6 +9,8 @@ fun call(lambda: () -> String ) = lambda()
 
 // FILE: 2.kt
 //NO_CHECK_LAMBDA_INLINING
+// CHECK_CALLED_IN_SCOPE: function=inlineFun$f scope=box
+// CHECK_CALLED_IN_SCOPE: function=call_h4ejuu$ scope=box
 import test.*
 
 fun box(): String {

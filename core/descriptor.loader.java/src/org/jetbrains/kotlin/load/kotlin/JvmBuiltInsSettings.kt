@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.annotations.createDeprecatedAnnotation
+import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
+import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -38,7 +41,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -95,7 +97,7 @@ open class JvmBuiltInsSettings(
         return mockSerializableClass.defaultType
     }
 
-    override fun getSupertypes(classDescriptor: DeserializedClassDescriptor): Collection<KotlinType> {
+    override fun getSupertypes(classDescriptor: ClassDescriptor): Collection<KotlinType> {
         val fqName = classDescriptor.fqNameUnsafe
         return when {
             isArrayOrPrimitiveArray(fqName) -> listOf(cloneableType, mockSerializableType)
@@ -104,8 +106,9 @@ open class JvmBuiltInsSettings(
         }
     }
 
-    override fun getFunctions(name: Name, classDescriptor: DeserializedClassDescriptor): Collection<SimpleFunctionDescriptor> {
-        if (name == CloneableClassScope.CLONE_NAME && KotlinBuiltIns.isArrayOrPrimitiveArray(classDescriptor)) {
+    override fun getFunctions(name: Name, classDescriptor: ClassDescriptor): Collection<SimpleFunctionDescriptor> {
+        if (name == CloneableClassScope.CLONE_NAME && classDescriptor is DeserializedClassDescriptor &&
+            KotlinBuiltIns.isArrayOrPrimitiveArray(classDescriptor)) {
             // Do not create clone for arrays deserialized from metadata in the old (1.0) runtime, because clone is declared there anyway
             if (classDescriptor.classProto.functionList.any { functionProto ->
                 classDescriptor.c.nameResolver.getName(functionProto.name) == CloneableClassScope.CLONE_NAME
@@ -156,7 +159,7 @@ open class JvmBuiltInsSettings(
         }
     }
 
-    override fun getFunctionsNames(classDescriptor: DeserializedClassDescriptor): Set<Name> {
+    override fun getFunctionsNames(classDescriptor: ClassDescriptor): Set<Name> {
         if (!isAdditionalBuiltInsFeatureSupported) return emptySet()
         // NB: It's just an approximation that could be calculated relatively fast
         // More precise computation would look like `getAdditionalFunctions` (and the measurements show that it would be rather slow)
@@ -164,7 +167,7 @@ open class JvmBuiltInsSettings(
     }
 
     private fun getAdditionalFunctions(
-            classDescriptor: DeserializedClassDescriptor,
+            classDescriptor: ClassDescriptor,
             functionsByScope: (MemberScope) -> Collection<SimpleFunctionDescriptor>
     ): Collection<SimpleFunctionDescriptor> {
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
@@ -268,7 +271,7 @@ open class JvmBuiltInsSettings(
         return ownerModuleDescriptor.resolveClassByFqName(javaAnalogueFqName, NoLookupLocation.FROM_BUILTINS) as? LazyJavaClassDescriptor
     }
 
-    override fun getConstructors(classDescriptor: DeserializedClassDescriptor): Collection<ClassConstructorDescriptor> {
+    override fun getConstructors(classDescriptor: ClassDescriptor): Collection<ClassConstructorDescriptor> {
         if (classDescriptor.kind != ClassKind.CLASS || !isAdditionalBuiltInsFeatureSupported) return emptyList()
 
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
@@ -304,7 +307,7 @@ open class JvmBuiltInsSettings(
         }
     }
 
-    override fun isFunctionAvailable(classDescriptor: DeserializedClassDescriptor, functionDescriptor: SimpleFunctionDescriptor): Boolean {
+    override fun isFunctionAvailable(classDescriptor: ClassDescriptor, functionDescriptor: SimpleFunctionDescriptor): Boolean {
         if (!functionDescriptor.annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)) return true
         if (!isAdditionalBuiltInsFeatureSupported) return false
 
@@ -317,8 +320,8 @@ open class JvmBuiltInsSettings(
                     .any { it.computeJvmDescriptor() == jvmDescriptor }
     }
 
-    private fun ConstructorDescriptor.isTrivialCopyConstructorFor(classDescriptor: DeserializedClassDescriptor): Boolean
-        = valueParameters.size == 1 &&
+    private fun ConstructorDescriptor.isTrivialCopyConstructorFor(classDescriptor: ClassDescriptor): Boolean =
+            valueParameters.size == 1 &&
             valueParameters.single().type.constructor.declarationDescriptor?.fqNameUnsafe == classDescriptor.fqNameUnsafe
 
     companion object {

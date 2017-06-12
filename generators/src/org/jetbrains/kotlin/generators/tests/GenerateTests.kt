@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,6 +130,7 @@ import org.jetbrains.kotlin.idea.repl.AbstractIdeReplCompletionTest
 import org.jetbrains.kotlin.idea.resolve.*
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
+import org.jetbrains.kotlin.idea.slicer.AbstractSlicerTest
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
@@ -144,6 +145,8 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
+import org.jetbrains.kotlin.js.test.AbstractDceTest
+import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
@@ -254,7 +257,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractLightAnalysisModeTest> {
-            model("codegen/box", targetBackend = TargetBackend.JVM)
+            model("codegen/box", targetBackend = TargetBackend.JVM, skipIgnored = true)
         }
 
         testClass<AbstractKapt3BuilderModeBytecodeShapeTest> {
@@ -377,6 +380,7 @@ fun main(args: Array<String>) {
         testClass<AbstractCliTest> {
             model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
             model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
+            model("cli/js-dce", extension = "args", testMethod = "doJsDceTest", recursive = false)
         }
 
         testClass<AbstractReplInterpreterTest> {
@@ -834,6 +838,10 @@ fun main(args: Array<String>) {
             model("copyPaste/imports", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doTestCut", testClassName = "Cut", recursive = false)
         }
 
+        testClass<AbstractMoveOnCutPasteTest> {
+            model("copyPaste/moveDeclarations", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doTest")
+        }
+
         testClass<AbstractHighlightExitPointsTest> {
             model("exitPoints")
         }
@@ -1014,6 +1022,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractNameSuggestionProviderTest> {
             model("refactoring/nameSuggestionProvider")
+        }
+
+        testClass<AbstractSlicerTest> {
+            model("slicer", singleClass = true)
         }
     }
 
@@ -1346,6 +1358,14 @@ fun main(args: Array<String>) {
         testClass<AbstractOutputPrefixPostfixTest> {
             model("outputPrefixPostfix/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractDceTest> {
+            model("dce/", pattern = "(.+)\\.js", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractJsLineNumberTest> {
+            model("lineNumbers/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
+        }
     }
 
     testGroup("js/js.tests/test", "compiler/testData") {
@@ -1371,6 +1391,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractEnumValuesInlineTests> {
             model("codegen/boxInline/enum/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractInlineDefaultValuesTests> {
+            model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS)
         }
 
         testClass<AbstractJsTypedArraysBoxTest> {
@@ -1422,7 +1446,8 @@ class TestGroup(val testsRoot: String, val testDataRoot: String) {
                 testClassName: String? = null,
                 targetBackend: TargetBackend = TargetBackend.ANY,
                 excludeDirs: List<String> = listOf(),
-                filenameStartsLowerCase: Boolean? = null
+                filenameStartsLowerCase: Boolean? = null,
+                skipIgnored: Boolean = false
         ) {
             val rootFile = File(testDataRoot + "/" + relativeRootPath)
             val compiledPattern = Pattern.compile(pattern)
@@ -1430,12 +1455,13 @@ class TestGroup(val testsRoot: String, val testDataRoot: String) {
             testModels.add(
                     if (singleClass) {
                         if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
-                        SingleClassTestModel(rootFile, compiledPattern, filenameStartsLowerCase, testMethod, className, targetBackend)
+                        SingleClassTestModel(rootFile, compiledPattern, filenameStartsLowerCase, testMethod, className, targetBackend,
+                                             skipIgnored)
                     }
                     else {
                         SimpleTestClassModel(rootFile, recursive, excludeParentDirs,
                                              compiledPattern, filenameStartsLowerCase, testMethod, className,
-                                             targetBackend, excludeDirs)
+                                             targetBackend, excludeDirs, skipIgnored)
                     }
             )
         }

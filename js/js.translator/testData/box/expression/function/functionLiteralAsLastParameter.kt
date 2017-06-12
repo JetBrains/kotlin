@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 490
 package foo
 
 fun f(a: (Int) -> Int) = a(1)

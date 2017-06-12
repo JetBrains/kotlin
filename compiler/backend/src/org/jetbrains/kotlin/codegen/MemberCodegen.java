@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,6 +215,17 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         }
         else if (declaration instanceof KtTypeAlias) {
             genTypeAlias((KtTypeAlias) declaration);
+        }
+        else if (declaration instanceof KtDestructuringDeclarationEntry) {
+            try {
+                propertyCodegen.genDestructuringDeclaration((KtDestructuringDeclarationEntry) declaration);
+            }
+            catch (ProcessCanceledException | CompilationException e) {
+                throw e;
+            }
+            catch (Exception e) {
+                throw new CompilationException("Failed to generate destructuring declaration entry " + declaration.getName(), e, declaration);
+            }
         }
         else {
             throw new IllegalArgumentException("Unknown parameter: " + declaration);
@@ -465,6 +476,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 if (shouldInitializeProperty((KtProperty) declaration)) {
                     initializeProperty(codegen.invoke(), (KtProperty) declaration);
                 }
+            }
+            else if (declaration instanceof KtDestructuringDeclaration) {
+                codegen.invoke().initializeDestructuringDeclaration((KtDestructuringDeclaration) declaration, true);
             }
             else if (declaration instanceof KtAnonymousInitializer) {
                 KtExpression body = ((KtAnonymousInitializer) declaration).getBody();

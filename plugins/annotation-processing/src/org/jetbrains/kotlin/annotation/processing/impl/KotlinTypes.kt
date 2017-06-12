@@ -19,10 +19,14 @@ package org.jetbrains.kotlin.annotation.processing.impl
 import com.intellij.openapi.Disposable
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.*
+import com.intellij.psi.util.MethodSignatureUtil
+import com.intellij.psi.util.PsiTypesUtil
+import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.java.model.JeElement
 import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.java.model.types.*
+import org.jetbrains.kotlin.java.model.util.disposeAll
+import org.jetbrains.kotlin.java.model.util.toDisposable
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.*
@@ -37,7 +41,7 @@ class KotlinTypes(
     val psiManager = psiManager.toDisposable()
     val scope = scope.toDisposable()
 
-    override fun dispose() = dispose(javaPsiFacade, psiManager, scope)
+    override fun dispose() = disposeAll(javaPsiFacade, psiManager, scope)
 
     override fun contains(containing: TypeMirror, contained: TypeMirror): Boolean {
         assertKindNot(containing, TypeKind.PACKAGE, TypeKind.EXECUTABLE)

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
@@ -49,7 +50,6 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -377,3 +377,22 @@ fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodege
 }
 
 fun <D : CallableDescriptor> D.unwrapFrontendVersion() = unwrapInitialDescriptorForSuspendFunction()
+
+inline fun FrameMap.useTmpVar(type: Type, block: (index: Int) -> Unit) {
+    val index = enterTemp(type)
+    block(index)
+    leaveTemp(type)
+}
+
+fun InstructionAdapter.generateNewInstanceDupAndPlaceBeforeStackTop(
+        frameMap: FrameMap,
+        topStackType: Type,
+        newInstanceInternalName: String
+) {
+    frameMap.useTmpVar(topStackType) { index ->
+        store(index, topStackType)
+        anew(Type.getObjectType(newInstanceInternalName))
+        dup()
+        load(index, topStackType)
+    }
+}

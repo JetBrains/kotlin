@@ -20,9 +20,9 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.annotation.processing.impl.toDisposable
 import org.jetbrains.kotlin.java.model.internal.JeElementRegistry
-import org.jetbrains.kotlin.annotation.processing.impl.dispose
+import org.jetbrains.kotlin.java.model.util.disposeAll
+import org.jetbrains.kotlin.java.model.util.toDisposable
 
 interface JePsiType : JeTypeMirror {
     val psiType: PsiType
@@ -39,7 +39,7 @@ abstract class JePsiTypeBase<out T : PsiType>(
         ServiceManager.getService(manager.project, JeElementRegistry::class.java).register(this)
     }
 
-    override fun dispose() = dispose(disposableManager, disposableType)
+    override fun dispose() = disposeAll(disposableManager, disposableType)
 
     override val psiManager: PsiManager
         get() = disposableManager()

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.psi.KtFile
@@ -38,7 +39,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : Abstra
 
         if (!hasError(diagnostics)) {
             val translator = K2JSTranslator(config)
-            translator.translate(files, MainCallParameters.noCall(), analysisResult)
+            translator.translate(object : JsConfig.Reporter() {}, files, MainCallParameters.noCall(), analysisResult)
         }
 
         return analysisResult

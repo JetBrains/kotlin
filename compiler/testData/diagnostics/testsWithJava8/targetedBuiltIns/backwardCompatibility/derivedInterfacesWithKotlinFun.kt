@@ -6,10 +6,10 @@ interface IBaseWithKotlinDeclaration : Map<String, String> {
 
 interface TestDerivedInterfaceHidingWithKotlinDeclaration : IBaseWithKotlinDeclaration {
     // VIRTUAL_MEMBER_HIDDEN: hides member declaration inherited from a Kotlin interface
-    <!VIRTUAL_MEMBER_HIDDEN!>fun replace(key: String, value: String): String?<!>
+    fun <!VIRTUAL_MEMBER_HIDDEN!>replace<!>(key: String, value: String): String?
 }
 
 interface TestDerivedInterfaceDefaultWithKotlinDeclaration : IBaseWithKotlinDeclaration {
     // VIRTUAL_MEMBER_HIDDEN: hides member declaration inherited from a Kotlin interface
-    <!VIRTUAL_MEMBER_HIDDEN!>fun replace(key: String, value: String): String?<!> = TODO()
+    fun <!VIRTUAL_MEMBER_HIDDEN!>replace<!>(key: String, value: String): String? = TODO()
 }

@@ -37,8 +37,8 @@ open class JsDeclarationScope(parent: JsScope, description: String, useParentSco
     private val topLabelScope
         get() = if (labelScopes.isNotEmpty()) labelScopes.peek() else null
 
-    open fun enterLabel(label: String): JsName {
-        val scope = LabelScope(topLabelScope, label)
+    open fun enterLabel(label: String, outputName: String): JsName {
+        val scope = LabelScope(topLabelScope, label, outputName)
         labelScopes.push(scope)
         return scope.labelName
     }
@@ -51,18 +51,8 @@ open class JsDeclarationScope(parent: JsScope, description: String, useParentSco
     open fun findLabel(label: String): JsName? =
             topLabelScope?.findName(label)
 
-    private inner class LabelScope(parent: LabelScope?, val ident: String) : JsScope(parent, "Label scope for $ident") {
-        val labelName: JsName
-
-        init {
-            val freshIdent = when {
-                ident in RESERVED_WORDS -> getFreshIdent(ident)
-                parent != null -> parent.getFreshIdent(ident)
-                else -> ident
-            }
-
-            labelName = JsName(freshIdent, false)
-        }
+    private inner class LabelScope(parent: LabelScope?, val ident: String, outputIdent: String) : JsScope(parent, "Label scope for $ident") {
+        val labelName: JsName = JsName(outputIdent, true)
 
         override fun findOwnName(name: String): JsName? =
                 if (name == ident) labelName else null
@@ -130,8 +120,8 @@ class DelegatingJsFunctionScopeWithTemporaryParent(
     override fun declareFreshName(suggestedName: String): JsName =
             delegatingScope.declareFreshName(suggestedName)
 
-    override fun enterLabel(label: String): JsName =
-            delegatingScope.enterLabel(label)
+    override fun enterLabel(label: String, outputName: String): JsName =
+            delegatingScope.enterLabel(label, outputName)
 
     override fun exitLabel() =
             delegatingScope.exitLabel()

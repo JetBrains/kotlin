@@ -4,14 +4,7 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import gnu.trove.TDoubleObjectHashMap;
-import gnu.trove.THashMap;
-import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral.JsDoubleLiteral;
-import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral.JsIntLiteral;
-
-import java.util.Map;
 
 /**
  * A JavaScript program.
@@ -31,14 +24,6 @@ public final class JsProgram extends SourceInfoAwareJsNode {
         return globalBlock;
     }
 
-    public JsNumberLiteral getNumberLiteral(double value) {
-        return new JsDoubleLiteral(value);
-    }
-
-    public JsNumberLiteral getNumberLiteral(int value) {
-        return new JsIntLiteral(value);
-    }
-
     /**
      * Gets the quasi-mythical root scope. This is not the same as the top scope;
      * all unresolvable identifiers wind up here, because they are considered
@@ -54,14 +39,6 @@ public final class JsProgram extends SourceInfoAwareJsNode {
      */
     public JsObjectScope getScope() {
         return topScope;
-    }
-
-    /**
-     * Creates or retrieves a JsStringLiteral from an interned object pool.
-     */
-    @NotNull
-    public JsStringLiteral getStringLiteral(String value) {
-        return new JsStringLiteral(value);
     }
 
     @Override

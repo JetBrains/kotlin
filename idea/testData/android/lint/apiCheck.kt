@@ -477,3 +477,10 @@ fun testJava8() {
     // Ok, Kotlin
     mapOf(1 to 2).forEach { (key, value) -> key + value }
 }
+
+interface WithDefault {
+    // Should be ok
+    fun methodWithBody() {
+        return
+    }
+}

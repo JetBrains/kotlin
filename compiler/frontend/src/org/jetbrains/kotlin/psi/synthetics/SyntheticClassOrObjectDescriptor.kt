@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,6 +126,7 @@ class SyntheticClassOrObjectDescriptor(
         override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration> = emptyList()
         override fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction> = emptyList()
         override fun getPropertyDeclarations(name: Name): Collection<KtProperty> = emptyList()
+        override fun getDestructuringDeclarationsEntries(name: Name): Collection<KtDestructuringDeclarationEntry> = emptyList()
         override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo> = emptyList()
         override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias> = emptyList()
     }

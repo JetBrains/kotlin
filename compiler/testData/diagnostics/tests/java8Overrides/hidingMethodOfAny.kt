@@ -1,5 +1,5 @@
 interface IA {
-    <!VIRTUAL_MEMBER_HIDDEN!>fun toString(): String<!> = "IB"
+    fun <!VIRTUAL_MEMBER_HIDDEN!>toString<!>(): String = "IB"
 
     override fun equals(other: Any?): Boolean
 }

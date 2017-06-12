@@ -1,5 +1,6 @@
 package test;
 
+@kotlin.Metadata()
 public final class AKt {
 
     public AKt() {
@@ -14,6 +15,7 @@ public final class AKt {
 
 package test;
 
+@kotlin.Metadata()
 public final class BKt {
 
     public BKt() {

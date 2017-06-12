@@ -25,8 +25,10 @@ import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
+import org.jetbrains.kotlin.cli.common.CLITool;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
+import org.jetbrains.kotlin.cli.js.dce.K2JSDce;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
@@ -48,12 +50,12 @@ import java.util.List;
 
 public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     @NotNull
-    public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull List<String> args) {
+    public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLITool<?> compiler, @NotNull List<String> args) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         PrintStream origErr = System.err;
         try {
             System.setErr(new PrintStream(bytes));
-            ExitCode exitCode = CLICompiler.doMainNoExit(compiler, ArrayUtil.toStringArray(args));
+            ExitCode exitCode = CLITool.doMainNoExit(compiler, ArrayUtil.toStringArray(args));
             return new Pair<>(bytes.toString("utf-8"), exitCode);
         }
         catch (Exception e) {
@@ -79,7 +81,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         return normalizedOutputWithoutExitCode + exitCode;
     }
 
-    private void doTest(@NotNull String fileName, @NotNull CLICompiler<?> compiler) throws Exception {
+    private void doTest(@NotNull String fileName, @NotNull CLITool<?> compiler) throws Exception {
         System.setProperty("java.awt.headless", "true");
         Pair<String, ExitCode> outputAndExitCode = executeCompilerGrabOutput(compiler, readArgs(fileName, tmpdir.getPath()));
         String actual = getNormalizedCompilerOutput(
@@ -151,6 +153,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
     protected void doJsTest(@NotNull String fileName) throws Exception {
         doTest(fileName, new K2JSCompiler());
+    }
+
+    protected void doJsDceTest(@NotNull String fileName) throws Exception {
+        doTest(fileName, new K2JSDce());
     }
 
     public static String removePerfOutput(String output) {

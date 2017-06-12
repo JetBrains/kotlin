@@ -1,7 +1,7 @@
 fun complexFun(): Int {
 }
 
-fun main(args: Array<String>) {
+fun g(): Int {
     val p = complexFun()
-    p + p
+    return p + p
 }

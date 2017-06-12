@@ -1,0 +1,6 @@
+Usage: kotlin-dce-js <options> <source files>
+where advanced options include:
+  -Xprint-reachability-info  Print declarations marked as reachable
+
+Advanced options are non-standard and may be changed or removed without any notice.
+OK

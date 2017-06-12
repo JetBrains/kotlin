@@ -1,0 +1,19 @@
+FILE /argumentMappedWithError.kt
+  FUN public fun <R : kotlin.Number> kotlin.Number.convert(): R
+    TYPE_PARAMETER <R : kotlin.Number>
+    $receiver: VALUE_PARAMETER this@convert: Number
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='convert() on Number: R'
+        CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
+  FUN public fun foo(arg: kotlin.Number): kotlin.Unit
+    VALUE_PARAMETER value-parameter arg: kotlin.Number
+    BLOCK_BODY
+  FUN public fun main(args: kotlin.Array<kotlin.String>): kotlin.Unit
+    VALUE_PARAMETER value-parameter args: kotlin.Array<kotlin.String>
+    BLOCK_BODY
+      VAR val x: kotlin.Int = 0
+        CONST Int type=kotlin.Int value='0'
+      CALL 'foo(Number): Unit' type=kotlin.Unit origin=null
+        arg: CALL 'convert() on Number: Number' type=kotlin.Number origin=null
+          <R : Number>: Number
+          $receiver: GET_VAR 'x: Int' type=kotlin.Int origin=null

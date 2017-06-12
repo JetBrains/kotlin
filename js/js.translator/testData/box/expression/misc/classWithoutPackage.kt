@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 489
 class A(var a: Int) {
     init {
         a = 3

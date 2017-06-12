@@ -9,6 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="module" module-name="frontend" />
+    <orderEntry type="module" module-name="plugin-api" />
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="noarg-cli" />
     <orderEntry type="library" scope="PROVIDED" name="idea-full" level="project" />

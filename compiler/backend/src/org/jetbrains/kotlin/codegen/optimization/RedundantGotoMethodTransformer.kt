@@ -34,18 +34,14 @@ class RedundantGotoMethodTransformer : MethodTransformer() {
 
         val currentLabels = hashSetOf<LabelNode>()
         for (insn in insns) {
-            if (insn.isMeaningful) {
-                if (insn.opcode == Opcodes.GOTO && (insn as JumpInsnNode).label in currentLabels) {
+            when {
+                insn is LabelNode ->
+                    currentLabels.add(insn)
+                insn.opcode == Opcodes.GOTO &&
+                (insn as JumpInsnNode).label in currentLabels ->
                     insnsToRemove.add(insn)
-                }
-                else {
+                insn.isMeaningful ->
                     currentLabels.clear()
-                }
-                continue
-            }
-
-            if (insn is LabelNode) {
-                currentLabels.add(insn)
             }
         }
 

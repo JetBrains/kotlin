@@ -1,5 +1,6 @@
 package test;
 
+@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @Anno(value = "anno-class")
 public abstract @interface Anno {
@@ -11,6 +12,7 @@ public abstract @interface Anno {
 
 package test;
 
+@kotlin.Metadata()
 public final class AnnotationsTest {
 
     public AnnotationsTest() {
@@ -38,6 +40,7 @@ public final class AnnotationsTest {
 
 package test;
 
+@kotlin.Metadata()
 @Anno(value = "enum")
 public enum Enum {
     /*public static final*/ WHITE /* = new WHITE(0) */,
@@ -58,6 +61,7 @@ public enum Enum {
 
 package test;
 
+@kotlin.Metadata()
 @Anno(value = "clazz")
 public abstract class Test {
     @org.jetbrains.annotations.NotNull()

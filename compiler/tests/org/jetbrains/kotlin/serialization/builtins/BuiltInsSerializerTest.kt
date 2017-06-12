@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
+import org.jetbrains.kotlin.builtins.BuiltInsLoaderImpl
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.builtins.createBuiltInPackageFragmentProvider
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
-import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -40,7 +40,7 @@ class BuiltInsSerializerTest : TestCaseWithTmpdir() {
 
         val module = KotlinTestUtils.createEmptyModule("<module>", DefaultBuiltIns.Instance)
 
-        val packageFragmentProvider = createBuiltInPackageFragmentProvider(
+        val packageFragmentProvider = BuiltInsLoaderImpl().createBuiltInPackageFragmentProvider(
                 LockBasedStorageManager(), module, setOf(TEST_PACKAGE_FQNAME), emptyList(), PlatformDependentDeclarationFilter.All
         ) {
             val file = File(tmpdir, it)

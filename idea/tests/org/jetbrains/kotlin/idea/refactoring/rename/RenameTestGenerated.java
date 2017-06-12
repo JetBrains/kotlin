@@ -216,6 +216,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("javaClassImportAliasByRef/javaClassImportAliasByRef.test")
+    public void testJavaClassImportAliasByRef_JavaClassImportAliasByRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/javaClassImportAliasByRef/javaClassImportAliasByRef.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("labeledAnonymousFunByLabel/labeledLambdaByLabel.test")
     public void testLabeledAnonymousFunByLabel_LabeledLambdaByLabel() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledAnonymousFunByLabel/labeledLambdaByLabel.test");
@@ -231,6 +237,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("labeledLambdaByLabelRef/labeledLambdaByLabelRef.test")
     public void testLabeledLambdaByLabelRef_LabeledLambdaByLabelRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelRef/labeledLambdaByLabelRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabelRefAfterLabel/labeledLambdaByLabelRefAfterLabel.test")
+    public void testLabeledLambdaByLabelRefAfterLabel_LabeledLambdaByLabelRefAfterLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelRefAfterLabel/labeledLambdaByLabelRefAfterLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabelRefBeforeLabel/labeledLambdaByLabelRefBeforeLabel.test")
+    public void testLabeledLambdaByLabelRefBeforeLabel_LabeledLambdaByLabelRefBeforeLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelRefBeforeLabel/labeledLambdaByLabelRefBeforeLabel.test");
         doTest(fileName);
     }
 
@@ -288,6 +306,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("labeledReturnInLambdaAfterLabel/labeledReturnInLambdaAfterLabel.test")
+    public void testLabeledReturnInLambdaAfterLabel_LabeledReturnInLambdaAfterLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInLambdaAfterLabel/labeledReturnInLambdaAfterLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledReturnInLambdaBeforeLabel/labeledReturnInLambdaBeforeLabel.test")
+    public void testLabeledReturnInLambdaBeforeLabel_LabeledReturnInLambdaBeforeLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInLambdaBeforeLabel/labeledReturnInLambdaBeforeLabel.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("lambdaParameterRedeclaration/lambdaParameterRedeclaration.test")
     public void testLambdaParameterRedeclaration_LambdaParameterRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/lambdaParameterRedeclaration/lambdaParameterRedeclaration.test");
@@ -342,6 +372,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("nonQuotedToQuoted/nonQuotedToQuoted.test")
+    public void testNonQuotedToQuoted_NonQuotedToQuoted() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/nonQuotedToQuoted/nonQuotedToQuoted.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("noShadowingConflictForSiblingDeclarations/noShadowingConflictForSiblingDeclarations.test")
     public void testNoShadowingConflictForSiblingDeclarations_NoShadowingConflictForSiblingDeclarations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/noShadowingConflictForSiblingDeclarations/noShadowingConflictForSiblingDeclarations.test");
@@ -357,6 +393,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("objectAliasByRef/objectAliasByRef.test")
     public void testObjectAliasByRef_ObjectAliasByRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/objectAliasByRef/objectAliasByRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("objectFunctionImportAliasByRef/objectFunctionImportAliasByRef.test")
+    public void testObjectFunctionImportAliasByRef_ObjectFunctionImportAliasByRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/objectFunctionImportAliasByRef/objectFunctionImportAliasByRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("objectPropertyImportAliasByRef/objectPropertyImportAliasByRef.test")
+    public void testObjectPropertyImportAliasByRef_ObjectPropertyImportAliasByRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/objectPropertyImportAliasByRef/objectPropertyImportAliasByRef.test");
         doTest(fileName);
     }
 
@@ -435,6 +483,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("propertyRedeclaredByPropertyParameter/propertyRedeclaredByPropertyParameter.test")
     public void testPropertyRedeclaredByPropertyParameter_PropertyRedeclaredByPropertyParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/propertyRedeclaredByPropertyParameter/propertyRedeclaredByPropertyParameter.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("quotedToNonQuoted/quotedToNonQuoted.test")
+    public void testQuotedToNonQuoted_QuotedToNonQuoted() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/quotedToNonQuoted/quotedToNonQuoted.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("quotedToNonQuotedCaretAtTheEnd/quotedToNonQuotedCaretAtTheEnd.test")
+    public void testQuotedToNonQuotedCaretAtTheEnd_QuotedToNonQuotedCaretAtTheEnd() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/quotedToNonQuotedCaretAtTheEnd/quotedToNonQuotedCaretAtTheEnd.test");
         doTest(fileName);
     }
 

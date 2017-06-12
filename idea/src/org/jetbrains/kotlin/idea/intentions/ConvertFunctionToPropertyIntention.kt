@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,10 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
@@ -32,6 +35,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -40,9 +45,11 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.READ_ONLY_PROPERTY
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -58,8 +65,9 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
 
     private inner class Converter(
             project: Project,
+            private val editor: Editor?,
             descriptor: FunctionDescriptor
-    ): CallableRefactoring<FunctionDescriptor>(project, descriptor, text) {
+    ) : CallableRefactoring<FunctionDescriptor>(project, descriptor, text) {
         private val elementsToShorten = ArrayList<KtElement>()
 
         private val newName: String by lazy {
@@ -68,30 +76,31 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
         }
 
         private fun convertFunction(originalFunction: KtNamedFunction, psiFactory: KtPsiFactory) {
-            val function = originalFunction.copy() as KtNamedFunction
+            val propertyString = KtPsiFactory.CallableBuilder(READ_ONLY_PROPERTY).apply {
+                // make sure to capture all comments and line breaks
+                modifier(originalFunction.text.substring(0, originalFunction.funKeyword!!.getStartOffsetIn(originalFunction)))
+                typeParams(originalFunction.typeParameters.map { it.text })
+                originalFunction.receiverTypeReference?.let { receiver(it.text) }
+                name(newName)
+                originalFunction.getReturnTypeReference()?.let { returnType(it.text) }
+                typeConstraints(originalFunction.typeConstraints.map { it.text })
 
-            val propertySample = psiFactory.createProperty("val foo: Int get() = 1")
+                if (originalFunction.equalsToken != null) {
+                    getterExpression(originalFunction.bodyExpression!!.text, breakLine = originalFunction.typeReference != null)
+                }
+                else {
+                    (originalFunction.bodyExpression as? KtBlockExpression)?.let { body ->
+                        transform {
+                            append("\nget() ")
+                            append(body.text)
+                        }
+                    }
+                }
+            }.asString()
 
-            val needsExplicitType = function.typeReference == null
-            if (needsExplicitType) {
-                originalFunction.typeFqNameToAdd?.let { function.setTypeReference(psiFactory.createType(it)) }
-            }
+            val replaced = originalFunction.replaced(psiFactory.createDeclaration<KtProperty>(propertyString))
 
-            function.funKeyword!!.replace(propertySample.valOrVarKeyword)
-            function.valueParameterList?.delete()
-            val insertAfter = (function.equalsToken ?: function.bodyExpression)
-                    ?.siblings(forward = false, withItself = false)
-                    ?.firstOrNull { it !is PsiWhiteSpace }
-            if (insertAfter != null) {
-                function.addAfter(psiFactory.createParameterList("()"), insertAfter)
-                function.addAfter(propertySample.getter!!.namePlaceholder, insertAfter)
-            }
-            function.setName(newName)
-
-            val property = originalFunction.replace(psiFactory.createProperty(function.text)) as KtProperty
-            if (needsExplicitType) {
-                elementsToShorten.add(property.typeReference!!)
-            }
+            editor?.caretModel?.moveToOffset(replaced.nameIdentifier!!.endOffset)
         }
 
         override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
@@ -211,6 +220,6 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
     override fun applyTo(element: KtNamedFunction, editor: Editor?) {
         val context = element.analyze(BodyResolveMode.PARTIAL)
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as FunctionDescriptor
-        Converter(element.project, descriptor).run()
+        Converter(element.project, editor, descriptor).run()
     }
 }

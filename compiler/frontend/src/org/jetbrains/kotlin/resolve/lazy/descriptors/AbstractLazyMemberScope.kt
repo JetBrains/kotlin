@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
+import org.jetbrains.kotlin.resolve.lazy.declarations.AbstractPsiBasedDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -128,6 +129,17 @@ protected constructor(
             result.add(propertyDescriptor)
         }
 
+        for (entry in declarationProvider.getDestructuringDeclarationsEntries(name)) {
+            val propertyDescriptor = c.descriptorResolver.resolveDestructuringDeclarationEntryAsProperty(
+                    thisDescriptor,
+                    getScopeForMemberDeclarationResolution(entry),
+                    getScopeForInitializerResolution(entry),
+                    entry,
+                    trace,
+                    c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(entry))
+            result.add(propertyDescriptor)
+        }
+
         getNonDeclaredProperties(name, result)
 
         return result.toList()
@@ -207,6 +219,9 @@ protected constructor(
     // it is very easy to compromise laziness of this class, and fail all the debugging
     // a generic implementation can't do this properly
     abstract override fun toString(): String
+
+    fun toProviderString() = (declarationProvider as? AbstractPsiBasedDeclarationProvider)?.toInfoString()
+                             ?: declarationProvider.toString()
 
     override fun printScopeStructure(p: Printer) {
         p.println(this::class.java.simpleName, " {")

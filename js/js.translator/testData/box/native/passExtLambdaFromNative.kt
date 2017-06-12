@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 492
 package foo
 
 internal external class A(v: String) {

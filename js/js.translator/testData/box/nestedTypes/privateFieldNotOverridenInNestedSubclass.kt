@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 498
 package foo
 
 open class A(private val bar: String = "1") {

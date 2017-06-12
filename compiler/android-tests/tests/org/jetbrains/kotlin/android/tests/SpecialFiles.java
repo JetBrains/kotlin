@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,6 +96,14 @@ public class SpecialFiles {
         excludedFiles.add("genericMethodSignature.kt");
         excludedFiles.add("kt11121.kt");
         excludedFiles.add("kt5112.kt");
+
+        // Different format of inner signature on Android and JVM
+        excludedFiles.add("signatureOfDeepGenericInner.kt");
+        excludedFiles.add("signatureOfDeepInner.kt");
+        excludedFiles.add("signatureOfDeepInnerLastGeneric.kt");
+        excludedFiles.add("signatureOfGenericInnerGenericOuter.kt");
+        excludedFiles.add("signatureOfGenericInnerSimpleOuter.kt");
+        excludedFiles.add("signatureOfSimpleInnerSimpleOuter.kt");
 
         // Some classes are not visible on android
         excludedFiles.add("classpath.kt");

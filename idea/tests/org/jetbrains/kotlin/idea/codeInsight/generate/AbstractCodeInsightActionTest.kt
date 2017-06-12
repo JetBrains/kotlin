@@ -23,6 +23,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestActionEvent
+import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -58,6 +59,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
         val fileText = FileUtil.loadFile(File(path), true)
 
         val conflictFile = File("$path.messages")
+        val afterFile = File("$path.after")
 
         try {
             ConfigLibraryUtil.configureLibrariesByDirective(myModule, PlatformTestUtil.getCommunityPath(), fileText)
@@ -89,12 +91,13 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
             assert(!conflictFile.exists()) { "Conflict file $conflictFile should not exist" }
 
             if (isForced || isApplicableExpected) {
-                val afterFile = File("$path.after")
                 TestCase.assertTrue(afterFile.exists())
                 myFixture.checkResult(FileUtil.loadFile(afterFile, true))
-
                 checkExtra()
             }
+        }
+        catch (e: ComparisonFailure) {
+            KotlinTestUtils.assertEqualsToFile(afterFile, myFixture.editor)
         }
         catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
             KotlinTestUtils.assertEqualsToFile(conflictFile, e.message!!)

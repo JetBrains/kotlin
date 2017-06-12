@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ public final class JSTestGenerator {
         JsNew testClass = new JsNew(expression);
         JsExpression functionToTestCall =
                 CallTranslator.INSTANCE.buildCall(context, functionDescriptor, Collections.emptyList(), testClass);
-        JsStringLiteral testName = context.program().getStringLiteral(classDescriptor.getName() + "." + functionDescriptor.getName());
+        JsStringLiteral testName = new JsStringLiteral(classDescriptor.getName() + "." + functionDescriptor.getName());
         tester.constructTestMethodInvocation(functionToTestCall, testName);
     }
 }

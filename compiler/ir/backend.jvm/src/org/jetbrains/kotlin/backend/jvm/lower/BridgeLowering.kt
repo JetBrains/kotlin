@@ -17,13 +17,12 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.bridges.Bridge
 import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.DefaultImplsClassDescriptor
-import org.jetbrains.kotlin.backend.jvm.descriptors.FileClassDescriptor
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmFunctionDescriptorImpl
 import org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag
 import org.jetbrains.kotlin.codegen.AsmUtil.isAbstractMethod
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.codegen.FunctionCodegen.isThereOverriddenInKotlinCla
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDirectMember
 import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*

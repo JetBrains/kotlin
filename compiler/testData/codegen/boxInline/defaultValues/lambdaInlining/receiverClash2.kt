@@ -10,7 +10,8 @@ inline fun String.inlineFun(crossinline lambda: () -> String, crossinline dlambd
 }
 
 // FILE: 2.kt
-
+// CHECK_CALLED_IN_SCOPE: function=inlineFun$f_0 scope=test
+// CHECK_CALLED_IN_SCOPE: function=inlineFun$f scope=test
 import test.*
 
 fun String.test(): String = "INLINE".inlineFun({ this })

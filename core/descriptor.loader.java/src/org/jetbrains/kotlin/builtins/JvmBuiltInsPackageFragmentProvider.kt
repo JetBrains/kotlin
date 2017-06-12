@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.NotFoundClasses
+import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.name.FqName
@@ -54,6 +57,6 @@ class JvmBuiltInsPackageFragmentProvider(
 
     override fun findPackage(fqName: FqName): DeserializedPackageFragment? =
             finder.findBuiltInsData(fqName)?.let { inputStream ->
-                BuiltInsPackageFragment(fqName, storageManager, moduleDescriptor, inputStream)
+                BuiltInsPackageFragmentImpl(fqName, storageManager, moduleDescriptor, inputStream)
             }
 }

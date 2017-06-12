@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 491
 // FILE: castToTypeParamBoundedByNativeInterface.kt
 external interface I {
     fun foo(): String

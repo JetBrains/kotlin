@@ -7,11 +7,6 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/lib/trove4j.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/src/trove4j_src.jar!/core/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/src/trove4j_src.jar!/generated/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/src/trove4j_src.jar!/test/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/src/trove4j_src.jar!/util/src" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>

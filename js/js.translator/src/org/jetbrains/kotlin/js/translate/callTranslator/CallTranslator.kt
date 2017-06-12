@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ object CallTranslator {
                   resolvedCall: ResolvedCall<out FunctionDescriptor>,
                   extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
-        return translateCall(context, resolvedCall, ExplicitReceivers(extensionOrDispatchReceiver))
+        return translateCall(context, resolvedCall, ExplicitReceivers(extensionOrDispatchReceiver)).source(resolvedCall.call.callElement)
     }
 
     fun translateGet(context: TranslationContext,
@@ -52,7 +52,7 @@ object CallTranslator {
                      extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
         val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), null)
-        return variableAccessInfo.translateVariableAccess()
+        return variableAccessInfo.translateVariableAccess().source(resolvedCall.call.callElement)
     }
 
     fun translateSet(context: TranslationContext,
@@ -61,7 +61,7 @@ object CallTranslator {
                      extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
         val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), value)
-        return variableAccessInfo.translateVariableAccess()
+        return variableAccessInfo.translateVariableAccess().source(resolvedCall.call.callElement)
     }
 
     fun buildCall(context: TranslationContext,
@@ -136,10 +136,14 @@ private fun translateFunctionCall(
 
     if (resolvedCall.resultingDescriptor.isSuspend) {
         if (context.isInStateMachine) {
-            context.currentBlock.statements += JsAstUtils.asSyntheticStatement(callExpression.apply { isSuspend = true })
-            val coroutineRef = TranslationUtils.translateContinuationArgument(context)
+            context.currentBlock.statements += JsAstUtils.asSyntheticStatement(callExpression.apply {
+                isSuspend = true
+                source = resolvedCall.call.callElement
+            })
+            val coroutineRef = TranslationUtils.translateContinuationArgument(context).apply { source = resolvedCall.call.callElement }
             return context.defineTemporary(JsNameRef("\$\$coroutineResult\$\$", coroutineRef).apply {
                 sideEffects = SideEffectKind.DEPENDS_ON_STATE
+                source = resolvedCall.call.callElement
                 coroutineResult = true
             })
         }

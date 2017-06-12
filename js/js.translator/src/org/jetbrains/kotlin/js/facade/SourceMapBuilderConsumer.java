@@ -23,7 +23,7 @@ import com.intellij.util.PairConsumer;
 import org.jetbrains.kotlin.js.backend.ast.JsLocation;
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder;
 
-class SourceMapBuilderConsumer implements PairConsumer<SourceMapBuilder, Object> {
+public class SourceMapBuilderConsumer implements PairConsumer<SourceMapBuilder, Object> {
     @Override
     public void consume(SourceMapBuilder builder, Object sourceInfo) {
         if (sourceInfo instanceof PsiElement) {

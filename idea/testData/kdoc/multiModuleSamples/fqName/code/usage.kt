@@ -9,7 +9,7 @@ fun some<caret>() {
 }
 
 
-//INFO: <pre><b>public</b> <b>fun</b> some(): Unit <i>defined in</i> root package</pre><br/>
+//INFO: <pre><b>public</b> <b>fun</b> some(): Unit <i>defined in</i> root package <i>in file</i> usage.kt</pre><br/>
 //INFO: <dl><dt><b>Samples:</b></dt><dd><a href="psi_element://samples.SampleGroup.mySample"><code>samples.SampleGroup.mySample</code></a><pre><code>
 //INFO: println("Hello, world")
 //INFO: </code></pre></dd><dd><a href="psi_element://samples.megasamples.MegaSamplesGroup.megaSample"><code>samples.megasamples.MegaSamplesGroup.megaSample</code></a><pre><code>

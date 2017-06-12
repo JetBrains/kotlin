@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,9 @@ class CatchTranslator(
             initialCatchParameterRef: JsNameRef,
             catches: Iterator<KtCatchClause>
     ): JsStatement {
-        if (!catches.hasNext()) return JsThrow(initialCatchParameterRef)
+        if (!catches.hasNext()) {
+            return JsThrow(initialCatchParameterRef)
+        }
 
         var nextContext = context
 
@@ -117,7 +119,7 @@ class CatchTranslator(
         }!!
 
         val elseBlock = translateCatches(context, initialCatchParameterRef, catches)
-        return JsIf(typeCheck, thenBlock, elseBlock)
+        return JsIf(typeCheck.source(catch), thenBlock, elseBlock).apply { source = catch }
     }
 
     private fun translateCatchBody(context: TranslationContext, catchClause: KtCatchClause): JsBlock {
@@ -126,7 +128,7 @@ class CatchTranslator(
             translateAsStatementAndMergeInBlockIfNeeded(catchBody, context)
         }
         else {
-            JsAstUtils.asSyntheticStatement(JsLiteral.NULL)
+            JsAstUtils.asSyntheticStatement(JsNullLiteral())
         }
 
         return convertToBlock(jsCatchBody)

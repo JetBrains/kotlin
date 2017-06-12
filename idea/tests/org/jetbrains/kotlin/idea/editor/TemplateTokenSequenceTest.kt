@@ -44,7 +44,7 @@ class TemplateTokenSequenceTest:UsefulTestCase() {
 
     //last empty line is skipped
     fun `test trailing new lines`(){
-        doTest("literal\n\n", "LITERAL_CHUNK(literal)NEW_LINE()")
+        doTest("literal\n\n", "LITERAL_CHUNK(literal)NEW_LINE()NEW_LINE()")
 
     }
 

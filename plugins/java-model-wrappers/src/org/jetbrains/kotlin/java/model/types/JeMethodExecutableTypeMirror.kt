@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.java.model.types
 
-import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.PsiTypesUtil
-import org.jetbrains.kotlin.annotation.processing.impl.toDisposable
-import org.jetbrains.kotlin.annotation.processing.impl.dispose
 import org.jetbrains.kotlin.java.model.JeDisposablePsiElementOwner
 import org.jetbrains.kotlin.java.model.elements.getReceiverTypeMirror
+import org.jetbrains.kotlin.java.model.util.disposeAll
+import org.jetbrains.kotlin.java.model.util.toDisposable
 import javax.lang.model.type.ExecutableType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
@@ -48,7 +47,7 @@ class JeMethodExecutableTypeMirror(
     // JeElementRegistry registration is done in JeDisposablePsiElementOwner
     override fun dispose() {
         super.dispose()
-        dispose(disposableSignature, disposableReturnType)
+        disposeAll(disposableSignature, disposableReturnType)
     }
 
     override fun getKind() = TypeKind.EXECUTABLE

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.backend.jvm.codegen.getMemberOwnerKind
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.DEFAULT_LAMBDA_FAKE_CALL
@@ -48,12 +47,9 @@ private data class Condition(
 fun extractDefaultLambdaOffsetAndDescriptor(jvmSignature: JvmMethodSignature, functionDescriptor: FunctionDescriptor): Map<Int, ValueParameterDescriptor> {
     val valueParameters = jvmSignature.valueParameters
     val containingDeclaration = functionDescriptor.containingDeclaration
-    val kind = containingDeclaration.getMemberOwnerKind().let {
-        if (DescriptorUtils.isInterface(containingDeclaration)) {
-            OwnerKind.DEFAULT_IMPLS
-        }
-        else it
-    }
+    val kind =
+            if (DescriptorUtils.isInterface(containingDeclaration)) OwnerKind.DEFAULT_IMPLS
+            else OwnerKind.getMemberOwnerKind(containingDeclaration)
     val parameterOffsets = parameterOffsets(AsmUtil.isStaticMethod(kind, functionDescriptor), valueParameters)
     val valueParameterOffset = valueParameters.takeWhile { it.kind != JvmMethodParameterKind.VALUE }.size
 

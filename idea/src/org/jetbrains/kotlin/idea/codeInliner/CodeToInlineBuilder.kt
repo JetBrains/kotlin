@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.SpecifyExplicitLambdaSignatureIntention
-import org.jetbrains.kotlin.idea.refactoring.addTypeArgumentsIfNeeded
-import org.jetbrains.kotlin.idea.refactoring.getQualifiedTypeArgumentList
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -59,12 +57,15 @@ class CodeToInlineBuilder(
             analyze: () -> BindingContext,
             importFqNames: Collection<FqName> = emptyList()
     ): CodeToInline {
-        val bindingContext = analyze()
+        var bindingContext = analyze()
 
         val codeToInline = MutableCodeToInline(mainExpression, statementsBefore.toMutableList(), importFqNames.toMutableSet())
 
+        bindingContext = insertExplicitTypeArguments(codeToInline, bindingContext, analyze)
+
         insertExplicitReceivers(codeToInline, bindingContext)
 
+        // NB: we must check in codeToInline, otherwise we get AE from addPostInsertionAction
         if (mainExpression != null && mainExpression in codeToInline) {
             val functionLiteralExpression = mainExpression.unpackFunctionLiteral(true)
             if (functionLiteralExpression != null) {
@@ -75,14 +76,7 @@ class CodeToInlineBuilder(
                     }
                 }
             }
-            val typeArgumentsForCall = getQualifiedTypeArgumentList(mainExpression, bindingContext)
-            if (typeArgumentsForCall != null) {
-                codeToInline.addPostInsertionAction(mainExpression) { inlinedExpression ->
-                    addTypeArgumentsIfNeeded(inlinedExpression, typeArgumentsForCall)
-                }
-            }
         }
-
 
         return codeToInline.toNonMutable()
     }
@@ -122,6 +116,24 @@ class CodeToInlineBuilder(
                                         element.getStrictParentOfType<KtFunctionLiteral>() == functionLiteral
             hasCantInferParameter || hasUnresolvedItOrThis
         }
+    }
+
+    private fun insertExplicitTypeArguments(codeToInline: MutableCodeToInline, bindingContext: BindingContext, analyze: () -> BindingContext): BindingContext {
+        val typeArgsToAdd = ArrayList<Pair<KtCallExpression, KtTypeArgumentList>>()
+        codeToInline.forEachDescendantOfType<KtCallExpression> {
+            if (InsertExplicitTypeArgumentsIntention.isApplicableTo(it, bindingContext)) {
+                typeArgsToAdd.add(it to InsertExplicitTypeArgumentsIntention.createTypeArguments(it, bindingContext)!!)
+            }
+        }
+
+        if (typeArgsToAdd.isEmpty()) return bindingContext
+
+        for ((callExpr, typeArgs) in typeArgsToAdd) {
+            callExpr.addAfter(typeArgs, callExpr.calleeExpression)
+        }
+
+        // reanalyze expression - new usages of type parameters may be added
+        return analyze()
     }
 
     private fun insertExplicitReceivers(codeToInline: MutableCodeToInline, bindingContext: BindingContext) {

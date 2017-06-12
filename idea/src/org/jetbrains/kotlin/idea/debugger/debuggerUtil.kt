@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.engine.events.DebuggerCommandImpl
+import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.sun.jdi.*
 import com.sun.tools.jdi.LocalVariableImpl
@@ -50,6 +52,16 @@ fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debug
     return markerLocalVariables.firstOrNull {
         lambdaOrdinalByLocalVariable(it.name()) == lambdaOrdinal && functionNameByLocalVariable(it.name()) == functionName
     } != null
+}
+
+fun <T: Any> DebugProcessImpl.invokeInManagerThread(f: (DebuggerContextImpl) -> T?): T? {
+    var result: T? = null
+    managerThread.invokeAndWait(object : DebuggerCommandImpl() {
+        override fun action() {
+            result = runReadAction { f(debuggerContext) }
+        }
+    })
+    return result
 }
 
 private fun lambdaOrdinalByArgument(elementAt: KtFunction, context: BindingContext): Int {

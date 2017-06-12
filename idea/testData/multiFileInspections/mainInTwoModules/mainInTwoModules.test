@@ -1,0 +1,5 @@
+{
+    "inspectionClass": "org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection",
+    "withRuntime": "true",
+    "isMultiModule": "true"
+}

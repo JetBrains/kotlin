@@ -73,12 +73,12 @@ object DefaultFunctionCallCase : FunctionCallCase() {
                                         callableDescriptor: CallableDescriptor,
                                         isNative: Boolean,
                                         hasSpreadOperator: Boolean): JsExpression {
+        val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
         if (isNative && hasSpreadOperator) {
-            val functionCallRef = Namer.getFunctionApplyRef(JsNameRef(context.getNameForDescriptor(callableDescriptor)))
+            val functionCallRef = Namer.getFunctionApplyRef(functionRef)
             return JsInvocation(functionCallRef, argumentsInfo.translateArguments)
         }
 
-        val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
         return JsInvocation(functionRef, argumentsInfo.translateArguments)
     }
 

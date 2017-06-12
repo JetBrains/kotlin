@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 503
 package foo
 
 // CHECK_NOT_CALLED: test

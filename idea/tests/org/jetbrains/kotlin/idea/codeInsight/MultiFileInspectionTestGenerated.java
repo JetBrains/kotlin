@@ -48,6 +48,12 @@ public class MultiFileInspectionTestGenerated extends AbstractMultiFileInspectio
         doTest(fileName);
     }
 
+    @TestMetadata("mainInTwoModules/mainInTwoModules.test")
+    public void testMainInTwoModules_MainInTwoModules() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileInspections/mainInTwoModules/mainInTwoModules.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("mismatchedProjectAndDirectory/mismatchedProjectAndDirectory.test")
     public void testMismatchedProjectAndDirectory_MismatchedProjectAndDirectory() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileInspections/mismatchedProjectAndDirectory/mismatchedProjectAndDirectory.test");

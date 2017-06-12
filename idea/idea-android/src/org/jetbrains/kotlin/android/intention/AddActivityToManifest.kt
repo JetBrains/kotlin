@@ -41,5 +41,5 @@ class AddActivityToManifest : AbstractRegisterComponentAction("Add activity to m
     }
 
     private fun KtClass.isSubclassOfActivity() =
-            (descriptor as? ClassDescriptor)?.defaultType?.isSubclassOf(FqName(SdkConstants.CLASS_ACTIVITY), true) ?: false
+            (descriptor as? ClassDescriptor)?.defaultType?.isSubclassOf(SdkConstants.CLASS_ACTIVITY, true) ?: false
 }

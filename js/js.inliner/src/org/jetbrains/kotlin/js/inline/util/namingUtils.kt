@@ -44,6 +44,7 @@ fun aliasArgumentsIfNeeded(
     for (defaultParam in defaultParams) {
         val paramName = defaultParam.name
         val freshName = JsScope.declareTemporaryName(paramName.ident)
+        freshName.copyMetadataFrom(paramName)
         context.newVar(freshName)
 
         context.replaceName(paramName, freshName.makeRef())

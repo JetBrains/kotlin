@@ -24,8 +24,9 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.FormatterUtil
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.KtNodeTypes.WHEN_ENTRY
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.lexer.KtTokens.ARROW
 
 /**
  * @see Block for good JavaDoc documentation
@@ -36,7 +37,7 @@ class KotlinBlock(
         private val myIndent: Indent?,
         wrap: Wrap?,
         mySettings: CodeStyleSettings,
-        private val mySpacingBuilder: KotlinSpacingBuilder) : AbstractBlock(node, wrap, myAlignmentStrategy.getAlignment(node)) {
+        private val mySpacingBuilder: KotlinSpacingBuilder) : AbstractBlock(node, wrap, myAlignmentStrategy.getAlignment(node)), BlockEx {
 
     private val kotlinDelegationBlock = object : KotlinCommonBlock(node, mySettings, mySpacingBuilder, myAlignmentStrategy) {
         override fun getNullAlignmentStrategy(): CommonAlignmentStrategy = NodeAlignmentStrategy.getNullStrategy()
@@ -91,6 +92,8 @@ class KotlinBlock(
     override fun getChildAttributes(newChildIndex: Int): ChildAttributes = kotlinDelegationBlock.getChildAttributes(newChildIndex)
 
     override fun isLeaf(): Boolean = kotlinDelegationBlock.isLeaf()
+
+    override fun getLanguage() = KotlinLanguage.INSTANCE
 }
 
 object KotlinSpacingBuilderUtilImpl : KotlinSpacingBuilderUtil {

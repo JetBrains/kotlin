@@ -1,3 +1,5 @@
+// SKIP_MINIFICATION
+// This test uses eval to access root package, therefore DCE can't infer usage of corresponding functions
 package foo
 
 private var log = ""

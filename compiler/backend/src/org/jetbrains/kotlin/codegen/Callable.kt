@@ -45,7 +45,7 @@ interface Callable {
         }
     }
 
-    fun afterReceiverGeneration(v: InstructionAdapter) {
+    fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap) {
     }
 
 }

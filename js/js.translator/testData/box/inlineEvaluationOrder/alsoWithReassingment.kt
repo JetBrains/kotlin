@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 490
 private var _value: String = "OK"
 
 private inline fun String.myAlso(f: (String) -> Unit): String {

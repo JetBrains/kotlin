@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 495
 //TODO: reuse same tests from JVM backend
 package foo
 

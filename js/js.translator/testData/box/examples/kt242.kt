@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 487
 fun box(): String {
     val i: Int? = 7
     val j: Int? = null

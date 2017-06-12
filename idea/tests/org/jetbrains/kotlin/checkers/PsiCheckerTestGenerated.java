@@ -551,6 +551,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("IncompleteClassDelegation.kt")
+        public void testIncompleteClassDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/IncompleteClassDelegation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InitializerInInterface.kt")
         public void testInitializerInInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/InitializerInInterface.kt");

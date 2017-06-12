@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 501
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: maxBySquare except=imul

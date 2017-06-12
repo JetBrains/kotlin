@@ -9,11 +9,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
-    <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="backend-common" exported="" />
     <orderEntry type="module" module-name="util" />
-    <orderEntry type="module" module-name="backend.jvm" />
-    <orderEntry type="module" module-name="ir.tree" />
   </component>
 </module>

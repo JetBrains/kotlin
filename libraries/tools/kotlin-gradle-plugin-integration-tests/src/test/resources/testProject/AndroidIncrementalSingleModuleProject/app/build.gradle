@@ -2,23 +2,22 @@ buildscript {
     repositories {
         mavenLocal()
         jcenter()
+        maven { url 'https://maven.google.com' }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
         classpath 'com.android.tools.build:gradle:' + android_tools_version
-        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
     }
 }
 
-apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "foo"
@@ -40,6 +39,7 @@ android {
 
 repositories {
     mavenLocal()
+    maven { url 'https://maven.google.com' }
 }
 
 dependencies {

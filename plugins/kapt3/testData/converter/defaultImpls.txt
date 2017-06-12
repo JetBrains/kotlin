@@ -1,9 +1,11 @@
+@kotlin.Metadata()
 public abstract interface Intf {
     public static final Intf.Companion Companion = null;
     public static final int WHITE = 2;
 
     public abstract int getColor();
 
+    @kotlin.Metadata(mv = {1, 1, 6}, bv = {1, 0, 1}, k = 3)
     public static final class DefaultImpls {
 
         public DefaultImpls() {
@@ -15,6 +17,7 @@ public abstract interface Intf {
         }
     }
 
+    @kotlin.Metadata()
     public static final class Companion {
         private static final int BLACK = 1;
         public static final int WHITE = 2;
@@ -32,10 +35,12 @@ public abstract interface Intf {
 ////////////////////
 
 
+@kotlin.Metadata()
 public abstract interface IntfWithDefaultImpls {
 
     public abstract void a();
 
+    @kotlin.Metadata(mv = {1, 1, 6}, bv = {1, 0, 1}, k = 3)
     public static final class DefaultImpls {
 
         public DefaultImpls() {
@@ -50,5 +55,6 @@ public abstract interface IntfWithDefaultImpls {
 ////////////////////
 
 
+@kotlin.Metadata()
 public abstract interface IntfWithoutDefaultImpls {
 }

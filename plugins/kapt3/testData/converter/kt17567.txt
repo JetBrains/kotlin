@@ -1,5 +1,6 @@
 package test;
 
+@kotlin.Metadata()
 public final class MutableEntry<K extends java.lang.Object, V extends java.lang.Object> implements java.util.Map.Entry<K, V>, kotlin.jvm.internal.markers.KMutableMap.Entry {
     private final java.util.Map<K, V> internal = null;
     private final K key = null;

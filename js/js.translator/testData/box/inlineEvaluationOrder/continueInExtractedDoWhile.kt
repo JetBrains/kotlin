@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 495
 package foo
 
 private inline fun bar(predicate: (Char) -> Boolean): Int {

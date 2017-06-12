@@ -129,9 +129,10 @@ public class IdeErrorMessages {
         MAP.put(VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, "<html>Val-property cannot override var-property<br />" +
                                        "{1}</html>", HTML, HTML);
 
-        MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "<html>{0} must be declared abstract or implement abstract member<br/>" +
-                                                 "{1}</html>", RENDER_CLASS_OR_OBJECT,
-                HTML);
+        MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "<html>{0} is not abstract and does not implement abstract member<br/>" +
+                                                 "{1}</html>", RENDER_CLASS_OR_OBJECT, HTML);
+        MAP.put(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, "<html>{0} is not abstract and does not implement abstract base class member<br/>" +
+                                                       "{1}</html>", RENDER_CLASS_OR_OBJECT, HTML);
 
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "<html>{0} must override {1}<br />because it inherits many implementations of it</html>",
                 RENDER_CLASS_OR_OBJECT, HTML);

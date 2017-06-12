@@ -52,7 +52,7 @@ class ReplInterpreter(
         }
 
         override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
-            val msg = messageRenderer.render(severity, message, location)
+            val msg = messageRenderer.render(severity, message, location).trimEnd()
             with (replConfiguration.writer) {
                 when (severity) {
                     CompilerMessageSeverity.EXCEPTION -> sendInternalErrorReport(msg)

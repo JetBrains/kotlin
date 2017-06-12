@@ -19,6 +19,11 @@ repositories {
     jcenter()
     mavenLocal()
     maven { url 'http://repository.jetbrains.com/utils/' }
+    maven { url 'https://maven.google.com' }
+}
+
+configurations {
+    agp25CompileOnly
 }
 
 dependencies {
@@ -37,8 +42,13 @@ dependencies {
     compileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
     compileOnly 'org.jetbrains.kotlin:gradle-api:2.2'
 
+    agp25CompileOnly 'com.android.tools.build:gradle:3.0.0-alpha1'
+    agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
+    agp25CompileOnly gradleApi()
+
     testCompile "org.jetbrains.kotlin:kotlin-build-common-test:$kotlin_version"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile "junit:junit:4.12"
 }
 
 tasks.withType(project.compileKotlin.class) {
@@ -54,12 +64,24 @@ sourceSets.main.compileClasspath += files(groovyClassesDir)
 compileGroovy.classpath = sourceSets.main.compileClasspath - files(groovyClassesDir)
 sourceSets.main.java.srcDirs += sourceSets.main.kotlin.srcDirs
 
+sourceSets {
+    agp25 {
+        compileClasspath += configurations.compile + configurations.agp25CompileOnly + sourceSets.main.output
+        compileClasspath += files(groovyClassesDir)
+    }
+}
+
+compileAgp25Kotlin.dependsOn compileGroovy
+
 processResources {
     expand(project.properties)
 }
 
+jar.dependsOn agp25Classes
+
 jar {
     from compileGroovy.destinationDir
+    from sourceSets.agp25.output.classesDir
 }
 
 test.executable = "${JDK_18}/bin/java"

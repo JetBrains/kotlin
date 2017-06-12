@@ -23,11 +23,15 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.intentions.*
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetInspection
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetIntention
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
@@ -36,10 +40,14 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.mapToIndex
 import java.util.*
 
@@ -66,13 +74,20 @@ object J2KPostProcessingRegistrar {
         _processings.add(FixObjectStringConcatenationProcessing())
         _processings.add(ConvertToStringTemplateProcessing())
         _processings.add(UsePropertyAccessSyntaxProcessing())
+        _processings.add(UninitializedVariableReferenceFromInitializerToThisReferenceProcessing())
+        _processings.add(UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing())
         _processings.add(RemoveRedundantSamAdaptersProcessing())
         _processings.add(RemoveRedundantCastToNullableProcessing())
 
         registerIntentionBasedProcessing(ConvertToExpressionBodyIntention(convertEmptyToUnit = false)) { it is KtPropertyAccessor }
+
+        registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
+
+        registerIntentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() }
+        registerIntentionBasedProcessing(FoldIfToReturnAsymmetricallyIntention()) { it.then.isTrivialStatementBody() && (KtPsiUtil.skipTrailingWhitespacesAndComments(it) as KtReturnExpression).returnedExpression.isTrivialStatementBody() }
+
         registerIntentionBasedProcessing(IfThenToSafeAccessIntention())
         registerIntentionBasedProcessing(IfThenToElvisIntention())
-        registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
         registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention())
         registerIntentionBasedProcessing(ReplaceGetOrSetIntention(), additionalChecker = ReplaceGetOrSetInspection.additionalChecker)
         registerIntentionBasedProcessing(AddOperatorModifierIntention())
@@ -100,11 +115,6 @@ object J2KPostProcessingRegistrar {
             fix.invoke()
         }
 
-        registerDiagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, _ ->
-            val exclExclExpr = element.parent as KtUnaryExpression
-            exclExclExpr.replace(exclExclExpr.baseExpression!!)
-        }
-
         registerDiagnosticBasedProcessingFactory(
                 Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
         ) {
@@ -119,6 +129,15 @@ object J2KPostProcessingRegistrar {
                         property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
                     }
                 }
+            }
+        }
+
+        registerDiagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, _ ->
+            val exclExclExpr = element.parent as KtUnaryExpression
+            val baseExpression = exclExclExpr.baseExpression!!
+            val context = baseExpression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+            if (context.diagnostics.forElement(element).any { it.factory == Errors.UNNECESSARY_NOT_NULL_ASSERTION }) {
+                exclExclExpr.replace(baseExpression)
             }
         }
 
@@ -173,7 +192,11 @@ object J2KPostProcessingRegistrar {
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) return null
 
-            return { element.delete() }
+            return {
+                if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) {
+                    element.delete()
+                }
+            }
         }
     }
 
@@ -275,6 +298,41 @@ object J2KPostProcessingRegistrar {
                     })
                 }
             }
+            return null
+        }
+    }
+
+    private class UninitializedVariableReferenceFromInitializerToThisReferenceProcessing : J2kPostProcessing {
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtSimpleNameExpression || diagnostics.forElement(element).none { it.factory == Errors.UNINITIALIZED_VARIABLE }) return null
+
+            val resolved = element.mainReference.resolve() ?: return null
+            if (resolved.isAncestor(element, strict = true)) {
+                if (resolved is KtVariableDeclaration && resolved.hasInitializer()) {
+                    val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
+                    if (resolved.initializer!!.getChildOfType<KtClassOrObject>() == anonymousObject) {
+                        return { element.replaced(KtPsiFactory(element).createThisExpression()) }
+                    }
+                }
+            }
+
+            return null
+        }
+    }
+
+    private class UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing : J2kPostProcessing {
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtSimpleNameExpression || diagnostics.forElement(element).none { it.factory == Errors.UNRESOLVED_REFERENCE }) return null
+
+            val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
+
+            val variable = anonymousObject.getParentOfType<KtVariableDeclaration>(true) ?: return null
+
+            if (variable.nameAsName == element.getReferencedNameAsName() &&
+                variable.initializer?.getChildOfType<KtClassOrObject>() == anonymousObject) {
+                return { element.replaced(KtPsiFactory(element).createThisExpression()) }
+            }
+
             return null
         }
     }

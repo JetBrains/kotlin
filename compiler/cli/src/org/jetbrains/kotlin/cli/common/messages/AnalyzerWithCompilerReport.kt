@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.cli.common.messages
 
 import com.intellij.openapi.util.io.FileUtil.toSystemDependentName
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.PsiModifierListOwner
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiFormatUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -170,9 +168,7 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
             return hasErrors
         }
 
-        fun reportSyntaxErrors(
-                file: PsiElement,
-                reporter: DiagnosticMessageReporter): SyntaxErrorReport {
+        fun reportSyntaxErrors(file: PsiElement, reporter: DiagnosticMessageReporter): SyntaxErrorReport {
             class ErrorReportingVisitor : AnalyzingUtils.PsiErrorElementVisitor() {
                 var hasErrors = false
                 var allErrorsAtEof = true
@@ -180,10 +176,18 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
                 private fun <E : PsiElement> reportDiagnostic(element: E, factory: DiagnosticFactory0<E>, message: String) {
                     val diagnostic = MyDiagnostic(element, factory, message)
                     AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, reporter)
-                    if (element.textRange.startOffset != file.textRange.endOffset) {
+                    if (allErrorsAtEof && !element.isAtEof()) {
                         allErrorsAtEof = false
                     }
                     hasErrors = true
+                }
+
+                private fun PsiElement.isAtEof(): Boolean {
+                    var element = this
+                    while (true) {
+                        element = element.nextSibling ?: return true
+                        if (element !is PsiWhiteSpace || element !is PsiComment) return false
+                    }
                 }
 
                 override fun visitErrorElement(element: PsiErrorElement) {

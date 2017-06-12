@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ public final class UnaryOperationTranslator {
                 assert compileTimeValue != null : message(expression, "Expression is not compile time value: " + expression.getText() + " ");
                 Object value = getCompileTimeValue(context.bindingContext(), expression, compileTimeValue);
                 if (value instanceof Long) {
-                    return JsAstUtils.newLong((Long) value, context);
+                    return JsAstUtils.newLong((Long) value);
                 }
             }
         }

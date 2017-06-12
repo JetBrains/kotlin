@@ -8,6 +8,7 @@ inline fun inlineFun(lambda: () -> Any = { "OK" as Any }): Any {
 }
 
 // FILE: 2.kt
+// CHECK_CONTAINS_NO_CALLS: box except=throwCCE;isType
 
 import test.*
 

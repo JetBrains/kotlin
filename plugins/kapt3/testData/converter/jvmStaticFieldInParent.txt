@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String test = "";
@@ -12,6 +13,7 @@ public final class Test {
         return null;
     }
 
+    @kotlin.Metadata()
     public static final class A {
 
         public static void test$annotations() {

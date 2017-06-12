@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
  * TODO: data class with zero components gets no toString/equals/hashCode methods. This is inconsistent and should be
  * changed here with the platform backends adopted.
  */
-abstract class DataClassMethodGenerator(private val declaration: KtClassOrObject, private val bindingContext: BindingContext) {
+abstract class DataClassMethodGenerator(protected val declaration: KtClassOrObject, private val bindingContext: BindingContext) {
     protected val classDescriptor: ClassDescriptor = BindingContextUtils.getNotNull(bindingContext, BindingContext.CLASS, declaration)
 
     fun generate() {

@@ -22,35 +22,40 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.KotlinSourceRoot
 import java.io.File
 
-data class JvmClasspathRoot(override val file: File): JvmContentRoot
-
-data class JavaSourceRoot(override val file: File, val packagePrefix: String?): JvmContentRoot
-
 interface JvmContentRoot : ContentRoot {
     val file: File
 }
+
+data class JvmClasspathRoot(override val file: File) : JvmContentRoot
+
+data class JavaSourceRoot(override val file: File, val packagePrefix: String?) : JvmContentRoot
 
 fun CompilerConfiguration.addJvmClasspathRoot(file: File) {
     add(JVMConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
 }
 
-fun CompilerConfiguration.addJvmClasspathRoots(files: List<File>): Unit = files.forEach { addJvmClasspathRoot(it) }
+fun CompilerConfiguration.addJvmClasspathRoots(files: List<File>) {
+    files.forEach(this::addJvmClasspathRoot)
+}
 
 val CompilerConfiguration.jvmClasspathRoots: List<File>
-    get() {
-        return get(JVMConfigurationKeys.CONTENT_ROOTS)?.filterIsInstance<JvmClasspathRoot>()?.map { it.file } ?: emptyList()
-    }
+    get() = getList(JVMConfigurationKeys.CONTENT_ROOTS).filterIsInstance<JvmClasspathRoot>().map(JvmContentRoot::file)
 
-@JvmOverloads fun CompilerConfiguration.addJavaSourceRoot(file: File, packagePrefix: String? = null) {
+@JvmOverloads
+fun CompilerConfiguration.addJavaSourceRoot(file: File, packagePrefix: String? = null) {
     add(JVMConfigurationKeys.CONTENT_ROOTS, JavaSourceRoot(file, packagePrefix))
 }
 
-@JvmOverloads fun CompilerConfiguration.addJavaSourceRoots(files: List<File>, packagePrefix: String? = null): Unit =
-        files.forEach { addJavaSourceRoot(it, packagePrefix) }
+@JvmOverloads
+fun CompilerConfiguration.addJavaSourceRoots(files: List<File>, packagePrefix: String? = null) {
+    files.forEach { addJavaSourceRoot(it, packagePrefix) }
+}
 
 val CompilerConfiguration.javaSourceRoots: Set<String>
-    get() = get(JVMConfigurationKeys.CONTENT_ROOTS)
-            ?.mapNotNullTo(hashSetOf<String>()) {
-                (it as? KotlinSourceRoot)?.path ?: (it as? JavaSourceRoot)?.file?.path
+    get() = getList(JVMConfigurationKeys.CONTENT_ROOTS).mapNotNullTo(linkedSetOf<String>()) { root ->
+                when (root) {
+                    is KotlinSourceRoot -> root.path
+                    is JavaSourceRoot -> root.file.path
+                    else -> null
+                }
             }
-            .orEmpty()

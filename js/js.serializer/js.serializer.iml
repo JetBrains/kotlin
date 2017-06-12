@@ -8,7 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="serialization" />
-    <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="js.ast" />

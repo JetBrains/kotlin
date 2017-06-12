@@ -60,7 +60,7 @@ object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOve
         val psiClass = psiMethod.containingClass
         if (psiClass == null) return Collections.emptyList()
 
-        val classToMethod = HashMap<PsiClass, PsiMethod>()
+        val classToMethod = LinkedHashMap<PsiClass, PsiMethod>()
         val classTraverser = object : HierarchyTraverser<PsiClass> {
             override fun nextElements(current: PsiClass): Iterable<PsiClass> =
                     DirectClassInheritorsSearch.search(

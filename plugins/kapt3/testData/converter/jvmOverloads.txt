@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public final class State {
     private final int someInt = 0;
     private final long someLong = 0L;
@@ -30,6 +31,7 @@ public final class State {
 ////////////////////
 
 
+@kotlin.Metadata()
 public final class State2 {
     public final int someInt = 0;
     public final long someLong = 0L;

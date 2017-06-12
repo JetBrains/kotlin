@@ -162,7 +162,9 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             getLog().info("Optimization is turned off");
         }
 
-        arguments.jvmTarget = jvmTarget;
+        if (jvmTarget != null) {
+            arguments.jvmTarget = jvmTarget;
+        }
 
         if (jdkHome != null) {
             getLog().info("Overriding JDK home path with: " + jdkHome);

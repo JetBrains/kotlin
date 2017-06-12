@@ -1,5 +1,13 @@
+package error;
+
+public final class NonExistentClass {
+}
+
+////////////////////
+
 package test;
 
+@kotlin.Metadata()
 public enum EnumClass {
     /*public static final*/ BLACK /* = new BLACK() */,
     /*public static final*/ WHITE /* = new WHITE() */;
@@ -12,21 +20,31 @@ public enum EnumClass {
 
 package test;
 
+@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface MyAnnotation {
 }
 
 ////////////////////
 
-package error;
+package test;
 
-public final class NonExistentClass {
+@kotlin.Metadata()
+public enum EnumClass2 {
+    /*public static final*/ WHITE /* = new WHITE(null) */,
+    /*public static final*/ RED /* = new RED(null) */;
+    private final java.lang.String blah = null;
+
+    EnumClass2(@org.jetbrains.annotations.NotNull()
+    java.lang.String blah) {
+    }
 }
 
 ////////////////////
 
 package test;
 
+@kotlin.Metadata()
 public final class Simple {
 
     @MyAnnotation()
@@ -39,19 +57,5 @@ public final class Simple {
 
     public Simple() {
         super();
-    }
-}
-
-////////////////////
-
-package test;
-
-public enum EnumClass2 {
-    /*public static final*/ WHITE /* = new WHITE(null) */,
-    /*public static final*/ RED /* = new RED(null) */;
-    private final java.lang.String blah = null;
-
-    EnumClass2(@org.jetbrains.annotations.NotNull()
-    java.lang.String blah) {
     }
 }

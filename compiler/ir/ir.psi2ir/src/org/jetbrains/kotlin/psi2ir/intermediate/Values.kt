@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface IntermediateValue {
     fun load(): IrExpression
+    fun loadIfExists(): IrExpression? = load()
     val type: KotlinType
 }
 

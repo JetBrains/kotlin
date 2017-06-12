@@ -109,7 +109,7 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
             val containingDescriptor = containingDeclaration ?: return null
             return when (containingDescriptor) {
                 is ClassDescriptorWithResolutionScopes -> containingDescriptor.scopeForInitializerResolution
-                is PackageFragmentDescriptor -> LexicalScope.Empty(containingDescriptor.getMemberScope().memberScopeAsImportingScope(), this)
+                is PackageFragmentDescriptor -> LexicalScope.Base(containingDescriptor.getMemberScope().memberScopeAsImportingScope(), this)
                 else -> null
             }
         }

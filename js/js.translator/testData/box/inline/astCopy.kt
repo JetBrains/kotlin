@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 491
 package foo
 
 // CHECK_FUNCTIONS_HAVE_SAME_LINES: syntaxTestInline syntaxTest

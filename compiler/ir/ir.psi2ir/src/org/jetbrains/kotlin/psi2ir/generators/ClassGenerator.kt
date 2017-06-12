@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.StableDescriptorsComparator
+import org.jetbrains.kotlin.ir.util.StableDescriptorsComparator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -215,13 +215,13 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
 
     private fun generatePrimaryConstructor(irClass: IrClass, ktClassOrObject: KtClassOrObject): IrConstructor? {
         val classDescriptor = irClass.descriptor
-        if (DescriptorUtils.isAnnotationClass(classDescriptor)) return null
-
         val primaryConstructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return null
 
         val irPrimaryConstructor = FunctionGenerator(declarationGenerator).generatePrimaryConstructor(primaryConstructorDescriptor, ktClassOrObject)
 
-        irClass.addMember(irPrimaryConstructor)
+        if (!DescriptorUtils.isAnnotationClass(classDescriptor)) {
+            irClass.addMember(irPrimaryConstructor)
+        }
 
         return irPrimaryConstructor
     }

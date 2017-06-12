@@ -37,8 +37,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.java.decompiler.IdeaLogger;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
+import org.jetbrains.kotlin.codegen.DefaultCodegenFactory;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.*;
@@ -325,7 +327,8 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
         GenerationState state = new GenerationState(
                 ktFile.getProject(), ClassBuilderFactories.TEST, resolutionFacade.getModuleDescriptor(), bindingContext, toProcess,
-                configuration, generateClassFilter
+                configuration, generateClassFilter,
+                configuration.getBoolean(JVMConfigurationKeys.IR) ? JvmIrCodegenFactory.INSTANCE : DefaultCodegenFactory.INSTANCE
         );
 
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);

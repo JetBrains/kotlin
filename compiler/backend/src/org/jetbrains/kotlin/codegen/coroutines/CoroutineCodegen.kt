@@ -426,7 +426,7 @@ class CoroutineCodegenForNamedFunction private constructor(
 
                         codegen.v.load(0, AsmTypes.OBJECT_TYPE)
 
-                        if (suspendFunctionJvmView.isEffectivelyOpen() && !isInterfaceMethod && captureThisType != null) {
+                        if (suspendFunctionJvmView.isOverridable && !isInterfaceMethod && captureThisType != null) {
                             val owner = captureThisType.internalName
                             val impl = callableMethod.getAsmMethod().getImplForOpenMethod(owner)
                             codegen.v.invokestatic(owner, impl.name, impl.descriptor, false)

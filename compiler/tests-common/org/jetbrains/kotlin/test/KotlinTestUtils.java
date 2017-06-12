@@ -57,7 +57,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.ContentRootsKt;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -121,6 +124,7 @@ public class KotlinTestUtils {
             "(?://\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*)?" +
             "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
     private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
+    private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
 
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
         @NotNull
@@ -497,12 +501,9 @@ public class KotlinTestUtils {
             JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromJre(getJreHome(jdk6)));
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_9) {
-            String jdk9 = System.getenv("JDK_9");
-            if (jdk9 != null) {
-                configuration.put(JVMConfigurationKeys.JDK_HOME, new File(getJreHome(jdk9)));
-            }
-            else {
-                System.err.println("Environment variable JDK_9 is not set, the test will be skipped");
+            File home = getJre9HomeIfPossible();
+            if (home != null) {
+                configuration.put(JVMConfigurationKeys.JDK_HOME, home);
             }
         }
         else {
@@ -527,6 +528,17 @@ public class KotlinTestUtils {
         return configuration;
     }
 
+    @Nullable
+    public static File getJre9HomeIfPossible() {
+        String jdk9 = System.getenv("JDK_19");
+        if (jdk9 == null) {
+            // TODO: replace this with a failure as soon as Java 9 is installed on all TeamCity agents
+            System.err.println("Environment variable JDK_19 is not set, the test will be skipped");
+            return null;
+        }
+        return new File(jdk9);
+    }
+
     @NotNull
     private static String getJreHome(@NotNull String jdkHome) {
         File jre = new File(jdkHome, "jre");
@@ -534,13 +546,10 @@ public class KotlinTestUtils {
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
-        List<ContentRoot> paths = environment.getConfiguration().get(JVMConfigurationKeys.CONTENT_ROOTS);
-        if (paths == null) return;
+        List<String> paths = ContentRootsKt.getKotlinSourceRoots(environment.getConfiguration());
+        if (paths.isEmpty()) return;
         List<KtFile> ktFiles = new ArrayList<>();
-        for (ContentRoot root : paths) {
-            if (!(root instanceof KotlinSourceRoot)) continue;
-
-            String path = ((KotlinSourceRoot) root).getPath();
+        for (String path : paths) {
             File file = new File(path);
             if (file.isFile()) {
                 ktFiles.add(loadJetFile(environment.getProject(), file));
@@ -640,6 +649,12 @@ public class KotlinTestUtils {
 
     @NotNull
     public static <M, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M, F> factory) {
+        return createTestFiles(testFileName, expectedText, factory, false);
+    }
+
+    @NotNull
+    public static <M, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M, F> factory,
+            boolean preserveLocations) {
         Map<String, String> directives = parseDirectives(expectedText);
 
         List<F> testFiles = Lists.newArrayList();
@@ -673,7 +688,9 @@ public class KotlinTestUtils {
                 else {
                     end = expectedText.length();
                 }
-                String fileText = expectedText.substring(start, end);
+                String fileText = preserveLocations ?
+                                  substringKeepingLocations(expectedText, start, end) :
+                                  expectedText.substring(start,end);
                 processedChars = end;
 
                 testFiles.add(factory.createFile(module, fileName, fileText, directives));
@@ -720,6 +737,26 @@ public class KotlinTestUtils {
         }
 
         return testFiles;
+    }
+
+    private static String substringKeepingLocations(String string, int start, int end) {
+        Matcher matcher = LINE_SEPARATOR_PATTERN.matcher(string);
+        StringBuilder prefix = new StringBuilder();
+        int lastLineOffset = 0;
+        while (matcher.find()) {
+            if (matcher.end() > start) {
+                break;
+            }
+
+            lastLineOffset = matcher.end();
+            prefix.append('\n');
+        }
+
+        while (lastLineOffset++ < start) {
+            prefix.append(' ');
+        }
+
+        return prefix + string.substring(start, end);
     }
 
     private static List<String> parseModuleList(@Nullable String dependencies) {

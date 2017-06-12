@@ -64,9 +64,10 @@ final class LineBuffer {
      */
     static final int BUFLEN = 256;
 
-    LineBuffer(Reader in, int lineno) {
+    LineBuffer(Reader in, CodePosition position) {
         this.in = in;
-        this.lineno = lineno;
+        this.lineno = position.getLine();
+        this.lineStart = -position.getOffset();
     }
 
     int read() throws IOException {
@@ -236,11 +237,7 @@ final class LineBuffer {
     // Get the offset of the current character, relative to
     // the line that getLine() returns.
     int getOffset() {
-        if (lineStart < 0)
-            // The line begins somewhere in the other buffer.
-            return offset + (otherEnd - otherStart);
-        else
-            return offset - lineStart;
+        return offset - lineStart;
     }
 
     private boolean fill() throws IOException {
@@ -269,7 +266,7 @@ final class LineBuffer {
 
         // set lineStart to a sentinel value, unless this is the first
         // time around.
-        prevStart = lineStart = (otherBuffer == null) ? 0 : -1;
+        prevStart = lineStart = (otherBuffer == null) ? 0 : lineStart - end;
 
         offset = 0;
         end = in.read(buffer, 0, buffer.length);

@@ -28,21 +28,31 @@ import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.rename.RenameHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 abstract class AbstractReferenceSubstitutionRenameHandler(
         private val delegateHandler: RenameHandler = MemberInplaceRenameHandler()
 ) : PsiElementRenameHandler() {
-        protected fun getReferenceExpression(dataContext: DataContext): KtSimpleNameExpression? {
-        val caret = CommonDataKeys.CARET.getData(dataContext) ?: return null
-        val ktFile = CommonDataKeys.PSI_FILE.getData(dataContext) as? KtFile ?: return null
-        var elementAtCaret = ktFile.findElementAt(caret.offset)
-        if (elementAtCaret is PsiWhiteSpace) {
-            elementAtCaret = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceAfter(ktFile, caret.offset)
+    companion object {
+        fun getReferenceExpression(file: PsiFile, offset: Int): KtSimpleNameExpression? {
+            var elementAtCaret = file.findElementAt(offset) ?: return null
+            if (elementAtCaret.node?.elementType == KtTokens.AT) return null
+            if (elementAtCaret is PsiWhiteSpace) {
+                elementAtCaret = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceAfter(file, offset) ?: return null
+                if (offset != elementAtCaret.endOffset) return null
+            }
+            return elementAtCaret.getNonStrictParentOfType<KtSimpleNameExpression>()
         }
-        return elementAtCaret?.getNonStrictParentOfType<KtSimpleNameExpression>()
+
+        fun getReferenceExpression(dataContext: DataContext): KtSimpleNameExpression? {
+            val caret = CommonDataKeys.CARET.getData(dataContext) ?: return null
+            val ktFile = CommonDataKeys.PSI_FILE.getData(dataContext) as? KtFile ?: return null
+            return getReferenceExpression(ktFile, caret.offset)
+        }
     }
 
     protected abstract fun getElementToRename(dataContext: DataContext): PsiElement?

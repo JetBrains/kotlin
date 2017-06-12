@@ -112,7 +112,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
                     when (access) {
                         ReadWriteAccessDetector.Access.Read -> kotlinOptions.isReadAccess
                         ReadWriteAccessDetector.Access.Write -> kotlinOptions.isWriteAccess
-                        ReadWriteAccessDetector.Access.ReadWrite -> true
+                        ReadWriteAccessDetector.Access.ReadWrite -> kotlinOptions.isReadWriteAccess
                     }
                 }
             }

@@ -64,7 +64,7 @@ private class TypeCheckRewritingVisitor : JsVisitorWithContextImpl() {
             val replacement = getReplacement(callee, calleeArguments, argument)
 
             if (replacement != null) {
-                ctx.replaceMe(accept(replacement))
+                ctx.replaceMe(accept(replacement).source(x.source))
                 return false
             }
         }

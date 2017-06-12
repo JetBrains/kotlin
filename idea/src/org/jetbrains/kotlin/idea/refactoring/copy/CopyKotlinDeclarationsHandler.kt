@@ -19,26 +19,26 @@ package org.jetbrains.kotlin.idea.refactoring.copy
 import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.PsiFileSystemItem
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
+import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
 import com.intellij.refactoring.copy.CopyHandlerDelegateBase
-import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.*
@@ -73,8 +73,31 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
         }
     }
 
+    private val copyFilesHandler by lazy { CopyFilesOrDirectoriesHandler() }
+
+    private fun getSourceFiles(elements: Array<out PsiElement>): Array<PsiElement>? {
+        return elements
+                .map { it.containingFile ?: it as? PsiFileSystemItem ?: return null }
+                .toTypedArray()
+    }
+
+    private fun canCopyFiles(elements: Array<out PsiElement>, fromUpdate: Boolean): Boolean {
+        val sourceFiles = getSourceFiles(elements) ?: return false
+        return copyFilesHandler.canCopy(sourceFiles, fromUpdate)
+    }
+
+    private fun canCopyDeclarations(elements: Array<out PsiElement>): Boolean {
+        val containingFile =
+                elements
+                        .flatMap { it.getElementsToCopy().ifEmpty { return false } }
+                        .distinctBy { it.containingFile }
+                        .singleOrNull()
+                        ?.containingFile ?: return false
+        return containingFile.sourceRoot != null
+    }
+
     override fun canCopy(elements: Array<out PsiElement>, fromUpdate: Boolean): Boolean {
-        return elements.flatMap { it.getElementsToCopy().ifEmpty { return false } }.distinctBy { it.containingFile }.size == 1
+        return canCopyDeclarations(elements) || canCopyFiles(elements, fromUpdate)
     }
 
     enum class ExistingFilePolicy {
@@ -145,6 +168,11 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
     }
 
     override fun doCopy(elements: Array<out PsiElement>, defaultTargetDirectory: PsiDirectory?) {
+        if (!canCopyDeclarations(elements)) {
+            val sourceFiles = getSourceFiles(elements) ?: return
+            return copyFilesHandler.doCopy(sourceFiles, defaultTargetDirectory)
+        }
+
         val elementsToCopy = elements.flatMap { it.getElementsToCopy() }
         if (elementsToCopy.isEmpty()) return
 
@@ -236,8 +264,13 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                         performDelayedRefactoringRequests(project)
                     }
 
-                    oldToNewElementsMapping.values.singleOrNull()?.let {
-                        RenameProcessor(project, it, newName!!.quoteIfNeeded(), false, false).run()
+                    (oldToNewElementsMapping.values.singleOrNull() as? KtNamedDeclaration)?.let { newDeclaration ->
+                        if (newName == newDeclaration.name) return@let
+                        val selfReferences = ReferencesSearch.search(newDeclaration, LocalSearchScope(newDeclaration)).findAll()
+                        runWriteAction {
+                            selfReferences.forEach { it.handleElementRename(newName!!) }
+                            newDeclaration.setName(newName!!)
+                        }
                     }
 
                     if (openInEditor) {

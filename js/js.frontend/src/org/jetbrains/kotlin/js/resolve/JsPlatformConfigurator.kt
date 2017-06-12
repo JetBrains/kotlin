@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
-import org.jetbrains.kotlin.resolve.IdentifierChecker
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
@@ -50,7 +49,7 @@ object JsPlatformConfigurator : PlatformConfigurator(
         additionalTypeCheckers = listOf(),
         additionalClassifierUsageCheckers = listOf(),
         additionalAnnotationCheckers = listOf(),
-        identifierChecker = IdentifierChecker.DEFAULT,
+        identifierChecker = JsIdentifierChecker,
         overloadFilter = OverloadFilter.DEFAULT,
         platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY,
         delegationFilter = DelegationFilter.DEFAULT,

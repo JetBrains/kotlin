@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 498
 // FILE: a.kt
 @file:JsModule("lib")
 @file:JsNonModule

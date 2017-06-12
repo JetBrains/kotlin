@@ -441,7 +441,7 @@ private fun KotlinType.getName() = constructor.declarationDescriptor?.name
 
 private fun KotlinType.fqNameEquals(fqName: String) = constructor.declarationDescriptor?.fqNameSafe?.asString() == fqName
 
-private fun KotlinType.isSubclassOfParcelable(strict: Boolean = false): Boolean = isSubclassOf(FqName(CLASS_PARCELABLE), strict)
+private fun KotlinType.isSubclassOfParcelable(strict: Boolean = false): Boolean = isSubclassOf(CLASS_PARCELABLE, strict)
 
 private fun KotlinType.isIBinder(): Boolean = fqNameEquals("android.os.IBinder")
 

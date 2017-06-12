@@ -178,6 +178,7 @@ enum class AnnotationArgumentsRenderingPolicy(
 interface DescriptorRendererOptions {
     var classifierNamePolicy: ClassifierNamePolicy
     var withDefinedIn: Boolean
+    var withSourceFileForTopLevel: Boolean
     var modifiers: Set<DescriptorRendererModifier>
     var startFromName: Boolean
     var startFromDeclarationKeyword: Boolean
@@ -206,7 +207,7 @@ interface DescriptorRendererOptions {
     var renderCompanionObjectName: Boolean
     var withoutSuperTypes: Boolean
     var typeNormalizer: (KotlinType) -> KotlinType
-    var renderDefaultValues: Boolean
+    var defaultParameterValueRenderer: ((ValueParameterDescriptor) -> String)?
     var secondaryConstructorsAsPrimary: Boolean
     var renderAccessors: Boolean
     var renderDefaultAnnotationArguments: Boolean

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,14 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.config.JsConfig;
+import org.jetbrains.kotlin.js.naming.NameSuggestionKt;
+import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
+import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.name.Name;
@@ -38,12 +43,15 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
 import java.util.*;
 
 import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt.isCoroutineLambda;
 import static org.jetbrains.kotlin.js.translate.context.UsageTrackerKt.getNameForCapturedDescriptor;
+import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForElement;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
 
 /**
  * All the info about the state of the translation process.
@@ -65,6 +73,8 @@ public class TranslationContext {
     private final ClassDescriptor classDescriptor;
     @Nullable
     private final VariableDescriptor continuationParameterDescriptor;
+
+    private final Set<String> modulesImportedForInline = new HashSet<>();
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext) {
@@ -264,16 +274,123 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsNameRef getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof MemberDescriptor && isFromCurrentModule(descriptor) && isPublicInlineFunction()) {
-            staticContext.export((MemberDescriptor) descriptor, true);
+    public JsExpression getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
+        JsExpression result = staticContext.getQualifiedReference(descriptor);
+        if (isPublicInlineFunction()) {
+            if (isFromCurrentModule(descriptor)) {
+                if (descriptor instanceof MemberDescriptor) {
+                    staticContext.export((MemberDescriptor) descriptor, true);
+                }
+            }
+            else {
+                ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
+                ModuleDescriptor currentModule = staticContext.getCurrentModule();
+                if (module != currentModule && !isInlineFunction(descriptor)) {
+                    result = exportModuleForInline(currentModule, module, result);
+                }
+            }
         }
-        return staticContext.getQualifiedReference(descriptor);
+        return result;
+    }
+
+    private boolean isInlineFunction(@NotNull DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof CallableDescriptor)) return false;
+        return CallExpressionTranslator.shouldBeInlined((CallableDescriptor) descriptor, this);
     }
 
     @NotNull
-    public JsNameRef getInnerReference(@NotNull DeclarationDescriptor descriptor) {
-        return JsAstUtils.pureFqn(getInnerNameForDescriptor(descriptor), null);
+    private JsExpression exportModuleForInline(
+            @NotNull ModuleDescriptor currentModule, @NotNull ModuleDescriptor module,
+            @NotNull JsExpression fqn
+    ) {
+        if (currentModule.getBuiltIns().getBuiltInsModule() == module) return fqn;
+
+        String moduleName = StaticContext.suggestModuleName(module);
+        if (moduleName.equals(Namer.KOTLIN_LOWER_NAME)) return fqn;
+
+        return exportModuleForInline(currentModule, moduleName, staticContext.getInnerNameForDescriptor(module), fqn);
+    }
+
+    private JsExpression exportModuleForInline(
+            @NotNull ModuleDescriptor currentModule,
+            @NotNull String moduleId, @NotNull JsName moduleName,
+            @NotNull JsExpression fqn) {
+        JsExpression currentModuleRef = pureFqn(staticContext.getInnerNameForDescriptor(currentModule), null);
+        JsExpression importsRef = pureFqn(Namer.IMPORTS_FOR_INLINE_PROPERTY, currentModuleRef);
+        JsExpression currentImports = pureFqn(staticContext.getNameForImportsForInline(), null);
+
+        JsExpression moduleRef;
+        JsExpression lhsModuleRef;
+        if (NameSuggestionKt.isValidES5Identifier(moduleId)) {
+            moduleRef = pureFqn(moduleId, importsRef);
+            lhsModuleRef = pureFqn(moduleId, currentImports);
+        }
+        else {
+            moduleRef = new JsArrayAccess(importsRef, new JsStringLiteral(moduleId));
+            MetadataProperties.setSideEffects(moduleRef, SideEffectKind.PURE);
+            lhsModuleRef = new JsArrayAccess(currentImports, new JsStringLiteral(moduleId));
+        }
+
+        fqn = replaceModuleReference(fqn, moduleName, moduleRef);
+
+        if (modulesImportedForInline.add(moduleId)) {
+            JsExpressionStatement importStmt = new JsExpressionStatement(JsAstUtils.assignment(lhsModuleRef, moduleName.makeRef()));
+            MetadataProperties.setExportedTag(importStmt, "imports:" + moduleId);
+            staticContext.getFragment().getExportBlock().getStatements().add(importStmt);
+        }
+
+        return fqn;
+    }
+
+    private static JsExpression replaceModuleReference(
+            @NotNull JsExpression expression,
+            @NotNull JsName expectedModuleName,
+            @NotNull JsExpression reexportExpr
+    ) {
+        if (expression instanceof JsNameRef) {
+            JsNameRef nameRef = (JsNameRef) expression;
+            if (nameRef.getQualifier() == null) {
+                return expectedModuleName == nameRef.getName() ? reexportExpr : expression;
+            }
+            else {
+                JsExpression newQualifier = replaceModuleReference(nameRef.getQualifier(), expectedModuleName, reexportExpr);
+                if (newQualifier == nameRef.getQualifier()) {
+                    return expression;
+                }
+                JsExpression result = nameRef.getName() != null ?
+                                      new JsNameRef(nameRef.getName(), newQualifier) :
+                                      new JsNameRef(nameRef.getIdent(), newQualifier);
+                result.copyMetadataFrom(nameRef);
+                return result;
+            }
+        }
+        else {
+            return expression;
+        }
+    }
+
+    @NotNull
+    public JsExpression getInnerReference(@NotNull DeclarationDescriptor descriptor) {
+        JsName name = getInnerNameForDescriptor(descriptor);
+        JsExpression result = pureFqn(name, null);
+
+        SuggestedName suggested = staticContext.suggestName(descriptor);
+        if (suggested != null && getConfig().getModuleKind() != ModuleKind.PLAIN && isPublicInlineFunction()) {
+            String moduleId = AnnotationsUtils.getModuleName(suggested.getDescriptor());
+            if (moduleId != null) {
+                result = exportModuleForInline(getCurrentModule(), moduleId, name, result);
+            }
+            else if (isNativeObject(suggested.getDescriptor()) && DescriptorUtils.isTopLevelDeclaration(suggested.getDescriptor())) {
+                String fileModuleId = AnnotationsUtils.getFileModuleName(bindingContext(), suggested.getDescriptor());
+                if (fileModuleId != null) {
+                    JsName fileModuleName = staticContext.getImportedModule(fileModuleId, null).getInternalName();
+                    result = exportModuleForInline(getCurrentModule(), fileModuleId, fileModuleName,
+                                                   staticContext.getQualifiedReference(descriptor));
+                }
+            }
+        }
+
+        return result;
     }
 
     @NotNull
@@ -390,7 +507,8 @@ public class TranslationContext {
             return nameRef;
         }
 
-        return aliasingContext.getAliasForDescriptor(descriptor);
+        JsExpression alias = aliasingContext.getAliasForDescriptor(descriptor);
+        return alias != null ? alias.deepCopy() : null;
     }
 
     @NotNull
@@ -407,7 +525,7 @@ public class TranslationContext {
 
         if (DescriptorUtils.isObject(descriptor.getContainingDeclaration())) {
             if (isConstructorOrDirectScope(descriptor.getContainingDeclaration())) {
-                return JsLiteral.THIS;
+                return new JsThisRef();
             }
             else {
                 ClassDescriptor objectDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
@@ -415,7 +533,7 @@ public class TranslationContext {
             }
         }
 
-        if (descriptor.getValue() instanceof ExtensionReceiver) return JsLiteral.THIS;
+        if (descriptor.getValue() instanceof ExtensionReceiver) return new JsThisRef();
 
         ClassifierDescriptor classifier = descriptor.getValue().getType().getConstructor().getDeclarationDescriptor();
 
@@ -427,7 +545,7 @@ public class TranslationContext {
         assert classDescriptor != null : "Can't get ReceiverParameterDescriptor in top level";
         JsExpression receiver = getAliasForDescriptor(classDescriptor.getThisAsReceiverParameter());
         if (receiver == null) {
-            receiver = JsLiteral.THIS;
+            receiver = new JsThisRef();
         }
 
         return getDispatchReceiverPath(cls, receiver);
@@ -467,7 +585,7 @@ public class TranslationContext {
             if (name != null) {
                 JsExpression result;
                 if (shouldCaptureViaThis()) {
-                    result = JsLiteral.THIS;
+                    result = new JsThisRef();
                     int depth = getOuterLocalClassDepth();
                     for (int i = 0; i < depth; ++i) {
                         result = new JsNameRef(Namer.OUTER_FIELD_NAME, result);
@@ -572,7 +690,7 @@ public class TranslationContext {
             return getDispatchReceiver((ReceiverParameterDescriptor) descriptor);
         }
         if (isCoroutineLambda(descriptor)) {
-            return JsLiteral.THIS;
+            return new JsThisRef();
         }
         return getNameForDescriptor(descriptor).makeRef();
     }

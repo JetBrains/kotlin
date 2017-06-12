@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 892
 package foo
 
 

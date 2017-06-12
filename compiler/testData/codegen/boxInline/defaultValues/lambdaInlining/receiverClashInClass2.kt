@@ -14,6 +14,8 @@ class A(val value: String) {
 
 // FILE: 2.kt
 //WIH_RUNTIME
+// CHECK_CALLED_IN_SCOPE: function=inlineFun$f scope=test
+// CHECK_CALLED_IN_SCOPE: function=inlineFun$f_0 scope=test
 import test.*
 
 fun String.test(): String = with(A("VALUE")) { "INLINE".inlineFun({ this@test }) }

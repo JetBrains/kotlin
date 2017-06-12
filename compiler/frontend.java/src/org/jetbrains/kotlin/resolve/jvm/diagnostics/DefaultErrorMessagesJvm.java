@@ -40,7 +40,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
                 StringBuilder sb = new StringBuilder();
                 for (DeclarationDescriptor descriptor : renderedDescriptors) {
-                    sb.append("    ").append(Renderers.COMPACT.render(descriptor, renderingContext)).append("\n");
+                    sb.append("    ").append(Renderers.WITHOUT_MODIFIERS.render(descriptor, renderingContext)).append("\n");
                 }
                 return ("The following declarations have the same JVM signature (" + data.getSignature().getName() + data.getSignature().getDesc() + "):\n" + sb).trim();
             };
@@ -67,7 +67,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, "External declaration can not be abstract");
         MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, "External declaration can not have a body");
         MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE, "Members of interfaces can not be external");
-        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_INLINED, "Members of interfaces can not be external");
+        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_INLINED, "Inline functions can not be external");
 
         MAP.put(ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
         MAP.put(ErrorsJvm.DEPRECATED_JAVA_ANNOTATION, "This annotation is deprecated in Kotlin. Use ''@{0}'' instead", Renderers.TO_STRING);

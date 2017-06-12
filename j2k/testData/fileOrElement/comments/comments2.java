@@ -15,5 +15,17 @@ class A {
 
     protected/*it's protected*/ void foo(char c) { }
 
+    /**
+     * Method description.
+     * Multi-line method description.
+     *
+     *
+     * @param param1 param1 description
+     * @param param2 param2 description
+     *
+     * @param param3 param3 description
+     */
+    public void foo(String param1, String param2, String param3) {}
+
     public/*it's public*/ static/*and static*/ final/*and final*/ int C = 1;
 }

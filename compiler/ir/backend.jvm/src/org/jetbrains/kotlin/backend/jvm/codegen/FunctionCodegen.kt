@@ -53,7 +53,8 @@ class FunctionCodegen(val irFunction: IrFunction, val classCodegen: ClassCodegen
 
     private fun doGenerate() {
         val signature = classCodegen.typeMapper.mapSignatureWithGeneric(descriptor, OwnerKind.IMPLEMENTATION)
-        val isStatic = isStaticMethod(classCodegen.descriptor.getMemberOwnerKind(), descriptor) || DescriptorUtils.isStaticDeclaration(descriptor)
+        val isStatic = isStaticMethod(OwnerKind.getMemberOwnerKind(classCodegen.descriptor), descriptor) ||
+                       DescriptorUtils.isStaticDeclaration(descriptor)
         val frameMap = createFrameMapWithReceivers(classCodegen.state, descriptor, signature, isStatic)
 
 

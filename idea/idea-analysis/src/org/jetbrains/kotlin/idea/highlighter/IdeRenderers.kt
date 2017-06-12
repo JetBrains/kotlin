@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
-import kotlin.comparisons.compareBy
 
 object IdeRenderers {
 
@@ -69,10 +68,6 @@ object IdeRenderers {
         HTML_RENDER_TYPE.render(member.returnType!!, context)
     }
 
-    @JvmField val HTML_COMPACT_WITH_MODIFIERS = DescriptorRenderer.HTML.withOptions {
-        withDefinedIn = false
-    }.asRenderer()
-
     @JvmField val HTML_CONFLICTING_JVM_DECLARATIONS_DATA = Renderer {
         data: ConflictingJvmDeclarationsData ->
 
@@ -80,7 +75,7 @@ object IdeRenderers {
                 .mapNotNull { it.descriptor }
                 .sortedWith(MemberComparator.INSTANCE)
         val context = RenderingContext.of(descriptors)
-        val conflicts = descriptors.joinToString("") { "<li>" + HTML_COMPACT_WITH_MODIFIERS.render(it, context) + "</li>\n" }
+        val conflicts = descriptors.joinToString("") { "<li>" + HTML.render(it, context) + "</li>\n" }
 
         "The following declarations have the same JVM signature (<code>${data.signature.name}${data.signature.desc}</code>):<br/>\n<ul>\n$conflicts</ul>"
     }

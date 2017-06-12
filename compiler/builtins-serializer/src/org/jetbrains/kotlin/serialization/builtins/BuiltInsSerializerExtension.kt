@@ -17,17 +17,19 @@
 package org.jetbrains.kotlin.serialization.builtins
 
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnresolvedType
 
 class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
-    private val shortNameToFullName = mapOf(
-            "IntRange" to "kotlin/ranges/IntRange",
-            "LongRange" to "kotlin/ranges/LongRange",
-            "CharRange" to "kotlin/ranges/CharRange"
-    )
+    private val shortNameToClassId = mapOf(
+            "IntRange" to "kotlin.ranges.IntRange",
+            "LongRange" to "kotlin.ranges.LongRange",
+            "CharRange" to "kotlin.ranges.CharRange"
+    ).mapValues { (_, value) -> ClassId.topLevel(FqName(value)) }
 
     override fun shouldUseTypeTable(): Boolean = true
 
@@ -37,9 +39,9 @@ class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSeriali
             throw UnsupportedOperationException("Error types which are not UnresolvedType instances are not supported here: $unwrapped")
         }
 
-        val fullName = shortNameToFullName[unwrapped.presentableName]
-                       ?: throw UnsupportedOperationException("Unsupported unresolved type: $unwrapped")
+        val classId = shortNameToClassId[unwrapped.presentableName]
+                      ?: throw UnsupportedOperationException("Unsupported unresolved type: $unwrapped")
 
-        builder.className = stringTable.getStringIndex(fullName)
+        builder.className = stringTable.getClassIdIndex(classId)
     }
 }

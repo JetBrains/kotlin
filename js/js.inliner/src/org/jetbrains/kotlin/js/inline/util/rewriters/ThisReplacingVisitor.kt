@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.inline.util.rewriters
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class ThisReplacingVisitor(private val thisReplacement: JsExpression) : JsVisitorWithContextImpl() {
-    override fun endVisit(x: JsLiteral.JsThisRef, ctx: JsContext<JsNode>) {
+    override fun endVisit(x: JsThisRef, ctx: JsContext<JsNode>) {
         ctx.replaceMe(thisReplacement)
     }
 

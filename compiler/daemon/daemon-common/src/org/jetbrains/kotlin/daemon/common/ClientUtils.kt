@@ -44,6 +44,10 @@ private const val ORPHANED_RUN_FILE_AGE_THRESHOLD_MS = 1000000L
 
 data class DaemonWithMetadata(val daemon: CompileService, val runFile: File, val jvmOptions: DaemonJVMOptions)
 
+// TODO: write metadata into discovery file to speed up selection
+// TODO: consider using compiler jar signature (checksum) as a CompilerID (plus java version, plus ???) instead of classpath checksum
+//    would allow to use same compiler from taken different locations
+//    reqs: check that plugins (or anything els) should not be part of the CP
 fun walkDaemons(registryDir: File,
                 compilerId: CompilerId,
                 fileToCompareTimestamp: File,

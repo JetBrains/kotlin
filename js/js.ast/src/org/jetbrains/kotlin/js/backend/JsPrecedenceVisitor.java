@@ -61,7 +61,7 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitBoolean(@NotNull JsLiteral.JsBooleanLiteral x) {
+    public void visitBoolean(@NotNull JsBooleanLiteral x) {
         answer = 17; // primary
     }
 
@@ -101,12 +101,12 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitInt(@NotNull JsNumberLiteral.JsIntLiteral x) {
+    public void visitInt(@NotNull JsIntLiteral x) {
         answer = 17; // primary
     }
 
     @Override
-    public void visitDouble(@NotNull JsNumberLiteral.JsDoubleLiteral x) {
+    public void visitDouble(@NotNull JsDoubleLiteral x) {
         answer = 17; // primary
     }
 
@@ -141,7 +141,7 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitThis(@NotNull JsLiteral.JsThisRef x) {
+    public void visitThis(@NotNull JsThisRef x) {
         answer = 17; // primary
     }
 

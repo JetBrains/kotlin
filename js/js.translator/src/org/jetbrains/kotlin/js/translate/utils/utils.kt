@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.utils
 
+import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.CoroutineMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
+import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
@@ -35,6 +37,8 @@ import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 
 fun generateDelegateCall(
@@ -42,9 +46,19 @@ fun generateDelegateCall(
         fromDescriptor: FunctionDescriptor,
         toDescriptor: FunctionDescriptor,
         thisObject: JsExpression,
-        context: TranslationContext
+        context: TranslationContext,
+        detectDefaultParameters: Boolean,
+        source: PsiElement?
 ): JsStatement {
-    val overriddenMemberFunctionName = context.getNameForDescriptor(toDescriptor)
+    fun FunctionDescriptor.getNameForFunctionWithPossibleDefaultParam() =
+            if (detectDefaultParameters && hasOrInheritsParametersWithDefaultValue()) {
+                context.scope().declareName(context.getNameForDescriptor(this).ident + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
+            }
+            else {
+                context.getNameForDescriptor(this)
+            }
+
+    val overriddenMemberFunctionName = toDescriptor.getNameForFunctionWithPossibleDefaultParam()
     val overriddenMemberFunctionRef = JsNameRef(overriddenMemberFunctionName, thisObject)
 
     val parameters = SmartList<JsParameter>()
@@ -71,10 +85,16 @@ fun generateDelegateCall(
         JsInvocation(overriddenMemberFunctionRef, args)
     }
 
-    val functionObject = simpleReturnFunction(context.getScopeForDescriptor(fromDescriptor), invocation)
+    invocation.source = source
+
+    val functionObject = simpleReturnFunction(context.scope(), invocation)
     functionObject.parameters.addAll(parameters)
 
-    return context.addFunctionToPrototype(classDescriptor, fromDescriptor, functionObject)
+    val fromFunctionName = fromDescriptor.getNameForFunctionWithPossibleDefaultParam()
+
+    val prototypeRef = JsAstUtils.prototypeOf(context.getInnerReference(classDescriptor))
+    val functionRef = JsNameRef(fromFunctionName, prototypeRef)
+    return JsAstUtils.assignment(functionRef, functionObject).makeStmt()
 }
 
 fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
@@ -136,7 +156,7 @@ fun TranslationContext.addAccessorsToPrototype(
 ) {
     val prototypeRef = JsAstUtils.prototypeOf(getInnerReference(containingClass))
     val propertyName = getNameForDescriptor(propertyDescriptor)
-    val defineProperty = JsAstUtils.defineProperty(prototypeRef, propertyName.ident, literal, program())
+    val defineProperty = JsAstUtils.defineProperty(prototypeRef, propertyName.ident, literal)
     addDeclarationStatement(defineProperty.makeStmt())
 }
 
@@ -170,6 +190,14 @@ fun JsFunction.fillCoroutineMetadata(
             resultName = getCoroutinePropertyName("result"),
             exceptionName = getCoroutinePropertyName("exception"),
             hasController = hasController,
-            hasReceiver = descriptor.dispatchReceiverParameter != null
+            hasReceiver = descriptor.dispatchReceiverParameter != null,
+            psiElement = descriptor.source.getPsi()
     )
+}
+
+fun definePackageAlias(name: String, varName: JsName, tag: String, parentRef: JsExpression): JsStatement {
+    val selfRef = JsNameRef(name, parentRef)
+    val rhs = JsAstUtils.or(selfRef, JsAstUtils.assignment(selfRef.deepCopy(), JsObjectLiteral(false)))
+
+    return JsAstUtils.newVar(varName, rhs).apply { exportedPackage = tag }
 }

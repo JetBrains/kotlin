@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.java.model.types
 
+import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiIntersectionType
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiTypeParameter
 import org.jetbrains.kotlin.java.model.elements.JeTypeParameterElement
-import com.intellij.psi.*
-import org.jetbrains.kotlin.annotation.processing.impl.toDisposable
 import org.jetbrains.kotlin.java.model.toJeElement
+import org.jetbrains.kotlin.java.model.util.toDisposable
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVariable

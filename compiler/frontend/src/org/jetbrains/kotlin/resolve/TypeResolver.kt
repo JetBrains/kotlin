@@ -20,7 +20,6 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.context.TypeLazinessToken
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -49,6 +48,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findFirstFromMeAndParent
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
@@ -56,17 +56,16 @@ import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliases
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class TypeResolver(
         private val annotationResolver: AnnotationResolver,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val moduleDescriptor: ModuleDescriptor,
         private val typeTransformerForTests: TypeTransformerForTests,
-        private val lazinessToken: TypeLazinessToken,
         private val dynamicTypesSettings: DynamicTypesSettings,
         private val dynamicCallableDescriptors: DynamicCallableDescriptors,
         private val identifierChecker: IdentifierChecker,
-        private val wrappedTypeFactory: WrappedTypeFactory,
         private val platformToKotlinClassMap: PlatformToKotlinClassMap,
         private val languageVersionSettings: LanguageVersionSettings
 ) {
@@ -115,37 +114,16 @@ class TypeResolver(
             return type(debugType)
         }
 
-        if (!c.allowBareTypes && !c.forceResolveLazyTypes && lazinessToken.isLazy()) {
-            // Bare types can be allowed only inside expressions; lazy type resolution is only relevant for declarations
-
-            val lazyKotlinType = wrappedTypeFactory.createLazyWrappedType {
-                doResolvePossiblyBareType(c, typeReference).actualType
-            }
-            c.trace.record(resolvedTypeSlice, typeReference, lazyKotlinType)
-            return type(lazyKotlinType)
-        }
-
-        val type = doResolvePossiblyBareType(c, typeReference)
-        if (!type.isBare) {
-            c.trace.record(resolvedTypeSlice, typeReference, type.actualType)
-        }
-        return type
-    }
-
-    private fun doResolvePossiblyBareType(c: TypeResolutionContext, typeReference: KtTypeReference): PossiblyBareType {
-        val typeElement = typeReference.typeElement
-
         val annotations = resolveTypeAnnotations(c, typeReference)
-
-        val type = resolveTypeElement(c, annotations, typeReference.modifierList, typeElement)
+        val type = resolveTypeElement(c, annotations, typeReference.modifierList, typeReference.typeElement)
         c.trace.recordScope(c.scope, typeReference)
 
         if (!type.isBare) {
             for (argument in type.actualType.arguments) {
                 forceResolveTypeContents(argument.type)
             }
+            c.trace.record(resolvedTypeSlice, typeReference, type.actualType)
         }
-
         return type
     }
 
@@ -255,6 +233,7 @@ class TypeResolver(
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
                 val parameterDescriptors = resolveParametersOfFunctionType(type.parameters)
+                checkParametersOfFunctionType(parameterDescriptors)
 
                 val returnTypeRef = type.returnTypeReference
                 val returnType = if (returnTypeRef != null) resolveType(c.noBareTypes(), returnTypeRef)
@@ -267,6 +246,17 @@ class TypeResolver(
                         returnType,
                         suspendFunction = hasSuspendModifier
                 ))
+            }
+
+            private fun checkParametersOfFunctionType(parameterDescriptors: List<VariableDescriptor>) {
+                val parametersByName = parameterDescriptors.filter { !it.name.isSpecial }.groupBy { it.name }
+                for (parametersGroup in parametersByName.values) {
+                    if (parametersGroup.size < 2) continue
+                    for (parameter in parametersGroup) {
+                        val ktParameter = parameter.source.getPsi()?.safeAs<KtParameter>() ?: continue
+                        c.trace.report(DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE.on(ktParameter))
+                    }
+                }
             }
 
             private fun resolveParametersOfFunctionType(parameters: List<KtParameter>): List<VariableDescriptor> {

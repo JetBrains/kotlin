@@ -282,6 +282,8 @@ message Vars {
 message VarDeclaration {
     required int32 name_id = 1;
     optional Expression initial_value = 2;
+    optional int32 fileId = 3;
+    optional Location location = 4;
 }
 
 message Block {
@@ -325,7 +327,7 @@ message DoWhile {
 
 message For {
     oneof init {
-        Vars variables = 1;
+        Statement variables = 1;
         Expression expression = 2;
         EmptyInit empty = 3;
     }

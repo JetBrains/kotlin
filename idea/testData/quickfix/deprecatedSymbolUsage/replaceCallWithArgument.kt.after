@@ -3,5 +3,5 @@
 fun oldFun(p: Int): Int = p
 
 fun foo() {
-    <caret>0
+    val v = 0
 }

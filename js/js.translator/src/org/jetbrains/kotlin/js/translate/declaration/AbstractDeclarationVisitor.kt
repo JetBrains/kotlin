@@ -76,8 +76,8 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
         }
 
         if (TranslationUtils.shouldAccessViaFunctions(descriptor) || descriptor.isExtensionProperty) {
-            addFunction(descriptor.getter!!, getterExpr)
-            descriptor.setter?.let { addFunction(it, setterExpr!!) }
+            addFunction(descriptor.getter!!, getterExpr, expression.getter ?: expression)
+            descriptor.setter?.let { addFunction(it, setterExpr!!, expression.setter ?: expression) }
         }
         else {
             addProperty(descriptor, getterExpr, setterExpr)
@@ -87,7 +87,7 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
     override fun visitNamedFunction(expression: KtNamedFunction, context: TranslationContext) {
         val descriptor = BindingUtils.getFunctionDescriptor(context.bindingContext(), expression)
         val jsFunction = if (descriptor.modality != Modality.ABSTRACT) translateFunction(descriptor, expression, context) else null
-        addFunction(descriptor, jsFunction)
+        addFunction(descriptor, jsFunction, expression)
     }
 
     override fun visitTypeAlias(typeAlias: KtTypeAlias, data: TranslationContext?) {}
@@ -115,7 +115,8 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
 
     protected abstract fun addFunction(
             descriptor: FunctionDescriptor,
-            expression: JsExpression?
+            expression: JsExpression?,
+            psi: KtElement
     )
 
     protected abstract fun addProperty(

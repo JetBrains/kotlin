@@ -49,8 +49,8 @@ data class ArgumentParseErrors(
     var argumentWithoutValue: String? = null
 )
 
-// Parses arguments in the passed [result] object, or throws an [IllegalArgumentException] with the message to be displayed to the user
-fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>, result: A) {
+// Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
+fun <A : CommonToolArguments> parseCommandLineArguments(args: Array<out String>, result: A) {
     data class ArgumentField(val field: Field, val argument: Argument)
 
     val fields = result::class.java.fields.mapNotNull { field ->
@@ -118,7 +118,7 @@ fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>,
     }
 }
 
-private fun <A : CommonCompilerArguments> updateField(field: Field, result: A, value: Any, delimiter: String) {
+private fun <A : CommonToolArguments> updateField(field: Field, result: A, value: Any, delimiter: String) {
     when (field.type) {
         Boolean::class.java, String::class.java -> field.set(result, value)
         Array<String>::class.java -> {

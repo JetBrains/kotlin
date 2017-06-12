@@ -3,7 +3,6 @@
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/coverage/lib/coverage.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/coverage/lib/jacocoant.jar!/" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/coverage/lib/coverage-agent.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

@@ -3,7 +3,7 @@ class Foo {
     fun method(b: Boolean,
                elementComputable: Computable<String>,
                processingContext: Any): WeighingComparable<String, ProximityLocation> {
-        return WeighingComparable(elementComputable, ProximityLocation(), Array<Weigher<*, *>>(0) { null!! })
+        return WeighingComparable(elementComputable, ProximityLocation(), Array(0) { null!! })
     }
 
     companion object {

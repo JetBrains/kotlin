@@ -1,5 +1,5 @@
 // Enable when KT-14833 is fixed.
-// TARGET_BACKEND: JS
+// IGNORE_BACKEND: JVM
 import kotlin.reflect.KProperty
 
 var a = 0

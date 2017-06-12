@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 494
 // MODULE: module-1
 // FILE: bar.kt
 // MODULE_KIND: PLAIN

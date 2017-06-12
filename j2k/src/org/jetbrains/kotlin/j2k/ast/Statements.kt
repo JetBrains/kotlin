@@ -69,6 +69,9 @@ class IfStatement(
         if (!elseStatement.isEmpty) {
             builder append br append "else" append brAfterElse append elseStatement.wrapToBlockIfRequired()
         }
+        else if (thenStatement.isEmpty) {
+            builder append ";"
+        }
     }
 }
 
@@ -79,6 +82,9 @@ class WhileStatement(val condition: Expression, val body: Element, singleLine: B
 
     override fun generateCode(builder: CodeBuilder) {
         builder append "while (" append condition append ")" append br append body.wrapToBlockIfRequired()
+        if (body.isEmpty) {
+            builder append ";"
+        }
     }
 }
 
@@ -106,6 +112,9 @@ class ForeachStatement(
             builder append ":" append explicitVariableType
         }
         builder append " in " append collection append ")" append br append body.wrapToBlockIfRequired()
+        if (body.isEmpty) {
+            builder append ";"
+        }
     }
 }
 

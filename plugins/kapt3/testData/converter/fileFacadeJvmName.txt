@@ -1,5 +1,6 @@
 package a.b.c;
 
+@kotlin.Metadata()
 public final class FacadeName {
 
     public FacadeName() {

@@ -17,7 +17,7 @@ class A1 : java.util.ArrayList<String>() {
     fun stream(): java.util.stream.Stream<String> = super.<!UNRESOLVED_REFERENCE!>stream<!>()
 
     // `sort` is defined in ArrayList, so it was impossible to declare it in 1.0 without an 'override' keyword
-    <!VIRTUAL_MEMBER_HIDDEN!>fun sort(c: Comparator<in String>?)<!> {
+    fun <!VIRTUAL_MEMBER_HIDDEN!>sort<!>(c: Comparator<in String>?) {
         super.sort(c)
     }
 }

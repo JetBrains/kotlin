@@ -16,15 +16,21 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.facet.FacetManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForModuleComputationTracker
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
+import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
+import org.jetbrains.kotlin.idea.facet.KotlinFacetType
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
 class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
@@ -105,6 +111,34 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module2.addDependency(module1, dependencyScope = DependencyScope.COMPILE)
 
         checkHighlightingInAllFiles()
+    }
+
+    fun testLanguageVersionsViaFacets() {
+        val m1 = module("m1", useFullJdk = true).setupKotlinFacet {
+            settings.languageLevel = LanguageVersion.KOTLIN_1_1
+        }
+        val m2 = module("m2", useFullJdk = true).setupKotlinFacet {
+            settings.languageLevel = LanguageVersion.KOTLIN_1_0
+        }
+
+        m1.addDependency(m2)
+        m2.addDependency(m1)
+
+        checkHighlightingInAllFiles()
+    }
+
+    private fun Module.setupKotlinFacet(configure: KotlinFacetConfiguration.() -> Unit) = apply {
+        runWriteAction {
+            val facet = FacetManager.getInstance(this).addFacet(KotlinFacetType.INSTANCE, KotlinFacetType.NAME, null)
+            val configuration = facet.configuration
+
+            // this is actually needed so facet settings object is in a valid state
+            configuration.settings.compilerArguments = K2JVMCompilerArguments()
+            // make sure module-specific settings are used
+            configuration.settings.useProjectSettings = false
+
+            configuration.configure()
+        }
     }
 
     class MultiPlatform : AbstractMultiModuleHighlightingTest() {

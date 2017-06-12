@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.annotation.processing.impl
 import com.intellij.openapi.Disposable
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.*
+import com.intellij.psi.util.PsiSuperMethodUtil
+import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.java.model.JeAnnotationOwner
 import org.jetbrains.kotlin.java.model.JeElement
 import org.jetbrains.kotlin.java.model.JeName
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JePackageElement
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
 import org.jetbrains.kotlin.java.model.internal.getTypeWithTypeParameters
+import org.jetbrains.kotlin.java.model.util.disposeAll
+import org.jetbrains.kotlin.java.model.util.toDisposable
 import java.io.PrintWriter
 import java.io.Writer
 import javax.lang.model.element.*
@@ -40,7 +43,7 @@ class KotlinElements(
     internal val javaPsiFacade = javaPsiFacade.toDisposable()
     internal val scope = scope.toDisposable()
 
-    override fun dispose() = dispose(javaPsiFacade, scope)
+    override fun dispose() = disposeAll(javaPsiFacade, scope)
 
     override fun hides(hider: Element, hidden: Element): Boolean {
         val hiderMethod = (hider as? JeMethodExecutableElement)?.psi ?: return false

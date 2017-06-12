@@ -21,10 +21,13 @@ import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
@@ -45,8 +48,13 @@ import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
+import org.jetbrains.jps.model.java.JpsJavaSdkType
+import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.cli.common.Usage
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
@@ -783,6 +791,27 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         )
     }
 
+    fun testHelp() {
+        initProject()
+
+        val result = buildAllModules()
+        result.assertSuccessful()
+        val warning = result.getMessages(BuildMessage.Kind.WARNING).single()
+
+        val expectedText = StringUtil.convertLineSeparators(Usage.render(K2JVMCompiler(), K2JVMCompilerArguments()))
+        Assert.assertEquals(expectedText, warning.messageText)
+    }
+
+    fun testWrongArgument() {
+        initProject()
+
+        val result = buildAllModules()
+        result.assertFailed()
+        val errors = result.getMessages(BuildMessage.Kind.ERROR).joinToString("\n\n") { it.messageText }
+
+        Assert.assertEquals("Invalid argument: -abcdefghij-invalid-argument", errors)
+    }
+
     fun testCodeInKotlinPackage() {
         initProject(JVM_MOCK_RUNTIME)
 
@@ -897,6 +926,32 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         val expectedFile = File(getCurrentTestDataRoot(), "expected.txt")
 
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual.toString())
+    }
+
+    fun testJre9() {
+        val path = KotlinTestUtils.getJre9HomeIfPossible()?.absolutePath ?: return
+
+        val jdk = myModel.global.addSdk(JDK_NAME, path, "9", JpsJavaSdkType.INSTANCE)
+        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + path + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
+
+        loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
+        addKotlinRuntimeDependency()
+
+        buildAllModules().assertSuccessful()
+    }
+
+    fun testCustomDestination() {
+        loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
+        addKotlinRuntimeDependency()
+        buildAllModules().apply {
+            assertSuccessful()
+
+            val aClass = File(workDir, "customOut/A.class")
+            assert(aClass.exists()) { "$aClass does not exist!" }
+
+            val warnings = getMessages(BuildMessage.Kind.WARNING)
+            assert(warnings.isEmpty()) { "Unexpected warnings: \n${warnings.joinToString("\n")}" }
+        }
     }
 
     private fun BuildResult.checkErrors() {

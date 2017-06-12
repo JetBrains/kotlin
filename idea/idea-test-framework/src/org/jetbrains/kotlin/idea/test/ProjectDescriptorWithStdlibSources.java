@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 public class ProjectDescriptorWithStdlibSources extends KotlinWithJdkAndRuntimeLightProjectDescriptor {
+    @NotNull
     public static final ProjectDescriptorWithStdlibSources INSTANCE = new ProjectDescriptorWithStdlibSources();
 
     @Override

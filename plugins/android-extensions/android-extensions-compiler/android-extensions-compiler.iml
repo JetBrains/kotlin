@@ -12,7 +12,6 @@
     <orderEntry type="module" module-name="frontend" exported="" />
     <orderEntry type="module" module-name="frontend.java" exported="" />
     <orderEntry type="module" module-name="util" />
-    <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="backend" scope="PROVIDED" />
   </component>
 </module>

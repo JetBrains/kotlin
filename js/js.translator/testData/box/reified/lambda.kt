@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 913
 package foo
 
 // CHECK_CALLED: doFilter

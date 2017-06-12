@@ -257,15 +257,44 @@ data class CompilerId(
 
 fun isDaemonEnabled(): Boolean = System.getProperty(COMPILE_DAEMON_ENABLED_PROPERTY) != null
 
-
 fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
                               vararg additionalParams: String,
                               inheritMemoryLimits: Boolean,
+                              inheritOtherJvmOptions: Boolean,
+                              inheritAdditionalProperties: Boolean
+): DaemonJVMOptions =
+        configureDaemonJVMOptions(opts, additionalParams.asIterable(), inheritMemoryLimits, inheritOtherJvmOptions, inheritAdditionalProperties)
+
+// TODO: expose sources for testability and test properly
+fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
+                              additionalParams: Iterable<String>,
+                              inheritMemoryLimits: Boolean,
+                              inheritOtherJvmOptions: Boolean,
                               inheritAdditionalProperties: Boolean
 ): DaemonJVMOptions {
-    // note: sequence matters, explicit override in COMPILE_DAEMON_JVM_OPTIONS_PROPERTY should be done after inputArguments processing
-    if (inheritMemoryLimits) {
-        ManagementFactory.getRuntimeMXBean().inputArguments.filterExtractProps(opts.mappers, "-")
+    // note: sequence matters, e.g. explicit override in COMPILE_DAEMON_JVM_OPTIONS_PROPERTY should be done after inputArguments processing
+    if (inheritMemoryLimits || inheritOtherJvmOptions) {
+        val jvmArguments = ManagementFactory.getRuntimeMXBean().inputArguments
+        val targetOptions = if (inheritMemoryLimits) opts else DaemonJVMOptions()
+        val otherArgs = jvmArguments.filterExtractProps(targetOptions.mappers, prefix = "-")
+
+        if (inheritMemoryLimits && opts.maxMemory.isBlank()) {
+            val maxMemBytes = Runtime.getRuntime().maxMemory()
+            // rounding up
+            val maxMemMegabytes = maxMemBytes / (1024 * 1024) + if (maxMemBytes % (1024 * 1024) == 0L) 0 else 1
+            opts.maxMemory = "${maxMemMegabytes}m"
+        }
+
+        if (inheritOtherJvmOptions) {
+            opts.jvmParams.addAll(
+                    otherArgs.filterNot {
+                        it.startsWith("agentlib") ||
+                        it.startsWith("D" + COMPILE_DAEMON_LOG_PATH_PROPERTY) ||
+                        it.startsWith("D" + KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY) ||
+                        it.startsWith("D" + COMPILE_DAEMON_JVM_OPTIONS_PROPERTY) ||
+                        it.startsWith("D" + COMPILE_DAEMON_OPTIONS_PROPERTY)
+                    })
+        }
     }
     System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)?.let {
         opts.jvmParams.addAll(
@@ -275,7 +304,10 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
                   .filterExtractProps(opts.mappers, "-", opts.restMapper))
     }
 
+    // assuming that from the conflicting options the last one is taken
+    // TODO: compare and override
     opts.jvmParams.addAll(additionalParams)
+
     if (inheritAdditionalProperties) {
         System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"") }
         System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY)?.let { opts.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY") }
@@ -285,12 +317,14 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
 
 
 fun configureDaemonJVMOptions(vararg additionalParams: String,
-                                     inheritMemoryLimits: Boolean,
-                                     inheritAdditionalProperties: Boolean
+                              inheritMemoryLimits: Boolean,
+                              inheritOtherJvmOptions: Boolean,
+                              inheritAdditionalProperties: Boolean
 ): DaemonJVMOptions =
         configureDaemonJVMOptions(DaemonJVMOptions(),
                                   additionalParams = *additionalParams,
                                   inheritMemoryLimits = inheritMemoryLimits,
+                                  inheritOtherJvmOptions = inheritOtherJvmOptions,
                                   inheritAdditionalProperties = inheritAdditionalProperties)
 
 

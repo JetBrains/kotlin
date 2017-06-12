@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -160,8 +161,13 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
             val typeConstructorDescriptor = type.constructor.declarationDescriptor
             return when (typeConstructorDescriptor) {
                 is ClassDescriptor -> {
-                    val hashCodeDescriptor: CallableDescriptor = typeConstructorDescriptor.findFirstFunction("hashCode") { it.valueParameters.isEmpty() }
-                    context.symbolTable.referenceFunction(hashCodeDescriptor)
+                    if (KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor)) {
+                        context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
+                    }
+                    else {
+                        val hashCodeDescriptor: CallableDescriptor = typeConstructorDescriptor.findFirstFunction("hashCode") { it.valueParameters.isEmpty() }
+                        context.symbolTable.referenceFunction(hashCodeDescriptor)
+                    }
                 }
                 is TypeParameterDescriptor ->
                     getHashCodeFunction(context.builtIns.anyType) // TODO
@@ -200,7 +206,14 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
         }
 
         private fun MemberFunctionBuilder.getHashCodeOf(irValue: IrExpression): IrExpression =
-                irCall(getHashCodeFunction(irValue.type), intType).apply { dispatchReceiver = irValue }
+                irCall(getHashCodeFunction(irValue.type)).apply {
+                    if (descriptor.dispatchReceiverParameter != null) {
+                        dispatchReceiver = irValue
+                    }
+                    else {
+                        putValueArgument(0, irValue)
+                    }
+                }
 
         override fun generateToStringMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
             buildMember(function) {
@@ -210,7 +223,17 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                 for (property in properties) {
                     if (!first) irConcat.addArgument(irString(", "))
                     irConcat.addArgument(irString(property.name.asString() + "="))
-                    irConcat.addArgument(irGet(irThis(), getPropertyGetterSymbol(property)))
+                    val irPropertyValue = irGet(irThis(), getPropertyGetterSymbol(property))
+                    val typeConstructorDescriptor = property.type.constructor.declarationDescriptor
+                    val irPropertyStringValue =
+                            if (typeConstructorDescriptor is ClassDescriptor &&
+                                KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor))
+                                irCall(context.irBuiltIns.dataClassArrayMemberToStringSymbol).apply {
+                                    putValueArgument(0, irPropertyValue)
+                                }
+                            else
+                                irPropertyValue
+                    irConcat.addArgument(irPropertyStringValue)
                     first = false
                 }
                 irConcat.addArgument(irString(")"))

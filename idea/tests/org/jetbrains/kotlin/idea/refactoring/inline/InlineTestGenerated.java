@@ -50,6 +50,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
             doTest(fileName);
         }
 
+        @TestMetadata("InStringTemplates.kt")
+        public void testInStringTemplates() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/InStringTemplates.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LocalCapturing.kt")
         public void testLocalCapturing() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/LocalCapturing.kt");
@@ -466,6 +472,18 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("UnusedComplicatedReturnValue.kt")
+            public void testUnusedComplicatedReturnValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/UnusedComplicatedReturnValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("UnusedReturnValue.kt")
+            public void testUnusedReturnValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/UnusedReturnValue.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ValIntializer.kt")
             public void testValIntializer() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/ValIntializer.kt");
@@ -525,6 +543,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
     public static class InlineVariableOrProperty extends AbstractInlineTest {
         public void testAllFilesPresentInInlineVariableOrProperty() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty"), Pattern.compile("^(\\w+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("AppendToCollection.kt")
+        public void testAppendToCollection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/AppendToCollection.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("Basic.kt")
@@ -907,6 +931,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("DeeperNestedCall2.kt")
+            public void testDeeperNestedCall2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/explicateTypeArgument/DeeperNestedCall2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("EnoughDontExplicate.kt")
             public void testEnoughDontExplicate() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/explicateTypeArgument/EnoughDontExplicate.kt");
@@ -976,15 +1006,15 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("ExtensionProperty.kt")
-            public void testExtensionProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/ExtensionProperty.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("InstanceProperty.kt")
             public void testInstanceProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/InstanceProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KT17489.kt")
+            public void testKT17489() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/KT17489.kt");
                 doTest(fileName);
             }
 
@@ -1012,6 +1042,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("PrivateSet.kt")
+            public void testPrivateSet() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/PrivateSet.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("QualifiedUsage.kt")
             public void testQualifiedUsage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/QualifiedUsage.kt");
@@ -1024,16 +1060,49 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("WithGetter.kt")
-            public void testWithGetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/WithGetter.kt");
-                doTest(fileName);
-            }
+            @TestMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Accessors extends AbstractInlineTest {
+                public void testAllFilesPresentInAccessors() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors"), Pattern.compile("^(\\w+)\\.kt$"), TargetBackend.ANY, true);
+                }
 
-            @TestMetadata("WithInitializerAndGetter.kt")
-            public void testWithInitializerAndGetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/WithInitializerAndGetter.kt");
-                doTest(fileName);
+                @TestMetadata("BlockBody.kt")
+                public void testBlockBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/BlockBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ExpressionBody.kt")
+                public void testExpressionBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/ExpressionBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ExtensionProperty.kt")
+                public void testExtensionProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/ExtensionProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("GetterAndSetter.kt")
+                public void testGetterAndSetter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/GetterAndSetter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("PlusPlus.kt")
+                public void testPlusPlus() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/PlusPlus.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("WithInitializer.kt")
+                public void testWithInitializer() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/WithInitializer.kt");
+                    doTest(fileName);
+                }
             }
         }
 

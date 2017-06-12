@@ -45,19 +45,23 @@ public class SimpleTestMethodModel implements TestMethodModel {
     @NotNull
     private final TargetBackend targetBackend;
 
+    private final boolean skipIgnored;
+
     public SimpleTestMethodModel(
             @NotNull File rootDir,
             @NotNull File file,
             @NotNull String doTestMethodName,
             @NotNull Pattern filenamePattern,
             @Nullable Boolean checkFilenameStartsLowerCase,
-            @NotNull TargetBackend targetBackend
+            @NotNull TargetBackend targetBackend,
+            boolean skipIgnored
     ) {
         this.rootDir = rootDir;
         this.file = file;
         this.doTestMethodName = doTestMethodName;
         this.filenamePattern = filenamePattern;
         this.targetBackend = targetBackend;
+        this.skipIgnored = skipIgnored;
 
         if (checkFilenameStartsLowerCase != null) {
             char c = file.getName().charAt(0);
@@ -124,7 +128,10 @@ public class SimpleTestMethodModel implements TestMethodModel {
             String relativePath = FileUtil.getRelativePath(rootDir, file.getParentFile());
             unescapedName = relativePath + "-" + StringUtil.capitalize(extractedName);
         }
-        return (isIgnoredTargetWithoutCheck(targetBackend, file) ? "ignore" : "test") + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
+
+        boolean ignored = isIgnoredTargetWithoutCheck(targetBackend, file) ||
+                          skipIgnored && isIgnoredTarget(targetBackend, file);
+        return (ignored ? "ignore" : "test") + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
     }
 
     @Override

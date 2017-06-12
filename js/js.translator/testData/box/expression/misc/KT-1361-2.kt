@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 505
 package foo
 
 class Data(val rawData: Array<Int>, val width: Int, val height: Int) {

@@ -51,7 +51,7 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
     }
 
     private void doJUnit3test() throws IOException {
-        checkClassWithDirectives(getPathToFile());
+        checkClassWithDirectives("idea/testData/search/junit/testJunit3.kt");
     }
 
     private void doJUnit4test() throws IOException {

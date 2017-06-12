@@ -155,7 +155,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
         private fun searchNamedArguments(parameter: KtParameter) {
             val parameterName = parameter.name ?: return
-            val function = parameter.ownerFunction ?: return
+            val function = parameter.ownerFunction as? KtFunction ?: return
             if (function.nameAsName?.isSpecial ?: true) return
             val project = function.project
             var namedArgsScope = function.useScope.intersectWith(queryParameters.scopeDeterminedByUser)

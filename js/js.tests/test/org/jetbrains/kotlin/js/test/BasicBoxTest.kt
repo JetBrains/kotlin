@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.test
 
+import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -31,17 +32,19 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.JavaScript
-import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.facade.K2JSTranslator
-import org.jetbrains.kotlin.js.facade.MainCallParameters
-import org.jetbrains.kotlin.js.facade.TranslationResult
-import org.jetbrains.kotlin.js.facade.TranslationUnit
-import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils
-import org.jetbrains.kotlin.js.test.utils.JsTestUtils
-import org.jetbrains.kotlin.js.test.utils.verifyAst
+import org.jetbrains.kotlin.js.dce.DeadCodeElimination
+import org.jetbrains.kotlin.js.dce.InputFile
+import org.jetbrains.kotlin.js.facade.*
+import org.jetbrains.kotlin.js.parser.parse
+import org.jetbrains.kotlin.js.parser.sourcemaps.*
+import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
+import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
+import org.jetbrains.kotlin.js.test.utils.*
+import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -53,10 +56,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.DFS
-import java.io.ByteArrayOutputStream
-import java.io.Closeable
-import java.io.File
-import java.io.PrintStream
+import java.io.*
 import java.nio.charset.Charset
 import java.util.regex.Pattern
 
@@ -72,6 +72,8 @@ abstract class BasicBoxTest(
     protected open fun getOutputPrefixFile(testFilePath: String): File? = null
     protected open fun getOutputPostfixFile(testFilePath: String): File? = null
 
+    protected open val runMinifierByDefault: Boolean = false
+
     fun doTest(filePath: String) {
         doTest(filePath, "OK", MainCallParameters.noCall())
     }
@@ -85,9 +87,7 @@ abstract class BasicBoxTest(
         val outputPostfixFile = getOutputPostfixFile(filePath)
 
         TestFileFactoryImpl().use { testFactory ->
-            testFactory.defaultModule.moduleKind
-
-            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory)
+            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory, true)
             val modules = inputFiles
                     .map { it.module }.distinct()
                     .map { it.name to it }.toMap()
@@ -102,8 +102,9 @@ abstract class BasicBoxTest(
                 generateJavaScriptFile(file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
                                        outputPrefixFile, outputPostfixFile, mainCallParameters)
 
-                if (!module.name.endsWith(OLD_MODULE_SUFFIX)) outputFileName else null
+                if (!module.name.endsWith(OLD_MODULE_SUFFIX)) Pair(outputFileName, module) else null
             }
+
             val mainModuleName = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
             val mainModule = modules[mainModuleName]!!
 
@@ -117,10 +118,10 @@ abstract class BasicBoxTest(
             }
             val inputJsFiles = inputFiles
                     .filter { it.fileName.endsWith(".js") }
-                    .map { file ->
-                        val sourceFile = File(file.fileName)
-                        val targetFile = File(outputDir, file.module.outputFileSimpleName() + "-js-" + sourceFile.name)
-                        FileUtil.copy(File(file.fileName), targetFile)
+                    .map { inputJsFile ->
+                        val sourceFile = File(inputJsFile.fileName)
+                        val targetFile = File(outputDir, inputJsFile.module.outputFileSimpleName() + "-js-" + sourceFile.name)
+                        FileUtil.copy(File(inputJsFile.fileName), targetFile)
                         targetFile.absolutePath
                     }
 
@@ -140,7 +141,7 @@ abstract class BasicBoxTest(
                 additionalFiles += additionalJsFile
             }
 
-            val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles + globalCommonFiles + localCommonFiles +
+            val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first } + globalCommonFiles + localCommonFiles +
                              additionalCommonFiles
 
             if (generateNodeJsRunner && !SKIP_NODE_JS.matcher(fileContent).find()) {
@@ -152,7 +153,48 @@ abstract class BasicBoxTest(
 
             runGeneratedCode(allJsFiles, mainModuleName, testFactory.testPackage, TEST_FUNCTION, expectedResult, withModuleSystem)
 
-            performAdditionalChecks(generatedJsFiles, outputPrefixFile, outputPostfixFile)
+            performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
+
+            val expectedReachableNodesMatcher = EXPECTED_REACHABLE_NODES.matcher(fileContent)
+            val expectedReachableNodesFound = expectedReachableNodesMatcher.find()
+            val skipMinification = System.getProperty("kotlin.js.skipMinificationTest", "false").toBoolean()
+            if (!skipMinification &&
+                (runMinifierByDefault || expectedReachableNodesFound) &&
+                !SKIP_MINIFICATION.matcher(fileContent).find()
+            ) {
+                val thresholdChecker: (Int) -> Unit = { reachableNodesCount ->
+                    val replacement = "// $EXPECTED_REACHABLE_NODES_DIRECTIVE: $reachableNodesCount"
+                    if (!expectedReachableNodesFound) {
+                        file.writeText("$replacement\n$fileContent")
+                        fail("The number of expected reachable nodes was not set. Actual reachable nodes: $reachableNodesCount")
+                    }
+                    else {
+                        val expectedReachableNodes = expectedReachableNodesMatcher.group(1).toInt()
+                        val minThreshold = expectedReachableNodes * 9 / 10
+                        val maxThreshold = expectedReachableNodes * 11 / 10
+                        if (reachableNodesCount < minThreshold || reachableNodesCount > maxThreshold) {
+
+                            val newText = fileContent.substring(0, expectedReachableNodesMatcher.start()) +
+                                          replacement +
+                                          fileContent.substring(expectedReachableNodesMatcher.end())
+                            file.writeText(newText)
+                            fail("Number of reachable nodes ($reachableNodesCount) does not fit into expected range " +
+                                 "[$minThreshold; $maxThreshold]")
+                        }
+                    }
+                }
+
+                minifyAndRun(
+                        workDir = File(File(outputDir, "min"), file.nameWithoutExtension),
+                        allJsFiles = allJsFiles,
+                        generatedJsFiles = generatedJsFiles,
+                        expectedResult = expectedResult,
+                        testModuleName = mainModuleName,
+                        testPackage = testFactory.testPackage,
+                        testFunction = TEST_FUNCTION,
+                        withModuleSystem = withModuleSystem,
+                        minificationThresholdChecker =  thresholdChecker)
+            }
         }
     }
 
@@ -289,7 +331,7 @@ abstract class BasicBoxTest(
             outputPostfixFile: File?,
             mainCallParameters: MainCallParameters) {
         val translator = K2JSTranslator(config)
-        val translationResult = translator.translateUnits(units, mainCallParameters)
+        val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
 
         if (translationResult !is TranslationResult.Success) {
             val outputStream = ByteArrayOutputStream()
@@ -340,6 +382,7 @@ abstract class BasicBoxTest(
         }
 
         processJsProgram(translationResult.program, units.filterIsInstance<TranslationUnit.SourceFile>().map { it.file })
+        checkSourceMap(outputFile, translationResult.program)
     }
 
     protected fun processJsProgram(program: JsProgram, psiFiles: List<KtFile>) {
@@ -347,6 +390,56 @@ abstract class BasicBoxTest(
                 .map { it.text }
                 .forEach { DirectiveTestUtils.processDirectives(program, it) }
         program.verifyAst()
+    }
+
+    private fun checkSourceMap(outputFile: File, program: JsProgram) {
+        val generatedProgram = JsProgram()
+        generatedProgram.globalBlock.statements += program.globalBlock.statements.map { it.deepCopy() }
+        generatedProgram.accept(object : RecursiveJsVisitor() {
+            override fun visitObjectLiteral(x: JsObjectLiteral) {
+                super.visitObjectLiteral(x)
+                x.isMultiline = false
+            }
+            override fun visitVars(x: JsVars) {
+                x.isMultiline = false
+                super.visitVars(x)
+            }
+        })
+        removeLocationFromBlocks(generatedProgram)
+        generatedProgram.accept(AmbiguousAstSourcePropagation())
+
+        val output = TextOutputImpl()
+        val sourceMapBuilder = SourceMap3Builder(outputFile, output, SourceMapBuilderConsumer())
+        generatedProgram.accept(JsSourceGenerationVisitor(output, sourceMapBuilder))
+        val code = output.toString()
+        val generatedSourceMap = sourceMapBuilder.build()
+
+        val codeWithLines = generatedProgram.toStringWithLineNumbers()
+
+        val parsedProgram = JsProgram()
+        parsedProgram.globalBlock.statements += parse(code, ThrowExceptionOnErrorReporter, parsedProgram.scope, outputFile.path)
+        removeLocationFromBlocks(parsedProgram)
+        val sourceMapParseResult = SourceMapParser.parse(StringReader(generatedSourceMap))
+        val sourceMap = when (sourceMapParseResult) {
+            is SourceMapSuccess -> sourceMapParseResult.value
+            is SourceMapError -> error("Could not parse source map: ${sourceMapParseResult.message}")
+        }
+
+        val remapper = SourceMapLocationRemapper(mapOf(outputFile.path to sourceMap))
+        remapper.remap(parsedProgram)
+
+        val codeWithRemappedLines = parsedProgram.toStringWithLineNumbers()
+
+        TestCase.assertEquals(codeWithLines, codeWithRemappedLines)
+    }
+
+    private fun removeLocationFromBlocks(program: JsProgram) {
+        program.globalBlock.accept(object : RecursiveJsVisitor() {
+            override fun visitBlock(x: JsBlock) {
+                super.visitBlock(x)
+                x.source = null
+            }
+        })
     }
 
     private fun createPsiFile(fileName: String): KtFile {
@@ -376,12 +469,10 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.MODULE_KIND, module.moduleKind)
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
 
-        configuration.put(JSConfigurationKeys.SOURCE_MAP, generateSourceMap)
-
         val hasFilesToRecompile = module.hasFilesToRecompile
         configuration.put(JSConfigurationKeys.META_INFO, multiModule)
         configuration.put(JSConfigurationKeys.SERIALIZE_FRAGMENTS, hasFilesToRecompile)
-        configuration.put(JSConfigurationKeys.SOURCE_MAP, hasFilesToRecompile)
+        configuration.put(JSConfigurationKeys.SOURCE_MAP, hasFilesToRecompile || generateSourceMap)
 
         if (additionalMetadata != null) {
             val metadata = PackagesWithHeaderMetadata(
@@ -395,6 +486,50 @@ abstract class BasicBoxTest(
         }
 
         return JsConfig(project, configuration)
+    }
+
+    private fun minifyAndRun(
+            workDir: File, allJsFiles: List<String>, generatedJsFiles: List<Pair<String, TestModule>>,
+            expectedResult: String, testModuleName: String, testPackage: String?, testFunction: String, withModuleSystem: Boolean,
+            minificationThresholdChecker: (Int) -> Unit
+    ) {
+        val kotlinJsLib = DIST_DIR_JS_PATH + "kotlin.js"
+        val kotlinTestJsLib = DIST_DIR_JS_PATH + "kotlin-test.js"
+        val kotlinJsLibOutput = File(workDir, "kotlin.min.js").path
+        val kotlinTestJsLibOutput = File(workDir, "kotlin-test.min.js").path
+
+        val kotlinJsInputFile = InputFile(kotlinJsLib, kotlinJsLibOutput, "kotlin")
+        val kotlinTestJsInputFile = InputFile(kotlinTestJsLib, kotlinTestJsLibOutput, "kotlin-test")
+
+        val filesToMinify = generatedJsFiles.associate { (fileName, module) ->
+            val inputFileName = File(fileName).nameWithoutExtension
+            fileName to InputFile(fileName, File(workDir, inputFileName + ".min.js").absolutePath, module.name)
+        }
+
+        val testFunctionFqn = testModuleName + (if (testPackage.isNullOrEmpty()) "" else ".$testPackage") + ".$testFunction"
+        val additionalReachableNodes = setOf(
+                testFunctionFqn, "kotlin.kotlin.io.BufferedOutput", "kotlin.kotlin.io.output.flush",
+                "kotlin.kotlin.io.output.buffer", "kotlin-test.kotlin.test.overrideAsserter_wbnzx$"
+        )
+        val allFilesToMinify = filesToMinify.values + kotlinJsInputFile + kotlinTestJsInputFile
+        val dceResult = DeadCodeElimination.run(allFilesToMinify, additionalReachableNodes) { }
+
+        val reachableNodes = dceResult.reachableNodes
+        minificationThresholdChecker(reachableNodes.size)
+
+        val runList = mutableListOf<String>()
+        runList += kotlinJsLibOutput
+        runList += kotlinTestJsLibOutput
+        runList += TEST_DATA_DIR_PATH + "nashorn-polyfills.js"
+        runList += allJsFiles.map { filesToMinify[it]?.outputPath ?: it }
+
+        val result = engineForMinifier.runAndRestoreContext {
+            runList.forEach(this::loadFile)
+            overrideAsserter()
+            eval(NashornJsTestChecker.SETUP_KOTLIN_OUTPUT)
+            runTestFunction(testModuleName, testPackage, testFunction, withModuleSystem)
+        }
+        TestCase.assertEquals(expectedResult, result)
     }
 
     private inner class TestFileFactoryImpl : TestFileFactory<TestModule, TestFile>, Closeable {
@@ -482,16 +617,21 @@ abstract class BasicBoxTest(
         private val NO_MODULE_SYSTEM_PATTERN = Pattern.compile("^// *NO_JS_MODULE_SYSTEM", Pattern.MULTILINE)
         private val NO_INLINE_PATTERN = Pattern.compile("^// *NO_INLINE *$", Pattern.MULTILINE)
         private val SKIP_NODE_JS = Pattern.compile("^// *SKIP_NODE_JS *$", Pattern.MULTILINE)
+        private val SKIP_MINIFICATION = Pattern.compile("^// *SKIP_MINIFICATION *$", Pattern.MULTILINE)
+        private val EXPECTED_REACHABLE_NODES_DIRECTIVE = "EXPECTED_REACHABLE_NODES"
+        private val EXPECTED_REACHABLE_NODES = Pattern.compile("^// *$EXPECTED_REACHABLE_NODES_DIRECTIVE: *([0-9]+) *$", Pattern.MULTILINE)
         private val RECOMPILE_PATTERN = Pattern.compile("^// *RECOMPILE *$", Pattern.MULTILINE)
         private val AST_EXTENSION = "jsast"
         private val METADATA_EXTENSION = "jsmeta"
         private val HEADER_FILE = "header.$METADATA_EXTENSION"
 
-        private val TEST_MODULE = "JS_TESTS"
+        val TEST_MODULE = "JS_TESTS"
         private val DEFAULT_MODULE = "main"
         private val TEST_FUNCTION = "box"
         private val OLD_MODULE_SUFFIX = "-old"
 
         const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
+
+        private val engineForMinifier = createScriptEngine()
     }
 }

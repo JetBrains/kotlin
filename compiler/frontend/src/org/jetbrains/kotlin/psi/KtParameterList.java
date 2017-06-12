@@ -74,10 +74,10 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
         removeParameter(getParameters().get(index));
     }
 
-    public KtFunction getOwnerFunction() {
+    public KtDeclarationWithBody getOwnerFunction() {
         PsiElement parent = getParentByStub();
-        if (!(parent instanceof KtFunction)) return null;
-        return (KtFunction) parent;
+        if (!(parent instanceof KtDeclarationWithBody)) return null;
+        return (KtDeclarationWithBody) parent;
     }
 
     @Nullable

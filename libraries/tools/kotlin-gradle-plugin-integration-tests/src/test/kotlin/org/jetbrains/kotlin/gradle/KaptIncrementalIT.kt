@@ -210,12 +210,11 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
                 assertKapt3FullyExecuted()
 
                 val useBKt = project.projectDir.getFileByName("useB.kt")
-                assertCompiledKotlinSources(project.relativize(bKt, useBKt),
-                        output = getOutputForTask("kaptGenerateStubsKotlin"))
+                assertCompiledKotlinSources(project.relativize(bKt, useBKt), tasks = listOf("kaptGenerateStubsKotlin"))
 
                 // java removal is detected
                 assertCompiledKotlinSources(project.relativize(project.projectDir.allKotlinFiles()),
-                        output = getOutputForTask("compileKotlin"))
+                        tasks = listOf("kaptGenerateStubsKotlin"))
             }
             else if (shouldUseStubs) {
                 // java removal is detected

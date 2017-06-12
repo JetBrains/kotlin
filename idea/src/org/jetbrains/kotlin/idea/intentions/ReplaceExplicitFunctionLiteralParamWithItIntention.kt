@@ -43,8 +43,9 @@ class ReplaceExplicitFunctionLiteralParamWithItIntention : PsiElementBaseIntenti
 
         val parameter = functionLiteral.valueParameters.singleOrNull() ?: return false
         if (parameter.typeReference != null) return false
+        if (parameter.destructuringDeclaration != null) return false
 
-        if (functionLiteral.anyDescendantOfType<KtFunctionLiteral>() { literal ->
+        if (functionLiteral.anyDescendantOfType<KtFunctionLiteral> { literal ->
             literal.usesName(element.text) &&
             (!literal.hasParameterSpecification() || literal.usesName("it"))
         } ) return false

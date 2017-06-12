@@ -30,7 +30,7 @@ object LabeledBlockToDoWhileTransformation {
         object : JsVisitorWithContextImpl() {
             override fun endVisit(x: JsLabel, ctx: JsContext<JsNode>) {
                 if (x.statement is JsBlock) {
-                    x.statement = JsDoWhile(JsLiteral.FALSE, x.statement)
+                    x.statement = JsDoWhile(JsBooleanLiteral(false), x.statement)
                 }
 
                 super.endVisit(x, ctx)

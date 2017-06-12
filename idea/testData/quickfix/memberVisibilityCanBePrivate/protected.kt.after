@@ -1,0 +1,8 @@
+// "Add 'private' modifier" "true"
+open class A {
+    private val a = ""
+
+    fun foo() {
+        a
+    }
+}

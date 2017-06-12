@@ -46,6 +46,7 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
                 listOf(sourceDir),
                 listOf(JvmSourceRoot(sourceDir)),
                 listOf(PathUtil.getKotlinPathsForDistDirectory().runtimePath),
+                null,
                 JavaModuleBuildTargetType.PRODUCTION.typeId,
                 JavaModuleBuildTargetType.PRODUCTION.isTests,
                 setOf(),

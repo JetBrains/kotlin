@@ -6,4 +6,4 @@ class KotlinClassUsedFromJava {
     }
 }
 
-//INFO: <pre><b>public</b> <b>final</b> <b>class</b> Test <i>defined in</i> testing</pre><p>Some comment</p>
+//INFO: <pre><b>public</b> <b>final</b> <b>class</b> Test <i>defined in</i> testing <i>in file</i> KotlinClassUsedFromJava_Data.kt</pre><p>Some comment</p>

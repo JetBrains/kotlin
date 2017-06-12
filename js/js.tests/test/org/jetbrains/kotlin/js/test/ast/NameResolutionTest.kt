@@ -57,8 +57,8 @@ class NameResolutionTest {
         val expectedCode = FileUtil.loadFile(File(expectedName))
 
         val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
-        val originalAst = JsGlobalBlock().apply { statements += parse(originalCode, errorReporter, parserScope) }
-        val expectedAst = JsGlobalBlock().apply { statements += parse(expectedCode, errorReporter, parserScope) }
+        val originalAst = JsGlobalBlock().apply { statements += parse(originalCode, errorReporter, parserScope, originalName) }
+        val expectedAst = JsGlobalBlock().apply { statements += parse(expectedCode, errorReporter, parserScope, expectedName) }
 
         originalAst.accept(object : RecursiveJsVisitor() {
             val cache = mutableMapOf<JsName, JsName>()

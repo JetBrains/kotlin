@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-@SuppressWarnings("unchecked")
 /**
  * A class loader which loads classes and resources from the given map.
  *
@@ -29,6 +28,7 @@ import java.util.*;
  * Therefore if you need to be able to find classes via findResource(), you should pass a fallback
  * class loader which is able to do that at any point of time.
  */
+@SuppressWarnings("unchecked")
 public class MemoryBasedClassLoader extends ClassLoader {
     private final ClassCondition classesToLoadByParent;
     private final ClassLoader parent;
@@ -140,7 +140,7 @@ public class MemoryBasedClassLoader extends ClassLoader {
         Enumeration<URL> fromParent = parent.getResources(name);
         if (!own.hasMoreElements()) return fromParent;
 
-        List<URL> result = new ArrayList<>();
+        List<URL> result = new ArrayList<URL>();
         while (own.hasMoreElements()) {
             result.add(own.nextElement());
         }
@@ -163,7 +163,7 @@ public class MemoryBasedClassLoader extends ClassLoader {
         else {
             assert resources instanceof ArrayList : "Resource map should contain ResourceData or ArrayList<ResourceData>: " + name;
             List<ResourceData> resourceDatas = (ArrayList<ResourceData>) resources;
-            List<URL> urls = new ArrayList<>(resourceDatas.size());
+            List<URL> urls = new ArrayList<URL>(resourceDatas.size());
             for (ResourceData data : resourceDatas) {
                 urls.add(data.getURL());
             }

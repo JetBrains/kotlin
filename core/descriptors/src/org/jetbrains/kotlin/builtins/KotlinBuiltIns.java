@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFac
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
+import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
+import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory;
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter;
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl;
@@ -36,16 +39,12 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
-import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory;
-import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
-import java.io.InputStream;
 import java.util.*;
 
 import static kotlin.collections.SetsKt.setOf;
@@ -135,21 +134,10 @@ public abstract class KotlinBuiltIns {
 
     protected void createBuiltInsModule() {
         builtInsModule = new ModuleDescriptorImpl(BUILTINS_MODULE_NAME, storageManager, this, null);
-        PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
-                storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
-                getClassDescriptorFactories(),
-                getPlatformDependentDeclarationFilter(),
-                getAdditionalClassPartsProvider(),
-                new Function1<String, InputStream>() {
-                    @Override
-                    public InputStream invoke(String path) {
-                        ClassLoader classLoader = KotlinBuiltIns.class.getClassLoader();
-                        return classLoader != null ? classLoader.getResourceAsStream(path) : ClassLoader.getSystemResourceAsStream(path);
-                    }
-                }
-        );
-
-        builtInsModule.initialize(packageFragmentProvider);
+        builtInsModule.initialize(BuiltInsLoader.Companion.getInstance().createPackageFragmentProvider(
+                storageManager, builtInsModule,
+                getClassDescriptorFactories(), getPlatformDependentDeclarationFilter(), getAdditionalClassPartsProvider()
+        ));
         builtInsModule.setDependencies(builtInsModule);
     }
 
@@ -1038,6 +1026,10 @@ public abstract class KotlinBuiltIns {
 
     public boolean isMemberOfAny(@NotNull DeclarationDescriptor descriptor) {
         return descriptor.getContainingDeclaration() == getAny();
+    }
+
+    public static boolean isEnum(@NotNull ClassDescriptor descriptor) {
+        return classFqNameEquals(descriptor, FQ_NAMES._enum);
     }
 
     public static boolean isCharSequence(@Nullable KotlinType type) {

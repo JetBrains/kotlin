@@ -1,0 +1,2 @@
+3 fun test(m: Int, <bold>n: Int</bold>) {
+4 	val <bold>x = if (m > 1) n else 1</bold>

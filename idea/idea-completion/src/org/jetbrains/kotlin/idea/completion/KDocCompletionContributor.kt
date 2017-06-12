@@ -134,7 +134,7 @@ class KDocNameCompletionSession(
         return (
                 if (collectFormParentScopes)
                     scope.collectDescriptorsFiltered(nameFilter = nameFilter).asSequence()
-                else if (scope is LexicalScope.Empty)
+                else if (scope is LexicalScope.Base)
                     scope.parent.getContributedDescriptors(nameFilter = nameFilter).asSequence()
                 else
                     (scope.getContributedDescriptors(nameFilter = nameFilter).asSequence()

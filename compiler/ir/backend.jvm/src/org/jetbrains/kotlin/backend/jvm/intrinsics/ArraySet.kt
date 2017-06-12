@@ -17,30 +17,18 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.org.objectweb.asm.Type
 
 class ArraySet : IntrinsicMethod() {
 
-    /*TODO return type, types*/
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        val type = expressionType(expression.dispatchReceiver!!, context)
-        return IrIntrinsicFunction.create(expression, signature, context) {
-            it.astore(signature.valueParameters.last().asmType)
+        val arrayType = expressionType(expression.dispatchReceiver!!, context)
+        val elementType = AsmUtil.correctElementType(arrayType)
+        return IrIntrinsicFunction.create(expression, signature, context, listOf(arrayType, Type.INT_TYPE, elementType)) {
+            it.astore(elementType)
         }
     }
-
-    /*override fun toCallable(method: CallableMethod): Callable {
-        val type = correctElementType(method.dispatchReceiverType)
-        return object : IntrinsicCallable(
-                Type.VOID_TYPE,
-                listOf(Type.INT_TYPE, type),
-                method.dispatchReceiverType,
-                method.extensionReceiverType
-        ) {
-            override fun invokeIntrinsic(v: InstructionAdapter) {
-                v.astore(type)
-            }
-        }
-    }*/
 }

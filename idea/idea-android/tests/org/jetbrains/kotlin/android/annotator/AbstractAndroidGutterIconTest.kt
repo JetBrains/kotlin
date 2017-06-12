@@ -52,11 +52,11 @@ abstract class AbstractAndroidGutterIconTest : KotlinAndroidTestCase() {
             val sourceFile = myFixture.copyFileToProject(path, "src/${PathUtil.getFileName(path)}")
             myFixture.configureFromExistingVirtualFile(sourceFile)
 
-            val gutter = myFixture.findAllGutters().find {
+            val gutter = myFixture.findGuttersAtCaret().find {
                 when {
                     drawable -> it.icon is ImageIcon
                     color != null -> (it.icon as? ColorIcon)?.iconColor == color
-                    else -> error("COLOR or DRAWABLE must be defined!")
+                    else -> true
                 }
             }
 

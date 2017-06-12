@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="Kotlin" exported="" />
     <orderEntry type="library" name="jps-model" level="project" />
     <orderEntry type="module" module-name="descriptors" />
+    <orderEntry type="module" module-name="deserialization" />
   </component>
 </module>

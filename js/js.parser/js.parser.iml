@@ -10,5 +10,6 @@
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="js.ast" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="library" name="json-org" level="project" />
   </component>
 </module>

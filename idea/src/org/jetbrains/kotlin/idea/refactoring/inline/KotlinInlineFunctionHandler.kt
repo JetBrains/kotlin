@@ -29,24 +29,15 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
-import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
-import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
-import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class KotlinInlineFunctionHandler: InlineActionHandler() {
@@ -57,49 +48,6 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
 
     override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {
         element as KtNamedFunction
-
-        val descriptor = element.resolveToDescriptor() as SimpleFunctionDescriptor
-        val bodyExpression = element.bodyExpression!!
-        val bodyCopy = bodyExpression.copied()
-
-        val expectedType = if (!element.hasBlockBody() && element.hasDeclaredReturnType())
-            descriptor.returnType ?: TypeUtils.NO_EXPECTED_TYPE
-        else
-            TypeUtils.NO_EXPECTED_TYPE
-
-        fun analyzeBodyCopy(): BindingContext {
-            return bodyCopy.analyzeInContext(bodyExpression.getResolutionScope(),
-                                             contextExpression = bodyExpression,
-                                             expectedType = expectedType)
-        }
-
-        val replacementBuilder = CodeToInlineBuilder(descriptor, element.getResolutionFacade())
-        val replacement = if (element.hasBlockBody()) {
-            bodyCopy as KtBlockExpression
-            val statements = bodyCopy.statements
-
-            val returnStatements = bodyCopy.collectDescendantsOfType<KtReturnExpression> {
-                it.getLabelName().let { it == null || it == element.name }
-            }
-
-            val lastReturn = statements.lastOrNull() as? KtReturnExpression
-            if (returnStatements.any { it != lastReturn }) {
-                val message = RefactoringBundle.getCannotRefactorMessage(
-                        if (returnStatements.size > 1)
-                            "Inline Function is not supported for functions with multiple return statements."
-                        else
-                            "Inline Function is not supported for functions with return statements not at the end of the body."
-                )
-                CommonRefactoringUtil.showErrorHint(project, editor, message, "Inline Function", null)
-                return
-            }
-
-            replacementBuilder.prepareCodeToInline(lastReturn?.returnedExpression,
-                                                   statements.dropLast(returnStatements.size), ::analyzeBodyCopy)
-        }
-        else {
-            replacementBuilder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeBodyCopy)
-        }
 
         val reference = editor?.let { TargetElementUtil.findReference(it, it.caretModel.offset) }
         val nameReference = when (reference) {
@@ -114,7 +62,17 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
             return
         }
 
-        val replacementStrategy = CallableUsageReplacementStrategy(replacement)
+        val descriptor = element.resolveToDescriptor() as SimpleFunctionDescriptor
+        val codeToInline = buildCodeToInline(
+                element,
+                descriptor.returnType,
+                element.hasDeclaredReturnType(),
+                element.bodyExpression!!,
+                element.hasBlockBody(),
+                editor
+        ) ?: return
+
+        val replacementStrategy = CallableUsageReplacementStrategy(codeToInline)
 
         val dialog = KotlinInlineFunctionDialog(project, element, nameReference, replacementStrategy,
                                                 allowInlineThisOnly = recursive)

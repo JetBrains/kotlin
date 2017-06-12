@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.renderer
 
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.IllegalStateException
@@ -47,7 +48,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
                     this,
                     PropertyReference1Impl(DescriptorRendererOptionsImpl::class, field.name, "get" + field.name.capitalize())
             )
-            field.set(copy, copy.property(value as Any))
+            field.set(copy, copy.property(value))
         }
 
         return copy
@@ -66,6 +67,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
 
     override var classifierNamePolicy: ClassifierNamePolicy by property(ClassifierNamePolicy.SOURCE_CODE_QUALIFIED)
     override var withDefinedIn by property(true)
+    override var withSourceFileForTopLevel by property(true)
     override var modifiers: Set<DescriptorRendererModifier> by property(DescriptorRendererModifier.DEFAULTS)
     override var startFromName by property(false)
     override var startFromDeclarationKeyword by property(false)
@@ -81,7 +83,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var withoutTypeParameters by property(false)
     override var withoutSuperTypes by property(false)
     override var typeNormalizer by property<(KotlinType) -> KotlinType>({ it })
-    override var renderDefaultValues by property(true)
+    override var defaultParameterValueRenderer by property<((ValueParameterDescriptor) -> String)?>({ "..." })
     override var secondaryConstructorsAsPrimary by property(true)
     override var overrideRenderingPolicy by property(OverrideRenderingPolicy.RENDER_OPEN)
     override var valueParametersHandler: DescriptorRenderer.ValueParametersHandler by property(DescriptorRenderer.ValueParametersHandler.DEFAULT)

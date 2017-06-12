@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 505
 package foo
 
 interface Test {

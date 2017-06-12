@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
+import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
@@ -1636,7 +1637,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (descriptor instanceof TypeAliasDescriptor) {
             ClassDescriptor classDescriptor = ((TypeAliasDescriptor) descriptor).getClassDescriptor();
             if (classDescriptor == null) {
-                throw new IllegalStateException("Type alias " + descriptor + " static member refernece should be rejected by type checker, " +
+                throw new IllegalStateException("Type alias " + descriptor + " static member reference should be rejected by type checker, " +
                                                 "since there is no class corresponding to this type alias.");
             }
             descriptor = classDescriptor;
@@ -2262,7 +2263,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 myFrameMap.leaveTemp(firstReceiverType);
             }
 
-            callableMethod.afterReceiverGeneration(v);
+            callableMethod.afterReceiverGeneration(v, myFrameMap);
         }
     }
 
@@ -3439,6 +3440,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration, StackValue receiver) {
+        return initializeDestructuringDeclaration(multiDeclaration, false);
+    }
+
+    public StackValue initializeDestructuringDeclaration(
+            @NotNull KtDestructuringDeclaration multiDeclaration,
+            boolean asProperty
+    ) {
         KtExpression initializer = multiDeclaration.getInitializer();
         if (initializer == null) return StackValue.none();
 
@@ -3455,7 +3463,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         v.store(tempVarIndex, initializerAsmType);
         StackValue.Local local = StackValue.local(tempVarIndex, initializerAsmType);
 
-        initializeDestructuringDeclarationVariables(multiDeclaration, initializerAsReceiver, local);
+        initializeDestructuringDeclarationVariables(multiDeclaration, initializerAsReceiver, local, asProperty);
 
         if (initializerAsmType.getSort() == Type.OBJECT || initializerAsmType.getSort() == Type.ARRAY) {
             v.aconst(null);
@@ -3471,6 +3479,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull ReceiverValue receiver,
             @NotNull StackValue receiverStackValue
     ) {
+        initializeDestructuringDeclarationVariables(destructuringDeclaration, receiver, receiverStackValue, false);
+    }
+
+    private void initializeDestructuringDeclarationVariables(
+            @NotNull KtDestructuringDeclaration destructuringDeclaration,
+            @NotNull ReceiverValue receiver,
+            @NotNull StackValue receiverStackValue,
+            boolean asProperty
+    ) {
         for (KtDestructuringDeclarationEntry variableDeclaration : destructuringDeclaration.getEntries()) {
             ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(COMPONENT_RESOLVED_CALL, variableDeclaration);
             assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
@@ -3479,9 +3496,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             VariableDescriptor variableDescriptor = getVariableDescriptorNotNull(variableDeclaration);
 
             // Do not call `componentX` for destructuring entry called _
-            if (variableDescriptor.getName().isSpecial()) continue;
+            if (UnderscoreUtilKt.isSingleUnderscore(variableDeclaration)) continue;
 
-            initializeLocalVariable(variableDeclaration, invokeFunction(call, resolvedCall, receiverStackValue));
+            if (asProperty && variableDescriptor instanceof PropertyDescriptor) {
+                StackValue.Property propertyValue = intermediateValueForProperty(
+                        (PropertyDescriptor) variableDescriptor,
+                        true,
+                        false,
+                        null,
+                        true,
+                        StackValue.LOCAL_0,
+                        null);
+
+                propertyValue.store(invokeFunction(call, resolvedCall, receiverStackValue), v);
+            }
+            else {
+                initializeLocalVariable(variableDeclaration, invokeFunction(call, resolvedCall, receiverStackValue));
+            }
         }
     }
 

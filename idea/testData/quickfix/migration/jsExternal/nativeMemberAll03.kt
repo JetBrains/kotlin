@@ -1,5 +1,6 @@
 // "Fix with 'asDynamic'" "true"
 // JS
+// ERROR: Declaration of such kind (extension function) cant be external
 
 external class B {
     @nativeGetter
@@ -15,4 +16,6 @@ external class B {
     fun<T> exp(t: T)
 
     fun dontTouch(): Nothing = definedExternally
+
+    fun B.doNotTouchNestedExtensionMembers(): Nothing = definedExternally
 }

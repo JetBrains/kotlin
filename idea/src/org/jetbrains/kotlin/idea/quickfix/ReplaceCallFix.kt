@@ -21,8 +21,11 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 
 abstract class ReplaceCallFix(
         expression: KtQualifiedExpression,
@@ -44,14 +47,36 @@ abstract class ReplaceCallFix(
     }
 }
 
+class ReplaceImplicitReceiverCallFix(expression: KtExpression) : KotlinQuickFixAction<KtExpression>(expression) {
+    override fun getFamilyName() = text
+
+    override fun getText() = "Replace with safe (this?.) call"
+
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
+        val newExpression = KtPsiFactory(element).createExpressionByPattern("this?.$0", element)
+        element.replace(newExpression)
+    }
+}
+
 class ReplaceWithSafeCallFix(expression: KtDotQualifiedExpression): ReplaceCallFix(expression, "?.") {
 
     override fun getText() = "Replace with safe (?.) call"
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val qualifiedExpression = diagnostic.psiElement.getParentOfType<KtDotQualifiedExpression>(strict = false) ?: return null
-            return ReplaceWithSafeCallFix(qualifiedExpression)
+            val psiElement = diagnostic.psiElement
+            val qualifiedExpression = psiElement.parent as? KtDotQualifiedExpression
+            if (qualifiedExpression != null) {
+                return ReplaceWithSafeCallFix(qualifiedExpression)
+            } else {
+                psiElement as? KtNameReferenceExpression ?: return null
+                if (psiElement.getResolvedCall(psiElement.analyze())?.getImplicitReceiverValue() != null) {
+                    val expressionToReplace: KtExpression = psiElement.parent as? KtCallExpression ?: psiElement
+                    return ReplaceImplicitReceiverCallFix(expressionToReplace)
+                }
+                return null
+            }
         }
     }
 }

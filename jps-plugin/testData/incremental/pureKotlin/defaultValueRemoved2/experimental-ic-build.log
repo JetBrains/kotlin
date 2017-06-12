@@ -27,8 +27,8 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-No value passed for parameter y
-No value passed for parameter y
+No value passed for parameter 'y'
+No value passed for parameter 'y'
 
 ================ Step #2 =================
 

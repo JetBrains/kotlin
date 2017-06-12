@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.descriptors.impl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 
 sealed class LocalVariableAccessorDescriptor(
@@ -38,7 +39,10 @@ sealed class LocalVariableAccessorDescriptor(
     init {
         val valueParameters =
                 if (isGetter) emptyList() else listOf(createValueParameter(Name.identifier("value"), correspondingVariable.type))
-        initialize(null, null, emptyList(), valueParameters, correspondingVariable.type, Modality.FINAL, Visibilities.LOCAL)
+        val returnType =
+                if (isGetter) correspondingVariable.type else correspondingVariable.builtIns.unitType
+        @Suppress("LeakingThis")
+        initialize(null, null, emptyList(), valueParameters, returnType, Modality.FINAL, Visibilities.LOCAL)
     }
 
     private fun createValueParameter(name: Name, type: KotlinType): ValueParameterDescriptorImpl {

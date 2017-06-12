@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
 
         JsNode node;
         if (size == 0) {
-            node = JsLiteral.NULL;
+            node = new JsNullLiteral();
         }
         else if (size > 1) {
             node = new JsBlock(statements);
@@ -175,6 +175,6 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         assert currentScope instanceof JsFunctionScope : "Usage of js outside of function is unexpected";
         JsScope temporaryRootScope = new JsRootScope(new JsProgram());
         JsScope scope = new DelegatingJsFunctionScopeWithTemporaryParent((JsFunctionScope) currentScope, temporaryRootScope);
-        return ParserUtilsKt.parse(jsCode, ThrowExceptionOnErrorReporter.INSTANCE, scope);
+        return ParserUtilsKt.parse(jsCode, ThrowExceptionOnErrorReporter.INSTANCE, scope, jsCodeExpression.getContainingKtFile().getName());
     }
 }

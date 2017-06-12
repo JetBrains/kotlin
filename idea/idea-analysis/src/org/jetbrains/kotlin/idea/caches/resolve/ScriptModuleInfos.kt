@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
@@ -23,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
+import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
@@ -41,9 +43,8 @@ data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
-    val externalDependencies by lazy {
-        KotlinScriptExternalImportsProvider.getInstance(project)?.getExternalImports(scriptFile)
-    }
+    val externalDependencies: KotlinScriptExternalDependencies?
+        get() = KotlinScriptExternalImportsProvider.getInstance(project)?.getExternalImports(scriptFile)
 
     override val name: Name = Name.special("<script ${scriptFile.name} ${scriptDefinition.name}>")
 
@@ -51,8 +52,7 @@ data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
 
     override fun dependencies(): List<IdeaModuleInfo> {
         return listOf(
-                this,
-                ScriptDependenciesModuleInfo(project, externalDependencies, this)
+                this, ScriptDependenciesModuleInfo(project, this)
         ) + sdkDependencies(externalDependencies, project)
     }
 }
@@ -72,26 +72,23 @@ fun findJdk(dependencies: KotlinScriptExternalDependencies?, project: Project): 
 
 class ScriptDependenciesModuleInfo(
         val project: Project,
-        val dependencies: KotlinScriptExternalDependencies?,
         val scriptModuleInfo: ScriptModuleInfo?
-): IdeaModuleInfo, BinaryModuleInfo {
-    override fun dependencies() = (listOf(this) + sdkDependencies(dependencies, project))
+) : IdeaModuleInfo, BinaryModuleInfo {
+    override fun dependencies() = (listOf(this) + sdkDependencies(scriptModuleInfo?.externalDependencies, project))
 
     override val name = Name.special("<Script dependencies>")
 
     override fun contentScope(): GlobalSearchScope {
-        if (dependencies == null) {
+        if (scriptModuleInfo == null) {
             // we do not know which scripts these dependencies are
             return KotlinSourceFilterScope.libraryClassFiles(
                     KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope(), project
             )
         }
-        val classpath = KotlinScriptConfigurationManager.toVfsRoots(dependencies.classpath)
-        // TODO: this is not very efficient because KotlinSourceFilterScope already checks if the files are in scripts classpath
-        return KotlinSourceFilterScope.libraryClassFiles(NonClasspathDirectoriesScope(classpath), project)
+        return project.service<ScriptBinariesScopeCache>().get(scriptModuleInfo.externalDependencies)
     }
 
-    // NOTE: intentionally not taking dependencies into account
+    // NOTE: intentionally not taking corresponding script info into account
     // otherwise there is no way to implement getModuleInfo
     override fun hashCode() = project.hashCode()
     override fun equals(other: Any?): Boolean = other is ScriptDependenciesModuleInfo && this.project == other.project
@@ -105,14 +102,23 @@ class ScriptDependenciesModuleInfo(
 
 data class ScriptDependenciesSourceModuleInfo(
         val project: Project
-): IdeaModuleInfo, SourceForBinaryModuleInfo {
+) : IdeaModuleInfo, SourceForBinaryModuleInfo {
     override val name = Name.special("<Source for script dependencies>")
 
     override val binariesModuleInfo: ScriptDependenciesModuleInfo
-        get() = ScriptDependenciesModuleInfo(project, null, null)
+        get() = ScriptDependenciesModuleInfo(project, null)
 
     override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(
             KotlinScriptConfigurationManager.getInstance(project).getAllLibrarySourcesScope(), project
     )
 
+}
+
+private class ScriptBinariesScopeCache(private val project: Project) : SLRUCache<KotlinScriptExternalDependencies, GlobalSearchScope>(6, 6) {
+    override fun createValue(key: KotlinScriptExternalDependencies?): GlobalSearchScope {
+        val roots = key?.classpath ?: emptyList()
+        val classpath = KotlinScriptConfigurationManager.toVfsRoots(roots)
+        // TODO: this is not very efficient because KotlinSourceFilterScope already checks if the files are in scripts classpath
+        return KotlinSourceFilterScope.libraryClassFiles(NonClasspathDirectoriesScope(classpath), project)
+    }
 }

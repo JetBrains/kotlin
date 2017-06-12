@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
-import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
@@ -383,6 +382,14 @@ internal class DescriptorRendererImpl(
             append(" ").append(renderMessage("defined in")).append(" ")
             val fqName = DescriptorUtils.getFqName(containingDeclaration)
             append(if (fqName.isRoot) "root package" else renderFqName(fqName))
+
+            if (withSourceFileForTopLevel &&
+                containingDeclaration is PackageFragmentDescriptor &&
+                descriptor is DeclarationDescriptorWithSource) {
+                descriptor.source.containingFile.name?.let { sourceFileName ->
+                    append(" ").append(renderMessage("in file")).append(" ").append(sourceFileName)
+                }
+            }
         }
     }
 
@@ -807,9 +814,9 @@ internal class DescriptorRendererImpl(
 
         renderVariable(valueParameter, includeName, builder, topLevel)
 
-        val withDefaultValue = renderDefaultValues && (if (debugMode) valueParameter.declaresDefaultValue() else valueParameter.hasDefaultValue())
+        val withDefaultValue = defaultParameterValueRenderer != null && (if (debugMode) valueParameter.declaresDefaultValue() else valueParameter.hasDefaultValue())
         if (withDefaultValue) {
-            builder.append(" = ...")
+            builder.append(" = ${defaultParameterValueRenderer!!(valueParameter)}")
         }
     }
 

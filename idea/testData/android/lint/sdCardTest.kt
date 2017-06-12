@@ -29,6 +29,11 @@ class SdCardTest {
     val mypath = "<warning descr="Do not hardcode \"`/data/`\"; use `Context.getFilesDir().getPath()` instead"><warning descr="Do not hardcode \"`/data/`\"; use `Context.getFilesDir().getPath()` instead">/data/data/foo</warning></warning>"
     val base = "<warning descr="Do not hardcode \"`/data/`\"; use `Context.getFilesDir().getPath()` instead"><warning descr="Do not hardcode \"`/data/`\"; use `Context.getFilesDir().getPath()` instead">/data/data/foo.bar/test-profiling</warning></warning>"
     val s = "<warning descr="Do not hardcode \"/sdcard/\"; use `Environment.getExternalStorageDirectory().getPath()` instead"><warning descr="Do not hardcode \"/sdcard/\"; use `Environment.getExternalStorageDirectory().getPath()` instead">file://sdcard/foo</warning></warning>"
+
+    val sdCardPath by lazy { "<warning descr="Do not hardcode \"/sdcard/\"; use `Environment.getExternalStorageDirectory().getPath()` instead">/sdcard</warning>" }
+    fun localPropertyTest() {
+        val sdCardPathLocal by lazy { "<warning descr="Do not hardcode \"/sdcard/\"; use `Environment.getExternalStorageDirectory().getPath()` instead">/sdcard</warning>" }
+    }
 }
 
 companion object {

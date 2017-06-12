@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
@@ -39,10 +40,7 @@ import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler
-import org.jetbrains.kotlin.codegen.GeneratedClassLoader
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -58,12 +56,11 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
-import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import java.io.File
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
@@ -201,6 +198,16 @@ object KotlinToJVMBytecodeCompiler {
         for (module in chunk) {
             for (classpathRoot in module.getClasspathRoots()) {
                 configuration.addJvmClasspathRoot(File(classpathRoot))
+            }
+        }
+
+        for (module in chunk) {
+            val modularJdkRoot = module.modularJdkRoot
+            if (modularJdkRoot != null) {
+                // We use the SDK of the first module in the chunk, which is not always correct because some other module in the chunk
+                // might depend on a different SDK
+                configuration.put(JVMConfigurationKeys.JDK_HOME, File(modularJdkRoot))
+                break
             }
         }
 
@@ -429,6 +436,7 @@ object KotlinToJVMBytecodeCompiler {
                 sourceFiles,
                 configuration,
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
+                if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory,
                 module?.let(::TargetId),
                 module?.let(Module::getModuleName),
                 module?.let { File(it.getOutputDirectory()) },

@@ -1,5 +1,6 @@
 package org.jetbrains.uast.test.kotlin
 
+import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -51,6 +52,14 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
             val xyzzy = file.findElementByText<UVariable>("val xyzzy: Int = 0")
             assertEquals(file.psi, xyzzy.nameIdentifier!!.containingFile)
+        }
+    }
+
+    @Test fun testInterfaceMethodWithBody() {
+        doTest("DefaultImpls") { _, file ->
+            val bar = file.findElementByText<UMethod>("fun bar() = \"Hello!\"")
+            assertFalse(bar.containingFile.text!!, bar.psi.modifierList.hasExplicitModifier(PsiModifier.DEFAULT))
+            assertTrue(bar.containingFile.text!!, bar.psi.modifierList.hasModifierProperty(PsiModifier.DEFAULT))
         }
     }
 }

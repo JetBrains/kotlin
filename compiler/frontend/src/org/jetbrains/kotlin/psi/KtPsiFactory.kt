@@ -381,9 +381,9 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return stringTemplateExpression.entries[0] as KtStringTemplateEntryWithExpression
     }
 
-    fun createSimpleNameStringTemplateEntry(name: String): KtStringTemplateEntryWithExpression {
+    fun createSimpleNameStringTemplateEntry(name: String): KtSimpleNameStringTemplateEntry {
         val stringTemplateExpression = createExpression("\"\$$name\"") as KtStringTemplateExpression
-        return stringTemplateExpression.entries[0] as KtStringTemplateEntryWithExpression
+        return stringTemplateExpression.entries[0] as KtSimpleNameStringTemplateEntry
     }
 
     fun createStringTemplate(content: String) = createExpression("\"$content\"") as KtStringTemplateExpression
@@ -612,7 +612,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         private fun placeKeyword() {
             assert(state == State.MODIFIERS)
 
-            if (sb.isNotEmpty()) {
+            if (sb.isNotEmpty() && !sb.endsWith(" ")) {
                 sb.append(" ")
             }
             val keyword = when (target) {
@@ -625,9 +625,9 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
             state = State.RECEIVER
         }
 
-        private fun bodyPrefix() = when (target) {
+        private fun bodyPrefix(breakLine: Boolean = true) = when (target) {
             Target.FUNCTION, Target.CONSTRUCTOR -> ""
-            Target.READ_ONLY_PROPERTY -> "\nget()"
+            Target.READ_ONLY_PROPERTY -> (if (breakLine) "\n" else " ") + "get()"
         }
 
         fun modifier(modifier: String): CallableBuilder {
@@ -728,6 +728,16 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
             assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
 
             sb.append(bodyPrefix()).append(" {\n").append(body).append("\n}")
+            state = State.DONE
+
+            return this
+        }
+
+        fun getterExpression(expression: String, breakLine: Boolean = true): CallableBuilder {
+            assert(target == Target.READ_ONLY_PROPERTY)
+            assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
+
+            sb.append(bodyPrefix(breakLine)).append(" = ").append(expression)
             state = State.DONE
 
             return this

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,10 +90,11 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     private JsExpression asPrefix() {
         // code fragment: expr(a++)
         // generate: expr(a = a.inc(), a)
-        JsExpression getExpression = accessTranslator.translateAsGet();
-        JsExpression reassignment = variableReassignment(context().innerBlock(accessBlock), getExpression);
+        JsExpression getExpression = accessTranslator.translateAsGet().source(expression);
+        JsExpression reassignment = variableReassignment(context().innerBlock(accessBlock), getExpression)
+                .source(expression);
         accessBlock.getStatements().add(JsAstUtils.asSyntheticStatement(reassignment));
-        JsExpression getNewValue = accessTranslator.translateAsGet();
+        JsExpression getNewValue = accessTranslator.translateAsGet().source(expression);
 
         JsExpression result;
         if (accessBlock.getStatements().size() == 1) {
@@ -112,10 +113,11 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     private JsExpression asPostfix() {
         // code fragment: expr(a++)
         // generate: expr( (t1 = a, t2 = t1, a = t1.inc(), t2) )
-        TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet());
+        TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet().source(expression));
         accessBlock.getStatements().add(t1.assignmentStatement());
-        JsExpression variableReassignment = variableReassignment(context().innerBlock(accessBlock), t1.reference());
-        accessBlock.getStatements().add(JsAstUtils.asSyntheticStatement(variableReassignment));
+        JsExpression variableReassignment = variableReassignment(context().innerBlock(accessBlock), t1.reference())
+                .source(expression);
+        accessBlock.getStatements().add(JsAstUtils.asSyntheticStatement(variableReassignment.source(expression)));
 
         JsExpression result;
         if (accessBlock.getStatements().size() == 2) {

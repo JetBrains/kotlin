@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.lazy.descriptors.AbstractLazyMemberScope;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedLazyResolveStorageManager;
@@ -92,12 +93,24 @@ public class LazyDeclarationResolver {
         DeclarationDescriptor descriptor = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classObjectOrScript);
 
         if (descriptor == null) {
+            String providerInfoString = null;
+            if (scope instanceof AbstractLazyMemberScope) {
+                AbstractLazyMemberScope lazyMemberScope = (AbstractLazyMemberScope) scope;
+                providerInfoString = lazyMemberScope.toProviderString();
+            }
             throw new IllegalArgumentException(
-                    String.format("Could not find a classifier for %s.\n" +
-                                  "Found descriptor: %s (%s).\n",
-                                  PsiUtilsKt.getElementTextWithContext(classObjectOrScript),
-                                  scopeDescriptor != null ? DescriptorRenderer.DEBUG_TEXT.render(scopeDescriptor) : "null",
-                                  scopeDescriptor != null ? (scopeDescriptor.getContainingDeclaration().getClass()) : null));
+                    String.format(
+                            "Could not find a classifier for %s.\n" +
+                            "Found descriptor: %s (%s).\n" +
+                            "Scope: %s.\n" +
+                            "Provider: %s.",
+                            PsiUtilsKt.getElementTextWithContext(classObjectOrScript),
+                            scopeDescriptor != null ? DescriptorRenderer.DEBUG_TEXT.render(scopeDescriptor) : "null",
+                            scopeDescriptor != null ? (scopeDescriptor.getContainingDeclaration().getClass()) : null,
+                            scope,
+                            providerInfoString != null ? providerInfoString : "null"
+                    )
+            );
         }
 
         return (ClassDescriptor) descriptor;
@@ -222,6 +235,17 @@ public class LazyDeclarationResolver {
                 MemberScope scopeForDeclaration = getMemberScopeDeclaredIn(property, location);
                 scopeForDeclaration.getContributedVariables(property.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
+            }
+
+            @Override
+            public DeclarationDescriptor visitDestructuringDeclarationEntry(
+                    @NotNull KtDestructuringDeclarationEntry destructuringDeclarationEntry, Void data
+            ) {
+                LookupLocation location = lookupLocationFor(destructuringDeclarationEntry, false);
+                KtDestructuringDeclaration destructuringDeclaration = ((KtDestructuringDeclaration) destructuringDeclarationEntry.getParent());
+                MemberScope scopeForDeclaration = getMemberScopeDeclaredIn(destructuringDeclaration, location);
+                scopeForDeclaration.getContributedVariables(destructuringDeclarationEntry.getNameAsSafeName(), location);
+                return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, destructuringDeclarationEntry);
             }
 
             @Override

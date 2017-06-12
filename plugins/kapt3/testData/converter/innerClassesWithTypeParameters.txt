@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public final class Test {
     private Test.FilterValueDelegate<java.lang.Float> a;
 
@@ -5,6 +6,7 @@ public final class Test {
         super();
     }
 
+    @kotlin.Metadata()
     final class FilterValueDelegate<T extends java.lang.Object> {
 
         public FilterValueDelegate() {
@@ -16,12 +18,14 @@ public final class Test {
 ////////////////////
 
 
+@kotlin.Metadata()
 public final class Test2 {
 
     public Test2() {
         super();
     }
 
+    @kotlin.Metadata()
     public final class FilterValueDelegate<T extends java.lang.Object> {
         private Test2.FilterValueDelegate<T>.Filter2<java.lang.String> a;
 
@@ -29,6 +33,7 @@ public final class Test2 {
             super();
         }
 
+        @kotlin.Metadata()
         public final class Filter2<X extends java.lang.Object> {
 
             public Filter2() {
@@ -41,6 +46,7 @@ public final class Test2 {
 ////////////////////
 
 
+@kotlin.Metadata()
 public final class Test3 {
     private Test3.FilterValueDelegate<java.lang.Float> a;
 
@@ -48,6 +54,7 @@ public final class Test3 {
         super();
     }
 
+    @kotlin.Metadata()
     static final class FilterValueDelegate<T extends java.lang.Object> {
 
         public FilterValueDelegate() {

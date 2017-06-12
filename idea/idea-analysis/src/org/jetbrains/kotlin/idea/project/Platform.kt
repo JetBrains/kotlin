@@ -25,8 +25,10 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.facet.getLibraryLanguageLevel
@@ -113,7 +115,14 @@ val Module.languageVersionSettings: LanguageVersionSettings
     }
 
 val Module.targetPlatform: TargetPlatformKind<*>?
-    get() = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)?.targetPlatformKind
+    get() = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)?.targetPlatformKind ?: project.targetPlatform
+
+val Project.targetPlatform: TargetPlatformKind<*>?
+    get() {
+        val jvmTarget = Kotlin2JvmCompilerArgumentsHolder.getInstance(this).settings.jvmTarget ?: return null
+        val version = JvmTarget.fromString(jvmTarget) ?: return null
+        return TargetPlatformKind.Jvm[version]
+    }
 
 private val Module.implementsCommonModule: Boolean
     get() = targetPlatform != TargetPlatformKind.Common

@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 515
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectOnDeclarationSite.1.kt

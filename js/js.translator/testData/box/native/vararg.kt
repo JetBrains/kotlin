@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 530
 package foo
 
 external fun paramCount(vararg a: Int): Int = definedExternally

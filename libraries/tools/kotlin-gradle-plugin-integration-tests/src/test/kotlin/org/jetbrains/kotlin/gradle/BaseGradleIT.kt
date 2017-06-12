@@ -2,9 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.gradle.util.checkBytecodeNotContains
-import org.jetbrains.kotlin.gradle.util.createGradleCommand
-import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.util.*
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assert
@@ -50,14 +48,16 @@ abstract class BaseGradleIT {
     }
 
     companion object {
+        // wrapper version to the number of daemon runs performed
+        private val daemonRunCount = hashMapOf<String, Int>()
+        // gradle wrapper version to wrapper directory
+        private val gradleWrappers = hashMapOf<String, File>()
+        private const val MAX_DAEMON_RUNS = 30
+        private const val MAX_ACTIVE_GRADLE_PROCESSES = 1
 
-        @JvmStatic
-        protected val ranDaemonVersions = hashMapOf<String, Int>()
+        private fun getEnvJDK_18() = System.getenv()["JDK_18"]
 
         val resourcesRootFile = File("src/test/resources")
-        val MAX_DAEMON_RUNS = 30
-
-        fun getEnvJDK_18() = System.getenv()["JDK_18"]
 
         @AfterClass
         @JvmStatic
@@ -67,29 +67,70 @@ abstract class BaseGradleIT {
             // Latest gradle requires Java > 7
             val environmentVariables = hashMapOf<String, String>()
             getEnvJDK_18()?.let { environmentVariables["JAVA_HOME"] = it }
+            stopAllDaemons(environmentVariables)
 
-            ranDaemonVersions.keys.forEach { stopDaemon(it, environmentVariables) }
-            ranDaemonVersions.clear()
-        }
-
-        fun stopDaemon(ver: String, environmentVariables: Map<String, String> = mapOf()) {
-            println("Stopping gradle daemon v$ver")
-            val wrapperDir = File(resourcesRootFile, "GradleWrapper-$ver")
-            val cmd = createGradleCommand(arrayListOf("-stop"))
-            val result = runProcess(cmd, wrapperDir, environmentVariables)
-            assert(result.isSuccessful) { "Could not stop daemon: $result" }
+            gradleWrappers.values.forEach { wrapperDir ->
+                wrapperDir.deleteRecursively()
+            }
+            gradleWrappers.clear()
         }
 
         @Synchronized
-        fun prepareDaemon(version: String, environmentVariables: Map<String, String> = mapOf()) {
-            val useCount = ranDaemonVersions.get(version)
-            if (useCount == null || useCount > MAX_DAEMON_RUNS) {
+        fun prepareWrapper(
+                version: String,
+                environmentVariables: Map<String, String> = mapOf(),
+                withDaemon: Boolean = true
+        ): File {
+            val wrapperDir = gradleWrappers.getOrPut(version) { createNewWrapperDir(version) }
+
+            // Even if gradle is run with --no-daemon, we should check,
+            // that common active process count does not exceed the threshold,
+            // to avoid retaining too much memory (which is critical for CI)
+            val activeDaemonsCount = daemonRunCount.keys.size
+            val nonDaemonCount = if (!withDaemon) 1 else 0
+            if (activeDaemonsCount + nonDaemonCount > MAX_ACTIVE_GRADLE_PROCESSES) {
+                println("Too many Gradle active processes (max is $MAX_ACTIVE_GRADLE_PROCESSES). Stopping all daemons")
+                stopAllDaemons(environmentVariables)
+            }
+
+            if (withDaemon) {
+                val timesDaemonUsed = daemonRunCount[version] ?: 0
+                if (timesDaemonUsed >= MAX_DAEMON_RUNS) {
+                    stopDaemon(version, environmentVariables)
+                }
+                daemonRunCount[version] = timesDaemonUsed + 1
+            }
+
+            return wrapperDir
+        }
+
+        private fun createNewWrapperDir(version: String): File =
+                FileUtil.createTempDirectory("GradleWrapper-", version, /* deleteOnExit */ true)
+                        .apply {
+                            File(BaseGradleIT.resourcesRootFile, "GradleWrapper").copyRecursively(this)
+                            val wrapperProperties = File(this, "gradle/wrapper/gradle-wrapper.properties")
+                            wrapperProperties.modify { it.replace("<GRADLE_WRAPPER_VERSION>", version) }
+                        }
+
+        private fun stopDaemon(version: String, environmentVariables: Map<String, String>) {
+            println("Stopping gradle daemon v$version")
+
+            val wrapperDir = gradleWrappers[version] ?: error("Was asked to stop unknown daemon $version")
+            if (version in daemonRunCount) {
+                val cmd = createGradleCommand(wrapperDir, arrayListOf("-stop"))
+                val result = runProcess(cmd, wrapperDir, environmentVariables)
+                assert(result.isSuccessful) { "Could not stop daemon: $result" }
+                daemonRunCount.remove(version)
+            }
+        }
+
+        private fun stopAllDaemons(environmentVariables: Map<String, String>) {
+            // copy wrapper versions, because stopDaemon modifies daemonRunCount
+            val wrapperVersions = daemonRunCount.keys.toList()
+            for (version in wrapperVersions) {
                 stopDaemon(version, environmentVariables)
-                ranDaemonVersions.put(version, 1)
             }
-            else {
-                ranDaemonVersions.put(version, useCount + 1)
-            }
+            assert(daemonRunCount.isEmpty()) { "Could not stop some daemons ${daemonRunCount.keys.joinToString()}" }
         }
     }
 
@@ -118,7 +159,6 @@ abstract class BaseGradleIT {
 
         open fun setupWorkingDir() {
             copyRecursively(this.resourcesRoot, workingDir)
-            copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), projectDir)
         }
 
         fun relativize(files: Iterable<File>): List<String> =
@@ -170,12 +210,9 @@ abstract class BaseGradleIT {
     }
 
     fun Project.build(vararg params: String, options: BuildOptions = defaultBuildOptions(), check: CompiledProject.() -> Unit) {
-        val cmd = createBuildCommand(params, options)
         val env = createEnvironmentVariablesMap(options)
-
-        if (options.withDaemon) {
-            prepareDaemon(wrapperVersion, env)
-        }
+        val wrapperDir = prepareWrapper(wrapperVersion, env)
+        val cmd = createBuildCommand(wrapperDir, params, options)
 
         println("<=== Test build: ${this.projectName} $cmd ===>")
 
@@ -310,6 +347,22 @@ abstract class BaseGradleIT {
         return this
     }
 
+    fun CompiledProject.findTasksByPattern(pattern: String): Set<String> {
+        return "task '($pattern)'".toRegex().findAll(output).mapTo(HashSet()) { it.groupValues[1] }
+    }
+
+    fun CompiledProject.assertTasksExecuted(tasks: Iterable<String>) {
+        for (task in tasks) {
+            assertContains("Executing task '$task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksUpToDate(tasks: Iterable<String>) {
+        for (task in tasks) {
+            assertContains("$task UP-TO-DATE")
+        }
+    }
+
     fun CompiledProject.getOutputForTask(taskName: String): String {
         fun String.substringAfter(delimiter: String, missingDelimiterValue: () -> String): String {
             val index = indexOf(delimiter)
@@ -330,24 +383,37 @@ abstract class BaseGradleIT {
             weakTesting: Boolean = false,
             tasks: List<String>) {
         for (task in tasks) {
-            assertCompiledKotlinSources(sources, weakTesting, getOutputForTask(task))
+            assertCompiledKotlinSources(sources, weakTesting, getOutputForTask(task), suffix = " in task ${task}")
         }
     }
 
-    fun CompiledProject.assertCompiledKotlinSources(sources: Iterable<String>, weakTesting: Boolean = false, output: String = this.output): CompiledProject =
-            if (weakTesting)
-                assertContainFiles(sources, getCompiledKotlinSources(output).projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
-            else
-                assertSameFiles(sources, getCompiledKotlinSources(output).projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
+    fun CompiledProject.assertCompiledKotlinSources(
+            expectedSources: Iterable<String>,
+            weakTesting: Boolean = false,
+            output: String = this.output,
+            suffix: String = ""
+    ): CompiledProject {
+        val messagePrefix = "Compiled Kotlin files differ${suffix}:\n  "
+        val actualSources = getCompiledKotlinSources(output).projectRelativePaths(this.project)
+        return if (weakTesting) {
+            assertContainFiles(expectedSources, actualSources, messagePrefix)
+        }
+        else {
+            assertSameFiles(expectedSources, actualSources, messagePrefix)
+        }
+    }
 
-    fun CompiledProject.assertCompiledJavaSources(sources: Iterable<String>, weakTesting: Boolean = false): CompiledProject =
+    fun CompiledProject.assertCompiledJavaSources(
+            sources: Iterable<String>,
+            weakTesting: Boolean = false
+    ): CompiledProject =
             if (weakTesting)
                 assertContainFiles(sources, compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
             else
                 assertSameFiles(sources, compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
 
-    private fun Project.createBuildCommand(params: Array<out String>, options: BuildOptions): List<String> =
-            createGradleCommand(createGradleTailParameters(options, params))
+    private fun Project.createBuildCommand(wrapperDir: File, params: Array<out String>, options: BuildOptions): List<String> =
+            createGradleCommand(wrapperDir, createGradleTailParameters(options, params))
 
     private fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
             params.toMutableList().apply {

@@ -21,9 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -122,7 +120,8 @@ object ModifierCheckerCore {
                                             INTERFACE, ENUM_CLASS, ENUM_ENTRY, FILE),
             COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE),
             FINAL_KEYWORD     to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
-                                            ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, FILE)
+                                            ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, FILE),
+            VARARG_KEYWORD    to EnumSet.of(CONSTRUCTOR, FUNCTION, CLASS)
     )
 
     val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
@@ -303,6 +302,8 @@ object ModifierCheckerCore {
         val modifier = node.elementType as KtModifierKeywordToken
         val actualParents: List<KotlinTarget> = when (parentDescriptor) {
             is ClassDescriptor -> KotlinTarget.classActualTargets(parentDescriptor)
+            is PropertySetterDescriptor -> listOf(PROPERTY_SETTER)
+            is PropertyGetterDescriptor -> listOf(PROPERTY_GETTER)
             is FunctionDescriptor -> listOf(FUNCTION)
             else -> listOf(FILE)
         }
@@ -362,7 +363,7 @@ object ModifierCheckerCore {
             // JetFunction or JetPropertyAccessor
             for (parameter in listOwner.valueParameters) {
                 if (!parameter.hasValOrVar()) {
-                    check(parameter, trace, null, languageVersionSettings)
+                    check(parameter, trace, trace[BindingContext.VALUE_PARAMETER, parameter], languageVersionSettings)
                 }
             }
         }

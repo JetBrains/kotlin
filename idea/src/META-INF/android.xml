@@ -18,6 +18,8 @@
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.android.actions.KotlinNewActivityNotification"/>
 
+        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.android.KotlinAndroidLineMarkerProvider"/>
+
         <intentionAction>
             <className>org.jetbrains.kotlin.android.intention.KotlinAndroidAddStringResource</className>
             <category>Kotlin Android</category>

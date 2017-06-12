@@ -66,7 +66,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
         companion object {
             private val SIGNATURE_SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE.withOptions {
-                renderDefaultValues = false
+                defaultParameterValueRenderer = null
             }
 
             private val SIGNATURE_PREVIEW_RENDERER = DescriptorRenderer.withOptions {
@@ -75,7 +75,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 modifiers = emptySet()
                 classifierNamePolicy = ClassifierNamePolicy.SHORT
                 unitReturnType = false
-                renderDefaultValues = false
+                defaultParameterValueRenderer = null
             }
         }
     }

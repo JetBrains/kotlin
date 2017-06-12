@@ -63,6 +63,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             node -> node instanceof JsInvocation && hasToBeInlined((JsInvocation) node);
 
     public static void process(
+            @NotNull JsConfig.Reporter reporter,
             @NotNull JsConfig config,
             @NotNull DiagnosticSink trace,
             @NotNull JsName currentModuleName,
@@ -76,7 +77,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             accessorInvocationTransformer.accept(fragment.getDeclarationBlock());
             accessorInvocationTransformer.accept(fragment.getInitializerBlock());
         }
-        FunctionReader functionReader = new FunctionReader(config, currentModuleName, fragments);
+        FunctionReader functionReader = new FunctionReader(reporter, config, currentModuleName, fragments);
         JsInliner inliner = new JsInliner(config, functions, accessors, functionReader, trace);
         for (JsProgramFragment fragment : fragmentsToProcess) {
             inliner.inliningContexts.push(inliner.new JsInliningContext());

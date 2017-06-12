@@ -86,4 +86,13 @@ class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
         Assert.assertEquals("1.1", settings.apiLevel!!.description)
         Assert.assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.compilerSettings!!.additionalArguments)
     }
+
+    fun testLoadAndSaveProjectWithV2FacetConfig() {
+        val moduleFileContentBefore = String(module.moduleFile!!.contentsToByteArray())
+        val application = ApplicationManager.getApplication() as ApplicationImpl
+        application.doNotSave(false)
+        application.saveAll()
+        val moduleFileContentAfter = String(module.moduleFile!!.contentsToByteArray())
+        Assert.assertEquals(moduleFileContentBefore, moduleFileContentAfter)
+    }
 }

@@ -260,6 +260,24 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             doTest(fileName);
         }
 
+        @TestMetadata("IfWithElseBlockInAssignment.kt")
+        public void testIfWithElseBlockInAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/IfWithElseBlockInAssignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IfWithPostfixAfterElseBlock.kt")
+        public void testIfWithPostfixAfterElseBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/IfWithPostfixAfterElseBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IfWithQualifiedAfterElseBlock.kt")
+        public void testIfWithQualifiedAfterElseBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/IfWithQualifiedAfterElseBlock.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LambdaBody.kt")
         public void testLambdaBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/LambdaBody.kt");

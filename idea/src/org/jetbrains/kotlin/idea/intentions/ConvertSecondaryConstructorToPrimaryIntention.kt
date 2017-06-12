@@ -128,7 +128,9 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
             if (parameterDescriptor != null && propertyDescriptor != null) {
                 val property = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? KtProperty
                 if (property != null) {
-                    if (propertyDescriptor.name == parameterDescriptor.name && propertyDescriptor.type == parameterDescriptor.type) {
+                    if (propertyDescriptor.name == parameterDescriptor.name &&
+                        propertyDescriptor.type == parameterDescriptor.type &&
+                        propertyDescriptor.accessors.all { it.isDefault }) {
                         propertyCommentSaver = CommentSaver(property)
                         val valOrVar = if (property.isVar) factory.createVarKeyword() else factory.createValKeyword()
                         newParameter.addBefore(valOrVar, newParameter.nameIdentifier)

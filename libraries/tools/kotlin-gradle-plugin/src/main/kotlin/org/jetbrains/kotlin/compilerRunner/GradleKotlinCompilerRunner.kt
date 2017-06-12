@@ -24,9 +24,15 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
+import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
@@ -49,6 +55,34 @@ const val COULD_NOT_CONNECT_TO_DAEMON_MESSAGE = "Could not connect to Kotlin com
 internal class GradleCompilerRunner(private val project: Project) : KotlinCompilerRunner<GradleCompilerEnvironment>() {
     override val log = GradleKotlinLogger(project.logger)
 
+    // used only for process launching so far, but implements unused proper contract
+    private val loggingMessageCollector: MessageCollector by lazy {
+        object : MessageCollector {
+            private var hasErrors = false
+            private val messageRenderer = MessageRenderer.PLAIN_FULL_PATHS
+
+            override fun clear() {
+                hasErrors = false
+            }
+
+            override fun hasErrors(): Boolean = hasErrors
+
+            override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+                val locMessage = messageRenderer.render(severity, message, location)
+                when (severity) {
+                    CompilerMessageSeverity.EXCEPTION -> log.error(locMessage)
+                    CompilerMessageSeverity.ERROR,
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    CompilerMessageSeverity.WARNING,
+                    CompilerMessageSeverity.INFO -> log.info(locMessage)
+                    CompilerMessageSeverity.LOGGING -> log.debug(locMessage)
+                    CompilerMessageSeverity.OUTPUT -> {
+                    }
+                }
+            }
+        }
+    }
+
     fun runJvmCompiler(
             sourcesToCompile: List<File>,
             javaSourceRoots: Iterable<File>,
@@ -69,11 +103,17 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             args.destination = null
         }
 
+        var deleteModuleFile = true
+
         try {
-            return runCompiler(K2JVM_COMPILER, args, environment)
+            val res = runCompiler(K2JVM_COMPILER, args, environment)
+            deleteModuleFile = (res == ExitCode.OK || System.getProperty("kotlin.compiler.leave.module.file.on.error") == null)
+            return res
         }
         finally {
-            moduleFile.delete()
+            if (deleteModuleFile) {
+                moduleFile.delete()
+            }
         }
     }
 
@@ -249,8 +289,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
         val classpathString = environment.compilerClasspath.map {it.absolutePath}.joinToString(separator = File.pathSeparator)
         val builder = ProcessBuilder(javaBin, "-cp", classpathString, compilerClassName, *argsArray)
-        val processLauncher = Native.get(ProcessLauncher::class.java)
-        val process = processLauncher.start(builder)
+        val process = launchProcessWithFallback(builder, DaemonReportingTargets(messageCollector = loggingMessageCollector))
 
         // important to read inputStream, otherwise the process may hang on some systems
         val readErrThread = thread {
