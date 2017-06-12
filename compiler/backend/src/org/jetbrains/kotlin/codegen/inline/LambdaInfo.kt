@@ -55,7 +55,7 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
 
     lateinit var node: SMAPAndMethodNode
 
-    abstract fun generateLambdaBody(codegen: ExpressionCodegen, reifiedTypeInliner: ReifiedTypeInliner)
+    abstract fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner)
 
     fun addAllParameters(remapper: FieldRemapper): Parameters {
         val builder = ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, invokeMethod.descriptor, this)
@@ -105,8 +105,8 @@ class DefaultLambda(
 
     override fun isMyLabel(name: String): Boolean = false
 
-    override fun generateLambdaBody(codegen: ExpressionCodegen, reifiedTypeInliner: ReifiedTypeInliner) {
-        val classReader = buildClassReaderByInternalName(codegen.state, lambdaClassType.internalName)
+    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner) {
+        val classReader = buildClassReaderByInternalName(sourceCompiler.state, lambdaClassType.internalName)
         var isPropertyReference = false
         var isFunctionReference = false
         classReader.accept(object: ClassVisitor(API){
@@ -153,7 +153,7 @@ class DefaultLambda(
 
         invokeMethod = Method(
                 (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString(),
-                codegen.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod.descriptor
+                sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod.descriptor
         )
 
         node = getMethodNode(
@@ -260,24 +260,17 @@ class ExpressionLambda(
     val isPropertyReference: Boolean
         get() = propertyReferenceInfo != null
 
-    override fun generateLambdaBody(codegen: ExpressionCodegen, reifiedTypeInliner: ReifiedTypeInliner) {
-        val closureContext =
-                if (isPropertyReference)
-                    codegen.getContext().intoAnonymousClass(classDescriptor, codegen, OwnerKind.IMPLEMENTATION)
-                else
-                    codegen.getContext().intoClosure(invokeMethodDescriptor, codegen, typeMapper)
-        val context = closureContext.intoInlinedLambda(invokeMethodDescriptor, isCrossInline, isPropertyReference)
-
+    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner) {
         val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
         val asmMethod = jvmMethodSignature.asmMethod
         val methodNode = MethodNode(
-                API, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, context.contextKind, codegen.state),
+                API, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, OwnerKind.IMPLEMENTATION, sourceCompiler.state),
                 asmMethod.name, asmMethod.descriptor, null, null
         )
 
         node = wrapWithMaxLocalCalc(methodNode).let { adapter ->
-            val smap = InlineCodegen.generateMethodBody(
-                    adapter, invokeMethodDescriptor, context, functionWithBodyOrCallableReference, jvmMethodSignature, codegen, this
+            val smap = sourceCompiler.generateLambdaBody(
+                    adapter, jvmMethodSignature, this
             )
             adapter.visitMaxs(-1, -1)
             SMAPAndMethodNode(methodNode, smap)

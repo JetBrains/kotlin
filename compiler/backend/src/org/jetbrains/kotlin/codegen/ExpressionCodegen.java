@@ -118,7 +118,7 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFun
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> implements LocalLookup {
+public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> implements LocalLookup, BaseExpressionCodegen {
     private final GenerationState state;
     final KotlinTypeMapper typeMapper;
     private final BindingContext bindingContext;
@@ -1352,6 +1352,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     //we should generate additional linenumber info after inline call only if it used as argument
+    @Override
     public void markLineNumberAfterInlineIfNeeded() {
         if (!shouldMarkLineNumbers) {
             //if it used as general argument
@@ -1366,6 +1367,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
+    @Override
     public int getLastLineNumber() {
         return myLastLineNumber;
     }
@@ -2286,10 +2288,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         FunctionDescriptor original =
                 unwrapInitialSignatureDescriptor(DescriptorUtils.unwrapFakeOverride((FunctionDescriptor) descriptor.getOriginal()));
         if (isDefaultCompilation) {
-            return new InlineCodegenForDefaultBody(original, this, state);
+            return new InlineCodegenForDefaultBody(original, this, state, new SourceCompilerForInline(this));
         }
         else {
-            return new InlineCodegen(this, state, original, callElement, typeParameterMappings);
+            return new InlineCodegen(this, state, original, callElement, typeParameterMappings, new SourceCompilerForInline(this));
         }
     }
 
@@ -4060,19 +4062,17 @@ The "returned" value of try expression with no finally is either the last expres
     public void putReifiedOperationMarkerIfTypeIsReifiedParameter(
             @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind
     ) {
-        putReifiedOperationMarkerIfTypeIsReifiedParameter(type, operationKind, v);
+        putReifiedOperationMarkerIfTypeIsReifiedParameter(type, operationKind, v, this);
     }
 
-    public void putReifiedOperationMarkerIfTypeIsReifiedParameter(
-            @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v
+    public static void putReifiedOperationMarkerIfTypeIsReifiedParameter(
+            @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v,
+            @NotNull BaseExpressionCodegen codegen
     ) {
         Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
         if (typeParameterAndReificationArgument != null && typeParameterAndReificationArgument.getFirst().isReified()) {
             TypeParameterDescriptor typeParameterDescriptor = typeParameterAndReificationArgument.getFirst();
-            if (typeParameterDescriptor.getContainingDeclaration() != context.getContextDescriptor()) {
-                parentCodegen.getReifiedTypeParametersUsages().
-                        addUsedReifiedParameter(typeParameterDescriptor.getName().asString());
-            }
+            codegen.consumeReifiedOperationMarker(typeParameterDescriptor);
             v.iconst(operationKind.getId());
             v.visitLdcInsn(typeParameterAndReificationArgument.getSecond().asString());
             v.invokestatic(
@@ -4082,6 +4082,7 @@ The "returned" value of try expression with no finally is either the last expres
         }
     }
 
+    @Override
     public void propagateChildReifiedTypeParametersUsages(@NotNull ReifiedTypeParametersUsages usages) {
         parentCodegen.getReifiedTypeParametersUsages().propagateChildUsagesWithinContext(usages, context);
     }
@@ -4203,6 +4204,7 @@ The "returned" value of try expression with no finally is either the last expres
         return context.getContextDescriptor().toString();
     }
 
+    @Override
     @NotNull
     public FrameMap getFrameMap() {
         return myFrameMap;
@@ -4213,6 +4215,7 @@ The "returned" value of try expression with no finally is either the last expres
         return context;
     }
 
+    @Override
     @NotNull
     public NameGenerator getInlineNameGenerator() {
         NameGenerator nameGenerator = getParentCodegen().getInlineNameGenerator();
@@ -4254,5 +4257,19 @@ The "returned" value of try expression with no finally is either the last expres
             @NotNull KotlinTypeMapper typeMapper
     ) {
         return StackValue.delegate(typeMapper.mapType(variableDescriptor.getType()), delegateValue, metadataValue, variableDescriptor, this);
+    }
+
+    @NotNull
+    @Override
+    public InstructionAdapter getVisitor() {
+        return v;
+    }
+
+    @Override
+    public void consumeReifiedOperationMarker(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
+        if (typeParameterDescriptor.getContainingDeclaration() != context.getContextDescriptor()) {
+            parentCodegen.getReifiedTypeParametersUsages().
+                    addUsedReifiedParameter(typeParameterDescriptor.getName().asString());
+        }
     }
 }
