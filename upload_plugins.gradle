@@ -25,7 +25,16 @@ task uploadPlugins() << {
     def repo = new org.jetbrains.intellij.pluginRepository.PluginRepositoryInstance(
             "https://plugins.jetbrains.com/",
             username, password)
-    new File(path).eachFileMatch(~/kotlin-plugin-.*\.zip/) { file ->
+
+    File[] files = new File(path).listFiles({ File f, String filename ->
+        filename.startsWith("kotlin-plugin") && filename.endsWith(".zip")
+                                            } as FilenameFilter)
+
+    files = files.sort { f1, f2 ->
+        f1.name.contains("1.1.2-5") ? 1 : (f2.name.contains("1.1.2-5") ? -1 : (f1.name <=> f2.name))
+    }
+
+    files.each {
         println("Uploading ${file.name}")
         repo.uploadPlugin(6954, file, channel)
     }
