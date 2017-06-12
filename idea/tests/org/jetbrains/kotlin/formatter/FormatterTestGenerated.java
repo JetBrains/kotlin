@@ -104,6 +104,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("CallLParenthOnNextLine.after.kt")
+        public void testCallLParenthOnNextLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallLParenthOnNextLine.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("CallRParenthOnNextLine.after.kt")
+        public void testCallRParenthOnNextLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallRParenthOnNextLine.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Cast.after.kt")
         public void testCast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Cast.after.kt");
@@ -1019,6 +1031,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("BinaryExpressionsWithoutAlignment.after.inv.kt")
         public void testBinaryExpressionsWithoutAlignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("CallLParenthOnNextLine.after.inv.kt")
+        public void testCallLParenthOnNextLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallLParenthOnNextLine.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("CallRParenthOnNextLine.after.inv.kt")
+        public void testCallRParenthOnNextLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallRParenthOnNextLine.after.inv.kt");
             doTestInverted(fileName);
         }
 
