@@ -2932,6 +2932,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility/private"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("noModifierListAnnotation.kt")
+            public void testNoModifierListAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListAnnotation.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noModifierListClass.kt")
             public void testNoModifierListClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListClass.kt");
