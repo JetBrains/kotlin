@@ -34,7 +34,7 @@ task uploadPlugins() << {
         f1.name.contains("1.1.2-5") ? 1 : (f2.name.contains("1.1.2-5") ? -1 : (f1.name <=> f2.name))
     }
 
-    files.each {
+    files.each { file ->
         println("Uploading ${file.name}")
         repo.uploadPlugin(6954, file, channel)
     }
