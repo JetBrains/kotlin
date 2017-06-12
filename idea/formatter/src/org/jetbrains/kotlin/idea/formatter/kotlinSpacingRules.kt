@@ -214,12 +214,12 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             beforeInside(GT, TYPE_ARGUMENT_LIST).spaces(0)
             before(TYPE_ARGUMENT_LIST).spaces(0)
 
-            betweenInside(FOR_KEYWORD, LPAR, FOR).lineBreakOrForceSpace(false, kotlinCommonSettings.SPACE_BEFORE_FOR_PARENTHESES)
-            betweenInside(IF_KEYWORD, LPAR, IF).lineBreakOrForceSpace(false, kotlinCommonSettings.SPACE_BEFORE_IF_PARENTHESES)
-            betweenInside(WHILE_KEYWORD, LPAR, WHILE).lineBreakOrForceSpace(false, kotlinCommonSettings.SPACE_BEFORE_WHILE_PARENTHESES)
-            betweenInside(WHILE_KEYWORD, LPAR, DO_WHILE).lineBreakOrForceSpace(false, kotlinCommonSettings.SPACE_BEFORE_WHILE_PARENTHESES)
-            betweenInside(WHEN_KEYWORD, LPAR, WHEN).lineBreakOrForceSpace(false, kotlinSettings.SPACE_BEFORE_WHEN_PARENTHESES)
-            betweenInside(CATCH_KEYWORD, VALUE_PARAMETER_LIST, CATCH).lineBreakOrForceSpace(false, kotlinCommonSettings.SPACE_BEFORE_CATCH_PARENTHESES)
+            betweenInside(FOR_KEYWORD, LPAR, FOR).spaceIf(kotlinCommonSettings.SPACE_BEFORE_FOR_PARENTHESES)
+            betweenInside(IF_KEYWORD, LPAR, IF).spaceIf(kotlinCommonSettings.SPACE_BEFORE_IF_PARENTHESES)
+            betweenInside(WHILE_KEYWORD, LPAR, WHILE).spaceIf(kotlinCommonSettings.SPACE_BEFORE_WHILE_PARENTHESES)
+            betweenInside(WHILE_KEYWORD, LPAR, DO_WHILE).spaceIf(kotlinCommonSettings.SPACE_BEFORE_WHILE_PARENTHESES)
+            betweenInside(WHEN_KEYWORD, LPAR, WHEN).spaceIf(kotlinSettings.SPACE_BEFORE_WHEN_PARENTHESES)
+            betweenInside(CATCH_KEYWORD, VALUE_PARAMETER_LIST, CATCH).spaceIf(kotlinCommonSettings.SPACE_BEFORE_CATCH_PARENTHESES)
 
             betweenInside(LPAR, VALUE_PARAMETER, FOR).spaces(0)
             betweenInside(LPAR, DESTRUCTURING_DECLARATION, FOR).spaces(0)
