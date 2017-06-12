@@ -42,9 +42,32 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
         }
     }
 
+    private data class Condition(
+            val parent: IElementType? = null,
+            val left: IElementType? = null,
+            val right: IElementType? = null,
+            val parentSet: TokenSet? = null,
+            val leftSet: TokenSet? = null,
+            val rightSet: TokenSet? = null
+    ) : (ASTBlock, ASTBlock, ASTBlock) -> Boolean {
+        override fun invoke(p: ASTBlock, l: ASTBlock, r: ASTBlock): Boolean =
+            (parent == null || p.node!!.elementType == parent) &&
+            (left == null || l.node!!.elementType == left) &&
+            (right == null || r.node!!.elementType == right) &&
+            (parentSet == null || parentSet.contains(p.node!!.elementType)) &&
+            (leftSet == null || leftSet.contains(l.node!!.elementType)) &&
+            (rightSet == null || rightSet.contains(r.node!!.elementType))
+    }
+
+    private data class Rule(val conditions: List<Condition>,
+                            val action: (ASTBlock, ASTBlock, ASTBlock) -> Spacing?) : (ASTBlock, ASTBlock, ASTBlock) -> Spacing? {
+        override fun invoke(p: ASTBlock, l: ASTBlock, r: ASTBlock): Spacing? =
+            if (conditions.all { it(p, l, r) }) action(p, l, r) else null
+    }
+
     inner class CustomSpacingBuilder : Builder {
-        private val rules = ArrayList<(ASTBlock, ASTBlock, ASTBlock) -> Spacing?>()
-        private var conditions = ArrayList<(ASTBlock, ASTBlock, ASTBlock) -> Boolean>()
+        private val rules = ArrayList<Rule>()
+        private var conditions = ArrayList<Condition>()
 
         override fun getSpacing(parent: ASTBlock, left: ASTBlock, right: ASTBlock): Spacing? {
             for (rule in rules) {
@@ -58,15 +81,7 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
 
         fun inPosition(parent: IElementType? = null, left: IElementType? = null, right: IElementType? = null,
                        parentSet: TokenSet? = null, leftSet: TokenSet? = null, rightSet: TokenSet? = null): CustomSpacingBuilder {
-            conditions.add {
-                p, l, r ->
-                (parent == null || p.node!!.elementType == parent) &&
-                (left == null || l.node!!.elementType == left) &&
-                (right == null || r.node!!.elementType == right) &&
-                (parentSet == null || parentSet.contains(p.node!!.elementType)) &&
-                (leftSet == null || leftSet.contains(l.node!!.elementType)) &&
-                (rightSet == null || rightSet.contains(r.node!!.elementType))
-            }
+            conditions.add(Condition(parent, left, right, parentSet, leftSet, rightSet))
             return this
         }
 
@@ -103,7 +118,7 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
 
         private fun newRule(rule: (ASTBlock, ASTBlock, ASTBlock) -> Spacing?) {
             val savedConditions = ArrayList(conditions)
-            rules.add { p, l, r -> if (savedConditions.all { it(p, l, r) }) rule(p, l, r) else null }
+            rules.add(Rule(savedConditions, rule))
             conditions.clear()
         }
     }
