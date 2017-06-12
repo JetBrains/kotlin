@@ -14,145 +14,120 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.formatter;
+package org.jetbrains.kotlin.idea.formatter
 
-import com.intellij.application.options.IndentOptionsEditor;
-import com.intellij.application.options.SmartIndentOptionsEditor;
-import com.intellij.lang.Language;
-import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings;
+import com.intellij.application.options.IndentOptionsEditor
+import com.intellij.application.options.SmartIndentOptionsEditor
+import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 
-public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
-    @NotNull
-    @Override
-    public Language getLanguage() {
-        return KotlinLanguage.INSTANCE;
+class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
+    override fun getLanguage() = KotlinLanguage.INSTANCE
+
+    override fun getCodeSample(settingsType: LanguageCodeStyleSettingsProvider.SettingsType): String = when (settingsType) {
+        LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS ->
+            """
+               public class ThisIsASampleClass {
+                   val test =
+                       12
+
+                   fun foo1(i1: Int, i2: Int, i3: Int) : Int {
+                       when (i1) {
+                           is Number -> 0
+                           else -> 1
+                       }
+                       return 0
+                   }
+                   private fun foo2():Int {
+               // todo: something
+                       try {            return foo1(12, 13, 14)
+                       }        catch (e: Exception) {            return 0        }        finally {           if (true) {               return 1           }           else {               return 2           }        }    }
+                   private val f = {(a: Int)->a*2}
+               }
+
+               enum class Enumeration {
+                   A,
+                   B
+               }
+            """.trimIndent()
+
+        LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS ->
+            """
+                class Foo {
+                   private var field1: Int = 1
+                   private val field2: String? = null
+
+
+                   init {
+                       field1 = 2;
+                   }
+
+                   fun foo1() {
+                       run {
+
+
+
+                           field1
+                       }
+                   }
+
+
+                   class InnerClass {
+                   }
+               }
+
+
+
+               class AnotherClass {
+               }
+
+               interface TestInterface {
+               }
+               fun run(f: () -> Unit) {
+                   f()
+               }""".trimIndent()
+
+        else -> """open class Some {
+                       private val f: (Int)->Int = { (a: Int) -> a * 2 }
+                       fun foo(): Int {
+                           val test: Int = 12
+                           for (i in 10..42) {
+                               println (when {
+                                   i < test -> -1
+                                   i > test -> 1
+                                   else -> 0
+                               })
+                           }
+                           if (true) { }
+                           while (true) { break }
+                           try {
+                               when (test) {
+                                   12 -> println("foo")
+                                   else -> println("bar")
+                               }
+                           } catch (e: Exception) {
+                           } finally {
+                           }
+                           return test
+                       }
+                       private fun <T>foo2(): Int where T : List<T> {
+                           return 0
+                       }
+
+
+                   }
+                   class AnotherClass<T : Any> : Some()
+                   """.trimIndent()
     }
 
-    @Override
-    public String getCodeSample(@NotNull SettingsType settingsType) {
-        switch (settingsType) {
-            case WRAPPING_AND_BRACES_SETTINGS:
-                return
-                        "public class ThisIsASampleClass {\n" +
-                        "    val test = \n" +
-                        "        12\n" +
-                        "\n" +
-                        "    fun foo1(i1: Int, i2: Int, i3: Int) : Int {\n" +
-                        "        when (i1) {\n" +
-                        "            is Number -> 0\n" +
-                        "            else -> 1\n" +
-                        "        }\n" +
-                        "        return 0\n" +
-                        "    }\n" +
-                        "    private fun foo2():Int {\n" +
-                        "// todo: something\n" +
-                        "        try {" +
-                        "            return foo1(12, 13, 14)\n" +
-                        "        }" +
-                        "        catch (e: Exception) {" +
-                        "            return 0" +
-                        "        }" +
-                        "        finally {" +
-                        "           if (true) {" +
-                        "               return 1" +
-                        "           }" +
-                        "           else {" +
-                        "               return 2" +
-                        "           }" +
-                        "        }" +
-                        "    }\n" +
-                        "    private val f = {(a: Int)->a*2}\n" +
-                        "}\n" +
-                        "\n" +
-                        "enum class Enumeration {\n" +
-                        "    A,\n" +
-                        "    B\n" +
-                        "}\n" +
-                        "";
-            case BLANK_LINES_SETTINGS:
-                return
-                        "class Foo {\n" +
-                        "    private var field1: Int = 1\n" +
-                        "    private val field2: String? = null\n" +
-                        "\n" +
-                        "\n" +
-                        "    init {\n" +
-                        "        field1 = 2;\n" +
-                        "    }\n" +
-                        "\n" +
-                        "    fun foo1() {\n" +
-                        "        run {\n" +
-                        "            \n" +
-                        "            \n" +
-                        "            \n" +
-                        "            field1\n" +
-                        "        }\n" +
-                        "    }\n" +
-                        "\n" +
-                        "\n" +
-                        "    class InnerClass {\n" +
-                        "    }\n" +
-                        "}\n" +
-                        "\n" +
-                        "\n" +
-                        "\n" +
-                        "class AnotherClass {\n" +
-                        "}\n" +
-                        "\n" +
-                        "interface TestInterface {\n" +
-                        "}\n" +
-                        "fun run(f: () -> Unit) {\n" +
-                        "    f()\n" +
-                        "}";
-            default:
-                return
-                        "open class Some {\n"+
-                        "    private val f: (Int)->Int = { (a: Int) -> a * 2 }\n"+
-                        "    fun foo(): Int {\n"+
-                        "        val test: Int = 12\n"+
-                        "        for (i in 10..42) {\n"+
-                        "            println (when {\n"+
-                        "                i < test -> -1\n"+
-                        "                i > test -> 1\n"+
-                        "                else -> 0\n"+
-                        "            })\n"+
-                        "        }\n"+
-                        "        if (true) { }\n" +
-                        "        while (true) { " +
-                        "          break" +
-                        "        }\n" +
-                        "        try {\n" +
-                        "          when (test) {\n" +
-                        "            12 -> println(\"foo\")\n" +
-                        "            else -> println(\"bar\")\n" +
-                        "          }\n" +
-                        "        } catch (e: Exception) {\n" +
-                        "        } finally {\n" +
-                        "        }\n" +
-                        "        return test\n"+
-                        "    }\n"+
-                        "    private fun <T>foo2(): Int where T : List<T> {\n"+
-                        "        return 0\n"+
-                        "    }\n"+
-                        "}\n"+
-                        "class AnotherClass<T : Any> : Some()\n";
-        }
-    }
+    override fun getLanguageName(): String = KotlinLanguage.NAME
 
-    @Override
-    public String getLanguageName() {
-        return KotlinLanguage.NAME;
-    }
-
-    @Override
-    public void customizeSettings(@NotNull CodeStyleSettingsCustomizable consumer, @NotNull SettingsType settingsType) {
-        switch (settingsType) {
-            case SPACING_SETTINGS:
+    override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: LanguageCodeStyleSettingsProvider.SettingsType) {
+        when (settingsType) {
+            LanguageCodeStyleSettingsProvider.SettingsType.SPACING_SETTINGS -> {
                 consumer.showStandardOptions(
                         "SPACE_AROUND_ASSIGNMENT_OPERATORS",
                         "SPACE_AROUND_LOGICAL_OPERATORS",
@@ -169,48 +144,47 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                         "SPACE_BEFORE_CATCH_PARENTHESES"
                 );
 
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_AROUND_RANGE", "Around range (..)",
-                                          CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS);
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_AROUND_RANGE", "Around range (..)",
+                                          CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON",
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_BEFORE_TYPE_COLON",
                                           "Space before colon, after declaration name",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_AFTER_TYPE_COLON",
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_AFTER_TYPE_COLON",
                                           "Space after colon, before declaration type",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_BEFORE_EXTEND_COLON",
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_BEFORE_EXTEND_COLON",
                                           "Space before colon in new type definition",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_AFTER_EXTEND_COLON",
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_AFTER_EXTEND_COLON",
                                           "Space after colon in new type definition",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD",
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD",
                                           "Insert whitespaces in simple one line methods",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_AROUND_FUNCTION_TYPE_ARROW",
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_AROUND_FUNCTION_TYPE_ARROW",
                                           "Surround arrow in function types with spaces",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_AROUND_WHEN_ARROW",
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_AROUND_WHEN_ARROW",
                                           "Surround arrow in \"when\" clause with spaces",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_BEFORE_LAMBDA_ARROW",
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_BEFORE_LAMBDA_ARROW",
                                           "Before lambda arrow",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_BEFORE_WHEN_PARENTHESES",
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_BEFORE_WHEN_PARENTHESES",
                                           "'when' parentheses",
-                                          CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES);
-
-                break;
-            case WRAPPING_AND_BRACES_SETTINGS:
-                consumer.showStandardOptions(
+                                          CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES)
+            }
+                LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
+                    consumer.showStandardOptions(
                         // "ALIGN_MULTILINE_CHAINED_METHODS",
                         "KEEP_FIRST_COLUMN_COMMENT",
                         "KEEP_LINE_BREAKS",
@@ -225,36 +199,27 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                         "FINALLY_ON_NEW_LINE",
                         "CALL_PARAMETERS_WRAP",
                         "METHOD_PARAMETERS_WRAP"
-                );
-                consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements");
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "ALIGN_IN_COLUMNS_CASE_BRANCH", "Align 'when' branches in columns",
-                                          CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT);
+                )
+                consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "ALIGN_IN_COLUMNS_CASE_BRANCH", "Align 'when' branches in columns",
+                                          CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "LBRACE_ON_NEXT_LINE",
+                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "LBRACE_ON_NEXT_LINE",
                                           "Put left brace on new line",
-                                          CodeStyleSettingsCustomizable.WRAPPING_BRACES);
-                break;
-            case BLANK_LINES_SETTINGS:
-                consumer.showStandardOptions(
-                        "KEEP_BLANK_LINES_IN_CODE",
-                        "KEEP_BLANK_LINES_IN_DECLARATIONS"
-                );
-                break;
-            default:
-                consumer.showStandardOptions();
-                break;
+                                          CodeStyleSettingsCustomizable.WRAPPING_BRACES)
+            }
+            LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS -> consumer.showStandardOptions(
+                    "KEEP_BLANK_LINES_IN_CODE",
+                    "KEEP_BLANK_LINES_IN_DECLARATIONS"
+            )
+            else -> consumer.showStandardOptions()
         }
     }
 
-    @Override
-    public IndentOptionsEditor getIndentOptionsEditor() {
-        return new SmartIndentOptionsEditor();
-    }
+    override fun getIndentOptionsEditor(): IndentOptionsEditor = SmartIndentOptionsEditor()
 
-    @Override
-    public CommonCodeStyleSettings getDefaultCommonSettings() {
-        CommonCodeStyleSettings commonCodeStyleSettings = new CommonCodeStyleSettings(getLanguage());
-        commonCodeStyleSettings.initIndentOptions();
-        return commonCodeStyleSettings;
-    }
+    override fun getDefaultCommonSettings(): CommonCodeStyleSettings =
+        CommonCodeStyleSettings(language).apply {
+            initIndentOptions()
+        }
 }
