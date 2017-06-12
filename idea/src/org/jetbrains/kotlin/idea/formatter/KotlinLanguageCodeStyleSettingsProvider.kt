@@ -23,6 +23,7 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import kotlin.reflect.KProperty
 
 class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     override fun getLanguage() = KotlinLanguage.INSTANCE
@@ -130,6 +131,10 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
     override fun getLanguageName(): String = KotlinLanguage.NAME
 
     override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: LanguageCodeStyleSettingsProvider.SettingsType) {
+        fun showCustomOption(field: KProperty<*>, title: String, groupName: String? = null) {
+            consumer.showCustomOption(KotlinCodeStyleSettings::class.java, field.name, title, groupName)
+        }
+
         when (settingsType) {
             LanguageCodeStyleSettingsProvider.SettingsType.SPACING_SETTINGS -> {
                 consumer.showStandardOptions(
@@ -148,44 +153,45 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "SPACE_BEFORE_CATCH_PARENTHESES"
                 );
 
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_AROUND_RANGE", "Around range (..)",
-                                          CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS)
+                showCustomOption(KotlinCodeStyleSettings::SPACE_AROUND_RANGE,
+                                 "Around range (..)",
+                                 CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_BEFORE_TYPE_COLON",
-                                          "Space before colon, after declaration name",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_TYPE_COLON,
+                                 "Space before colon, after declaration name",
+                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_AFTER_TYPE_COLON",
-                                          "Space after colon, before declaration type",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(KotlinCodeStyleSettings::SPACE_AFTER_TYPE_COLON,
+                                 "Space after colon, before declaration type",
+                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_BEFORE_EXTEND_COLON",
-                                          "Space before colon in new type definition",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_EXTEND_COLON,
+                                 "Space before colon in new type definition",
+                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_AFTER_EXTEND_COLON",
-                                          "Space after colon in new type definition",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(KotlinCodeStyleSettings::SPACE_AFTER_EXTEND_COLON,
+                                "Space after colon in new type definition",
+                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD",
-                                          "Insert whitespaces in simple one line methods",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(KotlinCodeStyleSettings::INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD,
+                                 "Insert whitespaces in simple one line methods",
+                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_AROUND_FUNCTION_TYPE_ARROW",
-                                          "Surround arrow in function types with spaces",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(KotlinCodeStyleSettings::SPACE_AROUND_FUNCTION_TYPE_ARROW,
+                                 "Surround arrow in function types with spaces",
+                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_AROUND_WHEN_ARROW",
-                                          "Surround arrow in \"when\" clause with spaces",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(KotlinCodeStyleSettings::SPACE_AROUND_WHEN_ARROW,
+                                "Surround arrow in \"when\" clause with spaces",
+                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_BEFORE_LAMBDA_ARROW",
-                                          "Before lambda arrow",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER)
+                showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_LAMBDA_ARROW,
+                                "Before lambda arrow",
+                                 CodeStyleSettingsCustomizable.SPACES_OTHER)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "SPACE_BEFORE_WHEN_PARENTHESES",
-                                          "'when' parentheses",
-                                          CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES)
+                showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_WHEN_PARENTHESES,
+                                 "'when' parentheses",
+                                 CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES)
             }
                 LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
                     consumer.showStandardOptions(
@@ -207,12 +213,13 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE"
                 )
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "ALIGN_IN_COLUMNS_CASE_BRANCH", "Align 'when' branches in columns",
-                                          CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT)
+                showCustomOption(KotlinCodeStyleSettings::ALIGN_IN_COLUMNS_CASE_BRANCH,
+                                 "Align 'when' branches in columns",
+                                 CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT)
 
-                consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "LBRACE_ON_NEXT_LINE",
-                                          "Put left brace on new line",
-                                          CodeStyleSettingsCustomizable.WRAPPING_BRACES)
+                showCustomOption(KotlinCodeStyleSettings::LBRACE_ON_NEXT_LINE,
+                                "Put left brace on new line",
+                                 CodeStyleSettingsCustomizable.WRAPPING_BRACES)
             }
             LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS -> consumer.showStandardOptions(
                     "KEEP_BLANK_LINES_IN_CODE",
