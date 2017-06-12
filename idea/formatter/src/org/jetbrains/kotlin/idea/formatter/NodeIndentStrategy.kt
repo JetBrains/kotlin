@@ -18,23 +18,24 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.Indent
 import com.intellij.lang.ASTNode
+import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import java.util.*
 
 abstract class NodeIndentStrategy {
 
-    abstract fun getIndent(node: ASTNode): Indent?
+    abstract fun getIndent(node: ASTNode, settings: CodeStyleSettings): Indent?
 
     class ConstIndentStrategy(private val indent: Indent) : NodeIndentStrategy() {
 
-        override fun getIndent(node: ASTNode): Indent? {
+        override fun getIndent(node: ASTNode, settings: CodeStyleSettings): Indent? {
             return indent
         }
     }
 
     class PositionStrategy(private val debugInfo: String?) : NodeIndentStrategy() {
-        private var defaultIndent = Indent.getNoneIndent()
+        private var indentCallback: (CodeStyleSettings) -> Indent = { Indent.getNoneIndent() }
 
         private val within = ArrayList<IElementType>()
         private val notIn = ArrayList<IElementType>()
@@ -46,7 +47,12 @@ abstract class NodeIndentStrategy {
         }
 
         fun set(indent: Indent): PositionStrategy {
-            defaultIndent = indent
+            indentCallback = { indent }
+            return this
+        }
+
+        fun set(indentCallback: (CodeStyleSettings) -> Indent): PositionStrategy {
+            this.indentCallback = indentCallback
             return this
         }
 
@@ -92,7 +98,7 @@ abstract class NodeIndentStrategy {
             return this
         }
 
-        override fun getIndent(node: ASTNode): Indent? {
+        override fun getIndent(node: ASTNode, settings: CodeStyleSettings): Indent? {
             if (!forElement.isEmpty()) {
                 if (!forElement.contains(node.elementType)) {
                     return null
@@ -121,7 +127,7 @@ abstract class NodeIndentStrategy {
                 }
             }
 
-            return defaultIndent
+            return indentCallback(settings)
         }
 
         private fun fillTypes(resultCollection: MutableList<IElementType>, singleType: IElementType, otherTypes: Array<out IElementType>) {

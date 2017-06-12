@@ -43,6 +43,9 @@ private val CODE_BLOCKS = TokenSet.create(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_B
 
 private val ALIGN_FOR_BINARY_OPERATIONS = TokenSet.create(MUL, DIV, PERC, PLUS, MINUS, ELVIS, LT, GT, LTEQ, GTEQ, ANDAND, OROR)
 
+val CodeStyleSettings.kotlinSettings
+    get() = getCustomSettings(KotlinCodeStyleSettings::class.java)
+
 abstract class KotlinCommonBlock(
         private val node: ASTNode,
         private val settings: CodeStyleSettings,
@@ -123,7 +126,7 @@ abstract class KotlinCommonBlock(
         }
 
         for (strategy in INDENT_RULES) {
-            val indent = strategy.getIndent(child)
+            val indent = strategy.getIndent(child, settings)
             if (indent != null) {
                 return indent
             }
@@ -178,7 +181,11 @@ abstract class KotlinCommonBlock(
                     ChildAttributes(block.indent, block.alignment)
                 }
                 else {
-                    ChildAttributes(Indent.getContinuationIndent(), null)
+                    val indent = if (type == KtNodeTypes.VALUE_PARAMETER_LIST && !settings.kotlinSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
+                        Indent.getNormalIndent()
+                    else
+                        Indent.getContinuationIndent()
+                    ChildAttributes(indent, null)
                 }
             }
 
@@ -207,7 +214,7 @@ abstract class KotlinCommonBlock(
 
     private fun getChildrenAlignmentStrategy(): CommonAlignmentStrategy {
         val jetCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)
-        val jetSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)
+        val kotlinSettings = settings.kotlinSettings
         val parentType = node.elementType
         return when {
             parentType === KtNodeTypes.VALUE_PARAMETER_LIST ->
@@ -221,7 +228,7 @@ abstract class KotlinCommonBlock(
                         jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR)
 
             parentType === KtNodeTypes.WHEN ->
-                getAlignmentForCaseBranch(jetSettings.ALIGN_IN_COLUMNS_CASE_BRANCH)
+                getAlignmentForCaseBranch(kotlinSettings.ALIGN_IN_COLUMNS_CASE_BRANCH)
 
             parentType === KtNodeTypes.WHEN_ENTRY ->
                 alignmentStrategy
@@ -397,7 +404,17 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
         strategy("Block in when entry")
                 .within(KtNodeTypes.WHEN_ENTRY)
                 .notForType(KtNodeTypes.BLOCK, KtNodeTypes.WHEN_CONDITION_EXPRESSION, KtNodeTypes.WHEN_CONDITION_IN_RANGE, KtNodeTypes.WHEN_CONDITION_IS_PATTERN, ELSE_KEYWORD, ARROW)
-                .set(Indent.getNormalIndent()))
+                .set(Indent.getNormalIndent()),
+
+         strategy("Parameter list")
+                .within(KtNodeTypes.VALUE_PARAMETER_LIST)
+                .forElement { it.elementType == KtNodeTypes.VALUE_PARAMETER && it.psi.prevSibling != null }
+                .set { settings ->
+                    if (settings.kotlinSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
+                        Indent.getContinuationIndent()
+                    else
+                        Indent.getNormalIndent()
+                })
 
 private fun getOperationType(node: ASTNode): IElementType? = node.findChildByType(KtNodeTypes.OPERATION_REFERENCE)?.firstChildNode?.elementType
 

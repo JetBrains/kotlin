@@ -40,6 +40,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public int NAME_COUNT_TO_USE_STAR_IMPORT = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 5;
     public int NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 3;
     public boolean IMPORT_NESTED_CLASSES = false;
+    public boolean CONTINUATION_INDENT_IN_PARAMETER_LISTS = true;
 
     public KotlinCodeStyleSettings(CodeStyleSettings container) {
         super("JetCodeStyleSettings", container);
