@@ -46,6 +46,10 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                        try {            return foo1(12, 13, 14)
                        }        catch (e: Exception) {            return 0        }        finally {           if (true) {               return 1           }           else {               return 2           }        }    }
                    private val f = {(a: Int)->a*2}
+
+                   fun longMethod(param1: Int,
+                    param2: String) {
+                   }
                }
 
                enum class Enumeration {
@@ -198,7 +202,9 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "CATCH_ON_NEW_LINE",
                         "FINALLY_ON_NEW_LINE",
                         "CALL_PARAMETERS_WRAP",
-                        "METHOD_PARAMETERS_WRAP"
+                        "METHOD_PARAMETERS_WRAP",
+                        "METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE",
+                        "METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE"
                 )
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
                 consumer.showCustomOption(KotlinCodeStyleSettings::class.java, "ALIGN_IN_COLUMNS_CASE_BRANCH", "Align 'when' branches in columns",

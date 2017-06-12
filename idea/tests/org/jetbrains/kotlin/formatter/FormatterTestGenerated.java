@@ -434,6 +434,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("MethodLParenthOnNextLine.after.kt")
+        public void testMethodLParenthOnNextLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodLParenthOnNextLine.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MethodRParenthOnNextLine.after.kt")
+        public void testMethodRParenthOnNextLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodRParenthOnNextLine.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Multideclaration.after.kt")
         public void testMultideclaration() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Multideclaration.after.kt");
@@ -1091,6 +1103,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("LambdaArrow.after.inv.kt")
         public void testLambdaArrow() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LambdaArrow.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("MethodLParenthOnNextLine.after.inv.kt")
+        public void testMethodLParenthOnNextLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodLParenthOnNextLine.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("MethodRParenthOnNextLine.after.inv.kt")
+        public void testMethodRParenthOnNextLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodRParenthOnNextLine.after.inv.kt");
             doTestInverted(fileName);
         }
 

@@ -201,11 +201,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             after(LBRACKET).spaces(0)
             before(RBRACKET).spaces(0)
-            after(LPAR).spaces(0)
-            before(RPAR).spaces(0)
 
-            afterInside(LPAR, VALUE_PARAMETER_LIST).spaces(0)
-            beforeInside(RPAR, VALUE_PARAMETER_LIST).spaces(0)
+            afterInside(LPAR, VALUE_PARAMETER_LIST).spaces(0, kotlinCommonSettings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE)
+            beforeInside(RPAR, VALUE_PARAMETER_LIST).spaces(0, kotlinCommonSettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE)
             afterInside(LT, TYPE_PARAMETER_LIST).spaces(0)
             beforeInside(GT, TYPE_PARAMETER_LIST).spaces(0)
             afterInside(LPAR, VALUE_ARGUMENT_LIST).spaces(0)
@@ -213,6 +211,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             afterInside(LT, TYPE_ARGUMENT_LIST).spaces(0)
             beforeInside(GT, TYPE_ARGUMENT_LIST).spaces(0)
             before(TYPE_ARGUMENT_LIST).spaces(0)
+
+            after(LPAR).spaces(0)
+            before(RPAR).spaces(0)
 
             betweenInside(FOR_KEYWORD, LPAR, FOR).spaceIf(kotlinCommonSettings.SPACE_BEFORE_FOR_PARENTHESES)
             betweenInside(IF_KEYWORD, LPAR, IF).spaceIf(kotlinCommonSettings.SPACE_BEFORE_IF_PARENTHESES)
