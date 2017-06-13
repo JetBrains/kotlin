@@ -189,7 +189,7 @@ public final class Namer {
 
     @NotNull
     public static String isInstanceSuggestedName(@NotNull TypeParameterDescriptor descriptor) {
-        return "is" + descriptor.getName().getIdentifier();
+        return "is" + NameSuggestion.sanitizeName(descriptor.getName().getIdentifier());
     }
 
     @NotNull
