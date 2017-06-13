@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
@@ -140,7 +142,8 @@ fun KtPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Edito
     (this.baseExpression as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
-fun KtExpression.isStableVariable(context: BindingContext = this.analyze()): Boolean {
+fun KtExpression.isStable(context: BindingContext = this.analyze()): Boolean {
+    if (this is KtConstantExpression || this is KtThisExpression) return true
     val descriptor = BindingContextUtils.extractVariableDescriptorFromReference(context, this)
     return descriptor is VariableDescriptor &&
            DataFlowValueFactory.isStableValue(descriptor, DescriptorUtils.getContainingModule(descriptor))
@@ -168,10 +171,16 @@ data class IfThenToSelectData(
                 (baseClause as KtDotQualifiedExpression).replaceFirstReceiver(
                         factory, newReceiver!!, safeAccess = true)
             }
-            else {
+            else if (hasImplicitReceiver()) {
+                factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
+            } else {
                 baseClause.insertSafeCalls(factory)
             }
         }
+    }
+
+    internal fun hasImplicitReceiver(): Boolean {
+        return baseClause.getResolvedCall(context)?.getImplicitReceiverValue() != null
     }
 }
 
@@ -199,7 +208,6 @@ internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData?
             when (condition.isNegated) {
                 true -> elseClause to thenClause
                 false -> thenClause to elseClause
-                else -> return null
             }
         }
         else -> return null

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPostfixExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -56,7 +56,7 @@ class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpress
         val defaultException = KtPsiFactory(element).createExpression("throw NullPointerException()")
 
         val isStatement = element.isUsedAsStatement(element.analyze())
-        val isStable = base.isStableVariable()
+        val isStable = base.isStable()
 
         val ifStatement = if (isStatement)
             element.convertToIfNullExpression(base, defaultException)

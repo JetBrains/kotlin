@@ -22,7 +22,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -39,7 +39,7 @@ class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(K
         val left = KtPsiUtil.safeDeparenthesize(element.left!!)
         val right = KtPsiUtil.safeDeparenthesize(element.right!!)
 
-        val leftIsStable = left.isStableVariable()
+        val leftIsStable = left.isStable()
 
         val ifStatement = element.convertToIfNotNullExpression(left, left, right)
 

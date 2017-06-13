@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
@@ -37,7 +37,7 @@ class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedE
         val receiver = KtPsiUtil.safeDeparenthesize(element.receiverExpression)
         val selector = element.selectorExpression!!
 
-        val receiverIsStable = receiver.isStableVariable()
+        val receiverIsStable = receiver.isStable()
 
         val psiFactory = KtPsiFactory(element)
         val dotQualified = psiFactory.createExpressionByPattern("$0.$1", receiver, selector)

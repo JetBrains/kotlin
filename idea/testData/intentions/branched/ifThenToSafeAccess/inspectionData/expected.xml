@@ -143,4 +143,12 @@
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
     <description>Remove redundant 'if' expression</description>
   </problem>
+  <problem>
+    <file>implicitReceiver.kt</file>
+    <line>2</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/implicitReceiver.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Remove redundant 'if' expression</description>
+  </problem>
 </problems>

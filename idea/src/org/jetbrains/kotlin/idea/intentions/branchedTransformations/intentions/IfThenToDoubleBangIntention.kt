@@ -38,7 +38,7 @@ class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpression>(
 
         val matchesAsStatement = element.isUsedAsStatement(context) && (baseClause?.isNullExpressionOrEmptyBlock() ?: true)
         if (!matchesAsStatement &&
-            !(baseClause?.evaluatesTo(receiverExpression) ?: false && receiverExpression.isStableVariable())) return null
+            !(baseClause?.evaluatesTo(receiverExpression) ?: false && receiverExpression.isStable())) return null
 
         var text = "Replace 'if' expression with '!!' expression"
         if (!throwExpression.throwsNullPointerExceptionWithNoArguments()) {

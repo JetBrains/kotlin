@@ -23,7 +23,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.core.appendElement
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
@@ -36,7 +36,7 @@ class MergeWhenIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenE
         val subject1 = element.subjectExpression
         val subject2 = next.subjectExpression
         if (!subject1.matches(subject2)) return null
-        if (subject1 != null && !subject1.isStableVariable()) return null
+        if (subject1 != null && !subject1.isStable()) return null
 
         val entries1 = element.entries
         val entries2 = next.entries
