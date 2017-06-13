@@ -111,7 +111,7 @@ cinterop execution (see the `dumpParameters` task in `samles/csvparser/build.gra
              apiVersion 'version'
 
              // Native interop to use in the artifact.
-             useInerop "interopName"
+             useInterop "interopName"
         }
      }
 

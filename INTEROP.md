@@ -51,7 +51,7 @@ Write something to console and watch server echoing it back.
 Structurally it's a simple property file, looking like this:
 
 
-    header = zlib.h
+    headers = zlib.h
     compilerOpts = -std=c99
 
 Then run `cinterop` tool with something like (note that for host libraries not included
