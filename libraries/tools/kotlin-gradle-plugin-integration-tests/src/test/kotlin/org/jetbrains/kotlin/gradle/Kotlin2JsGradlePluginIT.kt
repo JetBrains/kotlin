@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE
+import org.jetbrains.kotlin.gradle.util.allKotlinFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
@@ -233,6 +235,26 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertNotContains("this build assumes a single directory for all classes from a source set")
+        }
+    }
+
+    @Test
+    fun testIncrementalCompilation() {
+        val project = Project("kotlin2JsICProject", "4.0")
+        project.build("build") {
+            assertSuccessful()
+            assertContains(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            assertCompiledKotlinSources(project.relativize(project.projectDir.allKotlinFiles()))
+        }
+
+        val aKt = project.projectDir.getFileByName("A.kt").apply {
+            modify { it.replace("val x: String", "val x: Int") }
+        }
+        val useAKt = project.projectDir.getFileByName("useA.kt")
+        project.build("build") {
+            assertSuccessful()
+            assertContains(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            assertCompiledKotlinSources(project.relativize(aKt, useAKt))
         }
     }
 }

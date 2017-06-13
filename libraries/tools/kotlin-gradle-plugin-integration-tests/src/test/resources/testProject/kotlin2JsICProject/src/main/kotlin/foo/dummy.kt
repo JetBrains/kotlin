@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.incremental
+package foo
 
-import java.io.File
-
-internal const val GRADLE_CACHE_VERSION = 4
-internal const val GRADLE_CACHE_VERSION_FILE_NAME = "gradle-format-version.txt"
-
-internal fun gradleCacheVersion(dataRoot: File): CacheVersion =
-        customCacheVersion(GRADLE_CACHE_VERSION, GRADLE_CACHE_VERSION_FILE_NAME, dataRoot)
+fun dummy() {}
