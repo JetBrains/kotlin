@@ -34,3 +34,16 @@ compileKotlin.dependsOn preprocessSources
 jar {
     from(targetSrc) { include("META-INF/**") }
 }
+
+pluginBundle {
+    plugins {
+        kotlinAllopenPlugin {
+            id = 'org.jetbrains.kotlin.plugin.allopen'
+            description = displayName = 'Kotlin All Open compiler plugin'
+        }
+        kotlinSpringPlugin {
+            id = 'org.jetbrains.kotlin.plugin.spring'
+            description = displayName = 'Kotlin Spring compiler plugin'
+        }
+    }
+}

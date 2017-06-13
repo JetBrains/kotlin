@@ -90,3 +90,24 @@ dokka {
     outputFormat = 'markdown'
     includes = ["${projectDir}/Module.md"]
 }
+
+pluginBundle {
+    plugins {
+        kotlinJvmPlugin {
+            id = 'org.jetbrains.kotlin.jvm'
+            description = displayName = 'Kotlin JVM plugin'
+        }
+        kotlinAndroidPlugin {
+            id = 'org.jetbrains.kotlin.android'
+            description = displayName = 'Kotlin Android plugin'
+        }
+        kotlinAndroidExtensionsPlugin {
+            id = 'org.jetbrains.kotlin.android.extensions'
+            description = displayName = 'Kotlin Android Extensions plugin'
+        }
+        kotlinKaptPlugin {
+            id = 'org.jetbrains.kotlin.kapt'
+            description = displayName = 'Kotlin Kapt plugin'
+        }
+    }
+}

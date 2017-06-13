@@ -83,16 +83,18 @@ task preparePublication {
 ext.configurePublishing = { Project project ->
     project.configure(project) {
         apply plugin: 'maven'
-        apply plugin: 'signing'
 
+        if (!project.hasProperty('prebuiltJar')) {
+            apply plugin: 'signing'
 
-        signing {
-            required { (project.properties["signingRequired"] ?: project.isSonatypeRelease) }
-            sign configurations.archives
-        }
+            signing {
+                required { (project.properties["signingRequired"] ?: project.isSonatypeRelease) }
+                sign configurations.archives
+            }
 
-        signArchives {
-            enabled signing.required
+            signArchives {
+                enabled signing.required
+            }
         }
 
         task dist(type: Copy, dependsOn: assemble) {

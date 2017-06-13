@@ -40,3 +40,16 @@ compileKotlin.dependsOn preprocessSources
 jar {
     from(targetSrc) { include("META-INF/**") }
 }
+
+pluginBundle {
+    plugins {
+        kotlinNoargPlugin {
+            id = 'org.jetbrains.kotlin.plugin.noarg'
+            description = displayName = 'Kotlin No Arg compiler plugin'
+        }
+        kotlinJpaPlugin {
+            id = 'org.jetbrains.kotlin.plugin.jpa'
+            description = displayName = 'Kotlin JPA compiler plugin'
+        }
+    }
+}
