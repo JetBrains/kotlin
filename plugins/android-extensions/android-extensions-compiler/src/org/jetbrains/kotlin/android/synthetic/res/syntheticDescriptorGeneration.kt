@@ -145,10 +145,7 @@ private fun genProperty(
 private val SimpleType.shouldBeCached: Boolean
     get() {
         val viewClassFqName = constructor.declarationDescriptor?.fqNameUnsafe?.asString() ?: return false
-        return when (viewClassFqName) {
-            AndroidConst.VIEWSTUB_FQNAME -> false
-            else -> true
-        }
+        return viewClassFqName != AndroidConst.VIEWSTUB_FQNAME
     }
 
 interface AndroidSyntheticFunction
