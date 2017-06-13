@@ -2974,6 +2974,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noModifierListSealed.kt")
+            public void testNoModifierListSealed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListSealed.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noModifierListSecondaryConstructor.kt")
             public void testNoModifierListSecondaryConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListSecondaryConstructor.kt");
