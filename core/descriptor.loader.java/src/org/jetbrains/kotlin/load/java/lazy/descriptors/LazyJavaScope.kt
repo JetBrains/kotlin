@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
-import org.jetbrains.kotlin.load.java.typeEnhancement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.retainMostSpecificInEachOverridableGroup
@@ -88,7 +87,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
         computeNonDeclaredFunctions(result, name)
 
-        enhanceSignatures(result).toList()
+        c.components.signatureEnhancement.enhanceSignatures(result).toList()
     }
 
     open protected fun JavaMethodDescriptor.isVisibleAsFunction() = true
@@ -240,7 +239,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         if (DescriptorUtils.isAnnotationClass(ownerDescriptor))
             properties.toList()
         else
-            enhanceSignatures(properties).toList()
+            c.components.signatureEnhancement.enhanceSignatures(properties).toList()
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeResolver
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
+import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
@@ -51,7 +52,8 @@ class JavaResolverComponents(
         val lookupTracker: LookupTracker,
         val module: ModuleDescriptor,
         val reflectionTypes: ReflectionTypes,
-        val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver
+        val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver,
+        val signatureEnhancement: SignatureEnhancement
 ) {
     fun replace(
             javaResolverCache: JavaResolverCache = this.javaResolverCache
@@ -60,7 +62,7 @@ class JavaResolverComponents(
             externalAnnotationResolver, signaturePropagator, errorReporter, javaResolverCache,
             javaPropertyInitializerEvaluator, samConversionResolver, sourceElementFactory,
             moduleClassResolver, packageMapper, supertypeLoopChecker, lookupTracker, module, reflectionTypes,
-            annotationTypeQualifierResolver
+            annotationTypeQualifierResolver, signatureEnhancement
     )
 }
 

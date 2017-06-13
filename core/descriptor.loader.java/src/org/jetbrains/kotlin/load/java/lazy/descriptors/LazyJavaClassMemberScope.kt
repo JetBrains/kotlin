@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.kotlin.load.java.typeEnhancement.enhanceSignatures
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
@@ -86,7 +85,7 @@ class LazyJavaClassMemberScope(
             result.add(descriptor)
         }
 
-        enhanceSignatures(
+        c.components.signatureEnhancement.enhanceSignatures(
                 result.ifEmpty { listOfNotNull(createDefaultConstructor()) }
         ).toList()
     }
