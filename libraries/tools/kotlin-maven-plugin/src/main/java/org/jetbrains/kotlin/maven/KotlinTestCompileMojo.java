@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
 import org.jetbrains.kotlin.maven.kapt.KaptTestJvmCompilerMojo;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -90,11 +91,11 @@ public class KotlinTestCompileMojo extends K2JVMCompileMojo {
     }
 
     @Override
-    protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments) throws MojoExecutionException {
+    protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         classpath = testClasspath;
         arguments.friendPaths = new String[] { output };
         output = testOutput;
-        super.configureSpecificCompilerArguments(arguments);
+        super.configureSpecificCompilerArguments(arguments, sourceRoots);
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 
+import java.io.File;
 import java.util.List;
 
 /** Note! This file was majorly copied from {@link org.jetbrains.kotlin.maven.KotlinTestCompileMojo}.
@@ -64,11 +65,11 @@ public class KaptTestJvmCompilerMojo extends KaptJVMCompilerMojo {
     }
 
     @Override
-    protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments) throws MojoExecutionException {
+    protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         classpath = testClasspath;
         arguments.friendPaths = new String[] { output };
         output = testOutput;
-        super.configureSpecificCompilerArguments(arguments);
+        super.configureSpecificCompilerArguments(arguments, sourceRoots);
     }
 
     @Override

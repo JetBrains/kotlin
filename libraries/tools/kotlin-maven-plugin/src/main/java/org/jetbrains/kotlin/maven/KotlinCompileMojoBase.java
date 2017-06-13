@@ -211,7 +211,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         List<File> sourceRoots = getSourceRoots();
 
-        configureCompilerArguments(arguments, compiler);
+        configureCompilerArguments(arguments, compiler, sourceRoots);
         printCompilerArgumentsIfDebugEnabled(arguments, compiler);
 
         MavenPluginLogMessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog());
@@ -290,7 +290,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @NotNull
     protected abstract A createCompilerArguments();
 
-    protected abstract void configureSpecificCompilerArguments(@NotNull A arguments) throws MojoExecutionException;
+    protected abstract void configureSpecificCompilerArguments(@NotNull A arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException;
 
     private List<String> getCompilerPluginClassPaths() {
         ArrayList<String> result = new ArrayList<String>();
@@ -451,7 +451,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         return sourceRoots;
     }
 
-    private void configureCompilerArguments(@NotNull A arguments, @NotNull CLICompiler<A> compiler) throws MojoExecutionException {
+    private void configureCompilerArguments(@NotNull A arguments, @NotNull CLICompiler<A> compiler, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         if (getLog().isDebugEnabled()) {
             arguments.verbose = true;
         }
@@ -465,7 +465,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             arguments.coroutinesState = experimentalCoroutines;
         }
 
-        configureSpecificCompilerArguments(arguments);
+        configureSpecificCompilerArguments(arguments, sourceRoots);
 
         try {
             compiler.parseArguments(ArrayUtil.toStringArray(args), arguments);

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.maven;
 
 import com.intellij.openapi.util.text.StringUtil;
-import kotlin.text.StringsKt;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -29,16 +28,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.utils.LibraryUtils;
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
-import org.jetbrains.kotlin.js.JavaScript;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -71,6 +67,9 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     @Parameter(defaultValue = "false")
     private boolean sourceMap;
 
+    @Parameter
+    private String sourceMapPrefix;
+
     /**
      * Main invocation behaviour. Possible values are <b>call</b> and <b>noCall</b>.
      */
@@ -93,7 +92,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     private String moduleKind;
 
     @Override
-    protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments) throws MojoExecutionException {
+    protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         arguments.outputFile = outputFile;
         arguments.noStdlib = true;
         arguments.metaInfo = metaInfo;
@@ -110,6 +109,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         arguments.libraries = StringUtil.join(libraries, File.pathSeparator);
 
         arguments.sourceMap = sourceMap;
+        arguments.sourceMapPrefix = sourceMapPrefix;
 
         if (outputFile != null) {
             ConcurrentMap<String, List<String>> collector = getOutputDirectoriesCollector();
@@ -117,6 +117,17 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
             List<String> paths = collector.computeIfAbsent(key, k -> Collections.synchronizedList(new ArrayList<String>()));
             paths.add(new File(outputFile).getParent());
         }
+
+        StringBuilder sourceMapSourceRoots = new StringBuilder();
+        if (!sourceRoots.isEmpty()) {
+            sourceMapSourceRoots.append(sourceRoots.get(0).getAbsolutePath());
+            for (int i = 1; i < sourceRoots.size(); ++i) {
+                sourceMapSourceRoots.append(File.pathSeparator);
+                sourceMapSourceRoots.append(sourceRoots.get(i).getAbsolutePath());
+            }
+        }
+
+        arguments.sourceMapSourceRoots = sourceMapSourceRoots.toString();
     }
 
     protected List<String> getClassPathElements() throws DependencyResolutionRequiredException {

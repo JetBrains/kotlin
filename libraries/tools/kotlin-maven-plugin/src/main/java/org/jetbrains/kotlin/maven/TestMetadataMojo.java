@@ -25,13 +25,13 @@ public class TestMetadataMojo extends MetadataMojo {
     }
 
     @Override
-    protected void configureSpecificCompilerArguments(@NotNull K2MetadataCompilerArguments arguments) throws MojoExecutionException {
+    protected void configureSpecificCompilerArguments(@NotNull K2MetadataCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         String productionOutput = output;
 
         classpath = testClasspath;
 //        arguments.friendPaths = new String[] { productionOutput };
         output = testOutput;
-        super.configureSpecificCompilerArguments(arguments);
+        super.configureSpecificCompilerArguments(arguments, sourceRoots);
 
         if (arguments.classpath == null) {
             arguments.classpath = productionOutput;

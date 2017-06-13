@@ -44,7 +44,7 @@ public class MetadataMojo extends KotlinCompileMojoBase<K2MetadataCompilerArgume
     }
 
     @Override
-    protected void configureSpecificCompilerArguments(@NotNull K2MetadataCompilerArguments arguments) throws MojoExecutionException {
+    protected void configureSpecificCompilerArguments(@NotNull K2MetadataCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         arguments.destination = output;
         if (!arguments.multiPlatform) {
             getLog().info("multiPlatform forced for metadata generation");

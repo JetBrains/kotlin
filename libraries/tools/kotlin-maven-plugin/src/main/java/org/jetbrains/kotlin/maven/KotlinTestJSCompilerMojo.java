@@ -80,12 +80,12 @@ public class KotlinTestJSCompilerMojo extends K2JSCompilerMojo {
     private boolean metaInfo;
 
     @Override
-    protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments) throws MojoExecutionException {
+    protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         List<String> friends = getOutputDirectoriesCollector().getOrDefault(project.getArtifactId(), Collections.emptyList());
         arguments.friendModules = StringUtil.join(friends, File.pathSeparator);
         output = testOutput;
 
-        super.configureSpecificCompilerArguments(arguments);
+        super.configureSpecificCompilerArguments(arguments, sourceRoots);
 
         arguments.outputFile = outputFile;
         arguments.metaInfo = metaInfo;

@@ -1,6 +1,5 @@
-String[] getBuildLogLines() {
-    File buildLog = new File(basedir, "build.log");
-    BufferedReader reader = new BufferedReader(new FileReader(buildLog));
+String[] getFileLines(File file) {
+    BufferedReader reader = new BufferedReader(new FileReader(file));
     List result = new ArrayList();
     String line;
     while ((line = reader.readLine()) != null){
@@ -11,8 +10,24 @@ String[] getBuildLogLines() {
     return result.toArray(new String[0]);
 }
 
+String[] getBuildLogLines() {
+    return getFileLines(new File(basedir, "build.log"));
+}
+
 String[] buildLog = getBuildLogLines();
 
+void assertFileContains(String relativePath, String content) {
+    File file = new File(basedir, relativePath);
+    if (!file.exists()) {
+        throw new Exception("File was not found: " + relativePath);
+    }
+
+    String[] lines = getFileLines(file);
+    int lineNumber = findLineThatContains(lines, content);
+    if (lineNumber < 0) {
+        throw new Exception("Expected file " + relativePath + " to contain: \"" + content + "\"");
+    }
+}
 
 void assertBuildLogHasLine(String expectedLine) {
     for (int i = 0; i < buildLog.length; i++) {
@@ -40,8 +55,12 @@ void assertBuildLogHasNoLineThatContains(String content) {
 }
 
 int findBuildLogLineThatContains(String content) {
-    for (int i = 0; i < buildLog.length; i++) {
-        String line = buildLog[i];
+    return findLineThatContains(buildLog, content);
+}
+
+int findLineThatContains(String[] lines, String content) {
+    for (int i = 0; i < lines.length; i++) {
+        String line = lines[i];
 	    if (line.contains(content)) {
 	        return i;
 	    }

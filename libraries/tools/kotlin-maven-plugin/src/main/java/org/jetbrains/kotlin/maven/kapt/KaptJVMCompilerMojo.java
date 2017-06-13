@@ -106,8 +106,8 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     }
 
     @Override
-    protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments) throws MojoExecutionException {
-        super.configureSpecificCompilerArguments(arguments);
+    protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
+        super.configureSpecificCompilerArguments(arguments, sourceRoots);
 
         AnnotationProcessingManager.ResolvedArtifacts resolvedArtifacts;
 
