@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cli.common.repl
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.LastInferredTypeHolder
+import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
 import java.io.Serializable
 import java.util.*
@@ -84,9 +84,8 @@ sealed class ReplCompileResult : Serializable {
                           val mainClassName: String,
                           val classes: List<CompiledClassData>,
                           val hasResult: Boolean,
-                          val classpathAddendum: List<File>) : ReplCompileResult() {
-        val type = LastInferredTypeHolder.inferredType.get()
-    }
+                          val classpathAddendum: List<File>,
+                          val type: KotlinType?) : ReplCompileResult()
 
     class Incomplete : ReplCompileResult()
 
@@ -113,9 +112,7 @@ interface ReplEvalAction {
 }
 
 sealed class ReplEvalResult : Serializable {
-    class ValueResult(val value: Any?) : ReplEvalResult() {
-        val type = LastInferredTypeHolder.inferredType.get()
-
+    class ValueResult(val value: Any?, val type: KotlinType?) : ReplEvalResult() {
         override fun toString(): String = "$value : $type"
     }
 

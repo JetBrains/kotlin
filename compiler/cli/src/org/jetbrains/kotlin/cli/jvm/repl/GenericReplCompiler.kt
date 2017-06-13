@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.repl
 
 
 import com.intellij.openapi.Disposable
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -96,12 +98,18 @@ open class GenericReplCompiler(disposable: Disposable,
             val generatedClassname = makeScriptBaseName(codeLine)
             compilerState.history.push(LineId(codeLine), scriptDescriptor)
 
+            val expression = PsiTreeUtil.getChildOfType<KtExpression>(psiFile, KtExpression::class.java)
+            val type = expression?.let {
+                compilerState.analyzerEngine.trace.bindingContext.getType(expression)
+            }
+
             return ReplCompileResult.CompiledClasses(LineId(codeLine),
                                                      compilerState.history.map { it.id },
                                                      generatedClassname,
                                                      generationState.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
                                                      generationState.replSpecific.hasResult,
-                                                     classpathAddendum ?: emptyList())
+                                                     classpathAddendum ?: emptyList(),
+                                                     type)
         }
     }
 
