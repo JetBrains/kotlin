@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.utils.sure
 fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.getModuleInfo { reason ->
     LOG.error("Could not find correct module information.\nReason: $reason")
     NotUnderContentRootModuleInfo
-}.sure { "Defaulting to NotUnderContentRootModuleInfo so null is not possible" }
+} ?: NotUnderContentRootModuleInfo
 
 fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.getModuleInfo { reason ->
     LOG.warn("Could not find correct module information.\nReason: $reason")
@@ -84,9 +84,9 @@ private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): Id
 
 fun getModuleInfoByVirtualFile(
         project: Project, virtualFile: VirtualFile
-): IdeaModuleInfo = getModuleInfoByVirtualFile(project, virtualFile, treatAsLibrarySource = false)
+): IdeaModuleInfo? = getModuleInfoByVirtualFile(project, virtualFile, treatAsLibrarySource = false)
 
-private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile, treatAsLibrarySource: Boolean): IdeaModuleInfo {
+private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile, treatAsLibrarySource: Boolean): IdeaModuleInfo? {
     val projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
 
     val module = projectFileIndex.getModuleForFile(virtualFile)
@@ -149,7 +149,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
         return ScriptDependenciesSourceModuleInfo(project)
     }
 
-    return NotUnderContentRootModuleInfo
+    return null
 }
 
 private fun KtLightElement<*, *>.getModuleInfoForLightElement(onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
