@@ -97,9 +97,11 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
                         return buildString {
                             append(type.referencedName ?: "???")
 
-                            val arguments = type.typeArgumentsAsTypes
+                            val arguments = type.typeArguments
                             if (arguments.isNotEmpty()) {
-                                arguments.joinTo(this, prefix = "<", postfix = ">") { it.accept(visitor, data) }
+                                arguments.joinTo(this, prefix = "<", postfix = ">") {
+                                    it.typeReference?.accept(visitor, data) ?: it.text
+                                }
                             }
                         }
                     }
