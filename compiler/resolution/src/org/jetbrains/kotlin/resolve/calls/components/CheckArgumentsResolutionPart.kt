@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ReceiverConstraintPosi
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.captureFromExpression
 import org.jetbrains.kotlin.types.checker.hasSupertypeWithGivenTypeConstructor
@@ -202,7 +203,7 @@ internal fun checkExpressionArgument(
         isReceiver: Boolean
 ): KotlinCallDiagnostic? {
     // todo run this approximation only once for call
-    val argumentType = captureFromTypeParameterUpperBoundIfNeeded(expressionArgument.stableType, expectedType)
+    val argumentType = captureFromTypeParameterUpperBoundIfNeeded(expressionArgument.receiver.stableType, expectedType)
 
     fun unstableSmartCastOrSubtypeError(
             unstableType: UnwrappedType?, expectedType: UnwrappedType, position: ConstraintPosition
@@ -220,17 +221,17 @@ internal fun checkExpressionArgument(
     val position = if (isReceiver) ReceiverConstraintPosition(expressionArgument) else ArgumentConstraintPosition(expressionArgument)
     if (expressionArgument.isSafeCall) {
         if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedNullableType, position)) {
-            return unstableSmartCastOrSubtypeError(expressionArgument.unstableType, expectedNullableType, position)?.let { return it }
+            return unstableSmartCastOrSubtypeError(expressionArgument.receiver.unstableType, expectedNullableType, position)?.let { return it }
         }
         return null
     }
 
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
         if (!isReceiver) {
-            return unstableSmartCastOrSubtypeError(expressionArgument.unstableType, expectedType, position)?.let { return it }
+            return unstableSmartCastOrSubtypeError(expressionArgument.receiver.unstableType, expectedType, position)?.let { return it }
         }
 
-        val unstableType = expressionArgument.unstableType
+        val unstableType = expressionArgument.receiver.unstableType
         if (unstableType != null && csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
             return UnstableSmartCast(expressionArgument, unstableType)
         }
@@ -279,17 +280,17 @@ private fun captureFromTypeParameterUpperBoundIfNeeded(argumentType: UnwrappedTy
 }
 
 // if expression is not stable and has smart casts, then we create this type
-private val ExpressionKotlinCallArgument.unstableType: UnwrappedType?
+private val ReceiverValueWithSmartCastInfo.unstableType: UnwrappedType?
     get() {
-        if (receiver.isStable || receiver.possibleTypes.isEmpty()) return null
-        return intersectWrappedTypes(receiver.possibleTypes + receiver.receiverValue.type)
+        if (isStable || possibleTypes.isEmpty()) return null
+        return intersectWrappedTypes(possibleTypes + receiverValue.type)
     }
 
 // with all smart casts if stable
-internal val ExpressionKotlinCallArgument.stableType: UnwrappedType
+internal val ReceiverValueWithSmartCastInfo.stableType: UnwrappedType
     get() {
-        if (!receiver.isStable || receiver.possibleTypes.isEmpty()) return receiver.receiverValue.type.unwrap()
-        return intersectWrappedTypes(receiver.possibleTypes + receiver.receiverValue.type)
+        if (!isStable || possibleTypes.isEmpty()) return receiverValue.type.unwrap()
+        return intersectWrappedTypes(possibleTypes + receiverValue.type)
     }
 
 
