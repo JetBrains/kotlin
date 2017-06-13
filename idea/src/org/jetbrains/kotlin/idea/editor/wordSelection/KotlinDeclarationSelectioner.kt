@@ -59,10 +59,8 @@ class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
         if (firstComment != null || lastComment != null) {
             val startOffset = minOf(
                     firstComment?.startOffset ?: Int.MAX_VALUE,
-                    lastComment?.startOffset ?: Int.MAX_VALUE,
                     lastNonComment.startOffset)
             val endOffset = maxOf(
-                    lastComment?.endOffset ?: Int.MIN_VALUE,
                     lastComment?.endOffset ?: Int.MIN_VALUE,
                     lastNonComment.endOffset)
             result.addRange(editorText, TextRange(startOffset, endOffset))
