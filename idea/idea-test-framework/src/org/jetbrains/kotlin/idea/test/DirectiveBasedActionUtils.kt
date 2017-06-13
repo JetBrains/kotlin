@@ -76,6 +76,11 @@ object DirectiveBasedActionUtils {
             "Suppress all ",
             "Edit cleanup profile settings",
             "Fix all '",
-            "Cleanup code"
+            "Cleanup code",
+            "Show local variable type hints",
+            "Show function return type hints",
+            "Show property type hints",
+            "Show parameter type hints",
+            "Show argument name hints"
     )
 }
