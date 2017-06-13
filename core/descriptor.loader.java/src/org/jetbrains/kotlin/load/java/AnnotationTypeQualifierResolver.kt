@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.resolveClassByFqName
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.storage.StorageManager
@@ -48,6 +51,16 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager) {
         if (annotationClass.isAnnotatedWithTypeQualifier) return annotationDescriptor
 
         return resolveTypeQualifierNickname(annotationClass)
+    }
+
+    fun isTypeQualifier(moduleDescriptor: ModuleDescriptor, classFqName: FqName): Boolean {
+        val classDescriptor = moduleDescriptor.resolveClassByFqName(
+                classFqName, NoLookupLocation.FROM_JAVA_LOADER
+        ) ?: return false
+
+        if (classDescriptor.isTypeQualifierAnnotation) return true
+
+        return resolveTypeQualifierNickname(classDescriptor) != null
     }
 }
 

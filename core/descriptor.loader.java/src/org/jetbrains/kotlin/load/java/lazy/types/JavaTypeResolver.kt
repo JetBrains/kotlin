@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.load.java.lazy.types
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
+import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.components.TypeUsage.COMMON
 import org.jetbrains.kotlin.load.java.components.TypeUsage.SUPERTYPE
@@ -309,9 +311,13 @@ enum class JavaTypeFlexibility {
 class LazyJavaTypeAttributes(
         override val howThisTypeIsUsed: TypeUsage,
         annotations: Annotations,
-        override val isForAnnotationParameter: Boolean = false
+        override val isForAnnotationParameter: Boolean = false,
+        private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver,
+        private val moduleDescriptor: ModuleDescriptor
 ): JavaTypeAttributes {
-    override val typeAnnotations = FilteredAnnotations(annotations) { it in ANNOTATIONS_COPIED_TO_TYPES }
+    override val typeAnnotations = FilteredAnnotations(annotations) {
+        it in ANNOTATIONS_COPIED_TO_TYPES || annotationTypeQualifierResolver.isTypeQualifier(moduleDescriptor, it)
+    }
 }
 
 fun TypeUsage.toAttributes(

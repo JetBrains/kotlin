@@ -146,7 +146,9 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         val annotationMethod = method.containingClass.isAnnotationType
         val returnTypeAttrs = LazyJavaTypeAttributes(
                 TypeUsage.COMMON, annotations,
-                isForAnnotationParameter = annotationMethod
+                isForAnnotationParameter = annotationMethod,
+                moduleDescriptor = c.module,
+                annotationTypeQualifierResolver = c.components.annotationTypeQualifierResolver
         )
         return c.typeResolver.transformJavaType(method.returnType, returnTypeAttrs)
     }
@@ -163,7 +165,12 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             val (index, javaParameter) = pair
 
             val annotations = c.resolveAnnotations(javaParameter)
-            val typeUsage = LazyJavaTypeAttributes(TypeUsage.COMMON, annotations)
+            val typeUsage =
+                    LazyJavaTypeAttributes(
+                            TypeUsage.COMMON, annotations,
+                            annotationTypeQualifierResolver = c.components.annotationTypeQualifierResolver,
+                            moduleDescriptor = c.module
+                    )
             val (outType, varargElementType) =
                     if (javaParameter.isVararg) {
                         val paramType = javaParameter.type as? JavaArrayType
@@ -281,7 +288,11 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         val isNotNullable = !(field.isFinalStatic && field.hasConstantNotNullInitializer)
         val propertyType = c.typeResolver.transformJavaType(
                 field.type,
-                LazyJavaTypeAttributes(TypeUsage.COMMON, annotations)
+                LazyJavaTypeAttributes(
+                        TypeUsage.COMMON, annotations,
+                        annotationTypeQualifierResolver = c.components.annotationTypeQualifierResolver,
+                        moduleDescriptor = c.module
+                )
         )
         if (!isNotNullable) {
             return TypeUtils.makeNotNullable(propertyType)

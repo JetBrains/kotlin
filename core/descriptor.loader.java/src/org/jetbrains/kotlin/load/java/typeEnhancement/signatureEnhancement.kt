@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -32,7 +35,7 @@ import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import java.util.*
 
-class SignatureEnhancement {
+class SignatureEnhancement(private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver) {
     fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {
         return platformSignatures.map {
             it.enhanceSignature()
@@ -143,29 +146,10 @@ class SignatureEnhancement {
     private fun KotlinType.extractQualifiersFromAnnotations(): JavaTypeQualifiers {
         fun <T: Any> List<FqName>.ifPresent(qualifier: T) = if (any { annotations.findAnnotation(it) != null}) qualifier else null
 
-        // These two overloads are just for sake of optimization as in most cases last parameter in second overload is null
         fun <T: Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
-        fun <T: Any> uniqueNotNull(a: T?, b: T?, c: T?) =
-                if (c == null)
-                    uniqueNotNull(a, b)
-                else
-                    listOf(a, b, c).filterNotNull().toSet().singleOrNull()
 
-        // Javax/FundBugs NonNull annotation has parameter `when` that determines actual nullability
-        fun FqName.extractQualifierFromAnnotationWithWhen(): NullabilityQualifier? {
-            val annotationDescriptor = annotations.findAnnotation(this) ?: return null
-            return annotationDescriptor.allValueArguments.values.singleOrNull()?.value?.let {
-                enumEntryDescriptor ->
-                if (enumEntryDescriptor !is ClassDescriptor) return@let null
-                if (enumEntryDescriptor.name.asString() == "ALWAYS") NullabilityQualifier.NOT_NULL else NullabilityQualifier.NULLABLE
-            } ?: NullabilityQualifier.NOT_NULL
-        }
+        val nullability = annotations.extractNullability()
 
-        val nullability = uniqueNotNull(
-                NULLABLE_ANNOTATIONS.ifPresent(NullabilityQualifier.NULLABLE),
-                NOT_NULL_ANNOTATIONS.ifPresent(NullabilityQualifier.NOT_NULL),
-                JAVAX_NONNULL_ANNOTATION.extractQualifierFromAnnotationWithWhen()
-        )
         return JavaTypeQualifiers(
                 nullability,
                 uniqueNotNull(
@@ -178,6 +162,29 @@ class SignatureEnhancement {
                 ),
                 isNotNullTypeParameter = nullability == NullabilityQualifier.NOT_NULL && isTypeParameter()
         )
+    }
+
+    private fun Annotations.extractNullability(): NullabilityQualifier? {
+        for (annotationDescriptor in this) {
+            when (annotationDescriptor.annotationClass?.fqNameSafe) {
+                in NULLABLE_ANNOTATIONS -> return NullabilityQualifier.NULLABLE
+                in NOT_NULL_ANNOTATIONS -> return NullabilityQualifier.NOT_NULL
+            }
+
+            val typeQualifier =
+                    annotationTypeQualifierResolver
+                            .resolveTypeQualifierAnnotation(annotationDescriptor)
+                            ?.takeIf { it.annotationClass?.fqNameSafe == JAVAX_NONNULL_ANNOTATION }
+                    ?: continue
+
+            return typeQualifier.allValueArguments.values.singleOrNull()?.value?.let {
+                enumEntryDescriptor ->
+                if (enumEntryDescriptor !is ClassDescriptor) return@let null
+                if (enumEntryDescriptor.name.asString() == "ALWAYS") NullabilityQualifier.NOT_NULL else NullabilityQualifier.NULLABLE
+            } ?: NullabilityQualifier.NOT_NULL
+        }
+
+        return null
     }
 
     fun KotlinType.computeIndexedQualifiersForOverride(

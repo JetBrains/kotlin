@@ -58,14 +58,15 @@ class RuntimeModuleData private constructor(
             val runtimePackagePartProvider = RuntimePackagePartProvider(classLoader)
             val javaResolverCache = JavaResolverCache.EMPTY
             val notFoundClasses = NotFoundClasses(storageManager, module)
+            val annotationTypeQualifierResolver = AnnotationTypeQualifierResolver(storageManager)
             val globalJavaResolverContext = JavaResolverComponents(
                     storageManager, ReflectJavaClassFinder(classLoader), reflectKotlinClassFinder, deserializedDescriptorResolver,
                     ExternalAnnotationResolver.EMPTY, SignaturePropagator.DO_NOTHING, RuntimeErrorReporter, javaResolverCache,
                     JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolver, RuntimeSourceElementFactory, singleModuleClassResolver,
                     runtimePackagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
                     ReflectionTypes(module, notFoundClasses),
-                    AnnotationTypeQualifierResolver(storageManager),
-                    SignatureEnhancement()
+                    annotationTypeQualifierResolver,
+                    SignatureEnhancement(annotationTypeQualifierResolver)
             )
 
             val lazyJavaPackageFragmentProvider = LazyJavaPackageFragmentProvider(globalJavaResolverContext)
