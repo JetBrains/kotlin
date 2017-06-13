@@ -353,11 +353,11 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 
     private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>): ResolutionFacade {
-        val syntheticFiles = findSyntheticFiles(files)
+        val notInSourceFiles = files.filterNotInProjectSource()
         val file = files.first()
         val moduleInfo = file.getModuleInfo()
-        if (syntheticFiles.isNotEmpty()) {
-            val projectFacade = getFacadeForSyntheticFiles(syntheticFiles)
+        if (notInSourceFiles.isNotEmpty()) {
+            val projectFacade = getFacadeForSyntheticFiles(notInSourceFiles)
             return ResolutionFacadeImpl(projectFacade, moduleInfo)
         }
         else {
@@ -379,7 +379,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         return ResolutionFacadeImpl(projectFacade, moduleInfo)
     }
 
-    private fun findSyntheticFiles(files: Collection<KtFile>) = files.mapNotNull {
+    private fun Collection<KtFile>.filterNotInProjectSource() = mapNotNull {
         if (it is KtCodeFragment) it.getContextFile() else it
     }.filter {
         !ProjectRootsUtil.isInProjectSource(it)
