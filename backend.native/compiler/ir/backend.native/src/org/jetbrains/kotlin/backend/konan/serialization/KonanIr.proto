@@ -154,7 +154,7 @@ message IrGetEnumValue {
 message FieldAccessCommon {
     required KotlinDescriptor descriptor = 1;
     optional KotlinDescriptor super = 2;
-    required IrExpression reciever = 3;
+    required IrExpression receiver = 3;
 }
 
 message IrGetField {

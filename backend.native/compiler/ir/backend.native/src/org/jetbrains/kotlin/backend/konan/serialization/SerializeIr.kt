@@ -271,7 +271,7 @@ internal class IrSerializer(val context: Context,
             proto.setSuper(serializeDescriptor(superQualifier))
         val receiver = expression.receiver
         if (receiver != null) 
-            proto.setReciever(serializeExpression(receiver))
+            proto.setReceiver(serializeExpression(receiver))
         return proto.build()
     }
 
@@ -820,6 +820,19 @@ internal class IrDeserializer(val context: Context,
         return call
     }
 
+    fun deserializeGetField(proto: KonanIr.IrGetField, start: Int, end: Int, type: KotlinType): IrGetField {
+        val access = proto.fieldAccess
+        val descriptor = deserializeDescriptor(access.getDescriptor()) as PropertyDescriptor
+        val superQualifier = if (access.hasSuper()) {
+            deserializeDescriptor(access.getDescriptor()) as ClassDescriptor
+        } else null
+        val receiver = if (access.hasReceiver()) {
+            deserializeExpression(access.receiver)
+        } else null
+
+        return IrGetFieldImpl(start, end, descriptor, receiver, null, superQualifier)
+    }
+
     fun deserializeGetValue(proto: KonanIr.IrGetValue, start: Int, end: Int, type: KotlinType): IrGetValue {
         val descriptor = deserializeDescriptor(proto.descriptor) as ValueDescriptor
 
@@ -850,6 +863,20 @@ internal class IrDeserializer(val context: Context,
             deserializeDescriptor(proto.getReturnTarget()) as FunctionDescriptor
         val value = deserializeExpression(proto.getValue())
         return IrReturnImpl(start, end, type, descriptor, value)
+    }
+
+    fun deserializeSetField(proto: KonanIr.IrSetField, start: Int, end: Int, type: KotlinType): IrSetField {
+        val access = proto.fieldAccess
+        val descriptor = deserializeDescriptor(access.getDescriptor()) as PropertyDescriptor
+        val superQualifier = if (access.hasSuper()) {
+            deserializeDescriptor(access.getDescriptor()) as ClassDescriptor
+        } else null
+        val receiver = if (access.hasReceiver()) {
+            deserializeExpression(access.receiver)
+        } else null
+        val value = deserializeExpression(proto.value)
+
+        return IrSetFieldImpl(start, end, descriptor, receiver, value,  null, superQualifier)
     }
 
     fun deserializeSetVariable(proto: KonanIr.IrSetVariable, start: Int, end: Int, type: KotlinType): IrSetVariable {
@@ -1006,16 +1033,20 @@ internal class IrDeserializer(val context: Context,
                 -> deserializeContinue(proto.getContinue(), start, end, type)
             DELEGATING_CONSTRUCTOR_CALL
                 -> deserializeDelegatingConstructorCall(proto.delegatingConstructorCall, start, end, type)
-            GET_VALUE
-                -> deserializeGetValue(proto.getValue, start, end, type)
             GET_ENUM_VALUE
                 -> deserializeGetEnumValue(proto.getEnumValue, start, end, type)
+            GET_FIELD
+                -> deserializeGetField(proto.getField, start, end, type)
             GET_OBJECT
                 -> deserializeGetObject(proto.getObject, start, end, type)
+            GET_VALUE
+                -> deserializeGetValue(proto.getValue, start, end, type)
             INSTANCE_INITIALIZER_CALL
                 -> deserializeInstanceInitializerCall(proto.instanceInitializerCall, start, end, type)
             RETURN
                 -> deserializeReturn(proto.getReturn(), start, end, type)
+            SET_FIELD
+                -> deserializeSetField(proto.setField, start, end, type)
             SET_VARIABLE
                 -> deserializeSetVariable(proto.setVariable, start, end, type)
             STRING_CONCAT
@@ -1033,7 +1064,7 @@ internal class IrDeserializer(val context: Context,
             WHILE
                 -> deserializeWhile(proto.getWhile(), start, end, type)
             else -> {
-                TODO("Expression deserialization not implemented}")
+                TODO("Expression deserialization not implemented: ${proto.operationCase}")
             }
         }
 
