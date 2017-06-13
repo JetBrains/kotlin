@@ -23,21 +23,18 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.containsError
-import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
+import org.jetbrains.kotlin.types.isError
 
 //hack to separate type presentation from param info presentation
 const val TYPE_INFO_PREFIX = "@TYPE@"
 private val typeRenderer = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
     textFormat = RenderingFormat.PLAIN
-    renderUnabbreviatedType = false
 }
 
 fun providePropertyTypeHint(elem: PsiElement): List<InlayInfo> {
@@ -50,17 +47,8 @@ fun providePropertyTypeHint(elem: PsiElement): List<InlayInfo> {
 }
 
 fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo> {
-    var type: KotlinType = SpecifyTypeExplicitlyIntention.getTypeForDeclaration(element).unwrap()
-    if (type.containsError()) return emptyList()
-    val name = type.constructor.declarationDescriptor?.name
-    if (name == SpecialNames.NO_NAME_PROVIDED) {
-        type = type.immediateSupertypes().singleOrNull() ?: return emptyList()
-    }
-    else if (name?.isSpecial == true) {
-        return emptyList()
-    }
-
-    return if (isUnclearType(type, element)) {
+    val type = SpecifyTypeExplicitlyIntention.getTypeForDeclaration(element)
+    return if (!type.isError && isUnclearType(type, element)) {
         val settings = CodeStyleSettingsManager.getInstance(element.project).currentSettings
                 .getCustomSettings(KotlinCodeStyleSettings::class.java)
 
