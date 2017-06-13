@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.project.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
@@ -353,9 +354,9 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 
     private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>): ResolutionFacade {
-        val notInSourceFiles = files.filterNotInProjectSource()
         val file = files.first()
         val moduleInfo = file.getModuleInfo()
+        val notInSourceFiles = files.filterNotInProjectSource(moduleInfo)
         if (notInSourceFiles.isNotEmpty()) {
             val projectFacade = getFacadeForSyntheticFiles(notInSourceFiles)
             return ResolutionFacadeImpl(projectFacade, moduleInfo)
@@ -379,10 +380,10 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         return ResolutionFacadeImpl(projectFacade, moduleInfo)
     }
 
-    private fun Collection<KtFile>.filterNotInProjectSource() = mapNotNull {
+    private fun Collection<KtFile>.filterNotInProjectSource(moduleInfo: IdeaModuleInfo) = mapNotNull {
         if (it is KtCodeFragment) it.getContextFile() else it
     }.filter {
-        !ProjectRootsUtil.isInProjectSource(it)
+        !ProjectRootsUtil.isInProjectSource(it) || !moduleInfo.contentScope().contains(it)
     }.toSet()
 
     private fun KtCodeFragment.getContextFile(): KtFile? {
