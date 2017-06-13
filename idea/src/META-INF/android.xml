@@ -61,6 +61,8 @@
 
         <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.android.AndroidResourceReferenceAnnotator" />
 
+        <referencesSearch implementation="org.jetbrains.kotlin.AndroidExtensionsReferenceSearchExecutor"/>
+
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

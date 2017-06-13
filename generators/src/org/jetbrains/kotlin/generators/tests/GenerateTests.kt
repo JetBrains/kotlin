@@ -1302,6 +1302,10 @@ fun main(args: Array<String>) {
         testClass<AbstractAndroidFindUsagesTest> {
             model("android/findUsages", recursive = false, extension = null)
         }
+
+        testClass<AbstractAndroidUsageHighlightingTest> {
+            model("android/usageHighlighting", recursive = false, extension = null)
+        }
     }
 
     testGroup("idea/idea-android/tests", "idea/testData") {
