@@ -35,11 +35,10 @@ public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implement
     // make it a simple lazy value after converting to kotlin
     private KotlinScriptDefinition getKotlinScriptDefinition() {
         if (!kotlinScriptDefinitionInitialized) {
-            KtFile ktFile = getContainingKtFile();
-            kotlinScriptDefinitionField = KotlinScriptDefinitionProviderKt.getScriptDefinition(ktFile);
+            kotlinScriptDefinitionField = KotlinScriptDefinitionProviderKt.getScriptDefinition(getContainingKtFile());
             kotlinScriptDefinitionInitialized = true;
-            assert kotlinScriptDefinitionField != null : "Should not parse a script without definition: " + ktFile.toString();
         }
+        assert kotlinScriptDefinitionField != null : "Should not parse a script without definition: " + getContainingKtFile().toString();
         return kotlinScriptDefinitionField;
     }
 

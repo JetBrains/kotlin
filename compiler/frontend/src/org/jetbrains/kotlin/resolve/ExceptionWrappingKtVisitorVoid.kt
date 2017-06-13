@@ -38,7 +38,13 @@ class ExceptionWrappingKtVisitorVoid(private val delegate: KtVisitorVoid) : KtVi
             throw e
         }
         catch (t: Throwable) {
-            throw KotlinFrontEndException("Failed to analyze declaration ${dcl.name}", t, dcl)
+            val name = try {
+                dcl.name
+            }
+            catch (e: Throwable) {
+                "- error: ${e.message}"
+            }
+            throw KotlinFrontEndException("Failed to analyze declaration $name", t, dcl)
         }
     }
 }
