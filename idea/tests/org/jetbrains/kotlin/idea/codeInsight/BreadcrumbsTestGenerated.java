@@ -96,6 +96,12 @@ public class BreadcrumbsTestGenerated extends AbstractBreadcrumbsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("StarProjection.kt")
+    public void testStarProjection() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/StarProjection.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Try.kt")
     public void testTry() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/Try.kt");
