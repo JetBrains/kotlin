@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
@@ -561,7 +562,7 @@ class PSICallResolver(
                     }
                 }
                 is DoubleColonLHS.Type -> {
-                    val qualifier = expressionTypingContext.trace.get(BindingContext.QUALIFIER, ktExpression.receiverExpression!!)
+                    val qualifier = expressionTypingContext.trace.get(BindingContext.QUALIFIER, ktExpression.receiverExpression!!.referenceExpression())
                     if (qualifier is ClassQualifier) {
                         LHSResult.Type(qualifier)
                     }

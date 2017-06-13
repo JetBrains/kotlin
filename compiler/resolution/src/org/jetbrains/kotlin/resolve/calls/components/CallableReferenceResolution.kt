@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
+import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -113,6 +114,7 @@ class CallableReferencesCandidateFactory(
         val compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit,
         val expectedType: UnwrappedType?
 ) : CandidateFactory<CallableReferenceCandidate> {
+    private val position = ArgumentConstraintPosition(argument)
 
     fun createCallableProcessor(explicitReceiver: DetailedReceiver?) =
             createCallableReferenceProcessor(outerCallContext.scopeTower, argument.rhsName, this, explicitReceiver)
@@ -152,13 +154,26 @@ class CallableReferencesCandidateFactory(
 
             val toFreshSubstitutor = CreateDescriptorWithFreshTypeVariables.createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, it, kotlinCall = null)
             val reflectionType = toFreshSubstitutor.safeSubstitute(reflectionCandidateType)
+            it.addSubtypeConstraint(reflectionType, expectedType, position)
 
-            it.addSubtypeConstraint(reflectionType, expectedType, ArgumentConstraintPosition(argument))
+            it.addUnboundConstraint(toFreshSubstitutor, dispatchCallableReceiver, candidateDescriptor.dispatchReceiverParameter)
+            it.addUnboundConstraint(toFreshSubstitutor, extensionCallableReceiver, candidateDescriptor.extensionReceiverParameter)
+
             if (it.hasContradiction) diagnostics.add(CallableReferenceNotCompatible(argument, candidateDescriptor, expectedType, reflectionType))
         }
 
         return CallableReferenceCandidate(candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
                                           explicitReceiverKind, reflectionCandidateType, defaults, ResolutionCandidateStatus(diagnostics))
+    }
+
+    private fun ConstraintSystemOperation.addUnboundConstraint(
+            toFreshSubstitutor: FreshVariableNewTypeSubstitutor,
+            receiver: CallableReceiver?,
+            candidateReceiver: ReceiverParameterDescriptor?
+    ) {
+        val expectedType = toFreshSubstitutor.safeSubstitute(candidateReceiver?.value?.type?.unwrap() ?: return)
+        val receiverType = receiver?.receiver?.stableType ?: return
+        addSubtypeConstraint(receiverType, expectedType, position)
     }
 
     private fun getArgumentAndReturnTypeUseMappingByExpectedType(
