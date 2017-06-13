@@ -433,8 +433,12 @@ class PSICallResolver(
                     if (oldReceiver is ExpressionReceiver) {
                         val ktExpression = KtPsiUtil.getLastElementDeparenthesized(oldReceiver.expression, context.statementFilter)
 
-                        val onlyResolvedCall = ktExpression?.getCall(context.trace.bindingContext)?.let {
-                            context.trace.get(BindingContext.ONLY_RESOLVED_CALL, it)
+                        val bindingContext = context.trace.bindingContext
+                        val call = bindingContext[BindingContext.DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL, ktExpression]
+                                   ?: ktExpression?.getCall(bindingContext)
+
+                        val onlyResolvedCall = call?.let {
+                            bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)
                         }
                         if (onlyResolvedCall != null) {
                             subCallArgument = SubKotlinCallArgumentImpl(CallMaker.makeExternalValueArgument(oldReceiver.expression),

@@ -337,6 +337,10 @@ class DelegatedPropertyResolver(
 
         val (provideDelegateCall, provideDelegateResults) =
                 fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, functionName, delegateExpression)
+
+        if (provideDelegateResults.isSingleResult) {
+            context.trace.record(BindingContext.DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL, delegateExpression, provideDelegateCall)
+        }
         context.trace.record(BindingContext.PROVIDE_DELEGATE_CALL, propertyDescriptor, provideDelegateCall)
 
         return provideDelegateResults

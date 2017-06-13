@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.replaceReturnType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -42,7 +41,10 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import java.util.*
@@ -476,12 +478,12 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     }
 
     override fun getSmartCastDispatchReceiverType(): KotlinType? = null // todo
+}
 
-    fun ResolutionCandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) {
-        ResolutionCandidateApplicability.RESOLVED, ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY -> ResolutionStatus.SUCCESS
-        ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ResolutionStatus.RECEIVER_TYPE_ERROR
-        else -> ResolutionStatus.OTHER_ERROR
-    }
+fun ResolutionCandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) {
+    ResolutionCandidateApplicability.RESOLVED, ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY -> ResolutionStatus.SUCCESS
+    ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ResolutionStatus.RECEIVER_TYPE_ERROR
+    else -> ResolutionStatus.OTHER_ERROR
 }
 
 class NewVariableAsFunctionResolvedCallImpl(
@@ -491,7 +493,7 @@ class NewVariableAsFunctionResolvedCallImpl(
 ): VariableAsFunctionResolvedCall, ResolvedCall<FunctionDescriptor> by functionCall
 
 class StubOnlyResolvedCall<D : CallableDescriptor>(val candidate: SimpleKotlinResolutionCandidate): NewAbstractResolvedCall<D>() {
-    override fun getStatus() = ResolutionStatus.UNKNOWN_STATUS
+    override fun getStatus() = candidate.status.resultingApplicability.toResolutionStatus()
 
     override fun getCandidateDescriptor(): D = candidate.candidateDescriptor as D
     override fun getResultingDescriptor(): D = candidate.descriptorWithFreshTypes as D

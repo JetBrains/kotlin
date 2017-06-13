@@ -123,6 +123,7 @@ public interface BindingContext {
 
     WritableSlice<Call, ResolvedCall<?>> RESOLVED_CALL = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<Call, ResolvedKotlinCall.OnlyResolvedKotlinCall> ONLY_RESOLVED_CALL = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<KtExpression, Call> DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<Call, TailRecursionKind> TAIL_RECURSION_CALL = Slices.createSimpleSlice();
     WritableSlice<KtElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtElement, Call> CALL = new BasicWritableSlice<>(DO_NOTHING);
