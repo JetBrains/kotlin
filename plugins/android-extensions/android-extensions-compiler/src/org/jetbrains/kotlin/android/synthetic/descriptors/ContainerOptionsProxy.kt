@@ -28,33 +28,33 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 
-class ContainerOptionsProxy(val classType: AndroidContainerType, val cache: CacheImplementation) {
+class ContainerOptionsProxy(val containerType: AndroidContainerType, val cache: CacheImplementation) {
     companion object {
         private val CONTAINER_OPTIONS_FQNAME = FqName(ContainerOptions::class.java.canonicalName)
         private val CACHE_NAME = ContainerOptions::cache.name
 
         private val DEFAULT_CACHE_IMPL = SPARSE_ARRAY
 
-        fun get(container: ClassDescriptor): ContainerOptionsProxy {
+        fun create(container: ClassDescriptor): ContainerOptionsProxy {
             if (container.kind != ClassKind.CLASS) {
                 return ContainerOptionsProxy(AndroidContainerType.UNKNOWN, NO_CACHE)
             }
 
-            val classType = AndroidContainerType.get(container)
+            val containerType = AndroidContainerType.get(container)
 
             val anno = container.annotations.findAnnotation(CONTAINER_OPTIONS_FQNAME)
 
             if (anno == null) {
                 // Java classes (and Kotlin classes from other modules) does not support cache by default
-                val supportsCache = container.source is KotlinSourceElement && classType.doesSupportCache
+                val supportsCache = container.source is KotlinSourceElement && containerType.doesSupportCache
                 return ContainerOptionsProxy(
-                        classType,
+                        containerType,
                         if (supportsCache) DEFAULT_CACHE_IMPL else NO_CACHE)
             }
 
             val cache = anno.getEnumValue(CACHE_NAME, DEFAULT_CACHE_IMPL) { valueOf(it) }
 
-            return ContainerOptionsProxy(classType, cache)
+            return ContainerOptionsProxy(containerType, cache)
         }
     }
 }
@@ -68,7 +68,8 @@ private fun <E: Enum<E>> AnnotationDescriptor.getEnumValue(name: String, default
 
     return try {
         factory(valueName)
-    } catch (e: Exception) {
+    } catch (e: IllegalArgumentException) {
+        // Enum.valueOf() may throw this
         defaultValue
     }
 }
