@@ -28,13 +28,12 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens.VARARG_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.LATEINIT_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.VARARG_KEYWORD
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.AnnotationChecker
@@ -56,8 +55,8 @@ class MovePropertyToConstructorIntention :
 
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         fun KtProperty.isDeclaredInClass() : Boolean {
-            val parent = element.getStrictParentOfType<KtClassOrObject>()
-            return parent != null && !parent.isInterfaceClass()
+            val parent = getStrictParentOfType<KtClassOrObject>()
+            return parent is KtClass && !parent.isInterface()
         }
 
         return !element.isLocal
