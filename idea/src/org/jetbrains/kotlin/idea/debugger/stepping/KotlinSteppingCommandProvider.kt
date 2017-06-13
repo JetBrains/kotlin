@@ -96,7 +96,7 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
         val location = suspendContext.debugProcess.invokeInManagerThread { suspendContext.frameProxy?.location() } ?: return null
         if (isInSuspendMethod(location) && !isOnSuspendReturnOrReenter(location) && !isLastLineLocationInMethod(location)) {
             return DebugProcessImplHelper.createStepOverCommandWithCustomFilter(
-                    suspendContext, ignoreBreakpoints, KotlinSuspendCallStepOverFilter(sourcePosition.line, file))
+                    suspendContext, ignoreBreakpoints, KotlinSuspendCallStepOverFilter(sourcePosition.line, file, ignoreBreakpoints))
         }
 
         return null

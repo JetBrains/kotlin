@@ -32,7 +32,10 @@ import org.jetbrains.kotlin.idea.debugger.isOnSuspendReturnOrReenter
 import org.jetbrains.kotlin.idea.debugger.suspendFunctionFirstLineLocation
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
-class KotlinSuspendCallStepOverFilter(private val line: Int, private val file: PsiFile) : MethodFilter {
+class KotlinSuspendCallStepOverFilter(
+        private val line: Int,
+        private val file: PsiFile,
+        private val ignoreBreakpoints: Boolean) : MethodFilter {
     override fun getCallingExpressionLines(): Range<Int>? = Range(line, line)
 
     override fun locationMatches(process: DebugProcessImpl, location: Location?): Boolean {
@@ -47,20 +50,24 @@ class KotlinSuspendCallStepOverFilter(private val line: Int, private val file: P
         val breakpointManager = DebuggerManagerEx.getInstanceEx(debugProcess.project).breakpointManager
         breakpointManager.applyThreadFilter(debugProcess, null)
 
-        createRunToCursorBreakpoint(context, suspendStartLineNumber - 1, file)
+        createRunToCursorBreakpoint(context, suspendStartLineNumber - 1, file, ignoreBreakpoints)
         return RequestHint.RESUME
     }
 }
 
-private fun createRunToCursorBreakpoint(context: SuspendContextImpl, line: Int, file: PsiFile) {
+private fun createRunToCursorBreakpoint(context: SuspendContextImpl, line: Int, file: PsiFile, ignoreBreakpoints: Boolean) {
     val position = XSourcePositionImpl.create(file.virtualFile, line) ?: return
     val process = context.debugProcess
     process.showStatusText(DebuggerBundle.message("status.run.to.cursor"))
     process.cancelRunToCursorBreakpoint()
 
+    if (ignoreBreakpoints) {
+        DebuggerManagerEx.getInstanceEx(process.project).breakpointManager.disableBreakpoints(process)
+    }
+
     val runToCursorBreakpoint =
             runReadAction {
-                DebuggerManagerEx.getInstanceEx(process.project).breakpointManager.addRunToCursorBreakpoint(position, false)
+                DebuggerManagerEx.getInstanceEx(process.project).breakpointManager.addRunToCursorBreakpoint(position, ignoreBreakpoints)
             } ?:
             return
 

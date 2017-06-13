@@ -963,6 +963,21 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
     }
 
+    @TestMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOverForce")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StepOverForce extends AbstractKotlinSteppingTest {
+        public void testAllFilesPresentInStepOverForce() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepOverForce"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("sofSuspendableCallInFun.kt")
+        public void testSofSuspendableCallInFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOverForce/sofSuspendableCallInFun.kt");
+            doStepOverForceTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/debugger/tinyApp/src/stepping/filters")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -177,9 +177,10 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         dp.managerThread.schedule(stepOutCommand)
     }
 
-    protected fun SuspendContextImpl.doStepOver() {
-        val stepOverCommand = runReadAction { commandProvider.getStepOverCommand(this, false, debuggerContext) }
-                             ?: dp.createStepOverCommand(this, false)
+    protected fun SuspendContextImpl.doStepOver(ignoreBreakpoints: Boolean = false) {
+        val stepOverCommand =
+                runReadAction { commandProvider.getStepOverCommand(this, ignoreBreakpoints, debuggerContext) } ?:
+                dp.createStepOverCommand(this, ignoreBreakpoints)
         dp.managerThread.schedule(stepOverCommand)
     }
 
@@ -203,6 +204,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { doStepInto(false, null) }
             line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { doStepOut() }
             line.startsWith("// STEP_OVER: ") -> repeat("// STEP_OVER: ") { doStepOver() }
+            line.startsWith("// STEP_OVER_FORCE: ") -> repeat("// STEP_OVER_FORCE: ") { doStepOver(true) }
             line.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { doSmartStepInto(InTextDirectivesUtils.getPrefixedInt(line, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
             line.startsWith("// SMART_STEP_INTO: ") -> repeat("// SMART_STEP_INTO: ") { doSmartStepInto() }
             line.startsWith("// RESUME: ") -> repeat("// RESUME: ") { resume(this) }
