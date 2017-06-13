@@ -30,16 +30,16 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class ResourcePropertyStackValue(
         val receiver: StackValue,
-        val typeMapper: KotlinTypeMapper,
+        private val typeMapper: KotlinTypeMapper,
         val resource: PropertyDescriptor,
         val container: ClassDescriptor,
-        val containerOptions: ContainerOptionsProxy,
-        val androidPackage: String
+        private val containerOptions: ContainerOptionsProxy,
+        private val androidPackage: String
 ) : StackValue(typeMapper.mapType(resource.returnType!!)) {
-    private val androidClassType get() = containerOptions.classType
+    private val containerType get() = containerOptions.containerType
 
     init {
-        assert(containerOptions.classType != AndroidContainerType.UNKNOWN)
+        assert(containerOptions.containerType != AndroidContainerType.UNKNOWN)
     }
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
@@ -61,25 +61,25 @@ class ResourcePropertyStackValue(
             v.invokevirtual(declarationDescriptorType.internalName, AndroidExpressionCodegenExtension.CACHED_FIND_VIEW_BY_ID_METHOD_NAME, "(I)Landroid/view/View;", false)
         }
         else {
-            when (androidClassType) {
+            when (containerType) {
                 AndroidContainerType.ACTIVITY, AndroidContainerType.SUPPORT_FRAGMENT_ACTIVITY, AndroidContainerType.VIEW, AndroidContainerType.DIALOG -> {
-                    receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
+                    receiver.put(Type.getType("L${containerType.internalClassName};"), v)
                     getResourceId(v)
-                    v.invokevirtual(androidClassType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
+                    v.invokevirtual(containerType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
                 }
                 AndroidContainerType.FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT -> {
-                    receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
-                    v.invokevirtual(androidClassType.internalClassName, "getView", "()Landroid/view/View;", false)
+                    receiver.put(Type.getType("L${containerType.internalClassName};"), v)
+                    v.invokevirtual(containerType.internalClassName, "getView", "()Landroid/view/View;", false)
                     getResourceId(v)
                     v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
                 }
                 AndroidContainerType.LAYOUT_CONTAINER -> {
-                    receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
-                    v.invokevirtual(androidClassType.internalClassName, "getEntityView", "()Landroid/view/View;", false)
+                    receiver.put(Type.getType("L${containerType.internalClassName};"), v)
+                    v.invokevirtual(containerType.internalClassName, "getEntityView", "()Landroid/view/View;", false)
                     getResourceId(v)
                     v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
                 }
-                else -> throw IllegalStateException("Invalid Android class type: $androidClassType") // Should never occur
+                else -> throw IllegalStateException("Invalid Android class type: $containerType") // Should never occur
             }
         }
 
@@ -87,31 +87,31 @@ class ResourcePropertyStackValue(
     }
 
     private fun putSelectorForFragment(v: InstructionAdapter) {
-        receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
+        receiver.put(Type.getType("L${containerType.internalClassName};"), v)
 
-        when (androidClassType) {
+        when (containerType) {
             AndroidContainerType.ACTIVITY, AndroidContainerType.FRAGMENT -> {
-                v.invokevirtual(androidClassType.internalClassName, "getFragmentManager", "()Landroid/app/FragmentManager;", false)
+                v.invokevirtual(containerType.internalClassName, "getFragmentManager", "()Landroid/app/FragmentManager;", false)
                 getResourceId(v)
                 v.invokevirtual("android/app/FragmentManager", "findFragmentById", "(I)Landroid/app/Fragment;", false)
             }
             AndroidContainerType.SUPPORT_FRAGMENT -> {
-                v.invokevirtual(androidClassType.internalClassName, "getFragmentManager", "()Landroid/support/v4/app/FragmentManager;", false)
+                v.invokevirtual(containerType.internalClassName, "getFragmentManager", "()Landroid/support/v4/app/FragmentManager;", false)
                 getResourceId(v)
                 v.invokevirtual("android/support/v4/app/FragmentManager", "findFragmentById", "(I)Landroid/support/v4/app/Fragment;", false)
             }
             AndroidContainerType.SUPPORT_FRAGMENT_ACTIVITY -> {
-                v.invokevirtual(androidClassType.internalClassName, "getSupportFragmentManager", "()Landroid/support/v4/app/FragmentManager;", false)
+                v.invokevirtual(containerType.internalClassName, "getSupportFragmentManager", "()Landroid/support/v4/app/FragmentManager;", false)
                 getResourceId(v)
                 v.invokevirtual("android/support/v4/app/FragmentManager", "findFragmentById", "(I)Landroid/support/v4/app/Fragment;", false)
             }
-            else -> throw IllegalStateException("Invalid Android class type: $androidClassType") // Should never occur
+            else -> throw IllegalStateException("Invalid Android class type: $containerType") // Should never occur
         }
 
         v.checkcast(this.type)
     }
 
-    fun getResourceId(v: InstructionAdapter) {
+    private fun getResourceId(v: InstructionAdapter) {
         v.getstatic(androidPackage.replace(".", "/") + "/R\$id", resource.name.asString(), "I")
     }
 }

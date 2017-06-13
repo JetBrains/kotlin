@@ -51,12 +51,12 @@ fun KtUsefulTestCase.createTestEnvironment(configuration: CompilerConfiguration,
     ClassBuilderInterceptorExtension.registerExtension(project, AndroidOnDestroyClassBuilderInterceptorExtension())
     PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension())
 
-    addAERuntimeLibrary(myEnvironment)
+    addAndroidExtensionsRuntimeLibrary(myEnvironment)
 
     return myEnvironment
 }
 
-fun addAERuntimeLibrary(environment: KotlinCoreEnvironment) {
+fun addAndroidExtensionsRuntimeLibrary(environment: KotlinCoreEnvironment) {
     environment.apply {
         val runtimeLibrary = File("out/production/android-extensions-runtime")
         updateClasspath(listOf(JvmClasspathRoot(runtimeLibrary)))

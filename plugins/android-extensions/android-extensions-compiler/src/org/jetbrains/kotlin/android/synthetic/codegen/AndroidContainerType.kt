@@ -37,7 +37,7 @@ enum class AndroidContainerType(className: String, val doesSupportCache: Boolean
         private val LAYOUT_CONTAINER_FQNAME = LayoutContainer::class.java.canonicalName
 
         fun get(descriptor: ClassifierDescriptor): AndroidContainerType {
-            fun getClassTypeInternal(name: String): AndroidContainerType? = when (name) {
+            fun getContainerTypeInternal(name: String): AndroidContainerType? = when (name) {
                 AndroidConst.ACTIVITY_FQNAME -> AndroidContainerType.ACTIVITY
                 AndroidConst.FRAGMENT_FQNAME -> AndroidContainerType.FRAGMENT
                 AndroidConst.DIALOG_FQNAME -> AndroidContainerType.DIALOG
@@ -48,13 +48,13 @@ enum class AndroidContainerType(className: String, val doesSupportCache: Boolean
                 else -> null
             }
 
-            getClassTypeInternal(DescriptorUtils.getFqName(descriptor).asString())?.let { return it }
+            getContainerTypeInternal(DescriptorUtils.getFqName(descriptor).asString())?.let { return it }
 
             for (supertype in descriptor.typeConstructor.supertypes) {
                 val declarationDescriptor = supertype.constructor.declarationDescriptor
                 if (declarationDescriptor != null) {
-                    val androidClassType = get(declarationDescriptor)
-                    if (androidClassType != AndroidContainerType.UNKNOWN) return androidClassType
+                    val containerType = get(declarationDescriptor)
+                    if (containerType != AndroidContainerType.UNKNOWN) return containerType
                 }
             }
 
