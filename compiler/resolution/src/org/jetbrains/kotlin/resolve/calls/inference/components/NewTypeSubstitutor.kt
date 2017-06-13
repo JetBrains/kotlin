@@ -54,6 +54,18 @@ interface NewTypeSubstitutor {
     private fun substitute(type: SimpleType, runCapturedChecks: Boolean): UnwrappedType? {
         if (type.isError) return null
 
+        if (type is AbbreviatedType) {
+            val substitutedExpandedType = substitute(type.expandedType, runCapturedChecks)
+            val substitutedAbbreviation = substitute(type.abbreviation, runCapturedChecks)
+            if (substitutedExpandedType is SimpleType? && substitutedAbbreviation is SimpleType?) {
+                return AbbreviatedType(substitutedExpandedType ?: type.expandedType,
+                                       substitutedAbbreviation ?: type.abbreviation)
+            }
+            else {
+                return substitutedExpandedType
+            }
+        }
+
         if (type.arguments.isNotEmpty()) {
             return substituteParametrizedType(type, runCapturedChecks)
         }
