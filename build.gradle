@@ -344,9 +344,9 @@ task crossDistRuntime(type: Copy) {
 
 targetList.each { target ->
     task("${target}CrossDistRuntime", type: Copy) {
-        dependsOn ":runtime:${target}Runtime" 
-        dependsOn ":backend.native:${target}Stdlib" 
-        dependsOn ":backend.native:${target}Start" 
+        dependsOn ":runtime:${target}Runtime"
+        dependsOn ":backend.native:${target}Stdlib"
+        dependsOn ":backend.native:${target}Start"
 
         destinationDir file('dist')
 

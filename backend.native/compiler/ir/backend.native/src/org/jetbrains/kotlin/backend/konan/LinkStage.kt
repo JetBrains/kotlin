@@ -44,11 +44,13 @@ internal abstract class PlatformFlags(val distribution: Distribution) {
         = propertyTargetList("linkerOptimizationFlags")
     open val linkerKonanFlags 
         = propertyTargetList("linkerKonanFlags")
+    open val linkerDebugFlags
+            = propertyTargetList("linkerDebugFlags")
 
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 
    abstract fun linkCommand(objectFiles: List<ObjectFile>,
-        executable: ExecutableFile, optimize: Boolean): List<String>
+        executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String>
 
     open fun linkCommandSuffix(): List<String> = emptyList()
 
@@ -71,11 +73,17 @@ internal open class AndroidPlatform(distribution: Distribution)
 
     override val useCompilerDriverAsLinker: Boolean get() = true
 
-    override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
-        return mutableListOf<String>(clang, "-o", executable, "-fPIC", "-shared") +
-                    objectFiles +
-                    (if (optimize) linkerOptimizationFlags else emptyList()) +
-                linkerKonanFlags
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
+        return mutableListOf(clang).apply{
+            add("-o")
+            add(executable)
+            add("-fPIC")
+            add("-shared")
+            addAll(objectFiles)
+            if (optimize) addAll(linkerOptimizationFlags)
+            if (!debug) addAll(linkerDebugFlags)
+            addAll(linkerKonanFlags)
+        }
     }
 }
 
@@ -92,15 +100,19 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
                 propertyTargetString("osVersionMin") + ".0")
     }
 
-    override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
-        return mutableListOf(linker, "-demangle") +
-                    listOf("-object_path_lto", "temporary.o", "-lto_library", distribution.libLTO) +
-                    listOf("-dynamic", "-arch", propertyTargetString("arch")) +
-                    osVersionMin +
-                    listOf("-syslibroot", distribution.targetSysRoot, "-o", executable) +
-                    objectFiles +
-                    (if (optimize) linkerOptimizationFlags else emptyList()) +
-                    linkerKonanFlags + listOf("-lSystem")
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
+        return mutableListOf(linker).apply {
+            add("-demangle")
+            addAll(listOf("-object_path_lto", "temporary.o", "-lto_library", distribution.libLTO))
+            addAll(listOf("-dynamic", "-arch", propertyTargetString("arch")))
+            addAll(osVersionMin)
+            addAll(listOf("-syslibroot", distribution.targetSysRoot, "-o", executable))
+            addAll(objectFiles)
+            if (optimize) addAll(linkerOptimizationFlags)
+            if (!debug) addAll(linkerDebugFlags)
+            addAll(linkerKonanFlags)
+            add("-lSystem")
+        }
     }
 
     open fun dsymutilCommand(executable: ExecutableFile): List<String> {
@@ -123,26 +135,29 @@ internal open class LinuxBasedPlatform(distribution: Distribution)
     val specificLibs
         = propertyTargetList("abiSpecificLibraries").map{it -> "-L${targetSysRoot}/$it"}
 
-    override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
         // TODO: Can we extract more to the konan.properties?
-        return mutableListOf(linker,
-            "--sysroot=${targetSysRoot}",
-            "-export-dynamic", "-z", "relro", "--hash-style=gnu", 
-            "--build-id", "--eh-frame-hdr", // "-m", "elf_x86_64",
-            "-dynamic-linker", propertyTargetString("dynamicLinker"),
-            "-o", executable,
-            "${targetSysRoot}/usr/lib64/crt1.o", "${targetSysRoot}/usr/lib64/crti.o", "${libGcc}/crtbegin.o",
-            "-L${llvmLib}", "-L${libGcc}") +
-            specificLibs +
-            listOf("-L${targetSysRoot}/../lib", "-L${targetSysRoot}/lib", "-L${targetSysRoot}/usr/lib") + 
-            (if (optimize) listOf("-plugin", "$llvmLib/LLVMgold.so") + pluginOptimizationFlags else emptyList<String>()) +
-            objectFiles +
-            (if (optimize) linkerOptimizationFlags else emptyList<String>()) +
-            linkerKonanFlags +
-            listOf("-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed", 
-            "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
-            "${libGcc}/crtend.o",
-            "${targetSysRoot}/usr/lib64/crtn.o")
+        return mutableListOf(linker).apply {
+            addAll(listOf("--sysroot=${targetSysRoot}",
+                    "-export-dynamic", "-z", "relro", "--hash-style=gnu",
+                    "--build-id", "--eh-frame-hdr", // "-m", "elf_x86_64",
+                    "-dynamic-linker", propertyTargetString("dynamicLinker"),
+                    "-o", executable,
+                    "${targetSysRoot}/usr/lib64/crt1.o",
+                    "${targetSysRoot}/usr/lib64/crti.o", "${libGcc}/crtbegin.o",
+                    "-L${llvmLib}", "-L${libGcc}"))
+            addAll(specificLibs)
+            addAll(listOf("-L${targetSysRoot}/../lib", "-L${targetSysRoot}/lib", "-L${targetSysRoot}/usr/lib"))
+            if (optimize) addAll(listOf("-plugin", "$llvmLib/LLVMgold.so") + pluginOptimizationFlags)
+            addAll(objectFiles)
+            if (optimize) addAll(linkerOptimizationFlags)
+            if (!debug) addAll(linkerDebugFlags)
+            addAll(linkerKonanFlags)
+            addAll(listOf("-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
+                    "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
+                    "${libGcc}/crtend.o",
+                    "${targetSysRoot}/usr/lib64/crtn.o"))
+        }
     }
 }
 
@@ -153,10 +168,13 @@ internal open class MingwPlatform(distribution: Distribution)
 
     override val useCompilerDriverAsLinker: Boolean get() = true
 
-    override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
-        return listOf(linker, "-o", executable) +
-                objectFiles +
-                (if (optimize) linkerOptimizationFlags else emptyList())
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
+        return mutableListOf(linker).apply {
+            addAll(listOf("-o", executable))
+            addAll(objectFiles)
+            if (optimize) addAll(linkerOptimizationFlags)
+            if (!debug) addAll(linkerDebugFlags)
+        }
     }
 
     override fun linkCommandSuffix() = linkerKonanFlags
@@ -234,7 +252,7 @@ internal class LinkStage(val context: Context) {
 
     fun link(objectFiles: List<ObjectFile>): ExecutableFile {
         val executable = config.get(KonanConfigKeys.OUTPUT_FILE)!!
-        val linkCommand = platform.linkCommand(objectFiles, executable, optimize) +
+        val linkCommand = platform.linkCommand(objectFiles, executable, optimize, config.getBoolean(KonanConfigKeys.DEBUG)) +
                 distribution.libffi +
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                 entryPointSelector +
