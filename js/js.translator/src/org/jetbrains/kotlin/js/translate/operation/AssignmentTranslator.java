@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.operation;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
@@ -31,8 +32,7 @@ import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.isVariableReassignment;
+import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSimpleName;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isAssignment;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.hasCorrespondingFunctionIntrinsic;
@@ -46,7 +46,14 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
     @NotNull
     public static JsExpression translate(@NotNull KtBinaryExpression expression, @NotNull TranslationContext context) {
         if (hasCorrespondingFunctionIntrinsic(context, expression)) {
-            return IntrinsicAssignmentTranslator.doTranslate(expression, context);
+            // This is a hack. This code is conceptually wrong, refactoring required here.
+            // The right implementation is: get assignment via OverloadedAssignmentTranslator and see at the result.
+            // If it's an expression like `a = a + b` then represent it as `a += b`
+            // Another right implementation is: enumerate explicitly which descriptors are OK to intrinsify like this.
+            CallableDescriptor operationDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
+            if (operationDescriptor == null || operationDescriptor.getExtensionReceiverParameter() == null) {
+                return IntrinsicAssignmentTranslator.doTranslate(expression, context);
+            }
         }
         return OverloadedAssignmentTranslator.doTranslate(expression, context);
     }

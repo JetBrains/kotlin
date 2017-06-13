@@ -51,13 +51,7 @@ public class InlineDefaultValuesTestsGenerated extends AbstractInlineDefaultValu
     @TestMetadata("defaultMethodInClass.kt")
     public void testDefaultMethodInClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/defaultMethodInClass.kt");
-        try {
-            doTest(fileName);
-        }
-        catch (Throwable ignore) {
-            return;
-        }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        doTest(fileName);
     }
 
     @TestMetadata("defaultParamRemapping.kt")

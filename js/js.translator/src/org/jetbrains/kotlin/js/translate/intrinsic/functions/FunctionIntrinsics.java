@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.*;
+import org.jetbrains.kotlin.js.translate.intrinsic.operation.StringPlusCharFIF;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ public final class FunctionIntrinsics {
     private void registerFactories() {
         register(LongOperationFIF.INSTANCE);
         register(PrimitiveUnaryOperationFIF.INSTANCE);
+        register(StringPlusCharFIF.INSTANCE);
         register(PrimitiveBinaryOperationFIF.INSTANCE);
         register(ArrayFIF.INSTANCE);
         register(TopLevelFIF.INSTANCE);

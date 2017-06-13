@@ -7657,6 +7657,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/standardClasses/stringBuilder.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("stringPlus.kt")
+        public void testStringPlus() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/standardClasses/stringPlus.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/superCall")

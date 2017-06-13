@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
-import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -37,7 +36,7 @@ class BinaryOperationIntrinsics {
 
     private val intrinsicCache = mutableMapOf<IntrinsicKey, BinaryOperationIntrinsic>()
 
-    private val factories = listOf(LongCompareToBOIF, EqualsBOIF, CompareToBOIF, StringPlusCharBOIF, AssignmentBOIF)
+    private val factories = listOf(LongCompareToBOIF, EqualsBOIF, CompareToBOIF, AssignmentBOIF)
 
     fun getIntrinsic(expression: KtBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic {
         val token = getOperationToken(expression)
