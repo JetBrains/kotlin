@@ -1381,6 +1381,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("this.kt")
+            public void testThis() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToDoubleBang/this.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("throwByFqName.kt")
             public void testThrowByFqName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToDoubleBang/throwByFqName.kt");
@@ -1507,6 +1513,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("ifAsPartOfExpression.kt")
             public void testIfAsPartOfExpression() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/ifAsPartOfExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implicitReceiver.kt")
+            public void testImplicitReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/implicitReceiver.kt");
                 doTest(fileName);
             }
 
@@ -1762,6 +1774,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("ifAsExpression.kt")
             public void testIfAsExpression() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/ifAsExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implicitReceiver.kt")
+            public void testImplicitReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/implicitReceiver.kt");
                 doTest(fileName);
             }
 
