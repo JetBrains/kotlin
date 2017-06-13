@@ -76,24 +76,4 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         HintType.LOCAL_VARIABLE_HINT.option.set(true)
         check("""fun foo() { for (x: String in listOf("a")) { } }""")
     }
-
-    fun testErrorType() {
-        HintType.PROPERTY_HINT.option.set(true)
-        check("""val x = arrayListOf<>()""")
-    }
-
-    fun testExpandedTypeAlias() {
-        HintType.PROPERTY_HINT.option.set(true)
-        check("""val x<hint text=": ArrayList<Int>" /> = arrayListOf(1)""")
-    }
-
-    fun testAnonymousObject() {
-        HintType.FUNCTION_HINT.option.set(true)
-        check("""val o = object : Iterable<Int> {
-                  override fun iterator()<hint text=": Iterator<Int>" /> = object : Iterator<Int> {
-                       override fun next()<hint text=": Int" /> = 1
-                       override fun hasNext()<hint text=": Boolean" /> = true
-                  }
-              }""")
-    }
 }
