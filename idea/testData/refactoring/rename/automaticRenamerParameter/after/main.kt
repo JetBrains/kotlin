@@ -1,12 +1,12 @@
 package testing
 
 interface Trait {
-    open fun foo(aa: Int, b: String) {
+    open fun foo(a: Int, b: String) {
     }
 }
 
 open class Super {
-    open fun foo(aa: Int, b: String) {
+    open fun foo(a: Int, b: String) {
     }
 }
 

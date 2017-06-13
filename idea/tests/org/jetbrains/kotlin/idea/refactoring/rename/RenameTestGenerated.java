@@ -414,6 +414,24 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("parameterHierarchyLeaf/parameterHierarchyLeaf.test")
+    public void testParameterHierarchyLeaf_ParameterHierarchyLeaf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/parameterHierarchyLeaf/parameterHierarchyLeaf.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("parameterHierarchyMiddle/parameterHierarchyMiddle.test")
+    public void testParameterHierarchyMiddle_ParameterHierarchyMiddle() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/parameterHierarchyMiddle/parameterHierarchyMiddle.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("parameterHierarchyRoot/parameterHierarchyRoot.test")
+    public void testParameterHierarchyRoot_ParameterHierarchyRoot() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/parameterHierarchyRoot/parameterHierarchyRoot.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("parameterRedeclaration/parameterRedeclaration.test")
     public void testParameterRedeclaration_ParameterRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/parameterRedeclaration/parameterRedeclaration.test");
