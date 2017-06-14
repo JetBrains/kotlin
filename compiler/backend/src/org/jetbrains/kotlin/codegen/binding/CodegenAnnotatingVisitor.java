@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor;
@@ -372,11 +374,31 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         return CodegenBinding.recordClosure(bindingTrace, classDescriptor, peekFromStack(classStack), Type.getObjectType(name));
     }
 
+    private void recordLocalVariablePropertyMetadata(LocalVariableDescriptor variableDescriptor) {
+        KotlinType delegateType = JvmCodegenUtil.getPropertyDelegateType(variableDescriptor, bindingContext);
+        if (delegateType == null) return;
+
+        LocalVariableDescriptor metadataVariableDescriptor = new LocalVariableDescriptor(
+                variableDescriptor.getContainingDeclaration(),
+                Annotations.Companion.getEMPTY(),
+                Name.identifier(variableDescriptor.getName().asString() + "$metadata"),
+                ReflectionTypes.Companion.createKPropertyStarType(DescriptorUtilsKt.getModule(variableDescriptor)),
+                false,
+                false,
+                SourceElement.NO_SOURCE
+        );
+        bindingTrace.record(LOCAL_VARIABLE_PROPERTY_METADATA, variableDescriptor, metadataVariableDescriptor);
+    }
+
     @Override
     public void visitProperty(@NotNull KtProperty property) {
         DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, property);
         // working around a problem with shallow analysis
         if (descriptor == null) return;
+
+        if (descriptor instanceof LocalVariableDescriptor) {
+            recordLocalVariablePropertyMetadata((LocalVariableDescriptor) descriptor);
+        }
 
         String nameForClassOrPackageMember = getNameForClassOrPackageMember(descriptor);
         if (nameForClassOrPackageMember != null) {
