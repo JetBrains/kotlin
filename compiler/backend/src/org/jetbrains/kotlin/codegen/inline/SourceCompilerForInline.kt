@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.context.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -37,16 +40,75 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.HashMap
 import kotlin.properties.Delegates
 
-class SourceCompilerForInline(private val codegen: ExpressionCodegen) {
+interface SourceCompilerForInline {
+    val state: GenerationState
 
-    val state = codegen.state
+    val callElement: Any
+
+    val lookupLocation: LookupLocation
+
+    val callElementText: String
+
+    val callsiteFile: PsiFile?
+
+    val contextKind: OwnerKind
+
+    val inlineCallSiteInfo: InlineCallSiteInfo
+
+    val lazySourceMapper: DefaultSourceMapper
+
+    fun generateLambdaBody(adapter: MethodVisitor,
+                           jvmMethodSignature: JvmMethodSignature,
+                           lambdaInfo: ExpressionLambda): SMAP
+
+    fun doCreateMethodNodeFromSource(
+            callableDescriptor: FunctionDescriptor,
+            jvmSignature: JvmMethodSignature,
+            callDefault: Boolean,
+            asmMethod: Method
+    ): SMAPAndMethodNode
+
+    fun generateAndInsertFinallyBlocks(
+            intoNode: MethodNode,
+            insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
+            offsetForFinallyLocalVar: Int
+    )
+
+    fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean
+
+    fun isFinallyMarkerRequired(): Boolean
+
+    val compilationContextDescriptor: DeclarationDescriptor
+
+    val compilationContextFunctionDescriptor: FunctionDescriptor
+
+    fun getContextLabels(): Set<String>
+
+    fun initializeInlineFunctionContext(functionDescriptor: FunctionDescriptor)
+}
+
+
+class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, override val callElement: KtElement): SourceCompilerForInline {
+
+    override val state = codegen.state
 
     private var context by Delegates.notNull<CodegenContext<*>>()
 
-    val contextKind
+    override val lookupLocation = KotlinLookupLocation(callElement)
+
+
+    override val callElementText by lazy {
+        callElement.text
+    }
+
+    override val callsiteFile by lazy {
+        callElement.containingFile
+    }
+
+    override val contextKind
         get () = context.contextKind
 
-    val inlineCallSiteInfo: InlineCallSiteInfo
+    override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
             var context = codegen.getContext()
             var parentCodegen = codegen.parentCodegen
@@ -65,10 +127,10 @@ class SourceCompilerForInline(private val codegen: ExpressionCodegen) {
             )
         }
 
-    val lazySourceMapper
+    override val lazySourceMapper
         get() = codegen.parentCodegen.orCreateSourceMapper
 
-    fun generateLambdaBody(adapter: MethodVisitor,
+    override fun generateLambdaBody(adapter: MethodVisitor,
                            jvmMethodSignature: JvmMethodSignature,
                            lambdaInfo: ExpressionLambda): SMAP {
         val invokeMethodDescriptor = lambdaInfo.invokeMethodDescriptor
@@ -179,6 +241,7 @@ class SourceCompilerForInline(private val codegen: ExpressionCodegen) {
         override fun getInlineNameGenerator(): NameGenerator {
             return delegate.inlineNameGenerator
         }
+
         override //TODO: obtain name from context
         fun getClassName(): String {
             return className
@@ -186,7 +249,7 @@ class SourceCompilerForInline(private val codegen: ExpressionCodegen) {
 
     }
 
-    fun doCreateMethodNodeFromSource(
+    override fun doCreateMethodNodeFromSource(
             callableDescriptor: FunctionDescriptor,
             jvmSignature: JvmMethodSignature,
             callDefault: Boolean,
@@ -236,7 +299,7 @@ class SourceCompilerForInline(private val codegen: ExpressionCodegen) {
         return SMAPAndMethodNode(node, smap)
     }
 
-    fun generateAndInsertFinallyBlocks(
+    override fun generateAndInsertFinallyBlocks(
             intoNode: MethodNode,
             insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
             offsetForFinallyLocalVar: Int
@@ -302,29 +365,31 @@ class SourceCompilerForInline(private val codegen: ExpressionCodegen) {
         //processor.substituteLocalVarTable(intoNode);
     }
 
-    fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor) : Boolean {
+    override fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean {
         return JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), codegen.state.outDirectory)
     }
 
-    fun isFinallyMarkerRequired(): Boolean = isFinallyMarkerRequired(codegen.getContext())
+    override fun isFinallyMarkerRequired(): Boolean = isFinallyMarkerRequired(codegen.getContext())
 
 
-    val compilationContextDescriptor
+    override val compilationContextDescriptor
         get() = codegen.getContext().contextDescriptor
 
-    val compilationContextFunctionDescriptor
+    override val compilationContextFunctionDescriptor
         get() = codegen.getContext().functionDescriptor
 
-    fun getLabelOwnerDescriptor(): CallableMemberDescriptor {
+    override fun getContextLabels(): Set<String> {
         val context = codegen.getContext()
         val parentContext = context.parentContext
-        if (parentContext is ClosureContext && parentContext.originalSuspendLambdaDescriptor != null) {
-            return parentContext.originalSuspendLambdaDescriptor!!
+        val descriptor = if (parentContext is ClosureContext && parentContext.originalSuspendLambdaDescriptor != null) {
+            parentContext.originalSuspendLambdaDescriptor!!
         }
-        return context.contextDescriptor
+        else context.contextDescriptor
+
+        return InlineCodegen.getDeclarationLabels(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor)
     }
 
-    fun initializeInlineFunctionContext(functionDescriptor: FunctionDescriptor) {
+    override fun initializeInlineFunctionContext(functionDescriptor: FunctionDescriptor) {
         context = getContext(functionDescriptor, state, DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)?.containingFile as? KtFile)
     }
 

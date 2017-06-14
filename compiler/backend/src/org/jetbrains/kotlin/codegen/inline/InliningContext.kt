@@ -23,7 +23,7 @@ class RootInliningContext(
         expressionMap: Map<Int, LambdaInfo>,
         state: GenerationState,
         nameGenerator: NameGenerator,
-        val callElement: KtElement,
+        val sourceCompilerForInline: SourceCompilerForInline,
         override val callSiteInfo: InlineCallSiteInfo,
         val inlineMethodReifier: ReifiedTypeInliner,
         typeParameterMappings: TypeParameterMappings

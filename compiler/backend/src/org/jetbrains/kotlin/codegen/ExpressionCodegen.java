@@ -2288,10 +2288,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         FunctionDescriptor original =
                 unwrapInitialSignatureDescriptor(DescriptorUtils.unwrapFakeOverride((FunctionDescriptor) descriptor.getOriginal()));
         if (isDefaultCompilation) {
-            return new InlineCodegenForDefaultBody(original, this, state, new SourceCompilerForInline(this));
+            return new InlineCodegenForDefaultBody(original, this, state, new PsiSourceCompilerForInline(this, callElement));
         }
         else {
-            return new PsiInlineCodegen(this, state, original, callElement, typeParameterMappings, new SourceCompilerForInline(this));
+            return new PsiInlineCodegen(this, state, original, typeParameterMappings, new PsiSourceCompilerForInline(this, callElement));
         }
     }
 

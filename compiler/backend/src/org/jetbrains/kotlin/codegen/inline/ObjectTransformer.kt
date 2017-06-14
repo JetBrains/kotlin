@@ -37,7 +37,7 @@ abstract class ObjectTransformer<out T : TransformationInfo>(@JvmField val trans
         val classBuilder = state.factory.newVisitor(
                 JvmDeclarationOrigin.NO_ORIGIN,
                 Type.getObjectType(transformationInfo.newClassName),
-                inliningContext.root.callElement.containingFile
+                inliningContext.root.sourceCompilerForInline.callsiteFile!!
         )
 
         return RemappingClassBuilder(

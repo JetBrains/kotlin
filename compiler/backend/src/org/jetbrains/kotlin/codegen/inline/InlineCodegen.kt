@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isInlineOnly
-import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -57,11 +56,10 @@ import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
 
-abstract class InlineCodegen(
-        protected val codegen: BaseExpressionCodegen,
+abstract class InlineCodegen<out T: BaseExpressionCodegen>(
+        protected val codegen: T,
         protected val state: GenerationState,
         function: FunctionDescriptor,
-        private val callElement: KtElement,
         private val typeParameterMappings: TypeParameterMappings,
         protected val sourceCompiler: SourceCompilerForInline
 ) {
@@ -96,7 +94,7 @@ abstract class InlineCodegen(
 
     protected var activeLambda: LambdaInfo? = null
 
-    private val sourceMapper = sourceCompiler.lazySourceMapper
+    private val defaultSourceMapper = sourceCompiler.lazySourceMapper
 
     protected var delayedHiddenWriting: Function0<Unit>? = null
 
@@ -116,7 +114,7 @@ abstract class InlineCodegen(
             if (functionOrAccessorName != functionDescriptor.name.asString()) {
                 val scope = getMemberScope(functionDescriptor)
                 //Fake lookup to track track changes for property accessors and @JvmName functions/property accessors
-                scope?.getContributedFunctions(Name.identifier(functionOrAccessorName), KotlinLookupLocation(callElement))
+                scope?.getContributedFunctions(Name.identifier(functionOrAccessorName), sourceCompiler.lookupLocation)
             }
         }
     }
@@ -133,7 +131,7 @@ abstract class InlineCodegen(
                 DescriptorRenderer.DEBUG_TEXT.render(contextDescriptor) + "\n" +
                 (element?.text ?: "<no source>") +
                 if (generateNodeText) "\nCause: " + node.nodeText else "",
-                e, callElement
+                e, sourceCompiler.callElement as? PsiElement
         )
     }
 
@@ -186,7 +184,6 @@ abstract class InlineCodegen(
 
     protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, callDefault: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
-        val defaultSourceMapper = sourceMapper
         defaultSourceMapper.callSiteMarker = CallSiteMarker(codegen.lastLineNumber)
         val node = nodeAndSmap.node
         if (callDefault) {
@@ -212,13 +209,13 @@ abstract class InlineCodegen(
 
         val info = RootInliningContext(
                 expressionMap, state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
-                callElement, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings
+                sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings
         )
 
         val inliner = MethodInliner(
                 node, parameters, info, FieldRemapper(null, null, parameters), isSameModule,
-                "Method inlining " + callElement.text,
-                createNestedSourceMapper(nodeAndSmap, sourceMapper), info.callSiteInfo,
+                "Method inlining " + sourceCompiler.callElementText,
+                createNestedSourceMapper(nodeAndSmap, defaultSourceMapper), info.callSiteInfo,
                 if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null
         ) //with captured
 
@@ -231,8 +228,7 @@ abstract class InlineCodegen(
         val result = inliner.doInline(adapter, remapper, true, LabelOwner.SKIP_ALL)
         result.reifiedTypeParametersUsages.mergeAll(reificationResult)
 
-        val descriptor = sourceCompiler.getLabelOwnerDescriptor()
-        val labels = getDeclarationLabels(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor)
+        val labels = sourceCompiler.getContextLabels()
 
         val infos = MethodInliner.processReturns(adapter, LabelOwner { labels.contains(it) }, true, null)
         sourceCompiler.generateAndInsertFinallyBlocks(
@@ -580,10 +576,9 @@ class PsiInlineCodegen(
         codegen: ExpressionCodegen,
         state: GenerationState,
         function: FunctionDescriptor,
-        callElement: KtElement,
         typeParameterMappings: TypeParameterMappings,
         sourceCompiler: SourceCompilerForInline
-) : InlineCodegen(codegen, state, function, callElement, typeParameterMappings, sourceCompiler), CallGenerator {
+) : InlineCodegen<ExpressionCodegen>(codegen, state, function, typeParameterMappings, sourceCompiler), CallGenerator {
 
     override fun genCallInner(
             callableMethod: Callable,
