@@ -85,6 +85,10 @@ class ExpressionsOfTypeProcessor(
         @TestOnly
         var testLog: MutableList<String>? = null
 
+        inline fun testLog(s: () -> String) {
+            testLog?.add(s())
+        }
+
         val LOG = Logger.getInstance(ExpressionsOfTypeProcessor::class.java)
 
         fun logPresentation(element: PsiElement): String? {
@@ -183,7 +187,7 @@ class ExpressionsOfTypeProcessor(
     private fun downShiftToPlainSearch(reference: PsiReference) {
         val message = getFallbackDiagnosticsMessage(reference)
         LOG.info("ExpressionsOfTypeProcessor: " + message)
-        testLog?.add("Downgrade to plain text search: $message")
+        testLog { "Downgrade to plain text search: $message" }
 
         tasks.clear()
         scopesToUsePlainSearch.clear()
@@ -216,7 +220,7 @@ class ExpressionsOfTypeProcessor(
     private fun addClassToProcess(classToSearch: PsiClass) {
         data class ProcessClassUsagesTask(val classToSearch: PsiClass) : Task {
             override fun perform() {
-                testLog?.add("Searched references to ${logPresentation(classToSearch)}")
+                testLog { "Searched references to ${logPresentation(classToSearch)}" }
                 val scope = GlobalSearchScope.allScope(project).excludeFileTypes(XmlFileType.INSTANCE) // ignore usages in XML - they don't affect us
                 searchReferences(classToSearch, scope) { reference ->
                     val element = reference.element
@@ -347,7 +351,7 @@ class ExpressionsOfTypeProcessor(
                 for (klass in classes) {
                     val request = klass.name + "." + declarationName
 
-                    testLog?.add("Searched references to static ${member.name} in non-Java files by request $request")
+                    testLog { "Searched references to static ${member.name} in non-Java files by request $request" }
                     searchRequestCollector.searchWord(
                             request,
                             classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
@@ -356,7 +360,7 @@ class ExpressionsOfTypeProcessor(
                     if (qualifiedName != null) {
                         val importAllUnderRequest = qualifiedName + ".*"
 
-                        testLog?.add("Searched references to static ${member.name} in non-Java files by request $importAllUnderRequest")
+                        testLog { "Searched references to static ${member.name} in non-Java files by request $importAllUnderRequest" }
                         searchRequestCollector.searchWord(
                                 importAllUnderRequest,
                                 classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
@@ -397,10 +401,10 @@ class ExpressionsOfTypeProcessor(
         data class ProcessCallableUsagesTask(val declaration: PsiElement, val processor: ReferenceProcessor, val scope: SearchScope) : Task {
             override fun perform() {
                 if (scope is LocalSearchScope) {
-                    testLog?.add("Searched imported static member $declaration in ${scope.scope.toList()}")
+                    testLog { "Searched imported static member $declaration in ${scope.scope.toList()}" }
                 }
                 else {
-                    testLog?.add("Searched references to ${logPresentation(declaration)} in non-Java files")
+                    testLog { "Searched references to ${logPresentation(declaration)} in non-Java files" }
                 }
 
                 val searchParameters = KotlinReferencesSearchParameters(
@@ -464,7 +468,7 @@ class ExpressionsOfTypeProcessor(
         data class ProcessSamInterfaceTask(val psiClass: PsiClass) : Task {
             override fun perform() {
                 val scope = GlobalSearchScope.projectScope(project).excludeFileTypes(KotlinFileType.INSTANCE, XmlFileType.INSTANCE)
-                testLog?.add("Searched references to ${logPresentation(psiClass)} in non-Kotlin files")
+                testLog { "Searched references to ${logPresentation(psiClass)} in non-Kotlin files" }
                 searchReferences(psiClass, scope) { reference ->
                     if (reference.element.language != JavaLanguage.INSTANCE) { // reference in some JVM language can be method parameter (but we don't know)
                         downShiftToPlainSearch(reference)
@@ -765,7 +769,7 @@ class ExpressionsOfTypeProcessor(
         if (method.hasModifierProperty(PsiModifier.ABSTRACT)) {
             val psiClass = method.containingClass
             if (psiClass != null) {
-                testLog?.add("Resolved java class to descriptor: ${psiClass.qualifiedName}")
+                testLog { "Resolved java class to descriptor: ${psiClass.qualifiedName}" }
 
                 val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacadeByFile(psiClass.containingFile, JvmPlatform)
                 val classDescriptor = psiClass.resolveToDescriptor(resolutionFacade) as? JavaClassDescriptor
@@ -844,7 +848,7 @@ class ExpressionsOfTypeProcessor(
         else {
             if (!isImplicitlyTyped(declaration)) return
 
-            testLog?.add("Checked type of ${logPresentation(declaration)}")
+            testLog { "Checked type of ${logPresentation(declaration)}" }
 
             val descriptor = declaration.resolveToDescriptorIfAny() as? CallableDescriptor ?: return
             val type = descriptor.returnType

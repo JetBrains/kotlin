@@ -78,7 +78,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
 
     protected fun processReferenceElement(element: TReferenceElement): Boolean {
         val reference = extractReference(element) ?: return true
-        testLog?.add("Resolved ${logPresentation(element)}")
+        testLog { "Resolved ${logPresentation(element)}" }
         if (reference.isReferenceTo(targetDeclaration)) {
             return consumer.process(reference)
         }
@@ -239,7 +239,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
     }
 
     private fun doPlainSearch(scope: SearchScope) {
-        testLog?.add("Used plain search of ${logPresentation(targetDeclaration)} in ${scope.logPresentation()}")
+        testLog { "Used plain search of ${logPresentation(targetDeclaration)} in ${scope.logPresentation()}" }
 
         if (scope is LocalSearchScope) {
             for (element in scope.scope) {
