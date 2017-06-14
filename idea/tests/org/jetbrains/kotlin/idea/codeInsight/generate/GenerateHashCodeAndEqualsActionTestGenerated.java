@@ -60,6 +60,12 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
         doTest(fileName);
     }
 
+    @TestMetadata("dataClassHasArrayProperty.kt")
+    public void testDataClassHasArrayProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/dataClassHasArrayProperty.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/enum.kt");
