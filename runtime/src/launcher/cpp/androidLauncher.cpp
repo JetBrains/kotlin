@@ -20,7 +20,8 @@
 #include "KString.h"
 #include "Types.h"
 
-#ifdef ANDROID
+#ifdef KONAN_ANDROID
+
 #include <unistd.h>
 #include <pthread.h>
 #include <sys/types.h>
@@ -43,9 +44,11 @@
 //--- main --------------------------------------------------------------------//
 extern "C" KInt Konan_start(const ObjHeader*);
 
-static int pipeC, pipeKonan;
+namespace {
+int pipeC, pipeKonan;
 
-static NativeActivityState nativeActivityState;
+NativeActivityState nativeActivityState;
+}
 
 extern "C" void getNativeActivityState(NativeActivityState* state) {
   state->activity = nativeActivityState.activity;
@@ -54,13 +57,13 @@ extern "C" void getNativeActivityState(NativeActivityState* state) {
   state->looper = nativeActivityState.looper;
 }
 
-extern "C" void notifySysEventProcessed(int fd) {
-  if (fd != pipeKonan) return;
+extern "C" void notifySysEventProcessed() {
   int8_t message;
   write(pipeKonan, &message, sizeof(message));
 }
 
-static void* entry(void* param) {
+namespace {
+void* entry(void* param) {
   ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
   ALooper_addFd(looper, pipeKonan, LOOPER_ID_SYS, ALOOPER_EVENT_INPUT, NULL, NULL);
   nativeActivityState.looper = looper;
@@ -83,7 +86,7 @@ static void* entry(void* param) {
   return nullptr;
 }
 
-static void runKonan_start() {
+void runKonan_start() {
   int pipes[2];
   if (socketpair(AF_UNIX, SOCK_STREAM, 0, pipes)) {
     LOGE("Could not create pipe: %s", strerror(errno));
@@ -99,7 +102,7 @@ static void runKonan_start() {
   pthread_create(&thread, &attr, entry, nullptr);
 }
 
-static void putEventSynchronously(void* event) {
+void putEventSynchronously(void* event) {
   uint64_t value = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(event));
   if (write(pipeC, &value, sizeof(value)) != sizeof(value)) {
     LOGE("Failure writing event: %s\n", strerror(errno));
@@ -110,25 +113,25 @@ static void putEventSynchronously(void* event) {
   }
 }
 
-static void onDestroy(ANativeActivity* activity) {
+void onDestroy(ANativeActivity* activity) {
   LOGV("onDestroy called");
   NativeActivityEvent event = { DESTROY };
   putEventSynchronously(&event);
 }
 
-static void onStart(ANativeActivity* activity) {
+void onStart(ANativeActivity* activity) {
   LOGV("onStart called");
   NativeActivityEvent event = { START };
   putEventSynchronously(&event);
 }
 
-static void onResume(ANativeActivity* activity) {
+void onResume(ANativeActivity* activity) {
   LOGV("onResume called");
   NativeActivitySaveStateEvent event = { RESUME };
   putEventSynchronously(&event);
 }
 
-static void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen) {
+void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen) {
   LOGV("onSaveInstanceState called");
   NativeActivitySaveStateEvent event = { SAVE_INSTANCE_STATE };
   putEventSynchronously(&event);
@@ -136,61 +139,61 @@ static void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen) {
   return event.savedState;
 }
 
-static void onPause(ANativeActivity* activity) {
+void onPause(ANativeActivity* activity) {
   LOGV("onPause called");
   NativeActivityEvent event = { PAUSE };
   putEventSynchronously(&event);
 }
 
-static void onStop(ANativeActivity* activity) {
+void onStop(ANativeActivity* activity) {
   LOGV("onStop called");
   NativeActivityEvent event = { STOP };
   putEventSynchronously(&event);
 }
 
-static void onConfigurationChanged(ANativeActivity* activity) {
+void onConfigurationChanged(ANativeActivity* activity) {
   LOGV("onConfigurationChanged called");
   NativeActivityEvent event = { CONFIGURATION_CHANGED };
   putEventSynchronously(&event);
 }
 
-static void onLowMemory(ANativeActivity* activity) {
+void onLowMemory(ANativeActivity* activity) {
   LOGV("onLowMemory called");
   NativeActivityEvent event = { LOW_MEMORY };
   putEventSynchronously(&event);
 }
 
-static void onWindowFocusChanged(ANativeActivity* activity, int focused) {
+void onWindowFocusChanged(ANativeActivity* activity, int focused) {
   LOGV("onWindowFocusChanged called");
   NativeActivityEvent event = { focused ? WINDOW_GAINED_FOCUS : WINDOW_LOST_FOCUS };
   putEventSynchronously(&event);
 }
 
-static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window) {
+void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window) {
   LOGV("onNativeWindowCreated called");
   NativeActivityWindowEvent event = { NATIVE_WINDOW_CREATED, window };
   putEventSynchronously(&event);
 }
 
-static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window) {
+void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window) {
   LOGV("onNativeWindowDestroyed called");
   NativeActivityWindowEvent event = { NATIVE_WINDOW_DESTROYED, window };
   putEventSynchronously(&event);
 }
 
-static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue) {
+void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue) {
   LOGV("onInputQueueCreated called");
   NativeActivityQueueEvent event = { INPUT_QUEUE_CREATED, queue };
   putEventSynchronously(&event);
 }
 
-static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue) {
+void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue) {
   LOGV("onInputQueueDestroyed called");
   NativeActivityQueueEvent event = { INPUT_QUEUE_DESTROYED, queue };
   putEventSynchronously(&event);
 }
+}
 
-// ANativeActivity_onCreate.
 extern "C" void Konan_main(ANativeActivity* activity, void* savedState, size_t savedStateSize) {
   nativeActivityState = {activity, savedState, savedStateSize};
 
@@ -211,4 +214,4 @@ extern "C" void Konan_main(ANativeActivity* activity, void* savedState, size_t s
   runKonan_start();
 }
 
-#endif
+#endif // KONAN_ANDROID

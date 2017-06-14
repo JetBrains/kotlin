@@ -1,0 +1,118 @@
+buildscript {
+    repositories {
+       jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle-experimental:0.9.2'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+apply plugin: "konan"
+
+konanInterop {
+    arm32 {
+        defFile "android.def"
+        pkg "android"
+        includeDirs "../../runtime/src/launcher/cpp"
+        target "android_arm32"
+    }
+    arm64 {
+        defFile "android.def"
+        pkg "android"
+        includeDirs "../../runtime/src/launcher/cpp"
+        target "android_arm64"
+    }
+}
+
+konanArtifacts {
+    PolyhedronArm32 {
+        useInterop "arm32"
+        target "android_arm32"
+    }
+    PolyhedronArm64 {
+        useInterop "arm64"
+        target "android_arm64"
+    }
+}
+
+def platforms = ["armeabi-v7a", "arm64-v8a"]
+def artifacts = ["PolyhedronArm32", "PolyhedronArm64"]
+
+apply plugin: "com.android.model.application"
+
+model {
+    android {
+        compileSdkVersion = 25
+        buildToolsVersion = '25.0.2'
+
+        defaultConfig {
+            applicationId = 'com.android.konan_activity'
+            minSdkVersion.apiLevel   9
+            targetSdkVersion.apiLevel  25
+        }
+
+        ndk {
+            moduleName = "polyhedron"
+        }
+
+        productFlavors {
+            create("arm") {
+                ndk {
+                    abiFilters.addAll(platforms)
+                }
+            }
+        }
+    }
+
+    repositories {
+        libs(PrebuiltLibraries) {
+            libpoly {
+                    binaries.withType(SharedLibraryBinary) {
+                        def name = targetPlatform.getName()
+                        def index = platforms.indexOf(name)
+                        if (index >= 0)
+                            sharedLibraryFile = file("build/konan/bin/${artifacts[index]}/libpoly.so")
+                    }
+            }
+        }
+    }
+    android.sources {
+        main {
+            jniLibs {
+                dependencies {
+                    library "libpoly" 
+                }
+            }
+        }
+    }
+}
+
+task renameArtifacts << {
+    for (artifact in artifacts) {
+        copy {
+            from "build/konan/bin/${artifact}"
+            into "build/konan/bin/${artifact}"
+            rename "${artifact}.kexe", "libpoly.so"
+        }
+    }
+}
+
+renameArtifacts.dependsOn "compileKonanPolyhedronArm32"
+renameArtifacts.dependsOn "compileKonanPolyhedronArm64"
+
+tasks.matching { it.name == 'preBuild' }.all {
+    it.dependsOn 'renameArtifacts'
+}
+
+task buildApk(type: DefaultTask) {
+    dependsOn "compileKonanPolyhedronArm32"
+    dependsOn "compileKonanPolyhedronArm64"
+    dependsOn "renameArtifacts"
+    dependsOn "assembleDebug"
+}

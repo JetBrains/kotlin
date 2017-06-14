@@ -20,7 +20,7 @@
 #include "KString.h"
 #include "Types.h"
 
-#ifndef ANDROID
+#ifndef KONAN_ANDROID
 
 //--- Setup args --------------------------------------------------------------//
 

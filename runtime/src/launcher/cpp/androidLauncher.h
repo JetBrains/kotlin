@@ -36,7 +36,7 @@ struct NativeActivityState {
 
 void getNativeActivityState(struct NativeActivityState* state);
 
-void notifySysEventProcessed(int fd);
+void notifySysEventProcessed();
 
 #define LOOPER_ID_SYS 1
 
