@@ -17,17 +17,18 @@
 package org.jetbrains.kotlin.android.configure
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
-import org.jetbrains.kotlin.idea.versions.*
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID_JRE7
+import org.jetbrains.kotlin.idea.versions.hasJreSpecificRuntime
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 
 class KotlinAndroidGradleModuleConfigurator internal constructor() : KotlinWithGradleConfigurator() {
 
@@ -42,25 +43,21 @@ class KotlinAndroidGradleModuleConfigurator internal constructor() : KotlinWithG
     override val kotlinPluginName: String = KOTLIN_ANDROID
 
     override fun addElementsToFile(file: PsiFile, isTopLevelProjectFile: Boolean, version: String): Boolean {
-        if (file is GroovyFile) {
-            if (isTopLevelProjectFile) {
-                return addElementsToProjectGroovyFile(file, version)
-            }
-            else {
-                return addElementsToModuleGroovyFile(file, version)
-            }
-        }
+        val manipulator = getManipulator(file)
+        val sdk = ModuleUtil.findModuleForPsiElement(file)?.let { ModuleRootManager.getInstance(it).sdk }
+        val jvmTarget = getJvmTarget(sdk, version)
 
-        if (file is KtFile) {
-            if (isTopLevelProjectFile) {
-                return addElementsToProjectGSKFile(file, version)
-            }
-            else {
-                return addElementsToModuleGSKFile(file, version)
-            }
+        return if (isTopLevelProjectFile) {
+            manipulator.configureProjectBuildScript(version)
         }
-
-        return false
+        else {
+            manipulator.configureModuleBuildScript(
+                    kotlinPluginName,
+                    getStdlibArtifactName(sdk, version),
+                    version,
+                    jvmTarget
+            )
+        }
     }
 
     override fun getStdlibArtifactName(sdk: Sdk?, version: String): String {

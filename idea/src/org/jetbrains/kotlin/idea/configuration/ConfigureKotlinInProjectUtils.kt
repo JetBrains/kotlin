@@ -23,6 +23,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -64,6 +65,24 @@ val EAP_12_REPOSITORY = RepositoryDescription(
         "http://dl.bintray.com/kotlin/kotlin-eap-1.2",
         "https://bintray.com/kotlin/kotlin-eap-1.2/kotlin/",
         isSnapshot = false)
+
+val MAVEN_CENTRAL = "mavenCentral()"
+
+val JCENTER = "jcenter()"
+
+val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
+
+fun isRepositoryConfigured(repositoriesBlockText: String): Boolean =
+        repositoriesBlockText.contains(MAVEN_CENTRAL) || repositoriesBlockText.contains(JCENTER)
+
+fun DependencyScope.toGradleCompileScope(isAndroidModule: Boolean) = when (this) {
+    DependencyScope.COMPILE -> "compile"
+    // TODO: We should add testCompile or androidTestCompile
+    DependencyScope.TEST -> if (isAndroidModule) "compile" else "testCompile"
+    DependencyScope.RUNTIME -> "runtime"
+    DependencyScope.PROVIDED -> "compile"
+    else -> "compile"
+}
 
 fun RepositoryDescription.toGroovyRepositorySnippet() = "maven {\nurl '$url'\n}"
 

@@ -34,7 +34,7 @@ abstract class AbstractGradleConfigureProjectByChangingFileTest : AbstractConfig
             return
         }
 
-        configurator.changeBuildScript(file, true, version, collector)
-        configurator.changeBuildScript(file, false, version, collector)
+        configurator.configureBuildScript(file, true, version, collector)
+        configurator.configureBuildScript(file, false, version, collector)
     }
 }
