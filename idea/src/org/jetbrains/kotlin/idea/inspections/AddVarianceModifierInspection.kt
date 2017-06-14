@@ -89,7 +89,7 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
                         holder.registerProblem(
                                 typeParameter,
                                 "Type parameter can have $suggested variance",
-                                ProblemHighlightType.WEAK_WARNING,
+                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                 *fixes.toTypedArray()
                         )
                     }

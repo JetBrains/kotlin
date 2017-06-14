@@ -53,7 +53,7 @@ class CopyWithoutNamedArgumentsInspection : AbstractKotlinInspection() {
                 holder.registerProblem(
                         expression.calleeExpression ?: return,
                         "'copy' method of data class is called without named arguments",
-                        ProblemHighlightType.WEAK_WARNING,
+                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         IntentionWrapper(AddNamesToCallArgumentsIntention(), expression.containingKtFile)
                 )
             }

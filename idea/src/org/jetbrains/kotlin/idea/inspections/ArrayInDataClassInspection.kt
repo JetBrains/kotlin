@@ -44,7 +44,7 @@ class ArrayInDataClassInspection : AbstractKotlinInspection() {
                     if (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) {
                         holder.registerProblem(parameter,
                                                "Array property in data class: it's recommended to override equals() / hashCode()",
-                                               ProblemHighlightType.WEAK_WARNING)
+                                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
                     }
                 }
             }

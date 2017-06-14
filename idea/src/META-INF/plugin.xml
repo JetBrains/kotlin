@@ -1929,7 +1929,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      cleanupTool="true"
-                     level="WARNING"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 

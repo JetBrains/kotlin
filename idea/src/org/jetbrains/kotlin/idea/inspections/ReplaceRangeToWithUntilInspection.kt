@@ -51,7 +51,7 @@ class ReplaceRangeToWithUntilInspection : AbstractKotlinInspection() {
                 holder.registerProblem(
                         expression,
                         "'rangeTo' or the '..' call can be replaced with 'until'",
-                        ProblemHighlightType.WEAK_WARNING,
+                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         ReplaceWithUntilQuickFix()
                 )
             }

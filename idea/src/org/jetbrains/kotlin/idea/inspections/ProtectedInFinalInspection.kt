@@ -43,7 +43,7 @@ class ProtectedInFinalInspection  : AbstractKotlinInspection() {
                         declaration.implicitVisibility() != KtTokens.PROTECTED_KEYWORD) {
                         holder.registerProblem(visibilityModifier,
                                                "'protected' visibility is effectively 'private' in a final class",
-                                               ProblemHighlightType.WEAK_WARNING,
+                                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                                MakePrivateFix(),
                                                MakeOpenFix()
                         )

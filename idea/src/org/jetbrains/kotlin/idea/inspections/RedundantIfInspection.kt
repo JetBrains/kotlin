@@ -36,7 +36,7 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
 
                 holder.registerProblem(expression,
                                        "Redundant 'if' statement",
-                                       ProblemHighlightType.WEAK_WARNING,
+                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                        RemoveRedundantIf(redundancyType, branchType))
             }
         }

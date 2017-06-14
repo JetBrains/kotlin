@@ -98,7 +98,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
                             createProblemDescriptor(expression.valueArgumentList!!,
                                                     "Redundant SAM-constructors",
                                                     createQuickFix(samConstructorCalls),
-                                                    ProblemHighlightType.WEAK_WARNING,
+                                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                                     isOnTheFly)
 
                     holder.registerProblem(problemDescriptor)

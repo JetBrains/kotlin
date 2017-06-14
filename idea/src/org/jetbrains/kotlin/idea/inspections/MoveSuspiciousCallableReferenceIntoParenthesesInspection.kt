@@ -56,7 +56,7 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
                     holder.registerProblem(
                             lambdaExpression,
                             "Suspicious callable reference as the only lambda element",
-                            ProblemHighlightType.WEAK_WARNING,
+                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                             IntentionWrapper(MoveIntoParenthesesIntention(), lambdaExpression.containingFile)
                     )
 
