@@ -26,10 +26,12 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
@@ -271,4 +273,13 @@ fun KtDotQualifiedExpression.deleteFirstReceiver(): KtExpression {
         else -> selectorExpression?.let { return this.replace(it) as KtExpression }
     }
     return this
+}
+
+private val ARRAY_OF_METHODS = setOf("kotlin.arrayOf", "kotlin.doubleArrayOf", "kotlin.floatArrayOf", "kotlin.longArrayOf",
+                                     "kotlin.intArrayOf", "kotlin.charArrayOf", "kotlin.shortArrayOf", "kotlin.byteArrayOf",
+                                     "kotlin.booleanArrayOf", "kotlin.emptyArray")
+
+fun KtCallExpression.isArrayOfMethod(): Boolean {
+    val resolvedCall = getResolvedCall(analyze()) ?: return false
+    return ARRAY_OF_METHODS.contains(resolvedCall.candidateDescriptor.fqNameOrNull()?.asString())
 }
