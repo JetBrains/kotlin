@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -26,10 +27,14 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
@@ -271,4 +276,14 @@ fun KtDotQualifiedExpression.deleteFirstReceiver(): KtExpression {
         else -> selectorExpression?.let { return this.replace(it) as KtExpression }
     }
     return this
+}
+
+private val ARRAY_OF_METHODS = setOf(CollectionLiteralResolver.ARRAY_OF_FUNCTION) +
+                               CollectionLiteralResolver.PRIMITIVE_TYPE_TO_ARRAY.values.toSet() +
+                               Name.identifier("emptyArray")
+
+fun KtCallExpression.isArrayOfMethod(): Boolean {
+    val resolvedCall = getResolvedCall(analyze()) ?: return false
+    val descriptor = resolvedCall.candidateDescriptor
+    return descriptor.containingDeclaration is BuiltInsPackageFragment && ARRAY_OF_METHODS.contains(descriptor.name)
 }

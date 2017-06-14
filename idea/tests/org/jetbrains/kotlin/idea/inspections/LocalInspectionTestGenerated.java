@@ -216,6 +216,105 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveRedundantSpreadOperator extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInRemoveRedundantSpreadOperator() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/removeRedundantSpreadOperator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/basic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("booleanArrayOf.kt")
+        public void testBooleanArrayOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/booleanArrayOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("byteArrayOf.kt")
+        public void testByteArrayOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/byteArrayOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("charArrayOf.kt")
+        public void testCharArrayOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/charArrayOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doubleArrayOf.kt")
+        public void testDoubleArrayOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/doubleArrayOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyArray.kt")
+        public void testEmptyArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/emptyArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("floatArrayOf.kt")
+        public void testFloatArrayOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/floatArrayOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intArrayOf.kt")
+        public void testIntArrayOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("longArrayOf.kt")
+        public void testLongArrayOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/longArrayOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleValues.kt")
+        public void testMultipleValues() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/multipleValues.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleValuesWithOtherValues.kt")
+        public void testMultipleValuesWithOtherValues() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/multipleValuesWithOtherValues.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("namedArgument.kt")
+        public void testNamedArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/namedArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("namedArgumentForArray.kt")
+        public void testNamedArgumentForArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/namedArgumentForArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noParams.kt")
+        public void testNoParams() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/noParams.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shortArrayOf.kt")
+        public void testShortArrayOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/shortArrayOf.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/removeToStringInStringTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

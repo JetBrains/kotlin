@@ -23,20 +23,12 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.config.LanguageFeature.ArrayLiteralsInAnnotations
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.isArrayOfMethod
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 class ReplaceArrayOfWithLiteralInspection : AbstractKotlinInspection() {
-
-    private val acceptableNames = setOf(CollectionLiteralResolver.ARRAY_OF_FUNCTION) +
-                                  CollectionLiteralResolver.PRIMITIVE_TYPE_TO_ARRAY.values.toSet() +
-                                  Name.identifier("emptyArray")
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
@@ -47,10 +39,7 @@ class ReplaceArrayOfWithLiteralInspection : AbstractKotlinInspection() {
                     !ApplicationManager.getApplication().isUnitTestMode) return
 
                 val calleeExpression = expression.calleeExpression as? KtNameReferenceExpression ?: return
-                val resolvedCall = expression.getResolvedCall(expression.analyze()) ?: return
-                val descriptor = resolvedCall.candidateDescriptor
-                if (descriptor.containingDeclaration !is BuiltInsPackageFragment) return
-                if (descriptor.name !in acceptableNames) return
+                if (!expression.isArrayOfMethod()) return
 
                 val parent = expression.parent
                 when (parent) {
