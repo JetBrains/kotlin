@@ -139,6 +139,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("invokeWithVarArg.0.kt")
+            public void testInvokeWithVarArg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/invokeWithVarArg.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("plus.0.kt")
             public void testPlus() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/plus.0.kt");

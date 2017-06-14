@@ -47,7 +47,7 @@ class InvokeOperatorReferenceSearcher(
         val uMethod = uastContext.convertOpt<UMethod>(targetDeclaration, null)
         val uastParameters = uMethod?.uastParameters
 
-        val isStableNumberOfArguments = uastParameters != null && uastParameters.none { it.uastInitializer != null }
+        val isStableNumberOfArguments = uastParameters != null && uastParameters.none { it.uastInitializer != null || it.isVarArgs }
         callArgumentsSize = if (isStableNumberOfArguments) {
             val numberOfArguments = uastParameters!!.size
             when {
