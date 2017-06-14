@@ -91,6 +91,67 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    fun testJvmImport_1_1_2() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-dev'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-5")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            repositories {
+                mavenCentral()
+                maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.2-5"
+            }
+
+            compileKotlin {
+                kotlinOptions.jvmTarget = "1.7"
+                kotlinOptions.freeCompilerArgs = ["-Xsingle-module", "-Xdump-declarations-to", "tmp"]
+            }
+
+            compileTestKotlin {
+                kotlinOptions.jvmTarget = "1.6"
+                kotlinOptions.apiVersion = "1.0"
+                kotlinOptions.freeCompilerArgs = ["-Xdump-declarations-to", "tmpTest"]
+            }
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], targetPlatformKind)
+            Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals("-Xdump-declarations-to=tmp -Xsingle-module",
+                                compilerSettings!!.additionalArguments)
+        }
+        with (testFacetSettings) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
+            Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals("-Xdump-declarations-to=tmpTest",
+                                compilerSettings!!.additionalArguments)
+        }
+    }
+
+    @Test
     fun testJvmImportWithCustomSourceSets() {
         createProjectSubFile("build.gradle", """
             group 'Again'
@@ -126,6 +187,78 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
+            }
+
+            compileMyMainKotlin {
+                kotlinOptions.jvmTarget = "1.7"
+                kotlinOptions.freeCompilerArgs = ["-Xsingle-module", "-Xdump-declarations-to", "tmp"]
+            }
+
+            compileMyTestKotlin {
+                kotlinOptions.jvmTarget = "1.6"
+                kotlinOptions.apiVersion = "1.0"
+                kotlinOptions.freeCompilerArgs = ["-Xdump-declarations-to", "tmpTest"]
+            }
+        """)
+        importProject()
+
+        with (facetSettings("project_myMain")) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], targetPlatformKind)
+            Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals("-Xdump-declarations-to=tmp -Xsingle-module",
+                                compilerSettings!!.additionalArguments)
+        }
+        with (facetSettings("project_myTest")) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
+            Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals("-Xdump-declarations-to=tmpTest",
+                                compilerSettings!!.additionalArguments)
+        }
+    }
+
+    @Test
+    fun testJvmImportWithCustomSourceSets_1_1_2() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-5")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            repositories {
+                mavenCentral()
+                maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+            }
+
+            sourceSets {
+                myMain {
+                    kotlin {
+                        srcDir 'src'
+                    }
+                }
+                myTest {
+                    kotlin {
+                        srcDir 'test'
+                    }
+                }
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.2-5"
             }
 
             compileMyMainKotlin {

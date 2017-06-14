@@ -24,7 +24,6 @@ import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.Serializable
 import java.lang.Exception
 import java.lang.reflect.InvocationTargetException
-import java.lang.reflect.Method
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -104,18 +103,6 @@ class KotlinGradleModelBuilder : ModelBuilderService {
         return result
     }
 
-    private fun Class<*>.findGetterMethod(name: String): Method? {
-        generateSequence(this) { it.superclass }.forEach {
-            try {
-                return it.getDeclaredMethod(name)
-            }
-            catch(e: Exception) {
-                // Check next super class
-            }
-        }
-        return null
-    }
-
     @Suppress("UNCHECKED_CAST")
     private fun collectCompilerArguments(
             compileTask: Task,
@@ -124,7 +111,7 @@ class KotlinGradleModelBuilder : ModelBuilderService {
     ) {
         val taskClass = compileTask::class.java
         val sourceSetName = try {
-            taskClass.findGetterMethod("getSourceSetName\$kotlin_gradle_plugin")?.invoke(compileTask) as? String
+            taskClass.methods.firstOrNull { it.name.startsWith("getSourceSetName") && it.parameterCount == 0 }?.invoke(compileTask) as? String
         } catch (e : InvocationTargetException) {
             null // can be thrown if property is not initialized yet
         } ?: "main"
