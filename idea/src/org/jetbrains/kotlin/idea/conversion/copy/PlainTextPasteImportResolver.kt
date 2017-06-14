@@ -19,17 +19,20 @@ package org.jetbrains.kotlin.idea.conversion.copy
 import com.intellij.psi.*
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.util.*
 
 
@@ -119,7 +122,18 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
             val referenceName = reference.referenceName!!
             if (referenceName in failedToResolveReferenceNames) return false
             val classes = shortNameCache.getClassesByName(referenceName, scope)
-                    .map { it to it.resolveToDescriptor(resolutionFacade) }
+                    .mapNotNull { psiClass ->
+                        val containingFile = psiClass.containingFile
+                        if (ProjectRootsUtil.isInProjectOrLibraryContent(containingFile)) {
+                            val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacadeByFile(
+                                    containingFile, JvmPlatform
+                            )
+                            psiClass to psiClass.resolveToDescriptor(resolutionFacade)
+                        }
+                        else {
+                            null
+                        }
+                    }
                     .filter { canBeImported(it.second) }
 
             classes.find { (_, descriptor) -> JavaToKotlinClassMap.mapPlatformClass(descriptor!!).isNotEmpty() }
