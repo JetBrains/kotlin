@@ -46,18 +46,18 @@ internal impl fun lookupAsserter(): Asserter = qunitAsserter
 
 private val qunitAsserter = QUnitAsserter()
 
-internal var assertHook: (Boolean, String?, Any?, Any?) -> Unit = { _,_,_,_ -> }
+internal var assertHook: (result: Boolean, expected: Any?, actual: Any?, lazyMessage: () -> String?) -> Unit = { _, _, _, _ -> }
 
 // TODO: make object in 1.2
 class QUnitAsserter : Asserter {
 
-    val innerAsserter = object: Asserter {
+    private var expected: Any? = undefined
+    private var actual: Any? = undefined
+    private var msg: () -> String? = { null }
 
+    private val innerAsserter = object : Asserter {
         override fun fail(message: String?): Nothing {
-            failWithMessage(message)
-        }
-
-        private fun failWithMessage(message: String?): Nothing {
+            assertHook(false, expected, actual, msg)
             if (message == null)
                 throw AssertionError()
             else
@@ -65,33 +65,58 @@ class QUnitAsserter : Asserter {
         }
     }
 
+    private inline fun <T> withInfo(noinline msgFn: () -> String?,
+                                    e: Any? = undefined,
+                                    a: Any? = undefined,
+                                    fn: Asserter.() -> T): T {
+        msg = msgFn
+        expected = e
+        actual = a
+        innerAsserter.fn()
+        // If no exception was thrown
+        assertHook(true, expected, actual, msg)
+        // No need to clean up
+    }
+
     override fun assertEquals(message: String?, expected: Any?, actual: Any?) {
-        innerAsserter.assertEquals(message, expected, actual)
+        withInfo({ message }, expected, actual) {
+            assertEquals(message, expected, actual)
+        }
     }
 
     override fun assertNotEquals(message: String?, illegal: Any?, actual: Any?) {
-        super.assertNotEquals(message, illegal, actual)
+        withInfo({ message }, expected, actual) {
+            assertNotEquals(message, illegal, actual)
+        }
     }
 
     override fun assertNull(message: String?, actual: Any?) {
-        super.assertNull(message, actual)
+        withInfo({ message }, null, actual) {
+            assertNull(message, actual)
+        }
     }
 
     override fun assertNotNull(message: String?, actual: Any?) {
-        super.assertNotNull(message, actual)
+        withInfo({ message }, a = actual) {
+            assertNotNull(message, actual)
+        }
     }
 
     override fun assertTrue(lazyMessage: () -> String?, actual: Boolean) {
-        assertTrue(actual, lazyMessage())
+        withInfo(lazyMessage, true, actual) {
+            assertTrue(lazyMessage, actual)
+        }
     }
 
     override fun assertTrue(message: String?, actual: Boolean) {
-        okFun(actual, message)
-        if (!actual) failWithMessage(message)
+        withInfo({ message }, true, actual) {
+            assertTrue(message, actual)
+        }
     }
 
     override fun fail(message: String?): Nothing {
-        okFun(false, message)
-        failWithMessage(message)
+        withInfo({message}) {
+            fail(message)
+        }
     }
 }
