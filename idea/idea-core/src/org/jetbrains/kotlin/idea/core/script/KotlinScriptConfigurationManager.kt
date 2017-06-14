@@ -155,11 +155,24 @@ class KotlinScriptConfigurationManager(
 
     fun <TF : Any> getExternalImports(file: TF): KotlinScriptExternalDependencies = cacheLock.read {
         val path = getFilePath(file)
-        cache[path]?.dependencies?.let { return it }
+        val cached = cache[path]
+        cached?.dependencies?.let { return it }
+
+        tryLoadingFromDisk(cached, file, path)
 
         updateExternalImportsCache(listOf(file))
 
         return cache[path]?.dependencies ?: NoDependencies
+    }
+
+    private fun <TF : Any> tryLoadingFromDisk(cached: DataAndRequest?, file: TF, path: String) {
+        if (cached != null || file !is VirtualFile) return
+
+        ScriptDependenciesFileAttribute.read(file)?.let { deserialized ->
+            save(path, deserialized, file, persist = false)
+            invalidateLocalCaches()
+            notifyRootsChanged()
+        }
     }
 
     private fun <TF: Any> updateExternalImportsCache(files: Iterable<TF>) = cacheLock.write {
