@@ -1229,7 +1229,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 <caret>
             }${" "}
             """
@@ -1243,7 +1243,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(<caret>) {
+            } catch (<caret>) {
             }
             """
     )
@@ -1256,7 +1256,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(<caret>) {
+            } catch (<caret>) {
             }
             """
     )
@@ -1269,7 +1269,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(<caret>) {
+            } catch (<caret>) {
             }
             """
     )
@@ -1282,7 +1282,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 <caret>
             }
             """
@@ -1297,7 +1297,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(e: Exception) {
+            } catch (e: Exception) {
             } finally {
                 <caret>
             }
