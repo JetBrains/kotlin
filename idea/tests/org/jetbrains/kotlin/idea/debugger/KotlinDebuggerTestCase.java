@@ -38,6 +38,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.IdeaTestUtil;
+import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xdebugger.XDebugSession;
 import kotlin.io.FilesKt;
@@ -214,7 +215,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(false);
         }
 
-        EdtTestUtil.runInEdtAndWait(() -> {
+        EdtTestUtil.runInEdtAndWait((ThrowableRunnable<Throwable>) () -> {
             ConfigLibraryUtil.INSTANCE.removeLibrary(getModule(), CUSTOM_LIBRARY_NAME);
             ConfigLibraryUtil.INSTANCE.removeLibrary(getModule(), KOTLIN_LIBRARY_NAME);
         });
