@@ -38,8 +38,12 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
 import java.io.File
+import java.lang.Math.max
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletableFuture.supplyAsync
+import java.util.concurrent.Executors.newFixedThreadPool
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.function.Supplier
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.dependencies.KotlinScriptExternalDependencies
@@ -59,6 +63,7 @@ class KotlinScriptConfigurationManager(
 ) {
 
     private val cacheLock = ReentrantReadWriteLock()
+    private val threadPool = newFixedThreadPool(max(1, Runtime.getRuntime().availableProcessors() / 2))
 
     init {
         reloadScriptDefinitions()
@@ -88,7 +93,7 @@ class KotlinScriptConfigurationManager(
     }
 
     private val allScriptsClasspathCache = ClearableLazyValue(cacheLock) {
-        val files = cache.values.flatMap { it.classpath }.distinct()
+        val files = cache.values.flatMap { it?.dependencies?.classpath ?: emptyList() }.distinct()
         toVfsRoots(files)
     }
 
@@ -97,7 +102,7 @@ class KotlinScriptConfigurationManager(
     }
 
     private val allLibrarySourcesCache = ClearableLazyValue(cacheLock) {
-        toVfsRoots(cache.values.flatMap { it.sources }.distinct())
+        toVfsRoots(cache.values.flatMap { it?.dependencies?.sources ?: emptyList() }.distinct())
     }
 
     private val allLibrarySourcesScope = ClearableLazyValue(cacheLock) {
@@ -138,17 +143,23 @@ class KotlinScriptConfigurationManager(
         scriptDefinitionProvider.setScriptDefinitions(def)
     }
 
-    private val cache = hashMapOf<String, KotlinScriptExternalDependencies>()
-    // TODO: this is very primitive way of synchronizing these updates
-    private var lastStamp: TimeStamp = TimeStamps.next()
+    private class TimeStampedRequest(val future: CompletableFuture<Unit>, val timeStamp: TimeStamp)
+
+    private class DataAndRequest(
+            val dependencies: KotlinScriptExternalDependencies?,
+            val modificationStamp: Long?,
+            val requestInProgress: TimeStampedRequest? = null
+    )
+
+    private val cache = hashMapOf<String, DataAndRequest?>()
 
     fun <TF : Any> getExternalImports(file: TF): KotlinScriptExternalDependencies = cacheLock.read {
         val path = getFilePath(file)
-        cache[path]?.let { return it }
+        cache[path]?.dependencies?.let { return it }
 
         updateExternalImportsCache(listOf(file))
 
-        return cache[path] ?: NoDependencies
+        return cache[path]?.dependencies ?: NoDependencies
     }
 
     private fun <TF: Any> updateExternalImportsCache(files: Iterable<TF>) = cacheLock.write {
@@ -171,49 +182,99 @@ class KotlinScriptConfigurationManager(
         return updateSync(file, scriptDef)
     }
 
-    fun <TF : Any> updateAsync(file: TF, scriptDefinition: KotlinScriptDefinitionFromAnnotatedTemplate): Boolean {
+    private fun <TF : Any> updateAsync(file: TF, scriptDefinition: KotlinScriptDefinitionFromAnnotatedTemplate): Boolean {
         val path = getFilePath(file)
-        val oldDependencies = cache[path]
+        val oldDataAndRequest = cache[path]
 
+        if (!shouldSendNewRequest(file, oldDataAndRequest)) {
+            return false
+        }
+
+        oldDataAndRequest?.requestInProgress?.future?.cancel(true)
+
+        val (currentTimeStamp, newFuture) = sendRequest(path, scriptDefinition, file, oldDataAndRequest)
+
+        cache[path] = DataAndRequest(
+                oldDataAndRequest?.dependencies,
+                fileModificationStamp(file),
+                TimeStampedRequest(newFuture, currentTimeStamp)
+        )
+        return false // not changed immediately
+    }
+
+    private fun <TF : Any> sendRequest(
+            path: String,
+            scriptDefinition: KotlinScriptDefinitionFromAnnotatedTemplate,
+            file: TF,
+            oldDataAndRequest: DataAndRequest?
+    ): Pair<TimeStamp, CompletableFuture<Unit>> {
+        val currentTimeStamp = TimeStamps.next()
         val scriptContents = scriptDefinition.makeScriptContents(file, project)
-        val updateStamp = TimeStamps.next()
-
-        CompletableFuture.supplyAsync {
-            val newDependencies = scriptDefinition.getDependenciesFor(oldDependencies, scriptContents)
-            cacheLock.write {
-                if (updateStamp >= lastStamp) {
-                    lastStamp = updateStamp
-                    if (cacheNewDependencies(newDependencies, oldDependencies, path)) {
+        val newFuture = supplyAsync(Supplier {
+            val newDependencies = scriptDefinition.getDependenciesFor(oldDataAndRequest?.dependencies, scriptContents)
+            cacheLock.read {
+                val lastTimeStamp = cache[path]?.requestInProgress?.timeStamp
+                if (lastTimeStamp == currentTimeStamp) {
+                    if (cacheSync(newDependencies, oldDataAndRequest?.dependencies, path, file as? VirtualFile)) {
                         invalidateLocalCaches()
                         notifyRootsChanged()
                     }
                 }
             }
-        }
-        return false // not changed immediately
+        }, threadPool)
+        return Pair(currentTimeStamp, newFuture)
     }
+
+    private fun <TF : Any> shouldSendNewRequest(file: TF, oldDataAndRequest: DataAndRequest?): Boolean {
+        val currentStamp = fileModificationStamp(file)
+        val previousStamp = oldDataAndRequest?.modificationStamp
+
+        if (currentStamp == null || currentStamp != previousStamp) {
+            return true
+        }
+
+        return oldDataAndRequest.requestInProgress == null
+    }
+
+    private fun <TF : Any> fileModificationStamp(file: TF) = (file as? VirtualFile)?.modificationStamp
 
     private fun <TF : Any> updateSync(file: TF, scriptDef: KotlinScriptDefinition): Boolean {
         val path = getFilePath(file)
-        val oldDeps = cache[path]
+        val oldDeps = cache[path]?.dependencies
         val deps = scriptDef.getDependenciesFor(file, project, oldDeps)
-        return cacheNewDependencies(deps, oldDeps, path)
+        return cacheSync(deps, oldDeps, path, file as? VirtualFile)
     }
 
-    private fun cacheNewDependencies(
+    private fun cacheSync(
             new: KotlinScriptExternalDependencies?,
             old: KotlinScriptExternalDependencies?,
-            path: String
+            path: String,
+            file: VirtualFile?
     ): Boolean {
         return when {
             new != null && (old == null || !(new.match(old))) -> {
                 // changed or new
-                cache.put(path, new)
+                save(path, new, file, persist = true)
                 true
             }
-            new != null -> false // same
-            cache.remove(path) != null -> true
+            new != null -> {
+                save(path, new, file, persist = false)
+                false
+            } // same
+            cache.remove(path) != null -> {
+                save(path, null, file, persist = true)
+                true
+            }
             else -> false // unknown
+        }
+    }
+
+    private fun save(path: String, new: KotlinScriptExternalDependencies?, virtualFile: VirtualFile?, persist: Boolean) {
+        cacheLock.write {
+            cache.put(path, DataAndRequest(new, virtualFile?.modificationStamp))
+        }
+        if (persist && new != null && virtualFile != null) {
+            ScriptDependenciesFileAttribute.write(virtualFile, new)
         }
     }
 
