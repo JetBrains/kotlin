@@ -34,7 +34,7 @@ class InlineCodegenForDefaultBody(
         codegen: ExpressionCodegen,
         val state: GenerationState,
         private val sourceCompilerForInline: SourceCompilerForInline
-) : CallGenerator() {
+) : CallGenerator {
 
     private val sourceMapper: SourceMapper = codegen.parentCodegen.orCreateSourceMapper
 

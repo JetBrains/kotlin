@@ -31,9 +31,9 @@ enum class ValueKind {
     DEFAULT_LAMBDA_CAPTURED_PARAMETER
 }
 
-abstract class CallGenerator {
+interface CallGenerator {
 
-    internal class DefaultCallGenerator(private val codegen: ExpressionCodegen) : CallGenerator() {
+    class DefaultCallGenerator(private val codegen: ExpressionCodegen) : CallGenerator {
 
         override fun genCallInner(
                 callableMethod: Callable,
@@ -106,9 +106,9 @@ abstract class CallGenerator {
         genCallInner(callableMethod, resolvedCall, callDefault, codegen)
     }
 
-    abstract fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen)
+    fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen)
 
-    abstract fun genValueAndPut(
+    fun genValueAndPut(
             valueParameterDescriptor: ValueParameterDescriptor,
             argumentExpression: KtExpression,
             parameterType: Type,
@@ -120,20 +120,20 @@ abstract class CallGenerator {
         putValueIfNeeded(parameterType, value, ValueKind.GENERAL)
     }
 
-    abstract fun putValueIfNeeded(
+    fun putValueIfNeeded(
             parameterType: Type,
             value: StackValue,
             kind: ValueKind = ValueKind.GENERAL,
             parameterIndex: Int = -1)
 
-    abstract fun putCapturedValueOnStack(
+    fun putCapturedValueOnStack(
             stackValue: StackValue,
             valueType: Type, paramIndex: Int)
 
-    abstract fun processAndPutHiddenParameters(justProcess: Boolean)
+    fun processAndPutHiddenParameters(justProcess: Boolean)
 
     /*should be called if justProcess = true in processAndPutHiddenParameters*/
-    abstract fun putHiddenParamsIntoLocals()
+    fun putHiddenParamsIntoLocals()
 
-    abstract fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>)
+    fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>)
 }

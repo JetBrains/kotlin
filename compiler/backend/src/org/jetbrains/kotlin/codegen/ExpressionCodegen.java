@@ -2291,7 +2291,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return new InlineCodegenForDefaultBody(original, this, state, new SourceCompilerForInline(this));
         }
         else {
-            return new InlineCodegen(this, state, original, callElement, typeParameterMappings, new SourceCompilerForInline(this));
+            return new PsiInlineCodegen(this, state, original, callElement, typeParameterMappings, new SourceCompilerForInline(this));
         }
     }
 
