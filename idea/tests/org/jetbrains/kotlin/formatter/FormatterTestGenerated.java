@@ -662,6 +662,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SpaceBeforeIfParentheses.after.kt")
+        public void testSpaceBeforeIfParentheses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeIfParentheses.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SpaceBeforeIndices.after.kt")
         public void testSpaceBeforeIndices() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeIndices.after.kt");
@@ -671,12 +677,6 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("SpaceBeforeTypeArgumentList.after.kt")
         public void testSpaceBeforeTypeArgumentList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeTypeArgumentList.after.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SpaceBeforeIfParentheses.after.kt")
-        public void testSpaceBeforeIfParentheses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeIfParentheses.after.kt");
             doTest(fileName);
         }
 
