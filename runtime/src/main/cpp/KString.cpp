@@ -34,10 +34,6 @@
 
 #include "utf8.h"
 
-#ifdef KONAN_ANDROID
-#include <android/log.h>
-#endif
-
 namespace {
 
 OBJ_GETTER(utf8ToUtf16, const char* rawString, size_t rawStringLength) {
@@ -1124,41 +1120,6 @@ OBJ_GETTER(Kotlin_String_subSequence, KString thiz, KInt startIndex, KInt endInd
          CharArrayAddressOfElementAt(thiz, startIndex),
          length * sizeof(KChar));
   RETURN_OBJ(result->obj());
-}
-
-// io/Console.kt
-void Kotlin_io_Console_print(KString message) {
-  RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
-  // TODO: system stdout must be aware about UTF-8.
-  const KChar* utf16 = CharArrayAddressOfElementAt(message, 0);
-  std::string utf8;
-  utf8::utf16to8(utf16, utf16 + message->count_, back_inserter(utf8));
-  #ifdef KONAN_ANDROID
-  __android_log_print(ANDROID_LOG_INFO, "Konan_main", "%s", utf8.c_str());
-  #else
-  write(STDOUT_FILENO, utf8.c_str(), utf8.size());
-  #endif
-}
-
-void Kotlin_io_Console_println(KString message) {
-  Kotlin_io_Console_print(message);
-  Kotlin_io_Console_println0();
-}
-
-void Kotlin_io_Console_println0() {
-  #ifdef KONAN_ANDROID
-  __android_log_print(ANDROID_LOG_INFO, "Konan_main", "\n");
-  #else
-  write(STDOUT_FILENO, "\n", 1);
-  #endif
-}
-
-OBJ_GETTER0(Kotlin_io_Console_readLine) {
-  char data[4096];
-  if (!fgets(data, sizeof(data) - 1, stdin)) {
-    return nullptr;
-  }
-  RETURN_RESULT_OF(CreateStringFromCString, data);
 }
 
 } // extern "C"
