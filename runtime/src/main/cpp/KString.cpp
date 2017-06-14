@@ -1020,8 +1020,11 @@ KInt Kotlin_String_indexOfChar(KString thiz, KChar ch, KInt fromIndex) {
 }
 
 KInt Kotlin_String_lastIndexOfChar(KString thiz, KChar ch, KInt fromIndex) {
-  if (fromIndex < 0 || fromIndex > thiz->count_ || thiz->count_ == 0) {
+  if (fromIndex < 0 || thiz->count_ == 0) {
     return -1;
+  }
+  if (fromIndex >= thiz->count_) {
+    fromIndex = thiz->count_ - 1;
   }
   KInt count = thiz->count_;
   KInt index = fromIndex;
@@ -1065,35 +1068,33 @@ KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
 }
 
 KInt Kotlin_String_lastIndexOfString(KString thiz, KString other, KInt fromIndex) {
-  if (fromIndex < 0 || fromIndex > thiz->count_ || thiz->count_ == 0 ||
-      other->count_ > thiz->count_ - fromIndex) {
-    return -1;
-  }
   KInt count = thiz->count_;
   KInt otherCount = other->count_;
-  KInt start = fromIndex;
-  if (otherCount <= count && start >= 0) {
-    if (otherCount > 0) {
-      if (fromIndex > count - otherCount)
-        start = count - otherCount;
-      KChar firstChar = *CharArrayAddressOfElementAt(other, 0);
-      while (true) {
-        KInt candidate = Kotlin_String_lastIndexOfChar(thiz, firstChar, start);
-        if (candidate == -1) return -1;
-        KInt offsetThiz = candidate;
-        KInt offsetOther = 0;
-        while (++offsetOther < otherCount &&
-               *CharArrayAddressOfElementAt(thiz, ++offsetThiz) ==
-               *CharArrayAddressOfElementAt(other, offsetOther)) {}
-        if (offsetOther == otherCount) {
-          return candidate;
-        }
-        start = candidate - 1;
-      }
-    }
-    return start < count ? start : count;
+
+  if (fromIndex < 0 || otherCount > count) {
+    return -1;
   }
-  return -1;
+  if (otherCount == 0) {
+    return fromIndex < count ? fromIndex : count;
+  }
+
+  KInt start = fromIndex;
+  if (fromIndex > count - otherCount)
+    start = count - otherCount;
+  KChar firstChar = *CharArrayAddressOfElementAt(other, 0);
+  while (true) {
+    KInt candidate = Kotlin_String_lastIndexOfChar(thiz, firstChar, start);
+    if (candidate == -1) return -1;
+    KInt offsetThiz = candidate;
+    KInt offsetOther = 0;
+    while (++offsetOther < otherCount &&
+           *CharArrayAddressOfElementAt(thiz, ++offsetThiz) ==
+           *CharArrayAddressOfElementAt(other, offsetOther)) {}
+    if (offsetOther == otherCount) {
+      return candidate;
+    }
+    start = candidate - 1;
+  }
 }
 
 KInt Kotlin_String_hashCode(KString thiz) {
