@@ -138,14 +138,14 @@ void setupCompilationFlags() {
                  "android_arm32":
                          ["-target", getTargetArg("android_arm32"),
                           "--sysroot=$android_arm32SysrootDir",
-                          "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32",
+                          "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32", "-DANDROID",
                           // HACKS!
                           "-I$android_arm32SysrootDir/usr/include/c++/4.9.x",
                           "-I$android_arm32SysrootDir/usr/include/c++/4.9.x/arm-linux-androideabi"],
                  "android_arm64":
                         ["-target", getTargetArg("android_arm64"),
                          "--sysroot=$android_arm64SysrootDir",
-                         "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64",
+                         "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64", "-DANDROID",
                          // HACKS!
                          "-I$android_arm64SysrootDir/usr/include/c++/4.9.x",
                          "-I$android_arm64SysrootDir/usr/include/c++/4.9.x/aarch64-linux-android"]

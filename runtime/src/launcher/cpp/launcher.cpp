@@ -20,6 +20,8 @@
 #include "KString.h"
 #include "Types.h"
 
+#ifndef ANDROID
+
 //--- Setup args --------------------------------------------------------------//
 
 OBJ_GETTER(setupArgs, int argc, const char** argv) {
@@ -54,3 +56,5 @@ extern "C" int Konan_main(int argc, const char** argv) {
 
   return exitStatus;
 }
+
+#endif

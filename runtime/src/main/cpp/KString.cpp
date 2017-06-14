@@ -34,6 +34,10 @@
 
 #include "utf8.h"
 
+#ifdef ANDROID
+#include <android/log.h>
+#endif
+
 namespace {
 
 OBJ_GETTER(utf8ToUtf16, const char* rawString, size_t rawStringLength) {
@@ -1129,7 +1133,11 @@ void Kotlin_io_Console_print(KString message) {
   const KChar* utf16 = CharArrayAddressOfElementAt(message, 0);
   std::string utf8;
   utf8::utf16to8(utf16, utf16 + message->count_, back_inserter(utf8));
+  #ifdef ANDROID
+  __android_log_print(ANDROID_LOG_INFO, "Konan_main", "%s", utf8.c_str());
+  #else
   write(STDOUT_FILENO, utf8.c_str(), utf8.size());
+  #endif
 }
 
 void Kotlin_io_Console_println(KString message) {
@@ -1138,7 +1146,11 @@ void Kotlin_io_Console_println(KString message) {
 }
 
 void Kotlin_io_Console_println0() {
+  #ifdef ANDROID
+  __android_log_print(ANDROID_LOG_INFO, "Konan_main", "\n");
+  #else
   write(STDOUT_FILENO, "\n", 1);
+  #endif
 }
 
 OBJ_GETTER0(Kotlin_io_Console_readLine) {
