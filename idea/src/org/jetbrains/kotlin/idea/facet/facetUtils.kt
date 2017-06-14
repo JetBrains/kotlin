@@ -177,6 +177,12 @@ private val CommonCompilerArguments.primaryFields: List<String>
         else -> commonPrimaryFields
     }
 
+private val CommonCompilerArguments.ignoredFields: List<String>
+    get() = when (this) {
+        is K2JVMCompilerArguments -> listOf(K2JVMCompilerArguments::noJdk.name, K2JVMCompilerArguments::jdkHome.name)
+        else -> emptyList()
+    }
+
 fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: List<String>, kotlinFacet: KotlinFacet) {
     val argumentArray = arguments.toTypedArray()
 
@@ -191,15 +197,16 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
 
         compilerArguments.convertPathsToSystemIndependent()
 
-        // Retain only fields exposed in facet configuration editor.
+        // Retain only fields exposed (and not explicitly ignored) in facet configuration editor.
         // The rest is combined into string and stored in CompilerSettings.additionalArguments
 
         val primaryFields = compilerArguments.primaryFields
+        val ignoredFields = compilerArguments.ignoredFields
 
         fun exposeAsAdditionalArgument(field: Field) = field.name !in primaryFields && field.get(compilerArguments) != field.get(defaultCompilerArguments)
 
         val additionalArgumentsString = with(compilerArguments::class.java.newInstance()) {
-            copyFieldsSatisfying(compilerArguments, this, ::exposeAsAdditionalArgument)
+            copyFieldsSatisfying(compilerArguments, this) { exposeAsAdditionalArgument(it) && it.name !in ignoredFields }
             ArgumentUtils.convertArgumentsToStringList(this).joinToString(separator = " ") {
                 if (StringUtil.containsWhitespaces(it) || it.startsWith('"')) {
                     StringUtil.wrapWithDoubleQuote(StringUtil.escapeQuotes(it))
@@ -210,7 +217,7 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
                 if (additionalArgumentsString.isNotEmpty()) additionalArgumentsString else CompilerSettings.DEFAULT_ADDITIONAL_ARGUMENTS
 
         with(compilerArguments::class.java.newInstance()) {
-            copyFieldsSatisfying(this, compilerArguments, ::exposeAsAdditionalArgument)
+            copyFieldsSatisfying(this, compilerArguments) { exposeAsAdditionalArgument(it) || it.name in ignoredFields }
         }
     }
 }

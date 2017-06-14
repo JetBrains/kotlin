@@ -704,14 +704,14 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             apply plugin: 'kotlin-platform-jvm'
 
             compileKotlin {
-                kotlinOptions.jdkHome = "c:\\program files\\jdk1.8"
+                kotlinOptions.freeCompilerArgs = ["-module", "module with spaces"]
             }
         """)
         importProject()
 
         with (facetSettings) {
             Assert.assertEquals(
-                    listOf("-jdk-home", "c:/program files/jdk1.8", "-Xmulti-platform"),
+                    listOf("-module", "module with spaces"),
                     compilerSettings!!.additionalArgumentsAsList
             )
         }

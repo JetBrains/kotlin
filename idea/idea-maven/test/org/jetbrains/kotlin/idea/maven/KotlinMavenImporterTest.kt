@@ -431,7 +431,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                             <arg>-Xcoroutines=enable</arg>
                         </args>
                         <jvmTarget>1.8</jvmTarget>
-                        <jdkHome>JDK_HOME</jdkHome>
                         <classpath>foobar.jar</classpath>
                     </configuration>
                 </plugin>
@@ -452,7 +451,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("foobar.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
-            Assert.assertEquals("-jdk-home JDK_HOME -Xmulti-platform",
+            Assert.assertEquals("-Xmulti-platform",
                                 compilerSettings!!.additionalArguments)
         }
     }
@@ -622,7 +621,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                                 <args>
                                     <arg>-Xcoroutines=enable</arg>
                                 </args>
-                                <jdkHome>JDK_HOME</jdkHome>
                                 <classpath>foobar.jar</classpath>
                             </configuration>
                         </execution>
@@ -650,8 +648,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("foobar.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
-            Assert.assertEquals("-jdk-home JDK_HOME -Xmulti-platform",
-                                compilerSettings!!.additionalArguments)
+            Assert.assertEquals("-Xmulti-platform", compilerSettings!!.additionalArguments)
         }
     }
 
@@ -693,7 +690,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                             <arg>-jvm-target</arg>
                             <arg>1.8</arg>
                             <arg>-Xcoroutines=enable</arg>
-                            <arg>-jdk-home</arg>
+                            <arg>-classpath</arg>
                             <arg>c:\program files\jdk1.8</arg>
                         </args>
                     </configuration>
@@ -709,10 +706,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
-            Assert.assertEquals(
-                    listOf("-jdk-home", "c:/program files/jdk1.8"),
-                    compilerSettings!!.additionalArgumentsAsList
-            )
+            Assert.assertEquals("c:/program files/jdk1.8", (compilerArguments as K2JVMCompilerArguments).classpath)
         }
     }
 
@@ -1377,7 +1371,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                     </executions>
                     <configuration>
                         <jvmTarget>1.6</jvmTarget>
-                        <jdkHome>temp</jdkHome>
                         <languageVersion>1.0</languageVersion>
                         <apiVersion>1.0</apiVersion>
                         <args>
@@ -1387,8 +1380,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                             <arg>1.1</arg>
                             <arg>-api-version</arg>
                             <arg>1.1</arg>
-                            <arg>-jdk-home</arg>
-                            <arg>c:\program files\jdk1.8</arg>
                         </args>
                     </configuration>
                 </plugin>
@@ -1404,10 +1395,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.1", languageLevel!!.description)
             Assert.assertEquals("1.1", apiLevel!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals(
-                    listOf("-jdk-home", "c:\\program files\\jdk1.8"),
-                    compilerSettings!!.additionalArgumentsAsList
-            )
         }
     }
 
@@ -1447,12 +1434,13 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                     </executions>
                     <configuration>
                         <jvmTarget>1.7</jvmTarget>
-                        <jdkHome>temp</jdkHome>
                         <languageVersion>1.1</languageVersion>
                         <apiVersion>1.0</apiVersion>
                         <args>
                             <arg>-java-parameters</arg>
                             <arg>-Xdump-declarations-to=dumpDir</arg>
+                            <arg>-kotlin-home</arg>
+                            <arg>temp</arg>
                         </args>
                     </configuration>
                 </plugin>
@@ -1555,7 +1543,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                             <configuration>
                                 <jvmTarget>1.8</jvmTarget>
                                 <args combine.children="append">
-                                    <arg>-jdk-home</arg>
+                                    <arg>-kotlin-home</arg>
                                     <arg>temp2</arg>
                                 </args>
                             </configuration>
@@ -1608,7 +1596,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                             <configuration combine.self="override">
                                 <jvmTarget>1.8</jvmTarget>
                                 <args>
-                                    <arg>-jdk-home</arg>
+                                    <arg>-kotlin-home</arg>
                                     <arg>temp2</arg>
                                 </args>
                             </configuration>
@@ -1629,7 +1617,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.0", apiLevel!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
-                    listOf("-jdk-home", "temp", "-Xdump-declarations-to=dumpDir2"),
+                    listOf("-Xdump-declarations-to=dumpDir2"),
                     compilerSettings!!.additionalArgumentsAsList
             )
         }
@@ -1640,7 +1628,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.0", apiLevel!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
-                    listOf("-jdk-home", "temp2", "-java-parameters", "-Xdump-declarations-to=dumpDir"),
+                    listOf("-kotlin-home", "temp2", "-java-parameters", "-Xdump-declarations-to=dumpDir"),
                     compilerSettings!!.additionalArgumentsAsList
             )
         }
@@ -1651,7 +1639,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.1", apiLevel!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
-                    listOf("-jdk-home", "temp2"),
+                    listOf("-kotlin-home", "temp2"),
                     compilerSettings!!.additionalArgumentsAsList
             )
         }
