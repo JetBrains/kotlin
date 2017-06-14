@@ -53,7 +53,6 @@ import org.jetbrains.org.objectweb.asm.util.Printer
 import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 
-import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -65,19 +64,20 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 const val GENERATE_SMAP = true
 const val API = Opcodes.ASM5
-const val THIS = "this"
-const val THIS_0 = "this$0"
-const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
 const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
-const val SPECIAL_TRANSFORMATION_NAME = "\$special"
-const val INLINE_TRANSFORMATION_SUFFIX = "\$inlined"
-const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$" + INLINE_TRANSFORMATION_SUFFIX
-const val INLINE_FUN_THIS_0_SUFFIX = "\$inline_fun"
 const val INLINE_FUN_VAR_SUFFIX = "\$iv"
-const val DEFAULT_LAMBDA_FAKE_CALL = "$$\$DEFAULT_LAMBDA_FAKE_CALL$$$"
 
-const val CAPTURED_FIELD_FOLD_PREFIX = "$$$"
-private const val `RECEIVER$0` = "receiver$0"
+internal const val THIS = "this"
+internal const val THIS_0 = "this$0"
+internal const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
+internal const val SPECIAL_TRANSFORMATION_NAME = "\$special"
+internal const val INLINE_TRANSFORMATION_SUFFIX = "\$inlined"
+internal const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$" + INLINE_TRANSFORMATION_SUFFIX
+internal const val INLINE_FUN_THIS_0_SUFFIX = "\$inline_fun"
+internal const val DEFAULT_LAMBDA_FAKE_CALL = "$$\$DEFAULT_LAMBDA_FAKE_CALL$$$"
+internal const val CAPTURED_FIELD_FOLD_PREFIX = "$$$"
+
+private const val RECEIVER_0 = "receiver$0"
 private const val NON_LOCAL_RETURN = "$$$$\$NON_LOCAL_RETURN$$$$$"
 private const val CAPTURED_FIELD_PREFIX = "$"
 private const val NON_CAPTURED_FIELD_PREFIX = "$$"
@@ -88,7 +88,7 @@ private const val INLINE_MARKER_FINALLY_START = "finallyStart"
 
 private const val INLINE_MARKER_FINALLY_END = "finallyEnd"
 
-fun getMethodNode(
+internal fun getMethodNode(
         classData: ByteArray,
         methodName: String,
         methodDescriptor: String,
@@ -143,11 +143,11 @@ fun getMethodNode(
     return SMAPAndMethodNode(node!!, smap)
 }
 
-fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
+internal fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
     return VirtualFileFinder.getInstance(state.project).findVirtualFileWithHeader(classId)
 }
 
-fun findVirtualFileImprecise(state: GenerationState, internalClassName: String): VirtualFile? {
+internal fun findVirtualFileImprecise(state: GenerationState, internalClassName: String): VirtualFile? {
     val packageFqName = JvmClassName.byInternalName(internalClassName).packageFqName
     val classNameWithDollars = internalClassName.substringAfterLast("/", internalClassName)
     //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
@@ -155,7 +155,7 @@ fun findVirtualFileImprecise(state: GenerationState, internalClassName: String):
     return findVirtualFile(state, ClassId(packageFqName, Name.identifier(classNameWithDollars)))
 }
 
-fun getInlineName(
+internal fun getInlineName(
         codegenContext: CodegenContext<*>,
         typeMapper: KotlinTypeMapper,
         fileClassesManager: JvmFileClassesProvider
@@ -206,25 +206,25 @@ private fun getInlineName(
     return getInlineName(codegenContext, currentDescriptor.containingDeclaration!!, typeMapper, fileClassesProvider) + "$" + suffix
 }
 
-fun isInvokeOnLambda(owner: String, name: String): Boolean {
+internal fun isInvokeOnLambda(owner: String, name: String): Boolean {
     return OperatorNameConventions.INVOKE.asString() == name &&
            owner.startsWith(NUMBERED_FUNCTION_PREFIX) &&
            isInteger(owner.substring(NUMBERED_FUNCTION_PREFIX.length))
 }
 
-fun isAnonymousConstructorCall(internalName: String, methodName: String): Boolean {
+internal fun isAnonymousConstructorCall(internalName: String, methodName: String): Boolean {
     return "<init>" == methodName && isAnonymousClass(internalName)
 }
 
-fun isWhenMappingAccess(internalName: String, fieldName: String): Boolean {
+internal fun isWhenMappingAccess(internalName: String, fieldName: String): Boolean {
     return fieldName.startsWith(WhenByEnumsMapping.MAPPING_ARRAY_FIELD_PREFIX) && internalName.endsWith(WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX)
 }
 
-fun isAnonymousSingletonLoad(internalName: String, fieldName: String): Boolean {
+internal fun isAnonymousSingletonLoad(internalName: String, fieldName: String): Boolean {
     return JvmAbi.INSTANCE_FIELD == fieldName && isAnonymousClass(internalName)
 }
 
-fun isAnonymousClass(internalName: String): Boolean {
+internal fun isAnonymousClass(internalName: String): Boolean {
     val shortName = getLastNamePart(internalName)
     val index = shortName.lastIndexOf("$")
 
@@ -246,6 +246,7 @@ fun wrapWithMaxLocalCalc(methodNode: MethodNode): MethodVisitor {
 }
 
 private fun isInteger(string: String): Boolean {
+    string.toIntOrNull() != null
     if (string.isEmpty()) {
         return false
     }
@@ -259,23 +260,23 @@ private fun isInteger(string: String): Boolean {
     return true
 }
 
-fun isCapturedFieldName(fieldName: String): Boolean {
+internal fun isCapturedFieldName(fieldName: String): Boolean {
     // TODO: improve this heuristic
     return fieldName.startsWith(CAPTURED_FIELD_PREFIX) && !fieldName.startsWith(NON_CAPTURED_FIELD_PREFIX) ||
            THIS_0 == fieldName ||
-           `RECEIVER$0` == fieldName
+           RECEIVER_0 == fieldName
 }
 
-fun isReturnOpcode(opcode: Int): Boolean {
+internal fun isReturnOpcode(opcode: Int): Boolean {
     return opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN
 }
 
 //marked return could be either non-local or local in case of labeled lambda self-returns
-fun isMarkedReturn(returnIns: AbstractInsnNode): Boolean {
+internal fun isMarkedReturn(returnIns: AbstractInsnNode): Boolean {
     return getMarkedReturnLabelOrNull(returnIns) != null
 }
 
-fun getMarkedReturnLabelOrNull(returnInsn: AbstractInsnNode): String? {
+internal fun getMarkedReturnLabelOrNull(returnInsn: AbstractInsnNode): String? {
     if (!isReturnOpcode(returnInsn.opcode)) {
         return null
     }
@@ -289,22 +290,22 @@ fun getMarkedReturnLabelOrNull(returnInsn: AbstractInsnNode): String? {
     return null
 }
 
-fun generateGlobalReturnFlag(iv: InstructionAdapter, labelName: String) {
+internal fun generateGlobalReturnFlag(iv: InstructionAdapter, labelName: String) {
     iv.invokestatic(NON_LOCAL_RETURN, labelName, "()V", false)
 }
 
-fun getReturnType(opcode: Int): Type {
-    when (opcode) {
-        Opcodes.RETURN -> return Type.VOID_TYPE
-        Opcodes.IRETURN -> return Type.INT_TYPE
-        Opcodes.DRETURN -> return Type.DOUBLE_TYPE
-        Opcodes.FRETURN -> return Type.FLOAT_TYPE
-        Opcodes.LRETURN -> return Type.LONG_TYPE
-        else -> return AsmTypes.OBJECT_TYPE
+internal fun getReturnType(opcode: Int): Type {
+    return when (opcode) {
+        Opcodes.RETURN -> Type.VOID_TYPE
+        Opcodes.IRETURN -> Type.INT_TYPE
+        Opcodes.DRETURN -> Type.DOUBLE_TYPE
+        Opcodes.FRETURN -> Type.FLOAT_TYPE
+        Opcodes.LRETURN -> Type.LONG_TYPE
+        else -> AsmTypes.OBJECT_TYPE
     }
 }
 
-fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnNode) {
+internal fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnNode) {
     val iterator = from.instructions.iterator()
     while (iterator.hasNext()) {
         val next = iterator.next()
@@ -312,11 +313,11 @@ fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnN
     }
 }
 
-fun createEmptyMethodNode(): MethodNode {
+internal fun createEmptyMethodNode(): MethodNode {
     return MethodNode(API, 0, "fake", "()V", null, null)
 }
 
-fun firstLabelInChain(node: LabelNode): LabelNode {
+internal fun firstLabelInChain(node: LabelNode): LabelNode {
     var curNode = node
     while (curNode.previous is LabelNode) {
         curNode = curNode.previous as LabelNode
@@ -324,7 +325,7 @@ fun firstLabelInChain(node: LabelNode): LabelNode {
     return curNode
 }
 
-val MethodNode?.nodeText: String
+internal val MethodNode?.nodeText: String
     get() {
         if (this == null) {
             return "Not generated"
@@ -337,7 +338,7 @@ val MethodNode?.nodeText: String
         return name + " " + desc + ":\n" + sw.buffer.toString()
     }
 
-val AbstractInsnNode?.insnText: String
+internal val AbstractInsnNode?.insnText: String
     get() {
         if (this == null) return "<null>"
         val textifier = Textifier()
@@ -345,75 +346,65 @@ val AbstractInsnNode?.insnText: String
         val sw = StringWriter()
         textifier.print(PrintWriter(sw))
         sw.flush()
-        return sw.toString().trim { it <= ' ' }
+        return sw.toString().trim()
     }
 
-val AbstractInsnNode?.insnOpcodeText: String
+internal val AbstractInsnNode?.insnOpcodeText: String
     get() {
         return if (this == null) "null" else Printer.OPCODES[opcode]
     }
 
 internal fun buildClassReaderByInternalName(state: GenerationState, internalName: String): ClassReader {
     //try to find just compiled classes then in dependencies
-    try {
-        val outputFile = state.factory.get(internalName + ".class")
-        if (outputFile != null) {
-            return ClassReader(outputFile.asByteArray())
-        }
-        val file = findVirtualFileImprecise(state, internalName)
-        if (file != null) {
-            return ClassReader(file.contentsToByteArray())
-        }
-        throw RuntimeException("Couldn't find virtual file for " + internalName)
-    }
-    catch (e: IOException) {
-        throw RuntimeException(e)
+    val outputFile = state.factory.get(internalName + ".class")
+    if (outputFile != null) {
+        return ClassReader(outputFile.asByteArray())
     }
 
+    val file = findVirtualFileImprecise(state, internalName) ?:
+               throw RuntimeException("Couldn't find virtual file for " + internalName)
+
+    return ClassReader(file.contentsToByteArray())
 }
 
-fun generateFinallyMarker(v: InstructionAdapter, depth: Int, start: Boolean) {
+internal fun generateFinallyMarker(v: InstructionAdapter, depth: Int, start: Boolean) {
     v.iconst(depth)
     v.invokestatic(INLINE_MARKER_CLASS_NAME, if (start) INLINE_MARKER_FINALLY_START else INLINE_MARKER_FINALLY_END, "(I)V", false)
 }
 
-fun isFinallyEnd(node: AbstractInsnNode): Boolean {
+internal fun isFinallyEnd(node: AbstractInsnNode): Boolean {
     return isFinallyMarker(node, INLINE_MARKER_FINALLY_END)
 }
 
-fun isFinallyStart(node: AbstractInsnNode): Boolean {
+internal fun isFinallyStart(node: AbstractInsnNode): Boolean {
     return isFinallyMarker(node, INLINE_MARKER_FINALLY_START)
 }
 
-fun isFinallyMarker(node: AbstractInsnNode?): Boolean {
+internal fun isFinallyMarker(node: AbstractInsnNode?): Boolean {
     return node != null && (isFinallyStart(node) || isFinallyEnd(node))
 }
 
 private fun isFinallyMarker(node: AbstractInsnNode, name: String): Boolean {
     if (node !is MethodInsnNode) return false
-    val method = node
-    return INLINE_MARKER_CLASS_NAME == method.owner && name == method.name
+    return INLINE_MARKER_CLASS_NAME == node.owner && name == node.name
 }
 
-fun isFinallyMarkerRequired(context: MethodContext): Boolean {
+internal fun isFinallyMarkerRequired(context: MethodContext): Boolean {
     return context.isInlineMethodContext || context is InlineLambdaContext
 }
 
-fun getConstant(ins: AbstractInsnNode): Int {
+internal fun getConstant(ins: AbstractInsnNode): Int {
     val opcode = ins.opcode
-    if (opcode >= Opcodes.ICONST_0 && opcode <= Opcodes.ICONST_5) {
-        return opcode - Opcodes.ICONST_0
-    }
-    else if (opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH) {
-        return (ins as IntInsnNode).operand
-    }
-    else {
-        val index = ins as LdcInsnNode
-        return index.cst as Int
+    return when (opcode) {
+        in Opcodes.ICONST_0..Opcodes.ICONST_5 -> opcode - Opcodes.ICONST_0
+        Opcodes.BIPUSH, Opcodes.SIPUSH -> (ins as IntInsnNode).operand
+        else -> {
+            (ins as LdcInsnNode).cst as Int
+        }
     }
 }
 
-fun removeFinallyMarkers(intoNode: MethodNode) {
+internal fun removeFinallyMarkers(intoNode: MethodNode) {
     val instructions = intoNode.instructions
     var curInstr: AbstractInsnNode? = instructions.first
     while (curInstr != null) {
@@ -430,7 +421,7 @@ fun removeFinallyMarkers(intoNode: MethodNode) {
     }
 }
 
-fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
+internal fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     v.visitMethodInsn(
             Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
             if (isStartNotEnd) INLINE_MARKER_BEFORE_METHOD_NAME else INLINE_MARKER_AFTER_METHOD_NAME,
@@ -438,7 +429,7 @@ fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     )
 }
 
-fun isInlineMarker(insn: AbstractInsnNode): Boolean {
+internal fun isInlineMarker(insn: AbstractInsnNode): Boolean {
     return isInlineMarker(insn, null)
 }
 
@@ -456,23 +447,23 @@ private fun isInlineMarker(insn: AbstractInsnNode, name: String?): Boolean {
                methodInsnNode.name == INLINE_MARKER_BEFORE_METHOD_NAME || methodInsnNode.name == INLINE_MARKER_AFTER_METHOD_NAME
 }
 
-fun isBeforeInlineMarker(insn: AbstractInsnNode): Boolean {
+internal fun isBeforeInlineMarker(insn: AbstractInsnNode): Boolean {
     return isInlineMarker(insn, INLINE_MARKER_BEFORE_METHOD_NAME)
 }
 
-fun isAfterInlineMarker(insn: AbstractInsnNode): Boolean {
+internal fun isAfterInlineMarker(insn: AbstractInsnNode): Boolean {
     return isInlineMarker(insn, INLINE_MARKER_AFTER_METHOD_NAME)
 }
 
-fun getLoadStoreArgSize(opcode: Int): Int {
+internal fun getLoadStoreArgSize(opcode: Int): Int {
     return if (opcode == Opcodes.DSTORE || opcode == Opcodes.LSTORE || opcode == Opcodes.DLOAD || opcode == Opcodes.LLOAD) 2 else 1
 }
 
-fun isStoreInstruction(opcode: Int): Boolean {
+internal fun isStoreInstruction(opcode: Int): Boolean {
     return opcode >= Opcodes.ISTORE && opcode <= Opcodes.ASTORE
 }
 
-fun calcMarkerShift(parameters: Parameters, node: MethodNode): Int {
+internal fun calcMarkerShift(parameters: Parameters, node: MethodNode): Int {
     val markerShiftTemp = getIndexAfterLastMarker(node)
     return markerShiftTemp - parameters.realParametersSizeOnStack + parameters.argsSizeOnStack
 }
@@ -491,11 +482,11 @@ fun isFakeLocalVariableForInline(name: String): Boolean {
     return name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) || name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
 }
 
-fun isThis0(name: String): Boolean {
+internal fun isThis0(name: String): Boolean {
     return THIS_0 == name
 }
 
-fun isSpecialEnumMethod(functionDescriptor: FunctionDescriptor): Boolean {
+internal fun isSpecialEnumMethod(functionDescriptor: FunctionDescriptor): Boolean {
     val containingDeclaration = functionDescriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
     if (containingDeclaration.fqName != KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) {
         return false
@@ -505,10 +496,12 @@ fun isSpecialEnumMethod(functionDescriptor: FunctionDescriptor): Boolean {
     }
     val name = functionDescriptor.name.asString()
     val parameters = functionDescriptor.valueParameters
-    return "enumValues" == name && parameters.size == 0 || "enumValueOf" == name && parameters.size == 1 && KotlinBuiltIns.isString(parameters[0].type)
+    return "enumValues" == name && parameters.size == 0 ||
+           ("enumValueOf" == name && parameters.size == 1 &&
+            KotlinBuiltIns.isString(parameters[0].type))
 }
 
-fun createSpecialEnumMethodBody(
+internal fun createSpecialEnumMethodBody(
         codegen: ExpressionCodegen,
         name: String,
         type: KotlinType,
@@ -535,7 +528,7 @@ fun createSpecialEnumMethodBody(
     return node
 }
 
-fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String {
+internal fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String {
     return if (isValueOf) Type.getMethodDescriptor(type, AsmTypes.JAVA_STRING_TYPE) else Type.getMethodDescriptor(AsmUtil.getArrayType(type))
 }
 
@@ -553,10 +546,8 @@ fun FunctionDescriptor.getClassFilePath(typeMapper: KotlinTypeMapper, cache: Inc
 
     return when (source) {
         is KotlinJvmBinaryPackageSourceElement -> {
-            val directMember = JvmCodegenUtil.getDirectMember(this)
-            if (directMember !is DeserializedCallableMemberDescriptor) {
-                throw AssertionError("Expected DeserializedCallableMemberDescriptor, got: $this")
-            }
+            val directMember = JvmCodegenUtil.getDirectMember(this) as? DeserializedCallableMemberDescriptor ?:
+                               throw AssertionError("Expected DeserializedCallableMemberDescriptor, got: $this")
             val kotlinClass = source.getContainingBinaryClass(directMember) ?:
                               throw AssertionError("Descriptor $this is not found, in: $source")
             if (kotlinClass !is VirtualFileKotlinClass) {
@@ -580,7 +571,7 @@ fun FunctionDescriptor.getClassFilePath(typeMapper: KotlinTypeMapper, cache: Inc
 
 class InlineOnlySmapSkipper(codegen: ExpressionCodegen) {
 
-    val callLineNumber = codegen.lastLineNumber
+    private val callLineNumber = codegen.lastLineNumber
 
     fun markCallSiteLineNumber(mv: MethodVisitor) {
         if (callLineNumber >= 0) {

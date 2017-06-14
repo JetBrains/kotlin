@@ -59,7 +59,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.io.IOException
 import java.util.*
 
 class InlineCodegen(
@@ -503,7 +502,7 @@ class InlineCodegen(
         assert(value is StackValue.Constant) { "Additional default method argument should be constant, but " + value }
         val constantValue = (value as StackValue.Constant).value
         if (kind === ValueKind.DEFAULT_MASK) {
-            assert(constantValue is Int) { "Mask should be of Integer type, but " + constantValue!! }
+            assert(constantValue is Int) { "Mask should be of Integer type, but " + constantValue }
             maskValues.add(constantValue as Int)
             if (maskStartIndex == -1) {
                 maskStartIndex = invocationParamBuilder.nextParameterOffset
@@ -556,11 +555,8 @@ class InlineCodegen(
 
                 val frameMap = finallyCodegen.frameMap
                 val mark = frameMap.mark()
-                var marker = -1
-                val intervals = processor.localVarsMetaInfo.currentIntervals
-                for (interval in intervals) {
-                    marker = Math.max(interval.node.index + 1, marker)
-                }
+                val marker = processor.localVarsMetaInfo.currentIntervals.maxBy { it.node.index }?.node?.index?.plus(1) ?: -1
+
                 while (frameMap.currentSize < Math.max(processor.nextFreeLocalIndex, offsetForFinallyLocalVar + marker)) {
                     frameMap.enterTemp(Type.INT_TYPE)
                 }
@@ -602,13 +598,11 @@ class InlineCodegen(
         private fun getMemberScope(functionOrAccessor: FunctionDescriptor): MemberScope? {
             val callableMemberDescriptor = JvmCodegenUtil.getDirectMember(functionOrAccessor)
             val classOrPackageFragment = callableMemberDescriptor.containingDeclaration
-            if (classOrPackageFragment is ClassDescriptor) {
-                return classOrPackageFragment.unsubstitutedMemberScope
+            return when (classOrPackageFragment) {
+                is ClassDescriptor -> classOrPackageFragment.unsubstitutedMemberScope
+                is PackageFragmentDescriptor -> classOrPackageFragment.getMemberScope()
+                else -> null
             }
-            else if (classOrPackageFragment is PackageFragmentDescriptor) {
-                return classOrPackageFragment.getMemberScope()
-            }
-            return null
         }
 
         internal fun createMethodNode(
@@ -620,14 +614,12 @@ class InlineCodegen(
                 resolvedCall: ResolvedCall<*>?
         ): SMAPAndMethodNode {
             if (isSpecialEnumMethod(functionDescriptor)) {
-                assert(resolvedCall != null) { "Resolved call for $functionDescriptor should be not null" }
                 val arguments = resolvedCall!!.typeArguments
-                assert(arguments.size == 1) { "Resolved call for $functionDescriptor should have 1 type argument" }
 
                 val node = createSpecialEnumMethodBody(
                         codegen,
                         functionDescriptor.name.asString(),
-                        arguments.keys.iterator().next().defaultType,
+                        arguments.keys.single().defaultType,
                         codegen.state.typeMapper
                 )
                 return SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1))
@@ -655,8 +647,8 @@ class InlineCodegen(
 
             val resultInCache = state.inlineCache.methodNodeById.getOrPut(methodId
             ) {
-                val result = doCreateMethodNodeFromCompiled(directMember, state, asmMethod) ?: throw IllegalStateException("Couldn't obtain compiled function body for " + functionDescriptor)
-                result
+                doCreateMethodNodeFromCompiled(directMember, state, asmMethod)
+                ?: throw IllegalStateException("Couldn't obtain compiled function body for " + functionDescriptor)
             }
 
             return resultInCache.copyWithNewNode(cloneMethodNode(resultInCache.node))
@@ -664,20 +656,15 @@ class InlineCodegen(
 
         private fun getDirectMemberAndCallableFromObject(functionDescriptor: FunctionDescriptor): CallableMemberDescriptor {
             val directMember = JvmCodegenUtil.getDirectMember(functionDescriptor)
-            if (directMember is ImportedFromObjectCallableDescriptor<*>) {
-                return (directMember as ImportedFromObjectCallableDescriptor<*>).callableFromObject
-            }
-            return directMember
+            return (directMember as? ImportedFromObjectCallableDescriptor<*>)?.callableFromObject ?: directMember
         }
 
         private fun cloneMethodNode(methodNode: MethodNode): MethodNode {
             methodNode.instructions.resetLabels()
-            val result = MethodNode(
+            return MethodNode(
                     API, methodNode.access, methodNode.name, methodNode.desc, methodNode.signature,
                     ArrayUtil.toStringArray(methodNode.exceptions)
-            )
-            methodNode.accept(result)
-            return result
+            ).also(methodNode::accept)
         }
 
         private fun doCreateMethodNodeFromCompiled(
@@ -698,13 +685,8 @@ class InlineCodegen(
             val containerId = containingClasses.implClassId
 
             val bytes = state.inlineCache.classBytes.getOrPut(containerId) {
-                val file = findVirtualFile(state, containerId) ?: throw IllegalStateException("Couldn't find declaration file for " + containerId)
-                try {
-                    file.contentsToByteArray()
-                }
-                catch (e: IOException) {
-                    throw RuntimeException(e)
-                }
+                findVirtualFile(state, containerId)?.contentsToByteArray() ?:
+                throw IllegalStateException("Couldn't find declaration file for " + containerId)
             }
 
             return getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, containerId.asString())
