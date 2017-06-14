@@ -61,7 +61,7 @@ public class ArgumentUtils {
                 continue;
             }
 
-            if (Objects.equals(value, defaultValue)) continue;
+            if (value == null || Objects.equals(value, defaultValue)) continue;
 
             Class<?> fieldType = field.getType();
 
