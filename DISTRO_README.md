@@ -13,9 +13,12 @@ without need to ship an additional execution runtime.
   * `csvparser` - simple CSV file parser and analyzer
   * `gitchurn` - program interoperating with `libgit2` for GIT repository analysis
   * `libcurl` - using of FTP/HTTP/HTTPS client library `libcurl`
+  * `nonBlockingEchoServer` - multi-client TCP/IP echo server using co-routines
   * `opengl` - OpenGL/GLUT teapot example
   * `socket` - TCP/IP echo server
+  * `tensorflow` - simple client for TensorFlow Machine Intelligence library
   * `tetris` - Tetris game implementation (using SDL2 for rendering)
+  * `win32` - trivial Win32 application
 
  See `README.md` in each sample directory for more information and build instructions.
 

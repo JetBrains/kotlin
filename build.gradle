@@ -123,7 +123,7 @@ void setupCompilationFlags() {
          ext.host = "macbook"
          ext.targetArgs <<
             [(ext.host):
-                ["--sysroot=$macbookSysrootDir", "-mmacosx-version-min=$minMacOsVersion"], 
+                ["--sysroot=$macbookSysrootDir", "-mmacosx-version-min=10.11"],
              "iphone":
                 ["-stdlib=libc++", "-arch", "arm64", "-isysroot", "$iphoneSysrootDir",
                  "-miphoneos-version-min=8.0.0"]

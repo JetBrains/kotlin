@@ -2,8 +2,8 @@
 
 ## Introduction ##
 
- Kotlin/Native is a LLVM backend for the Kotlin compiler. It consists of a machine code generation facility using the LLVM toolchain
-and a native runtime implementation.
+ _Kotlin/Native_ is a LLVM backend for the Kotlin compiler. It consists of a machine code generation facility using
+the LLVM toolchain and a native runtime implementation.
 
  _Kotlin/Native_ is primarily designed to allow compilation for platforms where
 virtual machines are not desirable or possible (such as iOS or embedded targets),
@@ -20,14 +20,14 @@ basic runtime shipped along with the translator, we only support a subset of all
 target platforms. Currently _Kotlin/Native_ is being shipped and tested with support for
 the following platforms:
 
- * Mac OS X 10.11 and later (x86-64)
- * x86-64 Ubuntu Linux (14.04, 16.04 and later), other Linux flavours may work as well
- * Apple iOS (arm64), cross-compiled on MacOS X host (`-target iphone`)
- * Raspberry Pi, cross-compiled on Linux host (`-target raspberrypi`)
+ * Mac OS X 10.11 and later (x86-64), host and target
+ * Ubuntu Linux x86-64 (14.04, 16.04 and later), other Linux flavours may work as well, host and target
+ * Microsoft Windows x86-64 (tested on Windows 7 and Windows 10), host and target
+ * Apple iOS (arm64), cross-compiled on MacOS X host (`-target iphone`), target, hosted on OS X
+ * Raspberry Pi, cross-compiled on Linux host (`-target raspberrypi`), target, hosted on Linux
+ * Android arm32 and arm64 (`-target android_arm32` and `-target android_arm64`), target, hosted on Linux or OS X
 
-
- Adding support for other target platforms shouldn't be too hard, if LLVM support
- is available.
+ Adding support for other target platforms shouldn't be too hard, if LLVM support is available.
 
  ## Compatibility and features ##
 
@@ -68,8 +68,10 @@ for benchmarking and competitive analysis of any kind.
 
 ### Standard Library ###
 
-  The standard library in _Kotlin/Native_ is known to be incomplete and may not include
-few methods available in standard library of Kotlin (notably, regular expression-related).
+  The standard library in _Kotlin/Native_ is known to be mostly complete, please report us 
+missing functionality. Note, that standard Java APIs, such as `java.lang.Math` or `java.io`
+is not available in current _Kotlin_ standard library, but using C interoperability, one could
+call similar APIs from the POSIX library, see this [`sample`](https://github.com/JetBrains/kotlin-native/blob/master/samples/csvparser).
 
 ### Reflection ###
 
@@ -78,6 +80,19 @@ Notice that property delegation (including lazy properties) *does* work.
 
 ### Microsoft Windows support ###
 
-Due to significant differences in exception handling models on MS Windows and
-other LLVM targets, current _Kotlin/Native_ may not produce executables working on
-MS Windows. This situation could be improved in upcoming releases.
+ Only 64-bit Windows is currently supported as both compilation host and target.
+
+### Debugging ###
+
+ _Kotlin/Native_ supports preliminary source-level debugging on produced executables with `lldb` debugger.
+ Produce your binary with debugging information by specifying `-g` _Kotlin/Native_ compiler switch or 
+ using `-Pbuild_flags=-g` option for Gradle build. Start your application with 
+    
+    lldb my_program.kexe
+ 
+ and then 
+    
+    b kfun:main(kotlin.Array<kotlin.String>)
+
+to set breakpoint in main function of your application. Single stepping and step into shall work, 
+variable inspection does not work yet. See [`DEBUGGING.md`](https://github.com/JetBrains/kotlin-native/blob/master/DEBUGGING.md)

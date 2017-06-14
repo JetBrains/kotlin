@@ -18,8 +18,7 @@ Then build the compiler and standard library:
 
 	./gradlew dist
 
-To build standard library for cross-targets (currently, iOS on Mac OSX and Raspberry Pi on
-Linux hosts) use:
+To build standard library for cross-targets use:
 
     ./gradlew cross_dist
 
@@ -42,3 +41,6 @@ To generate interoperability stubs create library definition file
     cinterop -def lib.def
 
 See provided [samples](https://github.com/JetBrains/kotlin-native/tree/master/samples) and [`INTEROP.md`](https://github.com/JetBrains/kotlin-native/blob/master/INTEROP.md) for more details.
+
+Interop tool generates library in .klib library format, see [`LIBRARY.md`](https://github.com/JetBrains/kotlin-native/blob/master/LIBRARY.md)
+for more details on the file format.

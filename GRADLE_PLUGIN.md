@@ -22,7 +22,7 @@ a build script (see projects in `samples` directory):
 The plugin downloads the compiler during its first run. You may specify a version of the compiler using `konan.version`
 project property:
 
-    konan.version=0.2
+    konan.version=0.3
 
 If you already downloaded the compiler manually you may specify the path to it using `konan.home` project property (e.g.
  in `gradle.properties`). Note: the plugin ignores the `konan.version` property in this case.
