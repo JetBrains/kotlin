@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
@@ -35,12 +36,12 @@ import org.jetbrains.kotlin.idea.core.insertMembersAfter
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -75,8 +76,18 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                && targetClass !is KtEnumEntry
                && !targetClass.isAnnotation()
                && !targetClass.isInterface()
-               && !targetClass.hasModifier(KtTokens.DATA_KEYWORD)
+               && (!targetClass.isData() || isValidForDataClass(targetClass))
                && getPropertiesToUseInGeneratedMember(targetClass).isNotEmpty()
+    }
+    
+    private fun isValidForDataClass(targetClass: KtClass): Boolean {
+        val constructor = targetClass.primaryConstructor ?: return false
+        val context = constructor.analyze(BodyResolveMode.PARTIAL)
+        return constructor.valueParameters.any { parameter ->
+            parameter.hasValOrVar() && context.get(BindingContext.TYPE, parameter.typeReference)?.let { type ->
+                KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)
+            } ?: false
+        }
     }
 
     override fun prepareMembersInfo(klass: KtClassOrObject, project: Project, editor: Editor?): Info? {
