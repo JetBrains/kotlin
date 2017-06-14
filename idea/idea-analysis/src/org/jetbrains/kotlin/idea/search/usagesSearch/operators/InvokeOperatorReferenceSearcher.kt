@@ -27,8 +27,11 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOpt
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.uast.*
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.UastContext
+import org.jetbrains.uast.convertOpt
 
 class InvokeOperatorReferenceSearcher(
         targetFunction: PsiElement,
@@ -44,7 +47,14 @@ class InvokeOperatorReferenceSearcher(
         val uMethod = uastContext.convertOpt<UMethod>(targetDeclaration, null)
         val uastParameters = uMethod?.uastParameters
 
-        callArgumentsSize = if (uastParameters != null && uastParameters.none { it.uastInitializer != null }) uastParameters.size else null
+        val isStableNumberOfArguments = uastParameters != null && uastParameters.none { it.uastInitializer != null }
+        callArgumentsSize = if (isStableNumberOfArguments) {
+            val numberOfArguments = uastParameters!!.size
+            when {
+                targetFunction.isExtensionDeclaration() -> numberOfArguments - 1
+                else -> numberOfArguments
+            }
+        } else null
     }
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {
