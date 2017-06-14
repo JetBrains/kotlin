@@ -88,12 +88,12 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
     }
 
     private inner class SignatureParts(
-            val fromOverride: KotlinType,
-            val fromOverridden: Collection<KotlinType>,
-            val isCovariant: Boolean
+            private val fromOverride: KotlinType,
+            private val fromOverridden: Collection<KotlinType>,
+            private val isCovariant: Boolean
     ) {
         fun enhance(predefined: TypeEnhancementInfo? = null): PartEnhancementResult {
-            val qualifiers = fromOverride.computeIndexedQualifiersForOverride(this.fromOverridden, isCovariant)
+            val qualifiers = computeIndexedQualifiersForOverride()
 
             val qualifiersWithPredefined: ((Int) -> JavaTypeQualifiers)? = predefined?.let {
                 {
@@ -173,9 +173,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             return null
         }
 
-        fun KotlinType.computeIndexedQualifiersForOverride(
-                fromSupertypes: Collection<KotlinType>, isCovariant: Boolean
-        ): (Int) -> JavaTypeQualifiers {
+        private fun computeIndexedQualifiersForOverride(): (Int) -> JavaTypeQualifiers {
             fun KotlinType.toIndexed(): List<KotlinType> {
                 val list = ArrayList<KotlinType>(1)
 
@@ -195,15 +193,15 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 return list
             }
 
-            val indexedFromSupertypes = fromSupertypes.map { it.toIndexed() }
-            val indexedThisType = this.toIndexed()
+            val indexedFromSupertypes = fromOverridden.map { it.toIndexed() }
+            val indexedThisType = fromOverride.toIndexed()
 
             // The covariant case may be hard, e.g. in the superclass the return may be Super<T>, but in the subclass it may be Derived, which
             // is declared to extend Super<T>, and propagating data here is highly non-trivial, so we only look at the head type constructor
             // (outermost type), unless the type in the subclass is interchangeable with the all the types in superclasses:
             // e.g. we have (Mutable)List<String!>! in the subclass and { List<String!>, (Mutable)List<String>! } from superclasses
             // Note that `this` is flexible here, so it's equal to it's bounds
-            val onlyHeadTypeConstructor = isCovariant && fromSupertypes.any { !KotlinTypeChecker.DEFAULT.equalTypes(it, this) }
+            val onlyHeadTypeConstructor = isCovariant && fromOverridden.any { !KotlinTypeChecker.DEFAULT.equalTypes(it, fromOverride) }
 
             val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
             val computedResult = Array(treeSize) {
@@ -244,8 +242,12 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                     return if (supertypeQualifier == low && own == high) null else own ?: supertypeQualifier
                 }
                 return createJavaTypeQualifiers(
-                        nullabilityFromSupertypes.selectCovariantly(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own.nullability),
-                        mutabilityFromSupertypes.selectCovariantly(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability)
+                        nullabilityFromSupertypes.selectCovariantly(
+                                NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own.nullability
+                        ),
+                        mutabilityFromSupertypes.selectCovariantly(
+                                MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability
+                        )
                 )
             }
             else {
