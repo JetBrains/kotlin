@@ -22,11 +22,14 @@ import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.ExpressionCase
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.StatementCase
+import java.io.File
+import java.io.FileInputStream
 import java.io.InputStream
+import java.io.InputStreamReader
 import java.util.*
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy as KotlinInlineStrategy
 
-class JsAstDeserializer(program: JsProgram) {
+class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<File>) {
     private val scope = JsRootScope(program)
     private val stringTable = mutableListOf<String>()
     private val nameTable = mutableListOf<Name>()
@@ -515,7 +518,15 @@ class JsAstDeserializer(program: JsProgram) {
         }
         val node = action()
         if (deserializedLocation != null) {
-            node.source = deserializedLocation
+            val contentFile = sourceRoots
+                    .map { File(it, file) }
+                    .firstOrNull { it.exists() }
+            node.source = if (contentFile != null) {
+                JsLocationWithEmbeddedSource(deserializedLocation, null) { InputStreamReader(FileInputStream(contentFile), "UTF-8") }
+            }
+            else {
+                deserializedLocation
+            }
         }
         if (shouldUpdateFile) {
             fileStack.pop()

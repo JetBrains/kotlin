@@ -114,6 +114,11 @@ public class JsConfig {
     }
 
     @NotNull
+    public SourceMapSourceEmbedding getSourceMapContentEmbedding() {
+        return configuration.get(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.INLINING);
+    }
+
+    @NotNull
     public List<String> getFriends() {
         if (getConfiguration().getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)) return Collections.emptyList();
         return getConfiguration().getList(JSConfigurationKeys.FRIEND_PATHS);

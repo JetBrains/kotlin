@@ -16,15 +16,19 @@
 
 package org.jetbrains.kotlin.js.sourceMap;
 
-import org.jetbrains.kotlin.js.common.SourceInfo;
-import org.jetbrains.kotlin.js.util.TextOutput;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PairConsumer;
 import gnu.trove.TObjectIntHashMap;
+import kotlin.io.TextStreamsKt;
+import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor;
+import org.jetbrains.kotlin.js.common.SourceInfo;
+import org.jetbrains.kotlin.js.util.TextOutput;
 
 import java.io.File;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class SourceMap3Builder implements SourceMapBuilder {
     private final StringBuilder out = new StringBuilder(8192);
@@ -33,18 +37,16 @@ public class SourceMap3Builder implements SourceMapBuilder {
     private final String pathPrefix;
     private final PairConsumer<SourceMapBuilder, Object> sourceInfoConsumer;
 
-    private String lastSource;
-    private int lastSourceIndex;
-
-    private final TObjectIntHashMap<String> sources = new TObjectIntHashMap<String>() {
+    private final TObjectIntHashMap<SourceKey> sources = new TObjectIntHashMap<SourceKey>() {
         @Override
-        public int get(String key) {
+        public int get(SourceKey key) {
             int index = index(key);
             return index < 0 ? -1 : _values[index];
         }
     };
 
     private final List<String> orderedSources = new ArrayList<>();
+    private final List<Supplier<Reader>> orderedSourceContentSuppliers = new ArrayList<>();
 
     private int previousGeneratedColumn = -1;
     private int previousSourceIndex;
@@ -68,7 +70,11 @@ public class SourceMap3Builder implements SourceMapBuilder {
     public String build() {
         StringBuilder sb = new StringBuilder(out.length() + (128 * orderedSources.size()));
         sb.append("{\"version\":3,\"file\":\"").append(generatedFile.getName()).append('"').append(',');
+
         appendSources(sb);
+        sb.append(",");
+        appendSourcesContent(sb);
+
         sb.append(",\"names\":[");
         sb.append("],\"mappings\":\"");
         sb.append(out);
@@ -86,7 +92,29 @@ public class SourceMap3Builder implements SourceMapBuilder {
             else {
                 isNotFirst = true;
             }
-            sb.append('"').append(pathPrefix).append(source).append('"');
+            sb.append(JsToStringGenerationVisitor.javaScriptString(pathPrefix + source, true));
+        }
+        sb.append(']');
+    }
+
+    private void appendSourcesContent(StringBuilder sb) {
+        boolean isNotFirst = false;
+        sb.append('"').append("sourcesContent").append("\":[");
+        for (Supplier<Reader> contentSupplier : orderedSourceContentSuppliers) {
+            if (isNotFirst) {
+                sb.append(',');
+            }
+            else {
+                isNotFirst = true;
+            }
+
+            Reader reader = contentSupplier.get();
+            if (reader != null) {
+                sb.append(JsToStringGenerationVisitor.javaScriptString(TextStreamsKt.readText(reader), true));
+            }
+            else {
+                sb.append("null");
+            }
         }
         sb.append(']');
     }
@@ -110,26 +138,21 @@ public class SourceMap3Builder implements SourceMapBuilder {
         sourceInfoConsumer.consume(this, sourceInfo);
     }
 
-    private int getSourceIndex(String source) {
-        if (source.equals(lastSource)) {
-            return lastSourceIndex;
-        }
-
-        int sourceIndex = sources.get(source);
+    private int getSourceIndex(String source, Object identityObject, Supplier<Reader> contentSupplier) {
+        SourceKey key = new SourceKey(source, identityObject);
+        int sourceIndex = sources.get(key);
         if (sourceIndex == -1) {
             sourceIndex = orderedSources.size();
-            sources.put(source, sourceIndex);
+            sources.put(key, sourceIndex);
             orderedSources.add(source);
+            orderedSourceContentSuppliers.add(contentSupplier);
         }
-
-        lastSource = source;
-        lastSourceIndex = sourceIndex;
 
         return sourceIndex;
     }
 
     @Override
-    public void addMapping(String source, int sourceLine, int sourceColumn) {
+    public void addMapping(String source, Object identityObject, Supplier<Reader> sourceContent, int sourceLine, int sourceColumn) {
         source = source.replace(File.separatorChar, '/');
         boolean newGroupStarted = previousGeneratedColumn == -1;
         if (newGroupStarted) {
@@ -148,7 +171,7 @@ public class SourceMap3Builder implements SourceMapBuilder {
         // assert columnDiff != 0;
         Base64VLQ.encode(out, columnDiff);
         previousGeneratedColumn = textOutput.getColumn();
-        int sourceIndex = getSourceIndex(source);
+        int sourceIndex = getSourceIndex(source, identityObject, sourceContent);
         Base64VLQ.encode(out, sourceIndex - previousSourceIndex);
         previousSourceIndex = sourceIndex;
 
@@ -198,6 +221,36 @@ public class SourceMap3Builder implements SourceMapBuilder {
                 out.append(BASE64_MAP[digit]);
             }
             while (value > 0);
+        }
+    }
+
+    static final class SourceKey {
+        private final String sourcePath;
+        private final Object identityKey;
+
+        SourceKey(String sourcePath, Object identityKey) {
+            this.sourcePath = sourcePath;
+            this.identityKey = identityKey;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof SourceKey)) return false;
+
+            SourceKey key = (SourceKey) o;
+
+            if (!sourcePath.equals(key.sourcePath)) return false;
+            if (identityKey != null ? !identityKey.equals(key.identityKey) : key.identityKey != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = sourcePath.hashCode();
+            result = 31 * result + (identityKey != null ? identityKey.hashCode() : 0);
+            return result;
         }
     }
 }

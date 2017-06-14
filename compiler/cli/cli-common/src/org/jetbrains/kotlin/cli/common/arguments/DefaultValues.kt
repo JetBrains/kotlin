@@ -48,6 +48,15 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
             listOf("\"plain\"", "\"amd\"", "\"commonjs\"", "\"umd\"")
     )
 
+    object JsSourceMapContentModes : DefaultValues(
+            "\"${K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING}\"",
+            listOf(
+                    K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER,
+                    K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS,
+                    K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING
+            ).map { "\"$it\""}
+    )
+
     object JsMain : DefaultValues(
             "\"" + CALL + "\"",
             listOf("\"" + CALL + "\"", "\"" + NO_CALL + "\"")

@@ -7,6 +7,8 @@ where possible options include:
   -source-map-prefix         Prefix for paths in a source map
   -source-map-source-roots <path>
                              Base directories which are used to calculate relative paths to source files in source map
+  -source-map-embed-sources { always, never, inlining }
+                             Embed source files into source map
   -meta-info                 Generate .meta.js and .kjsm files with metadata. Use to create a library
   -target { v5 }             Generate JS files for specific ECMA version
   -module-kind { plain, amd, commonjs, umd }

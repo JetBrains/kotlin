@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.sourceMap;
+package org.jetbrains.kotlin.js.config;
 
-import java.io.File;
-import java.io.Reader;
-import java.util.function.Supplier;
-
-public interface SourceMapBuilder {
-    void newLine();
-
-    void skipLinesAtBeginning(int count);
-
-    void addMapping(String source, Object identityObject, Supplier<Reader> sourceContent, int sourceLine, int sourceColumn);
-
-    void processSourceInfo(Object info);
-
-    void addLink();
-
-    File getOutFile();
-
-    String build();
+public enum SourceMapSourceEmbedding {
+    NEVER,
+    ALWAYS,
+    INLINING
 }

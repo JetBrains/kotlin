@@ -68,7 +68,7 @@ class AmbiguousAstSourcePropagation : RecursiveJsVisitor() {
     private fun propagate(node: JsNode) {
         if (!sourceDefined) {
             val source = node.source
-            if (source is JsLocation || source is PsiElement) {
+            if (source is JsLocationWithSource || source is PsiElement) {
                 sourceDefined = true
             }
         }

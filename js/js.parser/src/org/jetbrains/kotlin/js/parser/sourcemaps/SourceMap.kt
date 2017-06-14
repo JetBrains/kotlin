@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.js.parser.sourcemaps
 
-class SourceMap {
+import java.io.Reader
+
+class SourceMap(val sourceContentResolver: (String) -> Reader?) {
     val groups = mutableListOf<SourceMapGroup>()
 }
 

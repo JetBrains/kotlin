@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
@@ -61,8 +62,13 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             val sourceMapBuilder =
                     if (config.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
                         val sourceRoots = config.sourceMapRoots.map { File(it) }
+                        val sourceMapContentEmbedding = config.sourceMapContentEmbedding
                         val pathResolver = SourceFilePathResolver(sourceRoots)
-                        SourceMap3Builder(outputFile, output, config.sourceMapPrefix, SourceMapBuilderConsumer(pathResolver))
+                        val consumer = SourceMapBuilderConsumer(
+                                pathResolver,
+                                sourceMapContentEmbedding == SourceMapSourceEmbedding.ALWAYS,
+                                sourceMapContentEmbedding != SourceMapSourceEmbedding.NEVER)
+                        SourceMap3Builder(outputFile, output, config.sourceMapPrefix, consumer)
                     }
                     else {
                         null

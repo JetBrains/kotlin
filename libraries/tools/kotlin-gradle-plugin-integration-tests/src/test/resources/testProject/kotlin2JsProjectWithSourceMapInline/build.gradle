@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    apply plugin: 'kotlin2js'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://dl.bintray.com/kotlin/kotlin-dev/" }
+    }
+
+    dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    }
+
+    compileKotlin2Js {
+        kotlinOptions.freeCompilerArgs = [ "-Xskip-metadata-version-check" ]
+        kotlinOptions.sourceMap = true
+        kotlinOptions.sourceMapEmbedSources = "always"
+    }
+}
+
+project("app") {
+    dependencies {
+        compile project(":lib")
+    }
+}
+
+

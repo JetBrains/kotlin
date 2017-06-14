@@ -124,7 +124,9 @@ object JsLibraryUtils {
                         librariesWithoutSourceMaps += JsLibrary(content, relativePath, null)
                     }
                     else if (entryName.endsWith(KotlinJavascriptMetadataUtils.JS_MAP_EXT)) {
-                        possibleMapFiles[entryName.removeSuffix(KotlinJavascriptMetadataUtils.JS_MAP_EXT)] = entry
+                        val correspondingJsPath = entryName.removeSuffix(KotlinJavascriptMetadataUtils.JS_MAP_EXT) +
+                                                  KotlinJavascriptMetadataUtils.JS_EXT
+                        possibleMapFiles[correspondingJsPath] = entry
                     }
                 }
             }

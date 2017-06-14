@@ -196,4 +196,22 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertTrue("Source map should contain reference to $sourceFilePath") { map.contains("\"$sourceFilePath\"") }
         }
     }
+
+    @Test
+    fun testKotlinJsSourceMapInline() {
+        val project = Project("kotlin2JsProjectWithSourceMapInline", "2.10")
+
+        project.build("build") {
+            assertSuccessful()
+
+            val mapFilePath = "app/build/classes/main/app_main.js.map"
+            assertFileExists(mapFilePath)
+            val map = fileInWorkingDir(mapFilePath).readText()
+
+            assertTrue("Source map should contain reference to main.kt") { map.contains("\"main.kt\"") }
+            assertTrue("Source map should contain reference to foo.kt") { map.contains("\"foo.kt\"") }
+            assertTrue("Source map should contain source of main.kt") { map.contains("\"fun main(args: Array<String>) {\\n") }
+            assertTrue("Source map should contain source of foo.kt") { map.contains("\"inline fun foo(): String {\\n") }
+        }
+    }
 }

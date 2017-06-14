@@ -52,6 +52,14 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     )
     public String sourceMapSourceRoots;
 
+    @GradleOption(DefaultValues.JsSourceMapContentModes.class)
+    @Argument(
+            value = "-source-map-embed-sources",
+            valueDescription = "{ always, never, inlining }",
+            description = "Embed source files into source map"
+    )
+    public String sourceMapEmbedSources;
+
     @GradleOption(DefaultValues.BooleanTrueDefault.class)
     @Argument(value = "-meta-info", description = "Generate .meta.js and .kjsm files with metadata. Use to create a library")
     public boolean metaInfo;

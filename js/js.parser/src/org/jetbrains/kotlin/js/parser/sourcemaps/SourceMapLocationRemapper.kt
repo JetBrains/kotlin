@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.js.parser.sourcemaps
 
-import org.jetbrains.kotlin.js.backend.ast.JsLocation
-import org.jetbrains.kotlin.js.backend.ast.JsNode
-import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
-import org.jetbrains.kotlin.js.backend.ast.SourceInfoAwareJsNode
+import org.jetbrains.kotlin.js.backend.ast.*
 
 class SourceMapLocationRemapper(val sourceMaps: Map<String, SourceMap>) {
     fun remap(node: JsNode) {
@@ -62,7 +59,8 @@ class SourceMapLocationRemapper(val sourceMaps: Map<String, SourceMap>) {
             }
 
             val segment = group.segments[lastSegmentIndex]
-            node.source = JsLocation(segment.sourceFileName, segment.sourceLineNumber, segment.sourceColumnNumber)
+            val location = JsLocation(segment.sourceFileName, segment.sourceLineNumber, segment.sourceColumnNumber)
+            node.source = JsLocationWithEmbeddedSource(location, sourceMap) { sourceMap.sourceContentResolver(segment.sourceFileName) }
 
             return true
         }

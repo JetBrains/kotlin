@@ -61,7 +61,9 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.js.translate.general.ModuleWrapperTranslation.wrapIfNecessary;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToStatement;
@@ -274,7 +276,8 @@ public final class Translation {
 
         Map<KtFile, List<DeclarationDescriptor>> fileMemberScopes = new HashMap<>();
 
-        JsAstDeserializer deserializer = new JsAstDeserializer(program);
+        List<File> sourceRoots = config.getSourceMapRoots().stream().map(File::new).collect(Collectors.toList());
+        JsAstDeserializer deserializer = new JsAstDeserializer(program, sourceRoots);
         for (TranslationUnit unit : units) {
             if (unit instanceof TranslationUnit.SourceFile) {
                 KtFile file = ((TranslationUnit.SourceFile) unit).getFile();

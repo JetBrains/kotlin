@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
+import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
@@ -74,12 +75,17 @@ import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static final Map<String, ModuleKind> moduleKindMap = new HashMap<>();
+    private static final Map<String, SourceMapSourceEmbedding> sourceMapContentEmbeddingMap = new LinkedHashMap<>();
 
     static {
         moduleKindMap.put(K2JsArgumentConstants.MODULE_PLAIN, ModuleKind.PLAIN);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_COMMONJS, ModuleKind.COMMON_JS);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_AMD, ModuleKind.AMD);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_UMD, ModuleKind.UMD);
+
+        sourceMapContentEmbeddingMap.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS, SourceMapSourceEmbedding.ALWAYS);
+        sourceMapContentEmbeddingMap.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER, SourceMapSourceEmbedding.NEVER);
+        sourceMapContentEmbeddingMap.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING, SourceMapSourceEmbedding.INLINING);
     }
 
     public static void main(String... args) {
@@ -357,8 +363,25 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             messageCollector.report(
                     ERROR, "Unknown module kind: " + moduleKindName + ". Valid values are: plain, amd, commonjs, umd", null
             );
+            moduleKind = ModuleKind.PLAIN;
         }
         configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind);
+
+        String sourceMapEmbedContentString = arguments.sourceMapEmbedSources;
+        SourceMapSourceEmbedding sourceMapContentEmbedding = sourceMapEmbedContentString != null ?
+                                                             sourceMapContentEmbeddingMap.get(sourceMapEmbedContentString) :
+                                                             SourceMapSourceEmbedding.INLINING;
+        if (sourceMapContentEmbedding == null) {
+            String message = "Unknown source map source embedding mode: " + sourceMapEmbedContentString + ". Valid values are: " +
+                             StringUtil.join(sourceMapContentEmbeddingMap.keySet(), ", ");
+            messageCollector.report(ERROR, message, null);
+            sourceMapContentEmbedding = SourceMapSourceEmbedding.INLINING;
+        }
+        configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, sourceMapContentEmbedding);
+
+        if (!arguments.sourceMap && sourceMapEmbedContentString != null) {
+            messageCollector.report(WARNING, "source-map-embed-sources argument has no effect without source map", null);
+        }
     }
 
     @NotNull

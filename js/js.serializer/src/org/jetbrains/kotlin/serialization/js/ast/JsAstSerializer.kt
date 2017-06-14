@@ -386,7 +386,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
                 val name = nameRef.name
                 val qualifier = nameRef.qualifier
                 if (name != null) {
-                    if (qualifier != null || (nameRef.inlineStrategy?.isInline ?: false)) {
+                    if (qualifier != null || nameRef.inlineStrategy?.isInline == true) {
                         val nameRefBuilder = NameReference.newBuilder()
                         nameRefBuilder.nameId = serialize(name)
                         if (qualifier != null) {
@@ -589,7 +589,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
     private fun extractLocation(node: JsNode): JsLocation? {
         val source = node.source
         return when (source) {
-            is JsLocation -> source
+            is JsLocationWithSource -> source.asSimpleLocation()
             is PsiElement -> extractLocation(source)
             else -> null
         }

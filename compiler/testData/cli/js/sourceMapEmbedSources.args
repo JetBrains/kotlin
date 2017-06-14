@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/sourceMap.kt
+-no-stdlib
+-source-map
+-source-map-embed-sources
+always
+-output
+$TEMP_DIR$/out.js

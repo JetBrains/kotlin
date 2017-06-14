@@ -3539,6 +3539,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("sourceMapSourceEmbedding.kt")
+        public void testSourceMapSourceEmbedding() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/incremental/sourceMapSourceEmbedding.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("syntheticStatement.kt")
         public void testSyntheticStatement() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/incremental/syntheticStatement.kt");

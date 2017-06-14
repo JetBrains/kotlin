@@ -70,6 +70,9 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     @Parameter
     private String sourceMapPrefix;
 
+    @Parameter(defaultValue = "inlining")
+    private String sourceMapEmbedSources;
+
     /**
      * Main invocation behaviour. Possible values are <b>call</b> and <b>noCall</b>.
      */
@@ -110,6 +113,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
 
         arguments.sourceMap = sourceMap;
         arguments.sourceMapPrefix = sourceMapPrefix;
+        arguments.sourceMapEmbedSources = sourceMapEmbedSources;
 
         if (outputFile != null) {
             ConcurrentMap<String, List<String>> collector = getOutputDirectoriesCollector();

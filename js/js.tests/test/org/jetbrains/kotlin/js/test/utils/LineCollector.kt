@@ -39,7 +39,7 @@ class LineCollector : RecursiveJsVisitor() {
                 val document = file.viewProvider.document!!
                 document.getLineNumber(offset)
             }
-            is JsLocation -> {
+            is JsLocationWithSource -> {
                 source.startLine
             }
             else -> null
