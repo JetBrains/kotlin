@@ -16,18 +16,18 @@
 
 package org.jetbrains.kotlin.idea.editor.wordSelection
 
-import com.intellij.psi.PsiElement
+import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
-import org.jetbrains.kotlin.psi.KtDeclaration
-import java.util.ArrayList
-import org.jetbrains.kotlin.psi.psiUtil.siblings
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import java.util.*
 
 class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
@@ -39,15 +39,32 @@ class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
         }
 
         val result = ArrayList<TextRange>()
+
         val firstChild = e.firstChild
+        val firstComment = firstChild
+                .siblings(forward = true, withItself = true)
+                .firstOrNull { it is PsiComment }
         val firstNonComment = firstChild
                 .siblings(forward = true, withItself = true)
                 .first { it !is PsiComment && it !is PsiWhiteSpace }
 
         val lastChild = e.lastChild
+        val lastComment = lastChild
+                .siblings(forward = false, withItself = true)
+                .firstOrNull { it is PsiComment }
         val lastNonComment = lastChild
                 .siblings(forward = false, withItself = true)
                 .first { it !is PsiComment && it !is PsiWhiteSpace }
+
+        if (firstComment != null || lastComment != null) {
+            val startOffset = minOf(
+                    firstComment?.startOffset ?: Int.MAX_VALUE,
+                    lastNonComment.startOffset)
+            val endOffset = maxOf(
+                    lastComment?.endOffset ?: Int.MIN_VALUE,
+                    lastNonComment.endOffset)
+            result.addRange(editorText, TextRange(startOffset, endOffset))
+        }
 
         if (firstNonComment != firstChild || lastNonComment != lastChild) {
             result.addRange(editorText, TextRange(firstNonComment.startOffset, lastNonComment.endOffset))

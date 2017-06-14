@@ -12,7 +12,7 @@ class U : T<String> {
 
 class V : T<Int> {
     override val foo: Int
-        get() = <caret><selection>TODO("not implemented")</selection> //To change initializer of created properties use File | Settings | File Templates.
+        get() = <caret><selection>TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.</selection>
 
 }
 
