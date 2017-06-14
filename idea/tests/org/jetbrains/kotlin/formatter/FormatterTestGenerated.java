@@ -886,6 +886,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ArgumentListLeftParentheseOnNextLine.after.kt")
+            public void testArgumentListLeftParentheseOnNextLine() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListLeftParentheseOnNextLine.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArgumentListRightParentheseOnNextLine.after.kt")
+            public void testArgumentListRightParentheseOnNextLine() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListRightParentheseOnNextLine.after.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ArgumentListWrapAlways.after.kt")
             public void testArgumentListWrapAlways() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListWrapAlways.after.kt");
@@ -919,6 +931,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             @TestMetadata("ParameterListWrapAsNeeded.after.kt")
             public void testParameterListWrapAsNeeded() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParameterListWrapAsNeeded.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParametersListLeftParentheseOnNextLine.after.kt")
+            public void testParametersListLeftParentheseOnNextLine() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParametersListLeftParentheseOnNextLine.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParametersListRightParentheseOnNextLine.after.kt")
+            public void testParametersListRightParentheseOnNextLine() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParametersListRightParentheseOnNextLine.after.kt");
                 doTest(fileName);
             }
         }

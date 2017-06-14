@@ -205,7 +205,11 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                         "CATCH_ON_NEW_LINE",
                         "FINALLY_ON_NEW_LINE",
                         "CALL_PARAMETERS_WRAP",
-                        "METHOD_PARAMETERS_WRAP"
+                        "METHOD_PARAMETERS_WRAP",
+                        "CALL_PARAMETERS_LPAREN_ON_NEXT_LINE",
+                        "CALL_PARAMETERS_RPAREN_ON_NEXT_LINE",
+                        "METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE",
+                        "METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE"
                 );
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements");
                 consumer.showCustomOption(KotlinCodeStyleSettings.class, "ALIGN_IN_COLUMNS_CASE_BRANCH", "Align 'when' branches in columns",

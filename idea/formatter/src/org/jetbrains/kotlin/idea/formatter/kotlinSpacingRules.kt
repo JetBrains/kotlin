@@ -87,6 +87,31 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 }
             }
             inPosition(parent = VALUE_PARAMETER_LIST, right = VALUE_PARAMETER).customRule(parameterWithDocCommentRule)
+
+
+            fun createParameterListParanthesesBreakRule(breakNeeded: Boolean): (ASTBlock, ASTBlock, ASTBlock) -> Spacing {
+                return {
+                    parent: ASTBlock, left: ASTBlock, right: ASTBlock ->
+                    if (breakNeeded) {
+                        Spacing.createDependentLFSpacing(0, 0, parent.textRange,
+                                                         commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                                                         commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+                    }
+                    else {
+                        createSpacing(0, 0, 0, commonCodeStyleSettings.KEEP_LINE_BREAKS, commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+                    }
+                }
+            }
+
+            inPosition(parent = VALUE_PARAMETER_LIST, left = LPAR, right = VALUE_PARAMETER)
+                    .customRule(createParameterListParanthesesBreakRule(commonCodeStyleSettings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE))
+            inPosition(parent = VALUE_PARAMETER_LIST, left = VALUE_PARAMETER, right = RPAR)
+                    .customRule(createParameterListParanthesesBreakRule(commonCodeStyleSettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE))
+
+            inPosition(parent = VALUE_ARGUMENT_LIST, left = LPAR, right = VALUE_ARGUMENT)
+                    .customRule(createParameterListParanthesesBreakRule(commonCodeStyleSettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE))
+            inPosition(parent = VALUE_ARGUMENT_LIST, left = VALUE_ARGUMENT, right = RPAR)
+                    .customRule(createParameterListParanthesesBreakRule(commonCodeStyleSettings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE))
         }
 
         simple {
@@ -204,12 +229,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             after(LPAR).spaces(0)
             before(RPAR).spaces(0)
 
-            afterInside(LPAR, VALUE_PARAMETER_LIST).spaces(0)
-            beforeInside(RPAR, VALUE_PARAMETER_LIST).spaces(0)
             afterInside(LT, TYPE_PARAMETER_LIST).spaces(0)
             beforeInside(GT, TYPE_PARAMETER_LIST).spaces(0)
-            afterInside(LPAR, VALUE_ARGUMENT_LIST).spaces(0)
-            beforeInside(RPAR, VALUE_ARGUMENT_LIST).spaces(0)
             afterInside(LT, TYPE_ARGUMENT_LIST).spaces(0)
             beforeInside(GT, TYPE_ARGUMENT_LIST).spaces(0)
             before(TYPE_ARGUMENT_LIST).spaces(0)
