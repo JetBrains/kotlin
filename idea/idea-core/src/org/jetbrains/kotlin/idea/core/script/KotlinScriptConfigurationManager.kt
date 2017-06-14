@@ -287,8 +287,10 @@ private class ClearableLazyValue<out T : Any>(private val lock: ReentrantReadWri
     }
 }
 
+// TODO: relying on this to compare dependencies seems wrong, doesn't take javaHome and other stuff into account
 private fun KotlinScriptExternalDependencies.match(other: KotlinScriptExternalDependencies)
-        = classpath.isSamePathListAs(other.classpath) && sources.isSamePathListAs(other.sources)
+        = classpath.isSamePathListAs(other.classpath) &&
+          sources.toSet().isSamePathListAs(other.sources.toSet()) // TODO: gradle returns stdlib and reflect sources in unstable order for some reason
 
 
 private fun Iterable<File>.isSamePathListAs(other: Iterable<File>): Boolean =
