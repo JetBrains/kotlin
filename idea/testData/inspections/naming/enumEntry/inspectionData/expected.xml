@@ -1,0 +1,16 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>11</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <description>Enum entry name &lt;code&gt;_Foo&lt;/code&gt; doesn't match regex '[A-Z]([A-Za-z\d]*|[A-Z_\d]*)' #loc</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>12</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <description>Enum entry name &lt;code&gt;quuxDoo&lt;/code&gt; doesn't match regex '[A-Z]([A-Za-z\d]*|[A-Z_\d]*)' #loc</description>
+    </problem>
+</problems>

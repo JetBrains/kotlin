@@ -16,19 +16,18 @@
 
 package org.jetbrains.kotlin.android.inspection
 
-import com.intellij.codeInsight.FileModificationService
-import com.intellij.codeInspection.*
-import com.intellij.ide.DataManager
+import com.intellij.codeInspection.LocalInspectionToolSession
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.refactoring.rename.RenameHandlerRegistry
 import org.jetbrains.kotlin.android.getAndroidFacetForFile
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
+import org.jetbrains.kotlin.idea.quickfix.RenameIdentifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 
 class IllegalIdentifierInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -71,28 +70,4 @@ class IllegalIdentifierInspection : AbstractKotlinInspection() {
         }
     }
 
-    class RenameIdentifierFix : LocalQuickFix {
-        override fun getName() = "Rename"
-        override fun getFamilyName() = name
-
-        override fun startInWriteAction(): Boolean = false
-
-        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val element = descriptor.psiElement ?: return
-            val file = element.containingFile ?: return
-            if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
-            val editorManager = FileEditorManager.getInstance(project)
-            val fileEditor = editorManager.getSelectedEditor(file.virtualFile) ?: return
-            val dataContext = DataManager.getInstance().getDataContext(fileEditor.component)
-            val renameHandler = RenameHandlerRegistry.getInstance().getRenameHandler(dataContext)
-
-            val editor = editorManager.selectedTextEditor
-            if (editor != null) {
-                renameHandler?.invoke(project, editor, file, dataContext)
-            }
-            else {
-                renameHandler?.invoke(project, arrayOf(element.parent), dataContext)
-            }
-        }
-    }
 }
