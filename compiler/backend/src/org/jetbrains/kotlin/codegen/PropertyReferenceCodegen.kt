@@ -116,10 +116,11 @@ class PropertyReferenceCodegen(
             generateCallableReferenceSignature(this, target, state)
         }
 
+        generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
+            ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
+        }
+
         if (!isLocalDelegatedProperty) {
-            generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
-                ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
-            }
             generateAccessors()
         }
     }

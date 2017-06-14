@@ -1354,6 +1354,18 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/delegatedProperty/local.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("localInAnonymousObject.kt")
+        public void testLocalInAnonymousObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/delegatedProperty/localInAnonymousObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localInLambda.kt")
+        public void testLocalInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/delegatedProperty/localInLambda.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/enclosingInfo")

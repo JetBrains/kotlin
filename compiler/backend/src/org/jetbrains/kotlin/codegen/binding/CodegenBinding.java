@@ -69,6 +69,8 @@ public class CodegenBinding {
             Slices.createSimpleSlice();
     public static final WritableSlice<VariableDescriptorWithAccessors, Type> DELEGATED_PROPERTY_METADATA_OWNER =
             Slices.createSimpleSlice();
+    public static final WritableSlice<VariableDescriptor, VariableDescriptor> LOCAL_VARIABLE_PROPERTY_METADATA =
+            Slices.createSimpleSlice();
 
     static {
         BasicWritableSlice.initSliceDebugNames(CodegenBinding.class);
@@ -222,5 +224,15 @@ public class CodegenBinding {
         Type type = bindingContext.get(ASM_TYPE, klass);
         assert type != null : "Type is not yet recorded for " + klass;
         return type;
+    }
+
+    @NotNull
+    public static VariableDescriptor getDelegatedLocalVariableMetadata(
+            @NotNull VariableDescriptor variableDescriptor,
+            @NotNull BindingContext bindingContext
+    ) {
+        VariableDescriptor metadataVariableDescriptor = bindingContext.get(LOCAL_VARIABLE_PROPERTY_METADATA, variableDescriptor);
+        assert metadataVariableDescriptor != null : "Metadata for local delegated property should be not null: " + variableDescriptor;
+        return metadataVariableDescriptor;
     }
 }
