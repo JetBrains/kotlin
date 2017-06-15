@@ -40,7 +40,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-private typealias DeclPtr = SmartPsiElementPointer<KtCallableDeclaration>
+private typealias DeclarationPointer = SmartPsiElementPointer<KtCallableDeclaration>
+
 class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAction<KtDeclaration>(declaration) {
 
     private val myQuickFixInfo: QuickFixInfo by CachedValue(declaration.project) {
@@ -55,7 +56,7 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
 
     private fun computeInfo(): QuickFixInfo {
         val element = element ?: return QUICKFIX_UNAVAILABLE
-        val overriddenNonOverridableMembers = mutableListOf<DeclPtr>()
+        val overriddenNonOverridableMembers = mutableListOf<DeclarationPointer>()
         val containingDeclarationsNames = mutableListOf<String>()
         val descriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? CallableMemberDescriptor ?: return QUICKFIX_UNAVAILABLE
 
@@ -103,7 +104,7 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
-        private data class QuickFixInfo(val declarations: List<DeclPtr>, val declNames: List<String>)
+        private data class QuickFixInfo(val declarations: List<DeclarationPointer>, val declNames: List<String>)
 
         private val QUICKFIX_UNAVAILABLE = QuickFixInfo(emptyList(), emptyList())
 
