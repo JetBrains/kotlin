@@ -15,10 +15,10 @@ changes in test/EnumFlagUnchanged: NONE
 changes in test/FinalFlagAdded: NONE
 changes in test/FinalFlagRemoved: NONE
 changes in test/FinalFlagUnchanged: NONE
+changes in test/InnerClassHolder: NONE
 changes in test/InnerClassHolder.InnerFlagAdded: CLASS_SIGNATURE
 changes in test/InnerClassHolder.InnerFlagRemoved: CLASS_SIGNATURE
 changes in test/InnerClassHolder.InnerFlagUnchanged: NONE
-changes in test/InnerClassHolder: NONE
 changes in test/InternalFlagAdded: CLASS_SIGNATURE
 changes in test/InternalFlagRemoved: CLASS_SIGNATURE
 changes in test/InternalFlagUnchanged: NONE
@@ -28,10 +28,10 @@ changes in test/OpenFlagUnchanged: NONE
 changes in test/PrivateFlagAdded: CLASS_SIGNATURE
 changes in test/PrivateFlagRemoved: CLASS_SIGNATURE
 changes in test/PrivateFlagUnchanged: NONE
+changes in test/ProtectedClassHolder: NONE
 changes in test/ProtectedClassHolder.ProtectedFlagAdded: CLASS_SIGNATURE
 changes in test/ProtectedClassHolder.ProtectedFlagRemoved: CLASS_SIGNATURE
 changes in test/ProtectedClassHolder.ProtectedFlagUnchanged: NONE
-changes in test/ProtectedClassHolder: NONE
 changes in test/PublicFlagAdded: NONE
 changes in test/PublicFlagRemoved: NONE
 changes in test/PublicFlagUnchanged: NONE
