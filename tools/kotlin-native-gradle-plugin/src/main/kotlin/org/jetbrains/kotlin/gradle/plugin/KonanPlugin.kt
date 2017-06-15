@@ -221,6 +221,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
     override fun apply(project: ProjectInternal?) {
         if (project == null) { return }
         registry.register(KonanToolingModelBuilder)
+        project.plugins.apply("base")
         project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
         project.extensions.add(COMPILER_EXTENSION_NAME, KonanArtifactsContainer(project))
         project.extensions.add(INTEROP_EXTENSION_NAME, KonanInteropContainer(project))
