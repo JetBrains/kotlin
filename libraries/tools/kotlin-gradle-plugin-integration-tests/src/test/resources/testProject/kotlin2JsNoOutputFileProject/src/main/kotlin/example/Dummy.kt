@@ -1,6 +1,8 @@
 package example
 
 class Dummy {
-    fun f() {}
+    fun f(): Int {
+        return 23
+    }
 }
 

@@ -174,7 +174,16 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
     @Test
     fun testKotlinJsSourceMap() {
-        val project = Project("kotlin2JsProjectWithSourceMap", "2.10")
+        val project = Project("kotlin2JsNoOutputFileProject", "2.10")
+
+        project.setupWorkingDir()
+
+        project.projectDir.getFileByName("build.gradle").modify {
+            it + "\n" +
+                    "compileKotlin2Js.kotlinOptions.sourceMap = true\n" +
+                    "compileKotlin2Js.kotlinOptions.sourceMapPrefix = \"prefixprefix/\"\n" +
+                    "compileKotlin2Js.kotlinOptions.outputFile = \"\${buildDir}/kotlin2js/main/app.js\"\n"
+        }
 
         project.build("build") {
             assertSuccessful()
@@ -183,7 +192,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertFileExists(mapFilePath)
             val map = fileInWorkingDir(mapFilePath).readText()
 
-            val sourceFilePath = "prefixprefix/example/main.kt"
+            val sourceFilePath = "prefixprefix/example/Dummy.kt"
             assertTrue("Source map should contain reference to $sourceFilePath") { map.contains("\"$sourceFilePath\"") }
         }
     }

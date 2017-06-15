@@ -210,9 +210,6 @@ internal class Kotlin2JsSourceSetProcessor(
 
             sourceSet.output.setClassesDir(outputDir)
             kotlinTask.destinationDir = outputDir
-
-            kotlinTask.kotlinOptions.sourceMapSourceRoots =
-                    sourceSet.allSource.srcDirs.joinToString(File.pathSeparator) { it.absolutePath }
         }
     }
 

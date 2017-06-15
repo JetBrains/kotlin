@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.SourceTask
@@ -335,7 +336,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     val outputFile: String
         get() = kotlinOptions.outputFile ?: defaultOutputFile.canonicalPath
 
-
     override fun findKotlinCompilerJar(project: Project): File? =
             findKotlinJsCompilerJar(project)
 
@@ -378,6 +378,12 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         }
 
         args.friendModules = friendDependency
+
+        args.sourceMapSourceRoots = source.orEmpty()
+                .asSequence()
+                .filterIsInstance<SourceDirectorySet>()
+                .flatMap { it.srcDirs.asSequence() }
+                .joinToString(File.pathSeparator) { it.absolutePath }
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 

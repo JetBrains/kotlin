@@ -45,7 +45,6 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "-source-map-prefix", description = "Prefix for paths in a source map")
     public String sourceMapPrefix;
 
-    @GradleOption(DefaultValues.StringNullDefault.class)
     @Argument(
             value = "-source-map-source-roots",
             valueDescription = "<path>",
