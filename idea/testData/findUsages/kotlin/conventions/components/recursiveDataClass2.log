@@ -2,6 +2,7 @@ Checked type of a1
 Checked type of b
 Checked type of n
 Checked type of s
+ExpressionOfTypeProcessor is already started for A. Exit for operator parameter b of A(val b: B, val n: Int).
 Resolved (a1, s)
 Resolved (b, n)
 Searched references to A

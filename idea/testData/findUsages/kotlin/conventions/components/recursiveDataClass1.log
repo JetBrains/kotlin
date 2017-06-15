@@ -4,6 +4,7 @@ Checked type of a2
 Checked type of n1
 Checked type of n2
 Checked type of n2
+ExpressionOfTypeProcessor is already started for A. Exit for operator parameter a of A(val a: A?, val n: Int).
 Resolved (a1, n1)
 Resolved (a2, n2)
 Resolved (a2, n2)

@@ -169,6 +169,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("severalOperators.0.kt")
+            public void testSeveralOperators() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/severalOperators.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unaryMinus.0.kt")
             public void testUnaryMinus() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/unaryMinus.0.kt");

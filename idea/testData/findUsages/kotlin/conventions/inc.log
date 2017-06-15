@@ -1,4 +1,5 @@
 Checked type of a
+ExpressionOfTypeProcessor is already started for A. Exit for operator A.inc().
 Resolved ++a
 Resolved a++
 Searched references to A

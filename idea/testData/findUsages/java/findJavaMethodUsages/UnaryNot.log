@@ -1,5 +1,6 @@
 Checked type of u1
 Checked type of u2
+ExpressionOfTypeProcessor is already started for UnaryNot. Exit for operator UnaryNot.not().
 Resolved !u1
 Searched references to UnaryNot
 Searched references to UnaryNot.not() in non-Java files

@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.search.excludeFileTypes
@@ -67,6 +66,7 @@ import java.util.*
 
 class ExpressionsOfTypeProcessor(
         private val typeToSearch: FuzzyType,
+        private val classToSearch: PsiClass?,
         private val searchScope: SearchScope,
         private val project: Project,
         private val possibleMatchHandler: (KtExpression) -> Unit,
@@ -120,7 +120,7 @@ class ExpressionsOfTypeProcessor(
     }
 
     private val tasks = ArrayDeque<Task>()
-    private val taskSet = HashSet<Any>()
+    private val taskSet = HashSet<Task>()
 
     private val scopesToUsePlainSearch = LinkedHashMap<KtFile, ArrayList<PsiElement>>()
 
@@ -130,7 +130,7 @@ class ExpressionsOfTypeProcessor(
             ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN -> true
             ExpressionsOfTypeProcessor.Mode.PLAIN_WHEN_NEEDED -> searchScope is LocalSearchScope // for local scope it's faster to use plain search
         }
-        if (usePlainSearch) {
+        if (usePlainSearch || classToSearch == null) {
             possibleMatchesInScopeHandler(searchScope)
             return
         }
@@ -138,15 +138,13 @@ class ExpressionsOfTypeProcessor(
         // optimization
         if (runReadAction { searchScope is GlobalSearchScope && !FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, searchScope) }) return
 
-        val psiClass = runReadAction { detectClassToSearch() }
-
         // for class from library always use plain search because we cannot search usages in compiled code (we could though)
-        if (psiClass == null || !runReadAction { psiClass.isValid && ProjectRootsUtil.isInProjectSource(psiClass) }) {
+        if (classToSearch == null || !runReadAction { classToSearch.isValid && ProjectRootsUtil.isInProjectSource(classToSearch) }) {
             possibleMatchesInScopeHandler(searchScope)
             return
         }
 
-        addClassToProcess(psiClass)
+        addClassToProcess(classToSearch)
 
         processTasks()
 
@@ -158,16 +156,6 @@ class ExpressionsOfTypeProcessor(
             if (scopeElements.isNotEmpty()) {
                 possibleMatchesInScopeHandler(LocalSearchScope(scopeElements))
             }
-        }
-    }
-
-    private fun detectClassToSearch(): PsiClass? {
-        val classDescriptor = typeToSearch.type.constructor.declarationDescriptor ?: return null
-        val classDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor)
-        return when (classDeclaration) {
-            is PsiClass -> classDeclaration
-            is KtClassOrObject -> classDeclaration.toLightClass()
-            else -> null
         }
     }
 
@@ -207,7 +195,6 @@ class ExpressionsOfTypeProcessor(
 
         return true
     }
-
 
     private fun addNonKotlinClassToProcess(classToSearch: PsiClass) {
         if (!checkPsiClass(classToSearch)) {
@@ -398,7 +385,10 @@ class ExpressionsOfTypeProcessor(
         }
 
         @Suppress("NAME_SHADOWING")
-        data class ProcessCallableUsagesTask(val declaration: PsiElement, val processor: ReferenceProcessor, val scope: SearchScope) : Task {
+        data class ProcessCallableUsagesTask(
+                val declaration: PsiElement,
+                val processor: ReferenceProcessor,
+                val scope: SearchScope) : Task {
             override fun perform() {
                 if (scope is LocalSearchScope) {
                     testLog { "Searched imported static member $declaration in ${scope.scope.toList()}" }
