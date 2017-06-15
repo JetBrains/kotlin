@@ -206,7 +206,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     //-------------------------------------------------------------------------//
 
     fun supertypesToString(supertypesId: List<Int>): String {
-        val buff = StringBuilder(" : ")
+        val buff = StringBuilder()
         supertypesId.dropLast(1).forEach { supertypeId ->
             val supertype = typeToString(supertypeId)
             if (supertype != "Any") buff.append("$supertype, ")
@@ -216,8 +216,8 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             if (supertype != "Any") buff.append(supertype)
         }
 
-        if (buff.toString() == " : ") return ""
-        return buff.toString()
+        if (buff.isEmpty()) return ""
+        return " : " + buff.toString()
     }
 
     //-------------------------------------------------------------------------//
