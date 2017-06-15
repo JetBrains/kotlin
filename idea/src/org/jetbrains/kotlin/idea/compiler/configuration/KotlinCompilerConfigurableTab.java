@@ -64,7 +64,8 @@ import java.util.List;
 import java.util.Map;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
-    private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<String, String>();
+    private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<>();
+    private static final Map<String, String> soruceMapSourceEmbeddingDescriptions = new LinkedHashMap<>();
     private static final List<LanguageFeature.State> languageFeatureStates = Arrays.asList(
             LanguageFeature.State.ENABLED, LanguageFeature.State.ENABLED_WITH_WARNING, LanguageFeature.State.ENABLED_WITH_ERROR
     );
@@ -75,6 +76,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_AMD, "AMD");
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_COMMONJS, "CommonJS");
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, "UMD (detect AMD or CommonJS if available, fallback to plain)");
+
+        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER, "Never");
+        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS, "Always");
+        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING,
+                                                 "When inlining a function from other module with embedded sources");
     }
 
     @Nullable
@@ -114,6 +120,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JLabel warningLabel;
     private JTextField sourceMapPrefix;
     private JLabel labelForSourceMapPrefix;
+    private JComboBox sourceMapEmbedSources;
     private boolean isEnabled = true;
 
     public KotlinCompilerConfigurableTab(
@@ -157,6 +164,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                          false);
 
         fillModuleKindList();
+        fillSourceMapSourceEmbeddingList();
         fillJvmVersionList();
         fillLanguageAndAPIVersionList();
         fillCoroutineSupportList();
@@ -259,11 +267,28 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     }
 
     @NotNull
+    private static String getSourceMapSourceEmbeddingDescription(@Nullable String sourceMapSourceEmbeddingId) {
+        if (sourceMapSourceEmbeddingId == null) return "";
+        String result = soruceMapSourceEmbeddingDescriptions.get(sourceMapSourceEmbeddingId);
+        assert result != null : "Source map source embedding mode " + sourceMapSourceEmbeddingId +
+                                " was not added to combobox, therefore it should not be here";
+        return result;
+    }
+
+    @NotNull
     private static String getModuleKindOrDefault(@Nullable String moduleKindId) {
         if (moduleKindId == null) {
             moduleKindId = K2JsArgumentConstants.MODULE_PLAIN;
         }
         return moduleKindId;
+    }
+
+    @NotNull
+    private static String getSourceMapSourceEmbeddingOrDefault(@Nullable String sourceMapSourceEmbeddingId) {
+        if (sourceMapSourceEmbeddingId == null) {
+            sourceMapSourceEmbeddingId = K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING;
+        }
+        return sourceMapSourceEmbeddingId;
     }
 
     private static String getJvmVersionOrDefault(@Nullable String jvmVersion) {
@@ -370,6 +395,19 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         });
     }
 
+    @SuppressWarnings("unchecked")
+    private void fillSourceMapSourceEmbeddingList() {
+        for (String moduleKind : soruceMapSourceEmbeddingDescriptions.keySet()) {
+            sourceMapEmbedSources.addItem(moduleKind);
+        }
+        sourceMapEmbedSources.setRenderer(new ListCellRendererWrapper<String>() {
+            @Override
+            public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
+                setText(value != null ? getSourceMapSourceEmbeddingDescription(value) : "");
+            }
+        });
+    }
+
     @NotNull
     @Override
     public String getId() {
@@ -409,13 +447,18 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                ComparingUtils.isModified(outputPostfixFile, k2jsCompilerArguments.outputPostfix) ||
                !getSelectedModuleKind().equals(getModuleKindOrDefault(k2jsCompilerArguments.moduleKind)) ||
                ComparingUtils.isModified(sourceMapPrefix, k2jsCompilerArguments.sourceMapPrefix) ||
-
+               !getSelectedSourceMapSourceEmbedding().equals(
+                       getSourceMapSourceEmbeddingOrDefault(k2jsCompilerArguments.sourceMapEmbedSources)) ||
                !getSelectedJvmVersion().equals(getJvmVersionOrDefault(k2jvmCompilerArguments.jvmTarget));
     }
 
     @NotNull
     private String getSelectedModuleKind() {
         return getModuleKindOrDefault((String) moduleKindComboBox.getSelectedItem());
+    }
+
+    private String getSelectedSourceMapSourceEmbedding() {
+        return getSourceMapSourceEmbeddingOrDefault((String) sourceMapEmbedSources.getSelectedItem());
     }
 
     @NotNull
@@ -499,6 +542,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         k2jsCompilerArguments.moduleKind = getSelectedModuleKind();
 
         k2jsCompilerArguments.sourceMapPrefix = sourceMapPrefix.getText();
+        k2jsCompilerArguments.sourceMapEmbedSources = getSelectedSourceMapSourceEmbedding();
 
         k2jvmCompilerArguments.jvmTarget = getSelectedJvmVersion();
 
@@ -542,6 +586,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         moduleKindComboBox.setSelectedItem(getModuleKindOrDefault(k2jsCompilerArguments.moduleKind));
         sourceMapPrefix.setText(k2jsCompilerArguments.sourceMapPrefix);
         sourceMapPrefix.setEnabled(k2jsCompilerArguments.sourceMap);
+        sourceMapEmbedSources.setSelectedItem(getSourceMapSourceEmbeddingOrDefault(k2jsCompilerArguments.sourceMapEmbedSources));
 
         jvmVersionComboBox.setSelectedItem(getJvmVersionOrDefault(k2jvmCompilerArguments.jvmTarget));
     }
