@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.org.objectweb.asm.*
@@ -31,7 +30,7 @@ import java.io.File
 class WrongBytecodeVersionTest : KtUsefulTestCase() {
     private val incompatibleVersion = JvmBytecodeBinaryVersion(42, 0, 0).toArray()
 
-    private fun doTest(relativeDirectory: String) {
+    private fun doTest(relativeDirectory: String, version: IntArray = incompatibleVersion) {
         val directory = KotlinTestUtils.getTestDataPathBase() + relativeDirectory
         val librarySource = File(directory, "A.kt")
         val usageSource = File(directory, "B.kt")
@@ -43,7 +42,7 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
 
         for (classFile in File(tmpdir, "library").listFiles { file -> file.extension == JavaClassFileType.INSTANCE.defaultExtension }) {
             classFile.writeBytes(transformMetadataInClassFile(classFile.readBytes()) { name, _ ->
-                if (name == JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME) incompatibleVersion else null
+                if (name == JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME) version else null
             })
         }
 
@@ -63,6 +62,10 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
 
     fun testSimple() {
         doTest("/bytecodeVersion/simple")
+    }
+
+    fun testObsoleteInlineSuspend() {
+        doTest("/bytecodeVersion/obsoleteInlineSuspend", intArrayOf(1, 0, 1))
     }
 
     companion object {
