@@ -1,12 +1,12 @@
-REMOVED: class ClassWithChangedCompanionObject$FirstName.class
-REMOVED: class ClassWithRemovedCompanionObject$Companion.class
-ADDED: class ClassWithAddedCompanionObject$Companion.class
-ADDED: class ClassWithChangedCompanionObject$SecondName.class
+REMOVED: class test/ClassWithChangedCompanionObject.FirstName
+REMOVED: class test/ClassWithRemovedCompanionObject.Companion
+ADDED: class test/ClassWithAddedCompanionObject.Companion
+ADDED: class test/ClassWithChangedCompanionObject.SecondName
 changes in test/ClassWithAddedCompanionObject: CLASS_SIGNATURE, MEMBERS
     [Companion]
 changes in test/ClassWithChangedCompanionObject: CLASS_SIGNATURE, MEMBERS
     [FirstName, SecondName]
-changes in test/ClassWithChangedVisibilityForCompanionObject.Companion: CLASS_SIGNATURE
 changes in test/ClassWithChangedVisibilityForCompanionObject: NONE
+changes in test/ClassWithChangedVisibilityForCompanionObject.Companion: CLASS_SIGNATURE
 changes in test/ClassWithRemovedCompanionObject: CLASS_SIGNATURE, MEMBERS
     [Companion]

@@ -37,8 +37,9 @@ abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         val oldClassFiles = compileFileAndGetClasses(testDataPath, testDir, "old")
         val newClassFiles = compileFileAndGetClasses(testDataPath, testDir, "new")
 
-        val oldClassMap = oldClassFiles.associateBy { it.name }
-        val newClassMap = newClassFiles.associateBy { it.name }
+
+        val oldClassMap = oldClassFiles.map { LocalFileKotlinClass.create(it)!!.let { it.classId to it } }.toMap()
+        val newClassMap = newClassFiles.map { LocalFileKotlinClass.create(it)!!.let { it.classId to it } }.toMap()
 
         val sb = StringBuilder()
         val p = Printer(sb)
@@ -46,17 +47,17 @@ abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         val oldSetOfNames = oldClassFiles.map { it.name }.toSet()
         val newSetOfNames = newClassFiles.map { it.name }.toSet()
 
-        val removedNames = (oldSetOfNames - newSetOfNames).sorted()
+        val removedNames = (oldClassMap.keys - newClassMap.keys).map { it.toString() }.sorted()
         removedNames.forEach {
             p.println("REMOVED: class $it")
         }
 
-        val addedNames = (newSetOfNames - oldSetOfNames).sorted()
+        val addedNames = (newClassMap.keys - oldClassMap.keys).map { it.toString() }.sorted()
         addedNames.forEach {
             p.println("ADDED: class $it")
         }
 
-        val commonNames = oldSetOfNames.intersect(newSetOfNames).sorted()
+        val commonNames = oldClassMap.keys.intersect(newClassMap.keys).sortedBy { it.toString() }
 
         for(name in commonNames) {
             p.printDifference(oldClassMap[name]!!, newClassMap[name]!!)
@@ -78,31 +79,30 @@ abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         return File(classesDirectory, "test").listFiles() { it -> it.name.endsWith(".class") }?.sortedBy { it.name }!!
     }
 
-    private fun Printer.printDifference(oldClassFile: File, newClassFile: File) {
+    private fun Printer.printDifference(oldClass: LocalFileKotlinClass, newClass: LocalFileKotlinClass) {
         fun KotlinJvmBinaryClass.readProto(): ProtoMapValue? {
             assert(classHeader.metadataVersion.isCompatible()) { "Incompatible class ($classHeader): $location" }
+
+            val bytes by lazy { BitEncoding.decodeBytes(classHeader.data!!) }
+            val strings by lazy { classHeader.strings!! }
+
             return when (classHeader.kind) {
-                KotlinClassHeader.Kind.CLASS, KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-                    ProtoMapValue(
-                            classHeader.kind != KotlinClassHeader.Kind.CLASS,
-                            BitEncoding.decodeBytes(classHeader.data!!),
-                            classHeader.strings!!
-                    )
+                KotlinClassHeader.Kind.CLASS -> {
+                    ProtoMapValue(false, bytes, strings)
+                }
+                KotlinClassHeader.Kind.FILE_FACADE,
+                KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+                    ProtoMapValue(true, bytes, strings)
                 }
                 else -> {
                     println("skip $classId")
-                    return null
+                    null
                 }
             }
         }
 
-        val oldClass = LocalFileKotlinClass.create(oldClassFile)!!
-        val newClass = LocalFileKotlinClass.create(newClassFile)!!
-
-        val diff = difference(
-                oldClass.readProto() ?: return,
-                newClass.readProto() ?: return
-        )
+        val diff = difference(oldClass.readProto() ?: return,
+                              newClass.readProto() ?: return)
 
         val changes = SmartList<String>()
 
