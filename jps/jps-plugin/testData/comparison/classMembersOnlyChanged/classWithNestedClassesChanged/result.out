@@ -1,9 +1,9 @@
-REMOVED: class ClassWithNestedClasses$NestedClassRemoved.class
-ADDED: class ClassWithNestedClasses$InnerClassAdded.class
-ADDED: class ClassWithNestedClasses$NestedClassAdded.class
+REMOVED: class test/ClassWithNestedClasses.NestedClassRemoved
+ADDED: class test/ClassWithNestedClasses.InnerClassAdded
+ADDED: class test/ClassWithNestedClasses.NestedClassAdded
+changes in test/ClassWithChangedVisibilityForNestedClasses: NONE
 changes in test/ClassWithChangedVisibilityForNestedClasses.InnerClass: CLASS_SIGNATURE
 changes in test/ClassWithChangedVisibilityForNestedClasses.NestedClass: CLASS_SIGNATURE
-changes in test/ClassWithChangedVisibilityForNestedClasses: NONE
-changes in test/ClassWithNestedClasses.InnerClass: NONE
 changes in test/ClassWithNestedClasses: MEMBERS
     [InnerClassAdded, NestedClassAdded, NestedClassRemoved]
+changes in test/ClassWithNestedClasses.InnerClass: NONE
