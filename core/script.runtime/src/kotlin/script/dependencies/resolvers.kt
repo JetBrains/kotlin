@@ -19,36 +19,43 @@
 package kotlin.script.dependencies
 
 import java.io.File
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
+import kotlin.script.dependencies.DependenciesResolver.ResolveResult
 
-interface ScriptDependenciesResolver {
+typealias Environment = Map<String, Any?>
 
-    enum class ReportSeverity { ERROR, WARNING, INFO, DEBUG }
+interface DependenciesResolver {
+    fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult
 
-    fun resolve(script: ScriptContents,
-                environment: Map<String, Any?>?,
-                report: (ReportSeverity, String, ScriptContents.Position?) -> Unit,
-                previousDependencies: KotlinScriptExternalDependencies?
-    ): Future<KotlinScriptExternalDependencies?> = PseudoFuture(null)
+    object NoDependencies : DependenciesResolver {
+        override fun resolve(scriptContents: ScriptContents, environment: Environment) = ScriptDependencies.Empty.asSuccess()
+    }
+
+    sealed class ResolveResult {
+        abstract val dependencies: ScriptDependencies?
+        abstract val reports: List<ScriptReport>
+
+        data class Success(
+                override val dependencies: ScriptDependencies,
+                override val reports: List<ScriptReport> = listOf()
+        ) : ResolveResult()
+
+        data class Failure(override val reports: List<ScriptReport>) : ResolveResult() {
+            constructor(vararg reports: ScriptReport) : this(reports.asList())
+
+            override val dependencies: ScriptDependencies? get() = null
+        }
+    }
 }
 
-class BasicScriptDependenciesResolver : ScriptDependenciesResolver
 interface ScriptContents {
-
-    data class Position(val line: Int, val col: Int)
-
     val file: File?
     val annotations: Iterable<Annotation>
     val text: CharSequence?
 }
 
-fun KotlinScriptExternalDependencies?.asFuture(): PseudoFuture<KotlinScriptExternalDependencies?> = PseudoFuture(this)
-
-class PseudoFuture<T>(private val value: T): Future<T> {
-    override fun get(): T = value
-    override fun get(p0: Long, p1: TimeUnit): T  = value
-    override fun cancel(p0: Boolean): Boolean = false
-    override fun isDone(): Boolean = true
-    override fun isCancelled(): Boolean = false
+data class ScriptReport(val message: String, val severity: Severity = ScriptReport.Severity.ERROR, val position: Position? = null) {
+    data class Position(val startLine: Int, val startColumn: Int, val endLine: Int? = null, val endColumn: Int? = null)
+    enum class Severity { ERROR, WARNING, INFO, DEBUG }
 }
+
+fun ScriptDependencies.asSuccess(): ResolveResult.Success = ResolveResult.Success(this)
