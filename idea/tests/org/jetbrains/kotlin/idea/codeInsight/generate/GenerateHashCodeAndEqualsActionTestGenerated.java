@@ -132,15 +132,9 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
         doTest(fileName);
     }
 
-    @TestMetadata("noVarsForced.kt")
-    public void testNoVarsForced() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsForced.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("noVarsForcedWithSuperClass.kt")
-    public void testNoVarsForcedWithSuperClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsForcedWithSuperClass.kt");
+    @TestMetadata("noVarsWithSuperClass.kt")
+    public void testNoVarsWithSuperClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsWithSuperClass.kt");
         doTest(fileName);
     }
 

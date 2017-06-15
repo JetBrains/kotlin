@@ -74,12 +74,12 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
     override fun isValidForClass(targetClass: KtClassOrObject): Boolean {
         return targetClass is KtClass
                && targetClass !is KtEnumEntry
+               && !targetClass.isEnum()
                && !targetClass.isAnnotation()
                && !targetClass.isInterface()
                && (!targetClass.isData() || isValidForDataClass(targetClass))
-               && getPropertiesToUseInGeneratedMember(targetClass).isNotEmpty()
     }
-    
+
     private fun isValidForDataClass(targetClass: KtClass): Boolean {
         val constructor = targetClass.primaryConstructor ?: return false
         val context = constructor.analyze(BodyResolveMode.PARTIAL)
@@ -226,7 +226,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             val initialValue = when {
                 !builtins.isMemberOfAny(superHashCode) -> "super.hashCode()"
                 propertyIterator.hasNext() -> propertyIterator.next().genVariableHashCode(false)
-                else -> "0"
+                else -> "javaClass.hashCode()"
             }
 
             val bodyText = if (propertyIterator.hasNext()) {

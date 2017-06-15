@@ -1,4 +1,3 @@
-// FORCED
 class A {
     fun foo() {
 
@@ -11,6 +10,6 @@ class A {
     }
 
     override fun hashCode(): Int {
-        return 0
+        return javaClass.hashCode()
     }
 }

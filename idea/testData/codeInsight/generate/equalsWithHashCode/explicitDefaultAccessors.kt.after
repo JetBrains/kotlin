@@ -12,9 +12,7 @@ class Test {
     }
 
     override fun hashCode(): Int {
-        return 0
+        return javaClass.hashCode()
     }
 
 }
-
-// FORCED
