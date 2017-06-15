@@ -99,9 +99,7 @@ open class GenericReplCompiler(disposable: Disposable,
             compilerState.history.push(LineId(codeLine), scriptDescriptor)
 
             val expression = PsiTreeUtil.getChildOfType<KtExpression>(psiFile, KtExpression::class.java)
-            val type = expression?.let {
-                compilerState.analyzerEngine.trace.bindingContext.getType(expression)
-            }
+            val type = if (expression != null) compilerState.analyzerEngine.trace.bindingContext.getType(expression) else null
 
             return ReplCompileResult.CompiledClasses(LineId(codeLine),
                                                      compilerState.history.map { it.id },
