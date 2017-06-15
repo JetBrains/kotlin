@@ -323,6 +323,18 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callers"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
+        @TestMetadata("callInsideAnonymousFun")
+        public void testCallInsideAnonymousFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/callInsideAnonymousFun/");
+            doCallerHierarchyTest(fileName);
+        }
+
+        @TestMetadata("callInsideLambda")
+        public void testCallInsideLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/callInsideLambda/");
+            doCallerHierarchyTest(fileName);
+        }
+
         @TestMetadata("kotlinClass")
         public void testKotlinClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinClass/");

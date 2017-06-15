@@ -40,13 +40,12 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.hierarchy.calls.CalleeReferenceProcessor
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallHierarchyNodeDescriptor
-import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallerMethodsTreeStructure
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import java.util.HashSet
-import java.util.LinkedHashSet
+import java.util.*
 
 class KotlinCallerChooser(
         declaration: PsiElement,
@@ -110,7 +109,7 @@ class KotlinMethodNode(
 
         val callers = LinkedHashSet<PsiElement>()
 
-        val processor = object: KotlinCallerMethodsTreeStructure.CalleeReferenceProcessor(false) {
+        val processor = object: CalleeReferenceProcessor(false) {
             override fun onAccept(ref: PsiReference, element: PsiElement) {
                 if ((element is KtFunction || element is KtClass || element is PsiMethod) && element !in myCalled) {
                     callers.add(element)

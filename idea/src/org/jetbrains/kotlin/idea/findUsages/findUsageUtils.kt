@@ -36,3 +36,18 @@ fun KtDeclaration.processAllExactUsages(
             options()
     )
 }
+
+fun KtDeclaration.processAllUsages(
+        options: FindUsagesOptions,
+        processor: (UsageInfo) -> Unit
+) {
+    val findUsagesHandler = KotlinFindUsagesHandlerFactory(project).createFindUsagesHandler(this, false, false)
+    findUsagesHandler.processElementUsages(
+            this,
+            {
+                processor(it)
+                true
+            },
+            options
+    )
+}

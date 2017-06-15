@@ -1,0 +1,5 @@
+<node text="foo()  ()" base="true">
+    <node text="bar()  ()">
+        <node text="baz()  ()"/>
+    </node>
+</node>

@@ -20,24 +20,9 @@ import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-
-fun isCallHierarchyElement(e: PsiElement): Boolean {
-    return e is PsiMethod ||
-           e is PsiClass ||
-           e is KtFile ||
-           e is KtNamedFunction ||
-           e is KtSecondaryConstructor ||
-           e is KtObjectDeclaration ||
-           e is KtClass && !e.isInterface() ||
-           e is KtProperty
-}
 
 fun getCurrentElement(dataContext: DataContext, project: Project): PsiElement? {
     val editor = CommonDataKeys.EDITOR.getData(dataContext)
@@ -49,5 +34,3 @@ fun getCurrentElement(dataContext: DataContext, project: Project): PsiElement? {
 
     return CommonDataKeys.PSI_ELEMENT.getData(dataContext)
 }
-
-fun getCallHierarchyElement(element: PsiElement) = element.parentsWithSelf.firstOrNull(::isCallHierarchyElement)
