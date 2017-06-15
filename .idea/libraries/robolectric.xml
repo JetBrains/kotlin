@@ -1,0 +1,59 @@
+<component name="libraryTable">
+  <library name="robolectric">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/accessibility-test-framework-2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/ant-1.8.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/ant-launcher-1.8.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/asm-5.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/asm-commons-5.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/asm-tree-5.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/assertj-core-2.6.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/backport-util-concurrent-3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/bcprov-jdk16-1.46.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/classworlds-1.1-alpha-2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/guava-20.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/hamcrest-core-1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/hamcrest-library-1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/icu4j-53.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/maven-ant-tasks-2.1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/maven-artifact-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/maven-artifact-manager-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/maven-error-diagnostics-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/maven-model-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/maven-plugin-registry-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/maven-profile-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/maven-project-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/maven-repository-metadata-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/maven-settings-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/nekohtml-1.9.6.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/plexus-container-default-1.0-alpha-9-stable-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/plexus-interpolation-1.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/plexus-utils-1.5.15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/protobuf-java-2.6.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/robolectric-3.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/robolectric-annotations-3.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/robolectric-junit-3.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/robolectric-resources-3.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/robolectric-sandbox-3.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/robolectric-utils-3.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/shadow-api-3.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/shadows-core-3.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/sqlite4java-0.282.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/wagon-file-1.0-beta-6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/wagon-http-lightweight-1.0-beta-6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/wagon-http-shared-1.0-beta-6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/wagon-provider-api-1.0-beta-6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/xercesMinimal-1.9.6.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/xmlpull-1.1.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/xpp3_min-1.1.4c.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/xstream-1.4.8.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/robolectric-3.3.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/robolectric-3.3.2-sources-source.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/robolectric/robolectric-3.3.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
