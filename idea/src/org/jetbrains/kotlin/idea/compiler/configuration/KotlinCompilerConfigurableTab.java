@@ -319,7 +319,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         apiVersionComboBox.setSelectedItem(
                 VersionComparatorUtil.compare(selectedAPIVersion.getVersionString(), upperBound.getVersionString()) <= 0
                 ? selectedAPIVersion
-                : upperBound
+                : ApiVersion.createByLanguageVersion(upperBound)
         );
     }
 
