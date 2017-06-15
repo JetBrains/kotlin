@@ -56,12 +56,6 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             doTest(fileName);
         }
 
-        @TestMetadata("classToFileFacade")
-        public void testClassToFileFacade() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classToFileFacade/");
-            doTest(fileName);
-        }
-
         @TestMetadata("classTypeParameterListChanged")
         public void testClassTypeParameterListChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classTypeParameterListChanged/");
@@ -71,12 +65,6 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
         @TestMetadata("classWithSuperTypeListChanged")
         public void testClassWithSuperTypeListChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("packageFacadeToClass")
-        public void testPackageFacadeToClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/packageFacadeToClass/");
             doTest(fileName);
         }
     }
@@ -197,12 +185,6 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             doTest(fileName);
         }
 
-        @TestMetadata("packageFacadeMultifileClassChanged")
-        public void testPackageFacadeMultifileClassChanged() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadeMultifileClassChanged/");
-            doTest(fileName);
-        }
-
         @TestMetadata("packageFacadePrivateOnlyChanges")
         public void testPackageFacadePrivateOnlyChanges() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadePrivateOnlyChanges/");
@@ -233,6 +215,39 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
         @TestMetadata("unchangedPackageFacade")
         public void testUnchangedPackageFacade() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/unchanged/unchangedPackageFacade/");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("jps-plugin/testData/comparison/jvmOnly")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmOnly extends AbstractProtoComparisonTest {
+        public void testAllFilesPresentInJvmOnly() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/jvmOnly"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("classToFileFacade")
+        public void testClassToFileFacade() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/jvmOnly/classToFileFacade/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("membersFlagsChanged")
+        public void testMembersFlagsChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/jvmOnly/membersFlagsChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageFacadeMultifileClassChanged")
+        public void testPackageFacadeMultifileClassChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/jvmOnly/packageFacadeMultifileClassChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageFacadeToClass")
+        public void testPackageFacadeToClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/jvmOnly/packageFacadeToClass/");
             doTest(fileName);
         }
     }
