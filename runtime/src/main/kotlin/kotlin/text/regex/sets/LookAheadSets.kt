@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package kotlin.text
+package kotlin.text.regex
 
 /**
  * Positive lookahead node.

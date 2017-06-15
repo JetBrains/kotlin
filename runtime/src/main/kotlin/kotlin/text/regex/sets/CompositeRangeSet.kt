@@ -80,7 +80,7 @@
  *  indicating the source. 
  */
 
-package kotlin.text
+package kotlin.text.regex
 
 /**
  * This class is used to split the range that contains surrogate characters into two ranges:

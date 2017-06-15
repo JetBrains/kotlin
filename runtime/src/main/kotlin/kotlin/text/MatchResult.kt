@@ -16,6 +16,8 @@
 
 package kotlin.text
 
+import kotlin.text.regex.*
+
 /**
  * Represents a collection of captured groups in a single match of a regular expression.
  *

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package kotlin.text
+package kotlin.text.regex
 
 /**
  * Reluctant quantifier node over a leaf node.

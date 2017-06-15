@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package kotlin.text
+package kotlin.text.regex
 
 /**
  * Represents canonical decomposition of Hangul syllable. Is used when

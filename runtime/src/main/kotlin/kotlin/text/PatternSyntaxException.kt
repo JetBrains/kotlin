@@ -24,7 +24,5 @@ package kotlin.text
  *
  * @author Nikolay A. Kuznetsov
  */
-
-// TODO: Rewrite
 class PatternSyntaxException(val description: String = "", val pattern: String = "", index: Int = -1)
     : IllegalArgumentException("Error in \"$pattern\" ($index). $description")

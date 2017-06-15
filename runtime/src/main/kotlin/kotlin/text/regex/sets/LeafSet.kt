@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package kotlin.text
+package kotlin.text.regex
 
 /**
  * Base class for nodes representing leaf tokens of the RE, those who consumes fixed number of characters.

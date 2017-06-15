@@ -16,6 +16,8 @@
 
 package kotlin.text
 
+import kotlin.text.regex.*
+
 private interface FlagEnum {
     val value: Int
     val mask: Int

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package kotlin.text
+package kotlin.text.regex
 
 /**
  * Optimized greedy quantifier node ('*') for the case where there is no intersection with

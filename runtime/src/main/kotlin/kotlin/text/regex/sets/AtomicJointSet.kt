@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package kotlin.text
+package kotlin.text.regex
 
 /**
  * This class represent atomic group (?>X), once X matches, this match become unchangeable till the end of the match.

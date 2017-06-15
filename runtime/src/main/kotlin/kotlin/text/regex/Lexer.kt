@@ -16,7 +16,22 @@
  */
 // TODO: Licenses.
 
-package kotlin.text
+package kotlin.text.regex
+
+// Access to the decomposition tables. =========================================================================
+/** Gets canonical class for given codepoint from decomposition mappings table. */
+@SymbolName("Kotlin_text_regex_getCanonicalClassInternal")
+external private fun getCanonicalClassInternal(ch: Int): Int
+
+/** Check if the given character is in table of single decompositions. */
+@SymbolName("Kotlin_text_regex_hasSingleCodepointDecompositionInternal")
+external private fun hasSingleCodepointDecompositionInternal(ch: Int): Boolean
+
+/** Returns a decomposition for a given codepoint. */
+@SymbolName("Kotlin_text_getDecompositionInternal")
+external private fun getDecompositionInternal(ch: Int): IntArray?
+
+// =============================================================================================================
 
 /**
  * The purpose of this class is to break given pattern into RE tokens;
@@ -749,8 +764,18 @@ internal class Lexer(val patternString: String, flags: Int) {
             return ch >= 0
         }
 
+        private fun String.codePointAt(index: Int): Int {
+            val high = this[index]
+            if (high.isHighSurrogate() && index + 1 < this.length) {
+                val low = this[index + 1]
+                if (low.isLowSurrogate()) {
+                    return Char.toCodePoint(high, low)
+                }
+            }
+            return high.toInt()
+        }
+
         // Decomposition ===============================================================================================
-        // TODO: Move to C++ side.
         // Maximum length of decomposition.
         val MAX_DECOMPOSITION_LENGTH = 4
         // Maximum length of Hangul decomposition. Note that MAX_HANGUL_DECOMPOSITION_LENGTH <= MAX_DECOMPOSITION_LENGTH.
@@ -772,33 +797,24 @@ internal class Lexer(val patternString: String, flags: Int) {
         val TCount = 28
         val NCount = 588
 
-        // TODO: Use decomposition tables on C++ side.
-        // TODO: Harmony uses its own IntHash and IntArrHash classes here.
-        // Canonical decomposition mappings
-        private var decompTable: IntArrHash? = null
+        // Access to the decomposition tables. =========================================================================
+        /** Gets canonical class for given codepoint from decomposition mappings table. */
+        fun getCanonicalClass(ch: Int): Int = getCanonicalClassInternal(ch)
 
-        // TODO: Decompositions:
-        // Table that contains canonical combining classes
-        private var canonClassesTable: IntHash? = null
-        private var canonClassesTableSize: Int = 0
+        /** Tests Unicode codepoint if it is a boundary of decomposed Unicode codepoint. */
+        fun isDecomposedCharBoundary(ch: Int): Boolean = getCanonicalClass(ch) == 0
 
-        /*
-         * Table that contains information about Unicode codepoints with
-         * single codepoint decomposition
-         */
-        private var singleDecompTable: IntHash? = null
-        private var singleDecompTableSize: Int = 0
+        /** Tests if given codepoint is a canonical decomposition of another codepoint. */
+        fun hasSingleCodepointDecomposition(ch: Int): Boolean = hasSingleCodepointDecompositionInternal(ch)
 
-        private fun String.codePointAt(index: Int): Int {
-            val high = this[index]
-            if (high.isHighSurrogate() && index + 1 < this.length) {
-                val low = this[index + 1]
-                if (low.isLowSurrogate()) {
-                    return Char.toCodePoint(high, low)
-                }
-            }
-            return high.toInt()
-        }
+        /** Tests if given codepoint has canonical decomposition and given codepoint's canonical class is not 0. */
+        fun hasDecompositionNonNullCanClass(ch: Int): Boolean =
+            (ch == 0x0340) or (ch == 0x0341) or (ch == 0x0343) or (ch == 0x0344)
+
+        /** Gets decomposition for given codepoint from decomposition mappings table. */
+        fun getDecomposition(ch: Int): IntArray? = getDecompositionInternal(ch)
+
+        // =============================================================================================================
 
         /**
          * Normalize given expression.
@@ -832,12 +848,6 @@ internal class Lexer(val patternString: String, flags: Int) {
 
             //result of canonical decomposition of input in UTF-16 encoding
             val result = StringBuilder()
-
-            decompTable = HashDecompositions.hashDecompositions
-            canonClassesTable = CanClasses.hashCanClasses
-            canonClassesTableSize = canonClassesTable!!.size
-            singleDecompTable = SingleDecompositions.hashSingleDecompositions
-            singleDecompTableSize = singleDecompTable!!.size
 
             run {
                 var i = 0
@@ -963,21 +973,6 @@ internal class Lexer(val patternString: String, flags: Int) {
             return inputInts
         }
 
-
-        /**
-         * Gets decomposition for given codepoint from
-         * decomposition mappings table.
-
-         * @param ch - Unicode codepoint
-         * *
-         * @return array of codepoints that is a canonical
-         * *         decomposition of currentChar.
-         */
-        // TODO @C++.
-        fun getDecomposition(ch: Int): IntArray? {
-            return decompTable!!.get(ch)
-        }
-
         /**
          * Gets decomposition for given Hangul syllable.
          * This is an implementation of Hangul decomposition algorithm
@@ -1008,62 +1003,6 @@ internal class Lexer(val patternString: String, flags: Int) {
                 }
                 return decomp
             }
-        }
-
-        /**
-         * Gets canonical class for given codepoint from
-         * decomposition mappings table.
-
-         * @param - currentChar Unicode codepoint
-         * *
-         * @return canonical class for given Unicode codepoint
-         * *         that is represented by currentChar.
-         */
-        // TODO: C++
-        fun getCanonicalClass(ch: Int): Int {
-            return canonClassesTable!!.get(ch) ?: 0
-        }
-
-        /**
-         * Tests if given codepoint is a canonical decomposition of another
-         * codepoint.
-
-         * @param ch - codepoint to test
-         * *
-         * @return true if currentChar is a decomposition.
-         */
-        // TODO: C++. Called from Pattern
-        fun hasSingleCodepointDecomposition(ch: Int): Boolean = singleDecompTable!!.get(ch) != null
-
-        /**
-         * Tests if given codepoint has canonical decomposition
-         * and given codepoint's canonical class is not 0.
-
-         * @param ch - codepoint to test
-         * *
-         * @return true if canonical class is not 0 and currentChar has a decomposition.
-         */
-        //  TODO: It's Ok to have this here. Called from DecomposedCharSet.
-        fun hasDecompositionNonNullCanClass(ch: Int): Boolean {
-            return (ch == 0x0340) or (ch == 0x0341) or (ch == 0x0343) or (ch == 0x0344)
-        }
-
-        /**
-         * Tests Unicode codepoint if it is a boundary
-         * of decomposed Unicode codepoint.
-
-         * @param ch - Unicode codepoint to test
-         * *
-         * @return true if given codepoint is a boundary.
-         */
-        // TODO: Move to C++ side.
-        fun isDecomposedCharBoundary(ch: Int): Boolean {
-            val canClass = canonClassesTable!!.get(ch)
-
-            //Lexer.getCanonicalClass(currentChar) == 0
-            val isBoundary = canClass == null
-
-            return isBoundary
         }
     }
 }

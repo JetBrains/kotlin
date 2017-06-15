@@ -523,27 +523,6 @@ constexpr KChar typeValues[] = {
   0xffd7, 0x5, 0xffdc, 0x5, 0xffe1, 0x1a, 0xffe3, 0x1b19, 0xffe5, 0x1a1c, 0xffe6, 0x1a, 0xffe9, 0x191c, 0xffec, 0x19, 0xffee, 0x1c, 0xfffb, 0x10
 };
 
-template <typename T>
-int binarySearchRange(const T* array, int arrayLength, T needle) {
-  int bottom = 0;
-  int top = arrayLength - 1;
-  int middle = -1;
-  T value = 0;
-  while (bottom <= top) {
-    middle = (bottom + top) / 2;
-    value = array[middle];
-    if (needle > value)
-      bottom = middle + 1;
-    else if (needle == value)
-      return middle;
-    else
-      top = middle - 1;
-  }
-  return middle - (needle < value ? 1 : 0);
-}
-
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-
 KInt getType(KChar ch) {
   if (ch < 1000) {
     return typeValuesCache[ch];

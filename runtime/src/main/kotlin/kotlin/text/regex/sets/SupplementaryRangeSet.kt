@@ -80,7 +80,7 @@
  *  indicating the source. 
  */
 
-package kotlin.text
+package kotlin.text.regex
 
 /**
  * Represents node accepting single character from the given char class.

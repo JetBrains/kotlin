@@ -1,6 +1,6 @@
 // TODO: License.
 
-package kotlin.text
+package kotlin.text.regex
 
 import kotlin.IllegalArgumentException
 

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package kotlin.text
+package kotlin.text.regex
 
 /** Represents canonical decomposition of Unicode character. Is used when CANON_EQ flag of Pattern class is specified. */
 // TODO: Refactor it.

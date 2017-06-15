@@ -80,7 +80,7 @@
  *  indicating the source. 
  */
 
-package kotlin.text
+package kotlin.text.regex
 
 /*
  * This class is a range that contains only surrogate characters.

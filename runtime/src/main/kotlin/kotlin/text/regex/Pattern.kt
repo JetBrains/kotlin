@@ -1,4 +1,4 @@
-package kotlin.text
+package kotlin.text.regex
 
 /**
  * Apache Harmony Pattern class implementation.
