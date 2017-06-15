@@ -21,50 +21,44 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.getArguments
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class ReplaceRangeToWithUntilInspection : AbstractPrimitiveRangeToInspection() {
-
+class EmptyRangeInspection : AbstractPrimitiveRangeToInspection() {
     override fun visitRangeToExpression(expression: KtExpression, holder: ProblemsHolder) {
-        if (expression.getArguments()?.second?.isMinusOne() != true) return
+        val (left, right) = expression.getArguments() ?: return
+
+        val context = expression.analyze(BodyResolveMode.PARTIAL)
+        val startValue = left?.longValueOrNull(context) ?: return
+        val endValue = right?.longValueOrNull(context) ?: return
+
+        if (startValue <= endValue) return
 
         holder.registerProblem(
                 expression,
-                "'rangeTo' or the '..' call can be replaced with 'until'",
+                "This range is empty. Did you mean to use 'downTo'?",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                ReplaceWithUntilQuickFix()
-        )
+                ReplaceWithDownToFix())
     }
 
-    class ReplaceWithUntilQuickFix : LocalQuickFix {
-
-        override fun getName() = "Replace with until"
-
-        override fun getFamilyName() = name
+    class ReplaceWithDownToFix : LocalQuickFix {
+        override fun getFamilyName() = "Replace with 'downTo'"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val element = descriptor.psiElement as KtExpression
-            val args = element.getArguments() ?: return
-            element.replace(KtPsiFactory(element).createExpressionByPattern(
-                    "$0 until $1",
-                    args.first ?: return,
-                    (args.second as? KtBinaryExpression)?.left ?: return)
-            )
-        }
+            val element = descriptor.psiElement as? KtExpression ?: return
+            val (left, right) = element.getArguments() ?: return
+            if (left == null || right == null) return
 
+            element.replace(KtPsiFactory(element).createExpressionByPattern("$0 downTo $1", left, right))
+        }
     }
 
-    private fun KtExpression.isMinusOne(): Boolean {
-        if (this !is KtBinaryExpression) return false
-        if (operationToken != KtTokens.MINUS) return false
-
-        val constantValue = right?.constantValueOrNull()
-        val rightValue = (constantValue?.value as? Number)?.toInt() ?: return false
-        return rightValue == 1
+    private fun KtExpression.longValueOrNull(context: BindingContext): Long? {
+        return (constantValueOrNull(context)?.value as? Number)?.toLong()
     }
 }
