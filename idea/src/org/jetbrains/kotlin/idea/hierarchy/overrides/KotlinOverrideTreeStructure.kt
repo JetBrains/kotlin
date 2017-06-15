@@ -33,9 +33,9 @@ class KotlinOverrideTreeStructure(project: Project, val element: PsiElement) : H
         setBaseElement(javaTreeStructures.first().baseDescriptor!!)
     }
 
-    override fun buildChildren(descriptor: HierarchyNodeDescriptor): Array<Any> {
+    override fun buildChildren(nodeDescriptor: HierarchyNodeDescriptor): Array<Any> {
         fun buildChildrenByTreeStructure(javaTreeStructure: MethodHierarchyTreeStructure): Array<Any> {
-            return javaTreeStructure.getChildElements(descriptor as MethodHierarchyNodeDescriptor) ?: ArrayUtil.EMPTY_OBJECT_ARRAY
+            return javaTreeStructure.getChildElements(nodeDescriptor as MethodHierarchyNodeDescriptor) ?: ArrayUtil.EMPTY_OBJECT_ARRAY
         }
 
         return javaTreeStructures

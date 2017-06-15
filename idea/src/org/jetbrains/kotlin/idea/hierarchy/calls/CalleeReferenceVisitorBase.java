@@ -36,7 +36,7 @@ public abstract class CalleeReferenceVisitorBase extends KtTreeVisitorVoid {
         this.deepTraversal = deepTraversal;
     }
 
-    protected abstract void processDeclaration(KtSimpleNameExpression reference, PsiElement declaration);
+    protected abstract void processDeclaration(@NotNull KtSimpleNameExpression reference, @NotNull PsiElement declaration);
 
     @Override
     public void visitKtElement(@NotNull KtElement element) {
