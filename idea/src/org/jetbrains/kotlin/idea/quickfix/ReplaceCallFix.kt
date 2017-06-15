@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 abstract class ReplaceCallFix(
         expression: KtQualifiedExpression,
@@ -77,6 +80,39 @@ class ReplaceWithSafeCallFix(expression: KtDotQualifiedExpression): ReplaceCallF
                 }
                 return null
             }
+        }
+    }
+}
+
+class ReplaceWithSafeCallForScopeFunctionFix(expression: KtDotQualifiedExpression) : ReplaceCallFix(expression, "?.") {
+
+    override fun getText() = "Replace scope function with safe (?.) call"
+
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
+            val element = diagnostic.psiElement
+            val callExpression = if (element.parent is KtCallExpression)
+                element.parent.getStrictParentOfType<KtCallExpression>()
+            else
+                element.getStrictParentOfType<KtCallExpression>()
+            if (callExpression == null || !callExpression.isScopeFunction()) return null
+            val dotQualifiedExpression = element.getStrictParentOfType<KtDotQualifiedExpression>() ?: return null
+            if (element is KtNameReferenceExpression) return ReplaceWithSafeCallForScopeFunctionFix(dotQualifiedExpression)
+            val receiverExpressionText = dotQualifiedExpression.receiverExpression.text ?: return null
+            val functionLiteral = element.getStrictParentOfType<KtFunctionLiteral>() ?: return null
+            when {
+                functionLiteral.hasParameterSpecification() -> if (functionLiteral.valueParameters.firstOrNull { it.text == receiverExpressionText } == null) return null
+                listOf("let", "also").contains(callExpression.calleeExpression?.text) -> if (receiverExpressionText != "it") return null
+                else -> if (receiverExpressionText != "this") return null
+            }
+            val targetExpression = callExpression.getStrictParentOfType<KtDotQualifiedExpression>() ?: return null
+            return ReplaceWithSafeCallForScopeFunctionFix(targetExpression)
+        }
+
+        private fun KtCallExpression.isScopeFunction(): Boolean {
+            val resolvedCall = this.getResolvedCall(this.analyze()) ?: return false
+            val methodName = resolvedCall.resultingDescriptor.fqNameUnsafe.asString()
+            return listOf("kotlin.let", "kotlin.apply", "kotlin.run", "kotlin.also").firstOrNull { it == methodName } != null
         }
     }
 }
