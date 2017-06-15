@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.backend.konan.serialization.Base64
 import org.jetbrains.kotlin.backend.konan.serialization.parseModuleHeader
 import org.jetbrains.kotlin.backend.konan.serialization.parsePackageFragment
-
 import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializerProtocol
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -39,8 +38,7 @@ class PrettyPrinter(val library: Base64, val packageLoader: (String) -> Base64) 
         get() = moduleHeader.packageFragmentNameList
 
     fun printPackageFragment(fqname: String) {
-        if (fqname.isNotEmpty()) println("package $fqname" )
-        if (fqname.isNotEmpty()) println("package $fqname" )
+        if (fqname.isNotEmpty()) println("\nPackage $fqname\n" )
         val fragment = packageFragment(fqname)
         PackageFragmentPrinter(fragment, out).print()
     }
@@ -70,8 +68,8 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
                 ProtoBuf.Class.Kind.INTERFACE        -> printClass(protoClass)
                 ProtoBuf.Class.Kind.ENUM_ENTRY       -> printEnum(protoClass)
                 ProtoBuf.Class.Kind.ANNOTATION_CLASS -> printClass(protoClass)
-                ProtoBuf.Class.Kind.OBJECT           -> printObject(protoClass)
-                ProtoBuf.Class.Kind.COMPANION_OBJECT -> printObject(protoClass)
+                ProtoBuf.Class.Kind.OBJECT           -> printClass(protoClass)
+                ProtoBuf.Class.Kind.COMPANION_OBJECT -> printClass(protoClass)
             }
         }
 
@@ -208,7 +206,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     //-------------------------------------------------------------------------//
 
     fun supertypesToString(supertypesId: List<Int>): String {
-        val buff = StringBuilder(": ")
+        val buff = StringBuilder(" : ")
         supertypesId.dropLast(1).forEach { supertypeId ->
             val supertype = typeToString(supertypeId)
             if (supertype != "Any") buff.append("$supertype, ")
@@ -218,7 +216,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             if (supertype != "Any") buff.append(supertype)
         }
 
-        if (buff.toString() == ": ") return ""
+        if (buff.toString() == " : ") return ""
         return buff.toString()
     }
 
@@ -298,8 +296,6 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     //-------------------------------------------------------------------------//
 
     fun valueParametersToString(valueParameters: List<ProtoBuf.ValueParameter>): String {
-        if (valueParameters.isEmpty()) return ""
-
         val buff = StringBuilder("(")
         valueParameters.dropLast(1).forEach { valueParameter ->
             val parameter = valueParameterToString(valueParameter)
@@ -319,10 +315,11 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         val type = typeToString(protoValueParameter.typeId)
         val flags = protoValueParameter.flags
         val isCrossInline = crossInlineToString(Flags.IS_CROSSINLINE.get(flags))
+        val visibility = visibilityToString(Flags.VISIBILITY.get(flags))
         val protoAnnotations = protoValueParameter.getExtension(KonanSerializerProtocol.parameterAnnotation)
         val annotations = annotationsToString(protoAnnotations)
 
-        return "$annotations$isCrossInline$parameterName: $type"
+        return "$annotations$isCrossInline$visibility$parameterName: $type"
     }
 
     //-------------------------------------------------------------------------//
@@ -330,12 +327,13 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     fun constructorValueParameterToString(protoValueParameter: ProtoBuf.ValueParameter): String {
         val flags = protoValueParameter.flags
         val isVar = if (Flags.IS_VAR.get(flags)) "var " else "val "
+        val visibility = visibilityToString(Flags.VISIBILITY.get(flags))
         val parameterName = stringTable.getString(protoValueParameter.name)
         val type = typeToString(protoValueParameter.typeId)
         val protoAnnotations = protoValueParameter.getExtension(KonanSerializerProtocol.parameterAnnotation)
         val annotations = annotationsToString(protoAnnotations)
 
-        return "$annotations$isVar$parameterName: $type"
+        return "$annotations$visibility$isVar$parameterName: $type"
     }
 
     //-------------------------------------------------------------------------//
@@ -384,7 +382,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     fun varianceToString(variance: ProtoBuf.TypeParameter.Variance): String {
         if (variance == ProtoBuf.TypeParameter.Variance.INV) return ""
-        return variance.toString().toLowerCase()
+        return variance.toString().toLowerCase() + " "
     }
 
     //-------------------------------------------------------------------------//
@@ -487,9 +485,9 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         val modality  = modalityToString(Flags.MODALITY.get(flags))
         val visibility = visibilityToString(Flags.VISIBILITY.get(flags))
 
-        val buff = StringBuilder()
+        val buff = StringBuilder("$modality$visibility")
         when (classKind) {
-            ProtoBuf.Class.Kind.CLASS            -> buff.append("$visibility${modality}class")
+            ProtoBuf.Class.Kind.CLASS            -> buff.append("class")
             ProtoBuf.Class.Kind.INTERFACE        -> buff.append("interface")
             ProtoBuf.Class.Kind.ANNOTATION_CLASS -> buff.append("annotation")
             ProtoBuf.Class.Kind.OBJECT           -> buff.append("object")
