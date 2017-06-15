@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.containsTypeAliases
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class SpecifyTypeExplicitlyIntention :
@@ -114,7 +113,7 @@ class SpecifyTypeExplicitlyIntention :
             val resolutionFacade = contextElement.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL)
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-            val types = with (exprType.getResolvableApproximations(scope, true).toList()) {
+            val types = with (exprType.getResolvableApproximations(scope, false).toList()) {
                 when {
                     exprType.isNullabilityFlexible() -> flatMap {
                         listOf(TypeUtils.makeNotNullable(it), TypeUtils.makeNullable(it))

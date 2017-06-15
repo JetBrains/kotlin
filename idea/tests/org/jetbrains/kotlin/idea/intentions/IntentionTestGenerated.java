@@ -14915,6 +14915,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("genericFunction.kt")
+        public void testGenericFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/genericFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaParam.kt")
         public void testLambdaParam() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/lambdaParam.kt");
