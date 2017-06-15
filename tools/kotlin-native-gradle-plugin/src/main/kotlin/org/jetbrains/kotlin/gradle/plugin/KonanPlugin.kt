@@ -207,7 +207,9 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
      * Looks for task with given name in the given project.
      * If such task isn't found, will create it. Returns created/found task.
      */
-    private fun getTask(project: ProjectInternal, name: String): Task {
+    private fun getTask(project: ProjectInternal, name: String): Task = project.getTasksByName(name, false).single()
+
+    private fun getOrCreateTask(project: ProjectInternal, name: String): Task {
         var tasks = project.getTasksByName(name, false)
         assert(tasks.size <= 1)
         return if (tasks.isEmpty()) {
@@ -237,14 +239,11 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         if (!project.extensions.extraProperties.has(KonanPlugin.KONAN_BUILD_TARGETS)) {
             project.extensions.extraProperties.set(KonanPlugin.KONAN_BUILD_TARGETS, hostTarget)
         }
-        getTask(project, "clean").doLast {
-            project.delete(project.konanBuildRoot)
-        }
         getTask(project, "build").apply {
             dependsOn(project.supportedCompileTasks)
         }
 
-        getTask(project, "run").apply {
+        getOrCreateTask(project, "run").apply {
             dependsOn(getTask(project, "build"))
             doLast {
                 for (task in project.tasks.withType(KonanCompileTask::class.java).matching { it.target?.equals(hostTarget) ?: true}) {
