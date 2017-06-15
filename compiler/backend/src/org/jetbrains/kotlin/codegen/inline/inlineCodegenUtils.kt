@@ -22,18 +22,19 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.CodegenContextUtil
 import org.jetbrains.kotlin.codegen.context.InlineLambdaContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
-import org.jetbrains.kotlin.codegen.intrinsics.*
+import org.jetbrains.kotlin.codegen.intrinsics.classId
+import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fileClasses.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
+import org.jetbrains.kotlin.fileClasses.getFileClassType
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
@@ -44,7 +45,11 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.ENUM_TYPE
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_CLASS_TYPE
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.*
@@ -53,14 +58,8 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.util.Printer
 import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
-
 import java.io.PrintWriter
 import java.io.StringWriter
-
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.ENUM_TYPE
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_CLASS_TYPE
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 
 
 const val GENERATE_SMAP = true
@@ -88,6 +87,8 @@ private const val INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall"
 private const val INLINE_MARKER_FINALLY_START = "finallyStart"
 
 private const val INLINE_MARKER_FINALLY_END = "finallyEnd"
+private const val INLINE_MARKER_BEFORE_SUSPEND_ID = 0
+private const val INLINE_MARKER_AFTER_SUSPEND_ID = 1
 
 internal fun getMethodNode(
         classData: ByteArray,
@@ -429,6 +430,21 @@ internal fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
             "()V", false
     )
 }
+
+internal fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
+    v.iconst(if (isStartNotEnd) INLINE_MARKER_BEFORE_SUSPEND_ID else INLINE_MARKER_AFTER_SUSPEND_ID)
+    v.visitMethodInsn(
+            Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
+            "mark",
+            "(I)V", false
+    )
+}
+
+internal fun isBeforeSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_SUSPEND_ID)
+internal fun isAfterSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_AFTER_SUSPEND_ID)
+
+private fun isSuspendMarker(insn: AbstractInsnNode, id: Int) =
+        isInlineMarker(insn, "mark") && insn.previous.intConstant == id
 
 internal fun isInlineMarker(insn: AbstractInsnNode): Boolean {
     return isInlineMarker(insn, null)

@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
 import org.jetbrains.kotlin.codegen.inline.MaxStackFrameSizeAndLocalsCalculator
+import org.jetbrains.kotlin.codegen.inline.isAfterSuspendMarker
+import org.jetbrains.kotlin.codegen.inline.isBeforeSuspendMarker
 import org.jetbrains.kotlin.codegen.inline.isInlineMarker
 import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.*
@@ -302,7 +304,7 @@ class CoroutineTransformerMethodVisitor(
         // It doesn't introduce an additional state to the corresponding coroutine's FSM.
         suspensionPoints.forEach {
             if (dceResult.isAlive(it.suspensionCallBegin) && dceResult.isRemoved(it.suspensionCallEnd)) {
-                methodNode.instructions.remove(it.suspensionCallBegin)
+                it.removeBeforeSuspendMarker(methodNode)
             }
         }
 
@@ -311,17 +313,15 @@ class CoroutineTransformerMethodVisitor(
 
     private fun collectSuspensionPoints(methodNode: MethodNode): MutableList<SuspensionPoint> {
         val suspensionPoints = mutableListOf<SuspensionPoint>()
-        val beforeSuspensionPointMarkerStack = Stack<MethodInsnNode>()
+        val beforeSuspensionPointMarkerStack = Stack<AbstractInsnNode>()
 
         for (methodInsn in methodNode.instructions.toArray().filterIsInstance<MethodInsnNode>()) {
-            if (methodInsn.owner != COROUTINE_MARKER_OWNER) continue
-
-            when (methodInsn.name) {
-                BEFORE_SUSPENSION_POINT_MARKER_NAME -> {
-                    beforeSuspensionPointMarkerStack.add(methodInsn)
+            when {
+                isBeforeSuspendMarker(methodInsn) -> {
+                    beforeSuspensionPointMarkerStack.add(methodInsn.previous)
                 }
 
-                AFTER_SUSPENSION_POINT_MARKER_NAME -> {
+                isAfterSuspendMarker(methodInsn) -> {
                     suspensionPoints.add(SuspensionPoint(beforeSuspensionPointMarkerStack.pop(), methodInsn))
                 }
             }
@@ -335,10 +335,8 @@ class CoroutineTransformerMethodVisitor(
     private fun dropSuspensionMarkers(methodNode: MethodNode, suspensionPoints: List<SuspensionPoint>) {
         // Drop markers
         suspensionPoints.forEach {
-            // before-marker
-            methodNode.instructions.remove(it.suspensionCallBegin)
-            // after-marker
-            methodNode.instructions.remove(it.suspensionCallEnd)
+            it.removeBeforeSuspendMarker(methodNode)
+            it.removeAfterSuspendMarker(methodNode)
         }
     }
 
@@ -615,18 +613,30 @@ private fun Type.normalize() =
 
 /**
  * Suspension call may consists of several instructions:
- * INVOKESTATIC beforeSuspensionMarker
+ * ICONST_0
+ * INVOKESTATIC InlineMarker.mark()
  * INVOKEVIRTUAL suspensionMethod()Ljava/lang/Object; // actually it could be some inline method instead of plain call
  * CHECKCAST Type
- * INVOKESTATIC afterSuspensionMarker
+ * ICONST_1
+ * INVOKESTATIC InlineMarker.mark()
  */
 private class SuspensionPoint(
-        // INVOKESTATIC beforeSuspensionMarker
+        // ICONST_0
         val suspensionCallBegin: AbstractInsnNode,
-        // INVOKESTATIC afterSuspensionMarker
+        // INVOKESTATIC InlineMarker.mark()
         val suspensionCallEnd: AbstractInsnNode
 ) {
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
+
+    fun removeBeforeSuspendMarker(methodNode: MethodNode) {
+        methodNode.instructions.remove(suspensionCallBegin.next)
+        methodNode.instructions.remove(suspensionCallBegin)
+    }
+
+    fun removeAfterSuspendMarker(methodNode: MethodNode) {
+        methodNode.instructions.remove(suspensionCallEnd.previous)
+        methodNode.instructions.remove(suspensionCallEnd)
+    }
 }
 
 private fun getLastParameterIndex(desc: String, access: Int) =

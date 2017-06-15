@@ -2238,19 +2238,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (isSuspendCall) {
-            v.invokestatic(
-                    CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
-                    CoroutineCodegenUtilKt.BEFORE_SUSPENSION_POINT_MARKER_NAME,
-                    "()V", false
-            );
+            addSuspendMarker(v, true);
         }
 
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
 
         if (isSuspendCall) {
-            v.invokestatic(
-                    CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
-                    CoroutineCodegenUtilKt.AFTER_SUSPENSION_POINT_MARKER_NAME, "()V", false);
+            addSuspendMarker(v, false);
             addInlineMarker(v, false);
         }
 
