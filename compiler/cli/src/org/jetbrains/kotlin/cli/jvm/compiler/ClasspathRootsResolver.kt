@@ -40,27 +40,27 @@ internal class ClasspathRootsResolver(
     private val javaModuleFinder = CliJavaModuleFinder(VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL))
     private val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
-    fun convertClasspathRoots(roots: Iterable<ContentRoot>): List<JavaRoot> {
+    fun convertClasspathRoots(contentRoots: Iterable<ContentRoot>): List<JavaRoot> {
         val result = mutableListOf<JavaRoot>()
 
-        for (javaRoot in roots) {
-            if (javaRoot !is JvmContentRoot) continue
-            val virtualFile = contentRootToVirtualFile(javaRoot) ?: continue
+        for (contentRoot in contentRoots) {
+            if (contentRoot !is JvmContentRoot) continue
+            val root = contentRootToVirtualFile(contentRoot) ?: continue
 
-            val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let { prefix ->
-                if (isValidJavaFqName(prefix)) FqName(prefix)
-                else null.also {
-                    report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
+            when (contentRoot) {
+                is JavaSourceRoot -> {
+                    result += JavaRoot(root, JavaRoot.RootType.SOURCE, contentRoot.packagePrefix?.let { prefix ->
+                        if (isValidJavaFqName(prefix)) FqName(prefix)
+                        else null.also {
+                            report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
+                        }
+                    })
                 }
+                is JvmClasspathRoot -> {
+                    result += JavaRoot(root, JavaRoot.RootType.BINARY)
+                }
+                else -> error("Unknown root type: $contentRoot")
             }
-
-            val rootType = when (javaRoot) {
-                is JavaSourceRoot -> JavaRoot.RootType.SOURCE
-                is JvmClasspathRoot -> JavaRoot.RootType.BINARY
-                else -> error("Unknown root type: $javaRoot")
-            }
-
-            result.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
         }
 
         addModularRoots(result)
