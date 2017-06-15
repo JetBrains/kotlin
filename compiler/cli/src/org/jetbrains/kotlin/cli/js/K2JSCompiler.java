@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.cli.common.messages.MessageUtil;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -266,9 +267,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         Iterable<String> fileNames = CollectionsKt.map(sourceFiles, file -> {
             VirtualFile virtualFile = file.getVirtualFile();
             if (virtualFile != null) {
-                return FileUtil.toSystemDependentName(virtualFile.getPath());
+                return MessageUtil.virtualFileToPath(virtualFile);
             }
-            return file.getName() + "(no virtual file)";
+            return file.getName() + " (no virtual file)";
         });
         messageCollector.report(LOGGING, "Compiling source files: " + StringsKt.join(fileNames, ", "), null);
     }

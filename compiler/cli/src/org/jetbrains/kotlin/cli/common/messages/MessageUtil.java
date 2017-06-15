@@ -43,18 +43,17 @@ public class MessageUtil {
             @Nullable String defaultValue,
             @NotNull DiagnosticUtils.LineAndColumn lineAndColumn
     ) {
-        String path;
         VirtualFile virtualFile = file.getVirtualFile();
-        if (virtualFile == null) {
-            path = defaultValue;
-        }
-        else {
-            path = virtualFile.getPath();
-            // Convert path to platform-dependent format when virtualFile is local file.
-            if (virtualFile instanceof CoreLocalVirtualFile || virtualFile instanceof CoreJarVirtualFile) {
-                path = toSystemDependentName(path);
-            }
-        }
+        String path = virtualFile != null ? virtualFileToPath(virtualFile) : defaultValue;
         return CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn(), lineAndColumn.getLineContent());
+    }
+
+    @NotNull
+    public static String virtualFileToPath(@NotNull VirtualFile virtualFile) {
+        // Convert path to platform-dependent format when virtualFile is local file.
+        if (virtualFile instanceof CoreLocalVirtualFile || virtualFile instanceof CoreJarVirtualFile) {
+            return toSystemDependentName(virtualFile.getPath());
+        }
+        return virtualFile.getPath();
     }
 }
