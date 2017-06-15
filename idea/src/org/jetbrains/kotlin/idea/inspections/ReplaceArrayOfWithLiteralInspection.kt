@@ -26,7 +26,7 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.config.LanguageFeature.ArrayLiteralsInAnnotations
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
@@ -43,8 +43,7 @@ class ReplaceArrayOfWithLiteralInspection : AbstractKotlinInspection() {
             override fun visitCallExpression(expression: KtCallExpression) {
                 super.visitCallExpression(expression)
 
-                val project = expression.project
-                if (!project.getLanguageVersionSettings().supportsFeature(ArrayLiteralsInAnnotations) &&
+                if (!expression.languageVersionSettings.supportsFeature(ArrayLiteralsInAnnotations) &&
                     !ApplicationManager.getApplication().isUnitTestMode) return
 
                 val calleeExpression = expression.calleeExpression as? KtNameReferenceExpression ?: return
