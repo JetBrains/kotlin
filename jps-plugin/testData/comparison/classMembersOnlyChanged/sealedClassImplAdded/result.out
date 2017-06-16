@@ -1,5 +1,5 @@
-ADDED: class test/Base.C
-changes in test/Base: CLASS_SIGNATURE, MEMBERS
+ADDED test/Base.C
+CHANGES in test/Base: CLASS_SIGNATURE, MEMBERS
     [C]
-changes in test/Base.A: NONE
-changes in test/Base.B: NONE
+CHANGES in test/Base.A: NONE
+CHANGES in test/Base.B: NONE
