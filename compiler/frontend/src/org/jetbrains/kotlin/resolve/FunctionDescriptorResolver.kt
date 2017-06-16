@@ -218,6 +218,14 @@ class FunctionDescriptorResolver(
             }
         }
 
+        val typesUnexpected = if (expectedParameterTypes != null) {
+            expectedParameterTypes.isNotEmpty() && expectedParameterTypes.map { it === TypeUtils.NO_EXPECTED_TYPE }
+                    .fold(true) { left, right -> left && right }
+        }
+        else {
+            false
+        }
+
         trace.recordScope(innerScope, function.valueParameterList)
 
         return resolveValueParameters(
@@ -225,7 +233,7 @@ class FunctionDescriptorResolver(
                 innerScope,
                 function.valueParameters,
                 trace,
-                expectedParameterTypes
+                if(typesUnexpected) { null } else { expectedParameterTypes }
         )
     }
 
