@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.CreateDescriptorWithFreshTypeVariables.createToFreshVariableSubstitutorAndAddInitialConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
@@ -173,16 +172,18 @@ internal object CheckArguments : ResolutionPart {
             1 -> candidates.single()
             else -> return CallableReferenceCandidatesAmbiguity(argument, candidates)
         }
+        val (toFreshSubstitutor, diagnostic) = with(chosenCandidate) {
+            csBuilder.checkCallableReference(argument, dispatchReceiver, extensionReceiver, candidate,
+                                             reflectionCandidateType, expectedType, callContext.scopeTower.lexicalScope.ownerDescriptor)
+        }
 
+        val resolvedCallableReference = ResolvedCallableReferenceArgument(
+                kotlinCall, argument, toFreshSubstitutor.freshVariables,
+                chosenCandidate, toFreshSubstitutor.safeSubstitute(chosenCandidate.reflectionCandidateType))
 
-        val toFreshSubstitutor = createToFreshVariableSubstitutorAndAddInitialConstraints(chosenCandidate.candidate, csBuilder, kotlinCall = null)
-        val reflectionType = toFreshSubstitutor.safeSubstitute(chosenCandidate.reflectionCandidateType)
-        csBuilder.addSubtypeConstraint(reflectionType, expectedType, ArgumentConstraintPosition(argument))
-
-        val resolvedCallableReference = ResolvedCallableReferenceArgument(kotlinCall, argument, toFreshSubstitutor.freshVariables, chosenCandidate)
         csBuilder.addCallableReferenceArgument(resolvedCallableReference)
 
-        return null
+        return diagnostic
     }
 
     fun processCollectionLiteralArgument(

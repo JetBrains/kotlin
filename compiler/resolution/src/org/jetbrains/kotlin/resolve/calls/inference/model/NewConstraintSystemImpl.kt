@@ -249,10 +249,16 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         storage.errors.add(error)
     }
 
-    // FixationOrderCalculator.Context, KotlinCallCompleter.Context
+    //  KotlinCallCompleter.Context
     override val lambdaArguments: List<ResolvedLambdaArgument> get() {
         checkState(State.COMPLETION)
         return storage.lambdaArguments
+    }
+
+    // FixationOrderCalculator.Context
+    override val lambdaAndCallableReferenceArguments: List<ArgumentWithPostponeResolution> get() {
+        checkState(State.COMPLETION)
+        return storage.lambdaArguments + storage.callableReferenceArguments
     }
 
     override val callableReferenceArguments: List<ResolvedCallableReferenceArgument>

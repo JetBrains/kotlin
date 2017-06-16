@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.calls.components.CreateDescriptorWithFreshTypeVariables.createToFreshVariableSubstitutorAndAddInitialConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 sealed class CallableReceiver(val receiver: ReceiverValueWithSmartCastInfo) {
     class UnboundReference(val qualifier: QualifierReceiver, receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
@@ -108,6 +110,45 @@ fun createCallableReferenceProcessor(factory: CallableReferencesCandidateFactory
     }
 }
 
+fun ConstraintSystemOperation.checkCallableReference(
+        argument: CallableReferenceKotlinCallArgument,
+        dispatchReceiver: CallableReceiver?,
+        extensionReceiver: CallableReceiver?,
+        candidateDescriptor: CallableDescriptor,
+        reflectionCandidateType: UnwrappedType,
+        expectedType: UnwrappedType?,
+        ownerDescriptor: DeclarationDescriptor
+): Pair<FreshVariableNewTypeSubstitutor, KotlinCallDiagnostic?> {
+    val invisibleMember = Visibilities.findInvisibleMember(dispatchReceiver?.asReceiverValueForVisibilityChecks,
+                                                           candidateDescriptor, ownerDescriptor)
+
+    val position = ArgumentConstraintPosition(argument)
+
+    val toFreshSubstitutor = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, this, kotlinCall = null)
+    val reflectionType = toFreshSubstitutor.safeSubstitute(reflectionCandidateType)
+
+    if (expectedType != null) {
+        addSubtypeConstraint(reflectionType, expectedType, position)
+    }
+
+    addReceiverConstraint(toFreshSubstitutor, dispatchReceiver, candidateDescriptor.dispatchReceiverParameter, position)
+    addReceiverConstraint(toFreshSubstitutor, extensionReceiver, candidateDescriptor.extensionReceiverParameter, position)
+
+    return toFreshSubstitutor to invisibleMember?.let(::VisibilityError)
+}
+
+
+private fun ConstraintSystemOperation.addReceiverConstraint(
+        toFreshSubstitutor: FreshVariableNewTypeSubstitutor,
+        receiver: CallableReceiver?,
+        candidateReceiver: ReceiverParameterDescriptor?,
+        position: ArgumentConstraintPosition
+) {
+    val expectedType = toFreshSubstitutor.safeSubstitute(candidateReceiver?.value?.type?.unwrap() ?: return)
+    val receiverType = receiver?.receiver?.stableType ?: return
+    addSubtypeConstraint(receiverType, expectedType, position)
+}
+
 class CallableReferencesCandidateFactory(
         val argument: CallableReferenceKotlinCallArgument,
         val outerCallContext: KotlinCallContext,
@@ -142,38 +183,21 @@ class CallableReferencesCandidateFactory(
 
         val diagnostics = SmartList<KotlinCallDiagnostic>()
         diagnostics.addAll(towerCandidate.diagnostics)
-        val invisibleMember = Visibilities.findInvisibleMember(dispatchCallableReceiver?.asReceiverValueForVisibilityChecks,
-                                                               candidateDescriptor, outerCallContext.scopeTower.lexicalScope.ownerDescriptor)
-        if (invisibleMember != null) {
-            diagnostics.add(VisibilityError(invisibleMember))
-        }
         // todo smartcast on receiver diagnostic and CheckInstantiationOfAbstractClass
 
         compatibilityChecker {
-            if (it.hasContradiction || expectedType == null) return@compatibilityChecker
+            if (it.hasContradiction) return@compatibilityChecker
 
-            val toFreshSubstitutor = CreateDescriptorWithFreshTypeVariables.createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, it, kotlinCall = null)
-            val reflectionType = toFreshSubstitutor.safeSubstitute(reflectionCandidateType)
-            it.addSubtypeConstraint(reflectionType, expectedType, position)
+            val (_, visibilityError) = it.checkCallableReference(argument, dispatchCallableReceiver, extensionCallableReceiver, candidateDescriptor,
+                                      reflectionCandidateType, expectedType, outerCallContext.scopeTower.lexicalScope.ownerDescriptor)
 
-            it.addUnboundConstraint(toFreshSubstitutor, dispatchCallableReceiver, candidateDescriptor.dispatchReceiverParameter)
-            it.addUnboundConstraint(toFreshSubstitutor, extensionCallableReceiver, candidateDescriptor.extensionReceiverParameter)
+            diagnostics.addIfNotNull(visibilityError)
 
-            if (it.hasContradiction) diagnostics.add(CallableReferenceNotCompatible(argument, candidateDescriptor, expectedType, reflectionType))
+            if (it.hasContradiction) diagnostics.add(CallableReferenceNotCompatible(argument, candidateDescriptor, expectedType, reflectionCandidateType))
         }
 
         return CallableReferenceCandidate(candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
                                           explicitReceiverKind, reflectionCandidateType, defaults, ResolutionCandidateStatus(diagnostics))
-    }
-
-    private fun ConstraintSystemOperation.addUnboundConstraint(
-            toFreshSubstitutor: FreshVariableNewTypeSubstitutor,
-            receiver: CallableReceiver?,
-            candidateReceiver: ReceiverParameterDescriptor?
-    ) {
-        val expectedType = toFreshSubstitutor.safeSubstitute(candidateReceiver?.value?.type?.unwrap() ?: return)
-        val receiverType = receiver?.receiver?.stableType ?: return
-        addSubtypeConstraint(receiverType, expectedType, position)
     }
 
     private fun getArgumentAndReturnTypeUseMappingByExpectedType(
@@ -235,12 +259,10 @@ class CallableReferencesCandidateFactory(
         val argumentsAndReceivers = ArrayList<KotlinType>(descriptor.valueParameters.size + 2)
 
         if (dispatchReceiver is CallableReceiver.UnboundReference) {
-            argumentsAndReceivers.add(descriptor.dispatchReceiverParameter?.type
-                                      ?: error("Dispatch receiver should be not null for descriptor: $descriptor"))
+            argumentsAndReceivers.add(dispatchReceiver.receiver.stableType)
         }
         if (extensionReceiver is CallableReceiver.UnboundReference) {
-            argumentsAndReceivers.add(descriptor.extensionReceiverParameter?.type
-                                      ?: error("Extension receiver should be not null for descriptor: $descriptor"))
+            argumentsAndReceivers.add(extensionReceiver.receiver.stableType)
         }
 
         val descriptorReturnType = descriptor.returnType
@@ -305,7 +327,7 @@ class CallableReferencesCandidateFactory(
 class CallableReferenceNotCompatible(
         val argument: CallableReferenceKotlinCallArgument,
         val candidate: CallableMemberDescriptor,
-        val expectedType: UnwrappedType,
+        val expectedType: UnwrappedType?,
         val callableReverenceType: UnwrappedType
 ) : KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)

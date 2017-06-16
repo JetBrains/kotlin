@@ -30,8 +30,6 @@ sealed class ArgumentWithPostponeResolution {
     abstract val argument: KotlinCallArgument
     abstract val inputTypes: Collection<UnwrappedType> // parameters and implicit receiver
     abstract val outputType: UnwrappedType?
-
-    var analyzed: Boolean = false
 }
 
 class ResolvedLambdaArgument(
@@ -42,6 +40,8 @@ class ResolvedLambdaArgument(
         val parameters: List<UnwrappedType>,
         val returnType: UnwrappedType
 ) : ArgumentWithPostponeResolution() {
+    var analyzed: Boolean = false
+
     val type: SimpleType = createFunctionType(returnType.builtIns, Annotations.EMPTY, receiver, parameters, null, returnType, isSuspend) // todo support annotations
 
     override val inputTypes: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
@@ -55,10 +55,11 @@ class ResolvedCallableReferenceArgument(
         override val outerCall: KotlinCall,
         override val argument: CallableReferenceKotlinCallArgument,
         val myTypeVariables: List<NewTypeVariable>,
-        val callableResolutionCandidate: CallableReferenceCandidate
+        val callableResolutionCandidate: CallableReferenceCandidate,
+        val reflectionType: UnwrappedType // via myTypeVariables variables
 ) : ArgumentWithPostponeResolution() {
-    override val inputTypes: Collection<UnwrappedType> get() = emptyList()
-    override val outputType: UnwrappedType? = null
+    override val inputTypes: Collection<UnwrappedType> get() = reflectionType.arguments.dropLast(1).map { it.type.unwrap() }
+    override val outputType: UnwrappedType? = reflectionType.arguments.last().type.unwrap()
 }
 
 class ResolvedCollectionLiteralArgument(
