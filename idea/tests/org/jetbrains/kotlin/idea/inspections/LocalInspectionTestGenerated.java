@@ -51,6 +51,72 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/collections")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Collections extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInCollections() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class UselessCallOnNotNull extends AbstractLocalInspectionTest {
+            public void testAllFilesPresentInUselessCallOnNotNull() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("NotNullType.kt")
+            public void testNotNullType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/NotNullType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotNullTypeChain.kt")
+            public void testNotNullTypeChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/NotNullTypeChain.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NullOrBlankSafe.kt")
+            public void testNullOrBlankSafe() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/NullOrBlankSafe.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NullOrEmpty.kt")
+            public void testNullOrEmpty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/NullOrEmpty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NullOrEmptyFake.kt")
+            public void testNullOrEmptyFake() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/NullOrEmptyFake.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OrEmptyFake.kt")
+            public void testOrEmptyFake() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/OrEmptyFake.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SafeCall.kt")
+            public void testSafeCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/SafeCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("String.kt")
+            public void testString() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/String.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/copyWithoutNamedArguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
