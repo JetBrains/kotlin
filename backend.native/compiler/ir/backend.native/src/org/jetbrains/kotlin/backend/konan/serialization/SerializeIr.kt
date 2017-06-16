@@ -1087,7 +1087,10 @@ internal class IrDeserializer(val context: Context,
     fun deserializeIrVariable(proto: KonanIr.IrVar, descriptor: VariableDescriptor, 
         start: Int, end: Int, origin: IrDeclarationOrigin): IrVariable {
 
-        val initializer = deserializeExpression(proto.getInitializer())
+        val initializer = if (proto.hasInitializer()) {
+            deserializeExpression(proto.getInitializer())
+        } else null
+
         val variable = IrVariableImpl(start, end, origin, descriptor, initializer)
 
         return variable
