@@ -1,0 +1,179 @@
+public static class Test$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final Test createFromParcel(android.os.Parcel p0) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (in)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+          NEW
+          DUP
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readSize, ()Landroid/util/Size;)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          IFEQ (L2)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readSize, ()Landroid/util/Size;)
+          GOTO (L3)
+        LABEL (L2)
+          ACONST_NULL
+        LABEL (L3)
+          INVOKESPECIAL (Test, <init>, (Landroid/util/Size;Landroid/util/Size;)V)
+          ARETURN
+        LABEL (L4)
+    }
+
+    public final Test[] newArray(int p0)
+}
+
+public final class Test : java/lang/Object, android/os/Parcelable {
+    public final static Test$CREATOR CREATOR
+
+    private final android.util.Size nullable
+
+    private final android.util.Size size
+
+    static void <clinit>()
+
+    public void <init>(android.util.Size p0, android.util.Size p1)
+
+    public final android.util.Size component1()
+
+    public final android.util.Size component2()
+
+    public final Test copy(android.util.Size p0, android.util.Size p1)
+
+    public static Test copy$default(Test p0, android.util.Size p1, android.util.Size p2, int p3, java.lang.Object p4)
+
+    public final int describeContents()
+
+    public boolean equals(java.lang.Object p0)
+
+    public final android.util.Size getNullable()
+
+    public final android.util.Size getSize()
+
+    public int hashCode()
+
+    public java.lang.String toString()
+
+    public final void writeToParcel(android.os.Parcel p0, int p1) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (size, Landroid/util/Size;)
+          INVOKEVIRTUAL (android/os/Parcel, writeSize, (Landroid/util/Size;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (nullable, Landroid/util/Size;)
+          DUP
+          IFNULL (L1)
+          ALOAD (1)
+          LDC (1)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          INVOKEVIRTUAL (android/os/Parcel, writeSize, (Landroid/util/Size;)V)
+          GOTO (L2)
+        LABEL (L1)
+          POP
+          LDC (0)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+        LABEL (L2)
+          RETURN
+        LABEL (L3)
+    }
+}
+
+public static class TestF$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final TestF createFromParcel(android.os.Parcel p0) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (in)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+          NEW
+          DUP
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readSizeF, ()Landroid/util/SizeF;)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          IFEQ (L2)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readSizeF, ()Landroid/util/SizeF;)
+          GOTO (L3)
+        LABEL (L2)
+          ACONST_NULL
+        LABEL (L3)
+          INVOKESPECIAL (TestF, <init>, (Landroid/util/SizeF;Landroid/util/SizeF;)V)
+          ARETURN
+        LABEL (L4)
+    }
+
+    public final TestF[] newArray(int p0)
+}
+
+public final class TestF : java/lang/Object, android/os/Parcelable {
+    public final static TestF$CREATOR CREATOR
+
+    private final android.util.SizeF nullable
+
+    private final android.util.SizeF size
+
+    static void <clinit>()
+
+    public void <init>(android.util.SizeF p0, android.util.SizeF p1)
+
+    public final android.util.SizeF component1()
+
+    public final android.util.SizeF component2()
+
+    public final TestF copy(android.util.SizeF p0, android.util.SizeF p1)
+
+    public static TestF copy$default(TestF p0, android.util.SizeF p1, android.util.SizeF p2, int p3, java.lang.Object p4)
+
+    public final int describeContents()
+
+    public boolean equals(java.lang.Object p0)
+
+    public final android.util.SizeF getNullable()
+
+    public final android.util.SizeF getSize()
+
+    public int hashCode()
+
+    public java.lang.String toString()
+
+    public final void writeToParcel(android.os.Parcel p0, int p1) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (size, Landroid/util/SizeF;)
+          INVOKEVIRTUAL (android/os/Parcel, writeSizeF, (Landroid/util/SizeF;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (nullable, Landroid/util/SizeF;)
+          DUP
+          IFNULL (L1)
+          ALOAD (1)
+          LDC (1)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          INVOKEVIRTUAL (android/os/Parcel, writeSizeF, (Landroid/util/SizeF;)V)
+          GOTO (L2)
+        LABEL (L1)
+          POP
+          LDC (0)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+        LABEL (L2)
+          RETURN
+        LABEL (L3)
+    }
+}

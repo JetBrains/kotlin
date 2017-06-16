@@ -186,9 +186,8 @@ messages/**)
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureReader { *; }
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureVisitor { *; }
 
--keepclassmembers class org.jetbrains.org.objectweb.asm.Type {
-    *** ARRAY;
-    *** OBJECT;
+-keep class org.jetbrains.org.objectweb.asm.Type {
+    public protected *;
 }
 
 -keepclassmembers class org.jetbrains.org.objectweb.asm.ClassReader {
