@@ -12,5 +12,5 @@
 }(this, function (Kotlin) {
     var _ = Kotlin;
 
-%output%
+    insertContent();
 }));
