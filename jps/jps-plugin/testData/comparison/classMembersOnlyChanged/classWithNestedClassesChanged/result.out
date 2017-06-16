@@ -1,9 +1,7 @@
 REMOVED test/ClassWithNestedClasses.NestedClassRemoved
 ADDED test/ClassWithNestedClasses.InnerClassAdded
 ADDED test/ClassWithNestedClasses.NestedClassAdded
-CHANGES in test/ClassWithChangedVisibilityForNestedClasses: NONE
 CHANGES in test/ClassWithChangedVisibilityForNestedClasses.InnerClass: CLASS_SIGNATURE
 CHANGES in test/ClassWithChangedVisibilityForNestedClasses.NestedClass: CLASS_SIGNATURE
 CHANGES in test/ClassWithNestedClasses: MEMBERS
     [InnerClassAdded, NestedClassAdded, NestedClassRemoved]
-CHANGES in test/ClassWithNestedClasses.InnerClass: NONE

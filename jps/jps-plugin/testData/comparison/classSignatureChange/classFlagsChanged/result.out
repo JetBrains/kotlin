@@ -1,41 +1,22 @@
 CHANGES in test/AbstractFlagAdded: CLASS_SIGNATURE
 CHANGES in test/AbstractFlagRemoved: CLASS_SIGNATURE
-CHANGES in test/AbstractFlagUnchanged: NONE
 CHANGES in test/AnnotationFlagAdded: CLASS_SIGNATURE
 CHANGES in test/AnnotationFlagRemoved: CLASS_SIGNATURE
-CHANGES in test/AnnotationFlagUnchanged: NONE
 CHANGES in test/DataFlagAdded: CLASS_SIGNATURE, MEMBERS
     [component1, copy, equals, hashCode, toString]
 CHANGES in test/DataFlagRemoved: CLASS_SIGNATURE, MEMBERS
     [component1, copy, equals, hashCode, toString]
-CHANGES in test/DataFlagUnchanged: NONE
 CHANGES in test/EnumFlagAdded: CLASS_SIGNATURE
 CHANGES in test/EnumFlagRemoved: CLASS_SIGNATURE
-CHANGES in test/EnumFlagUnchanged: NONE
-CHANGES in test/FinalFlagAdded: NONE
-CHANGES in test/FinalFlagRemoved: NONE
-CHANGES in test/FinalFlagUnchanged: NONE
-CHANGES in test/InnerClassHolder: NONE
 CHANGES in test/InnerClassHolder.InnerFlagAdded: CLASS_SIGNATURE
 CHANGES in test/InnerClassHolder.InnerFlagRemoved: CLASS_SIGNATURE
-CHANGES in test/InnerClassHolder.InnerFlagUnchanged: NONE
 CHANGES in test/InternalFlagAdded: CLASS_SIGNATURE
 CHANGES in test/InternalFlagRemoved: CLASS_SIGNATURE
-CHANGES in test/InternalFlagUnchanged: NONE
 CHANGES in test/OpenFlagAdded: CLASS_SIGNATURE
 CHANGES in test/OpenFlagRemoved: CLASS_SIGNATURE
-CHANGES in test/OpenFlagUnchanged: NONE
 CHANGES in test/PrivateFlagAdded: CLASS_SIGNATURE
 CHANGES in test/PrivateFlagRemoved: CLASS_SIGNATURE
-CHANGES in test/PrivateFlagUnchanged: NONE
-CHANGES in test/ProtectedClassHolder: NONE
 CHANGES in test/ProtectedClassHolder.ProtectedFlagAdded: CLASS_SIGNATURE
 CHANGES in test/ProtectedClassHolder.ProtectedFlagRemoved: CLASS_SIGNATURE
-CHANGES in test/ProtectedClassHolder.ProtectedFlagUnchanged: NONE
-CHANGES in test/PublicFlagAdded: NONE
-CHANGES in test/PublicFlagRemoved: NONE
-CHANGES in test/PublicFlagUnchanged: NONE
 CHANGES in test/SealedFlagAdded: CLASS_SIGNATURE
 CHANGES in test/SealedFlagRemoved: CLASS_SIGNATURE
-CHANGES in test/SealedFlagUnchanged: NONE
-CHANGES in test/UnchangedNoFlags: NONE
