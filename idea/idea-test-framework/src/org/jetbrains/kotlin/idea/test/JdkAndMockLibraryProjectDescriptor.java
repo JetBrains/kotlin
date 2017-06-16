@@ -22,12 +22,13 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescriptor {
     public static final String LIBRARY_NAME = "myKotlinLib";
@@ -37,7 +38,7 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
     private final boolean withRuntime;
     private final boolean isJsLibrary;
     private final boolean allowKotlinPackage;
-    private final String[] classpath;
+    private final List<String> classpath;
 
     public JdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources) {
         this(sourcesPath, withSources, false, false, false);
@@ -45,11 +46,12 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
 
     public JdkAndMockLibraryProjectDescriptor(
             String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage) {
-        this(sourcesPath, withSources, withRuntime, isJsLibrary, allowKotlinPackage, ArrayUtil.EMPTY_STRING_ARRAY);
+        this(sourcesPath, withSources, withRuntime, isJsLibrary, allowKotlinPackage, Collections.emptyList());
     }
 
     public JdkAndMockLibraryProjectDescriptor(
-            String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage, String[] classpath) {
+            String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage, List<String> classpath
+    ) {
         this.sourcesPath = sourcesPath;
         this.withSources = withSources;
         this.withRuntime = withRuntime;
@@ -60,7 +62,11 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
-        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, isJsLibrary, allowKotlinPackage, classpath);
+        List<String> extraOptions = allowKotlinPackage ? Collections.singletonList("-Xallow-kotlin-package") : Collections.emptyList();
+        File libraryJar =
+                isJsLibrary
+                ? MockLibraryUtil.compileJsLibraryToJar(sourcesPath, LIBRARY_NAME, withSources)
+                : MockLibraryUtil.compileJvmLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, extraOptions, classpath);
         String jarUrl = getJarUrl(libraryJar);
 
         Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(LIBRARY_NAME).getModifiableModel();

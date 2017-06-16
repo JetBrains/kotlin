@@ -33,10 +33,9 @@ abstract class AbstractJavaAgainstKotlinBinariesCheckerTest : AbstractJavaAgains
         if (KotlinTestUtils.isAllFilesPresentTest(testName)) {
             return
         }
-        val libraryName = "libFor" + testName
-        val libraryJar = MockLibraryUtil.compileLibraryToJar(
+        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
                 PluginTestCaseBase.getTestDataPathBase() + "/kotlinAndJavaChecker/javaAgainstKotlin/" + getTestName(false) + ".kt",
-                libraryName, false, false, false
+                "libFor$testName"
         )
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"
         ModuleRootModificationUtil.addModuleLibrary(module, jarUrl)

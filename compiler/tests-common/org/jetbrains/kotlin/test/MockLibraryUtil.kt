@@ -40,51 +40,35 @@ object MockLibraryUtil {
     private var compilerClassLoader = SoftReference<ClassLoader>(null)
 
     @JvmStatic
-    fun compileLibraryToJar(
+    @JvmOverloads
+    fun compileJvmLibraryToJar(
             sourcesPath: String,
             jarName: String,
-            addSources: Boolean,
-            isJsLibrary: Boolean,
-            allowKotlinPackage: Boolean,
-            vararg extraClasspath: String
-    ): File {
-        if (isJsLibrary) {
-            return compileJsLibraryToJar(sourcesPath, jarName, addSources)
-        }
-        else {
-            return compileLibraryToJar(sourcesPath, jarName, addSources, allowKotlinPackage, *extraClasspath)
-        }
-    }
-
-    @JvmStatic
-    fun compileLibraryToJar(
-            sourcesPath: String,
-            jarName: String,
-            addSources: Boolean,
-            allowKotlinPackage: Boolean,
-            vararg extraClasspath: String
+            addSources: Boolean = false,
+            extraOptions: List<String> = emptyList(),
+            extraClasspath: List<String> = emptyList()
     ): File {
         return compileLibraryToJar(
-                sourcesPath, KotlinTestUtils.tmpDir("testLibrary-" + jarName), jarName, addSources, allowKotlinPackage,
-                *extraClasspath
+                sourcesPath, KotlinTestUtils.tmpDir("testLibrary-" + jarName), jarName, addSources, extraOptions, extraClasspath
         )
     }
 
     @JvmStatic
+    @JvmOverloads
     fun compileLibraryToJar(
             sourcesPath: String,
             contentDir: File,
             jarName: String,
-            addSources: Boolean,
-            allowKotlinPackage: Boolean,
-            vararg extraClasspath: String
+            addSources: Boolean = false,
+            extraOptions: List<String> = emptyList(),
+            extraClasspath: List<String> = emptyList()
     ): File {
         val classesDir = File(contentDir, "classes")
 
         val srcFile = File(sourcesPath)
         val kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), srcFile)
         if (srcFile.isFile || kotlinFiles.isNotEmpty()) {
-            compileKotlin(sourcesPath, classesDir, allowKotlinPackage, *extraClasspath)
+            compileKotlin(sourcesPath, classesDir, extraOptions, *extraClasspath.toTypedArray())
         }
 
         val javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), srcFile)
@@ -110,25 +94,26 @@ object MockLibraryUtil {
             KotlinTestUtils.compileJavaFiles(javaFiles, options)
         }
 
-        return createJarFile(contentDir, classesDir, sourcesPath, jarName, addSources)
+        return createJarFile(contentDir, classesDir, jarName, sourcesPath.takeIf { addSources })
     }
 
-    private fun compileJsLibraryToJar(sourcesPath: String, jarName: String, addSources: Boolean): File {
+    @JvmStatic
+    fun compileJsLibraryToJar(sourcesPath: String, jarName: String, addSources: Boolean): File {
         val contentDir = KotlinTestUtils.tmpDir("testLibrary-" + jarName)
 
         val outDir = File(contentDir, "out")
         val outputFile = File(outDir, jarName + ".js")
         compileKotlin2JS(sourcesPath, outputFile)
 
-        return createJarFile(contentDir, outDir, sourcesPath, jarName, addSources)
+        return createJarFile(contentDir, outDir, jarName, sourcesPath.takeIf { addSources })
     }
 
-    fun createJarFile(contentDir: File, dirToAdd: File, sourcesPath: String, jarName: String, addSources: Boolean): File {
+    fun createJarFile(contentDir: File, dirToAdd: File, jarName: String, sourcesPath: String? = null): File {
         val jarFile = File(contentDir, jarName + ".jar")
 
         ZipOutputStream(FileOutputStream(jarFile)).use { zip ->
             ZipUtil.addDirToZipRecursively(zip, jarFile, dirToAdd, "", null, null)
-            if (addSources) {
+            if (sourcesPath != null) {
                 ZipUtil.addDirToZipRecursively(zip, jarFile, File(sourcesPath), "src", null, null)
             }
         }
@@ -154,14 +139,11 @@ object MockLibraryUtil {
     }
 
     @JvmStatic
-    fun compileKotlin(sourcesPath: String, outDir: File, vararg extraClasspath: String) {
-        compileKotlin(sourcesPath, outDir, false, *extraClasspath)
-    }
-
+    @JvmOverloads
     fun compileKotlin(
             sourcesPath: String,
             outDir: File,
-            allowKotlinPackage: Boolean,
+            extraOptions: List<String> = emptyList(),
             vararg extraClasspath: String
     ) {
         val classpath = mutableListOf<String>()
@@ -174,10 +156,7 @@ object MockLibraryUtil {
                 sourcesPath,
                 "-d", outDir.absolutePath,
                 "-classpath", classpath.joinToString(File.pathSeparator)
-        )
-        if (allowKotlinPackage) {
-            args += "-Xallow-kotlin-package"
-        }
+        ) + extraOptions
 
         runJvmCompiler(args)
     }

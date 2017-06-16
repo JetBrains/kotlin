@@ -50,9 +50,10 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
         }, file -> !LIBRARY.equals(file.getName()));
 
         File library = new File(root, LIBRARY);
-        List<File> classPath = library.exists() ?
-                               Collections.singletonList(MockLibraryUtil.compileLibraryToJar(library.getPath(), LIBRARY, false, false)) :
-                               Collections.emptyList();
+        List<File> classPath =
+                library.exists()
+                ? Collections.singletonList(MockLibraryUtil.compileJvmLibraryToJar(library.getPath(), LIBRARY))
+                : Collections.emptyList();
 
         assert !sourceFiles.isEmpty() : getTestName(true) + " should contain at least one .kt file";
         Collections.sort(sourceFiles);

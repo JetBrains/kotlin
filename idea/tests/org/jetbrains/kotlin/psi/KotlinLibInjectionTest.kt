@@ -57,7 +57,6 @@ class KotlinLibInjectionTest : AbstractInjectionTest() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return JdkAndMockLibraryProjectDescriptor(
                 PluginTestCaseBase.getTestDataPathBase() + "/injection/lib/", false, false, false, true,
-                arrayOf(KotlinTestUtils.getHomeDirectory() + "/ideaSDK/lib/annotations.jar"))
+                listOf(KotlinTestUtils.getHomeDirectory() + "/ideaSDK/lib/annotations.jar"))
     }
 }
-

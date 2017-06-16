@@ -52,7 +52,7 @@ class GotoWithMultipleLibrariesTest : AbstractMultiModuleTest() {
     fun doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(withSource: Int, noSource: Int) {
         val srcPath = testDataPath + "src"
 
-        val sharedJar = MockLibraryUtil.compileLibraryToJar(testDataPath + "libSrc", "sharedJar", true, false, false)
+        val sharedJar = MockLibraryUtil.compileJvmLibraryToJar(testDataPath + "libSrc", "sharedJar", addSources = true)
         val jarRoot = sharedJar.jarRoot
 
         var i: Int = 0

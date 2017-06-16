@@ -61,7 +61,7 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
         val classLoader: URLClassLoader
         if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// WITH_MOCK_LIBRARY: ") ?: false) {
             if (MOCK_LIBRARY_JAR == null) {
-                MOCK_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(MOCK_LIBRARY_SOURCES, "mockLibrary", true, false)
+                MOCK_LIBRARY_JAR = MockLibraryUtil.compileJvmLibraryToJar(MOCK_LIBRARY_SOURCES, "mockLibrary", addSources = true)
             }
 
             val mockLibraryJar = MOCK_LIBRARY_JAR ?: throw AssertionError("Mock library JAR is null")
@@ -77,7 +77,7 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
                 }
                 moduleModel.commit()
             }
-            MockLibraryUtil.compileKotlin(path, File(outDir.path), mockLibraryPath)
+            MockLibraryUtil.compileKotlin(path, File(outDir.path), extraClasspath = mockLibraryPath)
             classLoader = URLClassLoader(
                     arrayOf(URL(outDir.url + "/"), mockLibraryJar.toURI().toURL()),
                     ForTestCompileRuntime.runtimeJarClassLoader())

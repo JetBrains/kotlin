@@ -56,7 +56,7 @@ class NavigationWithMultipleCustomLibrariesTest : AbstractNavigationToSourceOrDe
     override fun createProjectLib(libraryName: String, withSources: Boolean): Library {
         val librarySrc = testDataPath + "libSrc"
 
-        val libraryJar = MockLibraryUtil.compileLibraryToJar(librarySrc, libraryName, withSources, false, false)
+        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(librarySrc, libraryName, addSources = withSources)
         val jarRoot = libraryJar.jarRoot
         return projectLibrary(libraryName, jarRoot, jarRoot.findChild("src").takeIf { withSources })
     }
@@ -120,7 +120,7 @@ class NavigationToSingleJarInMultipleLibrariesTest : AbstractNavigationWithMulti
         val moduleB = module("m2", srcPath)
         val moduleC = module("m3", srcPath)
 
-        val sharedJar = MockLibraryUtil.compileLibraryToJar(testDataPath + "libSrc", "sharedJar", true, false, false)
+        val sharedJar = MockLibraryUtil.compileJvmLibraryToJar(testDataPath + "libSrc", "sharedJar", addSources = true)
         val jarRoot = sharedJar.jarRoot
 
         moduleA.addDependency(projectLibrary("libA", jarRoot))

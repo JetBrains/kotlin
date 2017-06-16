@@ -237,8 +237,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
                 throw ExceptionUtilsKt.rethrow(e);
             }
 
-            CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(
-                    CUSTOM_LIBRARY_SOURCES.getPath(), jarDir, "debuggerCustomLibrary", false, false);
+            CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), jarDir, "debuggerCustomLibrary");
 
             String sourcesDir = modulePath + File.separator + "src";
 

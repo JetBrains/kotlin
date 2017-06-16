@@ -72,12 +72,12 @@ abstract class AbstractScriptConfigurationTest : AbstractPsiCheckerTest() {
     protected fun configureScriptEnvironment(path: String) {
         val templateOutDir = compileLibToDir(
                 File("${path}template"),
-                classpath = listOf(PathUtil.getKotlinPathsForDistDirectory().scriptRuntimePath.path)
+                PathUtil.getKotlinPathsForDistDirectory().scriptRuntimePath.path
         )
 
         val libSrcDir = File("${path}lib")
         val libClasses = if (libSrcDir.isDirectory) {
-            compileLibToDir(libSrcDir, classpath = listOf())
+            compileLibToDir(libSrcDir)
         }
         else null
 
@@ -92,22 +92,19 @@ abstract class AbstractScriptConfigurationTest : AbstractPsiCheckerTest() {
         return vFile
     }
 
-    private fun compileLibToDir(srcDir: File, classpath: List<String>): File {
+    private fun compileLibToDir(srcDir: File, vararg classpath: String): File {
         val outDir = KotlinTestUtils.tmpDir("${getTestName(false)}${srcDir.name}Out")
 
         val kotlinSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt$"), srcDir)
         if (kotlinSourceFiles.isNotEmpty()) {
-            MockLibraryUtil.compileKotlin(
-                    srcDir.path, outDir,
-                    *classpath.toTypedArray()
-            )
+            MockLibraryUtil.compileKotlin(srcDir.path, outDir, extraClasspath = *classpath)
         }
 
         val javaSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.java$"), srcDir)
         if (javaSourceFiles.isNotEmpty()) {
             KotlinTestUtils.compileJavaFiles(
                     javaSourceFiles,
-                    listOf("-cp", StringUtil.join(classpath + outDir, File.pathSeparator), "-d", outDir.path)
+                    listOf("-cp", StringUtil.join(listOf(*classpath, outDir), File.pathSeparator), "-d", outDir.path)
             )
         }
         return outDir

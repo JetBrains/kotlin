@@ -20,12 +20,8 @@ import org.jetbrains.kotlin.test.MockLibraryUtil
 import java.io.File
 
 abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsWithFullJdkTest() {
-    override fun getExtraClasspath(): List<File> {
-        return listOf(MockLibraryUtil.compileLibraryToJar(
-                annotationsPath,
-                "foreign-annotations", /* addSources = */false, /* allowKotlinPackage = */ false
-        ))
-    }
+    override fun getExtraClasspath(): List<File> =
+            listOf(MockLibraryUtil.compileJvmLibraryToJar(annotationsPath, "foreign-annotations"))
 
     open protected val annotationsPath: String
         get() = "compiler/testData/foreignAnnotations/annotations"
