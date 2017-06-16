@@ -107,6 +107,161 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 PartEnhancementResult(enhanced, wereChanges = true)
             } ?: PartEnhancementResult(fromOverride, wereChanges = false)
         }
+
+        private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
+            val (lower, upper) =
+                    if (this.isFlexible())
+                        asFlexibleType().let { Pair(it.lowerBound, it.upperBound) }
+                    else Pair(this, this)
+
+            val mapping = JavaToKotlinClassMap
+            return JavaTypeQualifiers(
+                    when {
+                        lower.isMarkedNullable -> NullabilityQualifier.NULLABLE
+                        !upper.isMarkedNullable -> NullabilityQualifier.NOT_NULL
+                        else -> null
+                    },
+                    when {
+                        mapping.isReadOnly(lower) -> MutabilityQualifier.READ_ONLY
+                        mapping.isMutable(upper) -> MutabilityQualifier.MUTABLE
+                        else -> null
+                    },
+                    isNotNullTypeParameter = unwrap() is NotNullTypeParameter)
+        }
+
+        private fun KotlinType.extractQualifiersFromAnnotations(): JavaTypeQualifiers {
+            fun <T: Any> List<FqName>.ifPresent(qualifier: T) = if (any { annotations.findAnnotation(it) != null}) qualifier else null
+
+            fun <T: Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
+
+            val nullability = annotations.extractNullability()
+
+            return JavaTypeQualifiers(
+                    nullability,
+                    uniqueNotNull(
+                            READ_ONLY_ANNOTATIONS.ifPresent(
+                                    MutabilityQualifier.READ_ONLY
+                            ),
+                            MUTABLE_ANNOTATIONS.ifPresent(
+                                    MutabilityQualifier.MUTABLE
+                            )
+                    ),
+                    isNotNullTypeParameter = nullability == NullabilityQualifier.NOT_NULL && isTypeParameter()
+            )
+        }
+
+        private fun Annotations.extractNullability(): NullabilityQualifier? {
+            for (annotationDescriptor in this) {
+                when (annotationDescriptor.annotationClass?.fqNameSafe) {
+                    in NULLABLE_ANNOTATIONS -> return NullabilityQualifier.NULLABLE
+                    in NOT_NULL_ANNOTATIONS -> return NullabilityQualifier.NOT_NULL
+                }
+
+                val typeQualifier =
+                        annotationTypeQualifierResolver
+                                .resolveTypeQualifierAnnotation(annotationDescriptor)
+                                ?.takeIf { it.annotationClass?.fqNameSafe == JAVAX_NONNULL_ANNOTATION }
+                        ?: continue
+
+                return typeQualifier.allValueArguments.values.singleOrNull()?.value?.let {
+                    enumEntryDescriptor ->
+                    if (enumEntryDescriptor !is ClassDescriptor) return@let null
+                    if (enumEntryDescriptor.name.asString() == "ALWAYS") NullabilityQualifier.NOT_NULL else NullabilityQualifier.NULLABLE
+                } ?: NullabilityQualifier.NOT_NULL
+            }
+
+            return null
+        }
+
+        fun KotlinType.computeIndexedQualifiersForOverride(
+                fromSupertypes: Collection<KotlinType>, isCovariant: Boolean
+        ): (Int) -> JavaTypeQualifiers {
+            fun KotlinType.toIndexed(): List<KotlinType> {
+                val list = ArrayList<KotlinType>(1)
+
+                fun add(type: KotlinType) {
+                    list.add(type)
+                    for (arg in type.arguments) {
+                        if (arg.isStarProjection) {
+                            list.add(arg.type)
+                        }
+                        else {
+                            add(arg.type)
+                        }
+                    }
+                }
+
+                add(this)
+                return list
+            }
+
+            val indexedFromSupertypes = fromSupertypes.map { it.toIndexed() }
+            val indexedThisType = this.toIndexed()
+
+            // The covariant case may be hard, e.g. in the superclass the return may be Super<T>, but in the subclass it may be Derived, which
+            // is declared to extend Super<T>, and propagating data here is highly non-trivial, so we only look at the head type constructor
+            // (outermost type), unless the type in the subclass is interchangeable with the all the types in superclasses:
+            // e.g. we have (Mutable)List<String!>! in the subclass and { List<String!>, (Mutable)List<String>! } from superclasses
+            // Note that `this` is flexible here, so it's equal to it's bounds
+            val onlyHeadTypeConstructor = isCovariant && fromSupertypes.any { !KotlinTypeChecker.DEFAULT.equalTypes(it, this) }
+
+            val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
+            val computedResult = Array(treeSize) {
+                index ->
+                val isHeadTypeConstructor = index == 0
+                assert(isHeadTypeConstructor || !onlyHeadTypeConstructor) { "Only head type constructors should be computed" }
+
+                val qualifiers = indexedThisType[index]
+                val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index) }
+
+                // Only the head type constructor is safely co-variant
+                qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant && isHeadTypeConstructor)
+            }
+
+            return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
+        }
+
+        private fun KotlinType.computeQualifiersForOverride(fromSupertypes: Collection<KotlinType>, isCovariant: Boolean): JavaTypeQualifiers {
+            val nullabilityFromSupertypes = fromSupertypes.mapNotNull { it.extractQualifiers().nullability }.toSet()
+            val mutabilityFromSupertypes = fromSupertypes.mapNotNull { it.extractQualifiers().mutability }.toSet()
+
+            val own = extractQualifiersFromAnnotations()
+
+            val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || fromSupertypes.any { it.extractQualifiers().isNotNullTypeParameter }
+
+            fun createJavaTypeQualifiers(nullability: NullabilityQualifier?, mutability: MutabilityQualifier?): JavaTypeQualifiers {
+                if (!isAnyNonNullTypeParameter || nullability != NullabilityQualifier.NOT_NULL) {
+                    return JavaTypeQualifiers(nullability, mutability, false)
+                }
+                return JavaTypeQualifiers(
+                        nullability, mutability,
+                        isNotNullTypeParameter = true)
+            }
+
+            if (isCovariant) {
+                fun <T : Any> Set<T>.selectCovariantly(low: T, high: T, own: T?): T? {
+                    val supertypeQualifier = if (low in this) low else if (high in this) high else null
+                    return if (supertypeQualifier == low && own == high) null else own ?: supertypeQualifier
+                }
+                return createJavaTypeQualifiers(
+                        nullabilityFromSupertypes.selectCovariantly(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own.nullability),
+                        mutabilityFromSupertypes.selectCovariantly(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability)
+                )
+            }
+            else {
+                fun <T : Any> Set<T>.selectInvariantly(own: T?): T? {
+                    val effectiveSet = own?.let { (this + own).toSet() } ?: this
+                    // if this set contains exactly one element, it is the qualifier everybody agrees upon,
+                    // otherwise (no qualifiers, or multiple qualifiers), there's no single such qualifier
+                    // and all qualifiers are discarded
+                    return effectiveSet.singleOrNull()
+                }
+                return createJavaTypeQualifiers(
+                        nullabilityFromSupertypes.selectInvariantly(own.nullability),
+                        mutabilityFromSupertypes.selectInvariantly(own.mutability)
+                )
+            }
+        }
     }
 
     private data class PartEnhancementResult(val type: KotlinType, val wereChanges: Boolean)
@@ -122,158 +277,4 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
         )
     }
 
-    private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
-        val (lower, upper) =
-                if (this.isFlexible())
-                    asFlexibleType().let { Pair(it.lowerBound, it.upperBound) }
-                else Pair(this, this)
-
-        val mapping = JavaToKotlinClassMap
-        return JavaTypeQualifiers(
-                when {
-                    lower.isMarkedNullable -> NullabilityQualifier.NULLABLE
-                    !upper.isMarkedNullable -> NullabilityQualifier.NOT_NULL
-                    else -> null
-                },
-                when {
-                    mapping.isReadOnly(lower) -> MutabilityQualifier.READ_ONLY
-                    mapping.isMutable(upper) -> MutabilityQualifier.MUTABLE
-                    else -> null
-                },
-                isNotNullTypeParameter = unwrap() is NotNullTypeParameter)
-    }
-
-    private fun KotlinType.extractQualifiersFromAnnotations(): JavaTypeQualifiers {
-        fun <T: Any> List<FqName>.ifPresent(qualifier: T) = if (any { annotations.findAnnotation(it) != null}) qualifier else null
-
-        fun <T: Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
-
-        val nullability = annotations.extractNullability()
-
-        return JavaTypeQualifiers(
-                nullability,
-                uniqueNotNull(
-                        READ_ONLY_ANNOTATIONS.ifPresent(
-                                MutabilityQualifier.READ_ONLY
-                        ),
-                        MUTABLE_ANNOTATIONS.ifPresent(
-                                MutabilityQualifier.MUTABLE
-                        )
-                ),
-                isNotNullTypeParameter = nullability == NullabilityQualifier.NOT_NULL && isTypeParameter()
-        )
-    }
-
-    private fun Annotations.extractNullability(): NullabilityQualifier? {
-        for (annotationDescriptor in this) {
-            when (annotationDescriptor.annotationClass?.fqNameSafe) {
-                in NULLABLE_ANNOTATIONS -> return NullabilityQualifier.NULLABLE
-                in NOT_NULL_ANNOTATIONS -> return NullabilityQualifier.NOT_NULL
-            }
-
-            val typeQualifier =
-                    annotationTypeQualifierResolver
-                            .resolveTypeQualifierAnnotation(annotationDescriptor)
-                            ?.takeIf { it.annotationClass?.fqNameSafe == JAVAX_NONNULL_ANNOTATION }
-                    ?: continue
-
-            return typeQualifier.allValueArguments.values.singleOrNull()?.value?.let {
-                enumEntryDescriptor ->
-                if (enumEntryDescriptor !is ClassDescriptor) return@let null
-                if (enumEntryDescriptor.name.asString() == "ALWAYS") NullabilityQualifier.NOT_NULL else NullabilityQualifier.NULLABLE
-            } ?: NullabilityQualifier.NOT_NULL
-        }
-
-        return null
-    }
-
-    fun KotlinType.computeIndexedQualifiersForOverride(
-            fromSupertypes: Collection<KotlinType>, isCovariant: Boolean
-    ): (Int) -> JavaTypeQualifiers {
-        fun KotlinType.toIndexed(): List<KotlinType> {
-            val list = ArrayList<KotlinType>(1)
-
-            fun add(type: KotlinType) {
-                list.add(type)
-                for (arg in type.arguments) {
-                    if (arg.isStarProjection) {
-                        list.add(arg.type)
-                    }
-                    else {
-                        add(arg.type)
-                    }
-                }
-            }
-
-            add(this)
-            return list
-        }
-
-        val indexedFromSupertypes = fromSupertypes.map { it.toIndexed() }
-        val indexedThisType = this.toIndexed()
-
-        // The covariant case may be hard, e.g. in the superclass the return may be Super<T>, but in the subclass it may be Derived, which
-        // is declared to extend Super<T>, and propagating data here is highly non-trivial, so we only look at the head type constructor
-        // (outermost type), unless the type in the subclass is interchangeable with the all the types in superclasses:
-        // e.g. we have (Mutable)List<String!>! in the subclass and { List<String!>, (Mutable)List<String>! } from superclasses
-        // Note that `this` is flexible here, so it's equal to it's bounds
-        val onlyHeadTypeConstructor = isCovariant && fromSupertypes.any { !KotlinTypeChecker.DEFAULT.equalTypes(it, this) }
-
-        val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
-        val computedResult = Array(treeSize) {
-            index ->
-            val isHeadTypeConstructor = index == 0
-            assert(isHeadTypeConstructor || !onlyHeadTypeConstructor) { "Only head type constructors should be computed" }
-
-            val qualifiers = indexedThisType[index]
-            val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index) }
-
-            // Only the head type constructor is safely co-variant
-            qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant && isHeadTypeConstructor)
-        }
-
-        return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
-    }
-
-    private fun KotlinType.computeQualifiersForOverride(fromSupertypes: Collection<KotlinType>, isCovariant: Boolean): JavaTypeQualifiers {
-        val nullabilityFromSupertypes = fromSupertypes.mapNotNull { it.extractQualifiers().nullability }.toSet()
-        val mutabilityFromSupertypes = fromSupertypes.mapNotNull { it.extractQualifiers().mutability }.toSet()
-
-        val own = extractQualifiersFromAnnotations()
-
-        val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || fromSupertypes.any { it.extractQualifiers().isNotNullTypeParameter }
-
-        fun createJavaTypeQualifiers(nullability: NullabilityQualifier?, mutability: MutabilityQualifier?): JavaTypeQualifiers {
-            if (!isAnyNonNullTypeParameter || nullability != NullabilityQualifier.NOT_NULL) {
-                return JavaTypeQualifiers(nullability, mutability, false)
-            }
-            return JavaTypeQualifiers(
-                    nullability, mutability,
-                    isNotNullTypeParameter = true)
-        }
-
-        if (isCovariant) {
-            fun <T : Any> Set<T>.selectCovariantly(low: T, high: T, own: T?): T? {
-                val supertypeQualifier = if (low in this) low else if (high in this) high else null
-                return if (supertypeQualifier == low && own == high) null else own ?: supertypeQualifier
-            }
-            return createJavaTypeQualifiers(
-                    nullabilityFromSupertypes.selectCovariantly(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own.nullability),
-                    mutabilityFromSupertypes.selectCovariantly(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability)
-            )
-        }
-        else {
-            fun <T : Any> Set<T>.selectInvariantly(own: T?): T? {
-                val effectiveSet = own?.let { (this + own).toSet() } ?: this
-                // if this set contains exactly one element, it is the qualifier everybody agrees upon,
-                // otherwise (no qualifiers, or multiple qualifiers), there's no single such qualifier
-                // and all qualifiers are discarded
-                return effectiveSet.singleOrNull()
-            }
-            return createJavaTypeQualifiers(
-                    nullabilityFromSupertypes.selectInvariantly(own.nullability),
-                    mutabilityFromSupertypes.selectInvariantly(own.mutability)
-            )
-        }
-    }
 }
