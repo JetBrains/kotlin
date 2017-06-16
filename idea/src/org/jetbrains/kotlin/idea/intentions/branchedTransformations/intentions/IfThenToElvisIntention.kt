@@ -38,7 +38,7 @@ class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(
     override fun inspectionTarget(element: KtIfExpression) = element.ifKeyword
 
     override fun problemHighlightType(element: KtIfExpression): ProblemHighlightType =
-            if (element.shouldBeTransformed()) ProblemHighlightType.WEAK_WARNING else super.problemHighlightType(element)
+            if (element.shouldBeTransformed()) super.problemHighlightType(element) else ProblemHighlightType.INFORMATION
 }
 
 class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
