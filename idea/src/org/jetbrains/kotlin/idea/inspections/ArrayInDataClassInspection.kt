@@ -16,16 +16,18 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.LocalInspectionToolSession
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInsight.FileModificationService
+import com.intellij.codeInspection.*
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -44,7 +46,8 @@ class ArrayInDataClassInspection : AbstractKotlinInspection() {
                     if (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) {
                         holder.registerProblem(parameter,
                                                "Array property in data class: it's recommended to override equals() / hashCode()",
-                                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+                                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                               GenerateEqualsAndHashcodeFix())
                     }
                 }
             }
@@ -68,6 +71,21 @@ class ArrayInDataClassInspection : AbstractKotlinInspection() {
                     }
                 }
                 return overriddenEquals && overriddenHashCode
+            }
+        }
+    }
+
+    class GenerateEqualsAndHashcodeFix : LocalQuickFix {
+        override fun getName() = "Generate equals() and hashCode()"
+
+        override fun getFamilyName() = name
+
+        override fun startInWriteAction() = false
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
+            descriptor.psiElement.getNonStrictParentOfType<KtClass>()?.run {
+                KotlinGenerateEqualsAndHashcodeAction().doInvoke(project, descriptor.psiElement.findExistingEditor(), this)
             }
         }
     }
