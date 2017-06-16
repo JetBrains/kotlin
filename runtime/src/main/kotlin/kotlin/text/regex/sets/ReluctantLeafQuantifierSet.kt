@@ -62,7 +62,7 @@ internal class ReluctantLeafQuantifierSet(
                 occurrences++
             }
 
-        } while (shift >= 1 && occurrences <= max)
+        } while (shift >= 1 && (max == Quantifier.INF || occurrences <= max))
 
         return -1
     }

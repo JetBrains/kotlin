@@ -17,6 +17,13 @@
 
 package kotlin.text.regex
 
+/**
+ * Decomposes the given codepoint. Saves the decomposition into [outputCodepoints] array starting with [fromIndex].
+ * Returns the length of the decomposition.
+ */
+@SymbolName("Kotlin_text_regex_decomposeCodePoint")
+external private fun decomposeCodePoint(codePoint: Int, outputCodePoints: IntArray, fromIndex: Int): Int
+
 /** Represents canonical decomposition of Unicode character. Is used when CANON_EQ flag of Pattern class is specified. */
 open internal class DecomposedCharSet(
         /** Decomposition of the Unicode codepoint */
@@ -48,19 +55,11 @@ open internal class DecomposedCharSet(
         // We read testString and decompose it gradually to compare with this decomposedChar at position strIndex
         var curChar = codePointAt(strIndex, testString, rightBound)
         strIndex += readCharsForCodePoint
-        var decomposedCurrentCodePoint: IntArray? = Lexer.getDecomposition(curChar)
         var readCodePoints = 0
         var i = 0
         // All decompositions have length that is less or equal Lexer.MAX_DECOMPOSITION_LENGTH
-        var decomposedCodePoint: IntArray
-        if (decomposedCurrentCodePoint == null) {
-            decomposedCodePoint = IntArray(Lexer.MAX_DECOMPOSITION_LENGTH)
-            decomposedCodePoint[readCodePoints++] = curChar
-        } else {
-            i = decomposedCurrentCodePoint.size
-            decomposedCodePoint = decomposedCurrentCodePoint.copyOf(Lexer.MAX_DECOMPOSITION_LENGTH)
-            readCodePoints += i
-        }
+        var decomposedCodePoint: IntArray = IntArray(Lexer.MAX_DECOMPOSITION_LENGTH)
+        readCodePoints += decomposeCodePoint(curChar, decomposedCodePoint, readCodePoints)
 
         if (strIndex < rightBound) {
             curChar = codePointAt(strIndex, testString, rightBound)
@@ -71,26 +70,11 @@ open internal class DecomposedCharSet(
                 if (!Lexer.hasDecompositionNonNullCanClass(curChar)) {
                     decomposedCodePoint[readCodePoints++] = curChar
                 } else {
-
                     /*
-                     * A few codepoints have decompositions and non null
-                     * canonical classes, we have to take them into
-                     * consideration, but general rule is:
-                     * if canonical class != 0 then no decomposition
+                     * A few codepoints have decompositions and non null canonical classes, we have to take them into
+                     * consideration, but general rule is: if canonical class != 0 then no decomposition
                      */
-                    decomposedCurrentCodePoint = Lexer.getDecomposition(curChar)
-
-                    /*
-                     * Length of such decomposition is 1 or 2. See UnicodeData file
-                     * http://www.unicode.org/Public/4.0-Update/UnicodeData-4.0.0.txt
-                     */
-                    // hasDecompositionNonNullCanClass(curChar) == true, so decomposedCurrentCodePoint != null.
-                    if (decomposedCurrentCodePoint!!.size == 2) {
-                        decomposedCodePoint[readCodePoints++] = decomposedCurrentCodePoint[0]
-                        decomposedCodePoint[readCodePoints++] = decomposedCurrentCodePoint[1]
-                    } else {
-                        decomposedCodePoint[readCodePoints++] = decomposedCurrentCodePoint[0]
-                    }
+                    readCodePoints += decomposeCodePoint(curChar, decomposedCodePoint, readCodePoints)
                 }
 
                 strIndex += readCharsForCodePoint
@@ -133,7 +117,7 @@ open internal class DecomposedCharSet(
     }
 
     override val name: String
-            get() = "decomposed char: $decomposedChar"
+        get() = "decomposed char: $decomposedChar"
 
     /** Reads Unicode codepoint from [testString] starting from [strIndex] until [rightBound]. */
     fun codePointAt(strIndex: Int, testString: CharSequence, rightBound: Int): Int {

@@ -116,12 +116,12 @@ constructor (internal val input: CharSequence,
 
     override fun next(): MatchResult? {
         var nextStart = range.endInclusive + 1
-        if (nextStart == input.length) {
-            return null
-        }
         // If the current match is empty - shift by 1.
         if (nextStart == range.start) {
             nextStart++
+        }
+        if (nextStart > input.length) {
+            return null
         }
         return regex.find(input, nextStart)
     }

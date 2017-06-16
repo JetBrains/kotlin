@@ -113,7 +113,6 @@ class Regex internal constructor(internal val nativePattern: Pattern) {
 
     companion object {
         /** Returns a literal regex for the specified [literal] string. */
-        // TODO: Uncomment for native
         fun fromLiteral(literal: String): Regex = Regex(literal, RegexOption.LITERAL)
 
         /** Returns a literal pattern for the specified [literal] string. */
@@ -159,7 +158,6 @@ class Regex internal constructor(internal val nativePattern: Pattern) {
     infix fun matches(input: CharSequence): Boolean = doMatch(input, Mode.MATCH) != null
 
     /** Indicates whether the regular expression can find at least one match in the specified [input]. */
-    // TODO: Looks like we don't need Mode anymore.
     fun containsMatchIn(input: CharSequence): Boolean = find(input) != null
 
     /**
@@ -172,7 +170,6 @@ class Regex internal constructor(internal val nativePattern: Pattern) {
         if (startIndex < 0 || startIndex > input.length) {
             throw IndexOutOfBoundsException() // TODO: Add a message.
         }
-        // TODO: reuse the match result?
         val matchResult = MatchResultImpl(input, this)
         matchResult.mode = Mode.FIND
         matchResult.startIndex = startIndex
@@ -181,14 +178,13 @@ class Regex internal constructor(internal val nativePattern: Pattern) {
             matchResult.finalizeMatch()
             return matchResult
         } else {
-            /*matchResult.hitEnd = true
-            matchResult.startIndex = -1*/
             return null
         }
     }
 
     /**
-     * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
+     * Returns a sequence of all occurrences of a regular expression within the [input] string,
+     * beginning at the specified [startIndex].
      */
     fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult>
             = generateSequence({ find(input, startIndex) }, MatchResult::next)
@@ -233,9 +229,10 @@ class Regex internal constructor(internal val nativePattern: Pattern) {
     }
 
     /**
-     * Replaces all occurrences of this regular expression in the specified [input] string with specified [replacement] expression.
+     * Replaces all occurrences of this regular expression in the specified [input] string with
+     * specified [replacement] expression.
      *
-     * @param replacement A replacement expression that can include substitutions. See [Matcher.appendReplacement] for details.
+     * @param replacement A replacement expression that can include substitutions.
      */
     fun replace(input: CharSequence, replacement: String): String
             = replace(input) { match -> processReplacement(match, replacement) }
@@ -280,7 +277,6 @@ class Regex internal constructor(internal val nativePattern: Pattern) {
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      *              Zero by default means no limit is set.
      */
-    // TODO: replace all argument checks with require function.
     fun split(input: CharSequence, limit: Int = 0): List<String> {
         require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
         if (input.isEmpty()) {

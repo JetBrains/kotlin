@@ -28,9 +28,15 @@ external private fun getCanonicalClassInternal(ch: Int): Int
 external private fun hasSingleCodepointDecompositionInternal(ch: Int): Boolean
 
 /** Returns a decomposition for a given codepoint. */
-@SymbolName("Kotlin_text_getDecompositionInternal")
+@SymbolName("Kotlin_text_regex_getDecompositionInternal")
 external private fun getDecompositionInternal(ch: Int): IntArray?
 
+/**
+ * Decomposes the given string represented as an array of codepoints. Saves the decomposition into [outputCodepoints] array.
+ * Returns the length of the decomposition.
+ */
+@SymbolName("Kotlin_text_regex_decomposeString")
+external private fun decomposeString(inputCodePoints: IntArray, inputLength: Int, outputCodePoints: IntArray): Int
 // =============================================================================================================
 
 /**
@@ -792,13 +798,8 @@ internal class Lexer(val patternString: String, flags: Int) {
         // =============================================================================================================
 
         /**
-         * Normalize given expression.
-
-         * @param input - expression to normalize
-         * *
-         * @return normalized expression.
+         * Normalize given string.
          */
-        // TODO: Implement on the C++ side.
         fun normalize(input: String): String {
             val inputChars = input.toCharArray()
             val inputLength = inputChars.size
@@ -824,45 +825,22 @@ internal class Lexer(val patternString: String, flags: Int) {
             //result of canonical decomposition of input in UTF-16 encoding
             val result = StringBuilder()
 
-            run {
-                var i = 0
-                while (i < inputLength) {
-                    ch = input.codePointAt(i)
-                    inputCodePoints[inputCodePointsIndex++] = ch
-                    i += if (Char.isSupplementaryCodePoint(ch)) 2 else 1
-                }
+            var i = 0
+            while (i < inputLength) {
+                ch = input.codePointAt(i)
+                inputCodePoints[inputCodePointsIndex++] = ch
+                i += if (Char.isSupplementaryCodePoint(ch)) 2 else 1
             }
 
-            /*
-             * Canonical decomposition based on mappings in decompTable
-             */
-            for (i in 0..inputCodePointsIndex - 1) {
-                ch = inputCodePoints[i]
+            // Canonical decomposition based on mappings in decomposition table.
+            resCodePointsIndex = decomposeString(inputCodePoints, inputCodePointsIndex, resCodePoints)
 
-                decomp = Lexer.getDecomposition(ch)
-                if (decomp == null) {
-                    resCodePoints[resCodePointsIndex++] = ch
-                } else {
-                    val curSymbDecompLength = decomp.size
-
-                    for (j in 0..curSymbDecompLength - 1) {
-                        resCodePoints[resCodePointsIndex++] = decomp[j]
-                    }
-                }
-            }
-
-            /*
-             * Canonical ordering.
-             * See http://www.unicode.org/reports/tr15/#Decomposition for
-             * details
-             */
+            // Canonical ordering.
+            // See http://www.unicode.org/reports/tr15/#Decomposition for details
             resCodePoints = Lexer.getCanonicalOrder(resCodePoints, resCodePointsIndex)
 
-            /*
-             * Decomposition for Hangul syllables.
-             * See http://www.unicode.org/reports/tr15/#Hangul for
-             * details
-             */
+            // Decomposition for Hangul syllables.
+            // See http://www.unicode.org/reports/tr15/#Hangul for details
             decompHangul = IntArray(resCodePoints.size)
 
             for (i in 0..resCodePointsIndex - 1) {
@@ -872,11 +850,7 @@ internal class Lexer(val patternString: String, flags: Int) {
                 if (decomp == null) {
                     decompHangul[decompHangulIndex++] = curSymb
                 } else {
-
-                    /*
-                     * Note that Hangul decompositions have length that is
-                     * equal 2 or 3.
-                     */
+                    // Note that Hangul decompositions have length that is equal 2 or 3.
                     decompHangul[decompHangulIndex++] = decomp[0]
                     decompHangul[decompHangulIndex++] = decomp[1]
                     if (decomp.size == 3) {
@@ -885,9 +859,7 @@ internal class Lexer(val patternString: String, flags: Int) {
                 }
             }
 
-            /*
-             * Translating into UTF-16 encoding
-             */
+            // Translating into UTF-16 encoding
             for (i in 0..decompHangulIndex - 1) {
                 result.append(Char.toChars(decompHangul[i]))
             }
@@ -896,17 +868,8 @@ internal class Lexer(val patternString: String, flags: Int) {
         }
 
         /**
-         * Rearrange codepoints according
-         * to canonical order.
-
-         * @param inputInts - array that contains Unicode codepoints
-         * *
-         * @param length - index of last Unicode codepoint plus 1
-         * *
-         * *
-         * @return array that contains rearranged codepoints.
+         * Rearrange codepoints in [inputInts] according to canonical order. Return an array with rearranged codepoints.
          */
-        // TODO: C++ side!
         fun getCanonicalOrder(inputInts: IntArray, length: Int): IntArray {
             val inputLength = if (length < inputInts.size)
                 length
@@ -914,12 +877,9 @@ internal class Lexer(val patternString: String, flags: Int) {
                 inputInts.size
 
             /*
-             * Simple bubble-sort algorithm.
-             * Note that many codepoints have 0
-             * canonical class, so this algorithm works
-             * almost lineary in overwhelming majority
-             * of cases. This is due to specific of Unicode
-             * combining classes and codepoints.
+             * Simple bubble-sort algorithm. Note that many codepoints have 0 canonical class, so this algorithm works
+             * almost lineary in overwhelming majority of cases. This is due to specific of Unicode combining
+             * classes and codepoints.
              */
             for (i in 1..inputLength - 1) {
                 var j = i - 1
@@ -951,14 +911,8 @@ internal class Lexer(val patternString: String, flags: Int) {
         /**
          * Gets decomposition for given Hangul syllable.
          * This is an implementation of Hangul decomposition algorithm
-         * according to http://www.unicode.org/versions/Unicode4.0.0/ch03.pdf
-         * "3.12 Conjoining Jamo Behavior".
-
-         * @param ch - given Hangul syllable
-         * *
-         * @return canonical decomposition of currentChar.
+         * according to http://www.unicode.org/versions/Unicode4.0.0/ch03.pdf "3.12 Conjoining Jamo Behavior".
          */
-        // TODO: C++
         fun getHangulDecomposition(ch: Int): IntArray? {
             val SIndex = ch - SBase
 
