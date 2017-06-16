@@ -6,7 +6,6 @@ CHANGES in test/ClassWithAddedCompanionObject: CLASS_SIGNATURE, MEMBERS
     [Companion]
 CHANGES in test/ClassWithChangedCompanionObject: CLASS_SIGNATURE, MEMBERS
     [FirstName, SecondName]
-CHANGES in test/ClassWithChangedVisibilityForCompanionObject: NONE
 CHANGES in test/ClassWithChangedVisibilityForCompanionObject.Companion: CLASS_SIGNATURE
 CHANGES in test/ClassWithRemovedCompanionObject: CLASS_SIGNATURE, MEMBERS
     [Companion]

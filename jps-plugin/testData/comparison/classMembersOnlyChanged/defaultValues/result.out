@@ -3,5 +3,4 @@ CHANGES in test/A: MEMBERS
 CHANGES in test/ConstructorArgumentAdded: CLASS_SIGNATURE
 CHANGES in test/ConstructorArgumentRemoved: CLASS_SIGNATURE
 CHANGES in test/ConstructorValueAdded: CLASS_SIGNATURE
-CHANGES in test/ConstructorValueChanged: NONE
 CHANGES in test/ConstructorValueRemoved: CLASS_SIGNATURE
