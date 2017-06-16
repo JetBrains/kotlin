@@ -41,8 +41,6 @@ class HasPlatformTypeInspection(
         }
 ) {
 
-    override fun problemHighlightType(element: KtCallableDeclaration) = ProblemHighlightType.WEAK_WARNING
-
     override val problemText = "Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. " +
                                "Specify type explicitly as nullable or non-nullable."
 
