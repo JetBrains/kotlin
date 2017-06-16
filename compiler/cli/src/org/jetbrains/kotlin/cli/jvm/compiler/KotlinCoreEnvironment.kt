@@ -203,13 +203,14 @@ class KotlinCoreEnvironment private constructor(
             )
         }
 
-        // REPL and kapt2 update classpath dynamically
-        val indexFactory = JvmUpdateableDependenciesIndexFactory()
-
         val (roots, singleJavaFileRoots) =
                 initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
-        rootsIndex = indexFactory.makeIndexFor(roots)
-        updateClasspathFromRootsIndex(rootsIndex)
+
+        // REPL and kapt2 update classpath dynamically
+        rootsIndex = JvmDependenciesDynamicCompoundIndex().apply {
+            addIndex(JvmDependenciesIndexImpl(roots))
+            updateClasspathFromRootsIndex(this)
+        }
 
         (ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl).initialize(
                 rootsIndex,

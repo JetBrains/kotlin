@@ -48,13 +48,3 @@ data class JavaRoot(val file: VirtualFile, val type: RootType, val prefixFqName:
         val SourceAndBinary: Set<RootType> = EnumSet.of(RootType.BINARY, RootType.SOURCE)
     }
 }
-
-interface JvmDependenciesIndexFactory<out T : JvmDependenciesIndex> {
-    fun makeIndexFor(roots: List<JavaRoot>): T
-}
-
-class JvmUpdateableDependenciesIndexFactory : JvmDependenciesIndexFactory<JvmDependenciesDynamicCompoundIndex> {
-    override fun makeIndexFor(roots: List<JavaRoot>) = JvmDependenciesDynamicCompoundIndex().apply {
-        addIndex(JvmDependenciesIndexImpl(roots))
-    }
-}
