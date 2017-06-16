@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.stepping
 
+import com.intellij.debugger.engine.ActionMethodFilter
 import com.intellij.debugger.engine.BreakpointStepMethodFilter
 import com.intellij.debugger.engine.MethodFilter
 import com.intellij.debugger.engine.RequestHint
@@ -68,7 +69,11 @@ internal class RequestHintWithMethodFilter(
                 /*NODE: Debugger API. Base implementation works only for smart step into, and calls filter only if !isTheSameFrame(context). */
                 if (filter.locationMatches(context.debugProcess, frameProxy.location())) {
                     targetMethodMatched = true
-                    return filter.onReached(context, this)
+
+                    if (filter is ActionMethodFilter) {
+                        return filter.onReached(context, this)
+                    }
+                    return STOP
                 }
             }
         }
