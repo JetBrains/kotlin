@@ -87,8 +87,6 @@ package kotlin.text.regex
  *
  * @author Nikolay A. Kuznetsov
  */
-//assumes int value of this supplementary codepoint as a parameter
-// TODO: Tests crash here. Investigate why.
 internal class SupplementaryCharSet(val codePoint: Int, ignoreCase: Boolean)
     : SequenceSet(fromCharArray(Char.toChars(codePoint), 0, 2), ignoreCase) {
 
@@ -96,7 +94,6 @@ internal class SupplementaryCharSet(val codePoint: Int, ignoreCase: Boolean)
         get() = patternString
 
     override fun first(set: AbstractSet): Boolean {
-        // TODO: replace with when
         return when (set) {
             is SupplementaryCharSet -> set.codePoint == codePoint
             is SupplementaryRangeSet -> set.contains(codePoint)

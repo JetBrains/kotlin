@@ -32,8 +32,6 @@ internal class SOLSet(val lt: AbstractLineTerminator, val multiline: Boolean = f
                 return next.matches(startIndex, testString, matchResult)
             }
         } else {
-            // TODO: In Kotlin JVM the empty string doesn't match to "^.$" pattern in multiline mode and matches in single-line mode.
-            // TODO: So do we need to implement this behaviour or we can match to the pattern in the both cases?
             if (startIndex != testString.length
                 && (startIndex == 0
                     || lt.isAfterLineTerminator(testString[startIndex - 1], testString[startIndex]))) {

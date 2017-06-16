@@ -23,7 +23,6 @@ package kotlin.text.regex
  *
  * @author Nikolay A. Kuznetsov
  */
-// TODO: May be rename?
 internal class UnifiedQuantifierSet(quant: LeafQuantifierSet) : LeafQuantifierSet(Quantifier.starQuantifier, quant.leaf, quant.next, quant.type) {
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
@@ -50,6 +49,6 @@ internal class UnifiedQuantifierSet(quant: LeafQuantifierSet) : LeafQuantifierSe
     }
 
     init {
-        innerSet.next = this  // TODO: O_o
+        innerSet.next = this
     }
 }

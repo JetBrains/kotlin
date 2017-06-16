@@ -21,7 +21,6 @@ package kotlin.text.regex
  * The node which marks end of the particular group.
  * @author Nikolay A. Kuznetsov
  */
-// TODO: Rename?
 open internal class FSet(val groupIndex: Int) : SimpleSet() {
 
     var isBackReferenced = false
@@ -96,7 +95,7 @@ internal class FinalSet : FSet(0) {
 internal class NonCapFSet(groupIndex: Int) : FSet(groupIndex) {
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
-        matchResult.setConsumed(groupIndex, startIndex - matchResult.getConsumed(groupIndex)) // TODO: Don't understand it.
+        matchResult.setConsumed(groupIndex, startIndex - matchResult.getConsumed(groupIndex))
         return next.matches(startIndex, testString, matchResult)
     }
 

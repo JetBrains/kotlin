@@ -18,7 +18,7 @@
 package kotlin.text.regex
 
 /**
- * Represents node accepting single character from the given char class. (TODO: Not a surrogate character?)
+ * Represents node accepting single character from the given char class.
  *
  * @author Nikolay A. Kuznetsov
  */

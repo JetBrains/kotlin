@@ -22,11 +22,9 @@ package kotlin.text.regex
  *
  * @author Nikolay A. Kuznetsov
  */
-// TODO: check of innerSet must be nullable or not
 internal abstract class QuantifierSet(open var innerSet: AbstractSet, override var next: AbstractSet, type: Int)
     : SimpleSet(type) {
 
-    // TODO: Looks like we need true by default here.
     override fun first(set: AbstractSet): Boolean =
         innerSet.first(set) || next.first(set)
 

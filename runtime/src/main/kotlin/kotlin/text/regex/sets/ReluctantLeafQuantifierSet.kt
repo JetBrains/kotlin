@@ -50,7 +50,6 @@ internal class ReluctantLeafQuantifierSet(
             occurrences++
         }
 
-        // TODO: May be refactor this loop.
         do {
             var shift = next.matches(index, testString, matchResult)
             if (shift >= 0) {

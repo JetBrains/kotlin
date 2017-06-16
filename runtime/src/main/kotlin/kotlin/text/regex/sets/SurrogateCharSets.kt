@@ -91,10 +91,8 @@ package kotlin.text.regex
  *
  * @author Nikolay A. Kuznetsov
  */
-// TODO: Could we use just CharSet instead of this one?
 internal class LowSurrogateCharSet(low: Char) : CharSet(low) {
 
-    // TODO: Remove bounds from MatchResultImpl.
     override fun accepts(startIndex: Int, testString: CharSequence): Int {
         val result = super.accepts(startIndex, testString)
         if (result < 0 || testString.isHighSurrogate(startIndex - 1)) {

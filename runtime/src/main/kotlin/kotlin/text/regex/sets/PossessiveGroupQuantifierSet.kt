@@ -31,7 +31,7 @@ internal class PossessiveGroupQuantifierSet(
 ): GroupQuantifierSet(quantifier, innerSet, next, type, setCounter) {
 
     init {
-        innerSet.next = FSet.possessiveFSet // TODO: Try to use such an approach for other sets.
+        innerSet.next = FSet.possessiveFSet
     }
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
@@ -45,8 +45,7 @@ internal class PossessiveGroupQuantifierSet(
             nextIndex = innerSet.matches(index, testString, matchResult)
         }
 
-        // TODO: Do we need this check?
-        if (/* nextIndex < 0 && */ occurrences < quantifier.min) {
+        if (occurrences < quantifier.min) {
             return -1
         } else {
             return next.matches(index, testString, matchResult)

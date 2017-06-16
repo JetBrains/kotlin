@@ -50,7 +50,7 @@ internal class ReluctantGroupQuantifierSet(
 
         // can't go inner set;
         if (enterCounter >= max) {
-            matchResult.enterCounters[groupQuantifierIndex] = 0 // TODO: Do we need it?
+            matchResult.enterCounters[groupQuantifierIndex] = 0
             return next.matches(startIndex, testString, matchResult)
         }
 

@@ -32,8 +32,7 @@ open internal class AtomicJointSet(children: List<AbstractSet>, fSet: FSet) : No
             val shift = it.matches(startIndex, testString, matchResult)
             if (shift >= 0) {
                 // AtomicFset always returns true, but saves the index to run this next.match() from;
-                // TODO: Try to get rid of this explicit cast to AtomicFSet
-                return next.matches((fSet as AtomicFSet).index, testString, matchResult) // TODO: We use next here.
+                return next.matches((fSet as AtomicFSet).index, testString, matchResult)
             }
         }
 
@@ -44,6 +43,5 @@ open internal class AtomicJointSet(children: List<AbstractSet>, fSet: FSet) : No
     override val name: String
         get() = "AtomicJointSet"
 
-    // TODO: looks like we can replace it with just next property.
     override var next: AbstractSet = dummyNext
 }

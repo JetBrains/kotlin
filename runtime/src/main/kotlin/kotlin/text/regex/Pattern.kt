@@ -43,7 +43,9 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         if (flags != 0 && flags or flagsBitMask != flagsBitMask) {
             throw IllegalArgumentException()
         }
-        AbstractSet.counter = 1 // TODO: It's for debug purposes.
+
+        // It's for debug purposes.
+        AbstractSet.counter = 1
 
         startNode = processExpression(-1, this.flags, null)
 
@@ -108,7 +110,6 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                     fSet = FinalSet()
                     saveChangedFlags = true
                 } else {
-                    // TODO: Looks like next here is null. Or it is set later.
                     fSet = FSet(capturingGroupCount)
                 }
                 if (capturingGroupCount < BACK_REF_NUMBER) {
@@ -136,7 +137,6 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                     }
                 }
             }
-            // TODO: Do we realy need this null check? Looks like child cannot be null.
             children.add(child)
         } while (!(lexemes.isEmpty() || lexemes.currentChar == Lexer.CHAR_RIGHT_PARENTHESIS))
 
@@ -184,7 +184,6 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                     || lexemes.lookAhead == Lexer.CHAR_DOLLAR)) {
             val ch = lexemes.next()
 
-            // TODO: Adapt to our checks.
             if (Char.isSupplementaryCodePoint(ch)) {
                 substring.append(Char.toChars(ch))
             } else {
@@ -197,7 +196,6 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
     /**
      * D->a
      */
-    // TODO: Refactor
     private fun processDecomposedChar(): AbstractSet {
         val codePoints = IntArray(Lexer.MAX_DECOMPOSITION_LENGTH)
         val codePointsHangul: CharArray
@@ -288,7 +286,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                         }
                     }
                     lexemes.isHighSurrogate() || lexemes.isLowSurrogate() -> {
-                        val term = processTerminal(last) // TODO: term is not null.
+                        val term = processTerminal(last)
                         cur = processQuantifier(last, term)
                     }
                     else -> {
@@ -479,7 +477,6 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                     if (lexemes.currentChar != Lexer.CHAR_RIGHT_SQUARE_BRACKET) {
                         throw PatternSyntaxException()
                     }
-                    // TODO: Set mode lexer as Mode.Range is set.
                     lexemes.setModeWithReread(Lexer.Mode.PATTERN)
                     lexemes.next()
                 }
@@ -598,7 +595,6 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
     /**
      * Process [...] ranges
      */
-    // TODO: We can merge it with processRangeExpression.
     private fun processRange(negative: Boolean, last: AbstractSet): AbstractSet {
         val res = processRangeExpression(negative)
         val rangeSet = processRangeSet(res)
@@ -760,7 +756,6 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         return result
     }
 
-    // TODO: Reread
     private fun processRangeSet(charClass: AbstractCharClass): AbstractSet {
         if (charClass.hasLowHighSurrogates()) {
             val lowHighSurrRangeSet = SurrogateRangeSet(charClass.surrogates)

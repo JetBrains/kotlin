@@ -26,11 +26,7 @@ internal abstract class LeafSet : SimpleSet(AbstractSet.TYPE_LEAF) {
 
     open val charCount = 1
 
-    /**
-     * Returns "shift", the number of accepted chars.
-     * Commonly internal function, but called by quantifiers.
-     */
-    // TODO: Magic function. Use by another way?
+    /** Returns "shift", the number of accepted chars. Commonly internal function, but called by quantifiers. */
     abstract fun accepts(startIndex: Int, testString: CharSequence): Int
 
     /**

@@ -91,7 +91,6 @@ package kotlin.text.regex
  */
 open internal class SupplementaryRangeSet(charClass: AbstractCharClass, val ignoreCase: Boolean = false): SimpleSet() {
 
-    // TODO: may be add ignoreCase flag to CharClass
     val chars = charClass.instance
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {

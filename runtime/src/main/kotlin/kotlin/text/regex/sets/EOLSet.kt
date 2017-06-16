@@ -24,7 +24,7 @@ package kotlin.text.regex
  *
  * @author Nikolay A. Kuznetsov
  */
-// TODO: What is consCounter?
+// TODO: rename consCounter?
 internal class EOLSet(val consCounter: Int, val lt: AbstractLineTerminator, val multiline: Boolean = false) : SimpleSet() {
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {

@@ -55,7 +55,6 @@ internal abstract class SpecialToken {
      */
     abstract val type: Type
 
-    // TODO: Replace with an enum?
     enum class Type {
         CHARCLASS,
         QUANTIFIER
@@ -87,8 +86,6 @@ internal class Lexer(val patternString: String, flags: Int) {
     /** When in [Mode.ESCAPE] mode, this field will save the previous one */
     private var savedMode = Mode.PATTERN
 
-    // TODO: Remove it.
-    // TODO: Harmony doesn't allow us to set the ESCAPE mode from outside of the lexer. DO we need this limitation?
     fun setModeWithReread(value: Mode) {
         if(value == Mode.PATTERN || value == Mode.RANGE) {
             mode = value
@@ -99,7 +96,6 @@ internal class Lexer(val patternString: String, flags: Int) {
     }
 
     // Tokens ==========================================================================================================
-    // TODO: May be add getters.
     internal var lookBack: Int = 0           // Previous char read.
         private set
     internal var currentChar: Int = 0        // Current character read. Returns 0 if there is no more characters.
@@ -107,7 +103,6 @@ internal class Lexer(val patternString: String, flags: Int) {
     internal var lookAhead: Int = 0          // Next character.
         private set
 
-    // TODO: Investigate if we can make it not nullable or not
     internal var curSpecialToken: SpecialToken? = null        // Current special token (e.g. quantifier)
         private set
     internal var lookAheadSpecialToken: SpecialToken? = null  // Next special token
@@ -116,7 +111,7 @@ internal class Lexer(val patternString: String, flags: Int) {
     // Indices in the pattern.
     private var index = 0                   // Current char being processed index.
     private var prevNonWhitespaceIndex = 0  // Previous non-whitespace character index.
-    private var curTokenIndex = 0           // Current token start index. TODO: == index?
+    private var curTokenIndex = 0           // Current token start index.
     private var lookAheadTokenIndex = 0     // Next token index.
 
     init {
@@ -124,7 +119,7 @@ internal class Lexer(val patternString: String, flags: Int) {
         if (flags and Pattern.LITERAL > 0) {
             processedPattern = Pattern.quote(patternString)
         } else if (flags and Pattern.CANON_EQ > 0) {
-            processedPattern = Lexer.normalize(patternString) // TODO: rewrite normalization
+            processedPattern = Lexer.normalize(patternString)
         }
 
         this.pattern = processedPattern.toCharArray().copyOf(processedPattern.length + 2)
@@ -142,7 +137,6 @@ internal class Lexer(val patternString: String, flags: Int) {
     val isQuantifier: Boolean   get() = isSpecial && curSpecialToken!!.type == SpecialToken.Type.QUANTIFIER
     val isNextSpecial: Boolean  get() = lookAheadSpecialToken != null
 
-    // TODO: May be replace with some already existing.
     private fun Int.isSurrogatePair() : Boolean {
         val high = (this ushr 16).toChar()
         val low = this.toChar()
@@ -152,7 +146,6 @@ internal class Lexer(val patternString: String, flags: Int) {
     private fun Char.isLineSeparator(): Boolean =
         this == '\n' || this == '\r' || this == '\u0085' || this.toInt() or 1 == '\u2029'.toInt()
 
-    // TODO: Replace with properties
     /** Checks if there are any characters in the pattern. */
     fun isEmpty(): Boolean =
         currentChar == 0 && lookAhead == 0 && index >= pattern.size && !isSpecial
@@ -170,7 +163,6 @@ internal class Lexer(val patternString: String, flags: Int) {
      * Restores flags for Lexer
      * @param flags
      */
-    // TODO: Refactor.
     fun restoreFlags(flags: Int) {
         this.flags = flags
         lookAhead = currentChar
@@ -221,7 +213,7 @@ internal class Lexer(val patternString: String, flags: Int) {
      */
     private fun nextIndex(): Int {
         prevNonWhitespaceIndex = index
-        if (flags and Pattern.COMMENTS != 0) { // TODO: Refactor flags.
+        if (flags and Pattern.COMMENTS != 0) {
             skipComments()
         } else {
             index++
@@ -310,7 +302,6 @@ internal class Lexer(val patternString: String, flags: Int) {
             if (lookAheadChar == 'E') {
                 // If \E found - change the mode to the previous one and shift to the next char.
                 mode = savedMode
-                // TODO: + we create an array with 2 additional characters but check the index here. May be there is not need to check it?
                 lookAhead = if (index <= pattern.size - 2) nextCodePoint() else 0
             } else {
                 // If \ have no E - make a step back and return.
@@ -332,8 +323,9 @@ internal class Lexer(val patternString: String, flags: Int) {
             return processEscapedChar()
         }
 
+        // TODO: Look like we can create a quantifier here.
         when (lookAheadChar) {
-            // Quantifier (*, +, ?). TODO: May be create a quantifier here.
+            // Quantifier (*, +, ?).
             '+', '*', '?' -> {
                 val mode = if (index < pattern.size) pattern[index] else '*'
                 // look at the next character to determine if the mode is greedy, reluctant or possessive.
@@ -407,14 +399,6 @@ internal class Lexer(val patternString: String, flags: Int) {
 
             ')' -> lookAhead = CHAR_RIGHT_PARENTHESIS
             '[' -> { lookAhead = CHAR_LEFT_SQUARE_BRACKET; mode = Mode.RANGE }
-            // TODO: No need in this case.
-            /*']' -> {
-                assert(mode == Mode.PATTERN)
-               /* // TODO: Think we cannot meet it here. because we already checked the mode and it is PATTERN, not RANGE. Check it.
-                if (mode == Lexer.MODE_RANGE) {
-                    lookAhead = CHAR_RIGHT_SQUARE_BRACKET
-                }*/
-            }*/
             '^' -> lookAhead = CHAR_CARET
             '|' -> lookAhead = CHAR_VERTICAL_BAR
             '.' -> lookAhead = CHAR_DOT
@@ -457,15 +441,12 @@ internal class Lexer(val patternString: String, flags: Int) {
                 val cs = parseCharClassName()
                 val negative = lookAheadChar == 'P'
 
-                // TODO: Harmony processes errors thrown from the getPredefinedClass
                 lookAheadSpecialToken = AbstractCharClass.getPredefinedClass(cs, negative)
                 lookAhead = 0
             }
 
             // Word/whitespace/digit.
             'w', 's', 'd', 'W', 'S', 'D' -> {
-                // TODO: Strange string creation. Can we do easily
-                // TODO: may be use parseCharClassName here?
                 lookAheadSpecialToken = AbstractCharClass.getPredefinedClass(
                         fromCharArray(pattern, prevNonWhitespaceIndex, 1),
                         false
@@ -496,7 +477,6 @@ internal class Lexer(val patternString: String, flags: Int) {
             }
 
             // A literal: octal, hex, or hex unicode.
-            // TODO: May be use standard Kotlin methods here.
             '0' -> lookAhead = readOctals()
             'x' -> lookAhead = readHex(2)
             'u' -> lookAhead = readHex(4)
@@ -520,7 +500,6 @@ internal class Lexer(val patternString: String, flags: Int) {
                 }
             }
 
-            // TODO: May be throw an exception in any not supported case?
             'C', 'E', 'F', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'R', 'T', 'U', 'V', 'X', 'Y', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'o', 'q', 'y' -> throw PatternSyntaxException()
         }
         return false
@@ -570,8 +549,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             }
         }
 
-        // TODO: Double check this contition.
-        if (min < 0 || max >=0 && max - min < 0) {
+        if (min < 0 || max >=0 && max < min) {
             throw PatternSyntaxException()
         }
 
@@ -581,7 +559,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             '?' -> { lookAhead = Lexer.QUANT_COMP_R; nextIndex() }
             else ->  lookAhead = Lexer.QUANT_COMP
         }
-        return Quantifier(min, max) // TODO: Save mode (P, R, G) in the Quantifier
+        return Quantifier(min, max)
     }
 
     // Reading methods for specific tokens =============================================================================
@@ -652,7 +630,6 @@ internal class Lexer(val patternString: String, flags: Int) {
         if (index < pattern.size - 2) {
             // one symbol family
             if (pattern[index] != '{') {
-                // TODO: Replace such string formation with something like patter.substring(..)
                 return "Is${pattern[nextIndex()]}"
             }
 
@@ -692,11 +669,9 @@ internal class Lexer(val patternString: String, flags: Int) {
     }
 
     /** Process octal integer. */
-    // TODO: Replace with String.toInt(8)
     private fun readOctals(): Int {
-        val length = pattern.size - 2 // TODO: Add a special method for check 'index < pattern.size - 2'
+        val length = pattern.size - 2
         var result = 0
-        // TODO: Add digit conversion.
         var digit = digitOf(pattern[index], 8)
         if (digit == -1) {
             throw PatternSyntaxException()
@@ -758,7 +733,7 @@ internal class Lexer(val patternString: String, flags: Int) {
         val QUANT_COMP_P = QMOD_POSSESSIVE or '{'.toInt()
         val QUANT_COMP_R = QMOD_RELUCTANT or '{'.toInt()
 
-        /** Returns true if [ch] is a plain token. */ // TODO: May be rename
+        /** Returns true if [ch] is a plain token. */
         fun isLetter(ch: Int): Boolean {
             // All supplementary codepoints have integer value that is >= 0.
             return ch >= 0

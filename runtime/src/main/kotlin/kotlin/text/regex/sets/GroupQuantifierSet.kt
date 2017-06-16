@@ -43,8 +43,6 @@ open internal class GroupQuantifierSet(
             return next.matches(startIndex, testString, matchResult)
         }
 
-        // TODO: We can store an optimized functions for specific cases (like *) in a separate callable reference and
-        // TODO: call it instead of checks during matching.
         // Fast case: '*' or {0, } - no need to count occurrences.
         if (min == 0 && max == Quantifier.INF) {
             val nextIndex = innerSet.matches(startIndex, testString, matchResult)

@@ -87,8 +87,6 @@ package kotlin.text.regex
  * the first consisting of these surrogate characters and the second consisting of all others characters
  * from the parent range. This class represents the parent range split in such a manner.
  */
-// TODO: May be we can merge sets with surrogates and without them.
-// TODO: Use more specific constructor params (e.g. RangeSet)
 internal class CompositeRangeSet(/* range without surrogates */ val withoutSurrogates: AbstractSet,
                                  /* range containing surrogates only */ val surrogates: AbstractSet) : SimpleSet() {
 

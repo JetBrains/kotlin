@@ -47,7 +47,6 @@ internal abstract class AbstractLineTerminator {
             }
         }
 
-        // TODO: Replace with property or another Kotlin-way singleton.
         fun getInstance(flag: Int): AbstractLineTerminator {
             if (flag and Pattern.UNIX_LINES != 0) {
                 return unixLT

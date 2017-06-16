@@ -22,7 +22,6 @@ package kotlin.text.regex
  *
  * @author Nikolay A. Kuznetsov
  */
-// TODO: Looks like we can extend AbstractSet instead of JointSet here.
 internal class DotSet(val lt: AbstractLineTerminator, val matchLineTerminator: Boolean)
     : SimpleSet(AbstractSet.TYPE_DOTSET) {
 

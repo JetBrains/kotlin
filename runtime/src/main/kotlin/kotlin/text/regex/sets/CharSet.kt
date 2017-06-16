@@ -22,7 +22,6 @@ package kotlin.text.regex
  *
  * @author Nikolay A. Kuznetsov
  */
-// TODO: Process next better - it is non-null in almost all cases.
 open internal class CharSet(char: Char, val ignoreCase: Boolean = false) : LeafSet() {
 
     // We use only low case characters when working in case insensitive mode.

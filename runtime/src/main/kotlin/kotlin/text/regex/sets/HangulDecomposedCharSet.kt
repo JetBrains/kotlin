@@ -21,7 +21,6 @@ package kotlin.text.regex
  * Represents canonical decomposition of Hangul syllable. Is used when
  * CANON_EQ flag of Pattern class is specified.
  */
-// TODO: Refactor it.
 internal class HangulDecomposedCharSet(
         /**
          * Decomposed Hangul syllable.

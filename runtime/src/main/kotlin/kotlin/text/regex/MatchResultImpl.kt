@@ -22,12 +22,7 @@ package kotlin.text.regex
  * @author Nikolay A. Kuznetsov
  */
 
-// TODO: rework defaults.
-// TODO: May be we can remove left/rightBound and just create a substring for matching/searching.
-// TODO: We don't use right/leftBound in our API now. So this function can be removed.
-// TODO: But I think it may be useful to save them for further improvements of the API.
 internal class MatchResultImpl
-// TODO: Refactor the constructor comment.
 /**
  *  @param input an input sequence for matching/searching.
  *  @param regex a [Regex] instance used for matching/searching.
@@ -37,20 +32,18 @@ constructor (internal val input: CharSequence,
              internal val regex: Regex) : MatchResult {
 
     // Harmony's implementation ========================================================================================
-    // TODO: Rework number of groups
     private val nativePattern = regex.nativePattern
     private val groupCount = nativePattern.capturingGroupCount
     private val groupBounds = IntArray(groupCount * 2) { -1 }
 
-    private val consumers = IntArray(nativePattern.consumersCount + 1) { -1 }  // TODO: What is consumers array?
+    private val consumers = IntArray(nativePattern.consumersCount + 1) { -1 }
 
     // Used by quantifiers to store a count of a quantified expression occurrences.
-    val enterCounters: IntArray = IntArray( maxOf(nativePattern.groupQuantifierCount, 0) ) // TODO remove maxOf
+    val enterCounters: IntArray = IntArray( maxOf(nativePattern.groupQuantifierCount, 0) )
 
     var startIndex: Int = 0
         set (startIndex: Int) {
             field = startIndex
-            // TODO: what is it? And do we need it?
             if (previousMatch < 0) {
                 previousMatch = startIndex
             }
@@ -62,7 +55,7 @@ constructor (internal val input: CharSequence,
     // MatchResult interface ===========================================================================================
     /** The range of indices in the original string where match was captured. */
     override val range: IntRange
-        get() = getStart(0) until getEnd(0) // TODO: I don't like these get... set... methods. Rename them or make properties.
+        get() = getStart(0) until getEnd(0)
 
     /** The substring from the input string captured by this match. */
     override val value: String
@@ -136,7 +129,6 @@ constructor (internal val input: CharSequence,
 
 
     // Harmony's implementation ========================================================================================
-    // TODO: What is it?
     fun setConsumed(counter: Int, value: Int) {
         this.consumers[counter] = value
     }
@@ -148,7 +140,6 @@ constructor (internal val input: CharSequence,
     fun isCaptured(group: Int): Boolean = getStart(group) >= 0
 
     // Setters and getters for starts and ends of groups ===============================================================
-    // TODO: Decide what access modifier should we use in this class.
     internal fun setStart(group: Int, offset: Int) {
         checkGroup(group)
         groupBounds[group * 2] = offset
@@ -189,14 +180,12 @@ constructor (internal val input: CharSequence,
      * @param group the group, ranging from 0 to groupCount() - 1, with 0 representing the whole pattern.
      * @return the text that matched the group.
      */
-    // TODO: Reread and maybe rewrite.
     fun group(group: Int = 0): String? {
         val start = getStart(group)
         val end = getEnd(group)
-        if (start < 0) { // TODO: Do we need to check end?
+        if (start < 0 || end < 0) {
             return null
         }
-        assert(start <= end && end >= 0 && end <= input.length) // TODO: remove the assert.
         return input.subSequence(getStart(group), getEnd(group)).toString()
     }
 
@@ -207,7 +196,7 @@ constructor (internal val input: CharSequence,
      * @return the number of groups.
      */
     fun groupCount(): Int {
-        return groupCount - 1 // TODO: Do something with it. These +/-1 are terrible.
+        return groupCount - 1
     }
 
     /*

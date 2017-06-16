@@ -98,7 +98,7 @@ internal abstract class AbstractSet(val type: Int = 0) {
 
     /**
      * @param leftLimit - an index, to finish search back (left limit, inclusive).
-     * @param rightLimit - an index to start search from (right limit, exclusive). // TODO: Is it really exclusive
+     * @param rightLimit - an index to start search from (right limit, exclusive).
      * @param testString - test string.
      * @param matchResult - match result.
      * @return an index to start back search next time if this search fails(new left bound);
@@ -128,7 +128,6 @@ internal abstract class AbstractSet(val type: Int = 0) {
      * @param set - A node the intersection is checked for. Usually a previous node.
      * @return true if the given node intersects with this one, false otherwise.
      */
-    // TODO: May be rename. e.g. intersects for something else.
     open fun first(set: AbstractSet): Boolean = true
 
     /**

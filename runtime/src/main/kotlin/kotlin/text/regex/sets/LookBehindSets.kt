@@ -38,7 +38,7 @@ internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
          return -1
     }
 
-    override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true // TODO: False was here. It's true just for experiment.
+    override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true
     override val name: String
         get() = "PositiveBehindJointSet"
 }

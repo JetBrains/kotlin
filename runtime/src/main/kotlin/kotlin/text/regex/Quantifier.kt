@@ -10,7 +10,6 @@ import kotlin.IllegalArgumentException
 
  * @author Nikolay A. Kuznetsov
  */
-// TODO: May be replace with some other class (Range?).
 internal class Quantifier(val min: Int, val max: Int = min) : SpecialToken() {
 
     init {

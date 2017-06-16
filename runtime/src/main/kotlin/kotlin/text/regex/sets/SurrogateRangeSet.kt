@@ -108,7 +108,7 @@ internal class SurrogateRangeSet(surrChars: AbstractCharClass) : RangeSet(surrCh
 
     override fun first(set: AbstractSet): Boolean {
         return when (set) {
-            is SurrogateRangeSet -> true // TODO: May be add some check here.
+            is SurrogateRangeSet -> true
             is CharSet,
             is RangeSet,
             is SupplementaryCharSet,

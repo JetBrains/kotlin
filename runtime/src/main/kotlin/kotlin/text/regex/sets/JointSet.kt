@@ -36,7 +36,6 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
     /**
      * Returns startIndex+shift, the next position to match
      */
-    // TODO: Why don't we use a next here?
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         if (children.isEmpty()) {
             return -1

@@ -36,7 +36,6 @@ internal class PossessiveLeafQuantifierSet(
         var index = startIndex
         var occurrences = 0
 
-        // TODO: Create a separate functions for these loops?
         while (occurrences < min) {
             if (index + leaf.charCount > testString.length) {
                 return -1

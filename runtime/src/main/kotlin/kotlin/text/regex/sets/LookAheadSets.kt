@@ -36,7 +36,7 @@ internal class PositiveLookAheadSet(children: List<AbstractSet>, fSet: FSet) : A
         return -1
     }
 
-    override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true // TODO: May be false?
+    override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true
     override val name: String
         get() = "PositiveLookaheadJointSet"
 }
