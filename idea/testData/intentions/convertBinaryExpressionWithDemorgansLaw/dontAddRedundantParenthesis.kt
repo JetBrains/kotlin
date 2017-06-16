@@ -3,5 +3,5 @@ object O {
     fun bar(): Boolean = true
 }
 fun foo(p1: Boolean, p2: Boolean) {
-    if (<caret>!O.foo() && !O.bar()) return
+    if (!(<caret>O.foo() || O.bar())) return
 }

@@ -4026,6 +4026,123 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertBinaryExpressionWithDemorgansLaw extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertBinaryExpressionWithDemorgansLaw() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("complexNegation1.kt")
+        public void testComplexNegation1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/complexNegation1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexNegation2.kt")
+        public void testComplexNegation2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/complexNegation2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("conjunctionNegation1.kt")
+        public void testConjunctionNegation1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/conjunctionNegation1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("conjunctionNegation2.kt")
+        public void testConjunctionNegation2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/conjunctionNegation2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("disjunctionNegation1.kt")
+        public void testDisjunctionNegation1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/disjunctionNegation1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("disjunctionNegation2.kt")
+        public void testDisjunctionNegation2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/disjunctionNegation2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dontAddRedundantParenthesis.kt")
+        public void testDontAddRedundantParenthesis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/dontAddRedundantParenthesis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doubleNegation.kt")
+        public void testDoubleNegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/doubleNegation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableOperator.kt")
+        public void testInapplicableOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/inapplicableOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableTriple.kt")
+        public void testInapplicableTriple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/inapplicableTriple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("longMixedExpression.kt")
+        public void testLongMixedExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/longMixedExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mixedExpression.kt")
+        public void testMixedExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/mixedExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noNegationPrefix1.kt")
+        public void testNoNegationPrefix1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/noNegationPrefix1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noNegationPrefix2.kt")
+        public void testNoNegationPrefix2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/noNegationPrefix2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noNegationPrefix3.kt")
+        public void testNoNegationPrefix3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/noNegationPrefix3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noNegationPrefix4.kt")
+        public void testNoNegationPrefix4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/noNegationPrefix4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonstandardPrefixOperator.kt")
+        public void testNonstandardPrefixOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/nonstandardPrefixOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("retainedParens.kt")
+        public void testRetainedParens() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBinaryExpressionWithDemorgansLaw/retainedParens.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertCamelCaseTestFunctionToSpaced")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -4997,105 +5114,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("parenthesizedConjunctionOfTwoNegations.kt")
         public void testParenthesizedConjunctionOfTwoNegations() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedBooleanSequence/parenthesizedConjunctionOfTwoNegations.kt");
-            doTest(fileName);
-        }
-    }
-
-    @TestMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertNegatedExpressionWithDemorgansLaw extends AbstractIntentionTest {
-        public void testAllFilesPresentInConvertNegatedExpressionWithDemorgansLaw() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("complexNegation1.kt")
-        public void testComplexNegation1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/complexNegation1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("complexNegation2.kt")
-        public void testComplexNegation2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/complexNegation2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("conjunctionNegation1.kt")
-        public void testConjunctionNegation1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/conjunctionNegation1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("conjunctionNegation2.kt")
-        public void testConjunctionNegation2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/conjunctionNegation2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("disjunctionNegation1.kt")
-        public void testDisjunctionNegation1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/disjunctionNegation1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("disjunctionNegation2.kt")
-        public void testDisjunctionNegation2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/disjunctionNegation2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("dontAddRedundantParenthesis.kt")
-        public void testDontAddRedundantParenthesis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/dontAddRedundantParenthesis.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("doubleNegation.kt")
-        public void testDoubleNegation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/doubleNegation.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("inapplicableNormalExpression.kt")
-        public void testInapplicableNormalExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/inapplicableNormalExpression.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("inapplicableOperator.kt")
-        public void testInapplicableOperator() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/inapplicableOperator.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("inapplicableTriple.kt")
-        public void testInapplicableTriple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/inapplicableTriple.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("longMixedExpression.kt")
-        public void testLongMixedExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/longMixedExpression.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("mixedExpression.kt")
-        public void testMixedExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/mixedExpression.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nonstandardPrefixOperator.kt")
-        public void testNonstandardPrefixOperator() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/nonstandardPrefixOperator.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("retainedParens.kt")
-        public void testRetainedParens() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/retainedParens.kt");
             doTest(fileName);
         }
     }

@@ -19,46 +19,49 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 
-class ConvertNegatedExpressionWithDemorgansLawIntention : SelfTargetingOffsetIndependentIntention<KtPrefixExpression>(KtPrefixExpression::class.java, "DeMorgan Law") {
-    override fun isApplicableTo(element: KtPrefixExpression): Boolean {
-        val prefixOperator = element.operationReference.getReferencedNameElementType()
-        if (prefixOperator != KtTokens.EXCL) return false
+class ConvertBinaryExpressionWithDemorgansLawIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "DeMorgan Law") {
+    override fun isApplicableTo(element: KtBinaryExpression): Boolean {
+        val expr = element.parentsWithSelf.takeWhile { it is KtBinaryExpression }.last() as KtBinaryExpression
 
-        val parenthesizedExpression = element.baseExpression as? KtParenthesizedExpression
-        val baseExpression = parenthesizedExpression?.expression as? KtBinaryExpression ?: return false
-
-        when (baseExpression.operationToken) {
+        when (expr.operationToken) {
             KtTokens.ANDAND -> text = "Replace '&&' with '||'"
             KtTokens.OROR -> text = "Replace '||' with '&&'"
             else -> return false
         }
 
-        return splitBooleanSequence(baseExpression) != null
+        return splitBooleanSequence(expr) != null
     }
 
-    override fun applyTo(element: KtPrefixExpression, editor: Editor?) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         applyTo(element)
     }
 
-    fun applyTo(element: KtPrefixExpression) {
-        val parenthesizedExpression = element.baseExpression as KtParenthesizedExpression
-        val baseExpression = parenthesizedExpression.expression as KtBinaryExpression
+    fun applyTo(element: KtBinaryExpression) {
+        val expr = element.parentsWithSelf.takeWhile { it is KtBinaryExpression }.last() as KtBinaryExpression
 
-        val operatorText = when (baseExpression.operationToken) {
+        val operatorText = when (expr.operationToken) {
             KtTokens.ANDAND -> KtTokens.OROR.value
             KtTokens.OROR -> KtTokens.ANDAND.value
             else -> throw IllegalArgumentException()
         }
 
-        val operands = splitBooleanSequence(baseExpression)!!.asReversed()
+        val operands = splitBooleanSequence(expr)!!.asReversed()
 
-        val newExpression = KtPsiFactory(element).buildExpression {
+        val newExpression = KtPsiFactory(expr).buildExpression {
             appendExpressions(operands.map { it.negate() }, separator = operatorText)
         }
 
-        element.replace(newExpression)
+        val grandParentPrefix = expr.parent.parent as? KtPrefixExpression
+        val negated = expr.parent is KtParenthesizedExpression &&
+                      grandParentPrefix?.operationReference?.getReferencedNameElementType() == KtTokens.EXCL
+        if (negated) {
+            grandParentPrefix?.replace(newExpression)
+        } else {
+            expr.replace(newExpression.negate())
+        }
     }
 
     private fun splitBooleanSequence(expression: KtBinaryExpression): List<KtExpression>? {
