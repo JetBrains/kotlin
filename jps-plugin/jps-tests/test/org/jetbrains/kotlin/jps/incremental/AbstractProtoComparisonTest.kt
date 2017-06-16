@@ -40,18 +40,18 @@ abstract class AbstractProtoComparisonTest<PROTO_DATA> : UsefulTestCase() {
         val p = Printer(sb)
 
         (oldClassMap.keys - newClassMap.keys).sortedBy { it.toString() }.forEach { classId ->
-            p.println("REMOVED: class $classId")
+            p.println("REMOVED $classId")
         }
 
         (newClassMap.keys - oldClassMap.keys).sortedBy { it.toString() }.forEach { classId ->
-            p.println("ADDED: class $classId")
+            p.println("ADDED $classId")
         }
 
         (oldClassMap.keys.intersect(newClassMap.keys)).sortedBy { it.toString() }.forEach { classId ->
             val diff = difference(oldClassMap[classId]!!, newClassMap[classId]!!)
 
             if (diff == null) {
-                p.println("skip $classId")
+                p.println("SKIPPED $classId")
                 return@forEach
             }
 
@@ -66,7 +66,7 @@ abstract class AbstractProtoComparisonTest<PROTO_DATA> : UsefulTestCase() {
                 changes.add("NONE")
             }
 
-            p.println("changes in $classId: ${changes.joinToString()}")
+            p.println("CHANGES in $classId: ${changes.joinToString()}")
         }
 
         KotlinTestUtils.assertEqualsToFile(File(testDataPath + File.separator + "result.out"), sb.toString())
