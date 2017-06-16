@@ -3,5 +3,5 @@ operator fun String.not(): Boolean {
 }
 
 fun foo(a: Boolean, b: Boolean) : Boolean {
-    return !<caret>(!"" || b)
+    return !(<caret>!"" || b)
 }
