@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.android.synthetic
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.android.parcel.ParcelableCodegenExtension
+import org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidExtensionsExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.diagnostic.AndroidExtensionPropertiesCallChecker
@@ -41,6 +44,8 @@ import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.android.synthetic.codegen.ParcelableClinitClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 
 object AndroidConfigurationKeys {
     val VARIANT: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create<List<String>>("Android build variant")
@@ -75,7 +80,17 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
 }
 
 class AndroidComponentRegistrar : ComponentRegistrar {
+    companion object {
+        fun registerParcelExtensions(project: Project) {
+            ExpressionCodegenExtension.registerExtension(project, ParcelableCodegenExtension())
+            SyntheticResolveExtension.registerExtension(project, ParcelableResolveExtension())
+            ClassBuilderInterceptorExtension.registerExtension(project, ParcelableClinitClassBuilderInterceptorExtension())
+        }
+    }
+
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+        registerParcelExtensions(project)
+
         val applicationPackage = configuration.get(AndroidConfigurationKeys.PACKAGE)
         val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.mapNotNull { parseVariant(it) } ?: emptyList()
         val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"

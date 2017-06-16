@@ -1,0 +1,80 @@
+public static class TestNotNull$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final TestNotNull createFromParcel(android.os.Parcel p0)
+
+    public final TestNotNull[] newArray(int p0)
+}
+
+public final class TestNotNull : java/lang/Object {
+    public final static TestNotNull$CREATOR CREATOR
+
+    private final android.util.Size a
+
+    static void <clinit>()
+
+    public void <init>(android.util.Size p0)
+
+    public final int describeContents()
+
+    public final android.util.Size getA()
+
+    public final void writeToParcel(android.os.Parcel p0, int p1) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (a, Landroid/util/Size;)
+          INVOKEVIRTUAL (android/os/Parcel, writeSize, (Landroid/util/Size;)V)
+          RETURN
+        LABEL (L1)
+    }
+}
+
+public static class TestNullable$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final TestNullable createFromParcel(android.os.Parcel p0)
+
+    public final TestNullable[] newArray(int p0)
+}
+
+public final class TestNullable : java/lang/Object {
+    public final static TestNullable$CREATOR CREATOR
+
+    private final android.util.Size a
+
+    static void <clinit>()
+
+    public void <init>(android.util.Size p0)
+
+    public final int describeContents()
+
+    public final android.util.Size getA()
+
+    public final void writeToParcel(android.os.Parcel p0, int p1) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (a, Landroid/util/Size;)
+          DUP
+          IFNULL (L1)
+          ALOAD (1)
+          LDC (1)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          INVOKEVIRTUAL (android/os/Parcel, writeSize, (Landroid/util/Size;)V)
+          GOTO (L2)
+        LABEL (L1)
+          POP
+          LDC (0)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+        LABEL (L2)
+          RETURN
+        LABEL (L3)
+    }
+}

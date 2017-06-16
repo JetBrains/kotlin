@@ -1,0 +1,82 @@
+public static class User$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final User createFromParcel(android.os.Parcel p0) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (in)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          NEW
+          DUP
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readString, ()Ljava/lang/String;)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readString, ()Ljava/lang/String;)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          INVOKESPECIAL (User, <init>, (Ljava/lang/String;Ljava/lang/String;IZ)V)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final User[] newArray(int p0)
+}
+
+public final class User : java/lang/Object, android/os/Parcelable {
+    public final static User$CREATOR CREATOR
+
+    private final int age
+
+    private final java.lang.String firstName
+
+    private final boolean isProUser
+
+    private final java.lang.String lastName
+
+    static void <clinit>() {
+          NEW
+          DUP
+          INVOKESPECIAL (User$CREATOR, <init>, ()V)
+          PUTSTATIC (CREATOR, LUser$CREATOR;)
+          RETURN
+    }
+
+    public void <init>(java.lang.String p0, java.lang.String p1, int p2, boolean p3)
+
+    public final int describeContents()
+
+    public final int getAge()
+
+    public final java.lang.String getFirstName()
+
+    public final java.lang.String getLastName()
+
+    public final boolean isProUser()
+
+    public final void writeToParcel(android.os.Parcel p0, int p1) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (firstName, Ljava/lang/String;)
+          INVOKEVIRTUAL (android/os/Parcel, writeString, (Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (lastName, Ljava/lang/String;)
+          INVOKEVIRTUAL (android/os/Parcel, writeString, (Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (age, I)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (isProUser, Z)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          RETURN
+        LABEL (L1)
+    }
+}
