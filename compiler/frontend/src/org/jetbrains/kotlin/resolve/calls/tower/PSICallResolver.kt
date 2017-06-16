@@ -564,7 +564,7 @@ class PSICallResolver(
                 is DoubleColonLHS.Type -> {
                     val qualifier = expressionTypingContext.trace.get(BindingContext.QUALIFIER, ktExpression.receiverExpression!!.referenceExpression())
                     if (qualifier is ClassQualifier) {
-                        LHSResult.Type(qualifier)
+                        LHSResult.Type(qualifier, lhsResult.type.unwrap())
                     }
                     else {
                         LHSResult.Empty // this is error case actually
