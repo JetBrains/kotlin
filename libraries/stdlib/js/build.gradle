@@ -49,8 +49,12 @@ sourceSets {
     }
 }
 
+configurations {
+    merger
+}
 dependencies {
     testCompile project(':kotlin-test:kotlin-test-js')
+    merger project(":tools:kotlin-stdlib-js-merger")
 }
 
 createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
@@ -110,6 +114,7 @@ compileBuiltinsKotlin2Js {
     kotlinOptions {
         metaInfo = false
         outputFile = "${buildDir}/classes/builtins/kotlin.js"
+        sourceMap = true
     }
 }
 
@@ -117,6 +122,7 @@ compileKotlin2Js {
     dependsOn preprocessSourcesMain, prepareBuiltinsSources
     kotlinOptions {
         outputFile = "${buildDir}/classes/main/kotlin.js"
+        sourceMap = true
     }
 }
 
@@ -127,51 +133,24 @@ compileTestKotlin2Js {
     }
 }
 
-configurations {
-    closureCompiler
-}
-dependencies {
-    closureCompiler "com.google.javascript:closure-compiler:v20160315"
-}
-
-task compileJs {
+task compileJs(type: JavaExec) {
     dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js
     inputs.files(compileBuiltinsKotlin2Js.outputs.files)
     inputs.files(compileKotlin2Js.outputs.files)
     inputs.dir(jsSrcDir)
     outputs.file(jsOutputFile)
+    outputs.file("${jsOutputFile}.map")
 
+    def inputFiles = fileTree("${jsSrcJsDir}") {
+        include '**/*.js'
+    }
+
+    main = "org.jetbrains.kotlin.js.FileMergerKt"
+    args = [jsOutputFile, "$rootDir/../", "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path } +
+           ["$buildDir/classes/builtins/kotlin.js", "$buildDir/classes/main/kotlin.js"]
+    classpath = configurations.merger
 
     doLast {
-        ant.taskdef(
-                name: 'closureCompiler',
-                classname: 'com.google.javascript.jscomp.ant.CompileTask',
-                classpath: configurations.closureCompiler.asPath)
-
-        ant.closureCompiler(
-                compilationLevel: 'whitespace',
-                prettyprint: 'true',
-                languagein: 'ECMASCRIPT5_STRICT',
-                warning: 'default',
-                output: jsOutputFile,
-                outputWrapperFile: "${jsSrcJsDir}/closure-wrapper.txt"
-        ) {
-            ant.path {
-                fileset(dir: "${jsSrcJsDir}") {
-                    include(name: '**/*.js')
-                    exclude(name: 'externs.js')
-                }
-                fileset(dir: "${buildDir}/classes") {
-                    include(name: 'builtins/kotlin.js')
-                    include(name: 'main/kotlin.js')
-                }
-            }
-
-            externs(dir: "${jsSrcJsDir}") {
-                ant.file(name: 'externs.js')
-            }
-        }
-
         ant.replaceregexp(
                 file: jsOutputFile,
                 match: "module.exports,\\s*require\\([^)]+\\)",
@@ -187,6 +166,29 @@ task compileJs {
                 match: "return\\s+_;",
                 replace: "",
                 byline: "true", encoding: "UTF-8")
+
+        def sourceMapFile = file("${jsOutputFile}.map")
+        def sourceMap = new groovy.json.JsonSlurper().parseText(sourceMapFile.text)
+        def sourceMapSourcesBaseDirs = [ "${rootDir}/..", jsSrcJsDir ]
+
+        sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
+            sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() && it.name != "kotlin.js" }?.text
+        }
+
+        def sourceMapBasePaths = [
+                "js/js.libraries/src/",
+                "libraries/stdlib/js/build/builtin-sources/",
+                "libraries/stdlib/js/build/builtin-sources-for-builtins/",
+                "libraries/stdlib/js/build/builtin-sources-for-builtins/",
+                "libraries/stdlib/js/build/common-sources/"
+        ]
+
+        sourceMap.sources = sourceMap.sources.collect { sourcePath ->
+            def prefixToRemove = sourceMapBasePaths.find { basePath -> sourcePath.startsWith(basePath) }
+            if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
+        }
+
+        sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
     }
 }
 
@@ -211,6 +213,7 @@ task mergedJar(type: Jar, dependsOn: classes) {
     includeEmptyDirs false
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
     from jsOutputFile
+    from "${jsOutputFile}.map"
     from sourceSets.main.output
 }
 
