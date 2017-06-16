@@ -22,9 +22,7 @@ package kotlin.text.regex
  *
  * @author Nikolay A. Kuznetsov
  */
-/*
- * TODO: replace the implementation with one using BitSet for first 256 symbols and a hash table / tree for the rest of UTF.
- */
+// TODO: replace the implementation with one using BitSet for first 256 symbols and a hash table / tree for the rest of UTF.
 internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = false)  : AbstractCharClass()  {
 
     var invertedSurrogates = false
@@ -38,7 +36,6 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
      */
     var inverted = false
 
-    // TODO: May be we can get rid of it?
     var hideBits = false
 
     internal var bits_ = BitSet()
@@ -155,9 +152,6 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                 }
             }
         // Some of charclasses hides its bits
-        // Looks like hideBits and nonBitSet are used when we add another class which have no bitmask.
-        // TODO: We can potentially remove nonBitSet and hideBits. What is alt?
-        // TODO: The same for or operation.
         } else {
             val curAlt = alt
 
@@ -222,16 +216,27 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
     fun add(start: Int, end: Int): CharClass {
         if (start > end)
             throw IllegalArgumentException()
-        //no intersection with surrogate characters
-        if (!ignoreCase && (end < Char.MIN_SURROGATE.toInt() || start > Char.MAX_SURROGATE.toInt())) {
-            if (!inverted) {
-                bits_.set(start, end + 1)
-            } else {
-                bits_.clear(start, end + 1)
-            }
-        } else {
+        val minSurrogate = Char.MIN_SURROGATE.toInt()
+        val maxSurrogate = Char.MAX_SURROGATE.toInt()
+        if (ignoreCase) {
+            // TODO: Make a faster implementation.
             for (i in start..end) {
                 add(i)
+            }
+        } else {
+            // No intersection with surrogate characters.
+            if (end < minSurrogate || start > maxSurrogate) {
+                bits_.set(start, end + 1, !inverted)
+            } else {
+                val surrogatesStart = maxOf(start, minSurrogate)
+                val surrogatesEnd = minOf(end, maxSurrogate)
+                bits_.set(start, end + 1, !inverted)
+                lowHighSurrogates.set(surrogatesStart - minSurrogate,
+                        surrogatesEnd - minSurrogate + 1,
+                        !invertedSurrogates)
+                if (!mayContainSupplCodepoints && end >= Char.MIN_SUPPLEMENTARY_CODE_POINT) {
+                    mayContainSupplCodepoints = true
+                }
             }
         }
         return this
@@ -489,7 +494,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
      */
     override operator fun contains(ch: Int): Boolean {
         if (nonBitSet == null) {
-            return this.alt xor bits_.get(ch) // TODO alt xor bits. It must make sense.
+            return alt xor bits_.get(ch)
         } else {
             return alt xor nonBitSet!!.contains(ch)
         }
