@@ -130,7 +130,11 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
                 effectiveSignature.valueParameters,
                 effectiveSignature.returnType,
                 Modality.convertFromFlags(method.isAbstract, !method.isFinal),
-                method.visibility
+                method.visibility,
+                if (effectiveSignature.receiverType != null)
+                    mapOf(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER to valueParameters.descriptors.first())
+                else
+                    emptyMap<FunctionDescriptor.UserDataKey<ValueParameterDescriptor>, ValueParameterDescriptor>()
         )
 
         functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames, valueParameters.hasSynthesizedNames)

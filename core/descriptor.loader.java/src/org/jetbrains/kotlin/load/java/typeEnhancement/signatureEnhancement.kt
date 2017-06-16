@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 class SignatureEnhancement(private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver) {
@@ -56,7 +58,12 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
         val receiverTypeEnhancement =
                 if (extensionReceiverParameter != null)
-                    parts(typeContainer = null, isCovariant = false) { it.extensionReceiverParameter!!.type }.enhance()
+                    parts(
+                            typeContainer =
+                                this.safeAs<FunctionDescriptor>()
+                                    ?.getUserData(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER),
+                            isCovariant = false
+                    ) { it.extensionReceiverParameter!!.type }.enhance()
                 else null
 
 

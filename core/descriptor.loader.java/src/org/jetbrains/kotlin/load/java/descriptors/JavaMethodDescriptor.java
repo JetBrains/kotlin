@@ -26,8 +26,15 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorChecks;
 
 import java.util.List;
+import java.util.Map;
 
 public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implements JavaCallableMemberDescriptor {
+    // TODO: It's only used to retrieve annotations from the original value parameter and can be removed when
+    // org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl.initialize accepts extension parameter descriptor
+    // instead of type
+    public static final UserDataKey<ValueParameterDescriptor> ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER =
+            new UserDataKey<ValueParameterDescriptor>() {};
+
     private enum ParameterNamesStatus {
         NON_STABLE_DECLARED(false, false),
         STABLE_DECLARED(true, false),
@@ -82,11 +89,12 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable KotlinType unsubstitutedReturnType,
             @Nullable Modality modality,
-            @NotNull Visibility visibility
+            @NotNull Visibility visibility,
+            @Nullable Map<? extends UserDataKey<?>, ?> userData
     ) {
         SimpleFunctionDescriptorImpl descriptor = super.initialize(
                 receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
-                unsubstitutedReturnType, modality, visibility);
+                unsubstitutedReturnType, modality, visibility, userData);
         setOperator(OperatorChecks.INSTANCE.check(descriptor).isSuccess());
         return descriptor;
     }
