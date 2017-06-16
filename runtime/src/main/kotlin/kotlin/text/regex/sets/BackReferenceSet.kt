@@ -18,11 +18,10 @@
 package kotlin.text.regex
 
 /**
- * Case Insensitive back reference node;
+ * Back reference node;
  *
  * @author Nikolay A. Kuznetsov
  */
-// TODO: rename the properties
 open internal class BackReferenceSet(val referencedGroup: Int, val consCounter: Int, val ignoreCase: Boolean = false)
     : SimpleSet() {
 

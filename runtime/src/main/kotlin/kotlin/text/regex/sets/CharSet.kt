@@ -72,7 +72,7 @@ open internal class CharSet(char: Char, val ignoreCase: Boolean = false) : LeafS
 
     override fun first(set: AbstractSet): Boolean {
         if (ignoreCase) {
-            return super.first(set) // TODO: Add correct checks here.
+            return super.first(set)
         }
         return when (set) {
             is CharSet -> set.char == char

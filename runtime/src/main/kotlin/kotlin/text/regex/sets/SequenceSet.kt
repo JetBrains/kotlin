@@ -88,7 +88,7 @@ open internal class SequenceSet(substring: CharSequence, val ignoreCase: Boolean
 
     override fun first(set: AbstractSet): Boolean {
         if (ignoreCase) {
-            return super.first(set) // TODO: Add correct checks for this case.
+            return super.first(set)
         }
         return when (set) {
             is CharSet -> set.char == patternString[0]

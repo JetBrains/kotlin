@@ -163,7 +163,6 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                             return another.contains(ch)
                         }
                     }
-                    //alt = true;
                 } else {
 
                     /*
@@ -177,14 +176,12 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                                 return !(curAlt xor bits_.get(ch) || curAlt xor inverted xor another.contains(ch))
                             }
                         }
-                        //alt = true
                     } else {
                         nonBitSet = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return curAlt xor bits_.get(ch) || curAlt xor inverted xor another.contains(ch)
                             }
                         }
-                        //alt = false
                     }
                 }
 
@@ -198,14 +195,12 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                             return !(curAlt xor (nb!!.contains(ch) || another.contains(ch)))
                         }
                     }
-                    //alt = true
                 } else {
                     nonBitSet = object : AbstractCharClass() {
                         override operator fun contains(ch: Int): Boolean {
                             return curAlt xor (nb!!.contains(ch) || another.contains(ch))
                         }
                     }
-                    //alt = false
                 }
             }
         }
@@ -314,14 +309,12 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                                 return !another.contains(ch)
                             }
                         }
-                        //alt = true
                     } else {
                         nonBitSet = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return another.contains(ch)
                             }
                         }
-                        //alt = false
                     }
                 } else {
 
@@ -331,14 +324,12 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                                 return !(another.contains(ch) || curAlt xor bits_.get(ch))
                             }
                         }
-                        //alt = true
                     } else {
                         nonBitSet = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return another.contains(ch) || curAlt xor bits_.get(ch)
                             }
                         }
-                        //alt = false
                     }
                 }
                 hideBits = true
@@ -351,14 +342,12 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                             return !(curAlt xor nb!!.contains(ch) || another.contains(ch))
                         }
                     }
-                    //alt = true
                 } else {
                     nonBitSet = object : AbstractCharClass() {
                         override operator fun contains(ch: Int): Boolean {
                             return curAlt xor nb!!.contains(ch) || another.contains(ch)
                         }
                     }
-                    //alt = false
                 }
             }
         }
@@ -432,14 +421,12 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                                 return !another.contains(ch)
                             }
                         }
-                        //alt = true
                     } else {
                         nonBitSet = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return another.contains(ch)
                             }
                         }
-                        //alt = false
                     }
                 } else {
 
@@ -449,14 +436,12 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                                 return !(another.contains(ch) && curAlt xor bits_.get(ch))
                             }
                         }
-                        //alt = true
                     } else {
                         nonBitSet = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return another.contains(ch) && curAlt xor bits_.get(ch)
                             }
                         }
-                        //alt = false
                     }
                 }
                 hideBits = true
@@ -469,14 +454,12 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                             return !(curAlt xor nb!!.contains(ch) && another.contains(ch))
                         }
                     }
-                    //alt = true
                 } else {
                     nonBitSet = object : AbstractCharClass() {
                         override operator fun contains(ch: Int): Boolean {
                             return curAlt xor nb!!.contains(ch) && another.contains(ch)
                         }
                     }
-                    //alt = false
                 }
             }
         }

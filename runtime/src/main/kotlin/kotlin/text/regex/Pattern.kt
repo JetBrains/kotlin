@@ -851,7 +851,6 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
          * Quotes a given string using "\Q" and "\E", so that all other meta-characters lose their special meaning.
          * If the string is used for a `Pattern` afterwards, it can only be matched literally.
          */
-        // TODO: Replace with other functions.
         fun quote(s: String): String {
             return StringBuilder()
                     .append("\\Q")

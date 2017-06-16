@@ -40,14 +40,6 @@ external private fun decomposeString(inputCodePoints: IntArray, inputLength: Int
 // =============================================================================================================
 
 /**
- * The purpose of this class is to break given pattern into RE tokens;
- * @author Nikolay A. Kuznetsov
- */
-// TODO: Move in C++.
-typealias IntArrHash = HashMap<Int, IntArray>
-typealias IntHash = HashMap<Int, Int>
-
-/**
  * This is base class for special tokens like character classes and quantifiers.
  *
  * @author Nikolay A. Kuznetsov
@@ -519,8 +511,6 @@ internal class Lexer(val patternString: String, flags: Int) {
         var max = -1
 
         // Obtain a min value.
-        //var lookAheadChar: Char = lookAhead.toChar()
-        // TODO: Check {} case
         var char: Char = if (index < pattern.size) pattern[nextIndex()] else throw PatternSyntaxException()
         while (char != '}') {
 
@@ -803,7 +793,6 @@ internal class Lexer(val patternString: String, flags: Int) {
         fun normalize(input: String): String {
             val inputChars = input.toCharArray()
             val inputLength = inputChars.size
-            var resCodePointsIndex = 0
             var inputCodePointsIndex = 0
             var decompHangulIndex = 0
 
@@ -833,7 +822,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             }
 
             // Canonical decomposition based on mappings in decomposition table.
-            resCodePointsIndex = decomposeString(inputCodePoints, inputCodePointsIndex, resCodePoints)
+            var resCodePointsIndex = decomposeString(inputCodePoints, inputCodePointsIndex, resCodePoints)
 
             // Canonical ordering.
             // See http://www.unicode.org/reports/tr15/#Decomposition for details
@@ -842,7 +831,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             // Decomposition for Hangul syllables.
             // See http://www.unicode.org/reports/tr15/#Hangul for details
             decompHangul = IntArray(resCodePoints.size)
-
+            @Suppress("NAME_SHADOWING")
             for (i in 0..resCodePointsIndex - 1) {
                 val curSymb = resCodePoints[i]
 
@@ -860,6 +849,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             }
 
             // Translating into UTF-16 encoding
+            @Suppress("NAME_SHADOWING")
             for (i in 0..decompHangulIndex - 1) {
                 result.append(Char.toChars(decompHangul[i]))
             }

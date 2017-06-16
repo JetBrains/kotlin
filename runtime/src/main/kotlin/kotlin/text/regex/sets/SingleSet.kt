@@ -71,10 +71,7 @@ open internal class SingleSet(var kid: AbstractSet, fSet: FSet) : JointSet(listO
     }
 
     override fun processSecondPassInternal(): AbstractSet {
-        val fSet = this.fSet
-        if (fSet != null) {
-            this.fSet = fSet.processSecondPass()
-        }
+        fSet = fSet.processSecondPass()
         kid = kid.processSecondPass()
         return processBackRefReplacement() ?: this
     }
@@ -84,8 +81,7 @@ open internal class SingleSet(var kid: AbstractSet, fSet: FSet) : JointSet(listO
      */
     override fun processSecondPass(): AbstractSet {
         if (secondPassVisited) {
-            val fSet = this.fSet
-            if (fSet is FSet && fSet.isBackReferenced) {
+            if (fSet.isBackReferenced) {
                 assert(backReferencedSet != null) // secondPassVisited
                 return backReferencedSet!!
             }
@@ -100,7 +96,7 @@ open internal class SingleSet(var kid: AbstractSet, fSet: FSet) : JointSet(listO
      * Group node over subexpression without alternations.
      * This node is used if current group is referenced via a backreference.
      */
-    internal class BackReferencedSingleSet(node: SingleSet) : SingleSet(node.kid, node.fSet as FSet) {
+    internal class BackReferencedSingleSet(node: SingleSet) : SingleSet(node.kid, node.fSet) {
 
         /*
          * This class is needed only for overwriting find() and findBack() methods of SingleSet class, which is being

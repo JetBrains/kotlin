@@ -145,18 +145,3 @@ open internal class SupplementaryRangeSet(charClass: AbstractCharClass, val igno
 
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
