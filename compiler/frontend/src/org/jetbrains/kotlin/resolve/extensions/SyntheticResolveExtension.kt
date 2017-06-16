@@ -43,6 +43,7 @@ interface SyntheticResolveExtension {
                 override fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) =
                     instances.forEach { it.addSyntheticSupertypes(thisDescriptor, supertypes) }
 
+                // todo revert
                 override fun generateSyntheticMethods(thisDescriptor: ClassDescriptor, name: Name,
                                                       fromSupertypes: List<SimpleFunctionDescriptor>,
                                                       result: MutableCollection<SimpleFunctionDescriptor>) =

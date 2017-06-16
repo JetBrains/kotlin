@@ -1,0 +1,82 @@
+public static class Test$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final Test createFromParcel(android.os.Parcel p0)
+
+    public final Test[] newArray(int p0)
+}
+
+public final class Test : java/lang/Object {
+    public final static Test$CREATOR CREATOR
+
+    private final java.util.List names
+
+    static void <clinit>()
+
+    public void <init>(java.util.List p0)
+
+    public final int describeContents()
+
+    public final java.util.List getNames()
+
+    public final void writeToParcel(android.os.Parcel p0, int p1) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (names, Ljava/util/List;)
+          DUP_X1
+          INVOKEINTERFACE (java/util/Collection, size, ()I)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          INVOKEINTERFACE (java/util/Collection, iterator, ()Ljava/util/Iterator;)
+        LABEL (L1)
+          DUP
+          INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
+          IFEQ (L2)
+          DUP
+          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
+          ALOAD (1)
+          SWAP
+          CHECKCAST
+          DUP_X1
+          INVOKEINTERFACE (java/util/Collection, size, ()I)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          INVOKEINTERFACE (java/util/Collection, iterator, ()Ljava/util/Iterator;)
+        LABEL (L3)
+          DUP
+          INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
+          IFEQ (L4)
+          DUP
+          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
+          ALOAD (1)
+          SWAP
+          CHECKCAST
+          DUP_X1
+          INVOKEINTERFACE (java/util/Collection, size, ()I)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          INVOKEINTERFACE (java/util/Collection, iterator, ()Ljava/util/Iterator;)
+        LABEL (L5)
+          DUP
+          INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
+          IFEQ (L6)
+          DUP
+          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
+          ALOAD (1)
+          SWAP
+          CHECKCAST
+          INVOKEVIRTUAL (android/os/Parcel, writeString, (Ljava/lang/String;)V)
+          GOTO (L5)
+        LABEL (L6)
+          POP
+          GOTO (L3)
+        LABEL (L4)
+          POP
+          GOTO (L1)
+        LABEL (L2)
+          POP
+          RETURN
+        LABEL (L7)
+    }
+}

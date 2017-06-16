@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.android.folding.AbstractAndroidResourceFoldingTest
 import org.jetbrains.kotlin.android.intention.AbstractAndroidIntentionTest
 import org.jetbrains.kotlin.android.intention.AbstractAndroidResourceIntentionTest
 import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
+import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
 import org.jetbrains.kotlin.android.quickfix.AbstractAndroidLintQuickfixTest
 import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTest
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
@@ -1248,6 +1249,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAndroidBytecodeShapeTest> {
             model("codegen/bytecodeShape", recursive = false, extension = null)
+        }
+
+        testClass<AbstractParcelBytecodeListingTest> {
+            model("parcel/codegen")
         }
     }
 
