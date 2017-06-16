@@ -20,53 +20,17 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
-import org.jetbrains.kotlin.psi.*
-import java.util.*
+import org.jetbrains.kotlin.psi.KtWhenExpression
 
 class FoldWhenToAssignmentIntention : SelfTargetingRangeIntention<KtWhenExpression>(
         KtWhenExpression::class.java,
         "Lift assignment out of 'when' expression"
 ) {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
-        if (!KtPsiUtil.checkWhenExpressionHasSingleElse(element)) return null
-
-        val entries = element.entries
-
-        if (entries.isEmpty()) return null
-
-        val assignments = ArrayList<KtBinaryExpression>()
-        for (entry in entries) {
-            val assignment = BranchedFoldingUtils.getFoldableBranchedAssignment(entry.expression) ?: return null
-            assignments.add(assignment)
-        }
-
-        assert(!assignments.isEmpty())
-
-        val firstAssignment = assignments.first()
-        for (assignment in assignments) {
-            if (!BranchedFoldingUtils.checkAssignmentsMatch(assignment, firstAssignment)) return null
-        }
-
-        return element.whenKeyword.textRange
+        return if (BranchedFoldingUtils.canFoldToAssignment(element)) element.whenKeyword.textRange else null
     }
 
     override fun applyTo(element: KtWhenExpression, editor: Editor?) {
-        assert(!element.entries.isEmpty())
-
-        val firstAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.entries.first().expression!!)!!
-
-        val op = firstAssignment.operationReference.text
-        val lhs = firstAssignment.left as KtNameReferenceExpression
-
-        val assignment = KtPsiFactory(element).createExpressionByPattern("$0 $1 $2", lhs, op, element)
-        val newWhenExpression = (assignment as KtBinaryExpression).right as KtWhenExpression
-
-        for (entry in newWhenExpression.entries) {
-            val currAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(entry.expression!!)!!
-            val currRhs = currAssignment.right!!
-            currAssignment.replace(currRhs)
-        }
-
-        element.replace(assignment)
+        BranchedFoldingUtils.foldToAssignment(element)
     }
 }

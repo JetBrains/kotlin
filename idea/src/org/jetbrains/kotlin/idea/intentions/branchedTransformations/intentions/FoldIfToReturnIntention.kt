@@ -20,11 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
-import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.psi.KtIfExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.createExpressionByPattern
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class FoldIfToReturnIntention : SelfTargetingRangeIntention<KtIfExpression>(
         KtIfExpression::class.java,
@@ -32,21 +28,10 @@ class FoldIfToReturnIntention : SelfTargetingRangeIntention<KtIfExpression>(
 ) {
 
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
-        val branches = element.branches
-
-        val lastElse = branches.lastOrNull()?.getStrictParentOfType<KtIfExpression>()?.`else` ?: return null
-        if (BranchedFoldingUtils.getFoldableBranchedReturn(lastElse) == null) return null
-
-        if (branches.any { BranchedFoldingUtils.getFoldableBranchedReturn(it) == null }) return null
-        return element.ifKeyword.textRange
+        return if (BranchedFoldingUtils.canFoldToReturn(element)) element.ifKeyword.textRange else null
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        for (it in element.branches) {
-            val returnExpression = BranchedFoldingUtils.getFoldableBranchedReturn(it)
-            returnExpression!!.replace(returnExpression.returnedExpression!!)
-        }
-
-        element.replace(KtPsiFactory(element).createExpressionByPattern("return $0", element))
+        BranchedFoldingUtils.foldToReturn(element)
     }
 }

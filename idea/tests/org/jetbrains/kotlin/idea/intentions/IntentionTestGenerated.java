@@ -975,6 +975,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding/ifToAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("cascadeIf.kt")
+                public void testCascadeIf() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/ifToAssignment/cascadeIf.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("ifElseIf.kt")
                 public void testIfElseIf() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/ifToAssignment/ifElseIf.kt");
@@ -1056,6 +1062,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding/ifToReturn"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("cascadeIf.kt")
+                public void testCascadeIf() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/ifToReturn/cascadeIf.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("ifElseIf.kt")
                 public void testIfElseIf() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/ifToReturn/ifElseIf.kt");
@@ -1128,6 +1140,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding/whenToAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("cascadeWhen.kt")
+                public void testCascadeWhen() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/whenToAssignment/cascadeWhen.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("innerWhenTransformed.kt")
                 public void testInnerWhenTransformed() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/whenToAssignment/innerWhenTransformed.kt");
@@ -1171,6 +1189,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             public static class WhenToReturn extends AbstractIntentionTest {
                 public void testAllFilesPresentInWhenToReturn() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding/whenToReturn"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("cascadeWhen.kt")
+                public void testCascadeWhen() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/whenToReturn/cascadeWhen.kt");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("innerWhenTransformed.kt")
