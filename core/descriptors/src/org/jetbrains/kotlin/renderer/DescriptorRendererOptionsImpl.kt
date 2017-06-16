@@ -96,9 +96,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
 
     override var excludedAnnotationClasses by property(emptySet<FqName>())
 
-    override var excludedTypeAnnotationClasses by property(
-            ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
-                    + ExcludedTypeAnnotations.internalAnnotationsForResolve)
+    override var excludedTypeAnnotationClasses by property(ExcludedTypeAnnotations.internalAnnotationsForResolve)
 
     override var annotationArgumentsRenderingPolicy by property(AnnotationArgumentsRenderingPolicy.NO_ARGUMENTS)
 

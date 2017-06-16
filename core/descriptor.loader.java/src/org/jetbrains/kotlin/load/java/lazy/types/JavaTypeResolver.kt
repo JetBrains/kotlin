@@ -17,13 +17,7 @@
 package org.jetbrains.kotlin.load.java.lazy.types
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
-import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
-import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.components.TypeUsage.COMMON
 import org.jetbrains.kotlin.load.java.components.TypeUsage.SUPERTYPE
@@ -64,29 +58,27 @@ class JavaTypeResolver(
     }
 
     fun transformArrayType(arrayType: JavaArrayType, attr: JavaTypeAttributes, isVararg: Boolean = false): KotlinType {
-        return run {
-            val javaComponentType = arrayType.componentType
-            val primitiveType = (javaComponentType as? JavaPrimitiveType)?.type
-            if (primitiveType != null) {
-                val jetType = c.module.builtIns.getPrimitiveArrayKotlinType(primitiveType)
-                return@run if (attr.isForAnnotationParameter)
-                    jetType
-                else KotlinTypeFactory.flexibleType(jetType, jetType.makeNullableAsSpecified(true))
-            }
+        val javaComponentType = arrayType.componentType
+        val primitiveType = (javaComponentType as? JavaPrimitiveType)?.type
+        if (primitiveType != null) {
+            val jetType = c.module.builtIns.getPrimitiveArrayKotlinType(primitiveType)
+            return if (attr.isForAnnotationParameter)
+                jetType
+            else KotlinTypeFactory.flexibleType(jetType, jetType.makeNullableAsSpecified(true))
+        }
 
-            val componentType = transformJavaType(javaComponentType,
-                                                  COMMON.toAttributes(attr.isForAnnotationParameter))
+        val componentType = transformJavaType(javaComponentType,
+                                              COMMON.toAttributes(attr.isForAnnotationParameter))
 
-            if (attr.isForAnnotationParameter) {
-                val projectionKind = if (isVararg) OUT_VARIANCE else INVARIANT
-                return@run c.module.builtIns.getArrayType(projectionKind, componentType)
-            }
+        if (attr.isForAnnotationParameter) {
+            val projectionKind = if (isVararg) OUT_VARIANCE else INVARIANT
+            return c.module.builtIns.getArrayType(projectionKind, componentType)
+        }
 
-            KotlinTypeFactory.flexibleType(
-                    c.module.builtIns.getArrayType(INVARIANT, componentType),
-                    c.module.builtIns.getArrayType(OUT_VARIANCE, componentType).makeNullableAsSpecified(true)
-            )
-        }.replaceAnnotations(attr.typeAnnotations)
+        return KotlinTypeFactory.flexibleType(
+                c.module.builtIns.getArrayType(INVARIANT, componentType),
+                c.module.builtIns.getArrayType(OUT_VARIANCE, componentType).makeNullableAsSpecified(true)
+        )
     }
 
     private fun transformJavaClassifierType(javaType: JavaClassifierType, attr: JavaTypeAttributes): KotlinType {
@@ -113,7 +105,7 @@ class JavaTypeResolver(
     }
 
     private fun computeSimpleJavaClassifierType(javaType: JavaClassifierType, attr: JavaTypeAttributes): SimpleType? {
-        val annotations = CompositeAnnotations(listOf(LazyJavaAnnotations(c, javaType), attr.typeAnnotations))
+        val annotations = LazyJavaAnnotations(c, javaType)
         val constructor = computeTypeConstructor(javaType, attr) ?: return null
         val arguments = computeArguments(javaType, attr, constructor)
         val isNullable = attr.isNullable()
@@ -294,7 +286,6 @@ interface JavaTypeAttributes {
     val howThisTypeIsUsed: TypeUsage
     val flexibility: JavaTypeFlexibility
         get() = INFLEXIBLE
-    val typeAnnotations: Annotations
     val isForAnnotationParameter: Boolean
         get() = false
     // Current type is upper bound of this type parameter
@@ -310,23 +301,14 @@ enum class JavaTypeFlexibility {
 
 class LazyJavaTypeAttributes(
         override val howThisTypeIsUsed: TypeUsage,
-        annotations: Annotations,
-        override val isForAnnotationParameter: Boolean = false,
-        private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver,
-        private val moduleDescriptor: ModuleDescriptor
-): JavaTypeAttributes {
-    override val typeAnnotations = FilteredAnnotations(annotations) {
-        it in ANNOTATIONS_COPIED_TO_TYPES || annotationTypeQualifierResolver.isTypeQualifier(moduleDescriptor, it)
-    }
-}
+        override val isForAnnotationParameter: Boolean = false
+): JavaTypeAttributes
 
 fun TypeUsage.toAttributes(
         isForAnnotationParameter: Boolean = false,
         upperBoundForTypeParameter: TypeParameterDescriptor? = null
 ) = object : JavaTypeAttributes {
     override val howThisTypeIsUsed: TypeUsage = this@toAttributes
-
-    override val typeAnnotations: Annotations = Annotations.EMPTY
 
     override val isForAnnotationParameter: Boolean = isForAnnotationParameter
     override val upperBoundOfTypeParameter: TypeParameterDescriptor? = upperBoundForTypeParameter

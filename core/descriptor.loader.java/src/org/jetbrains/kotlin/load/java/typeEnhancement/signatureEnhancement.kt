@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -54,7 +56,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
         val receiverTypeEnhancement =
                 if (extensionReceiverParameter != null)
-                    parts(isCovariant = false) { it.extensionReceiverParameter!!.type }.enhance()
+                    parts(typeContainer = null, isCovariant = false) { it.extensionReceiverParameter!!.type }.enhance()
                 else null
 
 
@@ -72,11 +74,12 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
         val valueParameterEnhancements = valueParameters.map {
             p ->
-            parts(isCovariant = false) { it.valueParameters[p.index].type }
+            parts(typeContainer = p, isCovariant = false) { it.valueParameters[p.index].type }
                     .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
         }
 
-        val returnTypeEnhancement = parts(isCovariant = true) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
+        val returnTypeEnhancement =
+                parts(typeContainer = this, isCovariant = true) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
 
         if ((receiverTypeEnhancement?.wereChanges ?: false)
             || returnTypeEnhancement.wereChanges || valueParameterEnhancements.any { it.wereChanges }) {
@@ -88,6 +91,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
     }
 
     private inner class SignatureParts(
+            private val typeContainer: Annotated?,
             private val fromOverride: KotlinType,
             private val fromOverridden: Collection<KotlinType>,
             private val isCovariant: Boolean
@@ -129,12 +133,19 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                     isNotNullTypeParameter = unwrap() is NotNullTypeParameter)
         }
 
-        private fun KotlinType.extractQualifiersFromAnnotations(): JavaTypeQualifiers {
-            fun <T: Any> List<FqName>.ifPresent(qualifier: T) = if (any { annotations.findAnnotation(it) != null}) qualifier else null
+        private fun KotlinType.extractQualifiersFromAnnotations(isHeadTypeConstructor: Boolean): JavaTypeQualifiers {
+            val composedAnnotation =
+                    if (isHeadTypeConstructor && typeContainer != null)
+                        composeAnnotations(typeContainer.annotations, annotations)
+                    else
+                        annotations
+
+            fun <T: Any> List<FqName>.ifPresent(qualifier: T) =
+                    if (any { composedAnnotation.findAnnotation(it) != null }) qualifier else null
 
             fun <T: Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
 
-            val nullability = annotations.extractNullability()
+            val nullability = composedAnnotation.extractNullability()
 
             return JavaTypeQualifiers(
                     nullability,
@@ -213,17 +224,20 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index) }
 
                 // Only the head type constructor is safely co-variant
-                qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant && isHeadTypeConstructor)
+                qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant && isHeadTypeConstructor, isHeadTypeConstructor)
             }
 
             return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
         }
 
-        private fun KotlinType.computeQualifiersForOverride(fromSupertypes: Collection<KotlinType>, isCovariant: Boolean): JavaTypeQualifiers {
+        private fun KotlinType.computeQualifiersForOverride(
+                fromSupertypes: Collection<KotlinType>, isCovariant: Boolean,
+                isHeadTypeConstructor: Boolean
+        ): JavaTypeQualifiers {
             val nullabilityFromSupertypes = fromSupertypes.mapNotNull { it.extractQualifiers().nullability }.toSet()
             val mutabilityFromSupertypes = fromSupertypes.mapNotNull { it.extractQualifiers().mutability }.toSet()
 
-            val own = extractQualifiersFromAnnotations()
+            val own = extractQualifiersFromAnnotations(isHeadTypeConstructor)
 
             val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || fromSupertypes.any { it.extractQualifiers().isNotNullTypeParameter }
 
@@ -268,8 +282,13 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
     private data class PartEnhancementResult(val type: KotlinType, val wereChanges: Boolean)
 
-    private fun <D : CallableMemberDescriptor> D.parts(isCovariant: Boolean, collector: (D) -> KotlinType): SignatureParts {
+    private fun <D : CallableMemberDescriptor> D.parts(
+            typeContainer: Annotated?,
+            isCovariant: Boolean,
+            collector: (D) -> KotlinType
+    ): SignatureParts {
         return SignatureParts(
+                typeContainer,
                 collector(this),
                 this.overriddenDescriptors.map {
                     @Suppress("UNCHECKED_CAST")

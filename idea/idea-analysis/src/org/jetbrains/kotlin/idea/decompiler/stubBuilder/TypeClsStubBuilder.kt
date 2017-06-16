@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionClass
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -42,7 +41,7 @@ import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 import java.util.*
 
 // TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
-private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = (ANNOTATIONS_COPIED_TO_TYPES + KotlinBuiltIns.FQ_NAMES.parameterName).toSet()
+private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(KotlinBuiltIns.FQ_NAMES.parameterName)
 
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 

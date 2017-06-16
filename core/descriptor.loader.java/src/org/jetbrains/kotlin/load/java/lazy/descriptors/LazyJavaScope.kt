@@ -145,10 +145,8 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     protected fun computeMethodReturnType(method: JavaMethod, annotations: Annotations, c: LazyJavaResolverContext): KotlinType {
         val annotationMethod = method.containingClass.isAnnotationType
         val returnTypeAttrs = LazyJavaTypeAttributes(
-                TypeUsage.COMMON, annotations,
-                isForAnnotationParameter = annotationMethod,
-                moduleDescriptor = c.module,
-                annotationTypeQualifierResolver = c.components.annotationTypeQualifierResolver
+                TypeUsage.COMMON,
+                isForAnnotationParameter = annotationMethod
         )
         return c.typeResolver.transformJavaType(method.returnType, returnTypeAttrs)
     }
@@ -167,9 +165,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             val annotations = c.resolveAnnotations(javaParameter)
             val typeUsage =
                     LazyJavaTypeAttributes(
-                            TypeUsage.COMMON, annotations,
-                            annotationTypeQualifierResolver = c.components.annotationTypeQualifierResolver,
-                            moduleDescriptor = c.module
+                            TypeUsage.COMMON
                     )
             val (outType, varargElementType) =
                     if (javaParameter.isVararg) {
@@ -289,9 +285,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         val propertyType = c.typeResolver.transformJavaType(
                 field.type,
                 LazyJavaTypeAttributes(
-                        TypeUsage.COMMON, annotations,
-                        annotationTypeQualifierResolver = c.components.annotationTypeQualifierResolver,
-                        moduleDescriptor = c.module
+                        TypeUsage.COMMON
                 )
         )
         if (!isNotNullable) {

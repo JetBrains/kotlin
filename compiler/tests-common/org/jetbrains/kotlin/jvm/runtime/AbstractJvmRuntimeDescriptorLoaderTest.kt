@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
-import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -55,9 +54,9 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
     companion object {
         private val renderer = DescriptorRenderer.withOptions {
             withDefinedIn = false
-            excludedAnnotationClasses = (listOf(
+            excludedAnnotationClasses = setOf(
                     FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)
-            ) + ANNOTATIONS_COPIED_TO_TYPES).toSet()
+            )
             overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
             includePropertyConstant = false

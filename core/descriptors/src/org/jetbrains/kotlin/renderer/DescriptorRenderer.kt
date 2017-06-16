@@ -219,31 +219,6 @@ interface DescriptorRendererOptions {
 }
 
 object ExcludedTypeAnnotations {
-    val annotationsForNullabilityAndMutability = setOf(
-            FqName("org.jetbrains.annotations.ReadOnly"),
-            FqName("org.jetbrains.annotations.Mutable"),
-            FqName("org.jetbrains.annotations.NotNull"),
-            FqName("org.jetbrains.annotations.Nullable"),
-            FqName("android.support.annotation.Nullable"),
-            FqName("android.support.annotation.NonNull"),
-            FqName("com.android.annotations.Nullable"),
-            FqName("com.android.annotations.NonNull"),
-            FqName("org.eclipse.jdt.annotation.Nullable"),
-            FqName("org.eclipse.jdt.annotation.NonNull"),
-            FqName("org.checkerframework.checker.nullness.qual.Nullable"),
-            FqName("org.checkerframework.checker.nullness.qual.NonNull"),
-            FqName("javax.annotation.Nonnull"),
-            FqName("javax.annotation.Nullable"),
-            FqName("javax.annotation.CheckForNull"),
-            FqName("edu.umd.cs.findbugs.annotations.NonNull"),
-            FqName("edu.umd.cs.findbugs.annotations.CheckForNull"),
-            FqName("edu.umd.cs.findbugs.annotations.Nullable"),
-            FqName("edu.umd.cs.findbugs.annotations.PossiblyNull"),
-            FqName("lombok.NonNull"),
-            FqName("io.reactivex.annotations.Nullable"),
-            FqName("io.reactivex.annotations.NonNull")
-    )
-
     val internalAnnotationsForResolve = setOf(
             FqName("kotlin.internal.NoInfer"),
             FqName("kotlin.internal.Exact")
