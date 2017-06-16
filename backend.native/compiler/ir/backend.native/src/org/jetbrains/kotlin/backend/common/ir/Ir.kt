@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.descriptors.replace
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -8,9 +9,11 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // This is what Context collects about IR.
@@ -91,6 +94,30 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
     val booleanArray = primitiveArrayClass(PrimitiveType.BOOLEAN)
 
     val arrays = PrimitiveType.values().map { primitiveArrayClass(it) } + array
+
+    private fun arrayExtensionFun(type: KotlinType, name: String): IrSimpleFunctionSymbol {
+        val descriptor = builtInsPackage("kotlin")
+                .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
+                .singleOrNull { it.valueParameters.isEmpty()
+                        && (it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor as? ClassDescriptor)?.defaultType == type }
+                ?: throw Error(type.toString())
+        return symbolTable.referenceSimpleFunction(descriptor)
+    }
+
+
+    private val arrayTypes = arrayOf(
+            builtIns.getPrimitiveArrayKotlinType(PrimitiveType.BYTE),
+            builtIns.getPrimitiveArrayKotlinType(PrimitiveType.CHAR),
+            builtIns.getPrimitiveArrayKotlinType(PrimitiveType.SHORT),
+            builtIns.getPrimitiveArrayKotlinType(PrimitiveType.INT),
+            builtIns.getPrimitiveArrayKotlinType(PrimitiveType.LONG),
+            builtIns.getPrimitiveArrayKotlinType(PrimitiveType.FLOAT),
+            builtIns.getPrimitiveArrayKotlinType(PrimitiveType.DOUBLE),
+            builtIns.getPrimitiveArrayKotlinType(PrimitiveType.BOOLEAN),
+            builtIns.array.defaultType
+    )
+    val arrayContentToString = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentToString") })
+    val arrayContentHashCode = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentHashCode") })
 
     val copyRangeTo = arrays.map { symbol ->
         val packageViewDescriptor = builtIns.builtInsModule.getPackage(KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME)

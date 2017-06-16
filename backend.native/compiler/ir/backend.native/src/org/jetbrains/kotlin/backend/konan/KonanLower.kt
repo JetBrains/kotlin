@@ -63,6 +63,9 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_STRING_CONCAT) {
             StringConcatenationLowering(context).lower(irFile)
         }
+        phaser.phase(KonanPhase.LOWER_DATA_CLASSES) {
+            DataClassOperatorsLowering(context).runOnFilePostfix(irFile)
+        }
         phaser.phase(KonanPhase.LOWER_ENUMS) {
             EnumClassLowering(context).run(irFile)
         }
