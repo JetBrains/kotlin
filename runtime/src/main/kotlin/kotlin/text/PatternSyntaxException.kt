@@ -22,7 +22,7 @@ package kotlin.text
  * [Pattern]. Might include a detailed description, the original regular
  * expression, and the index at which the error occurred.
  *
- * @author Nikolay A. Kuznetsov
+
  */
 class PatternSyntaxException(val description: String = "", val pattern: String = "", index: Int = -1)
     : IllegalArgumentException("Error in \"$pattern\" ($index). $description")

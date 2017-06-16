@@ -1,4 +1,20 @@
 /*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -19,8 +35,6 @@ package kotlin.text.regex
 
 /**
  * User defined character classes (e.g. [abef]).
- *
- * @author Nikolay A. Kuznetsov
  */
 // TODO: replace the implementation with one using BitSet for first 256 symbols and a hash table / tree for the rest of UTF.
 internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = false)  : AbstractCharClass()  {
@@ -473,8 +487,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
      * @param ch
      * *
      * @return `true` if character class contains symbol specified;
-     * *
-     */
+     *     */
     override operator fun contains(ch: Int): Boolean {
         if (nonBitSet == null) {
             return alt xor bits_.get(ch)

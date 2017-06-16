@@ -1,4 +1,20 @@
 /*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -19,7 +35,6 @@ package kotlin.text.regex
 
 /**
  * The node which marks end of the particular group.
- * @author Nikolay A. Kuznetsov
  */
 open internal class FSet(val groupIndex: Int) : SimpleSet() {
 
@@ -69,8 +84,6 @@ open internal class FSet(val groupIndex: Int) : SimpleSet() {
 
 /**
  * Special construction which marks end of pattern.
- *
- * @author Nikolay A. Kuznetsov
  */
 internal class FinalSet : FSet(0) {
 
@@ -89,8 +102,6 @@ internal class FinalSet : FSet(0) {
 
 /**
  * Non-capturing group closing node.
- *
- * @author Nikolay A. Kuznetsov
  */
 internal class NonCapFSet(groupIndex: Int) : FSet(groupIndex) {
 
@@ -109,7 +120,6 @@ internal class NonCapFSet(groupIndex: Int) : FSet(groupIndex) {
 
 /**
  * LookAhead FSet, always returns true
- * @author Nikolay A. Kuznetsov
  */
 internal class AheadFSet : FSet(-1) {
 
@@ -126,7 +136,6 @@ internal class AheadFSet : FSet(-1) {
  * jointSet in "consumers" equals to current index and return current string
  * index, return -1 otherwise.
 
- * @author Nikolay A. Kuznetsov
  */
 internal class BehindFSet(groupIndex: Int) : FSet(groupIndex) {
 
@@ -141,8 +150,6 @@ internal class BehindFSet(groupIndex: Int) : FSet(groupIndex) {
 
 /**
  * Represents an end of an atomic group.
- *
- * @author Nikolay A. Kuznetsov
  */
 internal class AtomicFSet(groupIndex: Int) : FSet(groupIndex) {
 

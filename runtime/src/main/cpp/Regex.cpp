@@ -620,14 +620,3 @@ KInt Kotlin_text_regex_decomposeCodePoint(KInt codePoint, ArrayHeader* outputCod
 }
 
 } // extern "C"
-
-
-
-
-
-
-
-
-
-
-
