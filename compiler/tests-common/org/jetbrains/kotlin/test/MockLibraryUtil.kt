@@ -14,63 +14,61 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.test;
+package org.jetbrains.kotlin.test
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.io.ZipUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.common.ExitCode;
-import org.jetbrains.kotlin.cli.js.K2JSCompiler;
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.preloading.ClassPreloadingUtils;
-import org.jetbrains.kotlin.preloading.Preloader;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.PathUtil;
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.ArrayUtil
+import com.intellij.util.io.ZipUtil
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
+import org.jetbrains.kotlin.preloading.Preloader
+import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.PathUtil
 
-import java.io.*;
-import java.lang.ref.SoftReference;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.zip.ZipOutputStream;
+import java.io.*
+import java.lang.ref.SoftReference
+import java.lang.reflect.Method
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.Collections
+import java.util.regex.Pattern
+import java.util.zip.ZipOutputStream
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Assert.assertEquals
 
-public class MockLibraryUtil {
+object MockLibraryUtil {
 
-    private static SoftReference<ClassLoader> compilerClassLoader = new SoftReference<>(null);
+    private var compilerClassLoader = SoftReference<ClassLoader>(null)
 
-    @NotNull
-    public static File compileLibraryToJar(
-            @NotNull String sourcesPath,
-            @NotNull String jarName,
-            boolean addSources,
-            boolean isJsLibrary,
-            boolean allowKotlinPackage,
-            @NotNull String... extraClasspath
-    ) {
+    @JvmStatic
+    fun compileLibraryToJar(
+            sourcesPath: String,
+            jarName: String,
+            addSources: Boolean,
+            isJsLibrary: Boolean,
+            allowKotlinPackage: Boolean,
+            vararg extraClasspath: String
+    ): File {
         if (isJsLibrary) {
-            return compileJsLibraryToJar(sourcesPath, jarName, addSources);
+            return compileJsLibraryToJar(sourcesPath, jarName, addSources)
         }
         else {
-            return compileLibraryToJar(sourcesPath, jarName, addSources, allowKotlinPackage, extraClasspath);
+            return compileLibraryToJar(sourcesPath, jarName, addSources, allowKotlinPackage, *extraClasspath)
         }
     }
 
-    @NotNull
-    public static File compileLibraryToJar(
-            @NotNull String sourcesPath,
-            @NotNull String jarName,
-            boolean addSources,
-            boolean allowKotlinPackage,
-            @NotNull String... extraClasspath
-    ) {
+    @JvmStatic
+    fun compileLibraryToJar(
+            sourcesPath: String,
+            jarName: String,
+            addSources: Boolean,
+            allowKotlinPackage: Boolean,
+            vararg extraClasspath: String
+    ): File {
         try {
             return compileLibraryToJar(
                     sourcesPath,
@@ -78,200 +76,199 @@ public class MockLibraryUtil {
                     jarName,
                     addSources,
                     allowKotlinPackage,
-                    extraClasspath);
+                    *extraClasspath)
         }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
+        catch (e: IOException) {
+            throw rethrow(e)
         }
+
     }
 
-    @NotNull
-    public static File compileLibraryToJar(
-            @NotNull String sourcesPath,
-            @NotNull File contentDir,
-            @NotNull String jarName,
-            boolean addSources,
-            boolean allowKotlinPackage,
-            @NotNull String... extraClasspath
-    ) {
+    @JvmStatic
+    fun compileLibraryToJar(
+            sourcesPath: String,
+            contentDir: File,
+            jarName: String,
+            addSources: Boolean,
+            allowKotlinPackage: Boolean,
+            vararg extraClasspath: String
+    ): File {
         try {
-            File classesDir = new File(contentDir, "classes");
+            val classesDir = File(contentDir, "classes")
 
-            File srcFile = new File(sourcesPath);
-            List<File> kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), srcFile);
-            if (srcFile.isFile() || !kotlinFiles.isEmpty()) {
-                compileKotlin(sourcesPath, classesDir, allowKotlinPackage, extraClasspath);
+            val srcFile = File(sourcesPath)
+            val kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), srcFile)
+            if (srcFile.isFile || !kotlinFiles.isEmpty()) {
+                compileKotlin(sourcesPath, classesDir, allowKotlinPackage, *extraClasspath)
             }
 
-            List<File> javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), srcFile);
+            val javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), srcFile)
             if (!javaFiles.isEmpty()) {
-                List<String> classpath = new ArrayList<>();
-                classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
-                classpath.add(KotlinTestUtils.getAnnotationsJar().getPath());
-                Collections.addAll(classpath, extraClasspath);
+                val classpath = ArrayList<String>()
+                classpath.add(ForTestCompileRuntime.runtimeJarForTests().path)
+                classpath.add(KotlinTestUtils.getAnnotationsJar().path)
+                Collections.addAll(classpath, *extraClasspath)
 
                 // Probably no kotlin files were present, so dir might not have been created after kotlin compiler
                 if (classesDir.exists()) {
-                    classpath.add(classesDir.getPath());
+                    classpath.add(classesDir.path)
                 }
                 else {
-                    FileUtil.createDirectory(classesDir);
+                    FileUtil.createDirectory(classesDir)
                 }
 
-                List<String> options = Arrays.asList(
+                val options = Arrays.asList(
                         "-classpath", StringUtil.join(classpath, File.pathSeparator),
-                        "-d", classesDir.getPath()
-                );
+                        "-d", classesDir.path
+                )
 
-                KotlinTestUtils.compileJavaFiles(javaFiles, options);
+                KotlinTestUtils.compileJavaFiles(javaFiles, options)
             }
 
-            return createJarFile(contentDir, classesDir, sourcesPath, jarName, addSources);
+            return createJarFile(contentDir, classesDir, sourcesPath, jarName, addSources)
         }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
+        catch (e: IOException) {
+            throw rethrow(e)
         }
+
     }
 
-    @NotNull
-    private static File compileJsLibraryToJar(
-            @NotNull String sourcesPath,
-            @NotNull String jarName,
-            boolean addSources
-    ) {
+    private fun compileJsLibraryToJar(
+            sourcesPath: String,
+            jarName: String,
+            addSources: Boolean
+    ): File {
         try {
-            File contentDir = KotlinTestUtils.tmpDir("testLibrary-" + jarName);
+            val contentDir = KotlinTestUtils.tmpDir("testLibrary-" + jarName)
 
-            File outDir = new File(contentDir, "out");
-            File outputFile = new File(outDir, jarName + ".js");
-            compileKotlin2JS(sourcesPath, outputFile);
+            val outDir = File(contentDir, "out")
+            val outputFile = File(outDir, jarName + ".js")
+            compileKotlin2JS(sourcesPath, outputFile)
 
-            return createJarFile(contentDir, outDir, sourcesPath, jarName, addSources);
+            return createJarFile(contentDir, outDir, sourcesPath, jarName, addSources)
         }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
+        catch (e: IOException) {
+            throw rethrow(e)
         }
+
     }
 
-    public static File createJarFile(File contentDir, File dirToAdd, String sourcesPath, String jarName, boolean addSources) throws IOException {
-        File jarFile = new File(contentDir, jarName + ".jar");
+    @Throws(IOException::class)
+    fun createJarFile(contentDir: File, dirToAdd: File, sourcesPath: String, jarName: String, addSources: Boolean): File {
+        val jarFile = File(contentDir, jarName + ".jar")
 
-        ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(jarFile));
-        ZipUtil.addDirToZipRecursively(zip, jarFile, dirToAdd, "", null, null);
+        val zip = ZipOutputStream(FileOutputStream(jarFile))
+        ZipUtil.addDirToZipRecursively(zip, jarFile, dirToAdd, "", null, null)
         if (addSources) {
-            ZipUtil.addDirToZipRecursively(zip, jarFile, new File(sourcesPath), "src", null, null);
+            ZipUtil.addDirToZipRecursively(zip, jarFile, File(sourcesPath), "src", null, null)
         }
-        zip.close();
+        zip.close()
 
-        return jarFile;
+        return jarFile
     }
 
-    private static void runJvmCompiler(@NotNull List<String> args) {
-        runCompiler(getCompiler2JVMClass(), args);
+    private fun runJvmCompiler(args: List<String>) {
+        runCompiler(compiler2JVMClass, args)
     }
 
-    private static void runJsCompiler(@NotNull List<String> args) {
-        runCompiler(getCompiler2JSClass(), args);
+    private fun runJsCompiler(args: List<String>) {
+        runCompiler(compiler2JSClass, args)
     }
 
     // Runs compiler in custom class loader to avoid effects caused by replacing Application with another one created in compiler.
-    private static void runCompiler(@NotNull Class<?> compilerClass, @NotNull List<String> args) {
+    private fun runCompiler(compilerClass: Class<*>, args: List<String>) {
         try {
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Object compiler = compilerClass.newInstance();
-            Method execMethod = compilerClass.getMethod("exec", PrintStream.class, String[].class);
+            val outStream = ByteArrayOutputStream()
+            val compiler = compilerClass.newInstance()
+            val execMethod = compilerClass.getMethod("exec", PrintStream::class.java, Array<String>::class.java)
 
-            Enum<?> invocationResult = (Enum<?>) execMethod.invoke(compiler, new PrintStream(outStream), ArrayUtil.toStringArray(args));
+            val invocationResult = execMethod.invoke(compiler, PrintStream(outStream), ArrayUtil.toStringArray(args)) as Enum<*>
 
-            assertEquals(new String(outStream.toByteArray()), ExitCode.OK.name(), invocationResult.name());
+            assertEquals(String(outStream.toByteArray()), ExitCode.OK.name, invocationResult.name)
         }
-        catch (Throwable e) {
-            throw ExceptionUtilsKt.rethrow(e);
+        catch (e: Throwable) {
+            throw rethrow(e)
         }
+
     }
 
-    public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir, @NotNull String... extraClasspath) {
-        compileKotlin(sourcesPath, outDir, false, extraClasspath);
+    @JvmStatic
+    fun compileKotlin(sourcesPath: String, outDir: File, vararg extraClasspath: String) {
+        compileKotlin(sourcesPath, outDir, false, *extraClasspath)
     }
 
-    public static void compileKotlin(
-            @NotNull String sourcesPath,
-            @NotNull File outDir,
-            boolean allowKotlinPackage,
-            @NotNull String... extraClasspath
+    fun compileKotlin(
+            sourcesPath: String,
+            outDir: File,
+            allowKotlinPackage: Boolean,
+            vararg extraClasspath: String
     ) {
-        List<String> classpath = new ArrayList<>();
-        if (new File(sourcesPath).isDirectory()) {
-            classpath.add(sourcesPath);
+        val classpath = ArrayList<String>()
+        if (File(sourcesPath).isDirectory) {
+            classpath.add(sourcesPath)
         }
-        Collections.addAll(classpath, extraClasspath);
+        Collections.addAll(classpath, *extraClasspath)
 
-        List<String> args = new ArrayList<>();
-        args.add(sourcesPath);
-        args.add("-d");
-        args.add(outDir.getAbsolutePath());
-        args.add("-classpath");
-        args.add(StringUtil.join(classpath, File.pathSeparator));
+        val args = ArrayList<String>()
+        args.add(sourcesPath)
+        args.add("-d")
+        args.add(outDir.absolutePath)
+        args.add("-classpath")
+        args.add(StringUtil.join(classpath, File.pathSeparator))
         if (allowKotlinPackage) {
-            args.add("-Xallow-kotlin-package");
+            args.add("-Xallow-kotlin-package")
         }
 
-        runJvmCompiler(args);
+        runJvmCompiler(args)
     }
 
-    private static void compileKotlin2JS(@NotNull String sourcesPath, @NotNull File outputFile) {
-        List<String> args = new ArrayList<>();
+    private fun compileKotlin2JS(sourcesPath: String, outputFile: File) {
+        val args = ArrayList<String>()
 
-        args.add("-meta-info");
-        args.add("-output");
-        args.add(outputFile.getAbsolutePath());
+        args.add("-meta-info")
+        args.add("-output")
+        args.add(outputFile.absolutePath)
 
-        args.add(sourcesPath);
+        args.add(sourcesPath)
 
-        runJsCompiler(args);
+        runJsCompiler(args)
     }
 
-    public static void compileKotlinModule(@NotNull String modulePath) {
-        runJvmCompiler(Arrays.asList("-no-stdlib", "-module", modulePath));
+    fun compileKotlinModule(modulePath: String) {
+        runJvmCompiler(Arrays.asList("-no-stdlib", "-module", modulePath))
     }
 
-    @NotNull
-    private static synchronized Class<?> getCompiler2JVMClass() {
-        return loadCompilerClass(K2JVMCompiler.class.getName());
-    }
+    private val compiler2JVMClass: Class<*>
+        @Synchronized get() = loadCompilerClass(K2JVMCompiler::class.java.name)
 
-    @NotNull
-    private static synchronized Class<?> getCompiler2JSClass() {
-        return loadCompilerClass(K2JSCompiler.class.getName());
-    }
+    private val compiler2JSClass: Class<*>
+        @Synchronized get() = loadCompilerClass(K2JSCompiler::class.java.name)
 
-    private static synchronized Class<?> loadCompilerClass(String compilerClassName) {
+    @Synchronized private fun loadCompilerClass(compilerClassName: String): Class<*> {
         try {
-            ClassLoader classLoader = compilerClassLoader.get();
+            var classLoader = compilerClassLoader.get()
             if (classLoader == null) {
-                classLoader = createCompilerClassLoader();
-                compilerClassLoader = new SoftReference<>(classLoader);
+                classLoader = createCompilerClassLoader()
+                compilerClassLoader = SoftReference<ClassLoader>(classLoader)
             }
-            return classLoader.loadClass(compilerClassName);
+            return classLoader.loadClass(compilerClassName)
         }
-        catch (Throwable e) {
-            throw ExceptionUtilsKt.rethrow(e);
+        catch (e: Throwable) {
+            throw rethrow(e)
         }
+
     }
 
-    @NotNull
-    private static synchronized ClassLoader createCompilerClassLoader() {
+    @Synchronized private fun createCompilerClassLoader(): ClassLoader {
         try {
-            File kotlinCompilerJar = new File(PathUtil.getKotlinPathsForDistDirectory().getLibPath(), "kotlin-compiler.jar");
+            val kotlinCompilerJar = File(PathUtil.getKotlinPathsForDistDirectory().libPath, "kotlin-compiler.jar")
             return ClassPreloadingUtils.preloadClasses(
-                    Collections.singletonList(kotlinCompilerJar), Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null, null
-            );
+                    listOf(kotlinCompilerJar), Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null, null
+            )
         }
-        catch (Throwable e) {
-            throw ExceptionUtilsKt.rethrow(e);
+        catch (e: Throwable) {
+            throw rethrow(e)
         }
-    }
 
-    private MockLibraryUtil() {
     }
 }
