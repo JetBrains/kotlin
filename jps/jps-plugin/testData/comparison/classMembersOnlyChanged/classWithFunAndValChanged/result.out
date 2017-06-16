@@ -1,12 +1,12 @@
-changes in test/ClassWithChangedVisiblityForFun1: MEMBERS
+CHANGES in test/ClassWithChangedVisiblityForFun1: MEMBERS
     [foo]
-changes in test/ClassWithChangedVisiblityForFun2: MEMBERS
+CHANGES in test/ClassWithChangedVisiblityForFun2: MEMBERS
     [foo]
-changes in test/ClassWithFunAdded: MEMBERS
+CHANGES in test/ClassWithFunAdded: MEMBERS
     [added]
-changes in test/ClassWithFunRemoved: MEMBERS
+CHANGES in test/ClassWithFunRemoved: MEMBERS
     [removed]
-changes in test/ClassWithValAndFunAddedAndRemoved: MEMBERS
+CHANGES in test/ClassWithValAndFunAddedAndRemoved: MEMBERS
     [funAdded, funRemoved, valAdded, valRemoved]
-changes in test/ClassWithValConvertedToVar: MEMBERS
+CHANGES in test/ClassWithValConvertedToVar: MEMBERS
     [value]
