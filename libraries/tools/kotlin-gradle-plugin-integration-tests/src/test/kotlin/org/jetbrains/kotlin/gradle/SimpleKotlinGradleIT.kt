@@ -163,4 +163,11 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             checkClass("Test2")
         }
     }
+
+    @Test
+    fun testChangedBuildDir() {
+        Project("changedBuildDir", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+        }
+    }
 }
