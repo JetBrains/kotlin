@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.debugger.stepping
 
 import com.intellij.debugger.DebuggerBundle
 import com.intellij.debugger.DebuggerManagerEx
+import com.intellij.debugger.engine.ActionMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.MethodFilter
 import com.intellij.debugger.engine.RequestHint
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 class KotlinSuspendCallStepOverFilter(
         private val line: Int,
         private val file: PsiFile,
-        private val ignoreBreakpoints: Boolean) : MethodFilter {
+        private val ignoreBreakpoints: Boolean) : MethodFilter, ActionMethodFilter {
     override fun getCallingExpressionLines(): Range<Int>? = Range(line, line)
 
     override fun locationMatches(process: DebugProcessImpl, location: Location?): Boolean {
