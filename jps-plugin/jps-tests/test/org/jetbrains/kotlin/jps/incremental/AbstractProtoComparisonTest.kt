@@ -18,112 +18,77 @@ package org.jetbrains.kotlin.jps.incremental
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.SmartList
-import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
-import org.jetbrains.kotlin.incremental.difference
-import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
+import org.jetbrains.kotlin.incremental.Difference
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 
-abstract class AbstractProtoComparisonTest : UsefulTestCase() {
+abstract class AbstractProtoComparisonTest<PROTO_DATA> : UsefulTestCase() {
+    protected abstract fun compileAndGetClasses(sourceDir: File, outputDir: File): Map<ClassId, PROTO_DATA>
+    protected abstract fun difference(oldData: PROTO_DATA, newData: PROTO_DATA): Difference?
+
     fun doTest(testDataPath: String) {
-        val testDir = KotlinTestUtils.tmpDir("testDirectory")
+        val testDir = File(testDataPath)
+        val workingDir = KotlinTestUtils.tmpDir("testDirectory")
 
-        val oldClassFiles = compileFileAndGetClasses(testDataPath, testDir, "old")
-        val newClassFiles = compileFileAndGetClasses(testDataPath, testDir, "new")
-
-
-        val oldClassMap = oldClassFiles.map { LocalFileKotlinClass.create(it)!!.let { it.classId to it } }.toMap()
-        val newClassMap = newClassFiles.map { LocalFileKotlinClass.create(it)!!.let { it.classId to it } }.toMap()
+        val oldClassMap = classesForPrefixedSources(testDir, workingDir, "old")
+        val newClassMap = classesForPrefixedSources(testDir, workingDir, "new")
 
         val sb = StringBuilder()
         val p = Printer(sb)
 
-        val oldSetOfNames = oldClassFiles.map { it.name }.toSet()
-        val newSetOfNames = newClassFiles.map { it.name }.toSet()
-
-        val removedNames = (oldClassMap.keys - newClassMap.keys).map { it.toString() }.sorted()
-        removedNames.forEach {
-            p.println("REMOVED: class $it")
+        (oldClassMap.keys - newClassMap.keys).sortedBy { it.toString() }.forEach { classId ->
+            p.println("REMOVED: class $classId")
         }
 
-        val addedNames = (newClassMap.keys - oldClassMap.keys).map { it.toString() }.sorted()
-        addedNames.forEach {
-            p.println("ADDED: class $it")
+        (newClassMap.keys - oldClassMap.keys).sortedBy { it.toString() }.forEach { classId ->
+            p.println("ADDED: class $classId")
         }
 
-        val commonNames = oldClassMap.keys.intersect(newClassMap.keys).sortedBy { it.toString() }
+        (oldClassMap.keys.intersect(newClassMap.keys)).sortedBy { it.toString() }.forEach { classId ->
+            val diff = difference(oldClassMap[classId]!!, newClassMap[classId]!!)
 
-        for(name in commonNames) {
-            p.printDifference(oldClassMap[name]!!, newClassMap[name]!!)
+            if (diff == null) {
+                p.println("skip $classId")
+                return@forEach
+            }
+
+            val changes = arrayListOf<String>()
+            if (diff.isClassAffected) {
+                changes.add("CLASS_SIGNATURE")
+            }
+            if (diff.changedMembersNames.isNotEmpty()) {
+                changes.add("MEMBERS\n    ${diff.changedMembersNames.sorted()}")
+            }
+            if (changes.isEmpty()) {
+                changes.add("NONE")
+            }
+
+            p.println("changes in $classId: ${changes.joinToString()}")
         }
 
         KotlinTestUtils.assertEqualsToFile(File(testDataPath + File.separator + "result.out"), sb.toString())
     }
 
-    private fun compileFileAndGetClasses(testPath: String, testDir: File, prefix: String): List<File> {
-        val files = File(testPath).listFiles { it -> it.name.startsWith(prefix) }!!
-        val sourcesDirectory = testDir.createSubDirectory("sources")
-        val classesDirectory = testDir.createSubDirectory("$prefix.src")
-
-        files.forEach { file ->
-            FileUtil.copy(file, File(sourcesDirectory, file.name.replaceFirst(prefix, "main")))
-        }
-        MockLibraryUtil.compileKotlin(sourcesDirectory.path, classesDirectory)
-
-        return File(classesDirectory, "test").listFiles() { it -> it.name.endsWith(".class") }?.sortedBy { it.name }!!
+    private fun classesForPrefixedSources(testDir: File, workingDir: File, prefix: String): Map<ClassId, PROTO_DATA> {
+        val srcDir = workingDir.createSubDirectory("$prefix/src")
+        val outDir = workingDir.createSubDirectory("$prefix/out")
+        copySourceFiles(testDir, srcDir, prefix)
+        return compileAndGetClasses(srcDir, outDir)
     }
 
-    private fun Printer.printDifference(oldClass: LocalFileKotlinClass, newClass: LocalFileKotlinClass) {
-        fun KotlinJvmBinaryClass.readProto(): ProtoMapValue? {
-            assert(classHeader.metadataVersion.isCompatible()) { "Incompatible class ($classHeader): $location" }
-
-            val bytes by lazy { BitEncoding.decodeBytes(classHeader.data!!) }
-            val strings by lazy { classHeader.strings!! }
-
-            return when (classHeader.kind) {
-                KotlinClassHeader.Kind.CLASS -> {
-                    ProtoMapValue(false, bytes, strings)
-                }
-                KotlinClassHeader.Kind.FILE_FACADE,
-                KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-                    ProtoMapValue(true, bytes, strings)
-                }
-                else -> {
-                    println("skip $classId")
-                    null
-                }
-            }
+    private fun copySourceFiles(sourceDir: File, targetDir: File, prefix: String) {
+        for (srcFile in sourceDir.walkMatching { it.name.startsWith(prefix) }) {
+            val targetFile = File(targetDir, srcFile.name.replaceFirst(prefix, "main"))
+            srcFile.copyTo(targetFile)
         }
-
-        val diff = difference(oldClass.readProto() ?: return,
-                              newClass.readProto() ?: return)
-
-        val changes = SmartList<String>()
-
-        if (diff.isClassAffected) {
-            changes.add("CLASS_SIGNATURE")
-        }
-
-        if (diff.changedMembersNames.isNotEmpty()) {
-            changes.add("MEMBERS\n    ${diff.changedMembersNames.sorted()}")
-        }
-
-        if (changes.isEmpty()) {
-            changes.add("NONE")
-        }
-
-        println("changes in ${oldClass.classId}: ${changes.joinToString()}")
     }
 
-    private fun File.createSubDirectory(relativePath: String): File {
-        val directory = File(this, relativePath)
-        FileUtil.createDirectory(directory)
-        return directory
-    }
+    protected fun File.createSubDirectory(relativePath: String): File =
+            File(this, relativePath).apply { mkdirs() }
+
+    protected fun File.walkMatching(predicate: (File)->Boolean): Sequence<File> =
+            walk().filter { predicate(it) }
 }
