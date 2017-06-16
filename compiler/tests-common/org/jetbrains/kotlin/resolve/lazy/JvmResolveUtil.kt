@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -45,9 +44,7 @@ object JvmResolveUtil {
 
     @JvmStatic
     fun analyzeAndCheckForErrors(files: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult =
-            analyzeAndCheckForErrors(environment.project, files, environment.configuration) { scope ->
-                JvmPackagePartProvider(environment, scope)
-            }
+            analyzeAndCheckForErrors(environment.project, files, environment.configuration, environment::createPackagePartProvider)
 
     @JvmStatic
     fun analyzeAndCheckForErrors(
@@ -79,9 +76,7 @@ object JvmResolveUtil {
 
     @JvmStatic
     fun analyze(files: Collection<KtFile>, environment: KotlinCoreEnvironment, configuration: CompilerConfiguration): AnalysisResult =
-            analyze(environment.project, files, configuration) { scope ->
-                JvmPackagePartProvider(environment, scope)
-            }
+            analyze(environment.project, files, configuration, environment::createPackagePartProvider)
 
     private fun analyze(
             project: Project,

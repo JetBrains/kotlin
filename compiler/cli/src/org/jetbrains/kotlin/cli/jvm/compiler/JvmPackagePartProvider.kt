@@ -19,9 +19,8 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageParts
@@ -29,20 +28,12 @@ import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import java.io.EOFException
 
 class JvmPackagePartProvider(
-        private val env: KotlinCoreEnvironment,
+        languageVersionSettings: LanguageVersionSettings,
         private val scope: GlobalSearchScope
 ) : PackagePartProvider {
     private data class ModuleMappingInfo(val root: VirtualFile, val mapping: ModuleMapping)
 
-    private val deserializationConfiguration = CompilerDeserializationConfiguration(env.configuration.languageVersionSettings)
-
-    private val notLoadedRoots by lazy(LazyThreadSafetyMode.NONE) {
-        env.configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)
-                .filterIsInstance<JvmClasspathRoot>()
-                .mapNotNull { env.contentRootToVirtualFile(it) }
-                .filter { it in scope && it.findChild("META-INF") != null }
-                .toMutableList()
-    }
+    private val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
     private val loadedModules: MutableList<ModuleMappingInfo> = SmartList()
 
@@ -69,8 +60,6 @@ class JvmPackagePartProvider(
 
     @Synchronized
     private fun getPackageParts(packageFqName: String): Map<VirtualFile, PackageParts> {
-        processNotLoadedRelevantRoots(packageFqName)
-
         val result = mutableMapOf<VirtualFile, PackageParts>()
         for ((root, mapping) in loadedModules) {
             val newParts = mapping.findPackageParts(packageFqName) ?: continue
@@ -79,32 +68,20 @@ class JvmPackagePartProvider(
         return result
     }
 
-    private fun processNotLoadedRelevantRoots(packageFqName: String) {
-        if (notLoadedRoots.isEmpty()) return
+    fun addRoots(roots: List<JavaRoot>) {
+        for ((root, type) in roots) {
+            if (type != JavaRoot.RootType.BINARY) continue
+            if (root !in scope) continue
 
-        val pathParts = packageFqName.split('.')
-
-        val relevantRoots = notLoadedRoots.filter {
-            //filter all roots by package path existing
-            pathParts.fold(it) {
-                parent, part ->
-                if (part.isEmpty()) parent
-                else parent.findChild(part) ?: return@filter false
-            }
-            true
-        }
-        notLoadedRoots.removeAll(relevantRoots)
-
-        for (root in relevantRoots) {
             val metaInf = root.findChild("META-INF") ?: continue
-            val moduleFiles = metaInf.children.filter { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }
-            for (moduleFile in moduleFiles) {
+            for (moduleFile in metaInf.children) {
+                if (!moduleFile.name.endsWith(ModuleMapping.MAPPING_FILE_EXT)) continue
+
                 val mapping = try {
                     ModuleMapping.create(moduleFile.contentsToByteArray(), moduleFile.toString(), deserializationConfiguration)
                 }
                 catch (e: EOFException) {
-                    throw RuntimeException("Error on reading package parts for '$packageFqName' package in '$moduleFile', " +
-                                           "roots: $notLoadedRoots", e)
+                    throw RuntimeException("Error on reading package parts from $moduleFile in $root", e)
                 }
                 loadedModules.add(ModuleMappingInfo(root, mapping))
             }

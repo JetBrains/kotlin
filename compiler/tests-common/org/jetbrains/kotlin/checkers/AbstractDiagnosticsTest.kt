@@ -22,7 +22,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -281,7 +280,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                     files,
                     moduleTrace,
                     environment.configuration.copy().apply { this.languageVersionSettings = languageVersionSettings },
-                    { scope -> JvmPackagePartProvider(environment, scope) }
+                    environment::createPackagePartProvider
             )
         }
 
@@ -313,7 +312,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
                 moduleContentScope,
                 LookupTracker.DO_NOTHING,
-                JvmPackagePartProvider(environment, moduleContentScope),
+                environment.createPackagePartProvider(moduleContentScope),
                 moduleClassResolver,
                 JvmTarget.JVM_1_6,
                 languageVersionSettings

@@ -11,7 +11,10 @@ import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
@@ -49,14 +52,9 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
 
         val trace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
 
-        val kotlinCoreEnvironment = kotlinCoreEnvironment!!
-
+        val environment = kotlinCoreEnvironment!!
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                project,
-                kotlinCoreEnvironment.getSourceFiles(),
-                trace,
-                compilerConfiguration,
-                { scope -> JvmPackagePartProvider(kotlinCoreEnvironment, scope) }
+                project, environment.getSourceFiles(), trace, compilerConfiguration, environment::createPackagePartProvider
         )
 
         val vfs = VirtualFileManager.getInstance().getFileSystem(URLUtil.FILE_PROTOCOL)

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplHistory
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.container.get
@@ -65,8 +64,8 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
                 emptyList(),
                 trace,
                 environment.configuration,
-                { scope -> JvmPackagePartProvider(environment, scope) },
-                { storageManager, files -> ScriptMutableDeclarationProviderFactory() }
+                environment::createPackagePartProvider,
+                { _, _ -> ScriptMutableDeclarationProviderFactory() }
         )
 
         this.module = container.get<ModuleDescriptorImpl>()

@@ -60,6 +60,7 @@ import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.meta.MetaDataContributor
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.psi.util.JavaClassSupers
 import com.intellij.util.io.URLUtil
@@ -142,8 +143,10 @@ class KotlinCoreEnvironment private constructor(
     }
     private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
+    private val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
 
     private val classpathRootsResolver: ClasspathRootsResolver
+    private val initialRoots: List<JavaRoot>
 
     val configuration: CompilerConfiguration = configuration.copy()
 
@@ -194,7 +197,7 @@ class KotlinCoreEnvironment private constructor(
 
         classpathRootsResolver = ClasspathRootsResolver(messageCollector, this::contentRootToVirtualFile)
 
-        val initialRoots = classpathRootsResolver.convertClasspathRoots(configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS))
+        initialRoots = classpathRootsResolver.convertClasspathRoots(configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS))
 
         if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK) && messageCollector != null) {
             JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(
@@ -221,6 +224,13 @@ class KotlinCoreEnvironment private constructor(
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
         project.registerService(MetadataFinderFactory::class.java, finderFactory)
         project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
+    }
+
+    fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
+        return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
+            addRoots(initialRoots)
+            packagePartProviders += this
+        }
     }
 
     private val VirtualFile.javaFiles: List<VirtualFile>
@@ -278,8 +288,14 @@ class KotlinCoreEnvironment private constructor(
         project.putUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY, appendJavaSourceRootsHandler)
     }
 
-    fun updateClasspath(roots: List<ContentRoot>): List<File>? {
-        return rootsIndex.addNewIndexForRoots(classpathRootsResolver.convertClasspathRoots(roots))?.let { newIndex ->
+    fun updateClasspath(contentRoots: List<ContentRoot>): List<File>? {
+        val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots)
+
+        for (packagePartProvider in packagePartProviders) {
+            packagePartProvider.addRoots(newRoots)
+        }
+
+        return rootsIndex.addNewIndexForRoots(newRoots)?.let { newIndex ->
             updateClasspathFromRootsIndex(newIndex)
             newIndex.indexedRoots.mapNotNull { (file) -> File(file.path.substringBefore(URLUtil.JAR_SEPARATOR)) }.toList()
         }.orEmpty()
