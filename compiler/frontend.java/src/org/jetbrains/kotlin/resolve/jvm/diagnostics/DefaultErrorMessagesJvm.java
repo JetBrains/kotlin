@@ -20,99 +20,98 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.rendering.*;
 import org.jetbrains.kotlin.resolve.MemberComparator;
+import org.jetbrains.kotlin.utils.StringsKt;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static kotlin.collections.CollectionsKt.*;
+import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*;
 
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
     private static final DiagnosticParameterRenderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA =
             (data, context) -> {
-                List<DeclarationDescriptor> renderedDescriptors = new ArrayList<>();
-                for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
-                    DeclarationDescriptor descriptor = origin.getDescriptor();
-                    if (descriptor != null) {
-                        renderedDescriptors.add(descriptor);
-                    }
-                }
-                renderedDescriptors.sort(MemberComparator.INSTANCE);
-                RenderingContext.Impl renderingContext = new RenderingContext.Impl(renderedDescriptors);
-
-                StringBuilder sb = new StringBuilder();
-                for (DeclarationDescriptor descriptor : renderedDescriptors) {
-                    sb.append("    ").append(Renderers.WITHOUT_MODIFIERS.render(descriptor, renderingContext)).append("\n");
-                }
-                return ("The following declarations have the same JVM signature (" + data.getSignature().getName() + data.getSignature().getDesc() + "):\n" + sb).trim();
+                List<DeclarationDescriptor> renderedDescriptors = sortedWith(
+                        mapNotNull(data.getSignatureOrigins(), JvmDeclarationOrigin::getDescriptor),
+                        MemberComparator.INSTANCE
+                );
+                RenderingContext renderingContext = new RenderingContext.Impl(renderedDescriptors);
+                return "The following declarations have the same JVM signature " +
+                       "(" + data.getSignature().getName() + data.getSignature().getDesc() + "):\n" +
+                       StringsKt.join(map(renderedDescriptors, descriptor ->
+                               "    " + Renderers.WITHOUT_MODIFIERS.render(descriptor, renderingContext)
+                       ), "\n");
             };
 
     private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("JVM");
     static {
-        MAP.put(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
-        MAP.put(ErrorsJvm.ACCIDENTAL_OVERRIDE, "Accidental override: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
-        MAP.put(ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS, "Inherited platform declarations clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
+        MAP.put(CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
+        MAP.put(ACCIDENTAL_OVERRIDE, "Accidental override: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
+        MAP.put(CONFLICTING_INHERITED_JVM_DECLARATIONS, "Inherited platform declarations clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
 
-        MAP.put(ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and companion objects of classes can be annotated with '@JvmStatic'");
-        MAP.put(ErrorsJvm.JVM_STATIC_ON_CONST_OR_JVM_FIELD, "'@JvmStatic' annotation is useless for const or '@JvmField' properties");
-        MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be '@JvmStatic' in object");
-        MAP.put(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "'@JvmOverloads' annotation has no effect for methods without default arguments");
-        MAP.put(ErrorsJvm.OVERLOADS_ABSTRACT, "'@JvmOverloads' annotation cannot be used on abstract methods");
-        MAP.put(ErrorsJvm.OVERLOADS_INTERFACE, "'@JvmOverloads' annotation cannot be used on interface methods");
-        MAP.put(ErrorsJvm.OVERLOADS_PRIVATE, "'@JvmOverloads' annotation has no effect on private declarations");
-        MAP.put(ErrorsJvm.OVERLOADS_LOCAL, "'@JvmOverloads' annotation cannot be used on local declarations");
-        MAP.put(ErrorsJvm.INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration");
-        MAP.put(ErrorsJvm.ILLEGAL_JVM_NAME, "Illegal JVM name");
-        MAP.put(ErrorsJvm.VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties");
-        MAP.put(ErrorsJvm.VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties");
-        MAP.put(ErrorsJvm.SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions");
-        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, "External declaration can not be abstract");
-        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, "External declaration can not have a body");
-        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE, "Members of interfaces can not be external");
-        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_INLINED, "Inline functions can not be external");
+        MAP.put(JVM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and companion objects of classes can be annotated with '@JvmStatic'");
+        MAP.put(JVM_STATIC_ON_CONST_OR_JVM_FIELD, "'@JvmStatic' annotation is useless for const or '@JvmField' properties");
+        MAP.put(OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be '@JvmStatic' in object");
+        MAP.put(OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "'@JvmOverloads' annotation has no effect for methods without default arguments");
+        MAP.put(OVERLOADS_ABSTRACT, "'@JvmOverloads' annotation cannot be used on abstract methods");
+        MAP.put(OVERLOADS_INTERFACE, "'@JvmOverloads' annotation cannot be used on interface methods");
+        MAP.put(OVERLOADS_PRIVATE, "'@JvmOverloads' annotation has no effect on private declarations");
+        MAP.put(OVERLOADS_LOCAL, "'@JvmOverloads' annotation cannot be used on local declarations");
+        MAP.put(INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration");
+        MAP.put(ILLEGAL_JVM_NAME, "Illegal JVM name");
+        MAP.put(VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties");
+        MAP.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties");
+        MAP.put(SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions");
+        MAP.put(EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, "External declaration can not be abstract");
+        MAP.put(EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, "External declaration can not have a body");
+        MAP.put(EXTERNAL_DECLARATION_IN_INTERFACE, "Members of interfaces can not be external");
+        MAP.put(EXTERNAL_DECLARATION_CANNOT_BE_INLINED, "Inline functions can not be external");
 
-        MAP.put(ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
-        MAP.put(ErrorsJvm.DEPRECATED_JAVA_ANNOTATION, "This annotation is deprecated in Kotlin. Use ''@{0}'' instead", Renderers.TO_STRING);
-        MAP.put(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION, "Only annotations with SOURCE retention can be repeated on JVM version before 1.8");
-        MAP.put(ErrorsJvm.ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES, "Annotation ''@{0}'' is not applicable to the multi-file classes", Renderers.TO_STRING);
+        MAP.put(POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
+        MAP.put(DEPRECATED_JAVA_ANNOTATION, "This annotation is deprecated in Kotlin. Use ''@{0}'' instead", TO_STRING);
+        MAP.put(NON_SOURCE_REPEATED_ANNOTATION, "Only annotations with SOURCE retention can be repeated on JVM version before 1.8");
+        MAP.put(ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES, "Annotation ''@{0}'' is not applicable to the multi-file classes", TO_STRING);
 
-        MAP.put(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH, "Call uses reflection API which is not found in compilation classpath. " +
-                                                       "Make sure you have kotlin-reflect.jar in the classpath");
+        MAP.put(NO_REFLECTION_IN_CLASS_PATH, "Call uses reflection API which is not found in compilation classpath. " +
+                                             "Make sure you have kotlin-reflect.jar in the classpath");
 
-        MAP.put(ErrorsJvm.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can't call Java default methods via super");
-        MAP.put(ErrorsJvm.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, "Using non-JVM static members protected in the superclass companion is unsupported yet");
+        MAP.put(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can't call Java default methods via super");
+        MAP.put(SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, "Using non-JVM static members protected in the superclass companion is unsupported yet");
 
-        MAP.put(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument can be null in Java, but exhaustive when contains no null branch");
+        MAP.put(WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument can be null in Java, but exhaustive when contains no null branch");
 
-        MAP.put(ErrorsJvm.JAVA_CLASS_ON_COMPANION,
+        MAP.put(JAVA_CLASS_ON_COMPANION,
                 "The resulting type of this ''javaClass'' call is {0} and not {1}. " +
                 "Please use the more clear ''::class.java'' syntax to avoid confusion",
-                Renderers.RENDER_TYPE, Renderers.RENDER_TYPE
+                RENDER_TYPE, RENDER_TYPE
         );
 
-        MAP.put(ErrorsJvm.JAVA_TYPE_MISMATCH,
-                "Java type mismatch expected {1} but found {0}. Use explicit cast", Renderers.RENDER_TYPE, Renderers.RENDER_TYPE);
+        MAP.put(JAVA_TYPE_MISMATCH,
+                "Java type mismatch expected {1} but found {0}. Use explicit cast", RENDER_TYPE, RENDER_TYPE);
 
-        MAP.put(ErrorsJvm.DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", Renderers.TO_STRING, Renderers.TO_STRING);
+        MAP.put(DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", STRING, STRING);
 
-        MAP.put(ErrorsJvm.UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of a type parameter cannot be an array");
+        MAP.put(UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of a type parameter cannot be an array");
 
-        MAP.put(ErrorsJvm.INAPPLICABLE_JVM_FIELD, "{0}", Renderers.TO_STRING);
+        MAP.put(INAPPLICABLE_JVM_FIELD, "{0}", STRING);
 
-        MAP.put(ErrorsJvm.JVM_SYNTHETIC_ON_DELEGATE, "'@JvmSynthetic' annotation cannot be used on delegated properties");
+        MAP.put(JVM_SYNTHETIC_ON_DELEGATE, "'@JvmSynthetic' annotation cannot be used on delegated properties");
 
-        MAP.put(ErrorsJvm.STRICTFP_ON_CLASS, "'@Strictfp' annotation on classes is unsupported yet");
+        MAP.put(STRICTFP_ON_CLASS, "'@Strictfp' annotation on classes is unsupported yet");
 
-        MAP.put(ErrorsJvm.SUPER_CALL_WITH_DEFAULT_PARAMETERS, "Super-calls with default arguments are not allowed. Please specify all arguments of ''super.{0}'' explicitly", Renderers.TO_STRING);
+        MAP.put(SUPER_CALL_WITH_DEFAULT_PARAMETERS, "Super-calls with default arguments are not allowed. Please specify all arguments of ''super.{0}'' explicitly", STRING);
 
-        MAP.put(ErrorsJvm.TARGET6_INTERFACE_INHERITANCE,
+        MAP.put(TARGET6_INTERFACE_INHERITANCE,
                 "Compiling ''{0}'' to JVM 1.8, but its superinterface ''{1}'' was compiled for JVM 1.6. " +
                 "Method implementation inheritance is restricted for such cases. " +
                 "Please make explicit overrides (abstract or concrete) for the following non-abstract members of ''{1}'': {2}",
-                Renderers.NAME, Renderers.NAME, Renderers.TO_STRING);
+                NAME, NAME, STRING);
 
-        MAP.put(ErrorsJvm.DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET, "Super calls to Java default methods are deprecated in JVM target 1.6. Recompile with '-jvm-target 1.8'");
-        MAP.put(ErrorsJvm.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, "Calls to static methods in Java interfaces are deprecated in JVM target 1.6. Recompile with '-jvm-target 1.8'");
+        MAP.put(DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET, "Super calls to Java default methods are deprecated in JVM target 1.6. Recompile with '-jvm-target 1.8'");
+        MAP.put(INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, "Calls to static methods in Java interfaces are deprecated in JVM target 1.6. Recompile with '-jvm-target 1.8'");
 
-        MAP.put(ErrorsJvm.INLINE_FROM_HIGHER_PLATFORM, "Cannot inline bytecode built with {0} into bytecode that is being built with {1}. Please specify proper ''-jvm-target'' option", Renderers.TO_STRING, Renderers.TO_STRING);
+        MAP.put(INLINE_FROM_HIGHER_PLATFORM, "Cannot inline bytecode built with {0} into bytecode that is being built with {1}. Please specify proper ''-jvm-target'' option", STRING, STRING);
     }
 
     @NotNull
