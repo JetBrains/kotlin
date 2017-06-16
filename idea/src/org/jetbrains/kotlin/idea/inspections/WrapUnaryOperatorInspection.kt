@@ -57,7 +57,9 @@ class WrapUnaryOperatorInspection : AbstractKotlinInspection() {
     }
 
     private class WrapUnaryOperatorQuickfix : LocalQuickFix {
-        override fun getFamilyName() = "Wrap unary operator and value with ()"
+        override fun getName() = "Wrap unary operator and value with ()"
+
+        override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val expression = descriptor.psiElement as? KtPrefixExpression ?: return

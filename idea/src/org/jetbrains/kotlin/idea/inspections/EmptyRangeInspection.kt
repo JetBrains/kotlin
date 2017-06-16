@@ -47,7 +47,9 @@ class EmptyRangeInspection : AbstractPrimitiveRangeToInspection() {
     }
 
     class ReplaceWithDownToFix : LocalQuickFix {
-        override fun getFamilyName() = "Replace with 'downTo'"
+        override fun getName() = "Replace with 'downTo'"
+
+        override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val element = descriptor.psiElement as? KtExpression ?: return

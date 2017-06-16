@@ -56,7 +56,9 @@ class RemoveRedundantSpreadOperatorInspection : AbstractKotlinInspection() {
 }
 
 class RemoveRedundantSpreadOperatorQuickfix : LocalQuickFix {
-    override fun getFamilyName() = "Remove redundant spread operator"
+    override fun getName() = "Remove redundant spread operator"
+
+    override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val arrayOfValueArgument = descriptor.psiElement as? KtValueArgument ?: return
