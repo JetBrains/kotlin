@@ -38,7 +38,7 @@ class PrettyPrinter(val library: Base64, val packageLoader: (String) -> Base64) 
         get() = moduleHeader.packageFragmentNameList
 
     fun printPackageFragment(fqname: String) {
-        if (fqname.isNotEmpty()) println("\nPackage $fqname\n" )
+        if (fqname.isNotEmpty()) println("\nPackage $fqname" )
         val fragment = packageFragment(fqname)
         PackageFragmentPrinter(fragment, out).print()
     }
@@ -196,9 +196,46 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     fun annotationsToString(protoAnnotations: List<ProtoBuf.Annotation>): String {
         val buff = StringBuilder()
-        protoAnnotations.forEach { protoAnnotation ->
-            val annotation = getShortName(protoAnnotation.id)
-            buff.append("@$annotation ")
+        protoAnnotations.forEach { buff.append(annotationToString(it)) }
+        return buff.toString()
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun annotationToString(protoAnnotation: ProtoBuf.Annotation): String {
+        val buff = StringBuilder()
+        val annotationName = getShortName(protoAnnotation.id)
+        buff.append("@$annotationName")
+        val arguments = annotationArgumentsToString(protoAnnotation.argumentList)
+        buff.append(arguments)
+        return buff.append(" ").toString()
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun annotationArgumentsToString(annotationArguments: List<ProtoBuf.Annotation.Argument>): String {
+        if (annotationArguments.isEmpty()) return ""
+        val buff = StringBuilder("(")
+        annotationArguments.dropLast(1).forEach { buff.append(annotationArgumentValueToString(it.value) + ", ") }
+        annotationArguments.lastOrNull()?.let   { buff.append(annotationArgumentValueToString(it.value)) }
+        return buff.append(")").toString()
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun annotationArgumentValueToString(value: ProtoBuf.Annotation.Argument.Value): String {
+        val buff = StringBuilder()
+        if (value.hasAnnotation())  buff.append(annotationToString(value.annotation))
+        if (value.hasStringValue()) buff.append("\"${stringTable.getString(value.stringValue)}\"")
+        if (value.hasDoubleValue()) buff.append(value.doubleValue)
+        if (value.hasFloatValue())  buff.append(value.floatValue)
+        if (value.hasIntValue())    buff.append(value.intValue)
+        if (value.hasClassId())     buff.append(getShortName(value.classId) + ".")
+        if (value.hasEnumValueId()) buff.append(stringTable.getString(value.enumValueId))
+        if (value.arrayElementCount > 0) {
+            val arrayElements = value.arrayElementList
+            arrayElements.dropLast(1).forEach { buff.append(annotationArgumentValueToString(it) + ", ") }
+            arrayElements.lastOrNull()?.let   { buff.append(annotationArgumentValueToString(it)) }
         }
         return buff.toString()
     }
@@ -489,7 +526,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         when (classKind) {
             ProtoBuf.Class.Kind.CLASS            -> buff.append("class")
             ProtoBuf.Class.Kind.INTERFACE        -> buff.append("interface")
-            ProtoBuf.Class.Kind.ANNOTATION_CLASS -> buff.append("annotation")
+            ProtoBuf.Class.Kind.ANNOTATION_CLASS -> buff.append("annotation class")
             ProtoBuf.Class.Kind.OBJECT           -> buff.append("object")
             else -> assert(false)
         }
