@@ -655,7 +655,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     fun testCircularDependencyWithReferenceToOldVersionLib() {
         initProject(JVM_MOCK_RUNTIME)
 
-        val libraryJar = MockLibraryUtil.compileLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib", false, false)
+        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
 
         AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
 
@@ -666,7 +666,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     fun testDependencyToOldKotlinLib() {
         initProject()
 
-        val libraryJar = MockLibraryUtil.compileLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib", false, false)
+        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
 
         AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "module-lib", libraryJar)
 
