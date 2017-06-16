@@ -81,7 +81,7 @@ interface FunctionExpression : LambdaKotlinCallArgument {
  * D.E::foo <-> Expression
  */
 sealed class LHSResult {
-    class Type(val qualifier: QualifierReceiver): LHSResult() {
+    class Type(val qualifier: QualifierReceiver, resolvedType: UnwrappedType): LHSResult() {
         val unboundDetailedReceiver: ReceiverValueWithSmartCastInfo
 
         init {
@@ -89,7 +89,7 @@ sealed class LHSResult {
                 "Should be ClassDescriptor: ${qualifier.descriptor}"
             }
 
-            val unboundReceiver = TransientReceiver((qualifier.descriptor as ClassDescriptor).defaultType)
+            val unboundReceiver = TransientReceiver(resolvedType)
             unboundDetailedReceiver = ReceiverValueWithSmartCastInfo(unboundReceiver, emptySet(), isStable = true)
         }
     }
