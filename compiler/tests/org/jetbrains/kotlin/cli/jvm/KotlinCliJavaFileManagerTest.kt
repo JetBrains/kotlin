@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.search.GlobalSearchScope
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
@@ -38,7 +39,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 
 class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
-    private var javaFilesDir: File? = null
+    private lateinit var javaFilesDir: File
 
     fun testCommon() {
         val manager = configureManager(
@@ -184,7 +185,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         javaFilesDir = KotlinTestUtils.tmpDir("java-file-manager-test")
 
         val configuration = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir!!)
+                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir)
         )
 
         return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -200,7 +201,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         val coreJavaFileFinder = VirtualFileFinder.SERVICE.getInstance(project)
         val coreJavaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
-        val root = environment.contentRootToVirtualFile(JavaSourceRoot(javaFilesDir!!, null))!!
+        val root = StandardFileSystems.local().findFileByPath(javaFilesDir.path)!!
         coreJavaFileManager.initialize(
                 JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))),
                 SingleJavaFileRootsIndex(emptyList()),
@@ -223,7 +224,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         TestCase.assertNotNull("Could not find: $stringRequest", foundByString)
 
         TestCase.assertEquals(foundByClassId, foundByString)
-        TestCase.assertEquals("Found ${foundByClassId!!.qualifiedName} instead of $packageFQName", packageFQName + "." + classFqName,
+        TestCase.assertEquals("Found ${foundByClassId.qualifiedName} instead of $packageFQName", packageFQName + "." + classFqName,
                               foundByClassId.qualifiedName)
     }
 

@@ -360,24 +360,24 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     private fun analyze(environment: KotlinCoreEnvironment, targetDescription: String?): AnalysisResult? {
+        val sourceFiles = environment.getSourceFiles()
         val collector = environment.messageCollector
 
         val analysisStart = PerformanceCounter.currentTime()
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
-        analyzerWithCompilerReport.analyzeAndReport(
-                environment.getSourceFiles(), object : AnalyzerWithCompilerReport.Analyzer {
+        analyzerWithCompilerReport.analyzeAndReport(sourceFiles, object : AnalyzerWithCompilerReport.Analyzer {
             override fun analyze(): AnalysisResult {
                 val project = environment.project
                 val moduleOutputs = environment.configuration.get(JVMConfigurationKeys.MODULES)?.mapNotNull { module ->
                     environment.findLocalFile(module.getOutputDirectory())
                 }.orEmpty()
-                val sourcesOnly = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, environment.getSourceFiles())
+                val sourcesOnly = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, sourceFiles)
                 // To support partial and incremental compilation, we add the scope which contains binaries from output directories
                 // of the compiled modules (.class) to the list of scopes of the source module
                 val scope = if (moduleOutputs.isEmpty()) sourcesOnly else sourcesOnly.uniteWith(DirectoriesScope(project, moduleOutputs))
                 return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                         project,
-                        environment.getSourceFiles(),
+                        sourceFiles,
                         CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                         environment.configuration,
                         environment::createPackagePartProvider,
@@ -392,12 +392,11 @@ object KotlinToJVMBytecodeCompiler {
 
         val analysisNanos = PerformanceCounter.currentTime() - analysisStart
 
-        val sourceLinesOfCode = environment.sourceLinesOfCode
-        val numberOfFiles = environment.getSourceFiles().size
+        val sourceLinesOfCode = environment.countLinesOfCode(sourceFiles)
         val time = TimeUnit.NANOSECONDS.toMillis(analysisNanos)
         val speed = sourceLinesOfCode.toFloat() * 1000 / time
 
-        val message = "ANALYZE: $numberOfFiles files ($sourceLinesOfCode lines) ${targetDescription ?: ""}" +
+        val message = "ANALYZE: ${sourceFiles.size} files ($sourceLinesOfCode lines) ${targetDescription ?: ""}" +
                       "in $time ms - ${"%.3f".format(speed)} loc/s"
 
         K2JVMCompiler.reportPerf(environment.configuration, message)

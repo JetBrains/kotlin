@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.google.common.collect.Sets
 import com.intellij.codeInsight.ContainerProvider
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.InferredAnnotationsManager
@@ -29,7 +28,6 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
-import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
@@ -113,7 +111,6 @@ class KotlinCoreEnvironment private constructor(
         configuration: CompilerConfiguration,
         configFiles: EnvironmentConfigFiles
 ) {
-
     private val projectEnvironment: JavaCoreProjectEnvironment = object : KotlinCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
         override fun preregisterServices() {
             registerProjectExtensionPoints(Extensions.getArea(project))
@@ -141,6 +138,7 @@ class KotlinCoreEnvironment private constructor(
             super.registerJavaPsiFacade()
         }
     }
+
     private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
     private val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
@@ -152,9 +150,7 @@ class KotlinCoreEnvironment private constructor(
 
     init {
         PersistentFSConstants.setMaxIntellisenseFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING)
-    }
 
-    init {
         val project = projectEnvironment.project
 
         ExpressionCodegenExtension.registerExtensionPoint(project)
@@ -224,6 +220,10 @@ class KotlinCoreEnvironment private constructor(
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
         project.registerService(MetadataFinderFactory::class.java, finderFactory)
         project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
+
+        project.putUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY, fun(roots: List<File>) {
+            updateClasspath(roots.map { JavaSourceRoot(it, null) })
+        })
     }
 
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
@@ -260,15 +260,10 @@ class KotlinCoreEnvironment private constructor(
     private val applicationEnvironment: CoreApplicationEnvironment
         get() = projectEnvironment.environment
 
-    val application: MockApplication
-        get() = applicationEnvironment.application
-
     val project: Project
         get() = projectEnvironment.project
 
-    val sourceLinesOfCode: Int by lazy { countLinesOfCode(sourceFiles) }
-
-    fun countLinesOfCode(sourceFiles: List<KtFile>): Int  =
+    internal fun countLinesOfCode(sourceFiles: List<KtFile>): Int  =
             sourceFiles.sumBy { sourceFile ->
                 val text = sourceFile.text
                 StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
@@ -280,15 +275,7 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
-    val appendJavaSourceRootsHandler = fun(roots: List<File>) {
-        updateClasspath(roots.map { JavaSourceRoot(it, null) })
-    }
-
-    init {
-        project.putUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY, appendJavaSourceRootsHandler)
-    }
-
-    fun updateClasspath(contentRoots: List<ContentRoot>): List<File>? {
+    internal fun updateClasspath(contentRoots: List<ContentRoot>): List<File>? {
         val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots)
 
         for (packagePartProvider in packagePartProviders) {
@@ -297,15 +284,13 @@ class KotlinCoreEnvironment private constructor(
 
         return rootsIndex.addNewIndexForRoots(newRoots)?.let { newIndex ->
             updateClasspathFromRootsIndex(newIndex)
-            newIndex.indexedRoots.mapNotNull { (file) -> File(file.path.substringBefore(URLUtil.JAR_SEPARATOR)) }.toList()
+            newIndex.indexedRoots.mapNotNull { (file) ->
+                VfsUtilCore.virtualToIoFile(VfsUtilCore.getVirtualFileForJar(file) ?: file)
+            }.toList()
         }.orEmpty()
     }
 
-    @Suppress("unused") // used externally
-    @Deprecated("Use updateClasspath() instead.", ReplaceWith("updateClasspath(files)"))
-    fun tryUpdateClasspath(files: Iterable<File>): List<File>? = updateClasspath(files.map(::JvmClasspathRoot))
-
-    fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
+    private fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
         return when (root) {
             is JvmClasspathRoot -> if (root.file.isFile) findJarRoot(root) else findLocalFile(root)
             is JavaSourceRoot -> findLocalFile(root)
@@ -316,20 +301,18 @@ class KotlinCoreEnvironment private constructor(
     internal fun findLocalFile(path: String) = applicationEnvironment.localFileSystem.findFileByPath(path)
 
     private fun findLocalFile(root: JvmContentRoot): VirtualFile? {
-        val path = root.file
-        val localFile = findLocalFile(path.absolutePath)
-        if (localFile == null) {
-            report(STRONG_WARNING, "Classpath entry points to a non-existent location: $path")
-            return null
+        return findLocalFile(root.file.absolutePath).also {
+            if (it == null) {
+                report(STRONG_WARNING, "Classpath entry points to a non-existent location: ${root.file}")
+            }
         }
-        return localFile
     }
 
     private fun findJarRoot(root: JvmClasspathRoot): VirtualFile? =
             applicationEnvironment.jarFileSystem.findFileByPath("${root.file}${URLUtil.JAR_SEPARATOR}")
 
     private fun getSourceRootsCheckingForDuplicates(): Collection<String> {
-        val uniqueSourceRoots = Sets.newLinkedHashSet<String>()
+        val uniqueSourceRoots = linkedSetOf<String>()
 
         configuration.kotlinSourceRoots.forEach { path ->
             if (!uniqueSourceRoots.add(path)) {
@@ -403,7 +386,9 @@ class KotlinCoreEnvironment private constructor(
         // used in the daemon for jar cache cleanup
         val applicationEnvironment: JavaCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
-        private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
+        private fun getOrCreateApplicationEnvironmentForProduction(
+                configuration: CompilerConfiguration, configFilePaths: List<String>
+        ): JavaCoreApplicationEnvironment {
             synchronized (APPLICATION_LOCK) {
                 if (ourApplicationEnvironment != null)
                     return ourApplicationEnvironment!!
@@ -420,7 +405,7 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        fun disposeApplicationEnvironment() {
+        private fun disposeApplicationEnvironment() {
             synchronized (APPLICATION_LOCK) {
                 val environment = ourApplicationEnvironment ?: return
                 ourApplicationEnvironment = null
@@ -429,7 +414,9 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        private fun createApplicationEnvironment(parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
+        private fun createApplicationEnvironment(
+                parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>
+        ): JavaCoreApplicationEnvironment {
             Extensions.cleanRootArea(parentDisposable)
             registerAppExtensionPoints()
             val applicationEnvironment = object : JavaCoreApplicationEnvironment(parentDisposable) {
@@ -491,7 +478,9 @@ class KotlinCoreEnvironment private constructor(
         }
 
         // made public for Upsource
-        @JvmStatic fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
+        @Suppress("MemberVisibilityCanPrivate")
+        @JvmStatic
+        fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
             with(applicationEnvironment) {
                 registerFileType(KotlinFileType.INSTANCE, "kt")
                 registerFileType(KotlinFileType.INSTANCE, KotlinParserDefinition.STD_SCRIPT_SUFFIX)
@@ -508,7 +497,8 @@ class KotlinCoreEnvironment private constructor(
         }
 
         // made public for Upsource
-        @JvmStatic fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
+        @JvmStatic
+        fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
             with (projectEnvironment.project) {
                 val kotlinScriptDefinitionProvider = KotlinScriptDefinitionProvider()
                 registerService(KotlinScriptDefinitionProvider::class.java, kotlinScriptDefinitionProvider)
@@ -518,7 +508,7 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        private fun registerProjectServicesForCLI(projectEnvironment: JavaCoreProjectEnvironment) {
+        private fun registerProjectServicesForCLI(@Suppress("UNUSED_PARAMETER") projectEnvironment: JavaCoreProjectEnvironment) {
             /**
              * Note that Kapt may restart code analysis process, and CLI services should be aware of that.
              * Use PsiManager.getModificationTracker() to ensure that all the data you cached is still valid.
