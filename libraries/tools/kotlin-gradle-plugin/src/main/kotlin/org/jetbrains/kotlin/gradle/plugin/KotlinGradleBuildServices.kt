@@ -72,8 +72,8 @@ internal class KotlinGradleBuildServices private constructor(gradle: Gradle): Bu
     private val log = Logging.getLogger(this.javaClass)
     private val cleanup = CompilerServicesCleanup()
     private var startMemory: Long? = null
-    private val workingDir = File(gradle.rootProject.buildDir, "kotlin-build").apply { mkdirs() }
-    private val buildCacheStorage = BuildCacheStorage(workingDir)
+    private val workingDir: File by lazy { File(gradle.rootProject.buildDir, "kotlin-build").apply { mkdirs() } }
+    private val buildCacheStorage: BuildCacheStorage by lazy { BuildCacheStorage(workingDir) }
     private val shouldReportMemoryUsage = System.getProperty(SHOULD_REPORT_MEMORY_USAGE_PROPERTY) != null
 
     internal val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider

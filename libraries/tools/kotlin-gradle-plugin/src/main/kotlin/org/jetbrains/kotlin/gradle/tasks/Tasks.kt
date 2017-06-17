@@ -97,6 +97,20 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             System.setProperty("kotlin.incremental.compilation.experimental", value.toString())
         }
 
+    private lateinit var destinationDirProvider: Lazy<File>
+
+    override fun getDestinationDir(): File {
+        return destinationDirProvider.value
+    }
+
+    fun setDestinationDir(provider: () -> File) {
+        destinationDirProvider = lazy(provider)
+    }
+
+    override fun setDestinationDir(destinationDir: File) {
+        destinationDirProvider = lazyOf(destinationDir)
+    }
+
     init {
         incremental = true //to execute the setter as well
     }
