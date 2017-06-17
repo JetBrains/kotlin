@@ -105,6 +105,11 @@ open class KonanInteropTask: DefaultTask() {
                 jvmArgs(INTEROP_JVM_ARGS)
                 environment("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
 
+                // TODO: remove this hack.
+                if (KonanCompilerDownloadTask.simpleOsName() == "windows") {
+                    environment("PATH", "${project.konanHome}\\dependencies\\msys2-mingw-w64-x86_64-gcc-6.3.0-clang-llvm-3.9.1-windows-x86-64\\bin;${System.getenv("PATH")}")
+                }
+
                 args(buildArgs().apply { logger.info("Interop args: ${this.joinToString(separator = " ")}") })
             }
         }
