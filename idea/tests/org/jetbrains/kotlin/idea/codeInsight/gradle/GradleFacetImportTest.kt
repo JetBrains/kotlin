@@ -1009,4 +1009,74 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         Assert.assertNull(KotlinFacet.get(getModule("m1_main")))
         Assert.assertNull(KotlinFacet.get(getModule("m1_test")))
     }
+
+    @Test
+    fun testClasspathWithDependenciesImport() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
+                compile "org.apache.logging.log4j:log4j-core:2.7"
+            }
+
+            compileKotlin {
+                kotlinOptions.freeCompilerArgs += ["-cp", "tmp.jar"]
+            }
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals("tmp.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
+        }
+    }
+
+    @Test
+    fun testDependenciesClasspathImport() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
+                compile "org.apache.logging.log4j:log4j-core:2.7"
+            }
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals(null, (compilerArguments as K2JVMCompilerArguments).classpath)
+        }
+    }
 }

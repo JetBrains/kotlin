@@ -37,10 +37,8 @@ import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.ge
 
 var DataNode<ModuleData>.hasKotlinPlugin
         by NotNullableUserDataProperty(Key.create<Boolean>("HAS_KOTLIN_PLUGIN"), false)
-var DataNode<ModuleData>.currentCompilerArgumentsBySourceSet
+var DataNode<ModuleData>.compilerArgumentsBySourceSet
         by UserDataProperty(Key.create<CompilerArgumentsBySourceSet>("CURRENT_COMPILER_ARGUMENTS"))
-var DataNode<ModuleData>.defaultCompilerArgumentsBySourceSet
-        by UserDataProperty(Key.create<CompilerArgumentsBySourceSet>("DEFAULT_COMPILER_ARGUMENTS"))
 var DataNode<ModuleData>.coroutines
         by UserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
 var DataNode<ModuleData>.platformPluginId
@@ -71,8 +69,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         }
 
         ideModule.hasKotlinPlugin = gradleModel.hasKotlinPlugin
-        ideModule.currentCompilerArgumentsBySourceSet = gradleModel.currentCompilerArgumentsBySourceSet
-        ideModule.defaultCompilerArgumentsBySourceSet = gradleModel.defaultCompilerArgumentsBySourceSet
+        ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet
         ideModule.coroutines = gradleModel.coroutines
         ideModule.platformPluginId = gradleModel.platformPluginId
 
