@@ -18,88 +18,70 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.quickfix.ReplaceWithDotCallFix
-import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
-import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 
-class UselessCallOnNotNullInspection : AbstractKotlinInspection() {
+class UselessCallOnNotNullInspection : AbstractUselessCallInspection() {
+    override val uselessFqNames = mapOf("kotlin.collections.orEmpty" to deleteConversion,
+                                        "kotlin.text.orEmpty" to deleteConversion,
+                                        "kotlin.text.isNullOrEmpty" to Conversion("isEmpty"),
+                                        "kotlin.text.isNullOrBlank" to Conversion("isBlank"))
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
-                super.visitQualifiedExpression(expression)
-                val selector = expression.selectorExpression as? KtCallExpression ?: return
-                val calleeExpression = selector.calleeExpression ?: return
-                if (calleeExpression.text !in names) return
+    override val uselessNames = uselessFqNames.keys.toShortNames()
 
-                val context = expression.analyze(BodyResolveMode.PARTIAL)
-                val resolvedCall = expression.getResolvedCall(context) ?: return
-                val conversion = fqNames[resolvedCall.resultingDescriptor.fqNameOrNull()?.asString()] ?: return
-                val newName = conversion.replacementName
+    override fun QualifiedExpressionVisitor.suggestConversionIfNeeded(
+            expression: KtQualifiedExpression,
+            calleeExpression: KtExpression,
+            context: BindingContext,
+            conversion: Conversion
+    ) {
+        val newName = conversion.replacementName
 
-                val safeExpression = expression as? KtSafeQualifiedExpression
-                val notNullType = expression.receiverExpression.getType(context)?.let { TypeUtils.isNullableType(it) } == false
-                if (newName != null && (notNullType || safeExpression != null)) {
-                    val descriptor = holder.manager.createProblemDescriptor(
-                            expression,
-                            TextRange(expression.operationTokenNode.startOffset - expression.startOffset,
-                                      calleeExpression.endOffset - expression.startOffset),
-                            "Call on not-null type may be reduced",
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            isOnTheFly,
-                            RenameUselessCallFix(newName)
-                    )
-                    holder.registerProblem(descriptor)
-                }
-                else if (notNullType) {
-                    val descriptor = holder.manager.createProblemDescriptor(
-                            expression,
-                            TextRange(expression.operationTokenNode.startOffset - expression.startOffset,
-                                      calleeExpression.endOffset - expression.startOffset),
-                            "Useless call on not-null type",
-                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                            isOnTheFly,
-                            RemoveUselessCallFix()
-                    )
-                    holder.registerProblem(descriptor)
-                }
-                else if (safeExpression != null) {
-                    holder.registerProblem(
-                            safeExpression.operationTokenNode.psi,
-                            "This call is useless with ?.",
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            IntentionWrapper(ReplaceWithDotCallFix(safeExpression), safeExpression.containingKtFile)
-                    )
-                }
-            }
+        val safeExpression = expression as? KtSafeQualifiedExpression
+        val notNullType = expression.receiverExpression.getType(context)?.let { TypeUtils.isNullableType(it) } == false
+        val defaultRange = TextRange(expression.operationTokenNode.startOffset, calleeExpression.endOffset)
+                .shiftRight(-expression.startOffset)
+        if (newName != null && (notNullType || safeExpression != null)) {
+            val fixes = listOf(RenameUselessCallFix(newName)) + listOfNotNull(safeExpression?.let {
+                IntentionWrapper(ReplaceWithDotCallFix(safeExpression), safeExpression.containingKtFile)
+            })
+            val descriptor = holder.manager.createProblemDescriptor(
+                    expression,
+                    defaultRange,
+                    "Call on not-null type may be reduced",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    isOnTheFly,
+                    *fixes.toTypedArray()
+            )
+            holder.registerProblem(descriptor)
         }
-    }
-
-    companion object {
-        private data class Conversion(val replacementName: String? = null)
-
-        private val deleteConversion = Conversion()
-
-        private val fqNames = mapOf("kotlin.collections.orEmpty" to deleteConversion,
-                                    "kotlin.text.orEmpty" to deleteConversion,
-                                    "kotlin.text.isNullOrEmpty" to Conversion("isEmpty"),
-                                    "kotlin.text.isNullOrBlank" to Conversion("isBlank"))
-
-        private val names = fqNames.keys.mapTo(mutableSetOf()) { fqName -> fqName.takeLastWhile { it != '.' } }
+        else if (notNullType) {
+            val descriptor = holder.manager.createProblemDescriptor(
+                    expression,
+                    defaultRange,
+                    "Useless call on not-null type",
+                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    isOnTheFly,
+                    RemoveUselessCallFix()
+            )
+            holder.registerProblem(descriptor)
+        }
+        else if (safeExpression != null) {
+            holder.registerProblem(
+                    safeExpression.operationTokenNode.psi,
+                    "This call is useless with ?.",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    IntentionWrapper(ReplaceWithDotCallFix(safeExpression), safeExpression.containingKtFile)
+            )
+        }
     }
 }
 

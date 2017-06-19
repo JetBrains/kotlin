@@ -59,6 +59,93 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class UselessCallOnCollection extends AbstractLocalInspectionTest {
+            public void testAllFilesPresentInUselessCallOnCollection() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections/uselessCallOnCollection"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("FilterIsExactInstance.kt")
+            public void testFilterIsExactInstance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/FilterIsExactInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FilterIsExactInstanceFake.kt")
+            public void testFilterIsExactInstanceFake() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/FilterIsExactInstanceFake.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FilterIsForFlexible.kt")
+            public void testFilterIsForFlexible() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/FilterIsForFlexible.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FilterIsSupertypeInstance.kt")
+            public void testFilterIsSupertypeInstance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/FilterIsSupertypeInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FilterIsSupertypeInstanceFake.kt")
+            public void testFilterIsSupertypeInstanceFake() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/FilterIsSupertypeInstanceFake.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FilterNotNull.kt")
+            public void testFilterNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/FilterNotNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("filterNotNullFake.kt")
+            public void testFilterNotNullFake() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/filterNotNullFake.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MapIndexedNotNullTo.kt")
+            public void testMapIndexedNotNullTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/MapIndexedNotNullTo.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MapNotNullTo.kt")
+            public void testMapNotNullTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/MapNotNullTo.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MapNotNullWithLambda.kt")
+            public void testMapNotNullWithLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/MapNotNullWithLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MapNotNullWithLambdaFake.kt")
+            public void testMapNotNullWithLambdaFake() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/MapNotNullWithLambdaFake.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MapNotNullWithReference.kt")
+            public void testMapNotNullWithReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/MapNotNullWithReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MapNotNullWithReferenceFake.kt")
+            public void testMapNotNullWithReferenceFake() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/MapNotNullWithReferenceFake.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -94,6 +181,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("NullOrEmptyFake.kt")
             public void testNullOrEmptyFake() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/NullOrEmptyFake.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NullOrEmptySafe.kt")
+            public void testNullOrEmptySafe() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/NullOrEmptySafe.kt");
                 doTest(fileName);
             }
 

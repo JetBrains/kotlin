@@ -20,10 +20,9 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
-import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
-import org.jetbrains.kotlin.psi.createExpressionByPattern
 
 class RenameUselessCallFix(val newName: String) : LocalQuickFix {
     override fun getName() = "Rename useless call to '$newName'"
@@ -33,8 +32,9 @@ class RenameUselessCallFix(val newName: String) : LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         (descriptor.psiElement as? KtQualifiedExpression)?.let {
             val factory = KtPsiFactory(it)
-            val sign = if (it is KtSafeQualifiedExpression) "?." else "."
-            it.replaced(factory.createExpressionByPattern("$0$sign$newName()", it.receiverExpression))
+            val selectorCallExpression = it.selectorExpression as? KtCallExpression
+            val calleeExpression = selectorCallExpression?.calleeExpression ?: return
+            calleeExpression.replaced(factory.createExpression(newName))
         }
     }
 }
