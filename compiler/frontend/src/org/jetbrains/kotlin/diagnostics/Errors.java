@@ -784,7 +784,8 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, KotlinType> UNSAFE_CALL = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> UNSAFE_IMPLICIT_INVOKE_CALL = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory3<KtExpression, String, String, String> UNSAFE_INFIX_CALL = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<KtExpression, PsiElement, String, PsiElement> UNSAFE_INFIX_CALL = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<KtExpression, PsiElement, String, PsiElement> UNSAFE_OPERATOR_CALL = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> UNNECESSARY_SAFE_CALL = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<PsiElement> UNEXPECTED_SAFE_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> UNNECESSARY_NOT_NULL_ASSERTION = DiagnosticFactory1.create(WARNING);

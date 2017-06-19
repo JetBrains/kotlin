@@ -498,6 +498,7 @@ fun main(args: Array<String>) {
             model("checker/scripts", extension = "kts")
             model("checker/duplicateJvmSignature")
             model("checker/infos", testMethod = "doTestWithInfos")
+            model("checker/diagnosticsMessage")
         }
 
         testClass<AbstractJavaAgainstKotlinSourceCheckerTest> {

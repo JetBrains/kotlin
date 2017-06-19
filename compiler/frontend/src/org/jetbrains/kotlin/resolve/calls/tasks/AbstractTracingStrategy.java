@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,18 +173,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
         else {
             PsiElement callElement = call.getCallElement();
             if (callElement instanceof KtBinaryExpression) {
-                KtBinaryExpression binaryExpression = (KtBinaryExpression)callElement;
-                KtSimpleNameExpression operationReference = binaryExpression.getOperationReference();
-
-                Name operationString = operationReference.getReferencedNameElementType() == KtTokens.IDENTIFIER ?
-                                       Name.identifier(operationReference.getText()) :
-                                       OperatorConventions.getNameForOperationSymbol((KtToken) operationReference.getReferencedNameElementType());
-
-                KtExpression left = binaryExpression.getLeft();
-                KtExpression right = binaryExpression.getRight();
-                if (left != null && right != null) {
-                    trace.report(UNSAFE_INFIX_CALL.on(reference, left.getText(), operationString.asString(), right.getText()));
-                }
+                reportUnsafeCallOnBinaryExpression(trace, (KtBinaryExpression) callElement);
             }
             else if (isCallForImplicitInvoke) {
                 trace.report(UNSAFE_IMPLICIT_INVOKE_CALL.on(reference, type));
@@ -192,6 +181,30 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             else {
                 trace.report(UNSAFE_CALL.on(reference, type));
             }
+        }
+    }
+
+    private void reportUnsafeCallOnBinaryExpression(@NotNull BindingTrace trace, @NotNull KtBinaryExpression binaryExpression) {
+        KtSimpleNameExpression operationReference = binaryExpression.getOperationReference();
+        boolean isInfixCall = operationReference.getReferencedNameElementType() == KtTokens.IDENTIFIER;
+        Name operationString = isInfixCall ?
+                               Name.identifier(operationReference.getText()) :
+                               OperatorConventions.getNameForOperationSymbol((KtToken) operationReference.getReferencedNameElementType());
+
+        if (operationString == null) return;
+
+        KtExpression left = binaryExpression.getLeft();
+        KtExpression right = binaryExpression.getRight();
+        if (left == null || right == null) return;
+
+        if (isInfixCall) {
+            trace.report(UNSAFE_INFIX_CALL.on(reference, left, operationString.asString(), right));
+        }
+        else {
+            boolean inOperation = KtPsiUtil.isInOrNotInOperation(binaryExpression);
+            KtExpression receiver = inOperation ? right : left;
+            KtExpression argument = inOperation ? left : right;
+            trace.report(UNSAFE_OPERATOR_CALL.on(reference, receiver, operationString.asString(), argument));
         }
     }
 
