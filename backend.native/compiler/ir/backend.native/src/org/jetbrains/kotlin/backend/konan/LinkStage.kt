@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan
 import java.io.File
 import java.lang.ProcessBuilder
 import java.lang.ProcessBuilder.Redirect
+import org.jetbrains.kotlin.konan.target.*
 
 typealias BitcodeFile = String
 typealias ObjectFile = String
@@ -186,7 +187,7 @@ internal class LinkStage(val context: Context) {
 
     private val distribution = context.config.distribution
 
-    val platform = when (context.config.targetManager.current) {
+    val platform = when (context.config.targetManager.target) {
         KonanTarget.LINUX, KonanTarget.RASPBERRYPI ->
             LinuxBasedPlatform(distribution)
         KonanTarget.MACBOOK, KonanTarget.IPHONE, KonanTarget.IPHONE_SIM ->
@@ -196,7 +197,7 @@ internal class LinkStage(val context: Context) {
         KonanTarget.MINGW ->
             MingwPlatform(distribution)
         else ->
-            error("Unexpected target platform: ${context.config.targetManager.current}")
+            error("Unexpected target platform: ${context.config.targetManager.target}")
     }
 
     val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
@@ -251,7 +252,7 @@ internal class LinkStage(val context: Context) {
         get() = if (nomain) emptyList() else platform.entrySelector
 
     fun link(objectFiles: List<ObjectFile>): ExecutableFile {
-        val executable = config.get(KonanConfigKeys.OUTPUT_FILE)!!
+        val executable = context.config.outputFile
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize, config.getBoolean(KonanConfigKeys.DEBUG)) +
                 distribution.libffi +
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +

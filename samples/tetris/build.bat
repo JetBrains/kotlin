@@ -15,6 +15,5 @@ rem Windows build requires Windows Resource Compiler in paths.
 call windres "%DIR%\Tetris.rc" -O coff -o "%DIR%\Tetris.res" || exit /b
 call konanc -target "%TARGET%" "%DIR%\src\main\kotlin\Tetris.kt" -library sdl -linkerOpts "%LFLAGS%" -opt -o Tetris || exit /b
 
-copy Tetris.kexe Tetris.exe
 copy %MINGW%\bin\SDL2.dll SDL2.dll
 copy src\main\resources\tetris_all.bmp tetris_all.bmp

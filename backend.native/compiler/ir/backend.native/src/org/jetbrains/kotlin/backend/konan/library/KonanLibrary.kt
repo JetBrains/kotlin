@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.konan.library
 import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.TargetManager
 import org.jetbrains.kotlin.backend.konan.serialization.Base64
 import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
 import org.jetbrains.kotlin.backend.konan.util.File

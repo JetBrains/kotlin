@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.util.*
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 enum class KonanPhase(val description: String,
                       vararg prerequisite: KonanPhase,

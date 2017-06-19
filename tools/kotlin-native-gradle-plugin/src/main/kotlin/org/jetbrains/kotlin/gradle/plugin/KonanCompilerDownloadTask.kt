@@ -20,6 +20,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleScriptException
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.konan.DependencyDownloader
+import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 
 open class KonanCompilerDownloadTask : DefaultTask() {
@@ -28,16 +29,6 @@ open class KonanCompilerDownloadTask : DefaultTask() {
         internal const val DOWNLOAD_URL = "http://download.jetbrains.com/kotlin/native"
 
         internal val KONAN_PARENT_DIR = "${System.getProperty("user.home")}/.konan"
-
-        internal fun simpleOsName(): String {
-            val osName = System.getProperty("os.name")
-            return when {
-                osName == "Mac OS X" -> "macos"
-                osName == "Linux" -> "linux"
-                osName.startsWith("Windows") -> "windows"
-                else -> throw IllegalStateException("Unsupported platform: $osName")
-            }
-        }
     }
 
     @TaskAction

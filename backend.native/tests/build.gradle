@@ -1093,7 +1093,7 @@ task intrinsic(type: RunKonanTest) {
 
 /*
     Disabled until we extract the classes that should be
-    always present from stdlib.kt.bc into a separate binary.
+    always present from stdlib into a separate binary.
 
 task link(type: LinkKonanTest) {
     goldValue = "0\n"

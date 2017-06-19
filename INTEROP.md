@@ -24,12 +24,12 @@ Build the dependencies and the compiler (see `README.md`).
 Prepare stubs for the system sockets library:
 
     cd samples/socket
-    ../../dist/bin/cinterop -def sockets.def -o sockets.kt.bc
+    ../../dist/bin/cinterop -def sockets.def -o sockets
 
 Compile the echo server:
 
-    ../../dist/bin/kotlinc EchoServer.kt -library sockets.kt.bc \
-     -o EchoServer.kexe
+    ../../dist/bin/kotlinc EchoServer.kt -library sockets \
+     -o EchoServer
 
 This whole process is automated in `build.sh` script, which also support cross-compilation
 to supported cross-targets with `TARGET=raspberrypi ./build.sh` (`cross_dist` target must
@@ -57,10 +57,10 @@ Structurally it's a simple property file, looking like this:
 Then run `cinterop` tool with something like (note that for host libraries not included
 in sysroot search paths for headers may be needed):
 
-    cinterop -def zlib.def -copt -I/opt/local/include -o zlib.kt.bc
+    cinterop -def zlib.def -copt -I/opt/local/include -o zlib
 
-This command will produce `zlib.kt.bc` compiled library and
-`zlib.kt.bc-build/kotlin` directory containing Kotlin source code for the library.
+This command will produce `zlib.klib` compiled library and
+`zlib-build/kotlin` directory containing Kotlin source code for the library.
 
 If behavior for certain platform shall be modified, one may use format like
 `compilerOpts.osx` or `compilerOpts.linux` to provide platform-specific values

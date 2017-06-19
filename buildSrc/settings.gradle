@@ -14,17 +14,5 @@
  * limitations under the License.
  */
 
-include ':dependencies'
-include ':Interop:Indexer'
-include ':Interop:StubGenerator'
-include ':Interop:Runtime'
-include ':llvmDebugInfoC'
-include ':klib'
-include ':backend.native'
-include ':runtime'
-include ':common'
-include ':backend.native:tests'
-include ':shared'
-include ':tools:helpers'
-include ':tools:kotlin-native-gradle-plugin'
-include ':utilities'
+include 'shared'
+include 'plugins'

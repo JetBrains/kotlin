@@ -6,7 +6,7 @@ import java.util.Properties
 import org.jetbrains.kotlin.backend.konan.library.SplitLibraryReader
 import org.jetbrains.kotlin.backend.konan.util.File
 import org.jetbrains.kotlin.backend.konan.util.copyTo
-import org.jetbrains.kotlin.backend.konan.TargetManager
+import org.jetbrains.kotlin.konan.target.TargetManager
 
 fun printUsage() {
     println("Usage: klib <command> <library> <options>")
@@ -113,7 +113,7 @@ fun main(args: Array<String>) {
     val command = Command(args)
 
     val targetManager = TargetManager(command.options["target"]?.last())
-    val target = targetManager.currentName
+    val target = targetManager.targetName
 
     val repository = command.options["repository"]?.last()
     val repositoryList = repository ?.let { listOf(it) } ?: emptyList()

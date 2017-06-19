@@ -25,9 +25,9 @@ mkdir -p $DIR/build/bin
 $DIR/buildCpp.sh
 
 cinterop -def $DIR/src/main/c_interop/MessageChannel.def -copt "-I$DIR/src/main/cpp" -target $TARGET \
-         -o $DIR/build/c_interop/MessageChannel.kt.bc || exit 1
+         -o $DIR/build/c_interop/MessageChannel || exit 1
 
-konanc $DIR/src/main/kotlin/Concurrent.kt -library $DIR/build/c_interop/MessageChannel.kt.bc \
-       -nativelibrary $DIR/build/clang/MessageChannel.bc -o $DIR/build/bin/Concurrent.kexe || exit 1
+konanc $DIR/src/main/kotlin/Concurrent.kt -library $DIR/build/c_interop/MessageChannel \
+       -nativelibrary $DIR/build/clang/MessageChannel.bc -o $DIR/build/bin/Concurrent || exit 1
 
 echo "Artifact path is $DIR/build/bin/Concurrent.kexe"

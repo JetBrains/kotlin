@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
+import org.jetbrains.kotlin.konan.target.*
 
-class Distribution(val config: CompilerConfiguration) {
+class Distribution(val targetManager: TargetManager,
+    val propertyFileOverride: String? = null,
+    val runtimeFileOverride: String? = null) {
 
-    val targetManager = TargetManager(config)
-    val target = targetManager.currentName
-    val hostSuffix = targetManager.hostSuffix()
-    val hostTargetSuffix = targetManager.hostTargetSuffix()
-    val targetSuffix = targetManager.targetSuffix()
+    val targetName = targetManager.targetName
+    val hostSuffix = targetManager.hostSuffix
+    val hostTargetSuffix = targetManager.hostTargetSuffix
+    val targetSuffix = targetManager.targetSuffix
 
     private fun findUserHome() = File(System.getProperty("user.home")).absolutePath
     val userHome = findUserHome()
@@ -38,8 +39,7 @@ class Distribution(val config: CompilerConfiguration) {
     }
 
     val konanHome = findKonanHome()
-    val propertyFile = config.get(KonanConfigKeys.PROPERTY_FILE) 
-        ?: "$konanHome/konan/konan.properties"
+    val propertyFile = propertyFileOverride ?: "$konanHome/konan/konan.properties"
     val properties = KonanProperties(propertyFile)
 
     val klib = "$konanHome/klib"
@@ -48,8 +48,7 @@ class Distribution(val config: CompilerConfiguration) {
     val dependencies = properties.propertyList("dependencies.$hostTargetSuffix")
 
     val stdlib = "$klib/stdlib"
-    val runtime = config.get(KonanConfigKeys.RUNTIME_FILE) 
-        ?: "$stdlib/targets/$target/native/runtime.bc"
+    val runtime = runtimeFileOverride ?: "$stdlib/targets/${targetName}/native/runtime.bc"
 
     val llvmHome = "$dependenciesDir/${properties.propertyString("llvmHome.$hostSuffix")}"
     val hostSysRoot = "$dependenciesDir/${properties.propertyString("targetSysRoot.$hostSuffix")}"

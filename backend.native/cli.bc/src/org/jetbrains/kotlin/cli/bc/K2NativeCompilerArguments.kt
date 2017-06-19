@@ -54,13 +54,13 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @field:Argument(value = "-opt", description = "Enable optimizations during compilation")
     @JvmField var optimization: Boolean = false
 
-    @field:Argument(value = "-output", shortName = "-o", valueDescription = "<path>", description = "Output file path")
-    @JvmField var outputFile: String? = null
+    @field:Argument(value = "-output", shortName = "-o", valueDescription = "<name>", description = "Output name")
+    @JvmField var outputName: String? = null
 
     @field:Argument(value = "-entry", shortName = "-e", valueDescription = "<name>", description = "Qualified entry point name")
     @JvmField var mainPackage: String? = null
 
-    @field:Argument(value = "-produce", shortName = "-p", valueDescription = "{program|library|bitcode}", description = "Produce either .kexe, .klib or a .bc file.")
+    @field:Argument(value = "-produce", shortName = "-p", valueDescription = "{program|library|bitcode}", description = "Specify output file kind")
     @JvmField var produce: String? = null
 
     @field:Argument(value = "-properties", valueDescription = "<path>", description = "Override standard 'konan.properties' location")

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 class KonanConfigKeys {
     companion object {
@@ -56,9 +57,7 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("don't the library into a klib file")
         val OPTIMIZATION: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("optimized compilation")
-        val OUTPUT_FILE: CompilerConfigurationKey<String> 
-                = CompilerConfigurationKey.create("final executable file path")
-        val OUTPUT_NAME: CompilerConfigurationKey<String> 
+        val OUTPUT: CompilerConfigurationKey<String> 
                 = CompilerConfigurationKey.create("program or library name")
         val PRINT_BITCODE: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("print bitcode")
@@ -95,8 +94,3 @@ class KonanConfigKeys {
     }
 }
 
-enum class CompilerOutputKind(val suffix: String) {
-    PROGRAM(".kexe"),
-    LIBRARY(".klib"),
-    BITCODE(".bc")
-}

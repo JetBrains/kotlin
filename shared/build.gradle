@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-include ':dependencies'
-include ':Interop:Indexer'
-include ':Interop:StubGenerator'
-include ':Interop:Runtime'
-include ':llvmDebugInfoC'
-include ':klib'
-include ':backend.native'
-include ':runtime'
-include ':common'
-include ':backend.native:tests'
-include ':shared'
-include ':tools:helpers'
-include ':tools:kotlin-native-gradle-plugin'
-include ':utilities'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+   dependencies {
+     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+   }
+}
+
+apply plugin: 'kotlin'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}

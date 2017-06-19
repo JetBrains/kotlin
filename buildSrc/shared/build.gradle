@@ -14,8 +14,33 @@
  * limitations under the License.
  */
 
-allprojects {
+buildscript {
+    ext {
+        gradleProperties = new Properties()
+        gradleProperties.load(new FileInputStream("$projectDir/../../gradle.properties"))
+        kotlin_version = gradleProperties."kotlin_version"
+    }
+
     repositories {
         mavenCentral()
     }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+
+compileKotlin {
+    // We reuse the source code from the Project in buildSrc.
+    source "$projectDir/../../shared"
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+rootProject.dependencies {
+    runtime project(path)
 }

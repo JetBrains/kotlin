@@ -88,7 +88,7 @@ cinterop execution (see the `dumpParameters` task in `samles/csvparser/build.gra
              // Directory for output artifact (default: build/konan/bin/<artifactName>).
              outputDir 'path/to/output/dir'
 
-             // *.kt.bc library for linking.
+             // *.klib library for linking.
              library project.file('path/to/library')
 
              // naitve library for linking.

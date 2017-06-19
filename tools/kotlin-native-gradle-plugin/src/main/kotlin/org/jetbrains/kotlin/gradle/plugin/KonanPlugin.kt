@@ -57,28 +57,29 @@ internal val Project.konanCompilerDownloadTask  get() = tasks.getByName(KonanPlu
 internal val Project.konanVersion
     get() = findProperty(KonanPlugin.KONAN_VERSION_PROPERTY_NAME) as String? ?: KonanPlugin.DEFAULT_KONAN_VERSION
 
-internal fun Project.isTargetSupported(target: String?): Boolean {
+internal fun Project.targetIsRequested(target: String?): Boolean {
     val targets = extensions.extraProperties.get(KonanPlugin.KONAN_BUILD_TARGETS).toString().trim().split(' ')
-    if (targets.contains("all")) {
-        return target?.isSupported() ?: true
-    } else {
-        return target == null || targets.contains(target)
-    }
+
+    return (targets.contains(target) || 
+            targets.contains("all") ||
+            target == null)
 }
 
-internal val Project.supportedCompileTasks: TaskCollection<KonanCompileTask>
-    get() {
+internal fun Project.targetIsSupportedAndRequested(task: KonanTargetableTask) 
+    = task.targetIsSupported && this.targetIsRequested(task.target)
 
-        return project.tasks.withType(KonanCompileTask::class.java).matching { isTargetSupported(it.target) }
+internal val Project.supportedCompileTasks: TaskCollection<KonanCompileTask>
+    get() = project.tasks.withType(KonanCompileTask::class.java).matching { 
+        targetIsSupportedAndRequested(it)
     }
 
 internal val Project.supportedInteropTasks: TaskCollection<KonanInteropTask>
-    get() {
-        return project.tasks.withType(KonanInteropTask::class.java).matching { isTargetSupported(it.target) }
+    get() = project.tasks.withType(KonanInteropTask::class.java).matching { 
+        targetIsSupportedAndRequested(it)
     }
 
 internal fun Project.konanCompilerName(): String =
-        "kotlin-native-${KonanCompilerDownloadTask.simpleOsName()}-${this.konanVersion}"
+        "kotlin-native-${project.simpleOsName}-${this.konanVersion}"
 
 internal fun Project.konanCompilerDownloadDir(): String =
         KonanCompilerDownloadTask.KONAN_PARENT_DIR + "/" + project.konanCompilerName()
@@ -177,17 +178,6 @@ internal fun dumpProperties(task: Task) {
     }
 }
 
-private fun String.isSupported(): Boolean {
-    val os = KonanCompilerDownloadTask.simpleOsName()
-    return when (os) {
-        "macos" -> this == "macbook" || this == "iphone"
-        "linux" -> this == "linux" || this == "raspberrypi"
-        "windows" -> this == "mingw"
-        else -> false
-    }
-}
-
-
 class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderRegistry)
     : Plugin<ProjectInternal> {
 
@@ -230,14 +220,8 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         if (!project.extensions.extraProperties.has(KonanPlugin.KONAN_HOME_PROPERTY_NAME)) {
             project.extensions.extraProperties.set(KonanPlugin.KONAN_HOME_PROPERTY_NAME, project.konanCompilerDownloadDir())
         }
-        val hostTarget =  when (KonanCompilerDownloadTask.simpleOsName()) {
-            "macos" -> "macbook"
-            "linux" -> "linux"
-            "windows" -> "mingw"
-            else -> throw IllegalStateException("Unsupported platform")
-        }
         if (!project.extensions.extraProperties.has(KonanPlugin.KONAN_BUILD_TARGETS)) {
-            project.extensions.extraProperties.set(KonanPlugin.KONAN_BUILD_TARGETS, hostTarget)
+            project.extensions.extraProperties.set(KonanPlugin.KONAN_BUILD_TARGETS, project.host)
         }
         getTask(project, "build").apply {
             dependsOn(project.supportedCompileTasks)
@@ -246,8 +230,8 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         getOrCreateTask(project, "run").apply {
             dependsOn(getTask(project, "build"))
             doLast {
-                for (task in project.tasks.withType(KonanCompileTask::class.java).matching { it.target?.equals(hostTarget) ?: true}) {
-                    if (task.artifactPath.endsWith("kexe")) {
+                for (task in project.tasks.withType(KonanCompileTask::class.java).matching { !it.isCrossCompile}) {
+                    if (task?.produce == "program") {
                         project.exec {
                             with(it) {
                                 commandLine(task.artifactPath)

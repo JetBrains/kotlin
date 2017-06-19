@@ -22,9 +22,9 @@ COMPILER_ARGS=${!var} # add -opt for an optimized build.
 mkdir -p $DIR/build/c_interop/
 mkdir -p $DIR/build/bin/
 
-cinterop -def $DIR/src/main/c_interop/stdio.def -compilerOpts "$CFLAGS" -target $TARGET -o $DIR/build/c_interop/stdio.kt.bc || exit 1
+cinterop -def $DIR/src/main/c_interop/stdio.def -compilerOpts "$CFLAGS" -target $TARGET -o $DIR/build/c_interop/stdio || exit 1
 
-konanc $COMPILER_ARGS -target $TARGET $DIR/src/main/kotlin/CsvParser.kt -library $DIR/build/c_interop/stdio.kt.bc \
-       -o $DIR/build/bin/CsvParser.kexe || exit 1
+konanc $COMPILER_ARGS -target $TARGET $DIR/src/main/kotlin/CsvParser.kt -library $DIR/build/c_interop/stdio \
+       -o $DIR/build/bin/CsvParser || exit 1
 
 echo "Artifact path is ./build/bin/CsvParser.kexe"

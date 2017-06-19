@@ -67,7 +67,7 @@ import java.io.File
 
 // TODO: form groups for tasks
 // TODO: Make the task class nested for config with properties accessible for outer users.
-open class KonanCompileTask: DefaultTask() {
+open class KonanCompileTask: KonanTargetableTask() {
 
     companion object {
         const val COMPILER_MAIN = "org.jetbrains.kotlin.cli.bc.K2NativeKt"
@@ -89,13 +89,17 @@ open class KonanCompileTask: DefaultTask() {
     internal fun init(artifactName: String) {
         dependsOn(project.konanCompilerDownloadTask)
         this.artifactName = artifactName
-        outputDir = project.file("${project.konanCompilerOutputDir}/$artifactName")
+        outputDir = project.file("${project.konanCompilerOutputDir}")
     }
 
-    private val artifactSuffix = mapOf("program" to "kexe", "library" to "klib", "bitcode" to "bc")
+    val artifactNamePath: String
+        get() = "${outputDir.absolutePath}/$artifactName"
+
+    val artifactSuffix: String
+        get() = produceSuffix(produce)
 
     val artifactPath: String
-        get() = "${outputDir.absolutePath}/$artifactName.${artifactSuffix[produce]}"
+        get() = "$artifactNamePath$artifactSuffix"
 
     // Other compilation parameters -------------------------------------------
 
@@ -119,8 +123,6 @@ open class KonanCompileTask: DefaultTask() {
     @Input var enableAssertions   = false
         internal set
 
-    @Optional @Input var target          : String? = null
-        internal set
     @Optional @Input var languageVersion : String? = null
         internal set
     @Optional @Input var apiVersion      : String? = null
@@ -133,7 +135,7 @@ open class KonanCompileTask: DefaultTask() {
     // Task action ------------------------------------------------------------
 
     protected fun buildArgs() = mutableListOf<String>().apply {
-        addArg("-output", artifactPath)
+        addArg("-output", artifactNamePath)
 
         addFileArgs("-library", libraries)
         addFileArgs("-nativelibrary", nativeLibraries)
@@ -219,7 +221,7 @@ open class KonanCompileConfig(
         compilationTask.dependsOn(generateStubsTask)
 
         linkerOpts(generateStubsTask.linkerOpts)
-        library(compileStubsTask.artifactPath)
+        library(compileStubsTask.artifactNamePath)
         nativeLibraries(project.fileTree(generateStubsTask.libsDir).apply {
             builtBy(generateStubsTask)
             include("**/*.bc")

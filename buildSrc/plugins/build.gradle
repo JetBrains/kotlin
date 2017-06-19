@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-include ':dependencies'
-include ':Interop:Indexer'
-include ':Interop:StubGenerator'
-include ':Interop:Runtime'
-include ':llvmDebugInfoC'
-include ':klib'
-include ':backend.native'
-include ':runtime'
-include ':common'
-include ':backend.native:tests'
-include ':shared'
-include ':tools:helpers'
-include ':tools:kotlin-native-gradle-plugin'
-include ':utilities'
+apply plugin: 'groovy'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile group: 'com.ullink.slack', name: 'simpleslackapi', version: '0.6.0'
+    compile project(':shared')
+}
+
+rootProject.dependencies {
+    runtime project(path)
+}

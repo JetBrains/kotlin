@@ -21,18 +21,39 @@ import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.SplitLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
 import org.jetbrains.kotlin.backend.konan.util.profile
+import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
+import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.backend.konan.util.File
+import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.target.TargetManager.*
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
-    val moduleId: String
-        get() = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
+    internal val targetManager = TargetManager(
+        configuration.get(KonanConfigKeys.TARGET))
 
-    internal val targetManager = TargetManager(configuration)
-    internal val distribution = Distribution(configuration)
+    init {
+        val target = targetManager.target
+        if (!target.enabled) {
+            error("Target $target is not available on the ${TargetManager.host} host")
+        }
+    }
+    internal val distribution = Distribution(targetManager, 
+        configuration.get(KonanConfigKeys.PROPERTY_FILE), 
+        configuration.get(KonanConfigKeys.RUNTIME_FILE))
+
+    private val produce = configuration.get(KonanConfigKeys.PRODUCE)!!
+    private val suffix = produce.suffix(targetManager.target)
+    val outputName = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(suffix) ?: produce.name.toLowerCase()
+    val outputFile = outputName.suffixIfNot(produce.suffix(targetManager.target))
+
+    val moduleId: String
+        // This is a decision we could change
+        get() = outputName
 
     private val libraryNames: List<String>
         get() {
@@ -51,7 +72,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val libraries: List<KonanLibraryReader> by lazy {
         val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)!!
-        val target = targetManager.currentName
+        val target = targetManager.targetName
         // Here we have chosen a particular KonanLibraryReader implementation.
         librariesFound.map{it -> SplitLibraryReader(it, currentAbiVersion, target)}
     }

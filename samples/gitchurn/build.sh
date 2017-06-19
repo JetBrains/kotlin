@@ -27,9 +27,9 @@ mkdir -p $DIR/build/c_interop/
 mkdir -p $DIR/build/bin/
 
 cinterop -compilerOpts $CFLAGS -def $DIR/src/main/c_interop/libgit2.def -target $TARGET \
-         -o $DIR/build/c_interop/libgit2.kt.bc || exit 1
+         -o $DIR/build/c_interop/libgit2 || exit 1
 
-konanc -target $TARGET $DIR/src/main/kotlin -library $DIR/build/c_interop/libgit2.kt.bc -linkerOpts "$LINKER_ARGS" \
-       -o $DIR/build/bin/GitChurn.kexe || exit 1
+konanc -target $TARGET $DIR/src/main/kotlin -library $DIR/build/c_interop/libgit2 -linkerOpts "$LINKER_ARGS" \
+       -o $DIR/build/bin/GitChurn || exit 1
 
 echo "Artifact path is ./build/bin/GitChurn.kexe"

@@ -14,27 +14,38 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan
+package org.jetbrains.kotlin.konan.target
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
+enum class KonanTarget(val targetSuffix: String, val programSuffix: String, var enabled: Boolean = false) {
+    ANDROID_ARM32("android_arm32", "so"),
+    ANDROID_ARM64("android_arm64", "so"),
+    IPHONE("ios", "kexe"),
+    IPHONE_SIM("ios_sim", "kexe"),
+    LINUX("linux", "kexe"),
+    MINGW("mingw", "exe"),
+    MACBOOK("osx", "kexe"),
+    RASPBERRYPI("raspberrypi", "kexe")
+}
 
-enum class KonanTarget(val suffix: String, var enabled: Boolean = false) {
-    ANDROID_ARM32("android_arm32"),
-    ANDROID_ARM64("android_arm64"),
-    IPHONE("ios"),
-    IPHONE_SIM("ios_sim"),
-    LINUX("linux"),
-    MINGW("mingw"),
-    MACBOOK("osx"),
-    RASPBERRYPI("raspberrypi")
+enum class CompilerOutputKind {
+    PROGRAM {
+        override fun suffix(target: KonanTarget?) = ".${target!!.programSuffix}"
+    },
+    LIBRARY {
+        override fun suffix(target: KonanTarget?) = ".klib"
+    } ,
+    BITCODE {
+        override fun suffix(target: KonanTarget?) = ".bc"
+    };
+
+    abstract fun suffix(target: KonanTarget? = null): String
 }
 
 class TargetManager(val userRequest: String? = null) {
-    constructor(config: CompilerConfiguration) : this(config.get(KonanConfigKeys.TARGET))
     val targets = KonanTarget.values().associate{ it.name.toLowerCase() to it }
-    val current = determineCurrent()
-    val currentName
-        get() = current.name.toLowerCase()
+    val target = determineCurrent()
+    val targetName
+        get() = target.name.toLowerCase()
 
     init {
         when (host) {
@@ -57,10 +68,6 @@ class TargetManager(val userRequest: String? = null) {
             else ->
                 error("Unknown host platform: $host")
         }
-
-        if (!current.enabled) {
-            error("Target $current is not available on the current host")
-        }
     }
 
     fun known(name: String): String {
@@ -71,9 +78,9 @@ class TargetManager(val userRequest: String? = null) {
     }
 
     fun list() {
-        targets.forEach { key, target -> 
-            if (target.enabled) {
-                val isDefault = if (target == current) "(default)" else ""
+        targets.forEach { key, it -> 
+            if (it.enabled) {
+                val isDefault = if (it == target) "(default)" else ""
                 println(String.format("%1$-30s%2$-10s", "$key:", "$isDefault"))
             }
         }
@@ -87,10 +94,12 @@ class TargetManager(val userRequest: String? = null) {
         }
     }
 
-    fun hostSuffix() = host.suffix
-    fun hostTargetSuffix() =
-            if (current == host) host.suffix else "${host.suffix}-${current.suffix}"
-    fun targetSuffix() = current.suffix
+    val hostSuffix get() = host.targetSuffix
+    val hostTargetSuffix get() =
+        if (target == host) host.targetSuffix else "${host.targetSuffix}-${target.targetSuffix}"
+    val targetSuffix get() = target.targetSuffix
+
+    val programSuffix get() = CompilerOutputKind.PROGRAM.suffix(target)
 
     companion object {
         fun host_os(): String {
@@ -101,6 +110,11 @@ class TargetManager(val userRequest: String? = null) {
                 javaOsName.startsWith("Windows") -> "windows"
                 else -> error("Unknown operating system: ${javaOsName}")
             }
+        }
+
+        fun simpleOsName(): String {
+            val hostOs = host_os()
+            return if (hostOs == "osx") "macos" else hostOs
         }
 
         fun host_arch(): String { 

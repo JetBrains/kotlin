@@ -22,7 +22,6 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.KonanVersion
-import org.jetbrains.kotlin.backend.konan.TargetManager
 import org.jetbrains.kotlin.backend.konan.util.File
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -103,7 +102,7 @@ internal fun String?.toFileAndFolder():FileAndFolder {
 internal fun generateDebugInfoHeader(context: Context) {
     if (context.shouldContainDebugInfo()) {
 
-        val path = context.config.configuration.get(KonanConfigKeys.OUTPUT_FILE)!!
+        val path = context.config.outputFile
             .toFileAndFolder()
 
         context.debugInfo.module = DICreateModule(

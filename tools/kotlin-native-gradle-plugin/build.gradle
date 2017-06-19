@@ -48,6 +48,7 @@ repositories {
 
 evaluationDependsOn(':tools:helpers')
 dependencies {
+    compile project(':shared')
     compile project(':tools:helpers')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile gradleApi()
@@ -57,6 +58,7 @@ jar {
     dependsOn(':tools:helpers:jar')
     dependsOn(':cross_dist')
     from (rootProject.findProject(':tools:helpers').sourceSets.main.output)
+    from (rootProject.findProject(':shared').sourceSets.main.output)
 }
 
 task deleteDist(type: Delete) {

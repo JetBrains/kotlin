@@ -22,6 +22,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
+import org.jetbrains.kotlin.konan.target.*
 
 abstract class KonanTest extends JavaExec {
     protected String source
@@ -208,7 +209,9 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
     void executeTest() {
         createOutputDirectory()
         def program = buildExePath()
-        def exe = "${program}.kexe"
+        def targetManager = new TargetManager(project.testTarget)
+        def suffix = targetManager.programSuffix
+        def exe = "$program$suffix"
 
         compileTest(buildCompileList(), program)
 
