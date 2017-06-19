@@ -200,9 +200,10 @@ class TestMessageCollector : MessageCollector {
     override fun hasErrors(): Boolean = messages.any { it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR }
 }
 
-fun TestMessageCollector.assertHasMessage(msg: String) {
-    assert(messages.any { it.message.contains(msg) }) {
-        "Expecting message \"$msg\", actual:\n${messages.joinToString("\n") { it.message }}"
+fun TestMessageCollector.assertHasMessage(msg: String, desiredSeverity: CompilerMessageSeverity? = null) {
+    assert(messages.any { it.message.contains(msg) && (desiredSeverity == null || it.severity == desiredSeverity) }) {
+        "Expecting message \"$msg\" with severity ${desiredSeverity?.toString() ?: "Any"}, actual:\n" +
+        messages.joinToString("\n") { it.severity.toString() + ": " + it.message }
     }
 }
 

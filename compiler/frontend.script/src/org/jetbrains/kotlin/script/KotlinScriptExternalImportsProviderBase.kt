@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.script
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -27,7 +28,7 @@ import kotlin.reflect.KClass
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependencies
 
-abstract class KotlinScriptExternalImportsProviderBase(private val project: Project): KotlinScriptExternalImportsProvider {
+abstract class KotlinScriptExternalImportsProviderBase(private val project: Project) : KotlinScriptExternalImportsProvider {
     fun getScriptContents(scriptDefinition: KotlinScriptDefinition, file: VirtualFile)
             = BasicScriptContents(file, getAnnotations = { loadAnnotations(scriptDefinition, file) })
 
@@ -61,10 +62,12 @@ abstract class KotlinScriptExternalImportsProviderBase(private val project: Proj
             file: VirtualFile
     ): ScriptDependencies? {
         val scriptContents = getScriptContents(scriptDef, file)
-        return scriptDef.dependencyResolver.resolve(
+        val result = scriptDef.dependencyResolver.resolve(
                 scriptContents,
                 (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.environment ?: emptyMap()
-        ).dependencies
+        )
+        ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
+        return result.dependencies
     }
 }
 
