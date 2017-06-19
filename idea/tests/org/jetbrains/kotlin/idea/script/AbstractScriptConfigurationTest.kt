@@ -25,6 +25,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager.Companion.updateScriptDependenciesSynchronously
 import org.jetbrains.kotlin.idea.navigation.GotoCheck
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.script.ScriptTemplatesProvider
@@ -42,7 +43,7 @@ abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfi
     override fun doTest(path: String) {
         configureScriptEnvironment(path)
 
-        super.doTest(copyScriptFile(path))
+        super.doTest(setupScriptFile(path))
     }
 }
 
@@ -51,7 +52,7 @@ abstract class AbstractScriptConfigurationNavigationTest : AbstractScriptConfigu
     override fun doTest(path: String) {
         configureScriptEnvironment(path)
 
-        myFixture.configureFromExistingVirtualFile(copyScriptFile(path))
+        myFixture.configureFromExistingVirtualFile(setupScriptFile(path))
         val reference = myFixture.getReferenceAtCaretPosition()!!
 
         val resolved = reference.resolve()!!.navigationElement!!
@@ -84,12 +85,13 @@ abstract class AbstractScriptConfigurationTest : AbstractPsiCheckerTest() {
         registerScriptTemplateProvider(templateOutDir, libClasses, libSrcDir)
     }
 
-    protected fun copyScriptFile(path: String): VirtualFile {
+    protected fun setupScriptFile(path: String): VirtualFile {
         val scriptDir = KotlinTestUtils.tmpDir("scriptDir")
         val target = File(scriptDir, "script.kts")
         File("${path}script.kts").copyTo(target)
-        val vFile = LocalFileSystem.getInstance().findFileByPath(target.path)!!
-        return vFile
+        val scriptFile = LocalFileSystem.getInstance().findFileByPath(target.path)!!
+        updateScriptDependenciesSynchronously(scriptFile, project)
+        return scriptFile
     }
 
     private fun compileLibToDir(srcDir: File, vararg classpath: String): File {
