@@ -13,10 +13,15 @@ interface Interface
 interface Interface2
 class ClassAndTwoInterfaces : Interface, Simple(), Interface2
 
+class ClassWithSuperInterfaceOnly : Interface
+
+annotation class AnnotationClass
+
 fun any(): Any = null!!
 fun simple(): Simple = null!!
 fun interface_(): Interface = null!!
 fun interface2(): Interface2 = null!!
+fun annotation(): Annotation = null!!
 
 fun box(): String {
     with(Simple::class) {
@@ -46,6 +51,20 @@ fun box(): String {
         assertEquals(listOf(Interface::class, Simple::class, Interface2::class), superclasses)
         assertEquals(setOf(::interface_.returnType, ::simple.returnType, ::interface2.returnType, ::any.returnType), allSupertypes.toSet())
         assertEquals(setOf(Interface::class, Simple::class, Interface2::class, Any::class), allSuperclasses.toSet())
+    }
+
+    with (ClassWithSuperInterfaceOnly::class) {
+        assertEquals(listOf(::interface_.returnType, ::any.returnType), supertypes)
+        assertEquals(listOf(Interface::class, Any::class), superclasses)
+        assertEquals(setOf(::interface_.returnType, ::any.returnType), allSupertypes.toSet())
+        assertEquals(setOf(Interface::class, Any::class), allSuperclasses.toSet())
+    }
+
+    with (AnnotationClass::class) {
+        assertEquals(listOf(::annotation.returnType, ::any.returnType), supertypes)
+        assertEquals(listOf(Annotation::class, Any::class), superclasses)
+        assertEquals(listOf(::annotation.returnType, ::any.returnType), allSupertypes)
+        assertEquals(listOf(Annotation::class, Any::class), allSuperclasses)
     }
 
     return "OK"
