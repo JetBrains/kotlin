@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,14 +33,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 
 
 abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinQuickFixAction<PsiElement>(psiElement) {
@@ -117,7 +116,10 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
             val parent = psiElement.parent
             when (parent) {
                 is KtUnaryExpression -> parent.baseExpression.expressionForCall()
-                is KtBinaryExpression -> parent.left.expressionForCall()
+                is KtBinaryExpression -> {
+                    val receiver = if (KtPsiUtil.isInOrNotInOperation(parent)) parent.right else parent.left
+                    receiver.expressionForCall()
+                }
                 else -> null
             }
         }

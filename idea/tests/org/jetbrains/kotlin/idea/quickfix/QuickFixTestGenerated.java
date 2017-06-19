@@ -265,6 +265,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/normal2.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("operationIn.kt")
+        public void testOperationIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/operationIn.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/addGenericUpperBound")

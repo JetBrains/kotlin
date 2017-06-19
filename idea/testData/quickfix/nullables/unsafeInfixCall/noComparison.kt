@@ -1,5 +1,5 @@
 // "Replace with safe (?.) call" "false"
-// ERROR: Infix call corresponds to a dot-qualified call 'p1.compareTo(p2)' which is not allowed on a nullable receiver 'p1'. Use '?.'-qualified call instead
+// ERROR: Operator call corresponds to a dot-qualified call 'p1.compareTo(p2)' which is not allowed on a nullable receiver 'p1'.
 // ACTION: Add non-null asserted (!!) call
 // ACTION: Flip '>'
 // ACTION: Replace overloaded operator with function call
