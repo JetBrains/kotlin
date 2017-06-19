@@ -55,14 +55,12 @@ class KotlinCommonCompilerArgumentsHolder : BaseKotlinCompilerSettings<CommonCom
         }
     }
 
-    override fun createSettings() = createDefaultArguments()
+    override fun createSettings() = CommonCompilerArguments.DummyImpl()
 
     companion object {
         private val DEFAULT_LANGUAGE_VERSION = LanguageVersion.LATEST_STABLE.versionString
 
         fun getInstance(project: Project) =
                 ServiceManager.getService<KotlinCommonCompilerArgumentsHolder>(project, KotlinCommonCompilerArgumentsHolder::class.java)!!
-
-        fun createDefaultArguments(): CommonCompilerArguments = CommonCompilerArguments.DummyImpl()
     }
 }
