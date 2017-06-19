@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.script
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import java.io.File
@@ -28,22 +27,24 @@ import kotlin.script.dependencies.KotlinScriptExternalDependencies
 class KotlinScriptExternalImportsProviderImpl(
         val project: Project,
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
-) : KotlinScriptExternalImportsProvider {
+) : KotlinScriptExternalImportsProviderBase(project) {
 
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, KotlinScriptExternalDependencies?>()
 
-    override fun <TF: Any> getExternalImports(file: TF): KotlinScriptExternalDependencies? = cacheLock.read {
+    override fun <TF : Any> getScriptDependencies(file: TF): KotlinScriptExternalDependencies? = cacheLock.read {
         calculateExternalDependencies(file)
     }
 
-    private fun <TF: Any> calculateExternalDependencies(file: TF): KotlinScriptExternalDependencies? {
+    private fun <TF : Any> calculateExternalDependencies(file: TF): KotlinScriptExternalDependencies? {
         val path = getFilePath(file)
         val cached = cache[path]
-        return if (cached != null) cached else {
+        return if (cached != null) cached
+        else {
             val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
             if (scriptDef != null) {
-                val deps = scriptDef.getDependenciesFor(file, project, null)
+                val deps = resolveDependencies(scriptDef, file)
+
                 if (deps != null) {
                     log.info("[kts] new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
                 }
@@ -55,11 +56,6 @@ class KotlinScriptExternalImportsProviderImpl(
             else null
         }
     }
-
-    companion object {
-        @JvmStatic
-        fun getInstance(project: Project): KotlinScriptExternalImportsProvider? =
-                ServiceManager.getService(project, KotlinScriptExternalImportsProvider::class.java)
-        internal val log = Logger.getInstance(KotlinScriptExternalImportsProvider::class.java)
-    }
 }
+
+private val log = Logger.getInstance(KotlinScriptExternalImportsProvider::class.java)

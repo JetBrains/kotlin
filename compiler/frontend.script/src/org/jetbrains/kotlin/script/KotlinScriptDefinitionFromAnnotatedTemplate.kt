@@ -18,17 +18,10 @@ package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -54,7 +47,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         ?: DEFAULT_SCRIPT_FILE_PATTERN
     }
 
-    val resolver: ScriptDependenciesResolver? by lazy {
+    override val dependencyResolver: ScriptDependenciesResolver by lazy {
         val defAnn by lazy { takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() } }
         val legacyDefAnn by lazy { takeUnlessError { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>() } }
         when {
@@ -84,8 +77,8 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
                     log.warn("[kts] Script def error ${ex.message}")
                     null
                 }
-            else -> BasicScriptDependenciesResolver()
-        }
+            else -> null
+        } ?: BasicScriptDependenciesResolver()
     }
 
     val samWithReceiverAnnotations: List<String>? by lazy {
@@ -93,7 +86,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.SamWithReceiverAnnotations>()?.annotations?.toList() }
     }
 
-    private val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
+    override val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
 
         fun sameSignature(left: KFunction<*>, right: KFunction<*>): Boolean =
                 left.parameters.size == right.parameters.size &&
@@ -104,7 +97,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
         val resolveMethod = ScriptDependenciesResolver::resolve
         val resolverMethodAnnotations =
-                resolver?.let { it::class }?.memberFunctions?.find { function ->
+                dependencyResolver::class.memberFunctions.find { function ->
                     function.name == resolveMethod.name &&
                     sameSignature(function, resolveMethod)
                 }?.annotations?.filterIsInstance<AcceptedAnnotations>()
@@ -122,62 +115,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
     override fun getScriptName(script: KtScript): Name = NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
-    override fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
-        return takeUnlessError(reportError = false) {
-            val fileDeps = resolver?.resolve(makeScriptContents(file, project), environment, ::logScriptDefMessage, previousDependencies)
-            // TODO: use it as a Future
-            fileDeps?.get()
-        }
-    }
-
-    fun <TF: Any>  makeScriptContents(file: TF, project: Project) = BasicScriptContents(file, getAnnotations = {
-        val classLoader = template.java.classLoader
-        takeUnlessError(reportError = false) {
-            getAnnotationEntries(file, project)
-                    .mapNotNull { psiAnn ->
-                        // TODO: consider advanced matching using semantic similar to actual resolving
-                        acceptedAnnotations.find { ann ->
-                            psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
-                        }?.let { constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
-                    }
-        }
-        ?: emptyList()
-    })
-
-
-    fun getDependenciesFor(previousDependencies: KotlinScriptExternalDependencies?, scriptContents: ScriptContents): KotlinScriptExternalDependencies? {
-        return takeUnlessError(reportError = false) {
-            // TODO: use it as a Future
-            resolver?.resolve(scriptContents, environment, ::logScriptDefMessage, previousDependencies)?.get()
-        }
-    }
-
-    private fun <TF: Any> getAnnotationEntries(file: TF, project: Project): Iterable<KtAnnotationEntry> = when (file) {
-        is PsiFile -> getAnnotationEntriesFromPsiFile(file)
-        is VirtualFile -> getAnnotationEntriesFromVirtualFile(file, project)
-        is File -> {
-            val virtualFile = (StandardFileSystems.local().findFileByPath(file.canonicalPath)
-                               ?: throw IllegalArgumentException("Unable to find file ${file.canonicalPath}"))
-            getAnnotationEntriesFromVirtualFile(virtualFile, project)
-        }
-        else -> throw IllegalArgumentException("Unsupported file type $file")
-    }
-
-    private fun getAnnotationEntriesFromPsiFile(file: PsiFile) =
-            (file as? KtFile)?.annotationEntries
-            ?: throw IllegalArgumentException("Unable to extract kotlin annotations from ${file.name} (${file.fileType})")
-
-    private fun getAnnotationEntriesFromVirtualFile(file: VirtualFile, project: Project): Iterable<KtAnnotationEntry> {
-        val psiFile: PsiFile = PsiManager.getInstance(project).findFile(file)
-                               ?: throw IllegalArgumentException("Unable to load PSI from ${file.canonicalPath}")
-        return getAnnotationEntriesFromPsiFile(psiFile)
-    }
-
-    class BasicScriptContents<out TF: Any>(myFile: TF, getAnnotations: () -> Iterable<Annotation>) : ScriptContents {
-        override val file: File? by lazy { getFile(myFile) }
-        override val annotations: Iterable<Annotation> by lazy { getAnnotations() }
-        override val text: CharSequence? by lazy { getFileContents(myFile) }
-    }
+    override fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?) = error("Should not be called")
 
     override fun toString(): String = "KotlinScriptDefinitionFromAnnotatedTemplate - ${template.simpleName}"
 
