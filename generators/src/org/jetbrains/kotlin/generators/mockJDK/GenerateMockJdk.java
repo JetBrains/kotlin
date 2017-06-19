@@ -20,9 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -343,6 +341,26 @@ public class GenerateMockJdk {
         File rtJar = new File(rtJarPath);
         File srcJar = new File(srcZipPath);
 
+        Set<String> sourceFileEntries = getSourceFileEntries();
+        try (JarFile sourceJar = new JarFile(srcJar)) {
+            InputStream stream = sourceJar.getInputStream(sourceJar.getEntry(sourceFileEntries.iterator().next()));
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+                boolean foundOpenJDKLicense = false;
+                while (true) {
+                    String line = reader.readLine();
+                    if (line == null) break;
+                    if (line.contains("\"Classpath\" exception")) {
+                        foundOpenJDKLicense = true;
+                    }
+                }
+
+                if (!foundOpenJDKLicense) {
+                    System.out.println("rt.jar and src.zip should point to OpenJDK installation");
+                    System.exit(1);
+                }
+            }
+        }
+
         generateFilteredJar(
                 rtJar,
                 new File("compiler/testData/mockJDK/jre/lib/rt.jar"),
@@ -351,7 +369,7 @@ public class GenerateMockJdk {
         generateFilteredJar(
                 srcJar,
                 new File("compiler/testData/mockJDK/src.zip"),
-                getSourceFileEntries(),
+                sourceFileEntries,
                 false);
     }
 
