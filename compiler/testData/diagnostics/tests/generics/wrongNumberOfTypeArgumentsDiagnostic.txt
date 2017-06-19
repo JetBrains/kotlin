@@ -1,0 +1,6 @@
+package
+
+public fun myFun(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun myFun(/*0*/ i: kotlin.String): kotlin.Unit
+public fun test1(): kotlin.Unit
+public fun test2(): kotlin.Unit
