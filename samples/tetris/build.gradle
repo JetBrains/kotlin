@@ -65,7 +65,7 @@ konanArtifacts {
     }
 }
 
-build {
+compileKonan {
     project.ext {
         buildTasks = getTaskDependencies().getDependencies().findAll { task -> task.name.startsWith("compileKonan") }
     }

@@ -197,13 +197,13 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
      * Looks for task with given name in the given project.
      * If such task isn't found, will create it. Returns created/found task.
      */
-    private fun getTask(project: ProjectInternal, name: String): Task = project.getTasksByName(name, false).single()
+    private fun ProjectInternal.getTask(name: String): Task = getTasksByName(name, false).single()
 
-    private fun getOrCreateTask(project: ProjectInternal, name: String): Task {
-        var tasks = project.getTasksByName(name, false)
+    private fun ProjectInternal.getOrCreateTask(name: String): Task {
+        var tasks = getTasksByName(name, false)
         assert(tasks.size <= 1)
         return if (tasks.isEmpty()) {
-            project.tasks.create(name, DefaultTask::class.java)
+            this.tasks.create(name, DefaultTask::class.java)
         } else {
             tasks.single()
         }
@@ -223,12 +223,15 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         if (!project.extensions.extraProperties.has(KonanPlugin.KONAN_BUILD_TARGETS)) {
             project.extensions.extraProperties.set(KonanPlugin.KONAN_BUILD_TARGETS, project.host)
         }
-        getTask(project, "build").apply {
+        val compileKonanTask = project.getOrCreateTask("compileKonan").apply {
             dependsOn(project.supportedCompileTasks)
         }
+        project.getTask("build").apply {
+            dependsOn(compileKonanTask)
+        }
 
-        getOrCreateTask(project, "run").apply {
-            dependsOn(getTask(project, "build"))
+        project.getOrCreateTask("run").apply {
+            dependsOn(project.getTask("build"))
             doLast {
                 for (task in project.tasks.withType(KonanCompileTask::class.java).matching { !it.isCrossCompile}) {
                     if (task?.produce == "program") {

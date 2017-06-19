@@ -12,3 +12,12 @@ konanArtifacts {
         nativeLibrary "${project.buildDir.canonicalPath}/clang/MessageChannel.bc"
     }
 }
+
+task compileCpp(type: Exec) {
+    workingDir project.getProjectDir()
+    commandLine './buildCpp.sh'
+}
+
+genMessageChannelInteropStubs {
+    dependsOn(compileCpp)
+}
