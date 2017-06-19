@@ -133,9 +133,10 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         val annotations     = protoFunction.getExtension(KonanSerializerProtocol.functionAnnotation)
         val typeParameters  = typeParametersToString(protoFunction.typeParameterList)
         val valueParameters = valueParametersToString(protoFunction.valueParameterList)
+        val returnType      = typeToString(protoFunction.returnTypeId)
 
         printAnnotations(annotations)
-        printer.println("$visibility${isInline}fun $typeParameters$receiverType$name$valueParameters")
+        printer.println("$visibility${isInline}fun $typeParameters$receiverType$name$valueParameters: $returnType")
     }
 
     //-------------------------------------------------------------------------//
@@ -434,8 +435,9 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     fun typeToString(typeId: Int): String {
         val type = typeTable!!.getType(typeId)
-        val buff = StringBuilder(typeName(type))
+        if (isCallableType(type)) return callableTypeToString(type)
 
+        val buff = StringBuilder(typeName(type))
         val argumentList = type.argumentList
         if (argumentList.isNotEmpty()) {
             buff.append("<")
@@ -447,6 +449,24 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
             buff.append(">")
         }
         if (type.nullable) buff.append("?")
+        return buff.toString()
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun isCallableType(type: ProtoBuf.Type) = typeName(type).contains("Function")
+
+    //-------------------------------------------------------------------------//
+
+    fun callableTypeToString(callableType: ProtoBuf.Type): String {
+        val buff = StringBuilder("(")
+        val argumentTypes = callableType.argumentList.dropLast(1)
+        val returnType = callableType.argumentList.lastOrNull()
+
+        argumentTypes.dropLast(1).forEach { buff.append("${typeToString(it.typeId)}, ") }
+        argumentTypes.lastOrNull()?.let { buff.append(typeToString(it.typeId)) }
+        buff.append(") -> ")
+        if (returnType != null) buff.append(typeToString(returnType.typeId))
         return buff.toString()
     }
 
