@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -29,10 +28,10 @@ import kotlin.script.dependencies.KotlinScriptExternalDependencies
 import kotlin.script.dependencies.ScriptContents
 
 abstract class KotlinScriptExternalImportsProviderBase(private val project: Project): KotlinScriptExternalImportsProvider {
-    fun <TF : Any> getScriptContents(scriptDefinition: KotlinScriptDefinition, file: TF)
+    fun getScriptContents(scriptDefinition: KotlinScriptDefinition, file: VirtualFile)
             = BasicScriptContents(file, getAnnotations = { loadAnnotations(scriptDefinition, file) })
 
-    private fun <TF : Any> loadAnnotations(scriptDefinition: KotlinScriptDefinition, file: TF): List<Annotation> {
+    private fun loadAnnotations(scriptDefinition: KotlinScriptDefinition, file: VirtualFile): List<Annotation> {
         val classLoader = scriptDefinition.template.java.classLoader
         // TODO_R: report error on failure to load annotation class
         return getAnnotationEntries(file, project)
@@ -44,36 +43,22 @@ abstract class KotlinScriptExternalImportsProviderBase(private val project: Proj
                 }
     }
 
-    private fun <TF: Any> getAnnotationEntries(file: TF, project: Project): Iterable<KtAnnotationEntry> = when (file) {
-        is PsiFile -> getAnnotationEntriesFromPsiFile(file)
-        is VirtualFile -> getAnnotationEntriesFromVirtualFile(file, project)
-        is File -> {
-            val virtualFile = (StandardFileSystems.local().findFileByPath(file.canonicalPath)
-                               ?: throw IllegalArgumentException("Unable to find file ${file.canonicalPath}"))
-            getAnnotationEntriesFromVirtualFile(virtualFile, project)
-        }
-        else -> throw IllegalArgumentException("Unsupported file type $file")
-    }
-
-    private fun getAnnotationEntriesFromPsiFile(file: PsiFile) =
-            (file as? KtFile)?.annotationEntries
-            ?: throw IllegalArgumentException("Unable to extract kotlin annotations from ${file.name} (${file.fileType})")
-
-    private fun getAnnotationEntriesFromVirtualFile(file: VirtualFile, project: Project): Iterable<KtAnnotationEntry> {
+    private fun getAnnotationEntries(file: VirtualFile, project: Project): Iterable<KtAnnotationEntry> {
         val psiFile: PsiFile = PsiManager.getInstance(project).findFile(file)
                                ?: throw IllegalArgumentException("Unable to load PSI from ${file.canonicalPath}")
-        return getAnnotationEntriesFromPsiFile(psiFile)
+        return (psiFile as? KtFile)?.annotationEntries
+               ?: throw IllegalArgumentException("Unable to extract kotlin annotations from ${file.name} (${file.fileType})")
     }
 
-    class BasicScriptContents<out TF: Any>(myFile: TF, getAnnotations: () -> Iterable<Annotation>) : ScriptContents {
-        override val file: File? by lazy { getFile(myFile) }
+    class BasicScriptContents(virtualFile: VirtualFile, getAnnotations: () -> Iterable<Annotation>) : ScriptContents {
+        override val file: File = File(virtualFile.path)
         override val annotations: Iterable<Annotation> by lazy { getAnnotations() }
-        override val text: CharSequence? by lazy { getFileContents(myFile) }
+        override val text: CharSequence? by lazy { virtualFile.inputStream.reader(charset = virtualFile.charset).readText() }
     }
 
-    fun <TF: Any> resolveDependencies(
+    fun resolveDependencies(
             scriptDef: KotlinScriptDefinition,
-            file: TF,
+            file: VirtualFile,
             oldDependencies: KotlinScriptExternalDependencies? = null
     ): KotlinScriptExternalDependencies? {
         val scriptContents = getScriptContents(scriptDef, file)
