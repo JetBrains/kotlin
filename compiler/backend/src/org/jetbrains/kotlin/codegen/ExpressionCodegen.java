@@ -1296,10 +1296,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             int index = myFrameMap.leave(variableDescriptor);
 
-            if (isSharedVarType(type)) {
-                v.aconst(null);
-                v.store(index, OBJECT_TYPE);
-            }
             v.visitLocalVariable(variableDescriptor.getName().asString(), type.getDescriptor(), null, scopeStart, blockEnd, index);
             return null;
         });

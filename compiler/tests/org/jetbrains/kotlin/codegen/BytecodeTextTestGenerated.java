@@ -132,6 +132,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("doNotStoreNullsForCapturedVars.kt")
+    public void testDoNotStoreNullsForCapturedVars() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/doNotStoreNullsForCapturedVars.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("falseSmartCast.kt")
     public void testFalseSmartCast() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/falseSmartCast.kt");
