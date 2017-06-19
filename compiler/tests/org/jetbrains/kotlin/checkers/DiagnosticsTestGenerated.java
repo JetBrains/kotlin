@@ -13912,6 +13912,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nullableReceiverWithOverloadedMethod.kt")
+            public void testNullableReceiverWithOverloadedMethod() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/nullableReceiverWithOverloadedMethod.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PreferExtensionsOnNullableReceiver.kt")
             public void testPreferExtensionsOnNullableReceiver() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/PreferExtensionsOnNullableReceiver.kt");
@@ -13957,6 +13963,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("unnecessaryNotNullAssertion.kt")
             public void testUnnecessaryNotNullAssertion() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/unnecessaryNotNullAssertion.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unstableSmartcastWhenOpenGetterWithOverloading.kt")
+            public void testUnstableSmartcastWhenOpenGetterWithOverloading() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/unstableSmartcastWhenOpenGetterWithOverloading.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unstableSmartcastWithOverloadedExtensions.kt")
+            public void testUnstableSmartcastWithOverloadedExtensions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/unstableSmartcastWithOverloadedExtensions.kt");
                 doTest(fileName);
             }
         }

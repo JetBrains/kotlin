@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,10 @@ import gnu.trove.THashSet
 import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
@@ -70,7 +72,22 @@ class OverloadingConflictResolver<C : Any>(
         }
 
         val noEquivalentCalls = filterOutEquivalentCalls(fixedCandidates)
-        val noOverrides = OverridingUtil.filterOverrides(noEquivalentCalls) { it.resultingDescriptor }
+        val noOverrides = OverridingUtil.filterOverrides(noEquivalentCalls) { a, b ->
+            val aDescriptor = a.resultingDescriptor
+            val bDescriptor = b.resultingDescriptor
+            // Here we'd like to handle situation when we have two synthetic descriptors as in syntheticSAMExtensions.kt
+
+            // Without this, we'll pick all synthetic descriptors as they don't have overridden descriptors and
+            // then report ambiguity, which isn't very convenient
+            if (aDescriptor is SyntheticMemberDescriptor<*> && bDescriptor is SyntheticMemberDescriptor<*>) {
+                val aBaseDescriptor = aDescriptor.baseDescriptorForSynthetic
+                val bBaseDescriptor = bDescriptor.baseDescriptorForSynthetic
+                if (aBaseDescriptor is CallableMemberDescriptor && bBaseDescriptor is CallableMemberDescriptor) {
+                    return@filterOverrides Pair(aBaseDescriptor, bBaseDescriptor)
+                }
+            }
+            Pair(aDescriptor, bDescriptor)
+        }
         if (noOverrides.size == 1) {
             return noOverrides
         }

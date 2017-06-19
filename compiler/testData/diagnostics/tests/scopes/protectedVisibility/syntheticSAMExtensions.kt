@@ -20,7 +20,7 @@ class B : A() {
         }
 
         if (d.x is B) {
-            <!SMARTCAST_IMPOSSIBLE!>d.x<!>.foo <!TYPE_MISMATCH!>{}<!>
+            <!SMARTCAST_IMPOSSIBLE!>d.x<!>.foo {}
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +35,6 @@ import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl;
-import org.jetbrains.kotlin.utils.FunctionsKt;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -72,23 +73,29 @@ public class OverridingUtil {
      */
     @NotNull
     public static <D extends CallableDescriptor> Set<D> filterOutOverridden(@NotNull Set<D> candidateSet) {
-        return filterOverrides(candidateSet, FunctionsKt.<CallableDescriptor>identity());
+        return filterOverrides(candidateSet, new Function2<D, D, Pair<CallableDescriptor, CallableDescriptor>>() {
+            @Override
+            public Pair<CallableDescriptor, CallableDescriptor> invoke(D a, D b) {
+                return new Pair<CallableDescriptor, CallableDescriptor>(a, b);
+            }
+        });
     }
 
     @NotNull
     public static <D> Set<D> filterOverrides(
             @NotNull Set<D> candidateSet,
-            @NotNull Function1<? super D, ? extends CallableDescriptor> transform
+            @NotNull Function2<? super D, ? super D, Pair<CallableDescriptor, CallableDescriptor>> transformFirst
     ) {
         if (candidateSet.size() <= 1) return candidateSet;
 
         Set<D> result = new LinkedHashSet<D>();
         outerLoop:
         for (D meD : candidateSet) {
-            CallableDescriptor me = transform.invoke(meD);
             for (Iterator<D> iterator = result.iterator(); iterator.hasNext(); ) {
                 D otherD = iterator.next();
-                CallableDescriptor other = transform.invoke(otherD);
+                Pair<CallableDescriptor, CallableDescriptor> meAndOther = transformFirst.invoke(meD, otherD);
+                CallableDescriptor me = meAndOther.component1();
+                CallableDescriptor other = meAndOther.component2();
                 if (overrides(me, other)) {
                     iterator.remove();
                 }
