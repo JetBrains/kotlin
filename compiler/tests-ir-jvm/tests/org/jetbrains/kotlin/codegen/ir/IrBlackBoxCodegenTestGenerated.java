@@ -14176,6 +14176,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("manyArgumentsNoneDefaultConstructor.kt")
+            public void testManyArgumentsNoneDefaultConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/callBy/manyArgumentsNoneDefaultConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("manyArgumentsNoneDefaultFunction.kt")
+            public void testManyArgumentsNoneDefaultFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/callBy/manyArgumentsNoneDefaultFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("manyArgumentsOnlyOneDefault.kt")
             public void testManyArgumentsOnlyOneDefault() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/callBy/manyArgumentsOnlyOneDefault.kt");

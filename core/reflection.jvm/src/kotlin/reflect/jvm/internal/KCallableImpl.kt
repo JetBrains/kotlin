@@ -118,6 +118,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
         var mask = 0
         val masks = ArrayList<Int>(1)
         var index = 0
+        var anyOptional = false
 
         for (parameter in parameters) {
             if (index != 0 && index % Integer.SIZE == 0) {
@@ -132,6 +133,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
                 parameter.isOptional -> {
                     arguments.add(defaultPrimitiveValue(parameter.type.javaType))
                     mask = mask or (1 shl (index % Integer.SIZE))
+                    anyOptional = true
                 }
                 else -> {
                     throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
@@ -143,7 +145,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
             }
         }
 
-        if (mask == 0 && masks.isEmpty()) {
+        if (!anyOptional) {
             return call(*arguments.toTypedArray())
         }
 
