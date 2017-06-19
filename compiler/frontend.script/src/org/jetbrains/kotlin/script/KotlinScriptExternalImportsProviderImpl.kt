@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -32,12 +33,12 @@ class KotlinScriptExternalImportsProviderImpl(
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, KotlinScriptExternalDependencies?>()
 
-    override fun <TF : Any> getScriptDependencies(file: TF): KotlinScriptExternalDependencies? = cacheLock.read {
+    override fun getScriptDependencies(file: VirtualFile): KotlinScriptExternalDependencies? = cacheLock.read {
         calculateExternalDependencies(file)
     }
 
-    private fun <TF : Any> calculateExternalDependencies(file: TF): KotlinScriptExternalDependencies? {
-        val path = getFilePath(file)
+    private fun calculateExternalDependencies(file: VirtualFile): KotlinScriptExternalDependencies? {
+        val path = file.path
         val cached = cache[path]
         return if (cached != null) cached
         else {
