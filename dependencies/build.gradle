@@ -58,7 +58,8 @@ task generatePom(type: DefaultTask) {
     def originalPom = configurations.kotlin_compiler_pom.singleFile
     inputs.file(originalPom)
 
-    def newPom = file("${temporaryDir.canonicalPath}/${originalPom.name}")
+    def (_, artifactIdString, versionString) = kotlinCompilerModule.tokenize(':')
+    def newPom = file("${temporaryDir.canonicalPath}/$artifactIdString-${versionString}.pom")
     outputs.file(newPom)
 
     doLast {
