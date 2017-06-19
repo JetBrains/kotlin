@@ -54,6 +54,18 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         doTest(fileName);
     }
 
+    @TestMetadata("doNotSpeakAboutJava")
+    public void testDoNotSpeakAboutJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/doNotSpeakAboutJava/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("doNotSpeakAboutJavaLegacy")
+    public void testDoNotSpeakAboutJavaLegacy() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/doNotSpeakAboutJavaLegacy/");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/simple/");

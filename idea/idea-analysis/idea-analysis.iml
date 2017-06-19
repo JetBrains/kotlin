@@ -38,6 +38,5 @@
     <orderEntry type="library" name="uast-java" level="project" />
     <orderEntry type="module" module-name="android-extensions-compiler" />
     <orderEntry type="module" module-name="frontend.script" />
-    <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
   </component>
 </module>
