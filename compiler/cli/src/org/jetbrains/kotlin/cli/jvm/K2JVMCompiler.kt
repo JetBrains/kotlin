@@ -463,7 +463,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                         messageCollector.report(
                                 INFO,
                                 "Added script definition $template to configuration: files pattern = \"${def.scriptFilePattern}\", " +
-                                "resolver = ${def.resolver?.javaClass?.name}"
+                                "resolver = ${def.dependencyResolver.javaClass.name}"
                         )
                     }
                     catch (ex: ClassNotFoundException) {

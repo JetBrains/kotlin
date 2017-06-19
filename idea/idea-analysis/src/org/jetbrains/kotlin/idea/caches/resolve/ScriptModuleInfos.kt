@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
 import kotlin.script.dependencies.KotlinScriptExternalDependencies
 
 class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
@@ -44,7 +43,7 @@ data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
         get() = ModuleOrigin.OTHER
 
     val externalDependencies: KotlinScriptExternalDependencies?
-        get() = KotlinScriptConfigurationManager.getInstance(project).getExternalImports(scriptFile)
+        get() = KotlinScriptConfigurationManager.getInstance(project).getScriptDependencies(scriptFile)
 
     override val name: Name = Name.special("<script ${scriptFile.name} ${scriptDefinition.name}>")
 

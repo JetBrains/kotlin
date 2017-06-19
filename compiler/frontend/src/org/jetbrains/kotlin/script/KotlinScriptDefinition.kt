@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.KotlinScriptExternalDependencies
+import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 open class KotlinScriptDefinition(val template: KClass<out Any>) {
@@ -37,13 +38,20 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) {
     open val annotationsForSamWithReceivers: List<String>
         get() = emptyList()
 
-    open fun <TF: Any> isScript(file: TF): Boolean =
+    open fun <TF : Any> isScript(file: TF): Boolean =
             getFileName(file).endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
 
     open fun getScriptName(script: KtScript): Name =
             NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
-    open fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
+    @Deprecated("Use dependencyResolver instead", level = DeprecationLevel.ERROR)
+    open fun <TF : Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
+
+    open val dependencyResolver: ScriptDependenciesResolver = EmptyDependencyResolver
+
+    open val acceptedAnnotations: List<KClass<out Annotation>> = emptyList()
+
+    private object EmptyDependencyResolver : ScriptDependenciesResolver
 }
 
 object StandardScriptDefinition : KotlinScriptDefinition(ScriptTemplateWithArgs::class)
