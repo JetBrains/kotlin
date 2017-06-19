@@ -26,7 +26,7 @@ struct RuntimeState {
   MemoryState* memoryState;
 };
 
-typedef void (*Initializer)();
+typedef void (*Initializer)(int initialize);
 struct InitNode {
     Initializer      init;
     InitNode* next;
@@ -37,10 +37,10 @@ namespace {
 InitNode* initHeadNode = nullptr;
 InitNode* initTailNode = nullptr;
 
-void InitGlobalVariables() {
+void InitOrDeinitGlobalVariables(int initialize) {
   InitNode *currNode = initHeadNode;
   while (currNode != nullptr) {
-    currNode->init();
+    currNode->init(initialize);
     currNode = currNode->next;
   }
 }
@@ -66,7 +66,7 @@ RuntimeState* InitRuntime() {
   RuntimeState* result = new RuntimeState();
   result->memoryState = InitMemory();
   // Keep global variables in state as well.
-  InitGlobalVariables();
+  InitOrDeinitGlobalVariables(true);
 #if KONAN_WINDOWS
   // Note that this code enforces UTF-8 console output, so we may want to rethink
   // how we perform console IO, if it turns out, that UTF-16 is better output format.
@@ -78,6 +78,7 @@ RuntimeState* InitRuntime() {
 
 void DeinitRuntime(RuntimeState* state) {
   if (state != nullptr) {
+    InitOrDeinitGlobalVariables(false);
     DeinitMemory(state->memoryState);
     delete state;
   }

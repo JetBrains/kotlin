@@ -21,11 +21,8 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.KonanPhase
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.library.LinkData
-import org.jetbrains.kotlin.backend.konan.PhaseManager
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
@@ -340,21 +337,41 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     val kVoidFuncType = LLVMFunctionType(LLVMVoidType(), null, 0, 0)
+    val kInitFuncType = LLVMFunctionType(LLVMVoidType(), cValuesOf(LLVMInt32Type()), 1, 0)
     val kNodeInitType = LLVMGetTypeByName(context.llvmModule, "struct.InitNode")!!
     //-------------------------------------------------------------------------//
 
     fun createInitBody(initName: String): LLVMValueRef {
-        val initFunction = LLVMAddFunction(context.llvmModule, initName, kVoidFuncType)!!    // create LLVM function
+        val initFunction = LLVMAddFunction(context.llvmModule, initName, kInitFuncType)!!    // create LLVM function
         codegen.prologue(initFunction, voidType)
         using(FunctionScope(initFunction)) {
-            context.llvm.fileInitializers.forEach {
-                val irField = it as IrField
-                val descriptor = irField.descriptor
-                val initialization = evaluateExpression(irField.initializer!!.expression)
-                val globalPtr = context.llvmDeclarations.forStaticField(descriptor).storage
-                codegen.storeAnyGlobal(initialization, globalPtr)
+            val bbInit = codegen.basicBlock("init")
+            val bbDeinit = codegen.basicBlock("deinit")
+            codegen.condBr(codegen.icmpEq(LLVMGetParam(initFunction, 0)!!, kImmZero), bbDeinit, bbInit)
+
+            codegen.appendingTo(bbDeinit) {
+                context.llvm.fileInitializers.forEach {
+                    val irField = it as IrField
+                    val descriptor = irField.descriptor
+                    if (descriptor.type.isValueType())
+                        return@forEach // Is not a subject for memory management.
+                    val globalPtr = context.llvmDeclarations.forStaticField(descriptor).storage
+                    codegen.storeAnyGlobal(codegen.kNullObjHeaderPtr, globalPtr)
+                }
+                objects.forEach { codegen.storeAnyGlobal(codegen.kNullObjHeaderPtr, it) }
+                codegen.ret(null)
             }
-            codegen.ret(null)
+
+            codegen.appendingTo(bbInit) {
+                context.llvm.fileInitializers.forEach {
+                    val irField = it as IrField
+                    val descriptor = irField.descriptor
+                    val initialization = evaluateExpression(irField.initializer!!.expression)
+                    val globalPtr = context.llvmDeclarations.forStaticField(descriptor).storage
+                    codegen.storeAnyGlobal(initialization, globalPtr)
+                }
+                codegen.ret(null)
+            }
         }
         codegen.epilogue()
 
@@ -392,7 +409,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         using(FileScope(declaration)) {
             declaration.acceptChildrenVoid(this)
 
-            if (context.llvm.fileInitializers.isEmpty())
+            if (context.llvm.fileInitializers.isEmpty() && objects.isEmpty())
                 return
 
             // Create global initialization records.
@@ -456,7 +473,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         if (constructorDescriptor.isPrimary) {
             if (DescriptorUtils.isObject(classDescriptor)) {
                 if (!classDescriptor.isUnit()) {
-                    val objectPtr = objectPtrByName(classDescriptor)
+                    val objectPtr = getObjectInstanceStorage(classDescriptor)
 
                     LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
                 }
@@ -722,7 +739,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             return codegen.theUnitInstanceRef.llvm
         }
 
-        var objectPtr = objectPtrByName(value.descriptor)
+        var objectPtr = getObjectInstanceStorage(value.descriptor)
         val bbCurrent = codegen.currentBlock
         val bbInit    = codegen.basicBlock("label_init")
         val bbExit    = codegen.basicBlock("label_continue")
@@ -1283,15 +1300,19 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun objectPtrByName(descriptor: ClassDescriptor): LLVMValueRef {
+    private val objects = mutableSetOf<LLVMValueRef>()
+
+    private fun getObjectInstanceStorage(descriptor: ClassDescriptor): LLVMValueRef {
         assert (!descriptor.isUnit())
-        return if (codegen.isExternal(descriptor)) {
+        val llvmGlobal = if (!codegen.isExternal(descriptor)) {
+            context.llvmDeclarations.forSingleton(descriptor).instanceFieldRef
+        } else {
             val llvmType = codegen.getLLVMType(descriptor.defaultType)
             codegen.importGlobal(descriptor.objectInstanceFieldSymbolName, llvmType,
                     threadLocal = true)
-        } else {
-            context.llvmDeclarations.forSingleton(descriptor).instanceFieldRef
         }
+        objects += llvmGlobal
+        return llvmGlobal
     }
 
     //-------------------------------------------------------------------------//
@@ -1942,8 +1963,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private val kImmOne      = LLVMConstInt(LLVMInt32Type(),  1, 1)!!
     private val kTrue        = LLVMConstInt(LLVMInt1Type(),   1, 1)!!
     private val kFalse       = LLVMConstInt(LLVMInt1Type(),   0, 1)!!
-    private val kIntPtrZero  = LLVMConstInt(codegen.intPtrType, 0, 1)!!
-
 
     private fun evaluateOperatorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         context.log{"evaluateCall                   : origin:${ir2string(callee)}"}
