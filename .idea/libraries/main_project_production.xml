@@ -71,6 +71,7 @@
       <root url="file://$PROJECT_DIR$/../out/production/noarg-cli" />
       <root url="file://$PROJECT_DIR$/../out/production/sam-with-receiver-cli" />
       <root url="file://$PROJECT_DIR$/../out/production/sam-with-receiver-ide" />
+      <root url="file://$PROJECT_DIR$/../out/production/annotation-based-compiler-plugins-ide-support" />
       <root url="file://$PROJECT_DIR$/../out/production/frontend.script" />
     </CLASSES>
     <JAVADOC />
