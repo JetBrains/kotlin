@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
+import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor
 import org.jetbrains.kotlin.codegen.optimization.common.isLoadOperation
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
@@ -31,6 +32,7 @@ import java.util.*
 
 class PopBackwardPropagationTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
+        if (!OptimizationMethodVisitor.canBeOptimizedUsingSourceInterpreter(methodNode)) return
         Transformer(methodNode).transform()
     }
 
@@ -63,7 +65,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
         private val frames by lazy { analyzeMethodBody() }
 
         fun transform() {
-            if (!insns.any { it.isPurePush() }) return
+            if (insns.none { it.isPop() || it.isPurePush() }) return
 
             computeTransformations()
             for ((insn, transformation) in transformations.entries) {
@@ -256,6 +258,9 @@ fun AbstractInsnNode.isPurePush() =
         isLoadOperation() ||
         opcode in Opcodes.ACONST_NULL .. Opcodes.LDC + 2 ||
         isUnitInstance()
+
+fun AbstractInsnNode.isPop() =
+        opcode == Opcodes.POP || opcode == Opcodes.POP2
 
 fun AbstractInsnNode.isUnitInstance() =
         opcode == Opcodes.GETSTATIC &&

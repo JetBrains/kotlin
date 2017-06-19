@@ -60,8 +60,14 @@ class OptimizationMethodVisitor(
                 RedundantNopsCleanupMethodTransformer()
         )
 
-        private fun canBeOptimized(node: MethodNode): Boolean {
+        fun canBeOptimized(node: MethodNode): Boolean {
             val totalFramesSizeMb = node.instructions.size() * (node.maxLocals + node.maxStack) / (1024 * 1024)
+            return totalFramesSizeMb < MEMORY_LIMIT_BY_METHOD_MB
+        }
+
+        fun canBeOptimizedUsingSourceInterpreter(node: MethodNode): Boolean {
+            val frameSize = node.maxLocals + node.maxStack
+            val totalFramesSizeMb = node.instructions.size().toLong() * frameSize * frameSize / (1024 * 1024)
             return totalFramesSizeMb < MEMORY_LIMIT_BY_METHOD_MB
         }
     }
