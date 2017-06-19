@@ -3,7 +3,7 @@
 
     <!-- Expected that these properties will be overridden by system properties -->
     <property name="kotlin.deploy.version" value="0.0.0"/>
-    <property name="kotlin.compiler.deploy.version" value="0.0.0"/>
+    <property name="kotlin.compiler.deploy.version" value="${kotlin.deploy.version}"/>
     <property name="kotlin.npmjs.auth.token" value="AUTH"/>
 
     <property name="node.version" value="v6.3.1"/>
@@ -114,6 +114,9 @@
 
     <target name="publish-kotlin-compiler-to-npm">
         <publish-to-npm template="kotlin-compiler" version="${kotlin.compiler.deploy.version}">
+            <copy todir="${package_deploy_dir}" failonerror="true" >
+                <fileset dir="${output}/kotlinc" />
+            </copy>
         </publish-to-npm>
     </target>
 

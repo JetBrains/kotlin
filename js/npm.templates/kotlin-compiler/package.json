@@ -19,6 +19,9 @@
     "url": "kotl.in/issue"
   },
   "homepage": "kotlinlang.org",
+  "bin": {
+    "kotlinc-js": "bin/kotlinc-js"
+  },
   "publishConfig" : {
     "tag" : "dev"
   }
