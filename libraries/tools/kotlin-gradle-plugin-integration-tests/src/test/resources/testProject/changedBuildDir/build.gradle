@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'java'
+
+buildDir = "_build"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.apache.commons:commons-math3:3.6.1'
+    compile 'com.google.guava:guava:21.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    testCompile "junit:junit:4+"
+    testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+}
+
+
