@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
@@ -88,6 +89,8 @@ private fun createJavaFileStub(project: Project, packageFqName: FqName, files: C
         override fun getPackageName() = packageFqName.asString()
 
         override fun isPhysical() = false
+
+        override fun getMirror(): PsiElement? = manager.findFile(virtualFile)
     }
 
     javaFileStub.psi = fakeFile
