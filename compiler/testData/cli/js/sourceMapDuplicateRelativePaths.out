@@ -1,0 +1,2 @@
+warning: there are files with same path 'lib.kt', relative to source roots: '$TESTDATA_DIR$/sourceMapDuplicatePath/foo/lib.kt' and '$TESTDATA_DIR$/sourceMapDuplicatePath/bar/lib.kt'. This will likely cause problems with debugger
+OK

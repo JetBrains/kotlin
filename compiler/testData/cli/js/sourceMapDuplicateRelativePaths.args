@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/sourceMapDuplicatePath/
+-no-stdlib
+-source-map
+-source-map-source-roots
+$TESTDATA_DIR$/sourceMapDuplicatePath/foo:$TESTDATA_DIR$/sourceMapDuplicatePath/bar
+-output
+$TEMP_DIR$/out.js

@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
@@ -63,6 +64,7 @@ import org.jetbrains.kotlin.utils.StringsKt;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
@@ -182,6 +184,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             }
         }
 
+        if (config.getConfiguration().getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
+            checkDuplicateSourceFileNames(messageCollector, sourcesFiles, config.getSourceMapRoots());
+        }
+
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.main);
         TranslationResult translationResult;
 
@@ -219,6 +225,41 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                                configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES));
 
         return OK;
+    }
+
+    private static void checkDuplicateSourceFileNames(
+            @NotNull MessageCollector log,
+            @NotNull List<KtFile> sourceFiles,
+            @NotNull List<String> sourceRoots
+    ) {
+        if (sourceRoots.isEmpty()) return;
+
+        List<File> sourceRootFiles = sourceRoots.stream().map(File::new).collect(Collectors.toList());
+        SourceFilePathResolver pathResolver = new SourceFilePathResolver(sourceRootFiles);
+        Map<String, String> pathMap = new HashMap<>();
+        Set<String> duplicatePaths = new HashSet<>();
+
+        try {
+            for (KtFile sourceFile : sourceFiles) {
+                String path = sourceFile.getVirtualFile().getPath();
+                String relativePath = pathResolver.getPathRelativeToSourceRoots(new File(sourceFile.getVirtualFile().getPath()));
+
+                String existingPath = pathMap.get(relativePath);
+                if (existingPath != null) {
+                    if (duplicatePaths.add(relativePath)) {
+                        log.report(WARNING, "There are files with same path '" + relativePath + "', relative to source roots: " +
+                                            "'" + path + "' and '" + existingPath + "'. " +
+                                            "This will likely cause problems with debugger", null);
+                    }
+                }
+                else {
+                    pathMap.put(relativePath, path);
+                }
+            }
+        }
+        catch (IOException e) {
+            log.report(ERROR, "IO error occurred validating source path:\n" + ExceptionUtil.getThrowableText(e), null);
+        }
     }
 
     private static void reportCompiledSourcesList(@NotNull MessageCollector messageCollector, @NotNull List<KtFile> sourceFiles) {
