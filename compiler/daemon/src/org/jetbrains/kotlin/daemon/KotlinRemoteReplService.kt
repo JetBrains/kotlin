@@ -66,7 +66,7 @@ open class KotlinJvmReplService(
             val cls = classloader.loadClass(templateClassName)
             val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, null, null, emptyMap())
             messageCollector.report(INFO, "New script definition $templateClassName: files pattern = \"${def.scriptFilePattern}\", " +
-                                          "resolver = ${def.resolver?.javaClass?.name}")
+                                          "resolver = ${def.dependencyResolver.javaClass.name}")
             return def
         }
         catch (ex: ClassNotFoundException) {
