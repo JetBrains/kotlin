@@ -148,6 +148,7 @@ internal fun dumpProperties(task: Task) {
             println("libraries          : ${task.libraries}")
             println("nativeLibraries    : ${task.nativeLibraries}")
             println("linkerOpts         : ${task.linkerOpts}")
+            println("enableDebug        : ${task.enableDebug}")
             println("noStdLib           : ${task.noStdLib}")
             println("noMain             : ${task.noMain}")
             println("enableOptimization : ${task.enableOptimization}")

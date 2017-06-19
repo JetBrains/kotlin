@@ -116,6 +116,8 @@ open class KonanCompileTask: KonanTargetableTask() {
     @Input var linkerOpts = mutableListOf<String>()
         internal set
 
+    @Input var enableDebug        = project.properties.containsKey("enableDebug") && project.properties["enableDebug"].toString().toBoolean()
+        internal set
     @Input var noStdLib           = false
         internal set
     @Input var noMain             = false
@@ -149,6 +151,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         addArgIfNotNull("-language-version", languageVersion)
         addArgIfNotNull("-api-version", apiVersion)
 
+        addKey("-g", enableDebug)
         addKey("-nostdlib", noStdLib)
         addKey("-nomain", noMain)
         addKey("-opt", enableOptimization)
@@ -209,6 +212,7 @@ open class KonanCompileConfig(
         anotherTask.apiVersion?.let { apiVersion(it) }
         anotherTask.produce.let { produce(it) }
 
+        enableDebug(anotherTask.enableDebug)
         if (anotherTask.noStdLib) noStdLib()
         if (anotherTask.noMain) noMain()
         if (anotherTask.enableOptimization) enableOptimization()
@@ -289,6 +293,10 @@ open class KonanCompileConfig(
 
     fun apiVersion(version: String) = with(compilationTask) {
         apiVersion = version
+    }
+
+    fun enableDebug(flag: Boolean) = with(compilationTask) {
+        enableDebug = flag
     }
 
     fun noStdLib() = with(compilationTask) {
