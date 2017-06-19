@@ -82,7 +82,6 @@ open class KonanCompileTask: KonanTargetableTask() {
 
     internal lateinit var artifactName: String
 
-    @OutputDirectory
     lateinit var outputDir: File
         internal set
 
@@ -100,6 +99,9 @@ open class KonanCompileTask: KonanTargetableTask() {
 
     val artifactPath: String
         get() = "$artifactNamePath$artifactSuffix"
+
+    val artifact: File
+        @OutputFile get() = project.file(artifactPath)
 
     // Other compilation parameters -------------------------------------------
 
@@ -221,7 +223,7 @@ open class KonanCompileConfig(
         compilationTask.dependsOn(generateStubsTask)
 
         linkerOpts(generateStubsTask.linkerOpts)
-        library(compileStubsTask.artifactNamePath)
+        library(compileStubsTask.artifact)
         nativeLibraries(project.fileTree(generateStubsTask.libsDir).apply {
             builtBy(generateStubsTask)
             include("**/*.bc")
