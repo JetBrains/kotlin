@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
@@ -38,14 +39,14 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) {
     open val annotationsForSamWithReceivers: List<String>
         get() = emptyList()
 
-    open fun <TF : Any> isScript(file: TF): Boolean =
-            getFileName(file).endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
+    open fun isScript(fileName: String): Boolean =
+            fileName.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
 
     open fun getScriptName(script: KtScript): Name =
             NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
     @Deprecated("Use dependencyResolver instead", level = DeprecationLevel.ERROR)
-    open fun <TF : Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
+    open fun getDependenciesFor(file: VirtualFile, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
 
     open val dependencyResolver: ScriptDependenciesResolver = EmptyDependencyResolver
 

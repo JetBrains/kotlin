@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.KtScript
@@ -109,13 +110,13 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
     override val name = template.simpleName!!
 
-    override fun <TF: Any> isScript(file: TF): Boolean =
-            scriptFilePattern.let { Regex(it).matches(getFileName(file)) }
+    override fun isScript(fileName: String): Boolean =
+            scriptFilePattern.let { Regex(it).matches(fileName) }
 
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
     override fun getScriptName(script: KtScript): Name = NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
-    override fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?) = error("Should not be called")
+    override fun getDependenciesFor(file: VirtualFile, project: Project, previousDependencies: KotlinScriptExternalDependencies?) = error("Should not be called")
 
     override fun toString(): String = "KotlinScriptDefinitionFromAnnotatedTemplate - ${template.simpleName}"
 
