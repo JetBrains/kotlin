@@ -144,9 +144,7 @@ public class DescriptorResolver {
         syntheticResolveExtension.addSyntheticSupertypes(classDescriptor, supertypes);
 
         if (supertypes.isEmpty()) {
-            KotlinType defaultSupertype = correspondingClassOrObject == null ? builtIns.getAnyType() :
-                    getDefaultSupertype(correspondingClassOrObject, trace, classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS);
-            addValidSupertype(supertypes, defaultSupertype);
+            addValidSupertype(supertypes, getDefaultSupertype(classDescriptor));
         }
 
         return supertypes;
@@ -168,27 +166,18 @@ public class DescriptorResolver {
         return false;
     }
 
-    private KotlinType getDefaultSupertype(KtPureClassOrObject ktClass, BindingTrace trace, boolean isAnnotation) {
-        // TODO : beautify
-        if (ktClass instanceof KtEnumEntry) {
-            KtEnumEntry enumEntry = (KtEnumEntry) ktClass;
-            KtClassOrObject parent = KtStubbedPsiUtil.getContainingDeclaration(enumEntry, KtClassOrObject.class);
-            ClassDescriptor parentDescriptor = trace.getBindingContext().get(BindingContext.CLASS, parent);
-            if (parentDescriptor.getTypeConstructor().getParameters().isEmpty()) {
-                return parentDescriptor.getDefaultType();
-            }
-            else {
-                trace.report(NO_GENERICS_IN_SUPERTYPE_SPECIFIER.on(enumEntry.getNameIdentifier()));
-                return ErrorUtils.createErrorType("Supertype not specified");
-            }
+    @NotNull
+    private KotlinType getDefaultSupertype(@NotNull ClassDescriptor classDescriptor) {
+        if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            return ((ClassDescriptor) classDescriptor.getContainingDeclaration()).getDefaultType();
         }
-        else if (isAnnotation) {
+        else if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
             return builtIns.getAnnotationType();
         }
         return builtIns.getAnyType();
     }
 
-    public Collection<KotlinType> resolveSuperTypeListEntries(
+    private static Collection<KotlinType> resolveSuperTypeListEntries(
             LexicalScope extensibleScope,
             List<KtSuperTypeListEntry> delegationSpecifiers,
             @NotNull TypeResolver resolver,
