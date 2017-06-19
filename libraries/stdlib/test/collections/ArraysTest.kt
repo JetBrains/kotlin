@@ -1244,6 +1244,12 @@ class ArraysTest {
         array.sortWith(comparator)
         array.iterator().assertSorted { a, b -> comparator.compare(a, b) <= 0 }
     }
+
+    @Test fun toHexString() {
+        val byteArray: ByteArray = ByteArray(100) { it.toByte() }
+        val expectedHexString = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f60616263"
+        assertEquals(expectedHexString, byteArray.toHexString())
+    }
 }
 
 private class ArraySortedChecker<A, T>(val array: A, val comparator: Comparator<in T>) {
