@@ -325,6 +325,17 @@ class KotlinScriptConfigurationManager(
         internal val log = Logger.getInstance(KotlinScriptConfigurationManager::class.java)
 
         @TestOnly
+        fun updateScriptDependenciesSynchronously(virtualFile: VirtualFile, project: Project) {
+            with(getInstance(project)) {
+                val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(project)!!.findScriptDefinition(virtualFile)!!
+                val updated = updateSync(virtualFile, scriptDefinition)
+                assert(updated)
+                invalidateLocalCaches()
+                notifyRootsChanged()
+            }
+        }
+
+        @TestOnly
         fun reloadScriptDefinitions(project: Project) {
             with(getInstance(project)) {
                 reloadScriptDefinitions()
