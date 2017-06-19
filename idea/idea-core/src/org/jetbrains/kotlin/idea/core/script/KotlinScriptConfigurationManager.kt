@@ -238,6 +238,7 @@ class KotlinScriptConfigurationManager(
             cacheLock.read {
                 val lastTimeStamp = cache[path]?.requestInProgress?.timeStamp
                 if (lastTimeStamp == currentTimeStamp) {
+                    ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
                     if (cacheSync(result.dependencies ?: ScriptDependencies.Empty, oldDataAndRequest?.dependencies, path, file)) {
                         invalidateLocalCaches()
                         notifyRootsChanged()
