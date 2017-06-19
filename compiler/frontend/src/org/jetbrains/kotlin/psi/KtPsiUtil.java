@@ -874,4 +874,16 @@ public class KtPsiUtil {
     public static boolean isStatement(@NotNull PsiElement element) {
         return isStatementContainer(element.getParent());
     }
+
+    public static boolean isInOrNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
+        return isInOperation(binaryExpression) || isNotInOperation(binaryExpression);
+    }
+
+    public static boolean isNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
+        return (binaryExpression.getOperationToken() == KtTokens.NOT_IN);
+    }
+
+    private static boolean isInOperation(@NotNull KtBinaryExpression binaryExpression) {
+        return (binaryExpression.getOperationToken() == KtTokens.IN_KEYWORD);
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,20 +93,8 @@ public final class PsiUtils {
         return (token == KtTokens.EQ);
     }
 
-    public static boolean isInOrNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
-        return isInOperation(binaryExpression) || isNotInOperation(binaryExpression);
-    }
-
-    private static boolean isNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
-        return (binaryExpression.getOperationToken() == KtTokens.NOT_IN);
-    }
-
     public static boolean isNegatedOperation(@NotNull KtBinaryExpression binaryExpression) {
-        return (binaryExpression.getOperationToken() == KtTokens.EXCLEQ) || isNotInOperation(binaryExpression);
-    }
-
-    private static boolean isInOperation(@NotNull KtBinaryExpression binaryExpression) {
-        return (binaryExpression.getOperationToken() == KtTokens.IN_KEYWORD);
+        return (binaryExpression.getOperationToken() == KtTokens.EXCLEQ) || KtPsiUtil.isNotInOperation(binaryExpression);
     }
 
     @NotNull
