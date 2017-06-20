@@ -42,5 +42,5 @@ To generate interoperability stubs create library definition file
 
 See provided [samples](https://github.com/JetBrains/kotlin-native/tree/master/samples) and [`INTEROP.md`](https://github.com/JetBrains/kotlin-native/blob/master/INTEROP.md) for more details.
 
-Interop tool generates library in .klib library format, see [`LIBRARY.md`](https://github.com/JetBrains/kotlin-native/blob/master/LIBRARY.md)
+Interop tool generates library in .klib library format, see [`LIBRARIES.md`](https://github.com/JetBrains/kotlin-native/blob/master/LIBRARIES.md)
 for more details on the file format.
