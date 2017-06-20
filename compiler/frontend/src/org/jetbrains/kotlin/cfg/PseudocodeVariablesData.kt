@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cfg
 
-import com.google.common.collect.Maps
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -34,16 +33,12 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils.variableDescriptorForDec
 import java.util.*
 
 class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingContext: BindingContext) {
-    private val pseudocodeVariableDataCollector: PseudocodeVariableDataCollector
+    private val pseudocodeVariableDataCollector = PseudocodeVariableDataCollector(bindingContext, pseudocode)
 
-    private val declaredVariablesForDeclaration = Maps.newHashMap<Pseudocode, Set<VariableDescriptor>>()
+    private val declaredVariablesForDeclaration = hashMapOf<Pseudocode, Set<VariableDescriptor>>()
 
     val variableInitializers: Map<Instruction, Edges<InitControlFlowInfo>> by lazy {
         computeVariableInitializers()
-    }
-
-    init {
-        this.pseudocodeVariableDataCollector = PseudocodeVariableDataCollector(bindingContext, pseudocode)
     }
 
     val blockScopeVariableInfo: BlockScopeVariableInfo
