@@ -17,8 +17,6 @@ public class TextOutputImpl implements TextOutput {
     private int line = 0;
     private int column = 0;
 
-    private OutListener outListener;
-
     public TextOutputImpl() {
         this(false);
     }
@@ -78,9 +76,6 @@ public class TextOutputImpl implements TextOutput {
         line++;
         column = 0;
         justNewlined = true;
-        if (outListener != null) {
-            outListener.newLined();
-        }
     }
 
     @Override
@@ -151,9 +146,6 @@ public class TextOutputImpl implements TextOutput {
         if (justNewlined && !compact) {
             printAndCount(indents[identLevel]);
             justNewlined = false;
-            if (outListener != null) {
-                outListener.indentedAfterNewLine();
-            }
         }
     }
 
@@ -172,10 +164,5 @@ public class TextOutputImpl implements TextOutput {
     @Override
     public boolean isJustNewlined() {
         return justNewlined && !compact;
-    }
-
-    @Override
-    public void setOutListener(OutListener outListener) {
-        this.outListener = outListener;
     }
 }

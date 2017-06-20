@@ -32,21 +32,7 @@ public interface TextOutput {
 
     void printOpt(char c);
 
-    void printOpt(char[] s);
-
-    void printOpt(String s);
-
     boolean isCompact();
 
-    boolean isJustNewlined();
-
-    void setOutListener(OutListener outListener);
-
     void maybeIndent();
-
-    public interface OutListener {
-        void newLined();
-
-        void indentedAfterNewLine();
-    }
 }

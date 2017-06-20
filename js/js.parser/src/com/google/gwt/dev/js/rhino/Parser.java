@@ -180,7 +180,7 @@ public class Parser extends Observable {
                     // by '(', assume <name> starts memberExpr
                     Node memberExprHead = nameNode;
                     nameNode = null;
-                    memberExprNode = memberExprTail(ts, false, memberExprHead, basePosition);
+                    memberExprNode = memberExprTail(ts, false, memberExprHead);
                 }
                 mustMatchToken(ts, TokenStream.LP, "msg.no.paren.parms");
             }
@@ -708,20 +708,20 @@ public class Parser extends Observable {
     }
 
     private Node expr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         Node pn = assignExpr(ts, inForInit);
         while (ts.matchToken(TokenStream.COMMA)) {
+            CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(TokenStream.COMMA, pn, assignExpr(ts, inForInit), position);
         }
         return pn;
     }
 
     private Node assignExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         Node pn = condExpr(ts, inForInit);
 
         if (ts.matchToken(TokenStream.ASSIGN)) {
             // omitted: "invalid assignment left-hand side" check.
+            CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(TokenStream.ASSIGN, ts.getOp(), pn, assignExpr(ts, inForInit), position);
         }
 
@@ -729,10 +729,10 @@ public class Parser extends Observable {
     }
 
     private Node condExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         Node pn = orExpr(ts, inForInit);
 
         if (ts.matchToken(TokenStream.HOOK)) {
+            CodePosition position = ts.tokenPosition;
             Node ifTrue = assignExpr(ts, false);
             mustMatchToken(ts, TokenStream.COLON, "msg.no.colon.cond");
             Node ifFalse = assignExpr(ts, inForInit);
@@ -743,9 +743,9 @@ public class Parser extends Observable {
     }
 
     private Node orExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         Node pn = andExpr(ts, inForInit);
         while (ts.matchToken(TokenStream.OR)) {
+            CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(TokenStream.OR, pn, andExpr(ts, inForInit), position);
         }
 
@@ -753,9 +753,9 @@ public class Parser extends Observable {
     }
 
     private Node andExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         Node pn = bitOrExpr(ts, inForInit);
         while (ts.matchToken(TokenStream.AND)) {
+            CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(TokenStream.AND, pn, bitOrExpr(ts, inForInit), position);
         }
 
@@ -763,44 +763,46 @@ public class Parser extends Observable {
     }
 
     private Node bitOrExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         Node pn = bitXorExpr(ts, inForInit);
         while (ts.matchToken(TokenStream.BITOR)) {
+            CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(TokenStream.BITOR, pn, bitXorExpr(ts, inForInit), position);
         }
         return pn;
     }
 
     private Node bitXorExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         Node pn = bitAndExpr(ts, inForInit);
         while (ts.matchToken(TokenStream.BITXOR)) {
+            CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(TokenStream.BITXOR, pn, bitAndExpr(ts, inForInit), position);
         }
         return pn;
     }
 
     private Node bitAndExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         Node pn = eqExpr(ts, inForInit);
         while (ts.matchToken(TokenStream.BITAND)) {
+            CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(TokenStream.BITAND, pn, eqExpr(ts, inForInit), position);
         }
         return pn;
     }
 
     private Node eqExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         Node pn = relExpr(ts, inForInit);
+
         while (ts.matchToken(TokenStream.EQOP)) {
+            CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(TokenStream.EQOP, ts.getOp(), pn, relExpr(ts, inForInit), position);
         }
         return pn;
     }
 
     private Node relExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         Node pn = shiftExpr(ts);
+        CodePosition position = ts.tokenPosition;
+
         while (ts.matchToken(TokenStream.RELOP)) {
             int op = ts.getOp();
             if (inForInit && op == TokenStream.IN) {
@@ -809,26 +811,26 @@ public class Parser extends Observable {
             }
 
             pn = nf.createBinary(TokenStream.RELOP, op, pn, shiftExpr(ts), position);
+            position = ts.tokenPosition;
         }
         return pn;
     }
 
     private Node shiftExpr(TokenStream ts) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         Node pn = addExpr(ts);
         while (ts.matchToken(TokenStream.SHOP)) {
+            CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(TokenStream.SHOP, ts.getOp(), pn, addExpr(ts), position);
         }
         return pn;
     }
 
     private Node addExpr(TokenStream ts) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         int tt;
         Node pn = mulExpr(ts);
 
         while ((tt = ts.getToken()) == TokenStream.ADD || tt == TokenStream.SUB) {
-            // flushNewLines
+            CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(tt, pn, mulExpr(ts), position);
         }
         ts.ungetToken(tt);
@@ -837,13 +839,13 @@ public class Parser extends Observable {
     }
 
     private Node mulExpr(TokenStream ts) throws IOException, JavaScriptException {
-        CodePosition position = getNextTokenPosition(ts);
         int tt;
 
         Node pn = unaryExpr(ts);
 
         while ((tt = ts.peekToken()) == TokenStream.MUL || tt == TokenStream.DIV || tt == TokenStream.MOD) {
             tt = ts.getToken();
+            CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(tt, pn, unaryExpr(ts), position);
         }
 
@@ -894,6 +896,7 @@ public class Parser extends Observable {
                 if (((peeked = ts.peekToken()) == TokenStream.INC || peeked == TokenStream.DEC)
                     && ts.getLineno() == lineno) {
                     int pf = ts.getToken();
+                    position = ts.tokenPosition;
                     return nf.createUnary(pf, TokenStream.POST, pn, position);
                 }
                 return pn;
@@ -960,16 +963,17 @@ public class Parser extends Observable {
             pn = primaryExpr(ts);
         }
 
-        return memberExprTail(ts, allowCallSyntax, pn, position);
+        return memberExprTail(ts, allowCallSyntax, pn);
     }
 
     private Node memberExprTail(
             TokenStream ts, boolean allowCallSyntax,
-            Node pn, CodePosition position
+            Node pn
     ) throws IOException, JavaScriptException {
         lastExprEndLine = ts.getLineno();
         int tt;
         while ((tt = ts.getToken()) > TokenStream.EOF) {
+            CodePosition position = ts.tokenPosition;
             if (tt == TokenStream.DOT) {
                 ts.treatKeywordAsIdentifier = true;
                 mustMatchToken(ts, TokenStream.NAME, "msg.no.name.after.dot");
@@ -1142,13 +1146,6 @@ public class Parser extends Observable {
                 break;
         }
         return null; // should never reach here
-    }
-
-    private static CodePosition getNextTokenPosition(TokenStream ts) throws IOException, JavaScriptException {
-        int tt = ts.getToken();
-        CodePosition result = ts.tokenPosition;
-        ts.ungetToken(tt);
-        return result;
     }
 
     private int lastExprEndLine; // Hack to handle function expr termination.

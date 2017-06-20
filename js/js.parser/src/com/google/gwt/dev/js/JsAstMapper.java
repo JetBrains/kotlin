@@ -1115,7 +1115,10 @@ public class JsAstMapper {
                 astNode.setSource(jsLocation);
             }
             else if (astNode instanceof JsExpressionStatement) {
-                ((JsExpressionStatement) astNode).getExpression().setSource(jsLocation);
+                JsExpression expression = ((JsExpressionStatement) astNode).getExpression();
+                if (expression.getSource() == null) {
+                    expression.setSource(jsLocation);
+                }
             }
         }
         return astNode;

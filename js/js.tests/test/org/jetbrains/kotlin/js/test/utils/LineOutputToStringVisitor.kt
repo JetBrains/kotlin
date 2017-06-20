@@ -73,6 +73,11 @@ class LineOutputToStringVisitor(output: TextOutput, val lineCollector: LineColle
         super.visitReturn(x)
     }
 
+    override fun visitTry(x: JsTry) {
+        printLineNumbers(x)
+        super.visitTry(x)
+    }
+
     override fun visit(x: JsSwitch) {
         printLineNumbers(x)
         super.visit(x)

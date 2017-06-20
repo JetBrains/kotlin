@@ -16,15 +16,26 @@
 
 package org.jetbrains.kotlin.js.parser.sourcemaps
 
+import java.io.PrintStream
 import java.io.Reader
 
 class SourceMap(val sourceContentResolver: (String) -> Reader?) {
     val groups = mutableListOf<SourceMapGroup>()
+
+    fun debug(writer: PrintStream = System.out) {
+        for ((index, group) in groups.withIndex()) {
+            writer.print("${index + 1}:")
+            for (segment in group.segments) {
+                writer.print(" ${segment.generatedColumnNumber + 1}:${segment.sourceLineNumber + 1},${segment.sourceColumnNumber + 1}")
+            }
+            writer.println()
+        }
+    }
 }
 
 class SourceMapSegment(
         val generatedColumnNumber: Int,
-        val sourceFileName: String,
+        val sourceFileName: String?,
         val sourceLineNumber: Int,
         val sourceColumnNumber: Int
 )

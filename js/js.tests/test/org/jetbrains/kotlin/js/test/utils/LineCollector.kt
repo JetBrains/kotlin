@@ -87,10 +87,9 @@ class LineCollector : RecursiveJsVisitor() {
 
     override fun visitDoWhile(x: JsDoWhile) {
         withStatement(x) {
-            handleNodeLocation(x)
+            x.body.accept(this)
             x.condition.accept(this)
         }
-        x.body.accept(this)
     }
 
     override fun visitFor(x: JsFor) {
@@ -130,13 +129,21 @@ class LineCollector : RecursiveJsVisitor() {
     override fun visit(x: JsSwitch) {
         withStatement(x) {
             x.expression.accept(this)
+            x.cases.forEach { accept(it) }
         }
-        x.cases.forEach { accept(it) }
     }
 
     override fun visitThrow(x: JsThrow) {
         withStatement(x) {
             super.visitThrow(x)
+        }
+    }
+
+    override fun visitTry(x: JsTry) {
+        withStatement(x) {
+            x.tryBlock.acceptChildren(this)
+            x.catches?.forEach { accept(it) }
+            x.finallyBlock?.acceptChildren(this)
         }
     }
 

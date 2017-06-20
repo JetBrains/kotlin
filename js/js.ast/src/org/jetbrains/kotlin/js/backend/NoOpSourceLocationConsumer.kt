@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.test.utils
+package org.jetbrains.kotlin.js.backend
 
-import org.jetbrains.kotlin.js.backend.ast.*
+object NoOpSourceLocationConsumer : SourceLocationConsumer {
+    override fun newLine() {}
 
-class AmbiguousAstSourcePropagation : RecursiveJsVisitor() {
-    private var lastSource: Any? = null
+    override fun pushSourceInfo(info: Any?) {}
 
-    override fun visitElement(node: JsNode) {
-        val source = node.source
-        if (source == null && node is JsExpression) {
-            node.source = lastSource
-        }
-
-        val oldLastSource = lastSource
-        lastSource = node.source
-        super.visitElement(node)
-        lastSource = oldLastSource
-    }
+    override fun popSourceInfo() {}
 }

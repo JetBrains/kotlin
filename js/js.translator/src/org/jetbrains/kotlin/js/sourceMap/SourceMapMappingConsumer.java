@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.test.utils
+package org.jetbrains.kotlin.js.sourceMap;
 
-import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-class AmbiguousAstSourcePropagation : RecursiveJsVisitor() {
-    private var lastSource: Any? = null
+import java.io.IOException;
+import java.io.Reader;
+import java.util.function.Supplier;
 
-    override fun visitElement(node: JsNode) {
-        val source = node.source
-        if (source == null && node is JsExpression) {
-            node.source = lastSource
-        }
+public interface SourceMapMappingConsumer {
+    void newLine();
 
-        val oldLastSource = lastSource
-        lastSource = node.source
-        super.visitElement(node)
-        lastSource = oldLastSource
-    }
+    void addMapping(
+            @NotNull String source, @Nullable Object sourceIdentity, @NotNull Supplier<Reader> sourceSupplier,
+            int sourceLine, int sourceColumn
+    );
+
+    void addEmptyMapping();
 }

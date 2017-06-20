@@ -194,7 +194,7 @@ class FunctionReader(
 
         val sourceMap = info.sourceMap
         if (sourceMap != null) {
-            val remapper = SourceMapLocationRemapper(mapOf(info.filePath to sourceMap))
+            val remapper = SourceMapLocationRemapper(sourceMap)
             remapper.remap(function)
         }
 

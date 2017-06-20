@@ -18,51 +18,118 @@ package org.jetbrains.kotlin.js.parser.sourcemaps
 
 import org.jetbrains.kotlin.js.backend.ast.*
 
-class SourceMapLocationRemapper(val sourceMaps: Map<String, SourceMap>) {
+class SourceMapLocationRemapper(private val sourceMap: SourceMap) {
     fun remap(node: JsNode) {
-        node.accept(visitor)
+        val listCollector = JsNodeFlatListCollector()
+        node.accept(listCollector)
+        applySourceMap(listCollector.nodeList)
     }
 
-    private val visitor = object : RecursiveJsVisitor() {
-        private var lastSourceMap: SourceMap? = null
-        private var lastGroup: SourceMapGroup? = null
-        private var lastSegmentIndex = 0
+    private fun applySourceMap(nodes: List<JsNode>) {
+        var lastGroup: SourceMapGroup? = null
+        var lastGroupIndex = 0
+        var lastSegment: SourceMapSegment? = null
+        var lastSegmentIndex = 0
 
-        override fun visitElement(node: JsNode) {
-            if (node is SourceInfoAwareJsNode) {
-                if (!remapNode(node)) {
-                    node.source = null
+        fun findCorrespondingSegment(node: SourceInfoAwareJsNode): SourceMapSegment? {
+            val source = node.source as? JsLocation ?: return null
+            val group = sourceMap.groups.getOrElse(source.startLine) { return null }
+
+            if (lastGroup != group) {
+                if (lastGroup != null) {
+                    val segmentsToSkip = lastGroup!!.segments.drop(lastSegmentIndex).toMutableList()
+                    if (lastGroupIndex + 1 < source.startLine) {
+                        segmentsToSkip += sourceMap.groups.subList((lastGroupIndex + 1), source.startLine).flatMap { it.segments }
+                    }
+
+                    segmentsToSkip.lastOrNull()?.let { lastSegment = it }
                 }
+                lastGroup = group
+                lastGroupIndex = source.startLine
+                lastSegmentIndex = 0
             }
-            super.visitElement(node)
+
+            while (lastSegmentIndex < group.segments.size) {
+                val segment = group.segments[lastSegmentIndex]
+                if (segment.generatedColumnNumber > source.startChar) break
+
+                lastSegment = segment
+                lastSegmentIndex++
+            }
+
+            return lastSegment
         }
 
-        private fun remapNode(node: SourceInfoAwareJsNode): Boolean {
-            val source = node.source as? JsLocation ?: return false
 
-            val sourceMap = sourceMaps[source.file] ?: return false
-            val group = sourceMap.groups.getOrElse(source.startLine) { return false }
-            if (group.segments.isEmpty()) return false
-
-            if (lastSourceMap != sourceMap || lastGroup != group) {
-                lastSegmentIndex = 0
+           for (node in nodes.asSequence().filterIsInstance<SourceInfoAwareJsNode>()) {
+            val segment = findCorrespondingSegment(node)
+            val sourceFileName = segment?.sourceFileName
+            node.source = if (sourceFileName != null) {
+                val location = JsLocation(segment.sourceFileName, segment.sourceLineNumber, segment.sourceColumnNumber)
+                JsLocationWithEmbeddedSource(location, sourceMap) { sourceMap.sourceContentResolver(segment.sourceFileName) }
             }
-            if (group.segments[lastSegmentIndex].generatedColumnNumber > source.startChar) {
-                if (lastSegmentIndex == 0) return false
-                lastSegmentIndex = 0
+            else {
+                null
             }
+        }
+    }
 
-            while (lastSegmentIndex + 1 < group.segments.size) {
-                val nextIndex = lastSegmentIndex + 1
-                if (group.segments[nextIndex].generatedColumnNumber > source.startChar) break
-                lastSegmentIndex = nextIndex
+    internal class JsNodeFlatListCollector : RecursiveJsVisitor() {
+        val nodeList = mutableListOf<JsNode>()
+
+        override fun visitDoWhile(x: JsDoWhile) {
+            nodeList += x
+            accept(x.body)
+            accept(x.condition)
+        }
+
+        override fun visitBinaryExpression(x: JsBinaryOperation) = handleNode(x, x.arg1, x.arg2)
+
+        override fun visitConditional(x: JsConditional) = handleNode(x, x.testExpression, x.thenExpression, x.elseExpression)
+
+        override fun visitArrayAccess(x: JsArrayAccess) = handleNode(x, x.arrayExpression, x.indexExpression)
+
+        override fun visitArray(x: JsArrayLiteral) = handleNode(x, *x.expressions.toTypedArray())
+
+        override fun visitPrefixOperation(x: JsPrefixOperation) = handleNode(x, x.arg)
+
+        override fun visitPostfixOperation(x: JsPostfixOperation) = handleNode(x, x.arg)
+
+        override fun visitNameRef(nameRef: JsNameRef) = handleNode(nameRef, nameRef.qualifier)
+
+        override fun visitInvocation(invocation: JsInvocation) =
+                handleNode(invocation, invocation.qualifier, *invocation.arguments.toTypedArray())
+
+        override fun visitElement(node: JsNode) {
+            nodeList += node
+            node.acceptChildren(this)
+        }
+
+        private fun handleNode(node: JsNode, vararg children: JsNode?) {
+            val nonNullChildren = children.mapNotNull { it }
+
+            if (nonNullChildren.isEmpty()) {
+                nodeList += node
             }
+            else {
+                val firstChild = nonNullChildren.first()
+                if (node.isNotBefore(firstChild)) {
+                    accept(firstChild)
+                    nodeList += node
+                    nonNullChildren.drop(1).forEach { accept(it) }
+                }
+                else {
+                    nodeList += node
+                    nonNullChildren.forEach { accept(it) }
+                }
+            }
+        }
 
-            val segment = group.segments[lastSegmentIndex]
-            val location = JsLocation(segment.sourceFileName, segment.sourceLineNumber, segment.sourceColumnNumber)
-            node.source = JsLocationWithEmbeddedSource(location, sourceMap) { sourceMap.sourceContentResolver(segment.sourceFileName) }
-
-            return true
+        private fun JsNode.isNotBefore(other: JsNode): Boolean {
+            val first = (source as? JsLocation ?: return false)
+            val second = (other.source as? JsLocation ?: return false)
+            if (first.file != second.file) return false
+            return first.startLine > second.startLine || (first.startLine == second.startLine && first.startChar >= second.startChar)
         }
     }
 }

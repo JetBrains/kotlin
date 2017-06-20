@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.js.test.optimizer
 
-
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 import org.jetbrains.kotlin.js.parser.parse
-import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
 import org.jetbrains.kotlin.js.test.BasicBoxTest
 import org.jetbrains.kotlin.js.test.createScriptEngine
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -120,7 +119,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
 
     private fun astToString(ast: List<JsStatement>): String {
         val output = TextOutputImpl()
-        val visitor = JsSourceGenerationVisitor(output, null)
+        val visitor = JsToStringGenerationVisitor(output)
         for (stmt in ast) {
             stmt.accept(visitor)
         }
