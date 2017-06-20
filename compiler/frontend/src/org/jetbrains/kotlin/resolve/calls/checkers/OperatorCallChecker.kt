@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -105,22 +103,17 @@ fun FunctionDescriptor.isOperatorMod(): Boolean {
     return this.isOperator && name in OperatorConventions.REM_TO_MOD_OPERATION_NAMES.values
 }
 
-// This is an alternate function to KotlinBuiltIns.isBuiltIn
-// It is safer as it produces stable results independent of target platform (Java/JS/Native)
-fun FunctionDescriptor.hasSubpackageOfKotlin(): Boolean {
-    val descriptorFqName = fqNameOrNull() ?: return false
-    return descriptorFqName.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
-}
-
 fun shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings: LanguageVersionSettings): Boolean {
     return languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem) && languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_1
 }
 
-private fun checkModConvention(descriptor: FunctionDescriptor, languageVersionSettings: LanguageVersionSettings,
-                               diagnosticHolder: DiagnosticSink, modifier: PsiElement) {
+private fun checkModConvention(
+        descriptor: FunctionDescriptor, languageVersionSettings: LanguageVersionSettings,
+        diagnosticHolder: DiagnosticSink, modifier: PsiElement
+) {
     if (!descriptor.isOperatorMod()) return
 
-    if (descriptor.hasSubpackageOfKotlin()) {
+    if (KotlinBuiltIns.isUnderKotlinPackage(descriptor)) {
         if (shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
             addWarningAboutDeprecatedMod(descriptor, diagnosticHolder, modifier)
         }
@@ -136,4 +129,3 @@ private fun addWarningAboutDeprecatedMod(descriptor: FunctionDescriptor, diagnos
     val newNameConvention = OperatorConventions.REM_TO_MOD_OPERATION_NAMES.inverse()[descriptor.name]
     diagnosticHolder.report(Errors.DEPRECATED_BINARY_MOD_AS_REM.on(reportOn, descriptor, newNameConvention!!.asString()))
 }
-

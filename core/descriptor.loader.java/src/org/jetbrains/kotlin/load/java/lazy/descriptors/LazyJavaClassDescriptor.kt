@@ -210,8 +210,8 @@ class LazyJavaClassDescriptor(
         }
 
         private fun getPurelyImplementedSupertype(): KotlinType? {
-            val annotatedPurelyImplementedFqName = getPurelyImplementsFqNameFromAnnotation()?.takeIf {
-                !it.isRoot && it.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)
+            val annotatedPurelyImplementedFqName = getPurelyImplementsFqNameFromAnnotation()?.takeIf { fqName ->
+                !fqName.isRoot && fqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)
             }
 
             val purelyImplementedFqName =

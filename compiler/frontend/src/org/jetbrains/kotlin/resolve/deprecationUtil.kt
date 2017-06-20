@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
-import org.jetbrains.kotlin.resolve.calls.checkers.hasSubpackageOfKotlin
 import org.jetbrains.kotlin.resolve.calls.checkers.isOperatorMod
 import org.jetbrains.kotlin.resolve.calls.checkers.shouldWarnAboutDeprecatedModFromBuiltIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -190,7 +189,7 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor, languageVers
 
 private fun DeclarationDescriptor.getOwnDeprecations(languageVersionSettings: LanguageVersionSettings): List<Deprecation> {
     // The problem is that declaration `mod` in built-ins has @Deprecated annotation but actually it was deprecated only in version 1.1
-    if (this is FunctionDescriptor && this.isOperatorMod() && this.hasSubpackageOfKotlin()) {
+    if (this is FunctionDescriptor && this.isOperatorMod() && KotlinBuiltIns.isUnderKotlinPackage(this)) {
         if (!shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
             return emptyList()
         }

@@ -473,9 +473,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
     private fun evaluateCall(callExpression: KtExpression, receiverExpression: KtExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val resolvedCall = callExpression.getResolvedCall(trace.bindingContext) ?: return null
-
-        val descriptorFqName = resolvedCall.resultingDescriptor.fqNameOrNull() ?: return null
-        if (!descriptorFqName.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)) return null
+        if (!KotlinBuiltIns.isUnderKotlinPackage(resolvedCall.resultingDescriptor)) return null
 
         val resultingDescriptorName = resolvedCall.resultingDescriptor.name
 
