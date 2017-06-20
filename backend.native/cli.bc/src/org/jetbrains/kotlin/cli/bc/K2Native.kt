@@ -20,8 +20,10 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -68,10 +70,18 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         } catch (e: KonanCompilationException) {
             return ExitCode.COMPILATION_ERROR
         }
-        // TODO: catch Errors and IllegalStateException.
 
+        if (arguments.freeArgs.isEmpty() && !arguments.isUsefulWithoutFreeArgs) {
+            val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
+        }
+
+        // TODO: catch Errors and IllegalStateException.
         return ExitCode.OK
     }
+
+    val K2NativeCompilerArguments.isUsefulWithoutFreeArgs: Boolean
+        get() = this.listTargets || this.listPhases
 
     fun Array<String>?.toNonNullList(): List<String> {
         return this?.asList<String>() ?: listOf<String>()
