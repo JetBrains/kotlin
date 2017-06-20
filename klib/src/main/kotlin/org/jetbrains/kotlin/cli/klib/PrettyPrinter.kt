@@ -38,21 +38,25 @@ class PrettyPrinter(val library: Base64, val packageLoader: (String) -> Base64) 
         get() = moduleHeader.packageFragmentNameList
 
     fun printPackageFragment(fqname: String) {
-        if (fqname.isNotEmpty()) println("\nPackage $fqname" )
-        val fragment = packageFragment(fqname)
-        PackageFragmentPrinter(fragment, out).print()
+        if (fqname == "konan") {
+            if (fqname.isNotEmpty()) println("\nPackage $fqname")
+            val fragment = packageFragment(fqname)
+            PackageFragmentPrinter(fragment, out).print()
+        }
     }
 }
 
 class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment, out: Appendable) {
-    val printer                        = Printer(out, "    ")
-    val stringTable                    = packageFragment.stringTable!!
-    val qualifiedNameTable             = packageFragment.nameTable!!
-    var typeTable: ProtoBuf.TypeTable? = packageFragment.`package`.typeTable
+    val printer            = Printer(out, "    ")
+    val stringTable        = packageFragment.stringTable!!
+    val qualifiedNameTable = packageFragment.nameTable!!
+    var typeTableStack     = mutableListOf<ProtoBuf.TypeTable>() //? =
 
     //-------------------------------------------------------------------------//
 
     fun print() {
+        typeTableStack.add(packageFragment.`package`.typeTable)
+
         val protoTypeAliases = packageFragment.`package`.typeAliasList
         protoTypeAliases.forEach { protoTypeAlias ->
             printTypeAlias(protoTypeAlias)
@@ -61,7 +65,6 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         val protoClasses = packageFragment.classes.classesList                     // ProtoBuf classes
         protoClasses.forEach { protoClass ->
             val classKind = Flags.CLASS_KIND.get(protoClass.flags)
-            if (protoClass.hasTypeTable()) typeTable = protoClass.typeTable
             when (classKind) {
                 ProtoBuf.Class.Kind.CLASS            -> printClass(protoClass)
                 ProtoBuf.Class.Kind.ENUM_CLASS       -> printEnum(protoClass)
@@ -75,8 +78,6 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
         val protoFunctions = packageFragment.`package`.functionList
         protoFunctions.forEach { protoFunction ->
-            if (protoFunction.hasTypeTable()) typeTable = protoFunction.typeTable
-            else                              typeTable = packageFragment.`package`.typeTable
             printFunction(protoFunction)
         }
 
@@ -97,6 +98,8 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     //-------------------------------------------------------------------------//
 
     fun printClass(protoClass: ProtoBuf.Class) {
+        val hasTypeTable = protoClass.hasTypeTable()
+        if (hasTypeTable) typeTableStack.add(protoClass.typeTable)
         val className         = getShortName(protoClass.fqName)
         val annotations       = protoClass.getExtension(KonanSerializerProtocol.classAnnotation)
         val keyword           = classOrInterface(protoClass)
@@ -120,11 +123,14 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         nestedClasses.forEach   { printNestedClass(it) }
         printer.popIndent()
         printer.println("}\n")
+        if (hasTypeTable) typeTableStack.removeAt(typeTableStack.lastIndex)
     }
 
     //-------------------------------------------------------------------------//
 
     fun printFunction(protoFunction: ProtoBuf.Function) {
+        val hasTypeTable = protoFunction.hasTypeTable()
+        if (hasTypeTable) typeTableStack.add(protoFunction.typeTable)
         val flags           = protoFunction.flags
         val name            = stringTable.getString(protoFunction.name)
         val visibility      = visibilityToString(Flags.VISIBILITY.get(flags))
@@ -133,10 +139,11 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         val annotations     = protoFunction.getExtension(KonanSerializerProtocol.functionAnnotation)
         val typeParameters  = typeParametersToString(protoFunction.typeParameterList)
         val valueParameters = valueParametersToString(protoFunction.valueParameterList)
-        val returnType      = typeToString(protoFunction.returnTypeId)
+        val returnType      = returnTypeToString(protoFunction)
 
         printAnnotations(annotations)
-        printer.println("$visibility${isInline}fun $typeParameters$receiverType$name$valueParameters: $returnType")
+        printer.println("$visibility${isInline}fun $typeParameters$receiverType$name$valueParameters$returnType")
+        if (hasTypeTable) typeTableStack.removeAt(typeTableStack.lastIndex)
     }
 
     //-------------------------------------------------------------------------//
@@ -157,6 +164,8 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     //-------------------------------------------------------------------------//
 
     fun printEnum(protoEnum: ProtoBuf.Class) {
+        val hasTypeTable = protoEnum.hasTypeTable()
+        if (hasTypeTable) typeTableStack.add(protoEnum.typeTable)
         val flags       = protoEnum.flags
         val enumName    = getShortName(protoEnum.fqName)
         val modality    = modalityToString(Flags.MODALITY.get(flags))
@@ -171,6 +180,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         enumEntries.dropLast(1).forEach { printer.print("    ${enumEntryToString(it)},\n") }
         enumEntries.lastOrNull()?.let   { printer.print("    ${enumEntryToString(it)} \n") }
         printer.println("}\n")
+        if (hasTypeTable) typeTableStack.removeAt(typeTableStack.lastIndex)
     }
 
     //-------------------------------------------------------------------------//
@@ -350,7 +360,10 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     fun valueParameterToString(protoValueParameter: ProtoBuf.ValueParameter): String {
         val parameterName = stringTable.getString(protoValueParameter.name)
-        val type = typeToString(protoValueParameter.typeId)
+        val typeId = protoValueParameter.typeId
+        val type = if (isCallableType(typeId)) callableTypeToString(typeId)
+                   else                        typeToString(typeId)
+
         val flags = protoValueParameter.flags
         val isCrossInline = crossInlineToString(Flags.IS_CROSSINLINE.get(flags))
         val visibility = visibilityToString(Flags.VISIBILITY.get(flags))
@@ -434,10 +447,9 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     //-------------------------------------------------------------------------//
 
     fun typeToString(typeId: Int): String {
-        val type = typeTable!!.getType(typeId)
-        if (isCallableType(type)) return callableTypeToString(type)
-
+        val type = typeTableStack.last().getType(typeId)
         val buff = StringBuilder(typeName(type))
+
         val argumentList = type.argumentList
         if (argumentList.isNotEmpty()) {
             buff.append("<")
@@ -454,11 +466,15 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     //-------------------------------------------------------------------------//
 
-    fun isCallableType(type: ProtoBuf.Type) = typeName(type).contains("Function")
+    fun isCallableType(typeId: Int): Boolean {
+        val type = typeTableStack.last().getType(typeId)
+        return typeName(type).contains("Function")
+    }
 
     //-------------------------------------------------------------------------//
 
-    fun callableTypeToString(callableType: ProtoBuf.Type): String {
+    fun callableTypeToString(typeId: Int): String {
+        val callableType = typeTableStack.last().getType(typeId)
         val buff = StringBuilder("(")
         val argumentTypes = callableType.argumentList.dropLast(1)
         val returnType = callableType.argumentList.lastOrNull()
@@ -532,6 +548,14 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     fun crossInlineToString(isCrossInline: Boolean): String {
         if (isCrossInline) return "crossinline "
         return ""
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun returnTypeToString(protoFunction: ProtoBuf.Function): String {
+        val returnType = typeToString(protoFunction.returnTypeId)
+        if (returnType == "Unit") return ""
+        return ": " + returnType
     }
 
     //-------------------------------------------------------------------------//
