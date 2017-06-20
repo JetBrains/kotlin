@@ -38,7 +38,7 @@ class PrettyPrinter(val library: Base64, val packageLoader: (String) -> Base64) 
         get() = moduleHeader.packageFragmentNameList
 
     fun printPackageFragment(fqname: String) {
-        if (fqname.isNotEmpty()) println("\nPackage $fqname")
+        if (fqname.isNotEmpty()) println("\npackage $fqname")
         val fragment = packageFragment(fqname)
         PackageFragmentPrinter(fragment, out).print()
     }
