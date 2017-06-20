@@ -47,3 +47,18 @@ public fun <T, R> Array<out Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
     }
     return listT to listR
 }
+
+private val hexArray = CharArray(16) { if (it < 10) '0' + it else 'a' + (it - 10) }
+
+/**
+* Creates a string from bytes represented as hexadecimal numbers.
+*/
+fun ByteArray.toHexString(): String {
+    val builder = StringBuilder(size * 2)
+    for (byte in this) {
+        val v = byte.toInt() and 0xFF
+        builder.append(hexArray[v.ushr(4)])
+        builder.append(hexArray[v and 0x0F])
+    }
+    return builder.toString()
+}
