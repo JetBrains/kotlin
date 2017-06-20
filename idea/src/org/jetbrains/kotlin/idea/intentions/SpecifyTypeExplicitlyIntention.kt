@@ -113,7 +113,7 @@ class SpecifyTypeExplicitlyIntention :
             val resolutionFacade = contextElement.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL)
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-            val types = with (exprType.getResolvableApproximations(scope, false).toList()) {
+            val types = with (exprType.getResolvableApproximations(scope, true).toList()) {
                 when {
                     exprType.isNullabilityFlexible() -> flatMap {
                         listOf(TypeUtils.makeNotNullable(it), TypeUtils.makeNullable(it))

@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
@@ -97,7 +98,15 @@ fun KotlinType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Bo
 
     val descriptor = constructor.declarationDescriptor
     if (descriptor == null || descriptor.name.isSpecial) return false
-    if (!checkTypeParameters && descriptor is TypeParameterDescriptor) return true
+
+    if (descriptor is TypeParameterDescriptor) {
+        if (checkTypeParameters) {
+            val owner = descriptor.containingDeclaration
+            if (owner is FunctionDescriptor && owner.typeParameters.any { it == descriptor }) return true
+        } else {
+            return true
+        }
+    }
 
     return scope != null && scope.findClassifier(descriptor.name, NoLookupLocation.FROM_IDE) == descriptor
 }
