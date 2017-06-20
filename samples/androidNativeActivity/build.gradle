@@ -5,6 +5,16 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle-experimental:0.9.2'
     }
+
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+        }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:+"
+    }
 }
 
 allprojects {
@@ -96,9 +106,9 @@ model {
 task renameArtifacts << {
     for (artifact in artifacts) {
         copy {
-            from "build/konan/bin/${artifact}"
+            from "build/konan/bin"
             into "build/konan/bin/${artifact}"
-            rename "${artifact}.kexe", "libpoly.so"
+            rename "${artifact}.so", "libpoly.so"
         }
     }
 }
