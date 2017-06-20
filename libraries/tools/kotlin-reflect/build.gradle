@@ -85,7 +85,6 @@ task reflectShadowJar(type: ShadowJar) {
     classifier = 'shadow'
     version = null
     manifestAttributes(manifest, project, 'Main')
-    manifest.attributes 'Class-Path': 'kotlin-stdlib.jar'
 
     from (sourceSets.main.output)
     from ("${core}/descriptor.loader.java/src") {
