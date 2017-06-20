@@ -36,6 +36,12 @@ public class LiteralKotlinToKotlinCopyPasteTestGenerated extends AbstractLiteral
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/literal"), Pattern.compile("^([^\\.]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("CollectionLiteralReference.kt")
+    public void testCollectionLiteralReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/literal/CollectionLiteralReference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DontEscapeEntries.kt")
     public void testDontEscapeEntries() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/literal/DontEscapeEntries.kt");
