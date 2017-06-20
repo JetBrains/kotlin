@@ -1,10 +1,13 @@
 package soSuspendableCallInFunFromOtherStepping
 
 import forTests.builder
+import forTests.WaitFinish
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.suspendCoroutine
 
 private fun foo(a: Any) {}
+
+val waiter = WaitFinish()
 
 fun main(args: Array<String>) {
     builder {
@@ -12,7 +15,7 @@ fun main(args: Array<String>) {
     }
 
     foo("Main end")
-    Thread.sleep(120)
+    waiter.waitEnd()
 }
 
 suspend fun inFun() {
@@ -25,8 +28,9 @@ suspend fun inFun() {
 suspend fun run() {
     return suspendCoroutine { cont: Continuation<Unit> ->
         Thread {
-            cont.resume(Unit)
             Thread.sleep(10)
+            cont.resume(Unit)
+            waiter.finish()
         }.start()
     }
 }
