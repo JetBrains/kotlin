@@ -74,8 +74,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.ConstantValue;
+import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluatorKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -826,14 +825,71 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitStringTemplateExpression(@NotNull KtStringTemplateExpression expression, StackValue receiver) {
-        StringBuilder constantValue = new StringBuilder("");
-        KtStringTemplateEntry[] entries = expression.getEntries();
+        List<StringTemplateEntry> entries = preprocessStringTemplate(expression);
 
-        if (entries.length == 1 && entries[0] instanceof KtStringTemplateEntryWithExpression) {
-            KtExpression expr = entries[0].getExpression();
-            return genToString(gen(expr), expressionType(expr));
+        if (entries.size() == 1) {
+            StringTemplateEntry entry = entries.get(0);
+            if (entry instanceof StringTemplateEntry.Expression) {
+                KtExpression expr = ((StringTemplateEntry.Expression) entry).expression;
+                return genToString(gen(expr), expressionType(expr));
+            }
+            else {
+                Type type = expressionType(expression);
+                return StackValue.constant(((StringTemplateEntry.Constant) entry).value, type);
+            }
         }
 
+        return StackValue.operation(JAVA_STRING_TYPE, v -> {
+            genStringBuilderConstructor(v);
+            invokeAppendForEntries(v, entries);
+            v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+            return Unit.INSTANCE;
+        });
+    }
+
+    private void invokeAppendForEntries(InstructionAdapter v, List<StringTemplateEntry> entries) {
+        for (StringTemplateEntry entry : entries) {
+            if (entry instanceof StringTemplateEntry.Expression) {
+                invokeAppend(v, ((StringTemplateEntry.Expression) entry).expression);
+            }
+            else {
+                String value = ((StringTemplateEntry.Constant) entry).value;
+                if (value.length() == 1) {
+                    v.iconst(value.charAt(0));
+                    genInvokeAppendMethod(v, Type.CHAR_TYPE);
+                }
+                else {
+                    v.aconst(value);
+                    genInvokeAppendMethod(v, JAVA_STRING_TYPE);
+                }
+            }
+        }
+    }
+
+    private static abstract class StringTemplateEntry {
+        static class Constant extends StringTemplateEntry {
+            final String value;
+
+            Constant(String value) {
+                this.value = value;
+            }
+        }
+
+        static class Expression extends StringTemplateEntry {
+            final KtExpression expression;
+
+            Expression(KtExpression expression) {
+                this.expression = expression;
+            }
+        }
+    }
+
+    private @NotNull List<StringTemplateEntry> preprocessStringTemplate(@NotNull KtStringTemplateExpression expression) {
+        KtStringTemplateEntry[] entries = expression.getEntries();
+
+        List<StringTemplateEntry> result = new ArrayList<>(entries.length);
+
+        StringBuilder constantValue = new StringBuilder("");
         for (KtStringTemplateEntry entry : entries) {
             if (entry instanceof KtLiteralStringTemplateEntry) {
                 constantValue.append(entry.getText());
@@ -841,35 +897,45 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             else if (entry instanceof KtEscapeStringTemplateEntry) {
                 constantValue.append(((KtEscapeStringTemplateEntry) entry).getUnescapedValue());
             }
+            else if (entry instanceof KtStringTemplateEntryWithExpression) {
+                KtExpression entryExpression = entry.getExpression();
+                if (entryExpression == null) throw new AssertionError("No expression in " + entry);
+
+                ConstantValue<?> compileTimeConstant =
+                        getPrimitiveOrStringCompileTimeConstant(entryExpression, bindingContext, state.getShouldInlineConstVals());
+
+                if (compileTimeConstant != null && isConstantValueInlinableInStringTemplate(compileTimeConstant)) {
+                    constantValue.append(String.valueOf(compileTimeConstant.getValue()));
+                }
+                else {
+                    result.add(new StringTemplateEntry.Constant(constantValue.toString()));
+                    constantValue.setLength(0);
+
+                    result.add(new StringTemplateEntry.Expression(entryExpression));
+                }
+            }
             else {
-                constantValue = null;
-                break;
+                throw new AssertionError("Unexpected string template entry: " + entry);
             }
         }
-        if (constantValue != null) {
-            Type type = expressionType(expression);
-            return StackValue.constant(constantValue.toString(), type);
+
+        String leftoverConstantValue = constantValue.toString();
+        if (leftoverConstantValue.length() > 0) {
+            result.add(new StringTemplateEntry.Constant(leftoverConstantValue));
         }
-        else {
-            return StackValue.operation(JAVA_STRING_TYPE, v -> {
-                genStringBuilderConstructor(v);
-                for (KtStringTemplateEntry entry : entries) {
-                    if (entry instanceof KtStringTemplateEntryWithExpression) {
-                        invokeAppend(entry.getExpression());
-                    }
-                    else {
-                        String text = entry instanceof KtEscapeStringTemplateEntry
-                                      ? ((KtEscapeStringTemplateEntry) entry).getUnescapedValue()
-                                      : entry.getText();
-                        v.aconst(text);
-                        genInvokeAppendMethod(v, JAVA_STRING_TYPE);
-                    }
-                }
-                v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
-                return Unit.INSTANCE;
-            });
-        }
+
+        return result;
     }
+
+    private static boolean isConstantValueInlinableInStringTemplate(@NotNull ConstantValue<?> constant) {
+        return constant instanceof StringValue ||
+               constant instanceof BooleanValue ||
+               constant instanceof DoubleValue ||
+               constant instanceof FloatValue ||
+               constant instanceof IntegerValueConstant ||
+               constant instanceof NullValue;
+    }
+
 
     @Override
     public StackValue visitBlockExpression(@NotNull KtBlockExpression expression, StackValue receiver) {
@@ -3250,21 +3316,30 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
-    public void invokeAppend(KtExpression expr) {
+    public void invokeAppend(InstructionAdapter v, KtExpression expr) {
+        expr = KtPsiUtil.safeDeparenthesize(expr);
+
         ConstantValue<?> compileTimeConstant = getPrimitiveOrStringCompileTimeConstant(expr, bindingContext, state.getShouldInlineConstVals());
 
-        if (compileTimeConstant == null && expr instanceof KtBinaryExpression) {
-            KtBinaryExpression binaryExpression = (KtBinaryExpression) expr;
-            if (binaryExpression.getOperationToken() == KtTokens.PLUS) {
-                KtExpression left = binaryExpression.getLeft();
-                KtExpression right = binaryExpression.getRight();
-                Type leftType = expressionType(left);
+        if (compileTimeConstant == null) {
+            if (expr instanceof KtBinaryExpression) {
+                KtBinaryExpression binaryExpression = (KtBinaryExpression) expr;
+                if (binaryExpression.getOperationToken() == KtTokens.PLUS) {
+                    KtExpression left = binaryExpression.getLeft();
+                    KtExpression right = binaryExpression.getRight();
+                    Type leftType = expressionType(left);
 
-                if (leftType.equals(JAVA_STRING_TYPE)) {
-                    invokeAppend(left);
-                    invokeAppend(right);
-                    return;
+                    if (leftType.equals(JAVA_STRING_TYPE)) {
+                        invokeAppend(v, left);
+                        invokeAppend(v, right);
+                        return;
+                    }
                 }
+            }
+            else if (expr instanceof KtStringTemplateExpression) {
+                List<StringTemplateEntry> entries = preprocessStringTemplate((KtStringTemplateExpression) expr);
+                invokeAppendForEntries(v, entries);
+                return;
             }
         }
 

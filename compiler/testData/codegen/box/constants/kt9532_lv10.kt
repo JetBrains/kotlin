@@ -1,4 +1,6 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+// LANGUAGE_VERSION: 1.0
 
 object A {
     const val a: String = "$"
@@ -25,8 +27,8 @@ fun box(): String {
 
     if (A.c !== B.c) return "Fail 3: A.c !== B.c"
 
-    if (A.bNonConst !== B.bNonConst) return "Fail 4: A.bNonConst !== B.bNonConst"
-    if (A.bNullable !== B.bNullable) return "Fail 5: A.bNullable !== B.bNullable"
+    if (A.bNonConst === B.bNonConst) return "Fail 4: A.bNonConst === B.bNonConst"
+    if (A.bNullable === B.bNullable) return "Fail 5: A.bNullable === B.bNullable"
 
     return "OK"
 }

@@ -4796,6 +4796,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt9532.kt")
         public void testKt9532() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constants/kt9532.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt9532_lv10.kt")
+        public void testKt9532_lv10() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constants/kt9532_lv10.kt");
             try {
                 doTest(fileName);
             }
@@ -21512,6 +21518,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/strings"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("constInStringTemplate.kt")
+        public void testConstInStringTemplate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/constInStringTemplate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ea35743.kt")
         public void testEa35743() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/ea35743.kt");
@@ -21587,6 +21599,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("multilineStringsWithTemplates.kt")
         public void testMultilineStringsWithTemplates() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/multilineStringsWithTemplates.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedConcat.kt")
+        public void testNestedConcat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/nestedConcat.kt");
             doTest(fileName);
         }
 

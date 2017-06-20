@@ -42,8 +42,8 @@ class Concat : IntrinsicMethod() {
         if (element is KtBinaryExpression && element.operationReference.getReferencedNameElementType() == KtTokens.PLUS) {
             // LHS + RHS
             genStringBuilderConstructor(v)
-            codegen.invokeAppend(element.left)
-            codegen.invokeAppend(element.right)
+            codegen.invokeAppend(v, element.left)
+            codegen.invokeAppend(v, element.right)
         }
         else {
             // Explicit plus call LHS?.plus(RHS) or LHS.plus(RHS)
@@ -51,7 +51,7 @@ class Concat : IntrinsicMethod() {
             genStringBuilderConstructor(v)
             v.swap()
             genInvokeAppendMethod(v, returnType)
-            codegen.invokeAppend(arguments[0])
+            codegen.invokeAppend(v, arguments[0])
         }
 
         v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
