@@ -568,9 +568,11 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
         when (classKind) {
             ProtoBuf.Class.Kind.CLASS            -> buff.append("class")
             ProtoBuf.Class.Kind.INTERFACE        -> buff.append("interface")
+            ProtoBuf.Class.Kind.ENUM_CLASS       -> buff.append("enum class")
+            ProtoBuf.Class.Kind.ENUM_ENTRY       -> buff.append("enum")
             ProtoBuf.Class.Kind.ANNOTATION_CLASS -> buff.append("annotation class")
             ProtoBuf.Class.Kind.OBJECT           -> buff.append("object")
-            else -> assert(false)
+            ProtoBuf.Class.Kind.COMPANION_OBJECT -> buff.append("companion object")
         }
         return buff.toString()
     }
