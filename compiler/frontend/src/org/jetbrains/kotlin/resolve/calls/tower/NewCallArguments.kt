@@ -191,7 +191,10 @@ internal fun createSimplePSICallArgument(
     val onlyResolvedCall = ktExpression.getCall(bindingContext)?.let {
         bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)
     }
-    val baseType = typeInfoForArgument.type?.unwrap() ?: return null
+    // todo hack for if expression: sometimes we not write properly type information for branches
+    val baseType = typeInfoForArgument.type?.unwrap() ?:
+                   onlyResolvedCall?.candidate?.lastCall?.descriptorWithFreshTypes?.returnType?.unwrap() ?:
+                   return null
 
     // we should use DFI after this argument, because there can be some useful smartcast. Popular case: if branches.
     val receiverToCast = transformToReceiverWithSmartCastInfo(
