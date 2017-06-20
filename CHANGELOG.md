@@ -1,7 +1,7 @@
 ## v0.3 (Jun 2017) ##
   * Preliminary support for x86-64 Windows hosts and targets
   * Support for producing native activities on 32- and 64-bit Android targets
-  * Extended standard library (bitsets, regular expression)
+  * Extended standard library (bitsets, character classification, regular expression)
   * Preliminary support for Kotlin/Native library format (.klib)
   * Preliminary source-level debugging support (stepping only, no variable inspection)
   * Compiler switch `-entry` to select entry point

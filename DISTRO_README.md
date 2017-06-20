@@ -19,6 +19,7 @@ without need to ship an additional execution runtime.
   * `tensorflow` - simple client for TensorFlow Machine Intelligence library
   * `tetris` - Tetris game implementation (using SDL2 for rendering)
   * `win32` - trivial Win32 application
+  * `androidNativeActivity` - Android Native Activity rendering 3D graphics using GLES2
 
  See `README.md` in each sample directory for more information and build instructions.
 

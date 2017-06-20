@@ -6,5 +6,5 @@ Please make sure that Android SDK version 25 is installed, using Android SDK man
 
 To build use `ANDROID_HOME=<your path to android sdk> ../gradlew buildApk`.
 
-Run `adb install build/outputs/apk/androidNativeActivity-arm-debug.apk` to deploy the apk on Android device or emulator
-(note that only ARM-based devices are currently supported).
+Run `adb install build/outputs/apk/androidNativeActivity-arm-debug.apk` to deploy the apk on the Android
+device or emulator (note that only ARM-based devices are currently supported).
