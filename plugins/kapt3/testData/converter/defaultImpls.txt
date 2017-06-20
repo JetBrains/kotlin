@@ -5,7 +5,7 @@ public abstract interface Intf {
 
     public abstract int getColor();
 
-    @kotlin.Metadata(mv = {1, 1, 6}, bv = {1, 0, 1}, k = 3)
+    @kotlin.Metadata()
     public static final class DefaultImpls {
 
         public DefaultImpls() {
@@ -40,7 +40,7 @@ public abstract interface IntfWithDefaultImpls {
 
     public abstract void a();
 
-    @kotlin.Metadata(mv = {1, 1, 6}, bv = {1, 0, 1}, k = 3)
+    @kotlin.Metadata()
     public static final class DefaultImpls {
 
         public DefaultImpls() {
