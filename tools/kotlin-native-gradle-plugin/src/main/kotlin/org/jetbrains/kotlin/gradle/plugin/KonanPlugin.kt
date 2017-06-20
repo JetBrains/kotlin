@@ -191,6 +191,8 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         internal const val KONAN_BUILD_TARGETS = "konan.build.targets"
 
         internal const val DEFAULT_KONAN_VERSION = "0.3"
+
+        internal const val DOWNLOAD_COMPILER_PROPERTY_NAME = "DownloadCompiler"
     }
 
     /**
@@ -219,6 +221,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.extensions.add(INTEROP_EXTENSION_NAME, KonanInteropContainer(project))
         if (!project.extensions.extraProperties.has(KonanPlugin.KONAN_HOME_PROPERTY_NAME)) {
             project.extensions.extraProperties.set(KonanPlugin.KONAN_HOME_PROPERTY_NAME, project.konanCompilerDownloadDir())
+            project.extensions.extraProperties.set(DOWNLOAD_COMPILER_PROPERTY_NAME, true)
         }
         if (!project.extensions.extraProperties.has(KonanPlugin.KONAN_BUILD_TARGETS)) {
             project.extensions.extraProperties.set(KonanPlugin.KONAN_BUILD_TARGETS, project.host)

@@ -33,7 +33,7 @@ open class KonanCompilerDownloadTask : DefaultTask() {
 
     @TaskAction
     fun downloadAndExtract() {
-        if (project.hasProperty(KonanPlugin.KONAN_HOME_PROPERTY_NAME)) {
+        if (!project.hasProperty(KonanPlugin.DOWNLOAD_COMPILER_PROPERTY_NAME)) {
             val konanHome = project.property(KonanPlugin.KONAN_HOME_PROPERTY_NAME)
             logger.info("Use a user-defined compiler path: $konanHome")
             return
