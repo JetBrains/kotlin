@@ -4,6 +4,9 @@
       <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-reflect.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/core/reflection.jvm/src" />
+      <root url="file://$PROJECT_DIR$/core/descriptors.runtime/src" />
+    </SOURCES>
   </library>
 </component>
