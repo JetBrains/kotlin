@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
-import com.google.common.collect.Lists
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -32,14 +31,14 @@ class LocalFunctionDeclarationInstruction(
         blockScope: BlockScope
 ) : InstructionWithNext(element, blockScope) {
     var sink: SubroutineSinkInstruction? = null
-        set(value: SubroutineSinkInstruction?) {
+        set(value) {
             field = outgoingEdgeTo(value) as SubroutineSinkInstruction?
         }
 
     override val nextInstructions: Collection<Instruction>
         get() {
-            if (sink != null) {
-                val instructions = Lists.newArrayList<Instruction>(sink)
+            sink?.let {
+                val instructions = arrayListOf<Instruction>(it)
                 instructions.addAll(super.nextInstructions)
                 return instructions
             }

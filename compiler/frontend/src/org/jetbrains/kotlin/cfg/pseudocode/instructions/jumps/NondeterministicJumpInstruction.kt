@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
-import com.google.common.collect.Maps
-import com.google.common.collect.Lists
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -35,9 +33,9 @@ class NondeterministicJumpInstruction(
         val inputValue: PseudoValue?
 ) : KtElementInstructionImpl(element, blockScope), JumpInstruction {
     private var _next: Instruction? = null
-    private val _resolvedTargets: MutableMap<Label, Instruction> = Maps.newLinkedHashMap()
+    private val _resolvedTargets: MutableMap<Label, Instruction> = linkedMapOf()
 
-    val targetLabels: List<Label> = Lists.newArrayList(targetLabels)
+    val targetLabels: List<Label> = ArrayList(targetLabels)
     val resolvedTargets: Map<Label, Instruction>
             get() = _resolvedTargets
 
@@ -53,7 +51,7 @@ class NondeterministicJumpInstruction(
 
     override val nextInstructions: Collection<Instruction>
         get() {
-            val targetInstructions = Lists.newArrayList(resolvedTargets.values)
+            val targetInstructions = ArrayList(resolvedTargets.values)
             targetInstructions.add(next)
             return targetInstructions
         }
