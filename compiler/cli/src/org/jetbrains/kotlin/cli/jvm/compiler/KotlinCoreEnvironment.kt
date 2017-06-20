@@ -104,7 +104,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFact
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
-import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProviderImpl
+import org.jetbrains.kotlin.cli.common.script.KotlinScriptExternalImportsProviderImpl
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
