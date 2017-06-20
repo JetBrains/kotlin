@@ -27,7 +27,11 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.psi.KtScriptInitializer
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -98,7 +102,11 @@ open class GenericReplCompiler(disposable: Disposable,
             val generatedClassname = makeScriptBaseName(codeLine)
             compilerState.history.push(LineId(codeLine), scriptDescriptor)
 
-            val expression = PsiTreeUtil.getChildOfType<KtExpression>(psiFile, KtExpression::class.java)
+            val expression = psiFile.getChildOfType<KtScript>()?.
+                    getChildOfType<KtBlockExpression>()?.
+                    getChildOfType<KtScriptInitializer>()?.
+                    getChildOfType<KtExpression>()
+
             val type = if (expression != null) compilerState.analyzerEngine.trace.bindingContext.getType(expression) else null
 
             return ReplCompileResult.CompiledClasses(LineId(codeLine),
