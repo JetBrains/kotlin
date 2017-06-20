@@ -16,21 +16,50 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-class RemoveSetterParameterTypeInspection : IntentionBasedInspection<KtCallableDeclaration>(
-        RemoveExplicitTypeIntention::class,
-        { it -> RemoveExplicitTypeIntention.isSetterParameter(it) }
-) {
-    override fun problemHighlightType(element: KtCallableDeclaration) = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+class RemoveSetterParameterTypeInspection : AbstractKotlinInspection() {
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+        return object : KtVisitorVoid() {
+            override fun visitDeclaration(dcl: KtDeclaration) {
+                if (dcl is KtParameter && dcl.typeReference != null && dcl.isSetterParameter) {
+                    holder.registerProblem(dcl,
+                                           "Redundant setter parameter type",
+                                           ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                           IntentionWrapper(RemoveExplicitTypeIntention(), dcl.containingKtFile))
+                }
+            }
+        }
+    }
+}
 
-    override fun inspectionTarget(element: KtCallableDeclaration) = (element as? KtParameter)?.typeReference
+class RedundantUnitReturnTypeInspection : AbstractKotlinInspection() {
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+        return object : KtVisitorVoid() {
+            override fun visitNamedFunction(function: KtNamedFunction) {
+                super.visitNamedFunction(function)
+                if (function.containingFile is KtCodeFragment) return
+                if ((function.descriptor as? FunctionDescriptor)?.returnType?.isUnit() ?: false) {
+                    function.typeReference?.typeElement?.let {
+                        holder.registerProblem(it,
+                                               "Redundant 'Unit' return type",
+                                               ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                               IntentionWrapper(RemoveExplicitTypeIntention(), function.containingKtFile))
+                    }
+                }
+            }
+        }
+    }
 }
 
 class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
@@ -39,21 +68,7 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
 ) {
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
-        if (element.containingFile is KtCodeFragment) return null
-        if (element.typeReference == null) return null
-
-        if (element is KtParameter && (element.isLoopParameter || element.isSetterParameter)) {
-            return element.textRange
-        }
-
-        val initializer = (element as? KtDeclarationWithInitializer)?.initializer
-        if (element !is KtProperty && (element !is KtNamedFunction || element.hasBlockBody())) return null
-
-        return when {
-            initializer != null -> TextRange(element.startOffset, initializer.startOffset - 1)
-            element is KtProperty && element.getter != null -> TextRange(element.startOffset, element.typeReference!!.endOffset)
-            else -> null
-        }
+        return getRange(element)
     }
 
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
@@ -61,9 +76,28 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
     }
 
     companion object {
-        fun isSetterParameter(element: KtCallableDeclaration) =
-                element is KtParameter && element.isSetterParameter
+        fun getRange(element: KtCallableDeclaration): TextRange? {
+            if (element.containingFile is KtCodeFragment) return null
+            if (element.typeReference == null) return null
 
-        private val KtParameter.isSetterParameter: Boolean get() = (parent.parent as? KtPropertyAccessor)?.isSetter ?: false
+            if (element is KtParameter && (element.isLoopParameter || element.isSetterParameter)) {
+                return element.textRange
+            }
+
+            val initializer = (element as? KtDeclarationWithInitializer)?.initializer
+            if (element !is KtProperty && element !is KtNamedFunction) return null
+            (element as? KtNamedFunction)?.let {
+                if (it.hasBlockBody() && (element.descriptor as? FunctionDescriptor)?.returnType?.isUnit()?.not() ?: true) return null
+            }
+
+            return when {
+                initializer != null -> TextRange(element.startOffset, initializer.startOffset - 1)
+                element is KtProperty && element.getter != null -> TextRange(element.startOffset, element.typeReference!!.endOffset)
+                element is KtNamedFunction -> TextRange(element.startOffset, element.typeReference!!.endOffset)
+                else -> null
+            }
+        }
     }
 }
+
+private val KtParameter.isSetterParameter: Boolean get() = (parent.parent as? KtPropertyAccessor)?.isSetter ?: false

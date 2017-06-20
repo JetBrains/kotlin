@@ -1,0 +1,26 @@
+<problems>
+    <problem>
+        <file>Test.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant 'Unit' return type</problem_class>
+        <description>Redundant Unit return type</description>
+    </problem>
+    <problem>
+        <file>Test.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant 'Unit' return type</problem_class>
+        <description>Redundant Unit return type</description>
+    </problem>
+    <problem>
+        <file>Test.kt</file>
+        <line>8</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant 'Unit' return type</problem_class>
+        <description>Redundant Unit return type</description>
+    </problem>
+</problems>
