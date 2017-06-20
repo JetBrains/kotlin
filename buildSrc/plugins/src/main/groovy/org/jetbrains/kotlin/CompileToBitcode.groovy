@@ -164,7 +164,7 @@ class CompileCppToBitcode extends DefaultTask {
 
         project.exec {
             executable "$project.llvmDir/bin/llvm-link"
-            args project.fileTree(objDir).include('**/*.bc')
+            args project.fileTree(objDir).include('**/*.bc').sort { a, b -> (a.name <=> b.name) }
 
             args linkerArgs
 
