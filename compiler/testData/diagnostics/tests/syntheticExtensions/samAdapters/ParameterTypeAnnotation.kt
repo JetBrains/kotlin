@@ -1,6 +1,6 @@
 // FILE: KotlinFile.kt
 fun foo(javaInterface: JavaInterface) {
-    javaInterface.doIt(<!NULL_FOR_NONNULL_TYPE!>null<!>) <!TYPE_MISMATCH!>{ }<!>
+    javaInterface.doIt(<!NULL_FOR_NONNULL_TYPE!>null<!>) { }
     javaInterface.doIt("", <!NULL_FOR_NONNULL_TYPE!>null<!>)
 }
 

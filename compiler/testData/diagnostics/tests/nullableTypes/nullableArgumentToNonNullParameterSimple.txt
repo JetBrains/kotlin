@@ -1,0 +1,6 @@
+package
+
+public fun bar(/*0*/ nullX: kotlin.Int?, /*1*/ nullY: kotlin.String?, /*2*/ notNullY: kotlin.String): kotlin.Unit
+public fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String): kotlin.Unit
+public fun foo(/*0*/ x: kotlin.String): kotlin.Unit

@@ -11,9 +11,9 @@ fun valuesNullable(map: MutableMap<Int, String?>) {
         // ORIGINAL:    fun merge(K, V, (V, V) -> V?): V? defined in kotlin.collections.MutableMap
         // SUBSTITUTED: fun merge(Int, String, (String, String) -> String?): String? defined in kotlin.collections.MutableMap
     map.merge(1, null) { old, new -> old + new }
-        // OTHER_ERROR
-        // ORIGINAL:    fun merge(K, V, BiFunction<in V, in V, out V?>): V? defined in kotlin.collections.MutableMap
-        // SUBSTITUTED: fun merge(Int, String, BiFunction<in String, in String, out String?>): String? defined in kotlin.collections.MutableMap
+        // NULLABLE_ARGUMENT_TYPE_MISMATCH
+        // ORIGINAL:    fun merge(K, V, (V, V) -> V?): V? defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun merge(Int, String, (String, String) -> String?): String? defined in kotlin.collections.MutableMap
 }
 
 fun <T> valuesT(map: MutableMap<Int, T>, newValue: T) {
@@ -32,9 +32,9 @@ fun <T : Any> valuesTNotNull(map: MutableMap<Int, T>, newValue: T) {
 
 fun <T : Any> valuesTNullable(map: MutableMap<Int, T?>, newValue: T?) {
     map.merge(1, newValue) { old, new -> new }
-        // OTHER_ERROR
-        // ORIGINAL:    fun merge(K, V, BiFunction<in V, in V, out V?>): V? defined in kotlin.collections.MutableMap
-        // SUBSTITUTED: fun merge(Int, T, BiFunction<in T, in T, out T?>): T? defined in kotlin.collections.MutableMap
+        // NULLABLE_ARGUMENT_TYPE_MISMATCH
+        // ORIGINAL:    fun merge(K, V, (V, V) -> V?): V? defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun merge(Int, T, (T, T) -> T?): T? defined in kotlin.collections.MutableMap
     map.merge(1, newValue!!) { old, new -> new }
         // SUCCESS
         // ORIGINAL:    fun merge(K, V, (V, V) -> V?): V? defined in kotlin.collections.MutableMap
