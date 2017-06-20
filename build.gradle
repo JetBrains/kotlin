@@ -373,7 +373,7 @@ task crossDist {
     dependsOn 'crossDistRuntime', 'distCompiler'
 }
 
-task bundle(type: Tar) {
+task bundle(type: (isWindows()) ? Zip : Tar) {
     dependsOn('crossDist')
     baseName = "kotlin-native-${simpleOsName()}-${project.konanVersion}"
     from("$project.rootDir/dist") {
@@ -402,8 +402,10 @@ task bundle(type: Tar) {
         into baseName
     }
     destinationDir = file('.')
-    extension = 'tar.gz'
-    compression = Compression.GZIP
+    if (!isWindows()) {
+        extension = 'tar.gz'
+        compression = Compression.GZIP
+    }
 }
 
 task clean {
