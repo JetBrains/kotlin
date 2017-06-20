@@ -108,6 +108,18 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("CollectionLiteralLeft.kt")
+    public void testCollectionLiteralLeft() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/CollectionLiteralLeft.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("CollectionLiteralRight.kt")
+    public void testCollectionLiteralRight() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/CollectionLiteralRight.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("CoroutineSuspensionPoint.kt")
     public void testCoroutineSuspensionPoint() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/CoroutineSuspensionPoint.kt");

@@ -30,7 +30,7 @@ class KtCollectionLiteralExpression(node: ASTNode) : KtExpressionImpl(node), KtR
         get() = findChildByType(KtTokens.LBRACKET)
 
     val rightBracket: PsiElement?
-        get() = findChildByType(KtTokens.LBRACKET)
+        get() = findChildByType(KtTokens.RBRACKET)
 
     fun getInnerExpressions(): List<KtExpression> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, KtExpression::class.java)
