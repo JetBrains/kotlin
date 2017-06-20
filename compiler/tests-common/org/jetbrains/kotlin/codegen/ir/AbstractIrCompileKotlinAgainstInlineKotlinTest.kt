@@ -20,6 +20,6 @@ import org.jetbrains.kotlin.codegen.AbstractCompileKotlinAgainstInlineKotlinTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 
-open class AbstractIrCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstInlineKotlinTest() {
+abstract class AbstractIrCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstInlineKotlinTest() {
     override fun updateConfiguration(configuration: CompilerConfiguration) = configuration.put(JVMConfigurationKeys.IR, true)
 }
