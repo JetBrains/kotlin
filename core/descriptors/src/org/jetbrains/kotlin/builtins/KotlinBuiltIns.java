@@ -1082,6 +1082,10 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClass(type, FQ_NAMES.iterable);
     }
 
+    public static boolean isThrowableOrNullableThrowable(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.throwable);
+    }
+
     public static boolean isKClass(@NotNull ClassDescriptor descriptor) {
         return classFqNameEquals(descriptor, FQ_NAMES.kClass);
     }

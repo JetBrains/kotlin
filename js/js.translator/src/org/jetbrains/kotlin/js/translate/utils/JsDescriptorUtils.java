@@ -185,7 +185,7 @@ public final class JsDescriptorUtils {
     public static boolean isImmediateSubtypeOfError(@NotNull ClassDescriptor descriptor) {
         if (!isExceptionClass(descriptor)) return false;
         ClassDescriptor superClass = DescriptorUtilsKt.getSuperClassOrAny(descriptor);
-        return TypeUtilsKt.isThrowable(superClass.getDefaultType()) || AnnotationsUtils.isNativeObject(superClass);
+        return TypeUtilsKt.isNotNullThrowable(superClass.getDefaultType()) || AnnotationsUtils.isNativeObject(superClass);
     }
 
     public static boolean isExceptionClass(@NotNull ClassDescriptor descriptor) {

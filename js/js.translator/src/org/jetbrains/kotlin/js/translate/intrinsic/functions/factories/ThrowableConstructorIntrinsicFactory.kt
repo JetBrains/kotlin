@@ -21,19 +21,18 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation
-import org.jetbrains.kotlin.js.backend.ast.JsLiteral
 import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.typeUtil.isThrowable
+import org.jetbrains.kotlin.types.typeUtil.isNotNullThrowable
 
 object ThrowableConstructorIntrinsicFactory : FunctionIntrinsicFactory {
     override fun getIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic? {
         if (descriptor !is ConstructorDescriptor) return null
-        if (!descriptor.constructedClass.defaultType.isThrowable()) return null
+        if (!descriptor.constructedClass.defaultType.isNotNullThrowable()) return null
 
         return Intrinsic
     }

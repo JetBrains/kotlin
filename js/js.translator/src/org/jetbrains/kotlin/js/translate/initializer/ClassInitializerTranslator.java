@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -288,7 +287,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             if (KotlinBuiltIns.isStringOrNullableString(param.getType())) {
                 messageArgument = context.cacheExpressionIfNeeded(jsValue);
             }
-            else if (TypeUtilsKt.isConstructedFromClassWithGivenFqName(param.getType(), KotlinBuiltIns.FQ_NAMES.throwable)) {
+            else if (KotlinBuiltIns.isThrowableOrNullableThrowable(param.getType())) {
                 causeArgument = context.cacheExpressionIfNeeded(jsValue);
             }
             else {

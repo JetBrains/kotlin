@@ -270,7 +270,7 @@ public final class StaticContext {
             else if (FunctionTypesKt.isBuiltinFunctionalType(type)) {
                 return pureFqn("Function", null);
             }
-            else if (TypeUtilsKt.isThrowable(classDescriptor.getDefaultType())) {
+            else if (TypeUtilsKt.isNotNullThrowable(classDescriptor.getDefaultType())) {
                 return pureFqn("Error", null);
             }
         }

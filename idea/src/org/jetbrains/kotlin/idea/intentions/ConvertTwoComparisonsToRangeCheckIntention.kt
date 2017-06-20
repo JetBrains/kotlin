@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
-import org.jetbrains.kotlin.types.typeUtil.isConstructedFromClassWithGivenFqName
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 class ConvertTwoComparisonsToRangeCheckInspection : IntentionBasedInspection<KtBinaryExpression>(
