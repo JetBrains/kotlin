@@ -1,9 +1,27 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.kotlin.cli.klib
 
 import kotlin.system.exitProcess
 import java.util.Properties
 // TODO: Extract these as a shared jar?
+import org.jetbrains.kotlin.backend.konan.library.SplitLibraryScheme
 import org.jetbrains.kotlin.backend.konan.library.SplitLibraryReader
+import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
 import org.jetbrains.kotlin.backend.konan.util.File
 import org.jetbrains.kotlin.backend.konan.util.copyTo
 import org.jetbrains.kotlin.konan.target.TargetManager
@@ -58,24 +76,24 @@ fun error(text: String) {
     exitProcess(1)
 }
 
-class Library(val name: String, val repository: String, val target: String) {
+// TODO: Get rid of the hardcoded path.
+val defaultRepository = File(File.userHome, ".konan")
 
-    val file = File(name)
-    val repositoryFile = File(repository)
+class Library(val name: String, val requestedRepository: String?, val target: String) {
 
-    // TODO: need to do something here.
-    val currentAbiVersion = 1
-
-    val library = SplitLibraryReader(file, currentAbiVersion, target)
-    val manifestFile = library.manifestFile
-
+    val repository = requestedRepository?.File() ?: defaultRepository
     fun info() {
+        val library = libraryInRepoOrCurrentDir(repository, name)
         val header = Properties()
+        val manifestFile = library.manifestFile
         manifestFile.bufferedReader().use { reader ->
             header.load(reader)
         }
         val headerAbiVersion = header.getProperty("abi_version")!!
         val moduleName = header.getProperty("module_name")!!
+
+        println("")
+        println("Resolved to: ${library.libDir.absolutePath}")
         println("Module name: $moduleName")
         println("ABI version: $headerAbiVersion")
         val targets = library.targetsDir.listFiles.map{it.name}.joinToString(", ")
@@ -83,22 +101,34 @@ class Library(val name: String, val repository: String, val target: String) {
     }
 
     fun install() {
-        remove()
-        val baseName = library.klibFile.name
-        val newKlibName = File(repositoryFile, baseName)
-        library.klibFile.copyTo(newKlibName)
+        remove(true) 
+
+        val klibFile = libraryInCurrentDir(name).klibFile
+        val newLocation = File(repository, "klib")
+        newLocation.mkdirs()
+        val newFile = File(newLocation, klibFile.name)
+        klibFile.copyTo(newFile)
     }
 
-    fun remove() {
-        repositoryFile.mkdirs()
-        val baseName = library.klibFile.name
-        val newDirName = File(repositoryFile, library.libDir.name)
-        val newKlibName = File(repositoryFile, baseName)
-        newKlibName.deleteRecursively()
-        newDirName.deleteRecursively()
+    fun remove(blind: Boolean = false) {
+        if (!repository.exists) error("Repository does not exist: $repository")
+
+        val library = try {
+            val library = libraryInRepo(repository, name)
+            if (blind) warn("Removing The previously installed $name from $repository.")
+            library
+
+        } catch (e: Throwable) {
+            if (!blind) println(e.message)
+            null
+
+        }
+        library?.libDir?.deleteRecursively()
+        library?.klibFile?.delete()
     }
 
     fun contents() {
+        val library = libraryInRepoOrCurrentDir(repository, name)
         val moduleName = library.moduleName
         val printer = PrettyPrinter(
             library.tableOfContents, {name -> library.packageMetadata(name)})
@@ -109,20 +139,37 @@ class Library(val name: String, val repository: String, val target: String) {
     }
 }
 
+// TODO: need to do something here.
+val currentAbiVersion = 1
+
+val File.konanLibrary 
+    get() = SplitLibraryReader(this, currentAbiVersion, null)
+
+fun libraryInRepo(repository: File, name: String): SplitLibraryReader {
+    val resolver = KonanLibrarySearchPathResolver(listOf(repository.absolutePath), null, null, skipCurrentDir = true)
+    return resolver.resolve(name).konanLibrary
+}
+
+fun libraryInCurrentDir(name: String): SplitLibraryReader {
+    val resolver = KonanLibrarySearchPathResolver(emptyList(), null, null)
+    return resolver.resolve(name).konanLibrary
+}
+
+fun libraryInRepoOrCurrentDir(repository: File, name: String): SplitLibraryReader {
+    val resolver = KonanLibrarySearchPathResolver(listOf(repository.absolutePath), null, null)
+    return resolver.resolve(name).konanLibrary
+}
+
+
 fun main(args: Array<String>) {
     val command = Command(args)
 
     val targetManager = TargetManager(command.options["target"]?.last())
     val target = targetManager.targetName
 
-    val repository = command.options["repository"]?.last()
-    val repositoryList = repository ?.let { listOf(it) } ?: emptyList()
+    val repository = command.options["-repository"]?.last()
 
-    val userHome = File(System.getProperty("user.home")).absolutePath
-    val userKonan = File(userHome, ".konan")
-    val userRepo = File(userKonan, "klib")
-
-    val library = Library(command.library, repository ?: userRepo.path, target)
+    val library = Library(command.library, repository, target)
 
     warn("IMPORTANT: the library format is unstable now. It can change with any new git commit without warning!")
 

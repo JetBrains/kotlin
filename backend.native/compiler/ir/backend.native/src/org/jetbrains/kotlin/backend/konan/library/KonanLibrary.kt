@@ -89,11 +89,11 @@ interface SplitLibraryScheme {
 }
 
 class SplitLibraryReader(override val libDir: File, currentAbiVersion: Int,
-        override val target: String) : 
+        override val target: String?) :
       FileBasedLibraryReader(libDir, currentAbiVersion, SplitMetadataReader(libDir)), 
       SplitLibraryScheme  {
 
-    public constructor(path: String, currentAbiVersion: Int, target: String) : 
+    public constructor(path: String, currentAbiVersion: Int, target: String?) :
         this(File(path), currentAbiVersion, target) 
 
     init {

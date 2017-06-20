@@ -64,9 +64,13 @@ class File(val path: String) {
     companion object {
         val userDir
             get() = File(System.getProperty("user.dir"))
+
+        val userHome
+            get() = File(System.getProperty("user.home"))
     }
 }
 
+fun String.File() = File(this)
 
 private val File.zipUri: URI
         get() = URI.create("jar:${this.toPath().toUri()}")

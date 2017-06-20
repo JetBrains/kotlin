@@ -26,16 +26,16 @@ interface SearchPathResolver {
 }
 
 class KonanLibrarySearchPathResolver(repositories: List<String>,
-    val distributionKlib: String, val localKonanDir: String): SearchPathResolver {
+    val distributionKlib: String?, val localKonanDir: String?, val skipCurrentDir: Boolean = false): SearchPathResolver {
 
-    val localHead: File
-        get() = File(localKonanDir).klib
+    val localHead: File?
+        get() = localKonanDir?.File()?.klib
 
-    val distHead: File
-        get() = File(distributionKlib)
+    val distHead: File?
+        get() = distributionKlib?.File()
 
-    val currentDirHead: File
-        get() = File.userDir
+    val currentDirHead: File?
+        get() = if (!skipCurrentDir) File.userDir else null
 
     private val repoRoots: List<File> by lazy {
         repositories.map{File(it).klib}
@@ -43,7 +43,7 @@ class KonanLibrarySearchPathResolver(repositories: List<String>,
 
     // This is the place where we specify the order of library search.
     override val searchRoots: List<File> by lazy {
-        listOf(currentDirHead) + repoRoots + listOf(localHead, distHead)
+        (listOf(currentDirHead) + repoRoots + listOf(localHead, distHead)).filterNotNull()
     }
 
     private fun found(candidate: File): File? {
@@ -68,10 +68,10 @@ class KonanLibrarySearchPathResolver(repositories: List<String>,
                 found(File(it, givenPath))?.apply{return this}
             }
         }
-        error("Could not find \"$givenPath\" in any of the provided locations.")
+        error("Could not find \"$givenPath\" in ${searchRoots.map{it.absolutePath}}.")
     }
 
-    private val File.klib 
+    private val File.klib
         get() = File(this, "klib")
 }
 
