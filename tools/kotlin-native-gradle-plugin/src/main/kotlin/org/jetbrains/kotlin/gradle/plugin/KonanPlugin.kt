@@ -190,7 +190,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         internal const val KONAN_VERSION_PROPERTY_NAME = "konan.version"
         internal const val KONAN_BUILD_TARGETS = "konan.build.targets"
 
-        internal const val DEFAULT_KONAN_VERSION = "0.2"
+        internal const val DEFAULT_KONAN_VERSION = "0.3"
     }
 
     /**
