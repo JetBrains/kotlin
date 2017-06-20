@@ -169,7 +169,16 @@ private object ReflectClassStructure {
             annotationType: Class<*>
     ) {
         for (method in annotationType.declaredMethods) {
-            processAnnotationArgumentValue(visitor, Name.identifier(method.name), method(annotation)!!)
+            val value = try {
+                method(annotation)!!
+            }
+            catch (e: IllegalAccessException) {
+                // This is possible if the annotation class is package local. In this case, we can't read the value into descriptor.
+                // However, this might be OK, because we do not use any data from AnnotationDescriptor in KAnnotatedElement implementations
+                // anyway; we use the source element and the underlying physical Annotation object to implement the needed API
+                continue
+            }
+            processAnnotationArgumentValue(visitor, Name.identifier(method.name), value)
         }
         visitor.visitEnd()
     }

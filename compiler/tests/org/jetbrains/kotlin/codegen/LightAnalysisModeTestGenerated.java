@@ -13843,6 +13843,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("privateAnnotation.kt")
+            public void testPrivateAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/annotations/privateAnnotation.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("propertyAccessors.kt")
             public void testPropertyAccessors() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/annotations/propertyAccessors.kt");
