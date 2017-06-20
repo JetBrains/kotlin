@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.script
+package org.jetbrains.kotlin.cli.common.script
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
+import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProviderBase
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
