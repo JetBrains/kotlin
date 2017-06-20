@@ -196,7 +196,7 @@ class CandidateResolver(
                 getReceiverValueWithSmartCast(receiverArgument, smartCastType), candidateDescriptor, scope.ownerDescriptor)
         return if (invisibleMember != null) {
             tracing.invisibleMember(trace, invisibleMember)
-            OTHER_ERROR
+            INVISIBLE_MEMBER_ERROR
         } else {
             SUCCESS
         }

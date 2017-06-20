@@ -4,7 +4,7 @@ package k
 import JavaClass
 
 fun foo(javaClass: JavaClass) {
-    javaClass.<!INVISIBLE_MEMBER!>doSomething<!> <!TYPE_MISMATCH!>{ }<!>
+    javaClass.<!INVISIBLE_MEMBER!>doSomething<!> { }
 }
 
 // FILE: KotlinFile2.kt

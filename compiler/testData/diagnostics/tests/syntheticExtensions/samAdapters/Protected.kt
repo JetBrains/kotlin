@@ -4,15 +4,15 @@ package k
 import JavaClass
 
 fun foo(javaClass: JavaClass) {
-    javaClass.<!INVISIBLE_MEMBER!>doSomething<!> <!TYPE_MISMATCH!>{
+    javaClass.<!INVISIBLE_MEMBER!>doSomething<!> {
         bar()
-    }<!>
+    }
 }
 
 class X : JavaClass() {
     fun foo(other: JavaClass) {
         doSomething { bar() }
-        other.<!INVISIBLE_MEMBER!>doSomething<!> <!TYPE_MISMATCH!>{ bar() }<!>
+        other.<!INVISIBLE_MEMBER!>doSomething<!> { bar() }
     }
 }
 
