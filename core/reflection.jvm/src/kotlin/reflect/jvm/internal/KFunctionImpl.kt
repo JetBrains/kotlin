@@ -18,8 +18,6 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
@@ -58,21 +56,16 @@ internal class KFunctionImpl private constructor(
 
     override val name: String get() = descriptor.name.asString()
 
-    private fun isPrivateInBytecode(): Boolean =
-            Visibilities.isPrivate(descriptor.visibility) ||
-            descriptor.isEffectivelyInlineOnly()
-
-    private fun isDeclared(): Boolean = isPrivateInBytecode()
-
     override val caller: FunctionCaller<*> by ReflectProperties.lazySoft caller@ {
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
                     return@caller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, POSITIONAL_CALL, KOTLIN)
-                container.findConstructorBySignature(jvmSignature.constructorDesc, isDeclared())
+                container.findConstructorBySignature(jvmSignature.constructorDesc, descriptor.isPublicInBytecode)
             }
-            is KotlinFunction -> container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc, isDeclared())
+            is KotlinFunction ->
+                container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc, descriptor.isPublicInBytecode)
             is JavaMethod -> jvmSignature.method
             is JavaConstructor -> jvmSignature.constructor
             is FakeJavaAnnotationConstructor -> {
@@ -102,12 +95,12 @@ internal class KFunctionImpl private constructor(
         val member: Member? = when (jvmSignature) {
             is KotlinFunction -> {
                 container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc,
-                                            !Modifier.isStatic(caller.member!!.modifiers), isDeclared())
+                                            !Modifier.isStatic(caller.member!!.modifiers), descriptor.isPublicInBytecode)
             }
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
                     return@defaultCaller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, CALL_BY_NAME, KOTLIN)
-                container.findDefaultConstructor(jvmSignature.constructorDesc, isDeclared())
+                container.findDefaultConstructor(jvmSignature.constructorDesc, descriptor.isPublicInBytecode)
             }
             is FakeJavaAnnotationConstructor -> {
                 val methods = jvmSignature.methods

@@ -16,10 +16,12 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.components.RuntimeSourceElementFactory
 import org.jetbrains.kotlin.load.java.reflect.tryLoadClass
@@ -145,3 +147,8 @@ internal val ReflectKotlinClass.packageModuleName: String?
         }
     }
 
+internal val CallableMemberDescriptor.isPublicInBytecode: Boolean
+    get() {
+        val visibility = visibility
+        return (visibility == Visibilities.PUBLIC || visibility == Visibilities.INTERNAL) && !isEffectivelyInlineOnly()
+    }

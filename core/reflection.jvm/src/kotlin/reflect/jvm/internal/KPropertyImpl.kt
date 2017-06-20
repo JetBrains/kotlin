@@ -235,12 +235,15 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
                 property.container.findMethodBySignature(
                         jvmSignature.nameResolver.getString(signature.name),
                         jvmSignature.nameResolver.getString(signature.desc),
-                        Visibilities.isPrivate(descriptor.visibility)
+                        descriptor.isPublicInBytecode
                 )
             }
 
             when {
-                accessor == null -> computeFieldCaller(property.javaField!!)
+                accessor == null -> computeFieldCaller(
+                        property.javaField
+                        ?: throw KotlinReflectionInternalError("No accessors or field is found for property $property")
+                )
                 !Modifier.isStatic(accessor.modifiers) ->
                     if (isBound) FunctionCaller.BoundInstanceMethod(accessor, property.boundReceiver)
                     else FunctionCaller.InstanceMethod(accessor)

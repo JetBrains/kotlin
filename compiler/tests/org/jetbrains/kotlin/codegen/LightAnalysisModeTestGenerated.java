@@ -14008,6 +14008,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("protectedMembers.kt")
+            public void testProtectedMembers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/protectedMembers.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("returnUnit.kt")
             public void testReturnUnit() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/returnUnit.kt");
