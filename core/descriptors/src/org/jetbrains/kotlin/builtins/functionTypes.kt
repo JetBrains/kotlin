@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
@@ -80,6 +80,8 @@ val KotlinType.isBuiltinFunctionalType: Boolean
     }
 
 fun isBuiltinFunctionClass(classId: ClassId): Boolean {
+    if (!classId.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return false
+
     val kind = classId.asSingleFqName().toUnsafe().getFunctionalClassKind()
     return kind == FunctionClassDescriptor.Kind.Function ||
            kind == FunctionClassDescriptor.Kind.SuspendFunction
@@ -102,27 +104,21 @@ private val KotlinType.isTypeAnnotatedWithExtensionFunctionType: Boolean
  * e.g. kotlin.Function1 (but NOT kotlin.reflect.KFunction1)
  */
 fun isNumberedFunctionClassFqName(fqName: FqNameUnsafe): Boolean {
-    if (!fqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return false
-
-    val segments = fqName.pathSegments()
-    if (segments.size != 2) return false
-
-    val shortName = segments.last().asString()
-    return BuiltInFictitiousFunctionClassFactory.isFunctionClassName(shortName, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
+    return fqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) &&
+           fqName.getFunctionalClassKind() == FunctionClassDescriptor.Kind.Function
 }
 
 fun DeclarationDescriptor.getFunctionalClassKind(): FunctionClassDescriptor.Kind? {
     if (this !is ClassDescriptor) return null
+    if (!KotlinBuiltIns.isUnderKotlinPackage(this)) return null
 
-    val fqNameUnsafe = this.fqNameUnsafe
     return fqNameUnsafe.getFunctionalClassKind()
 }
 
-fun FqNameUnsafe.getFunctionalClassKind(): FunctionClassDescriptor.Kind? {
+private fun FqNameUnsafe.getFunctionalClassKind(): FunctionClassDescriptor.Kind? {
     if (!isSafe || isRoot) return null
-    val fqName = toSafe()
 
-    return BuiltInFictitiousFunctionClassFactory.getFunctionalClassKind(fqName.shortName().asString(), fqName.parent())
+    return BuiltInFictitiousFunctionClassFactory.getFunctionalClassKind(shortName().asString(), toSafe().parent())
 }
 
 

@@ -90,6 +90,10 @@ public final class ClassId {
         return new FqName(packageFqName.asString() + "." + relativeClassName.asString());
     }
 
+    public boolean startsWith(@NotNull Name segment) {
+        return packageFqName.startsWith(segment);
+    }
+
     /**
      * @return a string where packages are delimited by '/' and classes by '.', e.g. "kotlin/Map.Entry"
      */
