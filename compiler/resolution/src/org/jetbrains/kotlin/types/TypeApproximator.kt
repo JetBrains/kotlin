@@ -328,7 +328,8 @@ class TypeApproximator {
                         // Inv<Foo!> is supertype for Inv<Foo?>
                         if (!NewKotlinTypeChecker.equalTypes(argumentType, toSubType)) return type.defaultResult(toSuper)
 
-                        newArguments[index] = argumentType.asTypeProjection()
+                        // also Captured(out Nothing) = Nothing
+                        newArguments[index] = toSubType.asTypeProjection()
                         continue@loop
                     }
 
