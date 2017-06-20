@@ -39,8 +39,18 @@
 #define DEFAULT_WIDTH MAX_ACCURACY_WIDTH
 
 extern "C" {
-KFloat
-Konan_FloatingPointParser_parseFloatImpl (KString s, KInt e);
+KFloat Konan_FloatingPointParser_parseFloatImpl (KString s, KInt e);
+
+KFloat Konan_int_bits_to_float(KInt x);
+}
+
+KFloat Konan_int_bits_to_float(KInt x) {
+  union {
+    int32_t x;
+    float f;
+  } tmp;
+  tmp.x = x;
+  return tmp.f;
 }
 
 KFloat createFloat1 (U_64 * f, IDATA length, KInt e);

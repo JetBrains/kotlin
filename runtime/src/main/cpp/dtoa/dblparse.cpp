@@ -53,6 +53,17 @@ KDouble Konan_NumberConverter_ceil(KDouble x) {
 }
 
 void Kotlin_IntArray_set(KRef thiz, KInt index, KInt value);
+
+KDouble Konan_long_bits_to_double(KLong x);
+}
+
+KDouble Konan_long_bits_to_double(KLong x) {
+  union {
+    int64_t x;
+    double d;
+  } tmp;
+  tmp.x = x;
+  return tmp.d;
 }
 
 KDouble createDouble (const char *s, KInt e);

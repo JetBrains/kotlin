@@ -336,8 +336,7 @@ object FloatingPointParser {
 
         // See if it could be a hexadecimal representation.
         if (parseAsHex(s)) {
-            TODO("Hex format is not supported")
-            //return HexStringParser.parseDouble(s)
+            return HexStringParser.parseDouble(s)
         }
 
         val info = initialParse(s, length)
@@ -389,8 +388,7 @@ object FloatingPointParser {
 
         // See if it could be a hexadecimal representation.
         if (parseAsHex(s)) {
-            TODO("Hex format is not supported")
-            //return HexStringParser.parseFloat(s)
+            return HexStringParser.parseFloat(s)
         }
 
         val info = initialParse(s, length)
