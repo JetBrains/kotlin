@@ -53,9 +53,9 @@ internal fun ClassDescriptor.toJavaClass(): Class<*>? {
             (source.javaElement as ReflectJavaClass).element
         }
         else -> {
-            // If this is neither a Kotlin class nor a Java class, it is either a built-in or some fake class descriptor like the one
+            // If this is neither a Kotlin class nor a Java class, it's likely either a built-in or some fake class descriptor like the one
             // that's created for java.io.Serializable in JvmBuiltInsSettings
-            val classId = JavaToKotlinClassMap.mapKotlinToJava(DescriptorUtils.getFqName(this)) ?: classId!!
+            val classId = JavaToKotlinClassMap.mapKotlinToJava(DescriptorUtils.getFqName(this)) ?: classId ?: return null
             val packageName = classId.packageFqName.asString()
             val className = classId.relativeClassName.asString()
             // All pseudo-classes like kotlin.String.Companion must be accessible from the current class loader
