@@ -33,7 +33,7 @@ In this case the compiler will not be downloaded by the plugin.
 
 To use the plugin you need to define artifacts you want to build in the `konanArtifacts` block. Here you can specify
 source files and compilation parameters (e.g. a target platform) for each artifact (see **Plugin DSL** section below for
-details).
+details). The plugin uses `src/main/kotlin/` as a default directory for sources.
 
     konanArtifacts {
        foo {
@@ -63,20 +63,65 @@ interop in the artifact definition using `useInterop` method.
     }
 
 Each element in the `konanInterop` block creates a task for `cinterop` tool exection (see `INTEROP.md` to read more
-about this tool) so you can specify `cinterop` parameters here (see **Plugin DSL** section below).
+about this tool) so you can specify `cinterop` parameters here (see **Plugin DSL** section below). The default path to
+an interop def-file is `src/main/c_interop/<interop-name>.def`.
 
-You can get a task for Kotlin/Native compilation using `compilationTask` property of an artifact:
+One can get a task for Kotlin/Native compilation using the `compilationTask` artifact property or by name:
+`compileKonan<ArtifactName>`.
 
-      konanArtifacts['foo'].compilationTask
+    konanArtifacts['foo'].compilationTask    // The task name is "compileKonanFoo"
 
-You can get a task for `cinterop` execution and a stub compilation task using `generateStubsTask` and `compileStubsTask`
-of an interop defined:
+One can get `cinterop` execution and stub compilation tasks using `generateStubsTask` and `compileStubsTask`
+interop properties or by names: `gen<InteropName>InteropStubs` (`cinterop` execution task) and
+`compile<InteropName>InteropStubs` (stub compilation task).
 
-    konanInterop['stdio'].generateStubsTask
-    konanInterop['stdio'].compileStubsTask
+    konanInterop['stdio'].generateStubsTask  // The task name is "genStdioInteropStubs"
+    konanInterop['stdio'].compileStubsTask   // The task name is "compileStdioInteropStubs"
 
-All tasks contain a set of properties allowing one to obtain paths to artifacts built and paramters of compilation and
-cinterop execution (see the `dumpParameters` task in `samles/csvparser/build.gradle` for example).
+All the tasks contain a set of properties allowing one to obtain paths to artifacts built and parameters of compilation/cinterop
+execution. One may print all these parameters by specifying `dumpParamters(true)` in an interop or an artifact block:
+    
+    konanArtifacts {
+       foo { dumpParameters(true) }
+    }
+    
+The plugin creates two additional tasks: `compileKonan` and `run`. The first one is dependent on all compilation
+tasks and allows one to build all the artifacts supported by the current host. The second one allows one to run all
+executable artifacts supported by the current host. Additional parameters can be passed using the `runArgs` project
+property:
+
+    ./gradlew run -PrunArgs='foo bar'
+
+The plugin also edits the default `build` and `clean` tasks so that the first one allows one to build all the artifacts
+supported (it's dependent on the `compileKonan` task) and the second one removes the files created by the Kotlin/Native
+build.
+
+#### Task graph
+
+A task dependency structure is simple. Consider a following project:
+
+    konanArtifacts {
+        fooArtifact { useInterop 'foo' ... }
+        barArtifact { useInterop 'bar' ... }
+    }
+     
+     konanInterop {
+        foo { ... }
+        bar { ... }
+     }
+     
+For this project the task graph will be the following:
+
+    run
+        build
+            compileKonan
+                compileKonanFooArtifact
+                    compileFooInteropStubs
+                        genFooInteropStubs
+                compileKonanBarArtifact
+                    compileBarInteropStubs
+                        genBarInteropStubs
+    clean
 
 #### Plugin DSL
 
@@ -112,6 +157,9 @@ cinterop execution (see the `dumpParameters` task in `samles/csvparser/build.gra
 
              // Native interop to use in the artifact.
              useInterop "interopName"
+             
+             // Print all parameters during the build.
+             dumpParameters(true)
         }
      }
 
@@ -129,5 +177,7 @@ cinterop execution (see the `dumpParameters` task in `samles/csvparser/build.gra
              includeDirs "include/directory" "another/directory"   // Directories to look for headers.
 
              link <files which will be linked with native stubs>    // Additional files to link with native stubs.
+             
+             dumpParameters(true)                                   // Print all parameters during the build.                       
          }
      }
