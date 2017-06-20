@@ -263,10 +263,14 @@ open class JvmBuiltInsSettings(
     private fun ClassDescriptor.getJavaAnalogue(): LazyJavaClassDescriptor? {
         // Prevents recursive dependency: memberScope(Any) -> memberScope(Object) -> memberScope(Any)
         // No additional members should be added to Any
-        if (isAny) return null
+        if (KotlinBuiltIns.isAny(this)) return null
 
-        val fqName = fqNameUnsafe.takeIf { it.isSafe }?.toSafe() ?: return null
-        val javaAnalogueFqName = j2kClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName() ?: return null
+        // Optimization: only classes under kotlin.* can have Java analogues
+        if (!KotlinBuiltIns.isUnderKotlinPackage(this)) return null
+
+        val fqName = fqNameUnsafe
+        if (!fqName.isSafe) return null
+        val javaAnalogueFqName = j2kClassMap.mapKotlinToJava(fqName)?.asSingleFqName() ?: return null
 
         return ownerModuleDescriptor.resolveClassByFqName(javaAnalogueFqName, NoLookupLocation.FROM_BUILTINS) as? LazyJavaClassDescriptor
     }
@@ -308,10 +312,10 @@ open class JvmBuiltInsSettings(
     }
 
     override fun isFunctionAvailable(classDescriptor: ClassDescriptor, functionDescriptor: SimpleFunctionDescriptor): Boolean {
+        val javaAnalogueClassDescriptor = classDescriptor.getJavaAnalogue() ?: return true
+
         if (!functionDescriptor.annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)) return true
         if (!isAdditionalBuiltInsFeatureSupported) return false
-
-        val javaAnalogueClassDescriptor = classDescriptor.getJavaAnalogue() ?: return true
 
         val jvmDescriptor = functionDescriptor.computeJvmDescriptor()
         return javaAnalogueClassDescriptor
@@ -473,8 +477,6 @@ open class JvmBuiltInsSettings(
             }
     }
 }
-
-private val ClassDescriptor.isAny: Boolean get() = fqNameUnsafe == KotlinBuiltIns.FQ_NAMES.any
 
 private class FallbackBuiltIns private constructor() : KotlinBuiltIns(LockBasedStorageManager()) {
     init {
