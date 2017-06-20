@@ -21,12 +21,17 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -71,11 +76,30 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
         }
 
     }
-}
 
-//TODO move to utils
-val KotlinType.isKFunctionType: Boolean
-    get() {
-        val kind = constructor.declarationDescriptor?.getFunctionalClassKind()
-        return kind == FunctionClassDescriptor.Kind.KFunction
-    }
+
+    //TODO move all to common utils
+    val KotlinType.isKFunctionType: Boolean
+        get() {
+            val kind = constructor.declarationDescriptor?.getFunctionalClassKind()
+            return kind == FunctionClassDescriptor.Kind.KFunction
+        }
+
+    fun BackendContext.createIrBuilder(symbol: IrSymbol,
+                                       startOffset: Int = UNDEFINED_OFFSET,
+                                       endOffset: Int = UNDEFINED_OFFSET) =
+            DeclarationIrBuilder(this, symbol, startOffset, endOffset)
+
+    class DeclarationIrBuilder(
+            backendContext: BackendContext,
+            symbol: IrSymbol,
+            startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
+    ) : IrBuilderWithScope(
+            IrLoweringContext(backendContext),
+            Scope(symbol),
+            startOffset,
+            endOffset
+    )
+
+    class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContext(backendContext.irBuiltIns)
+}
