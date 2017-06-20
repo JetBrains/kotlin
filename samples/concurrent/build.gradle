@@ -14,10 +14,11 @@ konanArtifacts {
 }
 
 task compileCpp(type: Exec) {
+    dependsOn 'genMessageChannelInteropStubs'
     workingDir project.getProjectDir()
     commandLine './buildCpp.sh'
 }
 
-genMessageChannelInteropStubs {
-    dependsOn(compileCpp)
+compileKonanMessageChannel {
+    dependsOn 'compileCpp'
 }

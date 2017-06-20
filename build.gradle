@@ -397,6 +397,7 @@ task bundle(type: Tar) {
         exclude '**/settings.gradle'
         exclude '**/build'
         exclude '**/.gradle'
+        exclude 'samples/**/*.kt.bc-build'
         rename('(.*)\\.for_bundle', '$1')
         into baseName
     }
