@@ -38,11 +38,9 @@ class PrettyPrinter(val library: Base64, val packageLoader: (String) -> Base64) 
         get() = moduleHeader.packageFragmentNameList
 
     fun printPackageFragment(fqname: String) {
-        if (fqname == "konan") {
-            if (fqname.isNotEmpty()) println("\nPackage $fqname")
-            val fragment = packageFragment(fqname)
-            PackageFragmentPrinter(fragment, out).print()
-        }
+        if (fqname.isNotEmpty()) println("\nPackage $fqname")
+        val fragment = packageFragment(fqname)
+        PackageFragmentPrinter(fragment, out).print()
     }
 }
 
@@ -50,7 +48,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
     val printer            = Printer(out, "    ")
     val stringTable        = packageFragment.stringTable!!
     val qualifiedNameTable = packageFragment.nameTable!!
-    var typeTableStack     = mutableListOf<ProtoBuf.TypeTable>() //? =
+    var typeTableStack     = mutableListOf<ProtoBuf.TypeTable>()
 
     //-------------------------------------------------------------------------//
 
