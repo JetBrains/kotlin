@@ -44,6 +44,8 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxCodegenTest
+import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxInlineCodegenTest
+import org.jetbrains.kotlin.codegen.ir.AbstractIrCompileKotlinAgainstInlineKotlinTest
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
 import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
@@ -439,6 +441,14 @@ fun main(args: Array<String>) {
     testGroup("compiler/tests-ir-jvm/tests", "compiler/testData") {
         testClass<AbstractIrBlackBoxCodegenTest> {
             model("codegen/box", targetBackend = TargetBackend.JVM)
+        }
+
+        testClass<AbstractIrBlackBoxInlineCodegenTest> {
+            model("codegen/boxInline")
+        }
+
+        testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
+            model("codegen/boxInline")
         }
     }
 
