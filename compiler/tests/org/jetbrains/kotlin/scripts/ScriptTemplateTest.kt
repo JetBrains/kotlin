@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.util.KotlinFrontEndException
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Test
@@ -251,6 +252,20 @@ class ScriptTemplateTest {
         Assert.assertTrue(exceptionThrown)
     }
 
+    @Test
+    fun testScriptWithNoMatchingTemplate() {
+        try {
+            compileScript("fib.kts", ScriptWithDifferentFileNamePattern::class, null)
+            Assert.fail("should throw compilation error")
+        }
+        catch (e: KotlinFrontEndException) {
+            if (e.message?.contains("Should not parse a script without definition") != true) {
+                // unexpected error
+                throw e
+            }
+        }
+    }
+
     private fun compileScript(
             scriptPath: String,
             scriptTemplate: KClass<out Any>,
@@ -386,6 +401,12 @@ abstract class ScriptWithoutParams(num: Int)
         scriptFilePattern =".*\\.kts",
         resolver = TestKotlinScriptDependenciesResolver::class)
 abstract class ScriptBaseClassWithOverriddenProperty(override val num: Int) : TestClassWithOverridableProperty(num)
+
+@ScriptTemplateDefinition(
+        scriptFilePattern = ".*\\.custom\\.kts",
+        resolver = TestKotlinScriptDependenciesResolver::class
+)
+abstract class ScriptWithDifferentFileNamePattern
 
 @ScriptTemplateDefinition(resolver = TestKotlinScriptDependenciesResolver::class)
 abstract class ScriptWithArrayParam(val myArgs: Array<String>)

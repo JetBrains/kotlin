@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.Lazy;
+import kotlin.LazyKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub;
@@ -26,21 +28,15 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProviderKt;
 
 import java.util.List;
+import java.util.Objects;
+
+import static kotlin.LazyThreadSafetyMode.PUBLICATION;
 
 public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implements KtDeclarationContainer {
-
-    private KotlinScriptDefinition kotlinScriptDefinitionField = null;
-    private boolean kotlinScriptDefinitionInitialized = false;
-
-    // make it a simple lazy value after converting to kotlin
-    private KotlinScriptDefinition getKotlinScriptDefinition() {
-        if (!kotlinScriptDefinitionInitialized) {
-            kotlinScriptDefinitionField = KotlinScriptDefinitionProviderKt.getScriptDefinition(getContainingKtFile());
-            kotlinScriptDefinitionInitialized = true;
-        }
-        assert kotlinScriptDefinitionField != null : "Should not parse a script without definition: " + getContainingKtFile().toString();
-        return kotlinScriptDefinitionField;
-    }
+    private final Lazy<KotlinScriptDefinition> kotlinScriptDefinition = LazyKt.lazy(PUBLICATION, () -> Objects.requireNonNull(
+            KotlinScriptDefinitionProviderKt.getScriptDefinition(getContainingKtFile()),
+            () -> "Should not parse a script without definition: " + getContainingKtFile().getVirtualFile().getPath()
+    ));
 
     public KtScript(@NotNull ASTNode node) {
         super(node);
@@ -58,7 +54,7 @@ public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implement
             return stub.getFqName();
         }
         KtFile containingKtFile = getContainingKtFile();
-        return containingKtFile.getPackageFqName().child(getKotlinScriptDefinition().getScriptName(this));
+        return containingKtFile.getPackageFqName().child(kotlinScriptDefinition.getValue().getScriptName(this));
     }
 
     @Override
@@ -67,7 +63,7 @@ public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implement
     }
 
     @NotNull
-    public KtBlockExpression getBlockExpression() {
+    private KtBlockExpression getBlockExpression() {
         return findNotNullChildByClass(KtBlockExpression.class);
     }
 
