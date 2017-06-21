@@ -957,6 +957,63 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class NullChecksToSafeCall extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInNullChecksToSafeCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/nullChecksToSafeCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("andCase.kt")
+        public void testAndCase() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall/andCase.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("function.kt")
+        public void testFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall/function.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kotlinType.kt")
+        public void testKotlinType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall/kotlinType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("longRightExpression.kt")
+        public void testLongRightExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall/longRightExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("orCase.kt")
+        public void testOrCase() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall/orCase.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeCall.kt")
+        public void testSafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall/safeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unstableChain.kt")
+        public void testUnstableChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall/unstableChain.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unstableExtensionInChain.kt")
+        public void testUnstableExtensionInChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall/unstableExtensionInChain.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/nullableBooleanElvis")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
