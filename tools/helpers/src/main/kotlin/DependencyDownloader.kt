@@ -20,7 +20,9 @@ import java.io.*
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.thread
+import kotlin.concurrent.withLock
 
 // TODO: Try to use some dependency management system (Ivy?)
 class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, val dependencies: List<String>) {
@@ -172,11 +174,34 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
         )
     }
 
-    fun run() {
-        val systemLock = RandomAccessFile(lockFile, "rw").channel.lock()
-        dependencies.forEach {
-            processDependency(it)
+    // stdlib `use` function adapted for AutoCloseable.
+    private inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
+        var closed = false
+        try {
+            return block(this)
+        } catch (e: Exception) {
+            closed = true
+            try {
+                this?.close()
+            } catch (closeException: Exception) {
+            }
+            throw e
+        } finally {
+            if (!closed) {
+                this?.close()
+            }
         }
-        systemLock.release()
+    }
+
+    companion object {
+        val lock = ReentrantLock()
+    }
+
+    fun run() = lock.withLock {
+        RandomAccessFile(lockFile, "rw").channel.lock().use {
+            dependencies.forEach {
+                processDependency(it)
+            }
+        }
     }
 }
