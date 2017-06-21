@@ -21,6 +21,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.HashMap
 import com.intellij.util.containers.StringInterner
 import org.jetbrains.kotlin.TestWithWorkingDir
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -149,27 +150,31 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
 
 
     private fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
-        val module = makeModuleFile(name = "test",
-                                    isTest = true,
-                                    outputDir = outDir,
-                                    sourcesToCompile = filesToCompile.toList(),
-                                    javaSourceRoots = listOf(srcDir),
-                                    classpath = listOf(outDir).filter { it.exists() },
-                                    friendDirs = emptyList())
+        val moduleFile = makeModuleFile(name = "test",
+                                        isTest = true,
+                                        outputDir = outDir,
+                                        sourcesToCompile = filesToCompile.toList(),
+                                        javaSourceRoots = listOf(srcDir),
+                                        classpath = listOf(outDir).filter { it.exists() },
+                                        friendDirs = emptyList())
         outDir.mkdirs()
-        val args = arrayOf("-module", module.canonicalPath, "-Xreport-output-files")
+        val args = K2JVMCompilerArguments().apply {
+            buildFile = moduleFile.canonicalPath
+            reportOutputFiles = true
+        }
+        val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
 
         try {
             val stream = ByteArrayOutputStream()
             val out = PrintStream(stream)
-            val exitCode = CompilerRunnerUtil.invokeExecMethod(K2JVMCompiler::class.java.name, args, env, out)
+            val exitCode = CompilerRunnerUtil.invokeExecMethod(K2JVMCompiler::class.java.name, argsArray, env, out)
             val reader = BufferedReader(StringReader(stream.toString()))
             CompilerOutputParser.parseCompilerMessagesFromReader(env.messageCollector, reader, env.outputItemsCollector)
 
             return exitCode
         }
         finally {
-            module.delete()
+            moduleFile.delete()
         }
     }
 
