@@ -31,11 +31,9 @@ class JavaModuleInfo(
         val requires: List<Requires>,
         val exports: List<Exports>
 ) {
-    data class Requires(val moduleName: String, val flags: Int) {
-        val isTransitive get() = (flags and ACC_TRANSITIVE) != 0
-    }
+    data class Requires(val moduleName: String, val isTransitive: Boolean)
 
-    data class Exports(val packageFqName: FqName, val flags: Int, val toModules: List<String>)
+    data class Exports(val packageFqName: FqName, val toModules: List<String>)
 
     override fun toString(): String =
             "Module $moduleName (${requires.size} requires, ${exports.size} exports)"
@@ -54,11 +52,11 @@ class JavaModuleInfo(
 
                     return object : ModuleVisitor(Opcodes.ASM6) {
                         override fun visitRequire(module: String, access: Int, version: String?) {
-                            requires.add(Requires(module, access))
+                            requires.add(Requires(module, (access and ACC_TRANSITIVE) != 0))
                         }
 
                         override fun visitExport(packageFqName: String, access: Int, modules: Array<String>?) {
-                            exports.add(Exports(FqName(packageFqName), access, modules?.toList().orEmpty()))
+                            exports.add(Exports(FqName(packageFqName), modules?.toList().orEmpty()))
                         }
                     }
                 }

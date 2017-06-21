@@ -29,9 +29,9 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
         fun dfs(module: String) {
             if (!visited.add(module)) return
             val moduleInfo = moduleInfo(module) ?: return
-            for (dependency in moduleInfo.requires) {
-                if (dependency.isTransitive) {
-                    dfs(dependency.moduleName)
+            for ((moduleName, isTransitive) in moduleInfo.requires) {
+                if (isTransitive) {
+                    dfs(moduleName)
                 }
             }
         }
