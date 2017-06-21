@@ -14857,6 +14857,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("overrideMemberFromFinalClass.kt")
+            public void testOverrideMemberFromFinalClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/overrideMemberFromFinalClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("OverrideWithErrors.kt")
             public void testOverrideWithErrors() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/OverrideWithErrors.kt");

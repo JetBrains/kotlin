@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,25 +22,22 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.SmartHashSet
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryWithPsiElement
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.*
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-
-import java.util.*
-
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
+import java.util.*
 
 class OverrideResolver(
         private val trace: BindingTrace,
@@ -741,7 +738,7 @@ class OverrideResolver(
             val propertyMemberDescriptor = if (memberDescriptor is PropertyDescriptor) memberDescriptor else null
 
             for (overridden in overriddenDescriptors) {
-                if (!overridden.isOverridable) {
+                if (overridden.modality == Modality.FINAL) {
                     reportError.overridingFinalMember(memberDescriptor, overridden)
                 }
 
