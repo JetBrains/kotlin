@@ -2,10 +2,10 @@ FILE /whenReturn.kt
   FUN public fun toString(grade: kotlin.String): kotlin.String
     VALUE_PARAMETER value-parameter grade: kotlin.String
     BLOCK_BODY
-      BLOCK type=kotlin.Unit origin=WHEN
+      BLOCK type=kotlin.Nothing origin=WHEN
         VAR IR_TEMPORARY_VARIABLE val tmp0_subject: kotlin.String
           GET_VAR 'value-parameter grade: String' type=kotlin.String origin=null
-        WHEN type=kotlin.Unit origin=WHEN
+        WHEN type=kotlin.Nothing origin=WHEN
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null

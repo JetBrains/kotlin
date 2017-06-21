@@ -5,7 +5,7 @@ CONTENT
       1 FUN public fun toString(grade: kotlin.String): kotlin.String
       2 GET_VAR 'value-parameter grade: String' type=kotlin.String origin=null
       3 VAR IR_TEMPORARY_VARIABLE val tmp0_subject: kotlin.String
-      4 WHEN type=kotlin.Unit origin=WHEN
+      4 WHEN type=kotlin.Nothing origin=WHEN
       5 GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
       6 CONST String type=kotlin.String value='A'
 OUTGOING -> BB 1, 5
