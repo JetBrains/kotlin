@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import com.intellij.testFramework.LightProjectDescriptor
+import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.uast.java.annotations
 
 // see KtFileLightClassTest
 class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -102,6 +106,33 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
         assertEquals(0, headerClass.toLightElements().size)
         val headerFunction = contextFile.declarations.single { it is KtNamedFunction }
         assertEquals(0, headerFunction.toLightElements().size)
+    }
+
+    fun testAnnotationsInAnnotationsDeclarations() {
+        myFixture.addClass("""
+            public @interface OuterAnnotation {
+                InnerAnnotation attribute();
+                @interface InnerAnnotation {
+                }
+            }
+        """.trimIndent())
+
+        myFixture.configureByText("AnnotatedClass.kt", """
+            @OuterAnnotation(attribute = OuterAnnotation.InnerAnnotation())
+            open class AnnotatedClass //There is another exception if class is not open
+        """.trimIndent())
+        myFixture.testHighlighting("OuterAnnotation.java", "AnnotatedClass.kt")
+
+        val headerClass = listOf(myFixture.findClass("AnnotatedClass"))
+        assertEquals(1, headerClass.size)
+        val annotations = headerClass.first().annotations
+        assertEquals(1, annotations.size)
+        val annotation = annotations.first()
+
+        val annotationAttributeVal = annotation.findAttributeValue("attribute") as PsiElement
+
+        TestCase.assertEquals("@OuterAnnotation.InnerAnnotation", annotationAttributeVal.text)
+        TestCase.assertEquals(TextRange(1, 1), annotationAttributeVal.textRange)
     }
 
     private fun classesFromText(text: String, fileName: String = "A.kt"): Array<out PsiClass> {
