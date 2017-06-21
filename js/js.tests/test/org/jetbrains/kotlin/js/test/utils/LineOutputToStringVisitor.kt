@@ -89,7 +89,7 @@ class LineOutputToStringVisitor(output: TextOutput, val lineCollector: LineColle
         }
         else if (statement in lineCollector.lineNumbersByStatement) {
             p.print("/* ")
-            p.print(lineCollector.lineNumbersByStatement[statement]!!.joinToString(" ") { (it + 1).toString() })
+            p.print(lineCollector.lineNumbersByStatement[statement]!!.filter { it >= 0 }.joinToString(" ") { (it + 1).toString() })
             p.print(" */ ")
         }
     }
