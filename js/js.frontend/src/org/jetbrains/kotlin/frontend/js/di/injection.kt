@@ -41,6 +41,7 @@ fun createTopDownAnalyzerForJs(
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory,
         languageVersionSettings: LanguageVersionSettings,
+        lookupTracker: LookupTracker,
         fallbackPackage: PackageFragmentProvider?
 ): LazyTopDownAnalyzer {
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatform) {
@@ -50,7 +51,7 @@ fun createTopDownAnalyzerForJs(
         useImpl<AnnotationResolverImpl>()
 
         CompilerEnvironment.configure(this)
-        useInstance(LookupTracker.DO_NOTHING)
+        useInstance(lookupTracker)
 
         useInstance(languageVersionSettings)
         useImpl<ResolveSession>()
