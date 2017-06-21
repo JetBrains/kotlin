@@ -15,15 +15,15 @@ fun test5(): Any = l@{ return@l }
 fun test6(): Any = {<!RETURN_NOT_ALLOWED!>return<!> 1}
 
 fun bbb() {
-  return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
+    return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
 
 fun foo(<!UNUSED_PARAMETER!>expr<!>: StringBuilder): Int {
-  val c = 'a'
-  when(c) {
-    0.toChar() -> throw Exception("zero")
-    else -> throw Exception("nonzero" + c)
-  }
+    val c = 'a'
+    when(c) {
+        0.toChar() -> throw Exception("zero")
+        else -> throw Exception("nonzero" + c)
+    }
 }
 
 
@@ -47,92 +47,92 @@ fun blockReturnValueTypeMatch() : Int {return 1}
 fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>Unit<!>}
 
 fun blockAndAndMismatch() : Int {
-  <!UNUSED_EXPRESSION!>true && false<!>
-<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+    <!UNUSED_EXPRESSION!>true && false<!>
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockAndAndMismatch1() : Int {
-  return <!TYPE_MISMATCH!>true && false<!>
+    return <!TYPE_MISMATCH!>true && false<!>
 }
 fun blockAndAndMismatch2() : Int {
-  (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) && (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)
+    (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) && (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)
 }
 
 fun blockAndAndMismatch3() : Int {
-  <!UNUSED_EXPRESSION!>true || false<!>
-<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+    <!UNUSED_EXPRESSION!>true || false<!>
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockAndAndMismatch4() : Int {
-  return <!TYPE_MISMATCH!>true || false<!>
+    return <!TYPE_MISMATCH!>true || false<!>
 }
 fun blockAndAndMismatch5() : Int {
-  (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) || (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)
+    (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) || (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)
 }
 fun blockReturnValueTypeMatch1() : Int {
-  return if (1 > 2) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> else <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
+    return if (1 > 2) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> else <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
 }
 fun blockReturnValueTypeMatch2() : Int {
-  return <!TYPE_MISMATCH, INVALID_IF_AS_EXPRESSION!>if (1 > 2) 1<!>
+    return <!TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2) 1<!>
 }
 fun blockReturnValueTypeMatch3() : Int {
-  return <!TYPE_MISMATCH, INVALID_IF_AS_EXPRESSION!>if (1 > 2) else 1<!>
+    return <!TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2) else 1<!>
 }
 fun blockReturnValueTypeMatch4() : Int {
-  if (1 > 2)
-    return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
-  else return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
+    if (1 > 2)
+        return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
+    else return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
 }
 fun blockReturnValueTypeMatch5() : Int {
-  if (1 > 2)
-    return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
-  return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
+    if (1 > 2)
+        return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
+    return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
 }
 fun blockReturnValueTypeMatch6() : Int {
-  if (1 > 2)
+    if (1 > 2)
     else return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
-  return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
+    return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
 }
 fun blockReturnValueTypeMatch7() : Int {
-  if (1 > 2)
+    if (1 > 2)
     <!UNUSED_EXPRESSION!>1.0<!>
-  else <!UNUSED_EXPRESSION!>2.0<!>
-<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+    else <!UNUSED_EXPRESSION!>2.0<!>
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch8() : Int {
-  if (1 > 2)
+    if (1 > 2)
     <!UNUSED_EXPRESSION!>1.0<!>
-  else <!UNUSED_EXPRESSION!>2.0<!>
-  return 1
+    else <!UNUSED_EXPRESSION!>2.0<!>
+    return 1
 }
 fun blockReturnValueTypeMatch9() : Int {
-  if (1 > 2)
+    if (1 > 2)
     <!UNUSED_EXPRESSION!>1.0<!>
-<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch10() : Int {
-  return <!TYPE_MISMATCH, INVALID_IF_AS_EXPRESSION!>if (1 > 2)
+    return <!TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2)
     1<!>
 }
 fun blockReturnValueTypeMatch11() : Int {
-  if (1 > 2)
-  else <!UNUSED_EXPRESSION!>1.0<!>
-<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+    if (1 > 2)
+    else <!UNUSED_EXPRESSION!>1.0<!>
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch12() : Int {
-  if (1 > 2)
-    return 1
-  else return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
+    if (1 > 2)
+        return 1
+    else return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
 }
 fun blockNoReturnIfValDeclaration(): Int {
-  val <!UNUSED_VARIABLE!>x<!> = 1
-<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+    val <!UNUSED_VARIABLE!>x<!> = 1
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockNoReturnIfEmptyIf(): Int {
-  if (1 < 2) {} else {}
-<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+    if (1 < 2) {} else {}
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockNoReturnIfUnitInOneBranch(): Int {
-  if (1 < 2) {
-    return 1
-  } else {
-    if (3 < 4) {
+    if (1 < 2) {
+        return 1
     } else {
-      return 2
+        if (3 < 4) {
+        } else {
+            return 2
+        }
     }
-  }
-<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun nonBlockReturnIfEmptyIf(): Int = if (1 < 2) <!TYPE_MISMATCH!>{}<!> else <!TYPE_MISMATCH!>{}<!>
 fun nonBlockNoReturnIfUnitInOneBranch(): Int = if (1 < 2) <!TYPE_MISMATCH!>{}<!> else 2
 
@@ -145,7 +145,7 @@ fun illegalConstantBlock(): String {
     return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
 fun illegalIfBody(): Int =
-    if (1 < 2) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>'a'<!> else { <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }
+        if (1 < 2) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>'a'<!> else { <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }
 fun illegalIfBlock(): Boolean {
     if (1 < 2)
         return false
@@ -166,7 +166,7 @@ fun f1(): Int = if (1 < 2) 1 else returnNothing()
 
 public fun f2() = 1
 class B() {
-   protected fun f() = "ss"
+    protected fun f() = "ss"
 }
 
 fun testFunctionLiterals() {

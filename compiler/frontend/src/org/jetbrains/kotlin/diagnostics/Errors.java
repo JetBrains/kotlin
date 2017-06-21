@@ -776,7 +776,7 @@ public interface Errors {
 
     DiagnosticFactory0<KtElement> SENSELESS_NULL_IN_WHEN = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory0<KtIfExpression> INVALID_IF_AS_EXPRESSION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INVALID_IF_AS_EXPRESSION = DiagnosticFactory0.create(ERROR);
 
     // Nullability
 

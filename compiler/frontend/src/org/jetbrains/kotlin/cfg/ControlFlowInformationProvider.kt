@@ -717,7 +717,7 @@ class ControlFlowInformationProvider private constructor(
                 val elseExpression = element.`else`
 
                 if (thenExpression == null || elseExpression == null) {
-                    trace.report(INVALID_IF_AS_EXPRESSION.on(element))
+                    trace.report(INVALID_IF_AS_EXPRESSION.on(element.ifKeyword))
                 }
                 else {
                     checkImplicitCastOnConditionalExpression(element)

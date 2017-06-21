@@ -10,20 +10,20 @@ fun test() {
     foo({ <!EXPECTED_TYPE_MISMATCH!>fun named3() = 1<!> })
 
     val x1 =
-        if (1 == 1)
-            // TODO: Diagnostic content could be better
-            <!SYNTAX!><!>fun named4(): Int {return 1}
-        <!SYNTAX!>else<!>
-            fun named5() = 1
+    <!INVALID_IF_AS_EXPRESSION!>if<!> (1 == 1)
+    // TODO: Diagnostic content could be better
+    <!SYNTAX!><!>fun named4(): Int {return 1}
+    <!SYNTAX!>else<!>
+    fun named5() = 1
 
     val x2 =
-            if (1 == 1) {
-                fun named6(): Int {
-                    return 1
-                }
-            }
-            else
-                <!SYNTAX!><!>fun named7() = 1
+    <!INVALID_IF_AS_EXPRESSION!>if<!> (1 == 1) {
+        fun named6(): Int {
+            return 1
+        }
+    }
+    else
+    <!SYNTAX!><!>fun named7() = 1
 
     val x3 = when (1) {
         0 -> <!EXPECTED_TYPE_MISMATCH!>fun named8(): Int {return 1}<!>
