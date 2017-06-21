@@ -58,11 +58,19 @@ val EAP_11_REPOSITORY = RepositoryDescription(
         "https://bintray.com/kotlin/kotlin-eap-1.1/kotlin/",
         isSnapshot = false)
 
+val EAP_12_REPOSITORY = RepositoryDescription(
+        "bintray.kotlin.eap",
+        "Bintray Kotlin 1.2 EAP Repository",
+        "http://dl.bintray.com/kotlin/kotlin-eap-1.2",
+        "https://bintray.com/kotlin/kotlin-eap-1.2/kotlin/",
+        isSnapshot = false)
+
 fun RepositoryDescription.toRepositorySnippet() = "maven {\nurl '$url'\n}"
 
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY
-    useEap11Repository(version) -> EAP_11_REPOSITORY
+    useEapRepository(2, version) -> EAP_12_REPOSITORY
+    useEapRepository(1, version) -> EAP_11_REPOSITORY
     isEap(version) -> EAP_REPOSITORY
     else -> null
 }
@@ -227,6 +235,7 @@ fun isEap(version: String): Boolean {
     return version.contains("rc") || version.contains("eap")
 }
 
-fun useEap11Repository(version: String): Boolean {
-    return Regex("1\\.1(\\.\\d)?-[A-Za-z][A-Za-z0-9-]*").matches(version) && !version.startsWith("1.1.0-dev")
+fun useEapRepository(minorKotlinVersion: Int, version: String): Boolean {
+    return Regex("1\\.$minorKotlinVersion(\\.\\d)?-[A-Za-z][A-Za-z0-9-]*").matches(version) &&
+           !version.startsWith("1.$minorKotlinVersion.0-dev")
 }

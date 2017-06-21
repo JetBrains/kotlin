@@ -20,17 +20,20 @@ import com.intellij.testFramework.UsefulTestCase
 import org.junit.Assert
 
 class ConfigureKotlinUtilTest : UsefulTestCase() {
-    fun test11Prerelease() {
-        Assert.assertTrue(useEap11Repository("1.1-M04"))
-        Assert.assertTrue(useEap11Repository("1.1-beta"))
-        Assert.assertTrue(useEap11Repository("1.1.0-beta"))
-        Assert.assertTrue(useEap11Repository("1.1-beta-2"))
-        Assert.assertTrue(useEap11Repository("1.1-rc2"))
-        Assert.assertTrue(useEap11Repository("1.1.0-RC"))
-        Assert.assertTrue(useEap11Repository("1.1.1-eap-22"))
-        Assert.assertFalse(useEap11Repository("1.1"))
-        Assert.assertFalse(useEap11Repository("1.1.2"))
-        Assert.assertFalse(useEap11Repository("1.1.2-3"))
-        Assert.assertFalse(useEap11Repository("1.1.0-dev-1234"))
+    fun testEapRepository() {
+        Assert.assertTrue(useEapRepository(1, "1.1-M04"))
+        Assert.assertTrue(useEapRepository(1, "1.1-beta"))
+        Assert.assertTrue(useEapRepository(1, "1.1.0-beta"))
+        Assert.assertTrue(useEapRepository(1, "1.1-beta-2"))
+        Assert.assertTrue(useEapRepository(1, "1.1-rc2"))
+        Assert.assertTrue(useEapRepository(1, "1.1.0-RC"))
+        Assert.assertTrue(useEapRepository(1, "1.1.1-eap-22"))
+        Assert.assertFalse(useEapRepository(1, "1.1"))
+        Assert.assertFalse(useEapRepository(1, "1.1.2"))
+        Assert.assertFalse(useEapRepository(1, "1.1.2-3"))
+        Assert.assertFalse(useEapRepository(1, "1.1.0-dev-1234"))
+        Assert.assertTrue(useEapRepository(2, "1.2-M01"))
+        Assert.assertTrue(useEapRepository(2, "1.2-M1"))
+        Assert.assertFalse(useEapRepository(2, "1.2"))
     }
 }
