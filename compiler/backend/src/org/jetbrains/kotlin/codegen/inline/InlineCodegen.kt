@@ -698,7 +698,7 @@ class PsiInlineCodegen(
     override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
         activeLambda = next
         when (next) {
-            is ExpressionLambda -> codegen.pushClosureOnStack(next.classDescriptor, true, this, functionReferenceReceiver)
+            is PsiExpressionLambda -> codegen.pushClosureOnStack(next.classDescriptor, true, this, functionReferenceReceiver)
             is DefaultLambda -> rememberCapturedForDefaultLambda(next)
             else -> throw RuntimeException("Unknown lambda: $next")
         }
@@ -744,7 +744,7 @@ class PsiInlineCodegen(
         val ktLambda = KtPsiUtil.deparenthesize(expression)
         assert(isInlinableParameterExpression(ktLambda)) { "Couldn't find inline expression in ${expression.text}" }
 
-        return ExpressionLambda(
+        return PsiExpressionLambda(
                 ktLambda!!, typeMapper, parameter.isCrossinline, getBoundCallableReferenceReceiver(expression) != null
         ).also { lambda ->
             val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
