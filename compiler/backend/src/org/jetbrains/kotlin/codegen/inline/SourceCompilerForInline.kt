@@ -136,6 +136,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
     override fun generateLambdaBody(adapter: MethodVisitor,
                            jvmMethodSignature: JvmMethodSignature,
                            lambdaInfo: ExpressionLambda): SMAP {
+        lambdaInfo as? PsiExpressionLambda ?: error("TODO")
         val invokeMethodDescriptor = lambdaInfo.invokeMethodDescriptor
         val closureContext =
                 if (lambdaInfo.isPropertyReference)
@@ -157,7 +158,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             context: MethodContext,
             expression: KtExpression,
             jvmMethodSignature: JvmMethodSignature,
-            lambdaInfo: ExpressionLambda?
+            lambdaInfo: PsiExpressionLambda?
     ): SMAP {
         val isLambda = lambdaInfo != null
 
