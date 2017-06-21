@@ -115,6 +115,17 @@ class InlayParameterHintsTest : KotlinLightCodeInsightFixtureTestCase() {
 """)
     }
 
+    fun `test show non-ambiguous overload`() {
+        check("""
+  fun main() {
+    test(<hint text="a:"/>10, <hint text="bI:"/>15);
+  }
+  fun test() {}
+  fun test(a: Int, bS: String) {}
+  fun test(a: Int, bI: Int) {}
+""")
+    }
+
     fun `test show ambiguous constructor`() {
         check("""
   fun main() {
