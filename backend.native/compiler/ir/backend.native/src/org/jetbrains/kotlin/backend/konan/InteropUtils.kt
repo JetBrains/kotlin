@@ -90,6 +90,13 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val staticCFunction = packageScope.getContributedFunctions("staticCFunction").toSet()
 
+    val workerPackageScope = builtIns.builtInsModule.getPackage(FqName("konan.worker")).memberScope
+
+    val scheduleFunction = (workerPackageScope.getContributedClassifier("Worker") as ClassDescriptor).
+            unsubstitutedMemberScope.getContributedFunctions("schedule").single()
+
+    val scheduleImplFunction = workerPackageScope.getContributedFunctions("scheduleImpl").single()
+
     val signExtend = packageScope.getContributedFunctions("signExtend").single()
 
     val narrow = packageScope.getContributedFunctions("narrow").single()

@@ -33,12 +33,15 @@ annotation class SymbolName(val name: String)
 //@Retention(AnnotationRetention.SOURCE)
 annotation class ExportTypeInfo(val name: String)
 
+/**
+ * * If lambda shall be carefully lowered by the compiler.
+ */
+annotation class VolatileLambda
 
 /**
  * Preserve the function entry point during global optimizations
  */
 public annotation class Used
-
 
 /**
  * Need to be fixed because of reification support.

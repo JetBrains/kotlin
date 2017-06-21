@@ -64,4 +64,5 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     }.toMap()
 
 
+    val scheduleImpl = symbolTable.referenceSimpleFunction(context.interopBuiltIns.scheduleImplFunction)
 }

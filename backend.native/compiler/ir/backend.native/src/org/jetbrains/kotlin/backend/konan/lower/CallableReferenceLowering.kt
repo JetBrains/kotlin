@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.createFakeOverrideDescriptor
+import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -33,15 +36,14 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -52,6 +54,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -68,15 +71,55 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object: IrElementTransformerVoidWithContext() {
 
-            override fun visitCall(expression: IrCall): IrExpression {
-                if (expression.descriptor.original in context.interopBuiltIns.staticCFunction) {
-                    return expression
-                }
-                return super.visitCall(expression)
+            private val stack = mutableListOf<IrElement>()
+
+            override fun visitElement(element: IrElement): IrElement {
+                stack.push(element)
+                val result = super.visitElement(element)
+                stack.pop()
+                return result
+            }
+
+            override fun visitExpression(expression: IrExpression): IrExpression {
+                stack.push(expression)
+                val result = super.visitExpression(expression)
+                stack.pop()
+                return result
+            }
+
+            override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+                stack.push(declaration)
+                val result = super.visitDeclaration(declaration)
+                stack.pop()
+                return result
+            }
+
+            override fun visitSpreadElement(spread: IrSpreadElement): IrSpreadElement {
+                stack.push(spread)
+                val result = super.visitSpreadElement(spread)
+                stack.pop()
+                return result
             }
 
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 expression.transformChildrenVoid(this)
+
+                for (i in stack.size - 1 downTo 0) {
+                    val cur = stack[i]
+                    if (cur is IrBlock)
+                        continue
+                    if (cur !is IrCall)
+                        break
+                    val argument = if (i < stack.size - 1) stack[i + 1] else expression
+                    val descriptor = cur.descriptor
+                    val argumentDescriptor = descriptor.valueParameters.singleOrNull {
+                        cur.getValueArgument(it.index) == argument
+                    }
+                    if (argumentDescriptor != null && argumentDescriptor.annotations.findAnnotation(FqName("konan.VolatileLambda")) != null) {
+                        return expression
+                    }
+                    break
+                }
 
                 if (!expression.type.isFunctionOrKFunctionType) {
                     // Not a subject of this lowering.

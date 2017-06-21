@@ -179,6 +179,32 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                         typeArguments = null)
             }
 
+            interop.scheduleFunction -> {
+                val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(2)!!)
+
+                if (irCallableReference == null || irCallableReference.getArguments().isNotEmpty()) {
+                    context.reportCompilationError(
+                            "${descriptor.fqNameSafe} must take an unbound, non-capturing function or lambda",
+                            irFile, expression
+                    )
+                }
+
+                val targetSymbol = irCallableReference.symbol
+                val target = targetSymbol.descriptor
+                val jobPointer = IrFunctionReferenceImpl(
+                        builder.startOffset, builder.endOffset,
+                        interop.cPointer.defaultType,
+                        targetSymbol, target,
+                        typeArguments = null)
+
+                builder.irCall(symbols.scheduleImpl).apply {
+                    putValueArgument(0, expression.dispatchReceiver)
+                    putValueArgument(1, expression.getValueArgument(0))
+                    putValueArgument(2, expression.getValueArgument(1))
+                    putValueArgument(3, jobPointer)
+                }
+            }
+
             interop.signExtend, interop.narrow -> {
 
                 val integerTypePredicates = arrayOf(

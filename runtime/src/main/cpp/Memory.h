@@ -353,6 +353,18 @@ void ReleaseRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
 void LeaveFrame(ObjHeader** start, int count) RUNTIME_NOTHROW;
 // Collect garbage, which cannot be found by reference counting (cycles).
 void GarbageCollect() RUNTIME_NOTHROW;
+// Clears object subgraph references from memory subsystem, and optionally
+// checks if subgraph referenced by given root is disjoint from the rest of
+// object graph, i.e. no external references exists.
+bool ClearSubgraphReferences(ObjHeader* root, bool checked) RUNTIME_NOTHROW;
+// Creates stable pointer out of the object.
+void* CreateStablePointer(ObjHeader* obj) RUNTIME_NOTHROW;
+// Disposes stable pointer to the object.
+void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;;
+// Translate stable pointer to object reference.
+OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
+// Move stable pointer ownership.
+OBJ_GETTER(AdoptStablePointer, void*) RUNTIME_NOTHROW;
 
 #ifdef __cplusplus
 }

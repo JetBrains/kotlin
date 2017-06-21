@@ -224,17 +224,17 @@ ContainerHeaderList collectMutableReferred(ContainerHeader* header) {
   for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
     ObjHeader** location = reinterpret_cast<ObjHeader**>(
       reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
-    ObjHeader* obj = *location;
-    if (obj != nullptr && !isPermanent(obj->container())) {
-      result.push_back(obj->container());
+    ObjHeader* ref = *location;
+    if (ref != nullptr && !isPermanent(ref->container())) {
+      result.push_back(ref->container());
     }
   }
   if (typeInfo == theArrayTypeInfo) {
     ArrayHeader* array = obj->array();
     for (int index = 0; index < array->count_; index++) {
-      ObjHeader* obj = *ArrayAddressOfElementAt(array, index);
-      if (obj != nullptr && !isPermanent(obj->container())) {
-        result.push_back(obj->container());
+      ObjHeader* ref = *ArrayAddressOfElementAt(array, index);
+      if (ref != nullptr && !isPermanent(ref->container())) {
+        result.push_back(ref->container());
       }
     }
   }
@@ -258,6 +258,7 @@ void dumpWorker(const char* prefix, ContainerHeader* header, ContainerHeaderSet*
 void dumpReachable(const char* prefix, const ContainerHeaderSet* roots) {
   ContainerHeaderSet seen;
   for (auto container : *roots) {
+    fprintf(stderr, "%p is root\n", container);
     dumpWorker(prefix, container, &seen);
   }
 }
@@ -590,6 +591,14 @@ void DeinitMemory(MemoryState* memoryState) {
   GarbageCollect();
   delete memoryState->toFree;
   memoryState->toFree = nullptr;
+
+#if OPTIMIZE_GC
+  if (memoryState->toFreeCache != nullptr) {
+    freeMemory(memoryState->toFreeCache);
+    memoryState->toFreeCache = nullptr;
+  }
+#endif
+
 #endif // USE_GC
 
   if (memoryState->allocCount > 0) {
@@ -857,5 +866,55 @@ KInt Kotlin_konan_internal_GC_getThreshold(KRef) {
 #endif
 }
 
+KNativePtr CreateStablePointer(KRef any) {
+  if (any == nullptr) return nullptr;
+  ::AddRef(any->container());
+  return reinterpret_cast<KNativePtr>(any);
+}
+
+void DisposeStablePointer(KNativePtr pointer) {
+  if (pointer == nullptr) return;
+  KRef ref = reinterpret_cast<KRef>(pointer);
+  ::Release(ref->container());
+}
+
+OBJ_GETTER(DerefStablePointer, KNativePtr pointer) {
+  KRef ref = reinterpret_cast<KRef>(pointer);
+  RETURN_OBJ(ref);
+}
+
+OBJ_GETTER(AdoptStablePointer, KNativePtr pointer) {
+  __sync_synchronize();
+  KRef ref = reinterpret_cast<KRef>(pointer);
+  // Somewhat hacky.
+  *OBJ_RESULT = ref;
+  return ref;
+}
+
+bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
+#if USE_GC
+  if (root != nullptr) {
+    auto state = memoryState;
+    auto container = root->container();
+    ContainerHeaderList todo;
+    ContainerHeaderSet subgraph;
+    todo.push_back(container);
+    while (todo.size() > 0) {
+      auto header = todo.back();
+      todo.pop_back();
+      if (subgraph.count(header) != 0)
+        continue;
+      subgraph.insert(header);
+      removeFreeable(state, header);
+      auto children = collectMutableReferred(header);
+      for (auto child : children) {
+        todo.push_back(child);
+      }
+    }
+  }
+#endif  // USE_GC
+  // TODO: perform trial deletion starting from this root, if in checked mode.
+  return true;
+}
 
 } // extern "C"

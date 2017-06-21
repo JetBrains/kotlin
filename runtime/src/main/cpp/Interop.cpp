@@ -73,19 +73,16 @@ void Kotlin_Interop_callWithVarargs(void* codePtr, void* returnValuePtr, FfiType
     ffi_call(&cif, (void (*)())codePtr, returnValuePtr, arguments);
 }
 
-void* Kotlin_Interop_createStablePointer(KRef any) {
-    ::AddRef(any->container());
-    return reinterpret_cast<void*>(any);
+KNativePtr Kotlin_Interop_createStablePointer(KRef any) {
+    return CreateStablePointer(any);
 }
 
-void Kotlin_Interop_disposeStablePointer(void* pointer) {
-    KRef ref = reinterpret_cast<KRef>(pointer);
-    ::Release(ref->container());
+void Kotlin_Interop_disposeStablePointer(KNativePtr pointer) {
+  DisposeStablePointer(pointer);
 }
 
-OBJ_GETTER(Kotlin_Interop_derefStablePointer, void* pointer) {
-    KRef ref = reinterpret_cast<KRef>(pointer);
-    RETURN_OBJ(ref);
+OBJ_GETTER(Kotlin_Interop_derefStablePointer, KNativePtr pointer) {
+  RETURN_RESULT_OF(DerefStablePointer, pointer);
 }
 
 }
