@@ -16,15 +16,12 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.lower.KCallableNamePropertyLowering
-import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
-import org.jetbrains.kotlin.backend.common.lower.LocalFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
-import org.jetbrains.kotlin.backend.common.lower.TailrecLowering
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.lower.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.name.NameUtils
 
 class JvmLower(val context: JvmBackendContext) {
     fun lower(irFile: IrFile) {
@@ -44,7 +41,11 @@ class JvmLower(val context: JvmBackendContext) {
         SharedVariablesLowering(context).runOnFilePostfix(irFile)
         InnerClassesLowering(context).runOnFilePostfix(irFile)
         InnerClassConstructorCallsLowering(context).runOnFilePostfix(irFile)
-        LocalFunctionsLowering(context).runOnFilePostfix(irFile)
+        LocalDeclarationsLowering(context,
+                                  object : LocalNameProvider {
+                                      override fun localName(descriptor: DeclarationDescriptor): String =
+                                              NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
+                                  }).runOnFilePostfix(irFile)
         EnumClassLowering(context).runOnFilePostfix(irFile)
         ObjectClassLowering(context).runOnFilePostfix(irFile)
         InitializersLowering(context).runOnFilePostfix(irFile)
