@@ -230,6 +230,15 @@
         </copy>
     </target>
 
+    <target name="copy-bootstrap-to-dist"
+            depends="clean"
+            description="Use bootstrap compiler instead of building one from sources">
+        <mkdir dir="${kotlin-home}"/>
+        <copy todir="${kotlin-home}">
+            <fileset dir="${bootstrap.compiler.home}"/>
+        </copy>
+    </target>
+
     <target name="compiler-sources">
         <jar jarfile="${output}/kotlin-compiler-sources.jar">
             <!-- TODO How to convert it from pathset or dirset ? -->
