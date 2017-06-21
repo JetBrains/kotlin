@@ -512,7 +512,6 @@ internal class IrSerializer(val context: Context,
                 proto.addDefaultArgument(pair)
             }
         }
-
         return proto.build()
     }
 
@@ -638,6 +637,8 @@ internal class IrSerializer(val context: Context,
 
 
         proto.setDeclarator(declarator)
+        val fileName = context.ir.originalModuleIndex.declarationToFile[declaration.descriptor]
+        proto.setFileName(fileName)
 
         return proto.build()
     }
@@ -1111,7 +1112,6 @@ internal class IrDeserializer(val context: Context,
                 descriptor.valueParameters.get(it.position), 
                 IrExpressionBodyImpl(start, end, expr))
         }
-
         return function
     }
 
@@ -1168,6 +1168,9 @@ internal class IrDeserializer(val context: Context,
                 TODO("Declaration deserialization not implemented")
             }
         }
+
+        val sourceFileName = proto.fileName
+        context.ir.originalModuleIndex.declarationToFile[declaration.descriptor.original] = sourceFileName
 
         if (!(descriptor is VariableDescriptor) && descriptor != rootFunction)
             localDeserializer.popContext(descriptor)

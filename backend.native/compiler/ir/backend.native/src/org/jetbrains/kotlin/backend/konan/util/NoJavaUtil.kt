@@ -59,6 +59,7 @@ class File(val path: String) {
     fun readBytes() = javaFile.readBytes()
     fun writeText(text: String) = javaFile.writeText(text)
     fun writeBytes(bytes: ByteArray) = javaFile.writeBytes(bytes)
+    fun forEachLine(action: (String) -> Unit) { javaFile.forEachLine { action(it) } }
 
     override fun toString() = path
 

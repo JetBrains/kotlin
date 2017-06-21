@@ -40,7 +40,8 @@ open class DeepCopyIrTreeWithReturnableBlockSymbols(
                 expression.startOffset, expression.endOffset,
                 expression.type,
                 expression.descriptor,
-                expression.origin
+                expression.origin,
+                expression.sourceFileName
         ).also {
             transformedReturnableBlocks.put(expression, it)
             it.statements.addAll(expression.statements.map { it.transform() })

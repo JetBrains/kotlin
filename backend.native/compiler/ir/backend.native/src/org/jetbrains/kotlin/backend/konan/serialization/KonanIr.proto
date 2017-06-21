@@ -321,6 +321,7 @@ message IrDeclaration {
     required Coordinates coordinates = 2;
     required IrDeclarator declarator = 3;
     repeated IrDeclaration nested = 4;
+    required string file_name = 5;
 }
 
 /* ------- IrStatements --------------------------------------------- */

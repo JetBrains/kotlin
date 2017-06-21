@@ -132,13 +132,15 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
 
         val statements = (copyFunctionDeclaration.body as IrBlockBody).statements           // IR statements from function copy.
         val returnType = copyFunctionDeclaration.descriptor.returnType!!                    // Substituted return type.
+        val sourceFileName = context.ir.originalModuleIndex.declarationToFile[functionDeclaration.descriptor.original]?:""
         val inlineFunctionBody = IrReturnableBlockImpl(                                     // Create new IR element to replace "call".
             startOffset = copyFunctionDeclaration.startOffset,
             endOffset   = copyFunctionDeclaration.endOffset,
             type        = returnType,
             descriptor  = copyFunctionDeclaration.descriptor.original,
             origin      = null,
-            statements  = statements
+            statements  = statements,
+            sourceFileName = sourceFileName
         )
 
         val transformer = ParameterSubstitutor()
