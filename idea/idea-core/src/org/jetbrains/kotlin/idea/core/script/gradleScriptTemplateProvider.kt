@@ -78,7 +78,7 @@ class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
     }
 
     companion object {
-        private val depLibsPrefixes = listOf("gradle-script-kotlin", "gradle-core")
+        private val depLibsPrefixes = listOf("gradle-kotlin-dsl", "gradle-script-kotlin", "gradle-core")
     }
 }
 
