@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.backend.konan.util
 
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -118,3 +121,4 @@ fun File.copyTo(destination: File, vararg options: StandardCopyOption) {
     Files.copy(this.toPath(), destination.toPath(), *options) 
 }
 
+fun bufferedReader(errorStream: InputStream?) = BufferedReader(InputStreamReader(errorStream))
