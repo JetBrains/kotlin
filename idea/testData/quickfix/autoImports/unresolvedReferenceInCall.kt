@@ -1,5 +1,5 @@
 // "Import" "true"
-// ERROR: Please specify constructor invocation; classifier 'ArrayList' does not have a companion object
+// ERROR: Classifier 'ArrayList' does not have a companion object, and thus must be initialized here
 
 // KT-4000
 

@@ -32,7 +32,7 @@ Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
 Unresolved reference: Companion
-Please specify constructor invocation; classifier 'A' does not have a companion object
+Classifier 'A' does not have a companion object, and thus must be initialized here
 
 ================ Step #2 =================
 
