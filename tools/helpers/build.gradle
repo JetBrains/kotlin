@@ -67,7 +67,7 @@ sourceSets {
     }
 }
 
-def testDependencies = project.file("${sourceSets.testOutputLocal.output.dirs.singleFile.absolutePath}/dependencies")
+def testDependencies = rootProject.file('dist/dependencies')
 
 void prepareDependenciesDir(File testDependencies) {
     project.delete testDependencies
@@ -105,6 +105,9 @@ task testInteropHelper(type: RunInteropKonanTest) {
 }
 
 task testCompilerHelper(type: RunKonanTest) {
+    dependsOn jar
+    dependsOn ':dist'
+
     dependenciesDir = testDependencies
     source = "testData/main.kt"
 
@@ -123,6 +126,9 @@ task testCompilerHelper(type: RunKonanTest) {
 
 // Simple test for parallel compiler execution
 task testParallel(type: DefaultTask) {
+    dependsOn jar
+    dependsOn ':dist'
+
     for (int i=0; i<4; i++) {
         task("runParallel$i", type: RunKonanTest) {
             dependenciesDir = testDependencies
@@ -163,9 +169,5 @@ task testHelpers {
     dependsOn testInteropHelper
     dependsOn testCompilerHelper
     dependsOn testParallel
-
-    doLast {
-        delete testDependencies
-    }
 }
 
