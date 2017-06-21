@@ -2,7 +2,6 @@
     <!-- Generates the standard library documentation using Dokka. -->
     <property name="github.revision" value="master"/>
     <property name="dokka.path" value="../dependencies/dokka" />
-    <property name="js.stdlib.src.path" value="../dependencies/js-stdlib-src" />
     <property name="docs.output" value="${basedir}/doc" />
     <property name="dokka.format" value="kotlin-website-html"/>
 
@@ -22,14 +21,7 @@
         <mkdir dir="${docs.output}"/>
     </target>
 
-    <target name="build-js-stdlib-sources">
-        <ant antfile="build.xml" target="pack-js-stdlib-sources" dir=".."/>
-
-        <delete dir="${js.stdlib.src.path}"/>
-        <unzip src="../dist/kotlinc/lib/kotlin-stdlib-js-sources.jar" dest="${js.stdlib.src.path}"/>
-    </target>
-
-    <target name="document" depends="clean,build-js-stdlib-sources">
+    <target name="document" depends="clean">
         <dokka samples="stdlib/samples/test" outputDir="${docs.output}/jre8" moduleName="kotlin-stdlib" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
                include="stdlib/src/Module.md" noStdlibLink="true">
 
@@ -46,7 +38,14 @@
 
 
             <sourceRoot path="../core/builtins" platforms="JS"/>
-            <sourceRoot path="${js.stdlib.src.path}" platforms="JS"/>
+
+            <sourceRoot path="../js/js.libraries/src/browser" platforms="JS"/>
+            <sourceRoot path="../js/js.libraries/src/core" platforms="JS"/>
+            <sourceRoot path="../js/js.libraries/src/dom" platforms="JS"/>
+            <sourceRoot path="../js/js.libraries/src/generated" platforms="JS"/>
+            <sourceRoot path="../js/js.libraries/src/js" platforms="JS"/>
+            <sourceRoot path="../js/js.libraries/src/reflect" platforms="JS"/>
+            <!--<sourceRoot path="${js.stdlib.src.path}" platforms="JS"/>-->
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
         </dokka>
