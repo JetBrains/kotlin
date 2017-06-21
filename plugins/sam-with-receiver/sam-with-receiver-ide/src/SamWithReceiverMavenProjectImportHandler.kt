@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jetbrains.kotlin.samWithReceiver.ide
 
+/*
 import org.jetbrains.kotlin.annotation.plugin.ide.AbstractMavenImportHandler
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor
 import org.jetbrains.kotlin.utils.PathUtil
@@ -52,3 +52,4 @@ class SamWithReceiverMavenProjectImportHandler : AbstractMavenImportHandler() {
         return annotations
     }
 }
+*/
