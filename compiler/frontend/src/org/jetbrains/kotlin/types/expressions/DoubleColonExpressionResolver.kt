@@ -528,7 +528,9 @@ class DoubleColonExpressionResolver(
                     resolvedCall?.resultingDescriptor ?: return null
                 }
                 else {
-                    context.trace.report(UNRESOLVED_REFERENCE.on(expression.callableReference, expression.callableReference))
+                    if (lhs != null || expression.isEmptyLHS) {
+                        context.trace.report(UNRESOLVED_REFERENCE.on(expression.callableReference, expression.callableReference))
+                    }
                     return null
                 }
 
@@ -680,10 +682,13 @@ class DoubleColonExpressionResolver(
     ): OverloadResolutionResults<CallableDescriptor>? {
         val reference = expression.callableReference
 
-        val lhsType =
-                lhs?.type ?:
-                return tryResolveRHSWithReceiver("resolve callable reference with empty LHS", null, reference, c, mode)
+        val lhsType = lhs?.type
+        if (lhsType == null) {
+            if (!expression.isEmptyLHS) return null
+
+            return tryResolveRHSWithReceiver("resolve callable reference with empty LHS", null, reference, c, mode)
                        ?.apply { commitTrace() }?.results
+        }
 
         val resultSequence = buildSequence {
             when (lhs) {

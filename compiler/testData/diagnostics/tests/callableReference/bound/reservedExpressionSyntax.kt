@@ -26,8 +26,8 @@ class Test {
     fun <T> List<T>.testClassLiteral2() = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS, EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>b<!>?::class
     fun <T> List<T>.testClassLiteral3() = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS, EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>b<T, Any><!>::class
 
-    fun <T> List<T>.testUnresolved1() = <!UNRESOLVED_REFERENCE!>unresolved<!><T>::<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>
+    fun <T> List<T>.testUnresolved1() = <!UNRESOLVED_REFERENCE!>unresolved<!><T>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
     fun <T> List<T>.testUnresolved2() = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>a<<!UNRESOLVED_REFERENCE!>unresolved<!>><!>::foo
     fun <T> List<T>.testUnresolved3() = a<<!SYNTAX!><!>>::foo
-    fun <T> List<T>.testUnresolved4() = <!UNRESOLVED_REFERENCE!>unresolved<!>?::<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>
+    fun <T> List<T>.testUnresolved4() = <!UNRESOLVED_REFERENCE!>unresolved<!>?::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
 }
