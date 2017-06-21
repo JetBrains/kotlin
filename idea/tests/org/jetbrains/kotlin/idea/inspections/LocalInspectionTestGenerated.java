@@ -59,6 +59,111 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SimplifiableCallChain extends AbstractLocalInspectionTest {
+            public void testAllFilesPresentInSimplifiableCallChain() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections/simplifiableCallChain"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("filterFirst.kt")
+            public void testFilterFirst() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/filterFirst.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("filterFirstFake.kt")
+            public void testFilterFirstFake() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/filterFirstFake.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("filterFirstFakeReference.kt")
+            public void testFilterFirstFakeReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/filterFirstFakeReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("filterFirstOrNullReference.kt")
+            public void testFilterFirstOrNullReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/filterFirstOrNullReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("filterIsEmpty.kt")
+            public void testFilterIsEmpty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/filterIsEmpty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("filterIsNotEmpty.kt")
+            public void testFilterIsNotEmpty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/filterIsNotEmpty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("filterLastExplicit.kt")
+            public void testFilterLastExplicit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/filterLastExplicit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("filterTextIsEmpty.kt")
+            public void testFilterTextIsEmpty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/filterTextIsEmpty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("filterTextSingleOrNull.kt")
+            public void testFilterTextSingleOrNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/filterTextSingleOrNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("joinTo.kt")
+            public void testJoinTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinTo.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("joinToFake.kt")
+            public void testJoinToFake() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinToFake.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("joinToFakeWithLambda.kt")
+            public void testJoinToFakeWithLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinToFakeWithLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("joinToString.kt")
+            public void testJoinToString() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinToString.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("joinToStringWithReference.kt")
+            public void testJoinToStringWithReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinToStringWithReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("joinToStringWithReferenceFake.kt")
+            public void testJoinToStringWithReferenceFake() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinToStringWithReferenceFake.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mapNotNull.kt")
+            public void testMapNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapNotNull.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

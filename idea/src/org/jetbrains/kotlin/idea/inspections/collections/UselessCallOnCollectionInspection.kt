@@ -18,9 +18,6 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -61,13 +58,7 @@ class UselessCallOnCollectionInspection : AbstractUselessCallInspection() {
             if (TypeUtils.isNullableType(receiverTypeArgument)) return
             if (calleeExpression.text != "filterNotNull") {
                 // Also check last argument functional type to have not-null result
-                val lastParameter = resolvedCall.resultingDescriptor.valueParameters.lastOrNull() ?: return
-                val lastArgument = resolvedCall.valueArguments[lastParameter]?.arguments?.singleOrNull() ?: return
-                val functionalType = lastArgument.getArgumentExpression()?.getType(context) ?: return
-                // Both Function & KFunction must pass here
-                if (functionalType.constructor.declarationDescriptor?.getFunctionalClassKind() == null) return
-                val resultType = functionalType.arguments.lastOrNull()?.type ?: return
-                if (TypeUtils.isNullableType(resultType)) return
+                if (!resolvedCall.hasLastFunctionalParameterWithResult(context) { !TypeUtils.isNullableType(it) }) return
             }
         }
 
