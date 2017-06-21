@@ -6,10 +6,6 @@ fun foo() : String {
     return u()
 }
 
-fun main(args: Array<String>) {
-    foo()
-}
-
 fun box(): String {
-  return foo()
+    return foo()
 }

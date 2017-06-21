@@ -1,9 +1,5 @@
 enum class En { A, B, С }
 
-fun main(args: Array<String>) {
-
-}
-
 fun box(): String {
     var res1 = "fail"
     var res2 = "fail2"
