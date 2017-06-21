@@ -196,25 +196,26 @@ private fun <T : Any> mapBuiltInType(
         return typeFactory.createObjectType(CONTINUATION_INTERNAL_NAME)
     }
 
-    val fqName = descriptor.fqNameUnsafe
-
-    val primitiveType = KotlinBuiltIns.getPrimitiveTypeByFqName(fqName)
+    val primitiveType = KotlinBuiltIns.getPrimitiveType(descriptor)
     if (primitiveType != null) {
         val jvmType = typeFactory.createFromString(JvmPrimitiveType.get(primitiveType).desc)
         val isNullableInJava = TypeUtils.isNullableType(type) || type.hasEnhancedNullability()
         return typeFactory.boxTypeIfNeeded(jvmType, isNullableInJava)
     }
 
-    val arrayElementType = KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(fqName)
+    val arrayElementType = KotlinBuiltIns.getPrimitiveArrayType(descriptor)
     if (arrayElementType != null) {
         return typeFactory.createFromString("[" + JvmPrimitiveType.get(arrayElementType).desc)
     }
 
-    val classId = JavaToKotlinClassMap.mapKotlinToJava(fqName)
-    if (classId != null) {
-        if (!mode.kotlinCollectionsToJavaCollections && JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId }) return null
+    if (KotlinBuiltIns.isUnderKotlinPackage(descriptor)) {
+        val classId = JavaToKotlinClassMap.mapKotlinToJava(descriptor.fqNameUnsafe)
+        if (classId != null) {
+            if (!mode.kotlinCollectionsToJavaCollections &&
+                JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId }) return null
 
-        return typeFactory.createObjectType(JvmClassName.byClassId(classId, typeMappingConfiguration).internalName)
+            return typeFactory.createObjectType(JvmClassName.byClassId(classId, typeMappingConfiguration).internalName)
+        }
     }
 
     return null

@@ -50,6 +50,8 @@ import java.util.*;
 import static kotlin.collections.SetsKt.setOf;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
+import static org.jetbrains.kotlin.utils.CollectionsKt.newHashMapWithExpectedSize;
+import static org.jetbrains.kotlin.utils.CollectionsKt.newHashSetWithExpectedSize;
 
 public abstract class KotlinBuiltIns {
     public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin");
@@ -320,12 +322,14 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe kMutableProperty2 = reflect("KMutableProperty2");
         public final ClassId kProperty = ClassId.topLevel(reflect("KProperty").toSafe());
 
-        public final Map<FqNameUnsafe, PrimitiveType> fqNameToPrimitiveType;
-        public final Map<FqNameUnsafe, PrimitiveType> arrayClassFqNameToPrimitiveType;
+        public final Set<Name> primitiveTypeShortNames = newHashSetWithExpectedSize(PrimitiveType.values().length);
+        public final Set<Name> primitiveArrayTypeShortNames = newHashSetWithExpectedSize(PrimitiveType.values().length);
+        public final Map<FqNameUnsafe, PrimitiveType> fqNameToPrimitiveType = newHashMapWithExpectedSize(PrimitiveType.values().length);
+        public final Map<FqNameUnsafe, PrimitiveType> arrayClassFqNameToPrimitiveType = newHashMapWithExpectedSize(PrimitiveType.values().length);
         {
-            fqNameToPrimitiveType = new HashMap<FqNameUnsafe, PrimitiveType>(0);
-            arrayClassFqNameToPrimitiveType = new HashMap<FqNameUnsafe, PrimitiveType>(0);
             for (PrimitiveType primitiveType : PrimitiveType.values()) {
+                primitiveTypeShortNames.add(primitiveType.getTypeName());
+                primitiveArrayTypeShortNames.add(primitiveType.getArrayTypeName());
                 fqNameToPrimitiveType.put(fqNameUnsafe(primitiveType.getTypeName().asString()), primitiveType);
                 arrayClassFqNameToPrimitiveType.put(fqNameUnsafe(primitiveType.getArrayTypeName().asString()), primitiveType);
             }
@@ -835,17 +839,21 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isPrimitiveArray(@NotNull FqNameUnsafe arrayFqName) {
-        return getPrimitiveTypeByArrayClassFqName(arrayFqName) != null;
+        return FQ_NAMES.arrayClassFqNameToPrimitiveType.get(arrayFqName) != null;
     }
 
     @Nullable
-    public static PrimitiveType getPrimitiveTypeByFqName(@NotNull FqNameUnsafe primitiveClassFqName) {
-        return FQ_NAMES.fqNameToPrimitiveType.get(primitiveClassFqName);
+    public static PrimitiveType getPrimitiveType(@NotNull DeclarationDescriptor descriptor) {
+        return FQ_NAMES.primitiveTypeShortNames.contains(descriptor.getName())
+               ? FQ_NAMES.fqNameToPrimitiveType.get(getFqName(descriptor))
+               : null;
     }
 
     @Nullable
-    public static PrimitiveType getPrimitiveTypeByArrayClassFqName(@NotNull FqNameUnsafe primitiveArrayClassFqName) {
-        return FQ_NAMES.arrayClassFqNameToPrimitiveType.get(primitiveArrayClassFqName);
+    public static PrimitiveType getPrimitiveArrayType(@NotNull DeclarationDescriptor descriptor) {
+        return FQ_NAMES.primitiveArrayTypeShortNames.contains(descriptor.getName())
+               ? FQ_NAMES.arrayClassFqNameToPrimitiveType.get(getFqName(descriptor))
+               : null;
     }
 
     @NotNull
@@ -871,26 +879,24 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isArrayOrPrimitiveArray(@NotNull ClassDescriptor descriptor) {
-        return classFqNameEquals(descriptor, FQ_NAMES.array) || getPrimitiveTypeByArrayClassFqName(getFqName(descriptor)) != null;
+        return classFqNameEquals(descriptor, FQ_NAMES.array) || getPrimitiveArrayType(descriptor) != null;
     }
 
     public static boolean isPrimitiveArray(@NotNull KotlinType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor != null && getPrimitiveTypeByArrayClassFqName(getFqName(descriptor)) != null;
+        return descriptor != null && getPrimitiveArrayType(descriptor) != null;
     }
 
     @Nullable
     public static PrimitiveType getPrimitiveArrayElementType(@NotNull KotlinType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor == null) return null;
-        return getPrimitiveTypeByArrayClassFqName(getFqName(descriptor));
+        return descriptor == null ? null : getPrimitiveArrayType(descriptor);
     }
 
     @Nullable
     public static PrimitiveType getPrimitiveType(@NotNull KotlinType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (type.isMarkedNullable() || !(descriptor instanceof ClassDescriptor)) return null;
-        return getPrimitiveTypeByFqName(getFqName(descriptor));
+        return descriptor == null ? null : getPrimitiveType(descriptor);
     }
 
     public static boolean isPrimitiveType(@NotNull KotlinType type) {
@@ -902,15 +908,8 @@ public abstract class KotlinBuiltIns {
         return descriptor instanceof ClassDescriptor && isPrimitiveClass((ClassDescriptor) descriptor);
     }
 
-    @Nullable
-    public static PrimitiveType getPrimitiveTypeByKotlinType(@NotNull KotlinType type) {
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor == null) return null;
-        return getPrimitiveTypeByFqName(getFqName(descriptor));
-    }
-
     public static boolean isPrimitiveClass(@NotNull ClassDescriptor descriptor) {
-        return getPrimitiveTypeByFqName(getFqName(descriptor)) != null;
+        return getPrimitiveType(descriptor) != null;
     }
 
     public static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {

@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.js.translate.intrinsic.operation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
+import org.jetbrains.kotlin.js.backend.ast.JsNullLiteral
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF
@@ -54,8 +57,8 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
             val ktLeft = checkNotNull(expression.left) { "No left-hand side: " + expression.text }
             val ktRight = checkNotNull(expression.right) { "No right-hand side: " + expression.text }
-            val leftType = getRefinedType(ktLeft, context)?.let { KotlinBuiltIns.getPrimitiveTypeByKotlinType(it) }
-            val rightType = getRefinedType(ktRight, context)?.let { KotlinBuiltIns.getPrimitiveTypeByKotlinType(it) }
+            val leftType = getRefinedType(ktLeft, context)?.let { KotlinBuiltIns.getPrimitiveType(it) }
+            val rightType = getRefinedType(ktRight, context)?.let { KotlinBuiltIns.getPrimitiveType(it) }
 
             if (leftType != null && (leftType in SIMPLE_PRIMITIVES || leftType == rightType && leftType != PrimitiveType.LONG)) {
                 return JsBinaryOperation(if (isNegated) JsBinaryOperator.REF_NEQ else JsBinaryOperator.REF_EQ,

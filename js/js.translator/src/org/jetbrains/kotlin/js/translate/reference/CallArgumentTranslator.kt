@@ -100,7 +100,8 @@ class CallArgumentTranslator private constructor(
                     hasSpreadOperator = arguments.any { it.getSpreadElement() != null }
                 }
 
-                varargPrimitiveType = KotlinBuiltIns.getPrimitiveType(parameterDescriptor.original.varargElementType!!)
+                val varargElementType = parameterDescriptor.original.varargElementType!!
+                varargPrimitiveType = KotlinBuiltIns.getPrimitiveType(varargElementType).takeUnless { varargElementType.isMarkedNullable }
 
                 if (hasSpreadOperator) {
                     if (isNativeFunctionCall) {

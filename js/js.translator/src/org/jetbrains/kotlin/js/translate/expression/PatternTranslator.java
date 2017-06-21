@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtIsExpression;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collections;
@@ -304,7 +303,7 @@ public final class PatternTranslator extends AbstractTranslator {
         DeclarationDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         if (!(descriptor instanceof ClassDescriptor)) return EqualityType.GENERAL;
 
-        PrimitiveType primitive = KotlinBuiltIns.getPrimitiveTypeByFqName(DescriptorUtilsKt.getFqNameUnsafe(descriptor));
+        PrimitiveType primitive = KotlinBuiltIns.getPrimitiveType(descriptor);
         if (primitive == null) return EqualityType.GENERAL;
 
         return primitive == PrimitiveType.LONG ? EqualityType.LONG : EqualityType.PRIMITIVE;
