@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.script.StandardScriptDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 
 import java.io.File;
 import java.util.Collections;
@@ -39,9 +39,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEnvironment {
+public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase {
     private File javaFilesDir;
     private File kotlinSourceRoot;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        // TODO: do not create temporary directory for tests without Java sources
+        javaFilesDir = KotlinTestUtils.tmpDir("java-files");
+        if (isKotlinSourceRootNeeded()) {
+            kotlinSourceRoot = KotlinTestUtils.tmpDir("kotlin-src");
+        }
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        if (javaFilesDir != null) FileUtil.delete(javaFilesDir);
+        if (kotlinSourceRoot != null) FileUtil.delete(kotlinSourceRoot);
+        super.tearDown();
+    }
 
     public class ModuleAndDependencies {
         final M module;
@@ -55,10 +72,8 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEn
         }
     }
 
-    @Override
-    protected KotlinCoreEnvironment createEnvironment() throws Exception {
-        // TODO: do not create temporary directory for tests without Java sources
-        javaFilesDir = KotlinTestUtils.tmpDir("java-files");
+    @NotNull
+    protected KotlinCoreEnvironment createEnvironment() {
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(
                 getConfigurationKind(),
                 getTestJdkKind(),
@@ -67,16 +82,9 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEn
         );
         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition.INSTANCE);
         if (isKotlinSourceRootNeeded()) {
-            kotlinSourceRoot = KotlinTestUtils.tmpDir("kotlin-src");
             ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
         }
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, getEnvironmentConfigFiles());
-    }
-
-    @Override
-    protected void removeEnvironment() throws Exception {
-        if (javaFilesDir != null) FileUtil.delete(javaFilesDir);
-        if (kotlinSourceRoot != null) FileUtil.delete(kotlinSourceRoot);
     }
 
     @NotNull

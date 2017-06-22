@@ -24,22 +24,11 @@ import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
-import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.*
 import java.io.File
 import java.io.StringWriter
-import kotlin.properties.Delegates
 
-abstract class AbstractAnnotationProcessorBoxTest : KotlinTestWithEnvironment() {
-    private var javaSourceRoot: File by Delegates.notNull()
-
-    override fun setUp() {
-        javaSourceRoot = KotlinTestUtils.tmpDir("java-files")
-        super.setUp()
-    }
-
+abstract class AbstractAnnotationProcessorBoxTest : KotlinTestWithEnvironmentManagement() {
     fun doTest(path: String) {
         val testDir = File(path)
 
@@ -53,9 +42,19 @@ abstract class AbstractAnnotationProcessorBoxTest : KotlinTestWithEnvironment() 
         val supportStubs = testName.contains("stubs", ignoreCase = true)
 
         val javaFiles = filesByExtension("java")
-        if (javaFiles.isNotEmpty()) {
-            javaFiles.forEach { it.copyTo(File(javaSourceRoot, it.name)) }
-        }
+        val javaSourceRoot =
+                if (javaFiles.isNotEmpty()) {
+                    KotlinTestUtils.tmpDir("java-files").also { javaSourceRoot ->
+                        javaFiles.forEach { javaFile -> javaFile.copyTo(File(javaSourceRoot, javaFile.name)) }
+                    }
+                }
+                else null
+
+        val configuration = KotlinTestUtils.newConfiguration(
+                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, listOf(KotlinTestUtils.getAnnotationsJar()), listOfNotNull(javaSourceRoot)
+        )
+        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val project = environment.project
 
         val collectorExtension = AnnotationCollectorExtensionForTests(supportInheritedAnnotations)
         ClassBuilderInterceptorExtension.registerExtension(project, collectorExtension)
@@ -74,13 +73,6 @@ abstract class AbstractAnnotationProcessorBoxTest : KotlinTestWithEnvironment() 
         val expectedAnnotationsFile = File(path + "annotations.txt")
 
         KotlinTestUtils.assertEqualsToFile(expectedAnnotationsFile, actualAnnotations)
-    }
-
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        val configuration = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, listOf(KotlinTestUtils.getAnnotationsJar()), listOf(javaSourceRoot)
-        )
-        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     private class AnnotationCollectorExtensionForTests(

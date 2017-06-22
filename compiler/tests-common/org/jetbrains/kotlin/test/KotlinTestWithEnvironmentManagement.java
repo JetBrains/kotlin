@@ -19,12 +19,10 @@ package org.jetbrains.kotlin.test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
-import org.jetbrains.kotlin.types.FlexibleTypeImpl;
 
 public abstract class KotlinTestWithEnvironmentManagement extends KtUsefulTestCase {
     static {
         System.setProperty("java.awt.headless", "true");
-        FlexibleTypeImpl.RUN_SLOW_ASSERTIONS = true;
     }
 
     @NotNull

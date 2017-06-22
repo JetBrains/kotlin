@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.checkers
 
-import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.ContainerUtil
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.asJava.getJvmSignatureDiagnostics
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestFile
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestModule
 import org.jetbrains.kotlin.checkers.CheckerTestUtil.ActualDiagnostic
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.*
@@ -42,8 +42,19 @@ import org.junit.Assert
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.reflect.jvm.javaField
 
 abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, TestFile>() {
+    protected lateinit var environment: KotlinCoreEnvironment
+
+    protected val project: Project
+        get() = environment.project
+
+    override fun tearDown() {
+        this::environment.javaField!![this] = null
+        super.tearDown()
+    }
+
     override fun createTestModule(name: String): TestModule =
             TestModule(name)
 
@@ -60,6 +71,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 modules[name]?.module ?: error("Dependency not found: $name for module ${moduleAndDependencies.module.name}")
             })
         }
+
+        environment = createEnvironment()
 
         analyzeAndCheck(file, testFiles)
     }
@@ -120,7 +133,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         private val diagnosedRanges: List<CheckerTestUtil.DiagnosedRange> = ArrayList()
         val expectedText: String
         private val clearText: String
-        val ktFile: KtFile?
+        private val createKtFile: Lazy<KtFile?>
         private val whatDiagnosticsToConsider: Condition<Diagnostic>
         val customLanguageVersionSettings: LanguageVersionSettings?
         val declareCheckType: Boolean
@@ -137,18 +150,19 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             this.declareFlexibleType = EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE in directives
             this.markDynamicCalls = MARK_DYNAMIC_CALLS_DIRECTIVE in directives
             if (fileName.endsWith(".java")) {
-                PsiFileFactory.getInstance(project).createFileFromText(fileName, JavaLanguage.INSTANCE, textWithMarkers)
-                // TODO: check there's not syntax errors
-                this.ktFile = null
+                // TODO: check there are no syntax errors in .java sources
+                this.createKtFile = lazyOf(null)
                 this.clearText = textWithMarkers
                 this.expectedText = this.clearText
             }
             else {
                 this.expectedText = textWithMarkers
                 this.clearText = CheckerTestUtil.parseDiagnosedRanges(addExtras(expectedText), diagnosedRanges)
-                this.ktFile = TestCheckerUtil.createCheckAndReturnPsiFile(fileName, clearText, project)
+                this.createKtFile = lazy { TestCheckerUtil.createCheckAndReturnPsiFile(fileName, clearText, project) }
             }
         }
+
+        val ktFile: KtFile? by createKtFile
 
         private val imports: String
             get() = buildString {
@@ -196,7 +210,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 actualText: StringBuilder,
                 skipJvmSignatureDiagnostics: Boolean
         ): Boolean {
-            if (this.ktFile == null) {
+            val ktFile = this.ktFile
+            if (ktFile == null) {
                 // TODO: check java files too
                 actualText.append(this.clearText)
                 return true
