@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.script.ScriptTemplatesProvider
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import java.io.File
+import java.net.URLClassLoader
 import java.util.*
 
 class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
@@ -57,7 +58,20 @@ class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
     override val id: String = "Gradle"
     override val isValid: Boolean get() = gradleExeSettings?.gradleHome != null
 
-    override val templateClassNames: Iterable<String> = listOf("org.gradle.script.lang.kotlin.KotlinBuildScript")
+    override val templateClassNames: Iterable<String> by lazy {
+        val loader = URLClassLoader(dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplatesProvider::class.java.classLoader)
+        val tpl = listOf("org.gradle.kotlin.dsl.KotlinBuildScript", "org.gradle.script.lang.kotlin.KotlinBuildScript").firstOrNull {
+            try {
+                // TODO: consider introducing caching mechanism (e.g. for ScriptDefinition) in ScriptTemplatesProvider to avoid double loading
+                loader.loadClass(it)
+                true
+            }
+            catch (e: ClassNotFoundException) { false }
+            catch (e: NoClassDefFoundError) { false }
+        }
+        if (tpl != null) listOf(tpl) else emptyList()
+    }
+
     override val dependenciesClasspath: Iterable<String> by lazy {
         gradleExeSettings?.gradleHome?.let { File(it, "lib") }
                 ?.let { if (it.exists()) it else null }
