@@ -22,8 +22,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.spring.SpringBundle
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.idea.editor.BatchTemplateRunner
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtClass
 
 class GenerateKotlinAutowiredDependencyAction : GenerateKotlinSpringBeanDependencyAction(
@@ -34,8 +32,6 @@ class GenerateKotlinAutowiredDependencyAction : GenerateKotlinSpringBeanDependen
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
         val klass = getTargetClass(editor, file) as? KtClass ?: return
         val lightClass = klass.toLightClass() ?: return
-        project
-                .executeWriteCommand<List<BatchTemplateRunner>>("") { generateAutowiredDependenciesFor(lightClass) }
-                .forEach { it.runTemplates() }
+        generateAutowiredDependenciesFor(lightClass).forEach { it.runTemplates() }
     }
 }
