@@ -125,6 +125,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         when (arguments) {
             is K2JVMCompilerArguments -> {
                 arguments.classpath = configuration?.getChild("classpath")?.text
+                arguments.jdkHome = configuration?.getChild("jdkHome")?.text
                 arguments.jvmTarget = configuration?.getChild("jvmTarget")?.text ?: mavenProject.properties["kotlin.compiler.jvmTarget"]?.toString()
             }
             is K2JSCompilerArguments -> {
@@ -163,9 +164,9 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val executionArguments = mavenPlugin.executions?.filter { it.goals.any { it in compilationGoals } }
                                          ?.firstOrNull()
                                          ?.configurationElement?.let { getCompilerArgumentsByConfigurationElement(mavenProject, it, configuredPlatform) }
-        parseCompilerArgumentsToFacet(sharedArguments, emptyList(), kotlinFacet)
+        parseCompilerArgumentsToFacet(sharedArguments, emptyList(), kotlinFacet, modifiableModelsProvider)
         if (executionArguments != null) {
-            parseCompilerArgumentsToFacet(executionArguments, emptyList(), kotlinFacet)
+            parseCompilerArgumentsToFacet(executionArguments, emptyList(), kotlinFacet, modifiableModelsProvider)
         }
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
     }

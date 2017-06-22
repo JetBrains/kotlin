@@ -16,6 +16,11 @@
 
 package org.jetbrains.kotlin.idea.maven
 
+import com.intellij.openapi.application.Result
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.roots.ModuleRootManager
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
@@ -1642,6 +1647,73 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                     listOf("-kotlin-home", "temp2"),
                     compilerSettings!!.additionalArgumentsAsList
             )
+        }
+    }
+
+    fun testJDKImport() {
+        object : WriteAction<Unit>() {
+            override fun run(result: Result<Unit>) {
+                val jdk = JavaSdk.getInstance().createJdk("myJDK", "my/path/to/jdk")
+                ProjectJdkTable.getInstance().addJdk(jdk)
+            }
+        }.execute()
+
+        try {
+            createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
+
+            importProject("""
+            <groupId>test</groupId>
+            <artifactId>project</artifactId>
+            <version>1.0.0</version>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib</artifactId>
+                    <version>$kotlinVersion</version>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+                <plugins>
+                    <plugin>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-plugin</artifactId>
+
+                        <executions>
+                            <execution>
+                                <id>compile</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <jdkHome>my/path/to/jdk</jdkHome>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            """)
+
+            assertModules("project")
+            assertImporterStatePresent()
+
+            val moduleSDK = ModuleRootManager.getInstance(getModule("project")).sdk!!
+            Assert.assertTrue(moduleSDK.sdkType is JavaSdk)
+            Assert.assertEquals("myJDK", moduleSDK.name)
+            Assert.assertEquals("my/path/to/jdk", moduleSDK.homePath)
+        }
+        finally {
+            object : WriteAction<Unit>() {
+                override fun run(result: Result<Unit>) {
+                    val jdkTable = ProjectJdkTable.getInstance()
+                    jdkTable.removeJdk(jdkTable.findJdk("myJDK"))
+                }
+            }.execute()
         }
     }
 

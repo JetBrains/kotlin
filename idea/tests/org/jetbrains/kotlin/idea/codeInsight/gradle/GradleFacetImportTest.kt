@@ -16,6 +16,11 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
+import com.intellij.openapi.application.Result
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -1077,6 +1082,61 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         with (facetSettings) {
             Assert.assertEquals(null, (compilerArguments as K2JVMCompilerArguments).classpath)
+        }
+    }
+
+    @Test
+    fun testJDKImport() {
+        object : WriteAction<Unit>() {
+            override fun run(result: Result<Unit>) {
+                val jdk = JavaSdk.getInstance().createJdk("myJDK", "my/path/to/jdk")
+                ProjectJdkTable.getInstance().addJdk(jdk)
+            }
+        }.execute()
+
+        try {
+            createProjectSubFile("build.gradle", """
+                group 'Again'
+                version '1.0-SNAPSHOT'
+
+                buildscript {
+                    repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+
+                    dependencies {
+                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                    }
+                }
+
+                apply plugin: 'kotlin'
+
+                dependencies {
+                    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
+                    compile "org.apache.logging.log4j:log4j-core:2.7"
+                }
+
+                compileKotlin {
+                    kotlinOptions.jdkHome = "my/path/to/jdk"
+                }
+            """)
+            importProject()
+
+            val moduleSDK = ModuleRootManager.getInstance(getModule("project_main")).sdk!!
+            Assert.assertTrue(moduleSDK.sdkType is JavaSdk)
+            Assert.assertEquals("myJDK", moduleSDK.name)
+            Assert.assertEquals("my/path/to/jdk", moduleSDK.homePath)
+        }
+        finally {
+            object : WriteAction<Unit>() {
+                override fun run(result: Result<Unit>) {
+                    val jdkTable = ProjectJdkTable.getInstance()
+                    jdkTable.removeJdk(jdkTable.findJdk("myJDK"))
+                }
+            }.execute()
         }
     }
 }

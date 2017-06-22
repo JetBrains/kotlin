@@ -139,7 +139,7 @@ private fun configureFacetByGradleModule(
         val defaultCompilerArguments = argsInfo.defaultArguments
         val dependencyClasspath = argsInfo.dependencyClasspath.map { PathUtil.toSystemIndependentName(it) }
         if (currentCompilerArguments.isNotEmpty()) {
-            parseCompilerArgumentsToFacet(currentCompilerArguments, defaultCompilerArguments, kotlinFacet)
+            parseCompilerArgumentsToFacet(currentCompilerArguments, defaultCompilerArguments, kotlinFacet, modelsProvider)
         }
         adjustClasspath(kotlinFacet, dependencyClasspath)
     }

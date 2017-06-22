@@ -21,8 +21,10 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
@@ -184,7 +186,20 @@ private val CommonCompilerArguments.ignoredFields: List<String>
         else -> emptyList()
     }
 
-fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: List<String>, kotlinFacet: KotlinFacet) {
+private fun Module.configureJdkIfPossible(compilerArguments: K2JVMCompilerArguments, modelsProvider: IdeModifiableModelsProvider) {
+    val jdkHome = compilerArguments.jdkHome ?: return
+    val jdk = ProjectJdkTable.getInstance().allJdks.firstOrNull {
+        it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0
+    } ?: return
+    modelsProvider.getModifiableRootModel(this).sdk = jdk
+}
+
+fun parseCompilerArgumentsToFacet(
+        arguments: List<String>,
+        defaultArguments: List<String>,
+        kotlinFacet: KotlinFacet,
+        modelsProvider: IdeModifiableModelsProvider
+) {
     val argumentArray = arguments.toTypedArray()
 
     with(kotlinFacet.configuration.settings) {
@@ -200,6 +215,10 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
 
         // Retain only fields exposed (and not explicitly ignored) in facet configuration editor.
         // The rest is combined into string and stored in CompilerSettings.additionalArguments
+
+        if (compilerArguments is K2JVMCompilerArguments) {
+            kotlinFacet.module.configureJdkIfPossible(compilerArguments, modelsProvider)
+        }
 
         val primaryFields = compilerArguments.primaryFields
         val ignoredFields = compilerArguments.ignoredFields
