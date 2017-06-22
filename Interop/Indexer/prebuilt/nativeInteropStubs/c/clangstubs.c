@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <jni.h>
 #include <clang-c/Index.h>
+#include <clang-c/ext.h>
 
 JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCString (JNIEnv *jniEnv, jclass jclss, jlong string) {
     return (jlong) (clang_getCString(*(CXString*)string));
@@ -1237,5 +1238,41 @@ JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1indexLoc_1getCXSourceLocati
 
 JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Type_1visitFields (JNIEnv *jniEnv, jclass jclss, jlong T, jlong visitor, jlong client_data) {
     return (jint) (clang_Type_visitFields(*(CXType*)T, (CXFieldVisitor)visitor, (CXClientData)client_data));
+}
+
+JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Cursor_1getAttributeSpelling (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
+    return (jlong) (clang_Cursor_getAttributeSpelling(*(CXCursor*)cursor));
+}
+
+JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getDeclTypeAttributes (JNIEnv *jniEnv, jclass jclss, jlong cursor, jlong retValPlacement) {
+    *(CXTypeAttributes*)retValPlacement = clang_getDeclTypeAttributes(*(CXCursor*)cursor);
+    return (jlong) retValPlacement;
+}
+
+JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getResultTypeAttributes (JNIEnv *jniEnv, jclass jclss, jlong typeAttributes, jlong retValPlacement) {
+    *(CXTypeAttributes*)retValPlacement = clang_getResultTypeAttributes(*(CXTypeAttributes*)typeAttributes);
+    return (jlong) retValPlacement;
+}
+
+JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1getCursorResultTypeAttributes (JNIEnv *jniEnv, jclass jclss, jlong cursor, jlong retValPlacement) {
+    *(CXTypeAttributes*)retValPlacement = clang_getCursorResultTypeAttributes(*(CXCursor*)cursor);
+    return (jlong) retValPlacement;
+}
+
+JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Type_1getNullabilityKind (JNIEnv *jniEnv, jclass jclss, jlong type, jlong attributes) {
+    return (jint) (clang_Type_getNullabilityKind(*(CXType*)type, *(CXTypeAttributes*)attributes));
+}
+
+JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Type_1getNumProtocols (JNIEnv *jniEnv, jclass jclss, jlong type) {
+    return (jint) (clang_Type_getNumProtocols(*(CXType*)type));
+}
+
+JNIEXPORT jlong JNICALL Java_clang_clang_kni_1clang_1Type_1getProtocol (JNIEnv *jniEnv, jclass jclss, jlong type, jint index, jlong retValPlacement) {
+    *(CXCursor*)retValPlacement = clang_Type_getProtocol(*(CXType*)type, (unsigned int)index);
+    return (jlong) retValPlacement;
+}
+
+JNIEXPORT jint JNICALL Java_clang_clang_kni_1clang_1Cursor_1isObjCInitMethod (JNIEnv *jniEnv, jclass jclss, jlong cursor) {
+    return (jint) (clang_Cursor_isObjCInitMethod(*(CXCursor*)cursor));
 }
 

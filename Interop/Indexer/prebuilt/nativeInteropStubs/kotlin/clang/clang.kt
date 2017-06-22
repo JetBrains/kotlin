@@ -2962,6 +2962,88 @@ fun clang_Type_visitFields(T: CValue<CXType>, visitor: CXFieldVisitor?, client_d
 
 private external fun kni_clang_Type_visitFields(T: NativePtr, visitor: NativePtr, client_data: NativePtr): Int
 
+fun clang_Cursor_getAttributeSpelling(cursor: CValue<CXCursor>): CPointer<ByteVar>? {
+    return memScoped {
+        val _cursor = cursor.getPointer(memScope).rawValue
+        val res = kni_clang_Cursor_getAttributeSpelling(_cursor)
+        interpretCPointer<ByteVar>(res)
+    }
+}
+
+private external fun kni_clang_Cursor_getAttributeSpelling(cursor: NativePtr): NativePtr
+
+fun clang_getDeclTypeAttributes(cursor: CValue<CXCursor>): CValue<CXTypeAttributes> {
+    return memScoped {
+        val _cursor = cursor.getPointer(memScope).rawValue
+        val res = kni_clang_getDeclTypeAttributes(_cursor, alloc<CXTypeAttributes>().rawPtr)
+        interpretPointed<CXTypeAttributes>(res).readValue()
+    }
+}
+
+private external fun kni_clang_getDeclTypeAttributes(cursor: NativePtr, retValPlacement: NativePtr): NativePtr
+
+fun clang_getResultTypeAttributes(typeAttributes: CValue<CXTypeAttributes>): CValue<CXTypeAttributes> {
+    return memScoped {
+        val _typeAttributes = typeAttributes.getPointer(memScope).rawValue
+        val res = kni_clang_getResultTypeAttributes(_typeAttributes, alloc<CXTypeAttributes>().rawPtr)
+        interpretPointed<CXTypeAttributes>(res).readValue()
+    }
+}
+
+private external fun kni_clang_getResultTypeAttributes(typeAttributes: NativePtr, retValPlacement: NativePtr): NativePtr
+
+fun clang_getCursorResultTypeAttributes(cursor: CValue<CXCursor>): CValue<CXTypeAttributes> {
+    return memScoped {
+        val _cursor = cursor.getPointer(memScope).rawValue
+        val res = kni_clang_getCursorResultTypeAttributes(_cursor, alloc<CXTypeAttributes>().rawPtr)
+        interpretPointed<CXTypeAttributes>(res).readValue()
+    }
+}
+
+private external fun kni_clang_getCursorResultTypeAttributes(cursor: NativePtr, retValPlacement: NativePtr): NativePtr
+
+fun clang_Type_getNullabilityKind(type: CValue<CXType>, attributes: CValue<CXTypeAttributes>): CXNullabilityKind {
+    return memScoped {
+        val _type = type.getPointer(memScope).rawValue
+        val _attributes = attributes.getPointer(memScope).rawValue
+        val res = kni_clang_Type_getNullabilityKind(_type, _attributes)
+        CXNullabilityKind.byValue(res)
+    }
+}
+
+private external fun kni_clang_Type_getNullabilityKind(type: NativePtr, attributes: NativePtr): Int
+
+fun clang_Type_getNumProtocols(type: CValue<CXType>): Int {
+    return memScoped {
+        val _type = type.getPointer(memScope).rawValue
+        val res = kni_clang_Type_getNumProtocols(_type)
+        res
+    }
+}
+
+private external fun kni_clang_Type_getNumProtocols(type: NativePtr): Int
+
+fun clang_Type_getProtocol(type: CValue<CXType>, index: Int): CValue<CXCursor> {
+    return memScoped {
+        val _type = type.getPointer(memScope).rawValue
+        val _index = index
+        val res = kni_clang_Type_getProtocol(_type, _index, alloc<CXCursor>().rawPtr)
+        interpretPointed<CXCursor>(res).readValue()
+    }
+}
+
+private external fun kni_clang_Type_getProtocol(type: NativePtr, index: Int, retValPlacement: NativePtr): NativePtr
+
+fun clang_Cursor_isObjCInitMethod(cursor: CValue<CXCursor>): Int {
+    return memScoped {
+        val _cursor = cursor.getPointer(memScope).rawValue
+        val res = kni_clang_Cursor_isObjCInitMethod(_cursor)
+        res
+    }
+}
+
+private external fun kni_clang_Cursor_isObjCInitMethod(cursor: NativePtr): Int
+
 val CINDEX_VERSION_MAJOR: Int = 0
 
 val CINDEX_VERSION_MINOR: Int = 35
@@ -3679,6 +3761,17 @@ class IndexerCallbacks(override val rawPtr: NativePtr) : CStructVar() {
     var indexEntityReference: CPointer<CFunction<(CXClientData?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>?
         get() = memberAt<CPointerVar<CFunction<(CXClientData?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>>(56).value
         set(value) { memberAt<CPointerVar<CFunction<(CXClientData?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>>(56).value = value }
+    
+}
+
+@CNaturalStruct("typeOpaquePtr")
+class CXTypeAttributes(override val rawPtr: NativePtr) : CStructVar() {
+    
+    companion object : Type(8, 8)
+    
+    var typeOpaquePtr: COpaquePointer?
+        get() = memberAt<COpaquePointerVar>(0).value
+        set(value) { memberAt<COpaquePointerVar>(0).value = value }
     
 }
 
@@ -4629,6 +4722,24 @@ val CXIndexOpt_IndexFunctionLocalSymbols: CXIndexOptFlags = 2
 val CXIndexOpt_IndexImplicitTemplateInstantiations: CXIndexOptFlags = 4
 val CXIndexOpt_SuppressWarnings: CXIndexOptFlags = 8
 val CXIndexOpt_SkipParsedBodiesInSession: CXIndexOptFlags = 16
+
+enum class CXNullabilityKind(override val value: Int) : CEnum {
+    CXNullabilityKind_Nullable(0),
+    CXNullabilityKind_NonNull(1),
+    CXNullabilityKind_Unspecified(2),
+    ;
+    
+    companion object {
+        fun byValue(value: Int) = CXNullabilityKind.values().find { it.value == value }!!
+    }
+    
+    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+        companion object : Type(IntVar.size.toInt())
+        var value: CXNullabilityKind
+            get() = byValue(this.reinterpret<IntVar>().value)
+            set(value) { this.reinterpret<IntVar>().value = value.value }
+    }
+}
 
 typealias CXVirtualFileOverlayVar = CPointerVarOf<CXVirtualFileOverlay>
 typealias CXVirtualFileOverlay = CPointer<CXVirtualFileOverlayImpl>

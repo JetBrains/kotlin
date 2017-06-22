@@ -72,6 +72,10 @@ class NamedNativeInteropConfig implements Named {
         pkg = value
     }
 
+    void compilerOpts(List<String> values) {
+        compilerOpts.addAll(values)
+    }
+
     void compilerOpts(String... values) {
         compilerOpts.addAll(values)
     }

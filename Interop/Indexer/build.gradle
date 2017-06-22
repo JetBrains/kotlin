@@ -23,6 +23,45 @@ apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 
 apply plugin: 'c'
 
+final Project libclangextProject = project(":libclangext")
+final String libclangextTask = libclangextProject.path + ":build"
+File libclangextDir = new File(libclangextProject.buildDir, "libs/clangext/static")
+final boolean libclangextIsEnabled = libclangextProject.isEnabled
+
+final String libclang
+if (isWindows()) {
+    libclang = "bin/libclang.dll"
+} else {
+    libclang = "lib/${System.mapLibraryName("clang")}"
+}
+
+List<String> cflags = [
+        "-I$llvmDir/include",
+        "-I${project(":libclangext").projectDir.absolutePath + "/src/main/include"}"
+]*.toString()
+
+List<String> ldflags = ["$llvmDir/$libclang", "-L$libclangextDir.absolutePath", "-lclangext"]*.toString()
+
+if (libclangextIsEnabled) {
+    assert(isMac())
+    ldflags.addAll(['-Wl,--no-demangle', '-Wl,-search_paths_first', '-Wl,-headerpad_max_install_names'])
+
+    List<String> llvmLibs = [
+            "clangAST", "clangASTMatchers", "clangAnalysis", "clangBasic", "clangDriver", "clangEdit",
+            "clangFrontend", "clangFrontendTool", "clangLex", "clangParse", "clangSema", "clangEdit",
+            "clangRewrite", "clangRewriteFrontend", "clangStaticAnalyzerFrontend",
+            "clangStaticAnalyzerCheckers", "clangStaticAnalyzerCore", "clangSerialization",
+            "clangToolingCore",
+            "clangTooling", "clangFormat", "LLVMTarget", "LLVMMC", "LLVMLinker", "LLVMTransformUtils",
+            "LLVMBitWriter", "LLVMBitReader", "LLVMAnalysis", "LLVMProfileData", "LLVMCore",
+            "LLVMSupport"
+    ].collect { "$llvmDir/lib/lib${it}.a".toString() }
+
+    ldflags.addAll(llvmLibs)
+    ldflags.addAll(['-lpthread', '-lz', '-lm', '-lcurses'])
+}
+
+
 model {
     components {
         clangstubs(NativeLibrarySpec) {
@@ -32,17 +71,11 @@ model {
 
             binaries.all {
                 cCompiler.args hostCompilerArgsForJni
-                cCompiler.args "-I$llvmDir/include"
+                cCompiler.args.addAll(cflags)
             }
 
             binaries.withType(SharedLibraryBinarySpec) {
-                final String libclang
-                if (isWindows()) {
-                    libclang = "bin/libclang.dll"
-                } else {
-                    libclang = "lib/${System.mapLibraryName("clang")}"
-                }
-                linker.args "$llvmDir/$libclang"
+                linker.args.addAll(ldflags)
             }
         }
    }
@@ -74,10 +107,17 @@ classes.dependsOn nativelibs
 kotlinNativeInterop {
     clang {
         defFile 'clang.def'
-        compilerOpts "-I$llvmDir/include"
-        linkerOpts "-L$llvmDir/lib"
+        compilerOpts cflags
+        linkerOpts ldflags
         genTask.args '-keepcstubs', 'true'
+        genTask.dependsOn libclangextTask
+        genTask.inputs.dir libclangextDir
     }
+}
+
+tasks.matching { it.name == 'linkClangstubsSharedLibrary' }.all {
+    it.dependsOn libclangextTask
+    it.inputs.dir libclangextDir
 }
 
 task updatePrebuilt {
