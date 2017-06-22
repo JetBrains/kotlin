@@ -63,7 +63,7 @@ public fun <T> (suspend () -> T).createCoroutineUnchecked(
 ): Continuation<Unit> =
         if (this !is CoroutineImpl)
             buildContinuationByInvokeCall(completion) {
-                (this as Function1<Continuation<T>, Any?>).invoke(completion)
+                @Suppress("UNCHECKED_CAST") (this as Function1<Continuation<T>, Any?>).invoke(completion)
             }
         else
             (this.create(completion) as CoroutineImpl).facade
@@ -84,7 +84,7 @@ public fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
 ): Continuation<Unit> =
         if (this !is CoroutineImpl)
             buildContinuationByInvokeCall(completion) {
-                (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+                @Suppress("UNCHECKED_CAST") (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
             }
         else
             (this.create(receiver, completion) as CoroutineImpl).facade

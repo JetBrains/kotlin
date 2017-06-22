@@ -95,7 +95,7 @@ internal inline fun processBareContinuationResume(completion: Continuation<*>, b
     try {
         val result = block()
         if (result !== COROUTINE_SUSPENDED) {
-            (completion as Continuation<Any?>).resume(result)
+            @Suppress("UNCHECKED_CAST") (completion as Continuation<Any?>).resume(result)
         }
     } catch (t: Throwable) {
         completion.resumeWithException(t)

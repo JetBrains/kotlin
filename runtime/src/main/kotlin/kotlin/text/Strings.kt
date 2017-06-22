@@ -1089,7 +1089,7 @@ private class DelimitedRangesSequence(private val input: CharSequence, private v
 private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
     require(limit >= 0, { "Limit must be non-negative, but was $limit." })
 
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimiters, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to 1 } })
+    return DelimitedRangesSequence(this, startIndex, limit, { index -> findAnyOf(delimiters, index, ignoreCase = ignoreCase, last = false)?.let { it.first to 1 } })
 }
 
 
@@ -1111,7 +1111,7 @@ private fun CharSequence.rangesDelimitedBy(delimiters: Array<out String>, startI
     require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
     val delimitersList = delimiters.asList()
 
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimitersList, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length } })
+    return DelimitedRangesSequence(this, startIndex, limit, { index -> findAnyOf(delimitersList, index, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length } })
 
 }
 

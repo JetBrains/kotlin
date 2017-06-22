@@ -77,7 +77,7 @@ internal class HangulDecomposedCharSet(
          * http://www.unicode.org/versions/Unicode4.0.0/ch03.pdf
          * "3.12 Conjoining Jamo Behavior"
          */
-        var LIndex = -1
+        var LIndex: Int
         var VIndex = -1
         var TIndex = -1
 
@@ -139,7 +139,7 @@ internal class HangulDecomposedCharSet(
                     -1
             }
             index++
-            decompSyllable[SyllIndex++] = curSymb.toInt()
+            decompSyllable[@Suppress("UNUSED_CHANGED_VALUE")SyllIndex++] = curSymb.toInt()
 
             /*
              * We deal with LVT syllable at testString, so

@@ -78,8 +78,8 @@ internal class HexStringParser(private val EXPONENT_WIDTH: Int, private val MANT
     /*
      * Parses the exponent field.
      */
-    private fun parseExponent(exponentStr: String) {
-        var exponentStr = exponentStr
+    private fun parseExponent(exponentString: String) {
+        var exponentStr = exponentString
         val leadingChar = exponentStr[0]
         val expSign = if (leadingChar == '-') -1 else 1
         if (!leadingChar.isDigit()) {
@@ -247,8 +247,8 @@ internal class HexStringParser(private val EXPONENT_WIDTH: Int, private val MANT
      * characters "0x1." followed by a lowercase hexadecimal representation of
      * the rest of the significand as a fraction.
      */
-    private fun getOffset(strIntegerPart: String, strDecimalPart: String): Int {
-        var strIntegerPart = strIntegerPart
+    private fun getOffset(strIntegerPartParam: String, strDecimalPart: String): Int {
+        var strIntegerPart = strIntegerPartParam
         strIntegerPart = strIntegerPart.replaceFirst("^0+".toRegex(), "") //$NON-NLS-1$ //$NON-NLS-2$
 
         // If the Integer part is a nonzero number.

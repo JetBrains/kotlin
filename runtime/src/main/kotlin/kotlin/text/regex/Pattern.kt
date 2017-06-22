@@ -254,7 +254,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                 curSymb = lexemes.currentChar
                 curSymbIndex = curSymb - Lexer.TBase
                 if (curSymbIndex >= 0 && curSymbIndex < Lexer.TCount) {
-                    codePointsHangul[readCodePoints++] = curSymb.toChar()
+                    codePointsHangul[@Suppress("UNUSED_CHANGED_VALUE")readCodePoints++] = curSymb.toChar()
                     lexemes.next()
 
                     //LVT syllable

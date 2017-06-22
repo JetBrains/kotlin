@@ -9,7 +9,8 @@ internal fun <T> getContinuation(): Continuation<T> = throw AssertionError("Call
 
 @Intrinsic
 @PublishedApi
-internal suspend fun <T> returnIfSuspended(value: Any?): T = throw AssertionError("Call to returnIfSuspended should've been lowered")
+internal suspend fun <T> returnIfSuspended(@Suppress("UNUSED_PARAMETER") argument: Any?): T
+        = throw AssertionError("Call to returnIfSuspended should've been lowered")
 
 // Single-threaded continuation.
 class SafeContinuation<in T>

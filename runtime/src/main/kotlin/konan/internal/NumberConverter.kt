@@ -50,7 +50,7 @@ class NumberConverter {
         // The value of the 'significand bits' of the inputNumber.
         var f = inputNumberBits and fMask
         val mantissaIsZero = f == 0L
-        var pow = 0
+        var pow: Int
         var numBits = 52
 
         if (e == 2047)
@@ -100,7 +100,7 @@ class NumberConverter {
         // The value of the 'significand bits' of the inputNumber.
         var f = inputNumberBits and fMask
         val mantissaIsZero = f == 0
-        var pow = 0
+        var pow: Int
         var numBits = 23
 
         if (e == 255)

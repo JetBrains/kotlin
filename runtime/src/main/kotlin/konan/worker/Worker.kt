@@ -92,7 +92,7 @@ class Future<T> internal constructor(val id: FutureId) {
     fun consume(code: (T) -> Unit) {
         when (state) {
             FutureState.SCHEDULED, FutureState.COMPUTED -> {
-                val value = consumeFuture(id) as T
+                val value = @Suppress("UNCHECKED_CAST") (consumeFuture(id) as T)
                 code(value)
             }
             FutureState.INVALID ->
@@ -103,7 +103,7 @@ class Future<T> internal constructor(val id: FutureId) {
     }
 
     val state: FutureState
-            get() = FutureState.values()[stateOfFuture(id)]
+        get() = FutureState.values()[stateOfFuture(id)]
 
     override fun equals(other: Any?): Boolean {
         return (other is Future<*>) && (id == other.id)
@@ -136,8 +136,8 @@ class Worker(val id: WorkerId) {
      * and result of such a execution is being disconnected from worker's object graph. Whoever will consume
      * the future, can use result of worker's computations.
      */
-    fun <T1, T2> schedule(mode: TransferMode, producer: () -> T1,
-                          @VolatileLambda job: (T1) -> T2): Future<T2> =
+    @Suppress("UNUSED_PARAMETER")
+    fun <T1, T2> schedule(mode: TransferMode, producer: () -> T1, @VolatileLambda job: (T1) -> T2): Future<T2> =
             /**
              * This function is a magical operation, handled by lowering in the compiler, and replaced with call to
              *   scheduleImpl(worker, mode, producer, job)
@@ -159,13 +159,13 @@ class Worker(val id: WorkerId) {
  * Typically new worker may be needed for computations offload to another core, for IO it may be
  * better to use non-blocking IO combined with more lightweight coroutines.
  */
-fun startWorker() : Worker = Worker(startInternal())
+fun startWorker(): Worker = Worker(startInternal())
 
 /**
  * Wait for availability of futures in the collection. Returns set with all futures which have
  * value available for the consumption.
  */
-fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int) : Set<Future<T>> {
+fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int): Set<Future<T>> {
     val result = mutableSetOf<Future<T>>()
 
     while (true) {
@@ -192,7 +192,7 @@ fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int) : Set<Future<T
 /**
  * Creates verbatim *shallow* copy of passed object, use carefully to create disjoint object graph.
  */
-fun <T> T.shallowCopy(): T = shallowCopyInternal(this) as T
+fun <T> T.shallowCopy(): T = @Suppress("UNCHECKED_CAST") (shallowCopyInternal(this) as T)
 
 /**
  * Creates verbatim *deep* copy of passed object's graph, use *VERY* carefully to create disjoint object graph.
@@ -203,21 +203,21 @@ fun <T> T.deepCopy(): T = TODO()
 // Implementation details.
 @konan.internal.ExportForCompiler
 internal fun scheduleImpl(worker: Worker, mode: TransferMode, producer: () -> Any?,
-                          job: CPointer<CFunction<*>>) : Future<Any?> =
+                          job: CPointer<CFunction<*>>): Future<Any?> =
         Future<Any?>(scheduleInternal(worker.id, mode.value, producer, job))
 
 @SymbolName("Kotlin_Worker_startInternal")
-external internal fun startInternal() : WorkerId
+external internal fun startInternal(): WorkerId
 
 @SymbolName("Kotlin_Worker_requestTerminationWorkerInternal")
 external internal fun requestTerminationInternal(id: WorkerId, processScheduledJobs: Boolean): FutureId
 
 @SymbolName("Kotlin_Worker_scheduleInternal")
 external internal fun scheduleInternal(
-        id: WorkerId, mode: Int, producer: () -> Any?, job: CPointer<CFunction<*>>) : FutureId
+        id: WorkerId, mode: Int, producer: () -> Any?, job: CPointer<CFunction<*>>): FutureId
 
 @SymbolName("Kotlin_Worker_shallowCopyInternal")
-external internal fun shallowCopyInternal(value: Any?) : Any?
+external internal fun shallowCopyInternal(value: Any?): Any?
 
 @SymbolName("Kotlin_Worker_stateOfFuture")
 external internal fun stateOfFuture(id: FutureId): Int

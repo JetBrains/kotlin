@@ -131,7 +131,7 @@ inline ObjHeader** asArenaSlot(ObjHeader** slot) {
 
 inline uint32_t hashOf(ContainerHeader* container) {
   uintptr_t value = reinterpret_cast<uintptr_t>(container);
-  return static_cast<uint32_t>(value >> 3) ^ static_cast<uint32_t>(value >> 32);
+  return static_cast<uint32_t>(value >> 3) ^ static_cast<uint32_t>(static_cast<uint64_t>(value) >> 32);
 }
 
 inline uint32_t freeableSize(MemoryState* state) {

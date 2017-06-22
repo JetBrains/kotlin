@@ -29,13 +29,15 @@ konanInterop {
     arm32 {
         defFile "android.def"
         pkg "android"
-        includeDirs "../../runtime/src/launcher/cpp"
+        // TODO: launcher header will be part of the platform library.
+        includeDirs "."
         target "android_arm32"
     }
     arm64 {
         defFile "android.def"
         pkg "android"
-        includeDirs "../../runtime/src/launcher/cpp"
+        // TODO: launcher header will be part of the platform library.
+        includeDirs "."
         target "android_arm64"
     }
 }

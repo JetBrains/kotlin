@@ -1,6 +1,5 @@
+// TODO: androidLauncher.h will become part of the platform library.
 headers = stdio.h stdlib.h string.h math.h time.h android/log.h androidLauncher.h EGL/egl.h GLES/gl.h
-excludeDependentModules.osx = true
-
 ---
 
 static int interop_errno() {
