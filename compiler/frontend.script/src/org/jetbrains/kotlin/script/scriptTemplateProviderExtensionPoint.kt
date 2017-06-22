@@ -22,7 +22,7 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import java.io.File
 import java.net.URLClassLoader
-import kotlin.script.dependencies.ScriptDependenciesResolver
+import kotlin.script.dependencies.DependenciesResolver
 
 interface ScriptTemplatesProvider {
 
@@ -38,7 +38,7 @@ interface ScriptTemplatesProvider {
 
     val templateClassNames: Iterable<String>
 
-    val resolver: ScriptDependenciesResolver? get() = null
+    val resolver: DependenciesResolver? get() = null
 
     val filePattern: String? get() = null
 
