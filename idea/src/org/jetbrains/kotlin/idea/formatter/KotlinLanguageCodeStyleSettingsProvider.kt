@@ -34,7 +34,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                    val test =
                        12
 
-                   fun foo1(i1: Int, i2: Int, i3: Int) : Int {
+                   @Deprecated("Foo") fun foo1(i1: Int, i2: Int, i3: Int) : Int {
                        when (i1) {
                            is Number -> 0
                            else -> 1
@@ -236,6 +236,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "CALL_PARAMETERS_WRAP",
                         "METHOD_PARAMETERS_WRAP",
                         "EXTENDS_LIST_WRAP",
+                        "METHOD_ANNOTATION_WRAP",
                         "CLASS_ANNOTATION_WRAP",
                         "PARAMETER_ANNOTATION_WRAP",
                         "METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE",

@@ -5,7 +5,8 @@
 import java.io.*
 
 internal object FileRead {
-    @JvmStatic fun main(args: Array<String>) {
+    @JvmStatic
+    fun main(args: Array<String>) {
         try {
             val fstream = FileInputStream()
             val `in` = DataInputStream(fstream)

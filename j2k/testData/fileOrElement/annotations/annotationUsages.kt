@@ -27,5 +27,7 @@ internal class C {
         @Deprecated("") @Anon5(3) val c = 'a'
     }
 
-    @Anon5(1) fun bar() {}
+    @Anon5(1)
+    fun bar() {
+    }
 }

@@ -359,6 +359,9 @@ abstract class KotlinCommonBlock(
                         return getWrappingStrategyForItemList(commonSettings.CLASS_ANNOTATION_WRAP,
                                                               KtNodeTypes.ANNOTATION_ENTRY)
 
+                    is KtNamedFunction ->
+                        return getWrappingStrategyForItemList(commonSettings.METHOD_ANNOTATION_WRAP,
+                                                              KtNodeTypes.ANNOTATION_ENTRY)
                 }
 
             elementType === KtNodeTypes.VALUE_PARAMETER ->
@@ -366,6 +369,9 @@ abstract class KotlinCommonBlock(
 
             node.psi is KtClassOrObject ->
                 return wrapAfterAnnotation(commonSettings.CLASS_ANNOTATION_WRAP)
+
+            node.psi is KtNamedFunction ->
+                return wrapAfterAnnotation(commonSettings.METHOD_ANNOTATION_WRAP)
         }
 
         return WrappingStrategy.NoWrapping

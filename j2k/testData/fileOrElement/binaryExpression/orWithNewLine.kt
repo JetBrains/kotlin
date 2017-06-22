@@ -1,5 +1,6 @@
 object A {
-    @JvmStatic fun main(args: Array<String>) {
+    @JvmStatic
+    fun main(args: Array<String>) {
         val ANDAND = true
                 && true
                 && true

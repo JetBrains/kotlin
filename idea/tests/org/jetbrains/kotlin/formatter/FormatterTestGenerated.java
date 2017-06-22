@@ -494,6 +494,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("MethodAnnotationWrapping.after.kt")
+        public void testMethodAnnotationWrapping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodAnnotationWrapping.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("MethodCall.after.kt")
         public void testMethodCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodCall.after.kt");

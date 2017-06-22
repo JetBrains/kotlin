@@ -42,7 +42,8 @@ class Variety<C> {
     private fun privateFun() = 0
     fun <T> genFunB(p: T): T = p
     fun <T> genFunC(p: T): C where T : C = p
-    @MemAnn fun annotatedFun() = 0
+    @MemAnn
+    fun annotatedFun() = 0
     final fun finalFun() = 0
     // property
     var publicProp = 0

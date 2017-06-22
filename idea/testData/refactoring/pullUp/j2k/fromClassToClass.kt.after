@@ -21,7 +21,8 @@ abstract class A {
         var X = "1" + "2"
 
         // INFO: {"checked": "true"}
-        @JvmStatic fun foo2(n: Int): String {
+        @JvmStatic
+        fun foo2(n: Int): String {
             return "_" + n + "_"
         }
     }

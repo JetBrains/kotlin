@@ -3,7 +3,8 @@
 annotation class X(val s: String)
 
 class A(val n: Int) {
-    internal @X("1") fun <T : Number> T.getFoo(): Boolean = toInt() - n > 1
+    internal @X("1")
+    fun <T : Number> T.getFoo(): Boolean = toInt() - n > 1
 }
 
 fun test() {

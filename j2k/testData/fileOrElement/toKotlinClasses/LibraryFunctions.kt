@@ -9,7 +9,8 @@ class TestJava {
     }
 
     companion object {
-        @JvmStatic fun main(args: Array<String>) {
+        @JvmStatic
+        fun main(args: Array<String>) {
             val x = ArrayList<String>()
             x.filter { o -> o == "a" }
             val lazy = lazy(LazyThreadSafetyMode.NONE) { "aaa" }
