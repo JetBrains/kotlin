@@ -25,8 +25,6 @@ import com.intellij.spring.SpringBundle
 import com.intellij.spring.SpringManager
 import com.intellij.spring.model.utils.SpringModelUtils
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.idea.editor.BatchTemplateRunner
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtClass
 
 abstract class GenerateKotlinSpringBeanXmlDependencyAction(
@@ -56,9 +54,7 @@ abstract class GenerateKotlinSpringBeanXmlDependencyAction(
         val klass = getTargetClass(editor, file) as? KtClass ?: return
         val lightClass = klass.toLightClass() ?: return
         val springModel = SpringModelUtils.getInstance().getPsiClassSpringModel(lightClass)
-        val templates = project.executeWriteCommand<List<BatchTemplateRunner>>("") {
-            generateDependenciesFor(springModel, lightClass, injectionKind)
-        }
+        val templates = generateDependenciesFor(springModel, lightClass, injectionKind)
         templates.forEach { it.runTemplates() }
     }
 }
