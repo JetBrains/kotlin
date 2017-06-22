@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.script.dependencies.KotlinScriptExternalDependencies
+import kotlin.script.dependencies.ScriptDependencies
 
 class ReplCompilerStageHistory(private val state: GenericReplCompilerState) : BasicReplStageHistory<ScriptDescriptor>(state.lock) {
 
@@ -70,5 +70,5 @@ class GenericReplCompilerState(environment: KotlinCoreEnvironment, override val 
 
     val analyzerEngine = ReplCodeAnalyzer(environment)
 
-    var lastDependencies: KotlinScriptExternalDependencies? = null
+    var lastDependencies: ScriptDependencies? = null
 }

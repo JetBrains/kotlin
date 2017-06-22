@@ -34,19 +34,19 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.io.URLUtil
+import kotlinx.coroutines.experimental.asCoroutineDispatcher
+import kotlinx.coroutines.experimental.future.future
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
 import java.io.File
-import java.lang.Math.max
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletableFuture.supplyAsync
 import java.util.concurrent.Executors.newFixedThreadPool
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import java.util.function.Supplier
 import kotlin.concurrent.read
 import kotlin.concurrent.write
-import kotlin.script.dependencies.KotlinScriptExternalDependencies
+import kotlin.script.dependencies.ScriptDependencies
+import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
 
 
 // NOTE: this service exists exclusively because KotlinScriptConfigurationManager
@@ -54,7 +54,7 @@ import kotlin.script.dependencies.KotlinScriptExternalDependencies
 class IdeScriptExternalImportsProvider(
         private val scriptConfigurationManager: KotlinScriptConfigurationManager
 ) : KotlinScriptExternalImportsProvider {
-    override fun getScriptDependencies(file: VirtualFile): KotlinScriptExternalDependencies? {
+    override fun getScriptDependencies(file: VirtualFile): ScriptDependencies? {
         return scriptConfigurationManager.getScriptDependencies(file)
     }
 }
@@ -64,7 +64,7 @@ class KotlinScriptConfigurationManager(
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
 ) : KotlinScriptExternalImportsProviderBase(project) {
     private val cacheLock = ReentrantReadWriteLock()
-    private val threadPool = newFixedThreadPool(max(1, Runtime.getRuntime().availableProcessors() / 2))
+    private val scriptDependencyUpdatesDispatcher = newFixedThreadPool(1).asCoroutineDispatcher()
 
     init {
         reloadScriptDefinitions()
@@ -144,17 +144,17 @@ class KotlinScriptConfigurationManager(
         scriptDefinitionProvider.setScriptDefinitions(def)
     }
 
-    private class TimeStampedRequest(val future: CompletableFuture<Unit>, val timeStamp: TimeStamp)
+    private class TimeStampedRequest(val future: CompletableFuture<*>, val timeStamp: TimeStamp)
 
     private class DataAndRequest(
-            val dependencies: KotlinScriptExternalDependencies?,
+            val dependencies: ScriptDependencies?,
             val modificationStamp: Long?,
             val requestInProgress: TimeStampedRequest? = null
     )
 
     private val cache = hashMapOf<String, DataAndRequest?>()
 
-    override fun getScriptDependencies(file: VirtualFile): KotlinScriptExternalDependencies = cacheLock.read {
+    override fun getScriptDependencies(file: VirtualFile): ScriptDependencies = cacheLock.read {
         val path = file.path
         val cached = cache[path]
         cached?.dependencies?.let { return it }
@@ -163,7 +163,7 @@ class KotlinScriptConfigurationManager(
 
         updateExternalImportsCache(listOf(file))
 
-        return cache[path]?.dependencies ?: NoDependencies
+        return cache[path]?.dependencies ?: ScriptDependencies.Empty
     }
 
     private fun tryLoadingFromDisk(cached: DataAndRequest?, file: VirtualFile, path: String) {
@@ -189,14 +189,18 @@ class KotlinScriptConfigurationManager(
             return cache.remove(file.path) != null
         }
 
-        // TODO: support apis that allow for async updates for any template
-        if (scriptDef is KotlinScriptDefinitionFromAnnotatedTemplate) {
-            return updateAsync(file, scriptDef)
+        val dependencyResolver = scriptDef.dependencyResolver
+        if (dependencyResolver is AsyncDependenciesResolver) {
+            return updateAsync(file, scriptDef, dependencyResolver)
         }
         return updateSync(file, scriptDef)
     }
 
-    private fun updateAsync(file: VirtualFile, scriptDefinition: KotlinScriptDefinitionFromAnnotatedTemplate): Boolean {
+    private fun updateAsync(
+            file: VirtualFile,
+            scriptDefinition: KotlinScriptDefinition,
+            dependencyResolver: AsyncDependenciesResolver
+    ): Boolean {
         val path = file.path
         val oldDataAndRequest = cache[path]
 
@@ -206,7 +210,7 @@ class KotlinScriptConfigurationManager(
 
         oldDataAndRequest?.requestInProgress?.future?.cancel(true)
 
-        val (currentTimeStamp, newFuture) = sendRequest(path, scriptDefinition, file, oldDataAndRequest)
+        val (currentTimeStamp, newFuture) = sendRequest(path, scriptDefinition, dependencyResolver, file, oldDataAndRequest)
 
         cache[path] = DataAndRequest(
                 oldDataAndRequest?.dependencies,
@@ -218,24 +222,29 @@ class KotlinScriptConfigurationManager(
 
     private fun sendRequest(
             path: String,
-            scriptDefinition: KotlinScriptDefinitionFromAnnotatedTemplate,
+            scriptDef: KotlinScriptDefinition,
+            dependenciesResolver: AsyncDependenciesResolver,
             file: VirtualFile,
             oldDataAndRequest: DataAndRequest?
-    ): Pair<TimeStamp, CompletableFuture<Unit>> {
+    ): Pair<TimeStamp, CompletableFuture<*>> {
         val currentTimeStamp = TimeStamps.next()
 
-        val newFuture = supplyAsync(Supplier {
-            val newDependencies = resolveDependencies(scriptDefinition, file, oldDataAndRequest?.dependencies) ?: EmptyDependencies
+        val newFuture = future(scriptDependencyUpdatesDispatcher) {
+            dependenciesResolver.resolveAsync(
+                    getScriptContents(scriptDef, file),
+                    (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.environment.orEmpty()
+            )
+        }.thenAccept { result ->
             cacheLock.read {
                 val lastTimeStamp = cache[path]?.requestInProgress?.timeStamp
                 if (lastTimeStamp == currentTimeStamp) {
-                    if (cacheSync(newDependencies, oldDataAndRequest?.dependencies, path, file)) {
+                    if (cacheSync(result.dependencies ?: ScriptDependencies.Empty, oldDataAndRequest?.dependencies, path, file)) {
                         invalidateLocalCaches()
                         notifyRootsChanged()
                     }
                 }
             }
-        }, threadPool)
+        }
         return Pair(currentTimeStamp, newFuture)
     }
 
@@ -253,13 +262,13 @@ class KotlinScriptConfigurationManager(
     private fun updateSync(file: VirtualFile, scriptDef: KotlinScriptDefinition): Boolean {
         val path = file.path
         val oldDeps = cache[path]?.dependencies
-        val newDeps = resolveDependencies(scriptDef, file, oldDeps) ?: EmptyDependencies
+        val newDeps = resolveDependencies(scriptDef, file) ?: ScriptDependencies.Empty
         return cacheSync(newDeps, oldDeps, path, file)
     }
 
     private fun cacheSync(
-            new: KotlinScriptExternalDependencies,
-            old: KotlinScriptExternalDependencies?,
+            new: ScriptDependencies,
+            old: ScriptDependencies?,
             path: String,
             file: VirtualFile
     ): Boolean {
@@ -277,7 +286,7 @@ class KotlinScriptConfigurationManager(
         }
     }
 
-    private fun save(path: String, new: KotlinScriptExternalDependencies?, virtualFile: VirtualFile, persist: Boolean) {
+    private fun save(path: String, new: ScriptDependencies?, virtualFile: VirtualFile, persist: Boolean) {
         cacheLock.write {
             cache.put(path, DataAndRequest(new, virtualFile.modificationStamp))
         }
@@ -342,8 +351,6 @@ class KotlinScriptConfigurationManager(
             }
         }
     }
-
-    private object NoDependencies: KotlinScriptExternalDependencies
 }
 
 private class ClearableLazyValue<out T : Any>(private val lock: ReentrantReadWriteLock, private val compute: () -> T) {
@@ -368,7 +375,7 @@ private class ClearableLazyValue<out T : Any>(private val lock: ReentrantReadWri
 }
 
 // TODO: relying on this to compare dependencies seems wrong, doesn't take javaHome and other stuff into account
-private fun KotlinScriptExternalDependencies.match(other: KotlinScriptExternalDependencies)
+private fun ScriptDependencies.match(other: ScriptDependencies)
         = classpath.isSamePathListAs(other.classpath) &&
           sources.toSet().isSamePathListAs(other.sources.toSet()) // TODO: gradle returns stdlib and reflect sources in unstable order for some reason
 
@@ -390,5 +397,3 @@ object TimeStamps {
 
     fun next() = TimeStamp(current++)
 }
-
-private object EmptyDependencies: KotlinScriptExternalDependencies

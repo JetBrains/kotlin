@@ -26,7 +26,7 @@ import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
-import kotlin.script.dependencies.KotlinScriptExternalDependencies
+import kotlin.script.dependencies.ScriptDependencies
 
 class KotlinScriptExternalImportsProviderImpl(
         val project: Project,
@@ -34,13 +34,13 @@ class KotlinScriptExternalImportsProviderImpl(
 ) : KotlinScriptExternalImportsProviderBase(project) {
 
     private val cacheLock = ReentrantReadWriteLock()
-    private val cache = hashMapOf<String, KotlinScriptExternalDependencies?>()
+    private val cache = hashMapOf<String, ScriptDependencies?>()
 
-    override fun getScriptDependencies(file: VirtualFile): KotlinScriptExternalDependencies? = cacheLock.read {
+    override fun getScriptDependencies(file: VirtualFile): ScriptDependencies? = cacheLock.read {
         calculateExternalDependencies(file)
     }
 
-    private fun calculateExternalDependencies(file: VirtualFile): KotlinScriptExternalDependencies? {
+    private fun calculateExternalDependencies(file: VirtualFile): ScriptDependencies? {
         val path = file.path
         val cached = cache[path]
         return if (cached != null) cached

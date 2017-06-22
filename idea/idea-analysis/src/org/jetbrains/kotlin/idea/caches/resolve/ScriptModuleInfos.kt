@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import kotlin.script.dependencies.KotlinScriptExternalDependencies
+import kotlin.script.dependencies.ScriptDependencies
 
 class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
     override fun equals(other: Any?) = other is ScriptModuleSearchScope && scriptFile == other.scriptFile && super.equals(other)
@@ -42,7 +42,7 @@ data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
-    val externalDependencies: KotlinScriptExternalDependencies?
+    val externalDependencies: ScriptDependencies?
         get() = KotlinScriptConfigurationManager.getInstance(project).getScriptDependencies(scriptFile)
 
     override val name: Name = Name.special("<script ${scriptFile.name} ${scriptDefinition.name}>")
@@ -56,13 +56,13 @@ data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
     }
 }
 
-private fun sdkDependencies(scriptDependencies: KotlinScriptExternalDependencies?, project: Project): List<SdkInfo>
+private fun sdkDependencies(scriptDependencies: ScriptDependencies?, project: Project): List<SdkInfo>
         = listOfNotNull(findJdk(scriptDependencies, project)?.let { SdkInfo(project, it) })
 
-fun findJdk(dependencies: KotlinScriptExternalDependencies?, project: Project): Sdk? {
+fun findJdk(dependencies: ScriptDependencies?, project: Project): Sdk? {
     val allJdks = getAllProjectSdks()
     // workaround for mismatched gradle wrapper and plugin version
-    val javaHome = try { dependencies?.javaHome } catch (e: Throwable) { null }
+    val javaHome = try { dependencies?.javaHome?.canonicalPath } catch (e: Throwable) { null }
 
     return allJdks.find { javaHome != null && it.homePath == javaHome } ?:
            ProjectRootManager.getInstance(project).projectSdk ?:
@@ -113,8 +113,8 @@ data class ScriptDependenciesSourceModuleInfo(
 
 }
 
-private class ScriptBinariesScopeCache(private val project: Project) : SLRUCache<KotlinScriptExternalDependencies, GlobalSearchScope>(6, 6) {
-    override fun createValue(key: KotlinScriptExternalDependencies?): GlobalSearchScope {
+private class ScriptBinariesScopeCache(private val project: Project) : SLRUCache<ScriptDependencies, GlobalSearchScope>(6, 6) {
+    override fun createValue(key: ScriptDependencies?): GlobalSearchScope {
         val roots = key?.classpath ?: emptyList()
         val classpath = KotlinScriptConfigurationManager.toVfsRoots(roots)
         // TODO: this is not very efficient because KotlinSourceFilterScope already checks if the files are in scripts classpath

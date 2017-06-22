@@ -20,6 +20,9 @@ import java.io.File
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
+import kotlin.script.dependencies.DependenciesResolver.ResolveResult
+import kotlin.script.dependencies.ScriptDependencies
+import kotlin.script.dependencies.ScriptReport
 
 const val DEFAULT_SCRIPT_FILE_PATTERN = ".*\\.kts"
 
@@ -115,41 +118,42 @@ private fun<T: Comparable<T>> compareIterables(a: Iterable<T>, b: Iterable<T>): 
 
 private inline fun Int.chainCompare(compFn: () -> Int ): Int = if (this != 0) this else compFn()
 
-class LegacyScriptDependenciesResolverWrapper(val legacyResolver: ScriptDependenciesResolver) : kotlin.script.dependencies.ScriptDependenciesResolver {
+@Suppress("DEPRECATION")
+class LegacyScriptDependenciesResolverWrapper(val legacyResolver: ScriptDependenciesResolver) : kotlin.script.dependencies.DependenciesResolver {
 
-    override fun resolve(script: kotlin.script.dependencies.ScriptContents,
-                environment: Map<String, Any?>?,
-                report: (kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity, String, kotlin.script.dependencies.ScriptContents.Position?) -> Unit,
-                previousDependencies: kotlin.script.dependencies.KotlinScriptExternalDependencies?
-    ): Future<kotlin.script.dependencies.KotlinScriptExternalDependencies?> {
+    override fun resolve(
+            scriptContents: kotlin.script.dependencies.ScriptContents,
+            environment: Map<String, Any?>
+    ): ResolveResult {
+        val reports = ArrayList<ScriptReport>()
         val legacyDeps = legacyResolver.resolve(
                 object : ScriptContents {
-                    override val file: File? get() = script.file
-                    override val annotations: Iterable<Annotation> get() = script.annotations
-                    override val text: CharSequence? get() = script.text
+                    override val file: File? get() = scriptContents.file
+                    override val annotations: Iterable<Annotation> get() = scriptContents.annotations
+                    override val text: CharSequence? get() = scriptContents.text
                 },
                 environment,
-                { sev, msg, pos -> report(kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.values()[sev.ordinal],
-                                          msg,
-                                          pos?.let { kotlin.script.dependencies.ScriptContents.Position(it.line, it.col) }) },
-                previousDependencies?.let {
-                    object : KotlinScriptExternalDependencies {
-                        override val javaHome get() = it.javaHome
-                        override val classpath get() = it.classpath
-                        override val imports get() = it.imports
-                        override val sources get() = it.sources
-                        override val scripts get() = it.scripts
-                    }
-                }
-        ).get()
-        return kotlin.script.dependencies.PseudoFuture(legacyDeps?.let {
-            object : kotlin.script.dependencies.KotlinScriptExternalDependencies {
-                override val javaHome get() = it.javaHome
-                override val classpath get() = it.classpath
-                override val imports get() = it.imports
-                override val sources get() = it.sources
-                override val scripts get() = it.scripts
-            }
-        })
+                { sev, msg, pos ->
+                    reports.add(ScriptReport(msg, sev.convertSeverity(), pos?.convertPosition()))
+                }, null
+        ).get() ?: return ResolveResult.Failure()
+
+        val dependencies = ScriptDependencies(
+                javaHome = legacyDeps.javaHome?.let(::File),
+                classpath = legacyDeps.classpath.toList(),
+                imports = legacyDeps.imports.toList(),
+                sources = legacyDeps.sources.toList(),
+                scripts = legacyDeps.scripts.toList()
+        )
+        return ResolveResult.Success(dependencies, reports)
     }
+
+    private fun ScriptDependenciesResolver.ReportSeverity.convertSeverity(): ScriptReport.Severity  = when(this) {
+        ScriptDependenciesResolver.ReportSeverity.ERROR -> ScriptReport.Severity.ERROR
+        ScriptDependenciesResolver.ReportSeverity.WARNING -> ScriptReport.Severity.WARNING
+        ScriptDependenciesResolver.ReportSeverity.INFO -> ScriptReport.Severity.INFO
+        ScriptDependenciesResolver.ReportSeverity.DEBUG -> ScriptReport.Severity.DEBUG
+    }
+
+    private fun ScriptContents.Position.convertPosition(): ScriptReport.Position = ScriptReport.Position(line, col)
 }

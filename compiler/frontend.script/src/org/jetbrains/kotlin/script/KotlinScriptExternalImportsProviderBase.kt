@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import kotlin.reflect.KClass
-import kotlin.script.dependencies.KotlinScriptExternalDependencies
 import kotlin.script.dependencies.ScriptContents
+import kotlin.script.dependencies.ScriptDependencies
 
 abstract class KotlinScriptExternalImportsProviderBase(private val project: Project): KotlinScriptExternalImportsProvider {
     fun getScriptContents(scriptDefinition: KotlinScriptDefinition, file: VirtualFile)
@@ -58,16 +58,13 @@ abstract class KotlinScriptExternalImportsProviderBase(private val project: Proj
 
     fun resolveDependencies(
             scriptDef: KotlinScriptDefinition,
-            file: VirtualFile,
-            oldDependencies: KotlinScriptExternalDependencies? = null
-    ): KotlinScriptExternalDependencies? {
+            file: VirtualFile
+    ): ScriptDependencies? {
         val scriptContents = getScriptContents(scriptDef, file)
         return scriptDef.dependencyResolver.resolve(
                 scriptContents,
-                (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.environment,
-                { _, _, _ -> Unit }, // TODO_R:
-                oldDependencies
-        ).get()
+                (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.environment ?: emptyMap()
+        ).dependencies
     }
 }
 
