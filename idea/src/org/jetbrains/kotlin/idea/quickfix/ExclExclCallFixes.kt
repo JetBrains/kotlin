@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -106,7 +107,10 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
 
     private fun getExpressionForIntroduceCall(): ExpressionForCall? {
         val psiElement = element ?: return null
-        return if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
+        return if ((psiElement as? KtExpression).isNullExpression()) {
+            return null
+        }
+        else if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
             (psiElement.prevSibling as? KtExpression).expressionForCall()
         }
         else if (psiElement is KtArrayAccessExpression) {
