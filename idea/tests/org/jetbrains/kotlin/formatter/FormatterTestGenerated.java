@@ -98,6 +98,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("BlankLinesBeforeRBrace.after.kt")
+        public void testBlankLinesBeforeRBrace() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BlankLinesBeforeRBrace.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("BlankLinesBeforeRBrace2.after.kt")
+        public void testBlankLinesBeforeRBrace2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BlankLinesBeforeRBrace2.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("BlockFor.after.kt")
         public void testBlockFor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BlockFor.after.kt");

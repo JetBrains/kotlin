@@ -29,6 +29,12 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import java.util.*
 
+fun CommonCodeStyleSettings.createSpaceBeforeRBrace(numSpacesOtherwise: Int, textRange: TextRange): Spacing? {
+    return Spacing.createDependentLFSpacing(numSpacesOtherwise, numSpacesOtherwise, textRange,
+                                            KEEP_LINE_BREAKS,
+                                            KEEP_BLANK_LINES_BEFORE_RBRACE)
+}
+
 class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings, val spacingBuilderUtil: KotlinSpacingBuilderUtil) {
     private val builders = ArrayList<Builder>()
 

@@ -253,6 +253,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                 consumer.showStandardOptions(
                         "KEEP_BLANK_LINES_IN_CODE",
                         "KEEP_BLANK_LINES_IN_DECLARATIONS",
+                        "KEEP_BLANK_LINES_BEFORE_RBRACE",
                         "BLANK_LINES_AFTER_CLASS_HEADER"
                 )
                 showCustomOption(KotlinCodeStyleSettings::BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES,

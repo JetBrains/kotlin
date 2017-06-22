@@ -439,7 +439,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 }
             }
 
-            inPosition(parent = CLASS_BODY, right = RBRACE).lineBreakIfLineBreakInParent(numSpacesOtherwise = 1)
+            inPosition(parent = CLASS_BODY, right = RBRACE).customRule { parent, _, _ ->
+                commonCodeStyleSettings.createSpaceBeforeRBrace(1, parent.textRange)
+            }
 
             inPosition(parent = BLOCK, right = RBRACE).customRule { block, left, _ ->
                 val psiElement = block.node.treeParent.psi
@@ -457,9 +459,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 }
 
                 val spaces = if (empty) 0 else spacesInSimpleFunction
-                Spacing.createDependentLFSpacing(spaces, spaces, psiElement.textRangeWithoutComments,
-                                                 commonCodeStyleSettings.KEEP_LINE_BREAKS,
-                                                 commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+                commonCodeStyleSettings.createSpaceBeforeRBrace(spaces, psiElement.textRangeWithoutComments)
             }
 
             inPosition(parent = BLOCK, left = LBRACE).customRule { parent, _, _ ->
@@ -491,7 +491,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
         simple {
             afterInside(LBRACE, BLOCK).lineBreakInCode()
-            beforeInside(RBRACE, BLOCK).lineBreakInCode()
+            beforeInside(RBRACE, BLOCK).spacing(1, 0, 1,
+                                                commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                                                commonCodeStyleSettings.KEEP_BLANK_LINES_BEFORE_RBRACE)
             beforeInside(RBRACE, WHEN).lineBreakInCode()
             between(RPAR, BODY).spaces(1)
 
