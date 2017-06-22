@@ -67,7 +67,8 @@ class OptimizationMethodVisitor(
 
         fun canBeOptimizedUsingSourceInterpreter(node: MethodNode): Boolean {
             val frameSize = node.maxLocals + node.maxStack
-            val totalFramesSizeMb = node.instructions.size().toLong() * frameSize * frameSize / (1024 * 1024)
+            val methodSize = node.instructions.size().toLong()
+            val totalFramesSizeMb = methodSize * methodSize * frameSize / (1024 * 1024)
             return totalFramesSizeMb < MEMORY_LIMIT_BY_METHOD_MB
         }
     }
