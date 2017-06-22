@@ -57,6 +57,8 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
 
     abstract fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner)
 
+    open val hasDispatchReceiver = true
+
     fun addAllParameters(remapper: FieldRemapper): Parameters {
         val builder = ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, invokeMethod.descriptor, this)
 
@@ -175,15 +177,32 @@ class DefaultLambda(
 
 fun Type.boxReceiverForBoundReference() = AsmUtil.boxType(this)
 
+abstract class ExpressionLambda(protected val typeMapper: KotlinTypeMapper, isCrossInline: Boolean): LambdaInfo(isCrossInline) {
 
-abstract class ExpressionLambda(isCrossInline: Boolean): LambdaInfo(isCrossInline)
+    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner) {
+        val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
+        val asmMethod = jvmMethodSignature.asmMethod
+        val methodNode = MethodNode(
+                API, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, OwnerKind.IMPLEMENTATION, sourceCompiler.state),
+                asmMethod.name, asmMethod.descriptor, null, null
+        )
+
+        node = wrapWithMaxLocalCalc(methodNode).let { adapter ->
+            val smap = sourceCompiler.generateLambdaBody(
+                    adapter, jvmMethodSignature, this
+            )
+            adapter.visitMaxs(-1, -1)
+            SMAPAndMethodNode(methodNode, smap)
+        }
+    }
+}
 
 class PsiExpressionLambda(
         expression: KtExpression,
-        private val typeMapper: KotlinTypeMapper,
+        typeMapper: KotlinTypeMapper,
         isCrossInline: Boolean,
         override val isBoundCallableReference: Boolean
-) : ExpressionLambda(isCrossInline) {
+) : ExpressionLambda(typeMapper, isCrossInline) {
 
     override val lambdaClassType: Type
 
@@ -270,21 +289,4 @@ class PsiExpressionLambda(
 
     val isPropertyReference: Boolean
         get() = propertyReferenceInfo != null
-
-    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner) {
-        val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
-        val asmMethod = jvmMethodSignature.asmMethod
-        val methodNode = MethodNode(
-                API, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, OwnerKind.IMPLEMENTATION, sourceCompiler.state),
-                asmMethod.name, asmMethod.descriptor, null, null
-        )
-
-        node = wrapWithMaxLocalCalc(methodNode).let { adapter ->
-            val smap = sourceCompiler.generateLambdaBody(
-                    adapter, jvmMethodSignature, this
-            )
-            adapter.visitMaxs(-1, -1)
-            SMAPAndMethodNode(methodNode, smap)
-        }
-    }
 }

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.backend.jvm.lower.InitializersLowering
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -36,7 +36,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class FunctionCodegen(private val irFunction: IrFunction, private val classCodegen: ClassCodegen) {
+open class FunctionCodegen(private val irFunction: IrFunction, private val classCodegen: ClassCodegen) {
 
     val state = classCodegen.state
 
@@ -66,10 +66,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             //reset abstract flag
             flags = flags.xor(Opcodes.ACC_ABSTRACT)
         }
-        val methodVisitor = classCodegen.visitor.newMethod(irFunction.OtherOrigin,
-                                                           flags,
-                                                           signature.asmMethod.name, signature.asmMethod.descriptor,
-                                                           signature.genericsSignature, null/*TODO support exception*/)
+        val methodVisitor = createMethod(flags, signature)
 
         FunctionCodegen.generateMethodAnnotations(descriptor, signature.asmMethod, methodVisitor, classCodegen, state.typeMapper)
         FunctionCodegen.generateParameterAnnotations(descriptor, methodVisitor, signature, classCodegen, state)
@@ -81,6 +78,13 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         }
 
         ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen).generate()
+    }
+
+    open protected fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
+        return classCodegen.visitor.newMethod(irFunction.OtherOrigin,
+                                              flags,
+                                              signature.asmMethod.name, signature.asmMethod.descriptor,
+                                              signature.genericsSignature, null/*TODO support exception*/)
     }
 
     private fun generateAnnotationDefaultValueIfNeeded(methodVisitor: MethodVisitor) {
