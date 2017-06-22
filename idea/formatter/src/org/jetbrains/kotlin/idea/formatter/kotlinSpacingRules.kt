@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.textRangeWithoutComments
 
 val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, ANNOTATION), MODIFIER_KEYWORDS)
@@ -256,8 +253,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(REFERENCE_EXPRESSION, LAMBDA_ARGUMENT, CALL_EXPRESSION).spaces(1)
             betweenInside(TYPE_ARGUMENT_LIST, LAMBDA_ARGUMENT, CALL_EXPRESSION).spaces(1)
 
-            between(WHEN_ENTRY, WHEN_ENTRY).lineBreakInCode()
-
             around(COLONCOLON).spaces(0)
 
             around(BY_KEYWORD).spaces(1)
@@ -372,6 +367,17 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             inPosition(parent = PROPERTY_ACCESSOR, right = BLOCK).customRule(leftBraceRule())
 
             inPosition(right = CLASS_BODY).customRule(leftBraceRule(blockType = CLASS_BODY))
+
+            inPosition(left = WHEN_ENTRY, right = WHEN_ENTRY).customRule { _, left, right ->
+                val leftEntry = left.node.psi as KtWhenEntry
+                val rightEntry = right.node.psi as KtWhenEntry
+                val blankLines = if (leftEntry.expression is KtBlockExpression || rightEntry.expression is KtBlockExpression)
+                    settings.kotlinSettings.BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES
+                else
+                    0
+
+                createSpacing(0, minLineFeeds = blankLines + 1)
+            }
 
             inPosition(parent = WHEN_ENTRY, right = BLOCK).customRule(leftBraceRule())
             inPosition(parent = WHEN, right = LBRACE).customRule {

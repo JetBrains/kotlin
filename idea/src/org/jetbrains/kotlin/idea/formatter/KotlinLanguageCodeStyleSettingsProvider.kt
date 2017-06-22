@@ -76,6 +76,24 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
 
                            field1
                        }
+
+                       when(field1) {
+                           1 -> println("1")
+                           2 -> println("2")
+                           3 ->
+                                println("3" +
+                                     "4")
+                       }
+
+                       when(field2) {
+                           1 -> {
+                               println("1")
+                           }
+
+                           2 -> {
+                               println("2")
+                           }
+                       }
                    }
 
 
@@ -231,10 +249,15 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                                 "Put left brace on new line",
                                  CodeStyleSettingsCustomizable.WRAPPING_BRACES)
             }
-            LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS -> consumer.showStandardOptions(
-                    "KEEP_BLANK_LINES_IN_CODE",
-                    "KEEP_BLANK_LINES_IN_DECLARATIONS"
-            )
+            LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS -> {
+                consumer.showStandardOptions(
+                        "KEEP_BLANK_LINES_IN_CODE",
+                        "KEEP_BLANK_LINES_IN_DECLARATIONS"
+                )
+                showCustomOption(KotlinCodeStyleSettings::BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES,
+                                 "Around 'when' branches with {}",
+                                 CodeStyleSettingsCustomizable.BLANK_LINES)
+            }
             else -> consumer.showStandardOptions()
         }
     }
