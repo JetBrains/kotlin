@@ -218,59 +218,65 @@ class ExpressionCodegen(
         if (callable is IrIntrinsicFunction) {
             return callable.invoke(mv, this, data)
         } else {
-            val callGenerator = getOrCreateCallGenerator(expression, expression.descriptor)
+            return generateCall(expression, callable, data)
+        }
+    }
 
-            val receiver = expression.dispatchReceiver
-            receiver?.apply {
-                //gen(receiver, callable.dispatchReceiverType!!, data)
-                callGenerator.genValueAndPut(null, this, callable.dispatchReceiverType!!, -1, this@ExpressionCodegen, data)
-            }
+    fun generateCall(expression: IrMemberAccessExpression, callable: Callable, data: BlockInfo): StackValue {
+        val callGenerator = getOrCreateCallGenerator(expression, expression.descriptor)
 
-            expression.extensionReceiver?.apply {
-                //gen(this, callable.extensionReceiverType!!, data)
-                callGenerator.genValueAndPut(null, this, callable.extensionReceiverType!!, -1, this@ExpressionCodegen, data)
-            }
+        val receiver = expression.dispatchReceiver
+        receiver?.apply {
+            //gen(receiver, callable.dispatchReceiverType!!, data)
+            callGenerator.genValueAndPut(null, this, callable.dispatchReceiverType!!, -1, this@ExpressionCodegen, data)
+        }
 
-            val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size)
-            expression.descriptor.valueParameters.forEachIndexed { i, parameterDescriptor ->
-                val arg = expression.getValueArgument(i)
-                val parameterType = callable.valueParameterTypes[i]
-                when {
-                    arg != null -> {
-                        callGenerator.genValueAndPut(parameterDescriptor, arg, parameterType, i, this@ExpressionCodegen, data)
-                    }
-                    parameterDescriptor.hasDefaultValue() -> {
-                        callGenerator.putValueIfNeeded(parameterType, StackValue.createDefaultValue(parameterType), ValueKind.DEFAULT_PARAMETER, i, this@ExpressionCodegen)
-                        defaultMask.mark(i)
-                    }
-                    else -> {
-                        assert(parameterDescriptor.varargElementType != null)
-                        //empty vararg
+        expression.extensionReceiver?.apply {
+            //gen(this, callable.extensionReceiverType!!, data)
+            callGenerator.genValueAndPut(null, this, callable.extensionReceiverType!!, -1, this@ExpressionCodegen, data)
+        }
 
-                        callGenerator.putValueIfNeeded(
-                                parameterType,
-                                StackValue.operation(parameterType) {
-                                    it.aconst(0)
-                                    it.newarray(correctElementType(parameterType))
-                                },
-                                ValueKind.GENERAL_VARARG, i, this@ExpressionCodegen)
-                    }
+        callGenerator.beforeValueParametersStart()
+        val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size)
+        expression.descriptor.valueParameters.forEachIndexed { i, parameterDescriptor ->
+            val arg = expression.getValueArgument(i)
+            val parameterType = callable.valueParameterTypes[i]
+            when {
+                arg != null -> {
+                    callGenerator.genValueAndPut(parameterDescriptor, arg, parameterType, i, this@ExpressionCodegen, data)
+                }
+                parameterDescriptor.hasDefaultValue() -> {
+                    callGenerator.putValueIfNeeded(parameterType, StackValue.createDefaultValue(parameterType), ValueKind.DEFAULT_PARAMETER, i, this@ExpressionCodegen)
+                    defaultMask.mark(i)
+                }
+                else -> {
+                    assert(parameterDescriptor.varargElementType != null)
+                    //empty vararg
+
+                    callGenerator.putValueIfNeeded(
+                            parameterType,
+                            StackValue.operation(parameterType) {
+                                it.aconst(0)
+                                it.newarray(correctElementType(parameterType))
+                            },
+                            ValueKind.GENERAL_VARARG, i, this@ExpressionCodegen)
                 }
             }
-
-            callGenerator.genCall(
-                    callable,
-                    defaultMask.generateOnStackIfNeeded(callGenerator, expression.descriptor is ConstructorDescriptor, this),
-                    this
-            )
-
-            val returnType = expression.descriptor.returnType
-            if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
-                mv.aconst(null)
-                mv.athrow()
-            }
-            return StackValue.onStack(callable.returnType)
         }
+
+        callGenerator.genCall(
+                callable,
+                defaultMask.generateOnStackIfNeeded(callGenerator, expression.descriptor is ConstructorDescriptor, this),
+                this,
+                expression
+        )
+
+        val returnType = expression.descriptor.returnType
+        if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
+            mv.aconst(null)
+            mv.athrow()
+        }
+        return StackValue.onStack(callable.returnType)
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: BlockInfo): StackValue {
@@ -957,12 +963,12 @@ class ExpressionCodegen(
             TODO()
         }
         else {
-            IrInlineCodegen(this, state, original, typeParameterMappings!!, IrSourceCompilerForInline(state, element))
+            IrInlineCodegen(this, state, original, typeParameterMappings!!, IrSourceCompilerForInline(state, element, this))
         }
     }
 
     internal fun getOrCreateCallGenerator(memberAccessExpression: IrMemberAccessExpression, descriptor: CallableDescriptor): IrCallGenerator {
-        val typeArguments = descriptor.typeParameters.keysToMap { memberAccessExpression.getTypeArgumentOrDefault(it) }
+        val typeArguments = descriptor.original.typeParameters.keysToMap { memberAccessExpression.getTypeArgumentOrDefault(it) }
 
         val mappings = TypeParameterMappings()
         for (entry in typeArguments.entries) {
