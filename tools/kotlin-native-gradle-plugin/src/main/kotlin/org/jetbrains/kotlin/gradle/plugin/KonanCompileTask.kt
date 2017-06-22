@@ -258,6 +258,10 @@ open class KonanCompileConfig(
         outputDir = project.file(dir)
     }
 
+    fun outputName(name: String) = with(compilationTask) {
+        artifactName = name
+    }
+
     // DSL. Libraries.
 
     fun library(lib: Any) = libraries(lib)
