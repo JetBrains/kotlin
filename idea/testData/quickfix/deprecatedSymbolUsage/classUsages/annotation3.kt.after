@@ -7,4 +7,5 @@ annotation class Foo
 
 annotation class Bar(val p: Int)
 
-@Bar(1) class C {}
+@Bar(1)
+class C {}

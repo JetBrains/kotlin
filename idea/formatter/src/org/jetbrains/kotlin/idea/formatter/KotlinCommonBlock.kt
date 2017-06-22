@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.psi.*
 import java.util.*
 
 private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
@@ -353,15 +350,22 @@ abstract class KotlinCommonBlock(
             }
 
             elementType === KtNodeTypes.MODIFIER_LIST ->
-                when (node.treeParent.elementType) {
-                    KtNodeTypes.VALUE_PARAMETER ->
+                when (node.treeParent.psi) {
+                    is KtParameter ->
                         return getWrappingStrategyForItemList(commonSettings.PARAMETER_ANNOTATION_WRAP,
                                                               KtNodeTypes.ANNOTATION_ENTRY,
                                                               !node.treeParent.isFirstParameter())
+                    is KtClassOrObject ->
+                        return getWrappingStrategyForItemList(commonSettings.CLASS_ANNOTATION_WRAP,
+                                                              KtNodeTypes.ANNOTATION_ENTRY)
+
                 }
 
             elementType === KtNodeTypes.VALUE_PARAMETER ->
                 return wrapAfterAnnotation(commonSettings.PARAMETER_ANNOTATION_WRAP)
+
+            node.psi is KtClassOrObject ->
+                return wrapAfterAnnotation(commonSettings.CLASS_ANNOTATION_WRAP)
         }
 
         return WrappingStrategy.NoWrapping

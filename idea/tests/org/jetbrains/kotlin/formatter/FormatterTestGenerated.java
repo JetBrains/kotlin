@@ -152,6 +152,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ClassAnnotationWrapping.after.kt")
+        public void testClassAnnotationWrapping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ClassAnnotationWrapping.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ClassInBody.after.kt")
         public void testClassInBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ClassInBody.after.kt");

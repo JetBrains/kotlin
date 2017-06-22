@@ -30,7 +30,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
     override fun getCodeSample(settingsType: LanguageCodeStyleSettingsProvider.SettingsType): String = when (settingsType) {
         LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS ->
             """
-               public class ThisIsASampleClass : Comparable<*>, Appendable {
+               @Deprecated("Foo") public class ThisIsASampleClass : Comparable<*>, Appendable {
                    val test =
                        12
 
@@ -236,6 +236,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "CALL_PARAMETERS_WRAP",
                         "METHOD_PARAMETERS_WRAP",
                         "EXTENDS_LIST_WRAP",
+                        "CLASS_ANNOTATION_WRAP",
                         "PARAMETER_ANNOTATION_WRAP",
                         "METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE",
                         "METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE",
