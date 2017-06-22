@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.Wrap
-import com.intellij.psi.tree.IElementType
+import com.intellij.lang.ASTNode
 
 interface WrappingStrategy {
-    fun getWrap(childElementType: IElementType): Wrap?
+    fun getWrap(childElement: ASTNode): Wrap?
 
     object NoWrapping: WrappingStrategy {
-        override fun getWrap(childElementType: IElementType): Wrap? = null
+        override fun getWrap(childElement: ASTNode): Wrap? = null
     }
 }

@@ -308,6 +308,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ExtendsListWrap.after.kt")
+        public void testExtendsListWrap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ExtendsListWrap.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ForLineBreak.after.kt")
         public void testForLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ForLineBreak.after.kt");
