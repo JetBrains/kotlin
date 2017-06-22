@@ -47,7 +47,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                        }        catch (e: Exception) {            return 0        }        finally {           if (true) {               return 1           }           else {               return 2           }        }    }
                    private val f = {(a: Int)->a*2}
 
-                   fun longMethod(param1: Int,
+                   fun longMethod(@Named("param1") param1: Int,
                     param2: String) {
                    }
                }
@@ -236,6 +236,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "CALL_PARAMETERS_WRAP",
                         "METHOD_PARAMETERS_WRAP",
                         "EXTENDS_LIST_WRAP",
+                        "PARAMETER_ANNOTATION_WRAP",
                         "METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE",
                         "METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE",
                         "CALL_PARAMETERS_LPAREN_ON_NEXT_LINE",

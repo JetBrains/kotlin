@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.formatter;
 
-import com.intellij.formatting.FormattingModel;
-import com.intellij.formatting.FormattingModelBuilder;
-import com.intellij.formatting.FormattingModelProvider;
-import com.intellij.formatting.Indent;
+import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.util.TextRange;

@@ -332,7 +332,15 @@ abstract class KotlinCommonBlock(
                 if (parentElementType === KtNodeTypes.FUN ||
                     parentElementType === KtNodeTypes.PRIMARY_CONSTRUCTOR ||
                     parentElementType === KtNodeTypes.SECONDARY_CONSTRUCTOR) {
-                    return getWrappingStrategyForItemList(commonSettings.METHOD_PARAMETERS_WRAP, KtNodeTypes.VALUE_PARAMETER)
+                    val wrap = Wrap.createWrap(commonSettings.METHOD_PARAMETERS_WRAP, false)
+                    return object : WrappingStrategy {
+                        override fun getWrap(childElement: ASTNode): Wrap? {
+                            return if (childElement.elementType === KtNodeTypes.VALUE_PARAMETER && !childElement.startsWithAnnotation())
+                                wrap
+                            else
+                                null
+                        }
+                    }
                 }
             }
 
@@ -343,9 +351,41 @@ abstract class KotlinCommonBlock(
                         if (childElement.psi is KtSuperTypeListEntry) wrap else null
                 }
             }
+
+            elementType === KtNodeTypes.MODIFIER_LIST ->
+                when (node.treeParent.elementType) {
+                    KtNodeTypes.VALUE_PARAMETER ->
+                        return getWrappingStrategyForItemList(commonSettings.PARAMETER_ANNOTATION_WRAP,
+                                                              KtNodeTypes.ANNOTATION_ENTRY,
+                                                              !node.treeParent.isFirstParameter())
+                }
+
+            elementType === KtNodeTypes.VALUE_PARAMETER ->
+                return wrapAfterAnnotation(commonSettings.PARAMETER_ANNOTATION_WRAP)
         }
 
         return WrappingStrategy.NoWrapping
+    }
+}
+
+private fun ASTNode.startsWithAnnotation() = firstChildNode?.firstChildNode?.elementType == KtNodeTypes.ANNOTATION_ENTRY
+
+private fun ASTNode.isFirstParameter(): Boolean = treePrev.elementType == KtTokens.LPAR
+
+private fun wrapAfterAnnotation(wrapType: Int): WrappingStrategy {
+    return object : WrappingStrategy {
+        override fun getWrap(childElement: ASTNode): Wrap? {
+            var prevLeaf = childElement.treePrev
+            while (prevLeaf?.elementType == TokenType.WHITE_SPACE) {
+                prevLeaf = prevLeaf.treePrev
+            }
+            if (prevLeaf?.elementType == KtNodeTypes.MODIFIER_LIST) {
+                if (prevLeaf?.lastChildNode?.elementType == KtNodeTypes.ANNOTATION_ENTRY) {
+                    return Wrap.createWrap(wrapType, true)
+                }
+            }
+            return null
+        }
     }
 }
 
@@ -502,8 +542,8 @@ private fun getPrevWithoutWhitespaceAndComments(pNode: ASTNode?): ASTNode? {
     return node
 }
 
-private fun getWrappingStrategyForItemList(wrapType: Int, itemType: IElementType): WrappingStrategy {
-    val itemWrap = Wrap.createWrap(wrapType, false)
+private fun getWrappingStrategyForItemList(wrapType: Int, itemType: IElementType, wrapFirstElement: Boolean = false): WrappingStrategy {
+    val itemWrap = Wrap.createWrap(wrapType, wrapFirstElement)
     return object : WrappingStrategy {
         override fun getWrap(childElement: ASTNode): Wrap? {
             return if (childElement.elementType === itemType) itemWrap else null

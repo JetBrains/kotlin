@@ -554,6 +554,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ParameterAnnotationWrap.after.kt")
+        public void testParameterAnnotationWrap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ParameterAnnotationWrap.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ParameterDocComments.after.kt")
         public void testParameterDocComments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ParameterDocComments.after.kt");
