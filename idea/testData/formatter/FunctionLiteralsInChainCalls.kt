@@ -42,3 +42,5 @@ fun testWithComments() {
         it > 4
     }
 }
+
+// SET_TRUE: CONTINUATION_INDENT_FOR_CHAINED_CALLS

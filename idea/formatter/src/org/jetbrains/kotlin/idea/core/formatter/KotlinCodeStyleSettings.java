@@ -42,6 +42,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public boolean IMPORT_NESTED_CLASSES = false;
     public boolean CONTINUATION_INDENT_IN_PARAMETER_LISTS = true;
     public boolean CONTINUATION_INDENT_FOR_EXPRESSION_BODIES = true;
+    public boolean CONTINUATION_INDENT_FOR_CHAINED_CALLS = true;
 
     public KotlinCodeStyleSettings(CodeStyleSettings container) {
         super("JetCodeStyleSettings", container);

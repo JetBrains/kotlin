@@ -94,10 +94,14 @@ abstract class KotlinCommonBlock(
                 // relative to it when it starts from new line (see Indent javadoc).
 
                 val operationBlock = nodeSubBlocks[operationBlockIndex]
+                val indent = if (settings.kotlinSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
+                    Indent.getContinuationWithoutFirstIndent()
+                else
+                    Indent.getNormalIndent()
                 val operationSyntheticBlock = SyntheticKotlinBlock(
                         (operationBlock as ASTBlock).node,
                         nodeSubBlocks.subList(operationBlockIndex, nodeSubBlocks.size),
-                        null, operationBlock.getIndent(), null, spacingBuilder) { createSyntheticSpacingNodeBlock(it) }
+                        null, indent, null, spacingBuilder) { createSyntheticSpacingNodeBlock(it) }
 
                 nodeSubBlocks = ArrayList<Block>(nodeSubBlocks.subList(0, operationBlockIndex))
                 nodeSubBlocks.add(operationSyntheticBlock)
@@ -382,7 +386,14 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
 
         strategy("Chained calls")
                 .within(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION)
-                .set(Indent.getContinuationWithoutFirstIndent(false)),
+                .notForType(KtTokens.DOT, KtTokens.SAFE_ACCESS)
+                .forElement { it.treeParent.firstChildNode != it }
+                .set { settings ->
+                    if (settings.kotlinSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
+                        Indent.getContinuationWithoutFirstIndent()
+                    else
+                        Indent.getNormalIndent()
+                },
 
         strategy("Colon of delegation list")
                 .within(KtNodeTypes.CLASS, KtNodeTypes.OBJECT_DECLARATION)

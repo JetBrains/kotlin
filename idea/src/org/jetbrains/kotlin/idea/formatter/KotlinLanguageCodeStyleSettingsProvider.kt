@@ -125,6 +125,8 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                            foo: String,
                            bar: String
                        ) {
+                           foo
+                               .length
                        }
 
                        fun expressionBodyMethod() =

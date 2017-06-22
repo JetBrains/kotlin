@@ -176,6 +176,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ContinuationIndentForChainedCalls.after.kt")
+        public void testContinuationIndentForChainedCalls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentForChainedCalls.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ContinuationIndentInParameterLists.after.kt")
         public void testContinuationIndentInParameterLists() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentInParameterLists.after.kt");
@@ -1064,6 +1070,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTestInverted(fileName);
         }
 
+        @TestMetadata("ConsecutiveSafeCallsIndent.after.inv.kt")
+        public void testConsecutiveSafeCallsIndent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ConsecutiveSafeCallsIndent.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("ContinuationIndentForChainedCalls.after.inv.kt")
+        public void testContinuationIndentForChainedCalls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentForChainedCalls.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
         @TestMetadata("ContinuationIndentForExpressionBodies.after.inv.kt")
         public void testContinuationIndentForExpressionBodies() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentForExpressionBodies.after.inv.kt");
@@ -1127,6 +1145,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("FunctionLineBreak.after.inv.kt")
         public void testFunctionLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionLineBreak.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("FunctionLiteralsInChainCalls.after.inv.kt")
+        public void testFunctionLiteralsInChainCalls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionLiteralsInChainCalls.after.inv.kt");
             doTestInverted(fileName);
         }
 
