@@ -56,6 +56,7 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
         }
         else {
             val function = context.getFunctionObject(getter)
+            function.source = expression
             defaultTranslator.generateDefaultGetterFunction(getter, function)
             function
         }
@@ -67,6 +68,7 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
             }
             else {
                 val function = context.getFunctionObject(setter)
+                function.source = expression
                 defaultTranslator.generateDefaultSetterFunction(setter, function)
                 function
             }
@@ -98,6 +100,7 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
             context: TranslationContext
     ): JsExpression {
         val function = context.getFunctionObject(descriptor)
+        function.source = expression.finalElement
         val innerContext = context.newDeclaration(descriptor).translateAndAliasParameters(descriptor, function.parameters)
 
         if (descriptor.isSuspend) {

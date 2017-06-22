@@ -5,4 +5,4 @@ fun foo() {
             0L)
 }
 
-// LINES: 2 3 4 5
+// LINES: 6 2 3 4 5

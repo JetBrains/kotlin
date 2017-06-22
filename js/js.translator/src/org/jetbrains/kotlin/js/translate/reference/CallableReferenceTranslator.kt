@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
+import org.jetbrains.kotlin.js.translate.utils.finalElement
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -96,6 +97,7 @@ object CallableReferenceTranslator {
         }
 
         val function = JsFunction(context.scope(), JsBlock(), "")
+        function.source = expression
         val receiverParam = if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) {
             val paramName = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
             function.parameters += JsParameter(paramName)
@@ -127,12 +129,12 @@ object CallableReferenceTranslator {
     ): JsExpression {
         val call = expression.callableReference.getPropertyResolvedCallWithAssert(context.bindingContext())
 
-        val getter = translateForPropertyAccessor(call, descriptor, context, receiver, false) { context, call, _, receiverParam ->
+        val getter = translateForPropertyAccessor(call, expression, descriptor, context, receiver, false) { context, call, _, receiverParam ->
             CallTranslator.translateGet(context, call, receiverParam)
         }
 
         val setter = if (isSetterVisible(descriptor, context)) {
-            translateForPropertyAccessor(call, descriptor, context, receiver, true, CallTranslator::translateSet)
+            translateForPropertyAccessor(call, expression, descriptor, context, receiver, true, CallTranslator::translateSet)
         }
         else {
             null
@@ -153,6 +155,7 @@ object CallableReferenceTranslator {
 
     private fun translateForPropertyAccessor(
             call: ResolvedCall<out PropertyDescriptor>,
+            expression: KtExpression,
             descriptor: PropertyDescriptor,
             context: TranslationContext,
             receiver: JsExpression?,
@@ -160,6 +163,7 @@ object CallableReferenceTranslator {
             translator: (TranslationContext, ResolvedCall<out PropertyDescriptor>, JsExpression, JsExpression?) -> JsExpression
     ): JsExpression {
         val accessorFunction = JsFunction(context.scope(), JsBlock(), "")
+        accessorFunction.source = expression.finalElement
         val accessorContext = context.innerBlock(accessorFunction.body)
         val receiverParam = if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) {
             val name = JsScope.declareTemporaryName(Namer.getReceiverParameterName())

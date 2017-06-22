@@ -48,6 +48,8 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
@@ -667,6 +669,7 @@ public final class StaticContext {
                 JsFunction correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(fragment.getScope());
                 assert (!scopeToFunction.containsKey(correspondingFunction.getScope())) : "Scope to function value overridden for " + descriptor;
                 scopeToFunction.put(correspondingFunction.getScope(), correspondingFunction);
+                correspondingFunction.setSource(KotlinSourceElementKt.getPsi(((CallableDescriptor) descriptor).getSource()));
                 return correspondingFunction.getScope();
             };
             Rule<JsScope> scopeForPackage = descriptor -> {

@@ -275,7 +275,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitBlock(@NotNull JsBlock x) {
-        printJsBlock(x, true);
+        printJsBlock(x, true, null);
     }
 
     @Override
@@ -496,7 +496,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitExpressionStatement(@NotNull JsExpressionStatement x) {
         Object source = x.getSource();
-        if (source == null) {
+        if (source == null && !(x.getExpression() instanceof JsFunction)) {
             source = x.getExpression().getSource();
         }
         pushSourceInfo(source);
@@ -605,8 +605,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitFunction(@NotNull JsFunction x) {
-        pushSourceInfo(x.getSource());
-
         p.print(CHARS_FUNCTION);
         space();
         if (x.getName() != null) {
@@ -626,12 +624,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         lineBreakAfterBlock = false;
 
         sourceLocationConsumer.pushSourceInfo(null);
-        accept(x.getBody());
+        printJsBlock(x.getBody(), true, x.getSource());
         sourceLocationConsumer.popSourceInfo();
 
         needSemi = true;
-
-        popSourceInfo();
     }
 
     @Override
@@ -1111,7 +1107,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
     }
 
-    private void printJsBlock(JsBlock x, boolean finalNewline) {
+    private void printJsBlock(JsBlock x, boolean finalNewline, Object closingBracketLocation) {
         if (!lineBreakAfterBlock) {
             finalNewline = false;
             lineBreakAfterBlock = true;
@@ -1184,7 +1180,15 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         if (needBraces) {
             // _blockClose() modified
             p.indentOut();
+
+            if (closingBracketLocation != null) {
+                pushSourceInfo(closingBracketLocation);
+            }
             p.print('}');
+            if (closingBracketLocation != null) {
+                popSourceInfo();
+            }
+
             if (finalNewline) {
                 newlineOpt();
             }

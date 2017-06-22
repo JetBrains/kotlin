@@ -208,6 +208,7 @@ public class Parser extends Observable {
         int savedFunctionNumber = functionNumber;
         Node args;
         Node body;
+        CodePosition closingBracketPosition;
         try {
             functionNumber = 0;
             args = nf.createLeaf(TokenStream.LP, ts.tokenPosition);
@@ -226,6 +227,7 @@ public class Parser extends Observable {
 
             mustMatchToken(ts, TokenStream.LC, "msg.no.brace.body");
             body = parseFunctionBody(ts);
+            closingBracketPosition = ts.tokenPosition;
             mustMatchToken(ts, TokenStream.RC, "msg.no.brace.after.body");
             // skip the last EOL so nested functions work...
         }
@@ -234,7 +236,7 @@ public class Parser extends Observable {
             functionNumber = savedFunctionNumber;
         }
 
-        Node pn = nf.createFunction(nameNode, args, body, basePosition);
+        Node pn = nf.createFunction(nameNode, args, body, closingBracketPosition);
         if (memberExprNode != null) {
             pn = nf.createBinary(TokenStream.ASSIGN, TokenStream.NOP, memberExprNode, pn, basePosition);
         }

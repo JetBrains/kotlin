@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.source.getPsi
 
 internal class DeclarationExporter(val context: StaticContext) {
     private val objectLikeKinds = setOf(ClassKind.OBJECT, ClassKind.ENUM_ENTRY)
@@ -113,6 +114,7 @@ internal class DeclarationExporter(val context: StaticContext) {
             val setterBody: JsExpression = if (simpleProperty) {
                 val statements = mutableListOf<JsStatement>()
                 val function = JsFunction(context.fragment.scope, JsBlock(statements), "$declaration setter")
+                function.source = declaration.source.getPsi()
                 val valueName = JsScope.declareTemporaryName("value")
                 function.parameters += JsParameter(valueName)
                 statements += assignment(context.getInnerNameForDescriptor(declaration).makeRef(), valueName.makeRef()).makeStmt()

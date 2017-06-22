@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.finalElement
 
 class CoroutineFunctionTransformer(private val function: JsFunction, name: String?) {
     private val innerFunction = function.getInnerFunction()
@@ -61,6 +62,7 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
         val psiElement = context.metadata.psiElement
 
         val constructor = JsFunction(function.scope.parent, JsBlock(), "Continuation")
+        constructor.source = psiElement?.finalElement
         constructor.name = className
         if (context.metadata.hasReceiver) {
             constructor.parameters += JsParameter(context.receiverFieldName)
@@ -130,6 +132,7 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
             statements: MutableList<JsStatement>
     ) {
         val resumeFunction = JsFunction(function.scope.parent, JsBlock(), "resume function")
+        resumeFunction.source = context.metadata.psiElement?.finalElement
 
         val coroutineBody = generateCoroutineBody(context, coroutineBlocks)
         functionWithBody.body.statements.clear()

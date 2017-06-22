@@ -13,4 +13,4 @@ class Delegate(val f: () -> Int) {
     }
 }
 
-// LINES: 2 3 2 * 3 * 7 10 12
+// LINES: 1 2 3 2 2 3 3 * 8 7 10 10 13 12

@@ -8,4 +8,4 @@ fun foo(x: Int) {
     println(y)
 }
 
-// LINES: 2 3 4 5 6 7 8
+// LINES: 9 2 3 4 5 6 7 8

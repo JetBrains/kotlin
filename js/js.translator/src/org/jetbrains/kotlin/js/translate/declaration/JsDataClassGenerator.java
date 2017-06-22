@@ -208,6 +208,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
     private JsFunction generateJsMethod(@NotNull FunctionDescriptor functionDescriptor) {
         JsFunction functionObject = context.createRootScopedFunction(functionDescriptor);
+        functionObject.setSource(getDeclaration());
         ClassDescriptor containingClass = (ClassDescriptor) functionDescriptor.getContainingDeclaration();
         context.addDeclarationStatement(UtilsKt.addFunctionToPrototype(context, containingClass, functionDescriptor, functionObject));
         return functionObject;

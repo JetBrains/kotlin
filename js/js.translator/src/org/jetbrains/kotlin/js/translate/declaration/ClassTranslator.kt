@@ -158,6 +158,7 @@ class ClassTranslator private constructor(
     private fun createEnumInitFunction(): JsFunction {
         val function = context().createRootScopedFunction(descriptor)
         function.name = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor) + "_initFields")
+        function.source = classDeclaration
         val emptyFunction = context().createRootScopedFunction(descriptor)
         function.body.statements += JsAstUtils.assignment(JsAstUtils.pureFqn(function.name, null), emptyFunction)
                 .source(classDeclaration).makeStmt()
@@ -455,6 +456,7 @@ class ClassTranslator private constructor(
 
         val instanceFun = context().createRootScopedFunction("Instance function: " + descriptor)
         instanceFun.name = context().getNameForObjectInstance(descriptor)
+        instanceFun.source = classDeclaration
 
         if (enumInitializerName != null) {
             instanceFun.body.statements += JsInvocation(pureFqn(enumInitializerName, null)).source(classDeclaration).makeStmt()

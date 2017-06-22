@@ -131,6 +131,7 @@ class DelegationTranslator(
             returnExpression.source(specifier)
 
             val jsFunction = simpleReturnFunction(context().getScopeForDescriptor(getterDescriptor.containingDeclaration), returnExpression)
+            jsFunction.source = specifier
             if (DescriptorUtils.isExtension(descriptor)) {
                 val receiverName = jsFunction.scope.declareName(Namer.getReceiverParameterName())
                 jsFunction.parameters.add(JsParameter(receiverName))
@@ -141,6 +142,7 @@ class DelegationTranslator(
         fun generateDelegateSetterFunction(setterDescriptor: PropertySetterDescriptor): JsFunction {
             val jsFunction = JsFunction(context().program().rootScope,
                                         "setter for " + setterDescriptor.name.asString())
+            jsFunction.source = specifier
 
             assert(setterDescriptor.valueParameters.size == 1) { "Setter must have 1 parameter" }
             val defaultParameter = JsParameter(JsScope.declareTemporary())

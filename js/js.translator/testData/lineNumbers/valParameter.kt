@@ -7,4 +7,4 @@ fun foo() {
     A(23, "foo")
 }
 
-// LINES: 2 3 * 7
+// LINES: 1 2 3 * 8 7

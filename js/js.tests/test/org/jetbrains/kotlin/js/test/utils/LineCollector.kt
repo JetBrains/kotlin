@@ -57,14 +57,8 @@ class LineCollector : RecursiveJsVisitor() {
     }
 
     override fun visitExpressionStatement(x: JsExpressionStatement) {
-        val expression = x.expression
-        if (expression is JsFunction) {
-            expression.accept(this)
-        }
-        else {
-            withStatement(x) {
-                super.visitExpressionStatement(x)
-            }
+        withStatement(x) {
+            super.visitExpressionStatement(x)
         }
     }
 

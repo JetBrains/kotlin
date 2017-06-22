@@ -16,4 +16,4 @@ inline fun foo(f: () -> Unit) {
     println("after")
 }
 
-// LINES: 2 14 4 16 6 14 8 16 10 14 15 16
+// LINES: 11 2 14 4 16 6 14 8 16 10 17 14 15 16

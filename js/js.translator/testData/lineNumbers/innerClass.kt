@@ -6,4 +6,4 @@ class A(val x: Int) {
     }
 }
 
-// LINES: 1 2 4
+// LINES: 1 1 2 2 5 4

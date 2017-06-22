@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateF
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.js.translate.utils.fillCoroutineMetadata
+import org.jetbrains.kotlin.js.translate.utils.finalElement
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
     fun translate(declaration: KtDeclarationWithBody): JsExpression {
+        val finalElement = declaration.finalElement
         val invokingContext = context()
         val descriptor = getFunctionDescriptor(invokingContext.bindingContext(), declaration)
 
@@ -59,6 +61,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         lambda.body.statements += setDefaultValueForArguments(descriptor, functionContext)
         lambda.body.statements += translateFunctionBody(descriptor, declaration, functionContext)
         lambda.functionDescriptor = descriptor
+        lambda.source = finalElement
 
         val tracker = functionContext.usageTracker()!!
 
@@ -71,6 +74,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             }
             lambdaCreator.name.staticRef = lambdaCreator
             lambdaCreator.fillCoroutineMetadata(invokingContext, descriptor)
+            lambdaCreator.source = declaration
             return lambdaCreator.withCapturedParameters(descriptor, functionContext, invokingContext)
         }
 

@@ -13,4 +13,4 @@ open class A
 
 open class B : A()
 
-// LINES: 2 2 3 4 5 6 8 * 14
+// LINES: 10 2 2 3 4 5 6 8 12 * 14 14

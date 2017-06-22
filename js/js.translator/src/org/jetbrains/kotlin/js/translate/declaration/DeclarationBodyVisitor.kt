@@ -75,6 +75,7 @@ class DeclarationBodyVisitor(
             enumInitializer.body.statements += JsAstUtils.assignment(pureFqn(enumInstanceName, null), jsEnumEntryCreation).makeStmt()
 
             val enumInstanceFunction = context.createRootScopedFunction(descriptor)
+            enumInstanceFunction.source = enumEntry
             enumInstanceFunction.name = context.getNameForObjectInstance(descriptor)
             context.addDeclarationStatement(enumInstanceFunction.makeStmt())
 
@@ -114,6 +115,7 @@ class DeclarationBodyVisitor(
 
             if (descriptor.hasOwnParametersWithDefaultValue()) {
                 val caller = JsFunction(context.getScopeForDescriptor(containingClass), JsBlock(), "")
+                caller.source = psi.finalElement
                 val callerContext = context
                         .newDeclaration(descriptor)
                         .translateAndAliasParameters(descriptor, caller.parameters)

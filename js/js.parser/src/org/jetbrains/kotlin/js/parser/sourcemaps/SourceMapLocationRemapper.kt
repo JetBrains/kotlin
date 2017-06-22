@@ -100,6 +100,12 @@ class SourceMapLocationRemapper(private val sourceMap: SourceMap) {
         override fun visitInvocation(invocation: JsInvocation) =
                 handleNode(invocation, invocation.qualifier, *invocation.arguments.toTypedArray())
 
+        override fun visitFunction(x: JsFunction) {
+            x.parameters.forEach { accept(it) }
+            x.body.statements.forEach { accept(it) }
+            nodeList += x
+        }
+
         override fun visitElement(node: JsNode) {
             nodeList += node
             node.acceptChildren(this)

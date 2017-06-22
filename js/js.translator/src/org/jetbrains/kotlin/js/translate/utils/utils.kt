@@ -35,6 +35,10 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
@@ -88,6 +92,7 @@ fun generateDelegateCall(
     invocation.source = source
 
     val functionObject = simpleReturnFunction(context.scope(), invocation)
+    functionObject.source = source?.finalElement
     functionObject.parameters.addAll(parameters)
 
     val fromFunctionName = fromDescriptor.getNameForFunctionWithPossibleDefaultParam()
@@ -201,3 +206,11 @@ fun definePackageAlias(name: String, varName: JsName, tag: String, parentRef: Js
 
     return JsAstUtils.newVar(varName, rhs).apply { exportedPackage = tag }
 }
+
+val PsiElement.finalElement: PsiElement
+    get() = when (this) {
+        is KtFunctionLiteral -> rBrace ?: this
+        is KtDeclarationWithBody -> (bodyExpression as? KtBlockExpression)?.rBrace ?: bodyExpression ?: this
+        is KtLambdaExpression -> bodyExpression?.rBrace ?: this
+        else -> this
+    }

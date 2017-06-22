@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.*
+import org.jetbrains.kotlin.js.translate.utils.finalElement
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.addParameter
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.addStatement
 import org.jetbrains.kotlin.psi.KtProperty
@@ -245,12 +246,16 @@ private class PropertyTranslator(
     private fun translateCustomAccessor(expression: KtPropertyAccessor): JsPropertyInitializer {
         val descriptor = BindingUtils.getFunctionDescriptor(bindingContext(), expression)
         val function = JsFunction(context().getScopeForDescriptor(descriptor), JsBlock(), descriptor.toString())
+        function.source = expression.finalElement
         context().translateAndAliasParameters(descriptor, function.parameters).translateFunction(expression, function)
         return translateFunctionAsEcma5PropertyDescriptor(function, descriptor, context())
     }
 
-    private fun createFunction(descriptor: VariableAccessorDescriptor) =
-            JsFunction(context().getScopeForDescriptor(descriptor), JsBlock(), accessorDescription(descriptor))
+    private fun createFunction(descriptor: VariableAccessorDescriptor): JsFunction {
+        val function = JsFunction(context().getScopeForDescriptor(descriptor), JsBlock(), accessorDescription(descriptor))
+        function.source = descriptor.source.getPsi()?.finalElement
+        return function
+    }
 
     private fun accessorDescription(accessorDescriptor: VariableAccessorDescriptor): String {
         val accessorType =

@@ -11,4 +11,4 @@ inline fun bar() {
     println("bar2")
 }
 
-// LINES: 2 10 11 4 10 11 6 10 11
+// LINES: 7 2 10 11 4 10 11 6 12 10 11
