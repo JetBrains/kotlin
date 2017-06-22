@@ -69,7 +69,12 @@
         </dokka>
     </target>
 
-    <target name="zip" depends="document">
+    <target name="write-build-number">
+        <echo file="${docs.output}/jre8/kotlin-stdlib/buildNumber.txt">${build.number}</echo>
+        <echo file="${docs.output}/jre8/kotlin-test/buildNumber.txt">${build.number}</echo>
+    </target>
+
+    <target name="zip" depends="document,write-build-number">
         <zip destfile="target/stdlib-docs.zip" basedir="${docs.output}/jre8/kotlin-stdlib"/>
         <zip destfile="target/kotlin-test-docs.zip" basedir="${docs.output}/jre8/kotlin-test"/>
     </target>
