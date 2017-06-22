@@ -20,8 +20,10 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.NamedMethodFilter
 import com.intellij.util.Range
 import com.sun.jdi.Location
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -33,8 +35,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class KotlinBasicStepMethodFilter(
-        val targetDescriptor: CallableMemberDescriptor,
-        val myCallingExpressionLines: Range<Int>
+        private val targetDescriptor: CallableMemberDescriptor,
+        private val myCallingExpressionLines: Range<Int>
 ) : NamedMethodFilter {
     private val myTargetMethodName = when (targetDescriptor) {
         is ClassDescriptor, is ConstructorDescriptor -> "<init>"
@@ -50,7 +52,7 @@ class KotlinBasicStepMethodFilter(
         val method = location.method()
         if (myTargetMethodName != method.name()) return false
 
-        val positionManager = process.positionManager ?: return false
+        val positionManager = process.positionManager
 
         val currentDescriptor = runReadAction {
             val elementAt = positionManager.getSourcePosition(location)?.elementAt
@@ -71,6 +73,10 @@ class KotlinBasicStepMethodFilter(
         if (currentDescriptor.kind != DECLARATION) return false
 
         if (compareDescriptors(currentDescriptor, targetDescriptor)) return true
+
+        if (targetDescriptor is FunctionInvokeDescriptor && currentDescriptor is FunctionDescriptor) {
+            return isCompatibleSignatures(targetDescriptor, currentDescriptor)
+        }
 
         // We should stop if current descriptor overrides the target one or some base descriptor of target
         // (if target descriptor is delegation or fake override)
@@ -94,4 +100,24 @@ class KotlinBasicStepMethodFilter(
 
 private fun compareDescriptors(d1: DeclarationDescriptor, d2: DeclarationDescriptor): Boolean {
     return d1 == d2 || d1.original == d2.original
+}
+
+private fun isCompatibleSignatures(target: FunctionDescriptor, current: FunctionDescriptor): Boolean {
+    // A very primitive approximation
+    if (target.valueParameters.size != current.valueParameters.size) {
+        return false
+    }
+
+    if (target.returnType != current.returnType) {
+        return false
+    }
+
+    for ((i, targetParam) in target.valueParameters.withIndex()) {
+        val currentParam = current.valueParameters[i]
+        if (targetParam.type != currentParam.type) {
+            return false
+        }
+    }
+
+    return true
 }

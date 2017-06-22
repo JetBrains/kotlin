@@ -1,0 +1,20 @@
+LineBreakpoint created at smartStepIntoToLambdaParameter.kt:7
+LineBreakpoint created at smartStepIntoToLambdaParameter.kt:14
+LineBreakpoint created at smartStepIntoToLambdaParameter.kt:21
+LineBreakpoint created at smartStepIntoToLambdaParameter.kt:28
+LineBreakpoint created at smartStepIntoToLambdaParameter.kt:35
+Run Java
+Connected to the target VM
+smartStepIntoToLambdaParameter.kt:7
+smartStepIntoToLambdaParameter.kt:39
+smartStepIntoToLambdaParameter.kt:14
+smartStepIntoToLambdaParameter.kt:10
+smartStepIntoToLambdaParameter.kt:21
+smartStepIntoToLambdaParameter.kt:45
+smartStepIntoToLambdaParameter.kt:28
+smartStepIntoToLambdaParameter.kt:47
+smartStepIntoToLambdaParameter.kt:35
+smartStepIntoToLambdaParameter.kt:49
+Disconnected from the target VM
+
+Process finished with exit code 0
