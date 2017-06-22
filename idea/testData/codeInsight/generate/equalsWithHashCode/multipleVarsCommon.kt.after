@@ -1,0 +1,28 @@
+// PLATFORM: Common
+class A(val n: Int, val s: String) {
+    val f: Float = 1.0f
+
+    fun foo() {
+
+    }
+
+    <caret>override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || other::class != this::class) return false
+
+        other as A
+
+        if (n != other.n) return false
+        if (s != other.s) return false
+        if (f != other.f) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = n
+        result = 31 * result + s.hashCode()
+        result = 31 * result + f.hashCode()
+        return result
+    }
+}

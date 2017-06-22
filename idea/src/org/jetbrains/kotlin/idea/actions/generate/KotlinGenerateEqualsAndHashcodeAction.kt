@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -34,11 +35,15 @@ import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.insertMembersAfter
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -134,7 +139,27 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         }
     }
 
-    private fun generateEquals(project: Project, info: Info): KtNamedFunction? {
+    private fun generateClassLiteralsNotEqual(paramName: String, targetClass: KtClassOrObject): String {
+        val defaultExpression = "$paramName?.javaClass != javaClass"
+        if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
+        return when (targetClass.platform) {
+            is JsPlatform -> "other == null || $paramName::class.js != this::class.js"
+            is TargetPlatform.Default -> "other == null || $paramName::class != this::class"
+            else -> defaultExpression
+        }
+    }
+
+    private fun generateClassLiteral(targetClass: KtClassOrObject): String {
+        val defaultExpression = "javaClass"
+        if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
+        return when (targetClass.platform) {
+            is JsPlatform -> "this::class.js"
+            is TargetPlatform.Default -> "this::class"
+            else -> defaultExpression
+        }
+    }
+
+    private fun generateEquals(project: Project, info: Info, targetClass: KtClassOrObject): KtNamedFunction? {
         with(info) {
             if (!needEquals) return null
 
@@ -149,7 +174,12 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             }
 
             val useIsCheck = CodeInsightSettings.getInstance().USE_INSTANCEOF_ON_EQUALS_PARAMETER
-            val isNotInstanceCondition = if (useIsCheck) "$paramName !is $typeForCast" else "$paramName?.javaClass != javaClass"
+            val isNotInstanceCondition = if (useIsCheck) {
+                "$paramName !is $typeForCast"
+            }
+            else {
+                generateClassLiteralsNotEqual(paramName, targetClass)
+            }
             val bodyText = StringBuilder().apply {
                 append("if (this === $paramName) return true\n")
                 append("if ($isNotInstanceCondition) return false\n")
@@ -189,7 +219,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         }
     }
 
-    private fun generateHashCode(project: Project, info: Info): KtNamedFunction? {
+    private fun generateHashCode(project: Project, info: Info, targetClass: KtClassOrObject): KtNamedFunction? {
         fun VariableDescriptor.genVariableHashCode(parenthesesNeeded: Boolean): String {
             val ref = (DescriptorToSourceUtilsIde.getAnyDeclaration(project, this) as PsiNameIdentifierOwner).nameIdentifier!!.text
             val isNullable = TypeUtils.isNullableType(type)
@@ -226,7 +256,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             val initialValue = when {
                 !builtins.isMemberOfAny(superHashCode) -> "super.hashCode()"
                 propertyIterator.hasNext() -> propertyIterator.next().genVariableHashCode(false)
-                else -> "javaClass.hashCode()"
+                else -> generateClassLiteral(targetClass) + ".hashCode()"
             }
 
             val bodyText = if (propertyIterator.hasNext()) {
@@ -249,8 +279,8 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         val targetClass = info.classDescriptor.source.getPsi() as KtClass
         val prototypes = ArrayList<KtDeclaration>(2)
                 .apply {
-                    addIfNotNull(generateEquals(project, info))
-                    addIfNotNull(generateHashCode(project, info))
+                    addIfNotNull(generateEquals(project, info, targetClass))
+                    addIfNotNull(generateHashCode(project, info, targetClass))
                 }
         val anchor = with(targetClass.declarations) { lastIsInstanceOrNull<KtNamedFunction>() ?: lastOrNull() }
         return insertMembersAfter(editor, targetClass, prototypes, anchor)
