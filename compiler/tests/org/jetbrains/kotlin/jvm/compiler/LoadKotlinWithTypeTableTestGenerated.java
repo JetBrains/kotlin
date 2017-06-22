@@ -74,6 +74,12 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
             doTest(fileName);
         }
 
+        @TestMetadata("PrimitiveArrayArguments.kt")
+        public void testPrimitiveArrayArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/PrimitiveArrayArguments.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SimpleAnnotation.kt")
         public void testSimpleAnnotation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");
