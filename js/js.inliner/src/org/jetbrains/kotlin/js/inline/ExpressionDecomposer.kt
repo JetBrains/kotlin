@@ -232,7 +232,7 @@ internal class ExpressionDecomposer private constructor(
         test = accept(test)
         if (then !in containsExtractable && otherwise !in containsExtractable) return
 
-        val tmp = Temporary()
+        val tmp = Temporary(sourceInfo = source)
         addStatement(tmp.variable)
 
         val thenBlock = withNewAdditionalStatements {
@@ -248,6 +248,7 @@ internal class ExpressionDecomposer private constructor(
         }
 
         val lazyEval = JsIf(test, thenBlock, elseBlock)
+        lazyEval.source = source
         lazyEval.synthetic = true
         addStatement(lazyEval)
         ctx.replaceMe(tmp.nameRef)
@@ -361,19 +362,23 @@ internal class ExpressionDecomposer private constructor(
         return tmp.nameRef
     }
 
-    private inner class Temporary(val value: JsExpression? = null) {
+    private inner class Temporary(val value: JsExpression? = null, val sourceInfo: Any? = null) {
         val name: JsName = JsScope.declareTemporary()
 
         val variable: JsVars = newVar(name, value).apply {
             synthetic = true
             name.staticRef = value
+            source = sourceInfo ?: value?.source
         }
 
         val nameRef: JsExpression
             get() = name.makeRef()
 
         fun assign(value: JsExpression): JsStatement {
-            val statement = JsExpressionStatement(assignment(nameRef, value)).apply { synthetic = true }
+            val statement = JsExpressionStatement(assignment(nameRef, value)).apply {
+                synthetic = true
+                expression.source = sourceInfo ?: value.source
+            }
             return statement
         }
     }

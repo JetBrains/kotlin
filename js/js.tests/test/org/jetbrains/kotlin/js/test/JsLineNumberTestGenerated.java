@@ -78,6 +78,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("conditionalDecomposed.kt")
+    public void testConditionalDecomposed() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/conditionalDecomposed.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("coroutine.kt")
     public void testCoroutine() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/coroutine.kt");
