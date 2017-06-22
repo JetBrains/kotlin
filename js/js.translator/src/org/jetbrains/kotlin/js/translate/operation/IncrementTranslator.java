@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
+import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation;
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator;
 import org.jetbrains.kotlin.js.backend.ast.JsBlock;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
-import org.jetbrains.kotlin.js.util.AstUtil;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
@@ -34,6 +33,8 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtUnaryExpression;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+
+import java.util.Arrays;
 
 import static org.jetbrains.kotlin.js.translate.reference.AccessTranslationUtils.getAccessTranslator;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
@@ -121,7 +122,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
 
         JsExpression result;
         if (accessBlock.getStatements().size() == 2) {
-            result = AstUtil.newSequence(t1.assignmentExpression(), variableReassignment, t1.reference());
+            result = JsAstUtils.newSequence(Arrays.asList(t1.assignmentExpression(), variableReassignment, t1.reference()));
         }
         else {
             context().getCurrentBlock().getStatements().addAll(accessBlock.getStatements());

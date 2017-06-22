@@ -19,23 +19,6 @@ public final class AstUtil {
     private AstUtil() {
     }
 
-    /**
-     * Returns a sequence of expressions (using the binary sequence operator).
-     *
-     * @param exprs - expressions to add to sequence
-     * @return a sequence of expressions.
-     */
-    public static JsBinaryOperation newSequence(JsExpression... exprs) {
-        if (exprs.length < 2) {
-            throw new RuntimeException("newSequence expects at least two arguments");
-        }
-        JsExpression result = exprs[exprs.length - 1];
-        for (int i = exprs.length - 2; i >= 0; i--) {
-            result = new JsBinaryOperation(JsBinaryOperator.COMMA, exprs[i], result);
-        }
-        return (JsBinaryOperation) result;
-    }
-
     @Nullable
     public static <T extends JsNode> T deepCopy(@Nullable T node) {
         if (node == null) return null;
@@ -46,9 +29,9 @@ public final class AstUtil {
 
     @NotNull
     public static <T extends JsNode> List<T> deepCopy(@Nullable List<T> nodes) {
-        if (nodes == null) return new SmartList<T>();
+        if (nodes == null) return new SmartList<>();
 
-        List<T> nodesCopy = new ArrayList<T>(nodes.size());
+        List<T> nodesCopy = new ArrayList<>(nodes.size());
         for (T node : nodes) {
             nodesCopy.add(deepCopy(node));
         }

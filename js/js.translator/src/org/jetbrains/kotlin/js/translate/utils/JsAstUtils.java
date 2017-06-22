@@ -433,9 +433,9 @@ public final class JsAstUtils {
         if (expressions.size() == 1) {
             return expressions.get(0);
         }
-        JsExpression result = expressions.get(expressions.size() - 1);
-        for (int i = expressions.size() - 2; i >= 0; i--) {
-            result = new JsBinaryOperation(JsBinaryOperator.COMMA, expressions.get(i), result);
+        JsExpression result = expressions.get(0);
+        for (int i = 1; i < expressions.size(); i++) {
+            result = new JsBinaryOperation(JsBinaryOperator.COMMA, result, expressions.get(i));
         }
         return result;
     }
