@@ -5,6 +5,8 @@ import kotlin.reflect.KProperty
 
 class A private()
 
+class AA private constructor
+
 fun foo() {
     @loop
     for (i in 1..100) {
