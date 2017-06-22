@@ -17,16 +17,13 @@
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.fileTypes.LanguageFileType
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import kotlin.reflect.KClass
-import kotlin.script.dependencies.KotlinScriptExternalDependencies
-import kotlin.script.dependencies.ScriptDependenciesResolver
+import kotlin.script.dependencies.DependenciesResolver
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 open class KotlinScriptDefinition(val template: KClass<out Any>) {
@@ -45,14 +42,9 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) {
     open fun getScriptName(script: KtScript): Name =
             NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
-    @Deprecated("Use dependencyResolver instead", level = DeprecationLevel.ERROR)
-    open fun getDependenciesFor(file: VirtualFile, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
+    open val dependencyResolver: DependenciesResolver get() = DependenciesResolver.NoDependencies
 
-    open val dependencyResolver: ScriptDependenciesResolver = EmptyDependencyResolver
-
-    open val acceptedAnnotations: List<KClass<out Annotation>> = emptyList()
-
-    private object EmptyDependencyResolver : ScriptDependenciesResolver
+    open val acceptedAnnotations: List<KClass<out Annotation>> get() = emptyList()
 }
 
 object StandardScriptDefinition : KotlinScriptDefinition(ScriptTemplateWithArgs::class)

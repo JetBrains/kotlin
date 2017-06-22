@@ -24,11 +24,8 @@ import org.jetbrains.kotlin.idea.core.script.dependencies.KotlinScriptResolveSco
 import org.jetbrains.kotlin.script.ScriptTemplatesProvider
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.util.concurrent.Future
-import kotlin.script.dependencies.KotlinScriptExternalDependencies
-import kotlin.script.dependencies.PseudoFuture
-import kotlin.script.dependencies.ScriptContents
-import kotlin.script.dependencies.ScriptDependenciesResolver
+import kotlin.script.dependencies.*
+import kotlin.script.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class StandardKotlinScriptTemplateProvider(val project: Project) : ScriptTemplatesProvider {
@@ -45,7 +42,7 @@ class StandardKotlinScriptTemplateProvider(val project: Project) : ScriptTemplat
         )
     }
 
-    override val resolver: ScriptDependenciesResolver = BundledKotlinScriptDependenciesResolver()
+    override val resolver: DependenciesResolver = BundledKotlinScriptDependenciesResolver()
 
     private fun getScriptSDK(project: Project): String? {
         val jdk = PathUtilEx.getAnyJdk(project) ?:
@@ -55,26 +52,22 @@ class StandardKotlinScriptTemplateProvider(val project: Project) : ScriptTemplat
     }
 }
 
-class BundledKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
+class BundledKotlinScriptDependenciesResolver : DependenciesResolver {
     override fun resolve(
-            script: ScriptContents,
-            environment: Map<String, Any?>?,
-            report: (ScriptDependenciesResolver.ReportSeverity, String, ScriptContents.Position?) -> Unit,
-            previousDependencies: KotlinScriptExternalDependencies?): Future<KotlinScriptExternalDependencies?> {
-        val javaHome = environment?.get("sdk") as String?
-        val dependencies = KotlinBundledScriptDependencies(javaHome)
-        return PseudoFuture(dependencies)
-    }
-}
-
-class KotlinBundledScriptDependencies(override val javaHome: String?) : KotlinScriptExternalDependencies {
-    override val classpath: Iterable<File> get() {
-        return with(PathUtil.getKotlinPathsForIdeaPlugin()) {
-            listOf(
-                    reflectPath,
-                    stdlibPath,
-                    scriptRuntimePath
-            )
-        }
+            scriptContents: ScriptContents,
+            environment: Environment
+    ): ResolveResult {
+        val javaHome = environment.get("sdk") as String?
+        val dependencies = ScriptDependencies(
+                javaHome = javaHome?.let(::File),
+                classpath = with(PathUtil.getKotlinPathsForIdeaPlugin()) {
+                    listOf(
+                            reflectPath,
+                            stdlibPath,
+                            scriptRuntimePath
+                    )
+                }
+        )
+        return dependencies.asSuccess()
     }
 }
