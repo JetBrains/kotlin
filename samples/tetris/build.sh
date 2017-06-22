@@ -53,4 +53,4 @@ konanc $COMPILER_ARGS -target $TARGET $DIR/src/main/kotlin/Tetris.kt \
 
 cp -R $DIR/src/main/resources/ $DIR/build/bin/
 
-echo "Artifact path is ./build/bin/Tetris.kexe"
+echo "Artifact path is $DIR/build/bin/Tetris.kexe"

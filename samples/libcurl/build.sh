@@ -27,9 +27,9 @@ mkdir -p $DIR/build/c_interop/
 mkdir -p $DIR/build/bin/
 
 cinterop -compilerOpts "$CFLAGS" -compilerOpts -I$DIR -compilerOpts -I/usr/include -def $DIR/src/main/c_interop/libcurl.def -target $TARGET \
-         -o $DIR/build/c_interop/libcurl || exit 1
+	 -o $DIR/build/c_interop/libcurl || exit 1
 
 konanc -target $TARGET $DIR/src/main/kotlin -library $DIR/build/c_interop/libcurl -linkerOpts "$LINKER_ARGS" \
        -o $DIR/build/bin/Curl || exit 1
 
-echo "Artifact path is ./build/bin/Curl.kexe"
+echo "Artifact path is $DIR/build/bin/Curl.kexe"

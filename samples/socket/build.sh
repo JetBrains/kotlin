@@ -22,10 +22,10 @@ mkdir -p $DIR/build/c_interop/
 mkdir -p $DIR/build/bin/
 
 cinterop -def $DIR/src/main/c_interop/sockets.def -copt "$CFLAGS" -target $TARGET \
-         -o $DIR/build/c_interop/sockets || exit 1
+	 -o $DIR/build/c_interop/sockets || exit 1
 
 konanc $COMPILER_ARGS -target $TARGET $DIR/src/main/kotlin/EchoServer.kt \
        -library $DIR/build/c_interop/sockets \
        -o $DIR/build/bin/EchoServer || exit 1
 
-echo "Artifact path is ./build/bin/EchoServer.kexe"
+echo "Artifact path is $DIR/build/bin/EchoServer.kexe"

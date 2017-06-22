@@ -27,4 +27,4 @@ cinterop -def $DIR/src/main/c_interop/stdio.def -compilerOpts "$CFLAGS" -target 
 konanc $COMPILER_ARGS -target $TARGET $DIR/src/main/kotlin/CsvParser.kt -library $DIR/build/c_interop/stdio \
        -o $DIR/build/bin/CsvParser || exit 1
 
-echo "Artifact path is ./build/bin/CsvParser.kexe"
+echo "Artifact path is $DIR/build/bin/CsvParser.kexe"
