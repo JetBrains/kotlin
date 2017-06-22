@@ -776,6 +776,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("largeMethodWithCoercionToUnit.kt")
+        public void testLargeMethodWithCoercionToUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization/largeMethodWithCoercionToUnit.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nopInlineFuns.kt")
         public void testNopInlineFuns() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization/nopInlineFuns.kt");

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
+import org.jetbrains.kotlin.codegen.optimization.boxing.FastPopBackwardPropagationTransformer
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.boxing.PopBackwardPropagationTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.prepareForEmitting
@@ -54,6 +55,7 @@ class OptimizationMethodVisitor(
                 RedundantCheckCastEliminationMethodTransformer(),
                 ConstantConditionEliminationMethodTransformer(),
                 RedundantBoxingMethodTransformer(),
+                FastPopBackwardPropagationTransformer(),
                 PopBackwardPropagationTransformer(),
                 DeadCodeEliminationMethodTransformer(),
                 RedundantGotoMethodTransformer(),
