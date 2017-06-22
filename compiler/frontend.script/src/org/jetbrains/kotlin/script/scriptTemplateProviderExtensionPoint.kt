@@ -46,6 +46,9 @@ interface ScriptTemplatesProvider {
 
     val environment: Map<String, Any?>?
 
+    // for caching already loaded definitions, when needed
+    val scriptDefinitions: List<KotlinScriptDefinition>? get() = null
+
     companion object {
         val EP_NAME: ExtensionPointName<ScriptTemplatesProvider> =
                 ExtensionPointName.create<ScriptTemplatesProvider>("org.jetbrains.kotlin.scriptTemplatesProvider")
@@ -54,26 +57,27 @@ interface ScriptTemplatesProvider {
 
 fun makeScriptDefsFromTemplatesProviderExtensions(project: Project,
                                                   errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { _, ex -> throw ex }
-): List<KotlinScriptDefinitionFromAnnotatedTemplate> =
+): List<KotlinScriptDefinition> =
         makeScriptDefsFromTemplatesProviders(Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.asIterable(),
                                              errorsHandler)
 
 fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProvider>,
                                          errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { _, ex -> throw ex }
-): List<KotlinScriptDefinitionFromAnnotatedTemplate> {
-    return providers.filter { it.isValid }.flatMap { provider ->
-        try {
-            Logger.getInstance("makeScriptDefsFromTemplatesProviders")
-                    .info("[kts] loading script definitions ${provider.templateClassNames} using cp: ${provider.dependenciesClasspath.joinToString(File.pathSeparator)}")
+): List<KotlinScriptDefinition> = providers.flatMap { provider ->
+    try {
+        LOG.info("[kts] loading script definitions ${provider.templateClassNames} using cp: ${provider.dependenciesClasspath.joinToString(File.pathSeparator)}")
+        provider.scriptDefinitions ?: run {
             val loader = URLClassLoader(provider.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplatesProvider::class.java.classLoader)
             provider.templateClassNames.map {
-                val cl = loader.loadClass(it)
-                KotlinScriptDefinitionFromAnnotatedTemplate(cl.kotlin, provider.resolver, provider.filePattern, provider.environment)
+                KotlinScriptDefinitionFromAnnotatedTemplate(loader.loadClass(it).kotlin, provider.resolver, provider.filePattern, provider.environment)
             }
         }
-        catch (ex: Exception) {
-            errorsHandler(provider, ex)
-            emptyList<KotlinScriptDefinitionFromAnnotatedTemplate>()
-        }
+    }
+    catch (ex: Exception) {
+        LOG.info("Templates provider ${provider.id} is invalid: ${ex.message}")
+        errorsHandler(provider, ex)
+        emptyList<KotlinScriptDefinition>()
     }
 }
+
+private val LOG = Logger.getInstance("ScriptTemplatesProviders")
