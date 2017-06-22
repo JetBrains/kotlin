@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.ASTBlock
+import com.intellij.formatting.DependentSpacingRule
 import com.intellij.formatting.Spacing
 import com.intellij.formatting.SpacingBuilder
 import com.intellij.formatting.SpacingBuilder.RuleBuilder
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.tree.IElementType
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBui
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi.psiUtil.textRangeWithoutComments
 
 val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, ANNOTATION), MODIFIER_KEYWORDS)
@@ -76,6 +79,25 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 if (klass.isEnum() && right.node.elementType in DECLARATIONS) {
                     createSpacing(0, minLineFeeds = 2, keepBlankLines = settings.KEEP_BLANK_LINES_IN_DECLARATIONS)
                 } else null
+            }
+
+            inPosition(parent = CLASS_BODY, left = LBRACE).customRule { parent, left, right ->
+                if (right.node.elementType == RBRACE) {
+                    return@customRule createSpacing(0)
+                }
+                val classBody = parent.node.psi as KtClassBody
+                val parentPsi = classBody.parent as? KtClassOrObject ?: return@customRule null
+                if (commonCodeStyleSettings.BLANK_LINES_AFTER_CLASS_HEADER == 0 || parentPsi.isObjectLiteral()) {
+                    null
+                }
+                else {
+                    Spacing.createDependentLFSpacing(
+                            0, 0,
+                            TextRange(parentPsi.textRange.startOffset, left.node.psi.textRange.startOffset),
+                            settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_DECLARATIONS,
+                            DependentSpacingRule(DependentSpacingRule.Trigger.HAS_LINE_FEEDS)
+                                .registerData(DependentSpacingRule.Anchor.MIN_LINE_FEEDS, commonCodeStyleSettings.BLANK_LINES_AFTER_CLASS_HEADER + 1))
+                }
             }
 
             val parameterWithDocCommentRule = {
@@ -130,8 +152,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             after(DOC_COMMENT).lineBreakInCode()
 
             // =============== Spacing ================
-            betweenInside(LBRACE, RBRACE, CLASS_BODY).spaces(0)
-
             before(COMMA).spaceIf(kotlinCommonSettings.SPACE_BEFORE_COMMA)
             after(COMMA).spaceIf(kotlinCommonSettings.SPACE_AFTER_COMMA)
 
