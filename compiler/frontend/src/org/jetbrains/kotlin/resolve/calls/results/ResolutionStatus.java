@@ -24,7 +24,7 @@ public enum ResolutionStatus {
     UNKNOWN_STATUS,
     UNSAFE_CALL_ERROR,
     WRONG_NUMBER_OF_TYPE_ARGUMENTS_ERROR,
-    UNSTABLE_SMARTCAST_ERROR,
+    UNSTABLE_SMARTCAST_FOR_RECEIVER_ERROR,
     INVISIBLE_MEMBER_ERROR,
     NULLABLE_ARGUMENT_TYPE_MISMATCH,
     OTHER_ERROR,
@@ -43,7 +43,7 @@ public enum ResolutionStatus {
     public static final EnumSet<ResolutionStatus>[] SEVERITY_LEVELS = new EnumSet[] {
             EnumSet.of(UNSAFE_CALL_ERROR), // weakest
             EnumSet.of(WRONG_NUMBER_OF_TYPE_ARGUMENTS_ERROR),
-            EnumSet.of(UNSTABLE_SMARTCAST_ERROR),
+            EnumSet.of(UNSTABLE_SMARTCAST_FOR_RECEIVER_ERROR),
             EnumSet.of(INVISIBLE_MEMBER_ERROR),
             EnumSet.of(NULLABLE_ARGUMENT_TYPE_MISMATCH),
             EnumSet.of(OTHER_ERROR),
