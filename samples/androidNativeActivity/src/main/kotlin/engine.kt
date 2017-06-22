@@ -17,11 +17,11 @@
 import kotlinx.cinterop.*
 import android.*
 
-private fun logError(message: String) {
+fun logError(message: String) {
     __android_log_write(ANDROID_LOG_ERROR, "KonanActivity", message)
 }
 
-private fun logInfo(message: String) {
+fun logInfo(message: String) {
     __android_log_write(ANDROID_LOG_INFO, "KonanActivity", message)
 }
 
@@ -42,9 +42,12 @@ fun main(args: Array<String>) {
     }
 }
 
+fun <T : CPointed> CPointer<*>?.dereferenceAs(): T = this!!.reinterpret<T>().pointed
+
 class Engine(val arena: NativePlacement, val state: NativeActivityState) {
-    private val renderer = Renderer(arena, state.activity!!.pointed)
+    private val renderer = Renderer(arena, state.activity!!.pointed, state.savedState)
     private var queue: CPointer<AInputQueue>? = null
+    private var rendererState: COpaquePointer? = null
 
     private var currentPoint = Vector2.Zero
     private var startPoint = Vector2.Zero
@@ -60,8 +63,8 @@ class Engine(val arena: NativePlacement, val state: NativeActivityState) {
         while (true) {
             // Process events.
             memScoped {
+                val fd = alloc<IntVar>()
                 eventLoop@while (true) {
-                    val fd = alloc<IntVar>()
                     val id = ALooper_pollAll(if (needRedraw || animating) 0 else -1, fd.ptr, null, null)
                     if (id < 0) break@eventLoop
                     when (id) {
@@ -91,21 +94,24 @@ class Engine(val arena: NativePlacement, val state: NativeActivityState) {
     }
 
     private fun processSysEvent(fd: IntVar): Boolean = memScoped {
-        val ptr = allocArray<LongVar>(1)
-        val readBytes = read(fd.value, ptr, 8).toLong()
-        if (readBytes != 8L) {
+        val eventPointer = alloc<COpaquePointerVar>()
+        val readBytes = read(fd.value, eventPointer.ptr, pointerSize.signExtend<size_t>()).toLong()
+        if (readBytes != pointerSize.toLong()) {
             logError("Failure reading event, $readBytes read: ${getUnixError()}")
             return true
         }
         try {
-            val event = ptr[0].toCPointer<NativeActivityEvent>()!!.pointed
+            val event = eventPointer.value.dereferenceAs<NativeActivityEvent>()
             when (event.eventKind) {
                 NativeActivityEventKind.START -> logInfo("START event received")
 
-                NativeActivityEventKind.DESTROY -> return false
+                NativeActivityEventKind.DESTROY -> {
+                    rendererState?.let { free(it) }
+                    return false
+                }
 
                 NativeActivityEventKind.NATIVE_WINDOW_CREATED -> {
-                    val windowEvent = ptr[0].toCPointer<NativeActivityWindowEvent>()!!.pointed
+                    val windowEvent = eventPointer.value.dereferenceAs<NativeActivityWindowEvent>()
                     if (!renderer.initialize(windowEvent.window!!))
                         return false
                     logInfo("Renderer initialized")
@@ -113,7 +119,7 @@ class Engine(val arena: NativePlacement, val state: NativeActivityState) {
                 }
 
                 NativeActivityEventKind.INPUT_QUEUE_CREATED -> {
-                    val queueEvent = ptr[0].toCPointer<NativeActivityQueueEvent>()!!.pointed
+                    val queueEvent = eventPointer.value.dereferenceAs<NativeActivityQueueEvent>()
                     if (queue != null)
                         AInputQueue_detachLooper(queue)
                     queue = queueEvent.queue
@@ -121,12 +127,22 @@ class Engine(val arena: NativePlacement, val state: NativeActivityState) {
                 }
 
                 NativeActivityEventKind.INPUT_QUEUE_DESTROYED -> {
-                    val queueEvent = ptr[0].toCPointer<NativeActivityQueueEvent>()!!.pointed
+                    val queueEvent = eventPointer.value.dereferenceAs<NativeActivityQueueEvent>()
                     AInputQueue_detachLooper(queueEvent.queue)
                 }
 
                 NativeActivityEventKind.NATIVE_WINDOW_DESTROYED -> {
                     renderer.destroy()
+                }
+
+                NativeActivityEventKind.SAVE_INSTANCE_STATE -> {
+                    val saveStateEvent = eventPointer.value.dereferenceAs<NativeActivitySaveStateEvent>()
+                    val state = renderer.getState()
+                    val dataSize = state.second.signExtend<size_t>()
+                    rendererState = realloc(rendererState, dataSize)
+                    memcpy(rendererState, state.first, dataSize)
+                    saveStateEvent.savedState = rendererState
+                    saveStateEvent.savedStateSize = dataSize
                 }
             }
         } finally {

@@ -17,22 +17,27 @@
 import kotlinx.cinterop.*
 import android.*
 
-private fun logError(message: String) {
-    __android_log_write(ANDROID_LOG_ERROR, "KonanActivity", message)
-}
+class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActivity, val savedMatrix: COpaquePointer?) {
 
-private fun logInfo(message: String) {
-    __android_log_write(ANDROID_LOG_INFO, "KonanActivity", message)
-}
-
-class Renderer(val arena: NativePlacement, val nativeActivity: ANativeActivity) {
-
+    private val arena = MemScope()
     private var display: EGLDisplay? = null
     private var surface: EGLSurface? = null
     private var context: EGLContext? = null
     private var initialized = false
 
     var screen = Vector2.Zero
+
+    private val matrix = parentArena.allocArray<FloatVar>(16)
+
+    init {
+        if (savedMatrix != null) {
+            memcpy(matrix, savedMatrix, 16 * 4)
+        } else {
+            for (i in 0..3)
+                for (j in 0..3)
+                    matrix[i * 4 + j] = if (i == j) 1.0f else 0.0f
+        }
+    }
 
     fun initialize(window: CPointer<ANativeWindow>): Boolean {
         with(arena) {
@@ -55,11 +60,14 @@ class Renderer(val arena: NativePlacement, val nativeActivity: ANativeActivity) 
                     EGL_NONE
             )
             val numConfigs = alloc<EGLintVar>()
-
+            if (eglChooseConfig(display, attribs, null, 0, numConfigs.ptr) == 0) {
+                logError("eglChooseConfig()#1 returned error ${eglGetError()}")
+                destroy()
+                return false
+            }
             val supportedConfigs = allocArray<EGLConfigVar>(numConfigs.value)
-            if (eglChooseConfig(display, attribs, null, 0, numConfigs.ptr) == 0
-                    || eglChooseConfig(display, attribs, supportedConfigs, numConfigs.value, numConfigs.ptr) == 0) {
-                logError("eglChooseConfig() returned error ${eglGetError()}")
+            if (eglChooseConfig(display, attribs, supportedConfigs, numConfigs.value, numConfigs.ptr) == 0) {
+                logError("eglChooseConfig()#2 returned error ${eglGetError()}")
                 destroy()
                 return false
             }
@@ -138,19 +146,16 @@ class Renderer(val arena: NativePlacement, val nativeActivity: ANativeActivity) 
 
             loadTexture("kotlin_logo.bmp")
 
-            glPushMatrix()
-            glLoadIdentity()
-            glGetFloatv(GL_MODELVIEW_MATRIX, matrix)
-            glPopMatrix()
-
             initialized = true
             return true
         }
     }
 
-    private val matrix = arena.allocArray<FloatVar>(16)
+    fun getState() = matrix to 16 * 4
 
     fun rotateBy(vec: Vector2) {
+        if (!initialized) return
+
         val len = vec.length
         if (len < 1e-9f) return
         val angle = 180 * len / screen.length
@@ -180,7 +185,7 @@ class Renderer(val arena: NativePlacement, val nativeActivity: ANativeActivity) 
         val data get() = interpretCPointer<ByteVar>(rawPtr + 54) as CArrayPointer<ByteVar>
     }
 
-    private fun loadTexture(assetName: String): Unit = with(arena) {
+    private fun loadTexture(assetName: String): Unit = memScoped {
         val asset = AAssetManager_open(nativeActivity.assetManager, assetName, AASSET_MODE_BUFFER)
         if (asset == null) {
             logError("Error opening asset")
@@ -221,7 +226,7 @@ class Renderer(val arena: NativePlacement, val nativeActivity: ANativeActivity) 
 
     private val scale = 1.25f
 
-    fun draw() = with (arena) {
+    fun draw() = memScoped {
         if (!initialized) return
 
         glPushMatrix()
@@ -276,6 +281,8 @@ class Renderer(val arena: NativePlacement, val nativeActivity: ANativeActivity) 
     }
 
     fun destroy() {
+        if (!initialized) return
+
         logInfo("Destroying context..")
 
         eglMakeCurrent(display, null, null, null)
@@ -287,5 +294,7 @@ class Renderer(val arena: NativePlacement, val nativeActivity: ANativeActivity) 
         surface = null
         context = null
         initialized = false
+
+        arena.clear()
     }
 }

@@ -46,10 +46,14 @@ konanArtifacts {
     PolyhedronArm32 {
         useInterop "arm32"
         target "android_arm32"
+        outputDir 'PolyhedronArm32'
+        outputName 'libpoly'
     }
     PolyhedronArm64 {
         useInterop "arm64"
         target "android_arm64"
+        outputDir 'PolyhedronArm64'
+        outputName 'libpoly'
     }
 }
 
@@ -89,7 +93,7 @@ model {
                         def name = targetPlatform.getName()
                         def index = platforms.indexOf(name)
                         if (index >= 0)
-                            sharedLibraryFile = file("build/konan/bin/${artifacts[index]}/libpoly.so")
+                            sharedLibraryFile = file("${artifacts[index]}/libpoly.so")
                     }
             }
         }
@@ -105,26 +109,13 @@ model {
     }
 }
 
-task renameArtifacts << {
-    for (artifact in artifacts) {
-        copy {
-            from "build/konan/bin"
-            into "build/konan/bin/${artifact}"
-            rename "${artifact}.so", "libpoly.so"
-        }
-    }
-}
-
-renameArtifacts.dependsOn "compileKonanPolyhedronArm32"
-renameArtifacts.dependsOn "compileKonanPolyhedronArm64"
-
 tasks.matching { it.name == 'preBuild' }.all {
-    it.dependsOn 'renameArtifacts'
+    it.dependsOn 'compileKonanPolyhedronArm32'
+    it.dependsOn 'compileKonanPolyhedronArm64'
 }
 
 task buildApk(type: DefaultTask) {
     dependsOn "compileKonanPolyhedronArm32"
     dependsOn "compileKonanPolyhedronArm64"
-    dependsOn "renameArtifacts"
     dependsOn "assembleDebug"
 }

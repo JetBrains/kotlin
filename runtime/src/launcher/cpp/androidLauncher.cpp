@@ -103,7 +103,7 @@ void runKonan_start() {
 }
 
 void putEventSynchronously(void* event) {
-  uint64_t value = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(event));
+  auto value = reinterpret_cast<uintptr_t>(event);
   if (write(pipeC, &value, sizeof(value)) != sizeof(value)) {
     LOGE("Failure writing event: %s\n", strerror(errno));
   }
