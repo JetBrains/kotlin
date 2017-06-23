@@ -175,7 +175,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val rangeExpression = context.defineTemporary(Translation.translateAsExpression(loopRange, context))
         val length = ArrayFIF.LENGTH_PROPERTY_INTRINSIC.apply(rangeExpression, listOf<JsExpression>(), context)
         val end = context.defineTemporary(length)
-        val index = context.declareTemporary(JsIntLiteral(0))
+        val index = context.declareTemporary(JsIntLiteral(0), expression)
 
         val arrayAccess = JsArrayAccess(rangeExpression, index.reference()).source(expression)
         val body = translateBody(arrayAccess)

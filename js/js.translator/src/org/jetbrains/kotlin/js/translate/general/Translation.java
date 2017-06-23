@@ -195,7 +195,7 @@ public final class Translation {
 
         assert jsNode instanceof JsStatement : "Unexpected node of type: " + jsNode.getClass().toString();
         if (BindingContextUtilsKt.isUsedAsExpression(expression, context.bindingContext())) {
-            TemporaryVariable result = context.declareTemporary(null);
+            TemporaryVariable result = context.declareTemporary(null, expression);
             AssignToExpressionMutator saveResultToTemporaryMutator = new AssignToExpressionMutator(result.reference());
             block.getStatements().add(mutateLastExpression(jsNode, saveResultToTemporaryMutator));
             return result.reference();

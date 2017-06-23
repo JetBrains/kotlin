@@ -87,7 +87,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
 
             if (type != null && KotlinBuiltIns.isCharOrNullableChar(type)) {
                 if (type.isMarkedNullable()) {
-                    TemporaryVariable tmp = context().declareTemporary(translatedExpression);
+                    TemporaryVariable tmp = context().declareTemporary(translatedExpression, entry);
                     append(new JsConditional(JsAstUtils.equality(tmp.assignmentExpression(), new JsNullLiteral()),
                                              new JsNullLiteral(),
                                              JsAstUtils.charToString(tmp.reference())));

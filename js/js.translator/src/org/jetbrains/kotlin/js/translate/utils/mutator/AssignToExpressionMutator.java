@@ -37,6 +37,8 @@ public final class AssignToExpressionMutator implements Mutator {
         if (!(node instanceof JsExpression)) {
             return node;
         }
-        return assignment(toAssign, (JsExpression) node);
+        JsExpression result = assignment(toAssign, (JsExpression) node);
+        result.setSource(node.getSource());
+        return result;
     }
 }

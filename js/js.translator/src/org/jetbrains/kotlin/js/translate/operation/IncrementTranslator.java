@@ -114,7 +114,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     private JsExpression asPostfix() {
         // code fragment: expr(a++)
         // generate: expr( (t1 = a, t2 = t1, a = t1.inc(), t2) )
-        TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet().source(expression));
+        TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet().source(expression), expression);
         accessBlock.getStatements().add(t1.assignmentStatement());
         JsExpression variableReassignment = variableReassignment(context().innerBlock(accessBlock), t1.reference())
                 .source(expression);

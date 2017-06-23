@@ -55,15 +55,17 @@ public final class DynamicContext {
     }
 
     @NotNull
-    public TemporaryVariable declareTemporary(@Nullable JsExpression initExpression) {
+    public TemporaryVariable declareTemporary(@Nullable JsExpression initExpression, @Nullable Object sourceInfo) {
         if (vars == null) {
             vars = new JsVars();
             MetadataProperties.setSynthetic(vars, true);
             currentBlock.getStatements().add(vars);
+            vars.setSource(sourceInfo);
         }
 
         JsName temporaryName = JsScope.declareTemporary();
         JsVar var = new JsVar(temporaryName, null);
+        var.setSource(sourceInfo);
         MetadataProperties.setSynthetic(var, true);
         vars.add(var);
         if (initExpression != null) {
