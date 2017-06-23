@@ -159,12 +159,16 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsExpression charToBoxedChar(@NotNull JsExpression expression) {
-        return withBoxingMetadata(invokeKotlinFunction("toBoxedChar", unnestBoxing(expression)));
+        JsInvocation invocation = invokeKotlinFunction("toBoxedChar", unnestBoxing(expression));
+        invocation.setSource(expression.getSource());
+        return withBoxingMetadata(invocation);
     }
 
     @NotNull
     public static JsExpression boxedCharToChar(@NotNull JsExpression expression) {
-        return withBoxingMetadata(invokeKotlinFunction("unboxChar", unnestBoxing(expression)));
+        JsInvocation invocation = invokeKotlinFunction("unboxChar", unnestBoxing(expression));
+        invocation.setSource(expression.getSource());
+        return withBoxingMetadata(invocation);
     }
 
     @NotNull
