@@ -16,18 +16,24 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.IntentionWrapper
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.PsiReference
-import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isInheritable
+import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 
 class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
 
@@ -57,20 +63,34 @@ class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
     }
 
 
-    private fun canBePrivate(declaration: KtDeclaration): Boolean {
+    private fun canBePrivate(declaration: KtNamedDeclaration): Boolean {
         if (declaration.hasModifier(KtTokens.PRIVATE_KEYWORD) || declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
         val classOrObject = declaration.containingClassOrObject ?: return false
         val inheritable = classOrObject is KtClass && classOrObject.isInheritable()
         if (!inheritable && declaration.hasModifier(KtTokens.PROTECTED_KEYWORD)) return false //reported by ProtectedInFinalInspection
         if (declaration.isOverridable()) return false
+
+        val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.project)
+        val useScope = declaration.useScope
+        val name = declaration.name ?: return false
+        if (useScope is GlobalSearchScope) {
+            when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
+                PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES -> return false
+                PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES -> return false
+                PsiSearchHelper.SearchCostResult.FEW_OCCURRENCES -> {
+                }
+            }
+        }
+
         var otherUsageFound = false
         var inClassUsageFound = false
-        ReferencesSearch.search(declaration, declaration.useScope).forEach(Processor<PsiReference> {
+        ReferencesSearch.search(declaration, useScope).forEach(Processor<PsiReference> {
             val usage = it.element
             if (classOrObject != usage.getParentOfType<KtClassOrObject>(false)) {
                 otherUsageFound = true
                 false
-            } else {
+            }
+            else {
                 inClassUsageFound = true
                 true
             }
