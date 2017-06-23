@@ -335,7 +335,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
                 logFile.assertLogContainsSequence("Some sessions are active, waiting for them to finish")
 
-                val res = daemon?.getUsedMemory()
+                val res = daemon?.leaseCompileSession(null)
 
                 assertEquals("Invalid state", CompileService.CallResult.Dying(), res)
 
@@ -343,7 +343,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
                 Thread.sleep(100) // allow after session timed action to run
 
-                logFile.assertLogContainsSequence("All sessions finished, shutting down",
+                logFile.assertLogContainsSequence("All sessions finished",
                                                   "Shutdown started")
             }
         }
