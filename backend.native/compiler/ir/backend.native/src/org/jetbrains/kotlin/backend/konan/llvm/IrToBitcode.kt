@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
-import org.jetbrains.kotlin.backend.konan.library.SplitLibraryWriter
+import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -109,12 +109,14 @@ internal fun produceOutput(context: Context) {
         }
         CompilerOutputKind.LIBRARY -> {
             val libraryName = context.config.outputName
-            val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
+            val abiVersion = context.config.currentAbiVersion
             val targetName = context.config.targetManager.targetName
+            val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
 
             val library = buildLibrary(
                 context.config.nativeLibraries, 
                 context.serializedLinkData!!, 
+                abiVersion,
                 targetName,
                 libraryName, 
                 llvmModule,
@@ -129,22 +131,6 @@ internal fun produceOutput(context: Context) {
             LLVMWriteBitcodeToFile(llvmModule, output)
         }
     }
-}
-
-internal fun buildLibrary(natives: List<String>, linkData: LinkData, target: String, output: String, llvmModule: LLVMModuleRef, nopack: Boolean): KonanLibraryWriter {
-    // TODO: May be we need a factory?
-    //val library = KtBcLibraryWriter(output, llvmModule)
-    val library = SplitLibraryWriter(output, target, nopack)
-
-    library.addKotlinBitcode(llvmModule)
-    library.addLinkData(linkData)
-
-    natives.forEach {
-        library.addNativeBitcode(it)
-    }
-
-    library.commit()
-    return library
 }
 
 internal fun verifyModule(llvmModule: LLVMModuleRef, current: String = "") {

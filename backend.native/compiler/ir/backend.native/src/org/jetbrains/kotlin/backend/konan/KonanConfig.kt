@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
-import org.jetbrains.kotlin.backend.konan.library.SplitLibraryReader
+import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.konan.target.TargetManager.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
+
+    val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)!!
 
     internal val targetManager = TargetManager(
         configuration.get(KonanConfigKeys.TARGET))
@@ -71,10 +73,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     internal val libraries: List<KonanLibraryReader> by lazy {
-        val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)!!
         val target = targetManager.targetName
         // Here we have chosen a particular KonanLibraryReader implementation.
-        librariesFound.map{it -> SplitLibraryReader(it, currentAbiVersion, target)}
+        librariesFound.map{it -> LibraryReaderImpl(it, currentAbiVersion, target)}
     }
 
     private val loadedDescriptors = loadLibMetadata()
@@ -89,7 +90,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
         for (klib in libraries) {
             profile("Loading ${klib.libraryName}") {
-                val moduleDescriptor = klib.moduleDescriptor(specifics)
+                // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
+                val moduleDescriptor = klib.moduleDescriptor(specifics) as ModuleDescriptorImpl
                 allMetadata.add(moduleDescriptor)
             }
         }

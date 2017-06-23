@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import java.io.File
-import java.util.Properties
+import org.jetbrains.kotlin.backend.konan.util.*
 
 public class KonanProperties(val propertyFile: String) {
 

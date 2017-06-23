@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.serialization.KonanLinkData
-import org.jetbrains.kotlin.backend.konan.serialization.Base64
 import org.jetbrains.kotlin.backend.konan.serialization.parseModuleHeader
 import org.jetbrains.kotlin.backend.konan.serialization.parsePackageFragment
 import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializerProtocol
@@ -26,16 +25,23 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.utils.Printer
 import java.lang.System.out
 
-class PrettyPrinter(val library: Base64, val packageLoader: (String) -> Base64) {
-
-    private val moduleHeader: KonanLinkData.Library
+open class ModuleDeserializer(val library: ByteArray) {
+    protected val moduleHeader: KonanLinkData.Library
         get() = parseModuleHeader(library)
 
-    fun packageFragment(fqname: String): KonanLinkData.PackageFragment 
-        = parsePackageFragment(packageLoader(fqname))
-            
+    val moduleName: String
+        get() = moduleHeader.moduleName
+
     val packageFragmentNameList: List<String>
         get() = moduleHeader.packageFragmentNameList
+
+}
+
+class PrettyPrinter(library: ByteArray, val packageLoader: (String) -> ByteArray) 
+    : ModuleDeserializer(library) {
+
+    private fun packageFragment(fqname: String): KonanLinkData.PackageFragment 
+        = parsePackageFragment(packageLoader(fqname))
 
     fun printPackageFragment(fqname: String) {
         if (fqname.isNotEmpty()) println("\npackage $fqname")

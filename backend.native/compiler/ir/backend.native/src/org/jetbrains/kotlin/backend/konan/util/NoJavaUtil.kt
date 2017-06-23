@@ -56,7 +56,9 @@ class File(val path: String) {
     fun delete() = javaFile.delete()
     fun deleteRecursively() = javaFile.deleteRecursively()
     fun readText() = javaFile.readText()
+    fun readBytes() = javaFile.readBytes()
     fun writeText(text: String) = javaFile.writeText(text)
+    fun writeBytes(bytes: ByteArray) = javaFile.writeBytes(bytes)
 
     override fun toString() = path
 

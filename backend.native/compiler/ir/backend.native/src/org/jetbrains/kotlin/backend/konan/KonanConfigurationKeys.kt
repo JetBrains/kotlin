@@ -33,6 +33,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("enable runtime assertions in generated code")
         val ENABLED_PHASES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("enable backend phases")
+        val ENTRY: CompilerConfigurationKey<String?>
+                = CompilerConfigurationKey.create("fully qualified main() name")
         val LIBRARY_FILES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("library file paths")
         val LINKER_ARGS: CompilerConfigurationKey<List<String>>
@@ -41,8 +43,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("list backend phases")
         val LIST_TARGETS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("list available targets")
-        val ENTRY: CompilerConfigurationKey<String?>
-                = CompilerConfigurationKey.create("fully qualified main() name")
         val META_INFO: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("generate metadata")
         val MODULE_KIND: CompilerConfigurationKey<ModuleKind> 
