@@ -14,4 +14,4 @@ private inline fun foo(): Int {
     return 23
 }
 
-// LINES: 10 3 3 4 3 6 13 3 14 2 15 13 14
+// LINES: 10 3 3 3 4 3 6 13 13 3 14 2 15 13 13 14 14

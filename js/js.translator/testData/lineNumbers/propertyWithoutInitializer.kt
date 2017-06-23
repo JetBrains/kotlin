@@ -9,4 +9,4 @@ open class A {
     }
 }
 
-// LINES: 1 2 4 7 8 4 4
+// LINES: 1 2 4 7 7 8 8 4 4 4
