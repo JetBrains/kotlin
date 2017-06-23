@@ -256,6 +256,10 @@ object InstantiationOfAbstractClass : KotlinCallDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
 }
 
+class SmartCastDiagnostic(val expressionArgument: ExpressionKotlinCallArgument, val smartCastType: UnwrappedType): KotlinCallDiagnostic(ResolutionCandidateApplicability.RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(expressionArgument, this)
+}
+
 class UnstableSmartCast(val expressionArgument: ExpressionKotlinCallArgument, val targetType: UnwrappedType) :
         KotlinCallDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(expressionArgument, this)
