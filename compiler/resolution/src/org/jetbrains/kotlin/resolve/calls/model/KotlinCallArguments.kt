@@ -39,6 +39,8 @@ interface KotlinCallArgument {
     val argumentName: Name?
 }
 
+interface PostponableCallArgument : KotlinCallArgument
+
 interface SimpleKotlinCallArgument : KotlinCallArgument, ReceiverKotlinCallArgument {
     override val receiver: ReceiverValueWithSmartCastInfo
 
@@ -51,7 +53,7 @@ interface SubKotlinCallArgument : SimpleKotlinCallArgument {
     val resolvedCall: ResolvedKotlinCall.OnlyResolvedKotlinCall
 }
 
-interface LambdaKotlinCallArgument : KotlinCallArgument {
+interface LambdaKotlinCallArgument : PostponableCallArgument {
     override val isSpread: Boolean
         get() = false
 
@@ -110,7 +112,7 @@ sealed class LHSResult {
     object Empty: LHSResult()
 }
 
-interface CallableReferenceKotlinCallArgument : KotlinCallArgument {
+interface CallableReferenceKotlinCallArgument : PostponableCallArgument {
     override val isSpread: Boolean
         get() = false
 
@@ -119,7 +121,7 @@ interface CallableReferenceKotlinCallArgument : KotlinCallArgument {
     val rhsName: Name
 }
 
-interface CollectionLiteralKotlinCallArgument : KotlinCallArgument
+interface CollectionLiteralKotlinCallArgument : PostponableCallArgument
 
 interface TypeArgument
 
