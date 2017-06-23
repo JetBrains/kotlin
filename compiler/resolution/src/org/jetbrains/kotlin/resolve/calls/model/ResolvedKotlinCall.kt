@@ -29,7 +29,7 @@ sealed class ResolvedKotlinCall {
     class CompletedResolvedKotlinCall(
             val completedCall: CompletedKotlinCall,
             val allInnerCalls: Collection<CompletedKotlinCall>,
-            val lambdaArguments: List<ResolvedLambdaArgument>
+            val lambdaArguments: List<PostponedLambdaArgument>
     ): ResolvedKotlinCall() {
         override val currentStatus get() = completedCall.resolutionStatus
     }

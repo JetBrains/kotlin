@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentWithPostponeResolution
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
+import org.jetbrains.kotlin.resolve.calls.model.PostponedLambdaArgument
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.isIntersectionType
@@ -43,7 +42,7 @@ class FixationOrderCalculator {
 
     interface Context {
         val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints>
-        val lambdaAndCallableReferenceArguments: List<ArgumentWithPostponeResolution>
+        val lambdaArguments: List<PostponedLambdaArgument>
     }
 
     fun computeCompletionOrder(
@@ -88,11 +87,11 @@ class FixationOrderCalculator {
         }
 
         private fun buildLambdaEdges() {
-            for (lambdaArgument in c.lambdaAndCallableReferenceArguments) {
-                if (lambdaArgument is ResolvedLambdaArgument && lambdaArgument.analyzed) continue // optimization
+            for (lambdaArgument in c.lambdaArguments) {
+                if (lambdaArgument.analyzed) continue // optimization
 
                 val typeVariablesInReturnType = SmartList<Variable>()
-                lambdaArgument.outputType?.findTypeVariables(typeVariablesInReturnType)
+                lambdaArgument.outputType.findTypeVariables(typeVariablesInReturnType)
 
                 if (typeVariablesInReturnType.isEmpty()) continue // optimization
 
@@ -132,7 +131,7 @@ class FixationOrderCalculator {
             topReturnType.visitType(ResolveDirection.TO_SUBTYPE) { variableWithConstraints, direction ->
                 enterToNode(variableWithConstraints, direction)
             }
-            for (resolvedLambdaArgument in c.lambdaAndCallableReferenceArguments) {
+            for (resolvedLambdaArgument in c.lambdaArguments) {
                 inner@ for (inputType in resolvedLambdaArgument.inputTypes) {
                     inputType.visitType(ResolveDirection.TO_SUBTYPE) { variableWithConstraints, direction ->
                         enterToNode(variableWithConstraints, direction)

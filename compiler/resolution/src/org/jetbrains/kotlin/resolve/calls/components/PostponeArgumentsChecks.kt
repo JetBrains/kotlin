@@ -29,29 +29,27 @@ fun createPostponedArgumentAndPerformInitialChecks(
         kotlinCall: KotlinCall,
         csBuilder: ConstraintSystemBuilder,
         argument: PostponableKotlinCallArgument,
-        parameterDescriptor: ValueParameterDescriptor,
-        postponeCallableReferenceArguments: MutableList<PostponeCallableReferenceArgument>
+        parameterDescriptor: ValueParameterDescriptor
 ): KotlinCallDiagnostic? {
     val expectedType = argument.getExpectedType(parameterDescriptor)
-    return when (argument) {
-        is LambdaKotlinCallArgument -> processLambdaArgument(kotlinCall, csBuilder, argument, expectedType)
-        is CallableReferenceKotlinCallArgument -> {
-            // callable reference resolution will be run after choosing single descriptor
-            postponeCallableReferenceArguments.add(PostponeCallableReferenceArgument(argument, expectedType))
-            checkCallableExpectedType(csBuilder, argument, expectedType)
-        }
-        is CollectionLiteralKotlinCallArgument -> processCollectionLiteralArgument(kotlinCall, csBuilder, argument, expectedType)
+    val (postponedArgument, diagnostic) =  when (argument) {
+        is LambdaKotlinCallArgument -> preprocessLambdaArgument(kotlinCall, csBuilder, argument, expectedType)
+        is CallableReferenceKotlinCallArgument -> preprocessCallableReference(csBuilder, argument, expectedType)
+        is CollectionLiteralKotlinCallArgument -> preprocessCollectionLiteralArgument(csBuilder, argument, expectedType)
         else -> unexpectedArgument(argument)
     }
+    csBuilder.addPostponedArgument(postponedArgument)
+
+    return diagnostic
 }
 
 // if expected type isn't function type, then may be it is Function<R>, Any or just `T`
-private fun processLambdaArgument(
+private fun preprocessLambdaArgument(
         kotlinCall: KotlinCall,
         csBuilder: ConstraintSystemBuilder,
         argument: LambdaKotlinCallArgument,
         expectedType: UnwrappedType
-): KotlinCallDiagnostic? {
+): Pair<PostponedLambdaArgument, KotlinCallDiagnostic?> {
     val builtIns = expectedType.builtIns
     val isSuspend = expectedType.isSuspendFunctionType
 
@@ -86,15 +84,12 @@ private fun processLambdaArgument(
         // what about case where expected type is type variable? In old TY such cases was not supported. => do nothing for now. todo design
     }
 
-    val resolvedArgument = ResolvedLambdaArgument(kotlinCall, argument, isSuspend, receiverType, parameters, returnType)
+    val resolvedArgument = PostponedLambdaArgument(kotlinCall, argument, isSuspend, receiverType, parameters, returnType)
 
     csBuilder.addSubtypeConstraint(resolvedArgument.type, expectedType, ArgumentConstraintPosition(argument))
-    csBuilder.addLambdaArgument(resolvedArgument)
 
-    return null
+    return resolvedArgument to null
 }
-
-
 
 private fun createFreshTypeVariableForLambdaReturnType(
         csBuilder: ConstraintSystemBuilder,
@@ -106,54 +101,21 @@ private fun createFreshTypeVariableForLambdaReturnType(
     return typeVariable.defaultType
 }
 
-private fun checkCallableExpectedType(
+private fun preprocessCallableReference(
         csBuilder: ConstraintSystemBuilder,
         argument: CallableReferenceKotlinCallArgument,
         expectedType: UnwrappedType
-): KotlinCallDiagnostic? {
+): Pair<PostponedCallableReferenceArgument, KotlinCallDiagnostic?> {
     val notCallableTypeConstructor = csBuilder.getProperSuperTypeConstructors(expectedType).firstOrNull { !ReflectionTypes.isPossibleExpectedCallableType(it) }
-    return notCallableTypeConstructor?.let { NotCallableExpectedType(argument, expectedType, notCallableTypeConstructor) }
+    val diagnostic = notCallableTypeConstructor?.let { NotCallableExpectedType(argument, expectedType, notCallableTypeConstructor) }
+    return PostponedCallableReferenceArgument(argument, expectedType) to diagnostic
 }
 
-fun processCallableReferenceArgument(
-        callContext: KotlinCallContext,
-        kotlinCall: KotlinCall,
-        csBuilder: ConstraintSystemBuilder,
-        argument: CallableReferenceKotlinCallArgument,
-        expectedType: UnwrappedType
-): KotlinCallDiagnostic? {
-    val subLHSCall = ((argument.lhsResult as? LHSResult.Expression)?.lshCallArgument as? SubKotlinCallArgument)
-    if (subLHSCall != null) {
-        csBuilder.addInnerCall(subLHSCall.resolvedCall)
-    }
-    val candidates = callContext.callableReferenceResolver.runRLSResolution(callContext, argument, expectedType) { checkCallableReference ->
-        csBuilder.runTransaction { checkCallableReference(this); false }
-    }
-    val chosenCandidate = when (candidates.size) {
-        0 -> return NoneCallableReferenceCandidates(argument)
-        1 -> candidates.single()
-        else -> return CallableReferenceCandidatesAmbiguity(argument, candidates)
-    }
-    val (toFreshSubstitutor, diagnostic) = with(chosenCandidate) {
-        csBuilder.checkCallableReference(argument, dispatchReceiver, extensionReceiver, candidate,
-                                         reflectionCandidateType, expectedType, callContext.scopeTower.lexicalScope.ownerDescriptor)
-    }
-
-    val resolvedCallableReference = ResolvedCallableReferenceArgument(
-            kotlinCall, argument, toFreshSubstitutor.freshVariables,
-            chosenCandidate, toFreshSubstitutor.safeSubstitute(chosenCandidate.reflectionCandidateType))
-
-    csBuilder.addCallableReferenceArgument(resolvedCallableReference)
-
-    return diagnostic
-}
-
-fun processCollectionLiteralArgument(
-        kotlinCall: KotlinCall,
+private fun preprocessCollectionLiteralArgument(
         csBuilder: ConstraintSystemBuilder,
         collectionLiteralArgument: CollectionLiteralKotlinCallArgument,
         expectedType: UnwrappedType
-): KotlinCallDiagnostic? {
-    csBuilder.addCollectionLiteralArgument(ResolvedCollectionLiteralArgument(kotlinCall, collectionLiteralArgument, expectedType))
-    return null
+): Pair<PostponedCollectionLiteralArgument, KotlinCallDiagnostic?> {
+    // todo add some checks about expected type
+    return PostponedCollectionLiteralArgument(collectionLiteralArgument, expectedType) to null
 }

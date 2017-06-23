@@ -50,9 +50,8 @@ class KotlinCallCompleter(
         val hasContradiction: Boolean
         fun buildCurrentSubstitutor(): NewTypeSubstitutor
         fun buildResultingSubstitutor(): NewTypeSubstitutor
-        val lambdaArguments: List<ResolvedLambdaArgument>
-        val callableReferenceArguments: List<ResolvedCallableReferenceArgument>
-        val collectionLiteralArguments: List<ResolvedCollectionLiteralArgument>
+        val postponedArguments: List<PostponedKotlinCallArgument>
+        val lambdaArguments: List<PostponedLambdaArgument>
 
         // type can be proper if it not contains not fixed type variables
         fun canBeProper(type: UnwrappedType): Boolean
@@ -83,27 +82,23 @@ class KotlinCallCompleter(
                 }
 
         if (topLevelCall.prepareForCompletion(expectedType)) {
-            resolveCallableReferenceArguments(topLevelCall)
-
             val c = candidate.lastCall.constraintSystem.asCallCompleterContext()
+
+            resolveCallableReferenceArguments(c, candidate.lastCall)
 
             topLevelCall.competeCall(c, resolutionCallbacks)
             return toCompletedBaseResolvedCall(c, candidate, resolutionCallbacks)
-        }
-        else {
-            // todo I'm not sure that we should do this
-            resolveCallableReferenceArguments(topLevelCall)
         }
 
         return ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
     }
 
-    private fun resolveCallableReferenceArguments(candidate: SimpleKotlinResolutionCandidate) {
-        for (callableReferenceArgument in candidate.postponeCallableReferenceArguments) {
-            processCallableReferenceArgument(candidate.callContext, candidate.kotlinCall, candidate.csBuilder,
-                                                            callableReferenceArgument.argument, callableReferenceArgument.expectedType)
+    // todo do not use topLevelCall
+    private fun resolveCallableReferenceArguments(c: Context, topLevelCall: SimpleKotlinResolutionCandidate) {
+        for (callableReferenceArgument in c.postponedArguments) {
+            if (callableReferenceArgument !is PostponedCallableReferenceArgument) continue
+            processCallableReferenceArgument(topLevelCall.callContext, c.getBuilder(), callableReferenceArgument)
         }
-        candidate.postponeCallableReferenceArguments.clear()
     }
 
     private fun toCompletedBaseResolvedCall(
@@ -116,14 +111,19 @@ class KotlinCallCompleter(
         val competedCalls = c.innerCalls.map {
             it.candidate.toCompletedCall(currentSubstitutor)
         }
-        c.lambdaArguments.forEach {
-            it.finalReturnType = currentSubstitutor.safeSubstitute(it.returnType)
-        }
-        c.callableReferenceArguments.forEach {
-            resolutionCallbacks.completeCallableReference(it, it.myTypeVariables.map { currentSubstitutor.safeSubstitute(it.defaultType) })
-        }
-        c.collectionLiteralArguments.forEach {
-            resolutionCallbacks.completeCollectionLiteralCalls(it)
+        for (postponedArgument in c.postponedArguments) {
+            when (postponedArgument) {
+                is PostponedLambdaArgument -> {
+                    postponedArgument.finalReturnType = currentSubstitutor.safeSubstitute(postponedArgument.returnType)
+                }
+                is PostponedCallableReferenceArgument -> {
+                    val resultTypeParameters = postponedArgument.myTypeVariables.map { currentSubstitutor.safeSubstitute(it.defaultType) }
+                    resolutionCallbacks.completeCallableReference(postponedArgument, resultTypeParameters)
+                }
+                is PostponedCollectionLiteralArgument -> {
+                    resolutionCallbacks.completeCollectionLiteralCalls(postponedArgument)
+                }
+            }
         }
         return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls, c.lambdaArguments)
     }
@@ -209,7 +209,7 @@ class KotlinCallCompleter(
         return true
     }
 
-    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: ResolvedLambdaArgument) {
+    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: PostponedLambdaArgument) {
         val currentSubstitutor = c.buildCurrentSubstitutor()
         fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type)
 
@@ -229,7 +229,7 @@ class KotlinCallCompleter(
         }
     }
 
-    private fun canWeAnalyzeIt(c: Context, lambda: ResolvedLambdaArgument): Boolean {
+    private fun canWeAnalyzeIt(c: Context, lambda: PostponedLambdaArgument): Boolean {
         if (lambda.analyzed) return false
         lambda.receiver?.let {
             if (!c.canBeProper(it)) return false
