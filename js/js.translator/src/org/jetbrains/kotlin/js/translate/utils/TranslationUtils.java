@@ -85,7 +85,9 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsFunction simpleReturnFunction(@NotNull JsScope functionScope, @NotNull JsExpression returnExpression) {
-        return new JsFunction(functionScope, new JsBlock(new JsReturn(returnExpression)), "<simpleReturnFunction>");
+        JsReturn jsReturn = new JsReturn(returnExpression);
+        jsReturn.setSource(returnExpression.getSource());
+        return new JsFunction(functionScope, new JsBlock(jsReturn), "<simpleReturnFunction>");
     }
 
     @NotNull
