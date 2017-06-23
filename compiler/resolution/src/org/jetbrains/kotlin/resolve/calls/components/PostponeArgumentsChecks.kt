@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 fun createPostponedArgumentAndPerformInitialChecks(
         kotlinCall: KotlinCall,
         csBuilder: ConstraintSystemBuilder,
-        argument: PostponableCallArgument,
+        argument: PostponableKotlinCallArgument,
         parameterDescriptor: ValueParameterDescriptor,
         postponeCallableReferenceArguments: MutableList<PostponeCallableReferenceArgument>
 ): KotlinCallDiagnostic? {

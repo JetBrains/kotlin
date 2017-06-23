@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationFo
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -220,8 +219,8 @@ class KotlinCallCompleter(
         lambda.analyzed = true
         lambda.resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(lambda.outerCall, lambda.argument, lambda.isSuspend, receiver, parameters, expectedType)
 
-        for (innerCall in lambda.resultArguments) {
-            checkSimpleArgument(c.getBuilder(), innerCall, lambda.returnType.let(::substitute))
+        for (resultLambdaArgument in lambda.resultArguments) {
+            checkSimpleArgument(c.getBuilder(), resultLambdaArgument, lambda.returnType.let(::substitute))
         }
 
         if (lambda.resultArguments.isEmpty()) {
