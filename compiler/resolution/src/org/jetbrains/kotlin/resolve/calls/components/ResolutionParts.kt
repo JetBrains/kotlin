@@ -28,13 +28,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.RUNTIME_ERROR
+import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
+import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -252,38 +249,22 @@ internal object CheckArguments : ResolutionPart {
     }
 }
 
-object InstantiationOfAbstractClass : KotlinCallDiagnostic(RUNTIME_ERROR) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
+internal object CheckInfixResolutionPart : ResolutionPart {
+    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+        if (kotlinCall.isInfixCall && (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isInfix)) {
+            return listOf(InfixCallNoInfixModifier)
+        }
+
+        return emptyList()
+    }
 }
 
-class SmartCastDiagnostic(val expressionArgument: ExpressionKotlinCallArgument, val smartCastType: UnwrappedType): KotlinCallDiagnostic(ResolutionCandidateApplicability.RESOLVED) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(expressionArgument, this)
-}
+internal object CheckOperatorResolutionPart : ResolutionPart {
+    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+        if (kotlinCall.isOperatorCall && (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isOperator)) {
+            return listOf(InvokeConventionCallNoOperatorModifier)
+        }
 
-class UnstableSmartCast(val expressionArgument: ExpressionKotlinCallArgument, val targetType: UnwrappedType) :
-        KotlinCallDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(expressionArgument, this)
-}
-
-class UnsafeCallError(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallReceiver(receiver, this)
-}
-
-class NoneCallableReferenceCandidates(val argument: CallableReferenceKotlinCallArgument) : KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
-}
-
-class CallableReferenceCandidatesAmbiguity(
-        val argument: CallableReferenceKotlinCallArgument,
-        val candidates: Collection<CallableReferenceCandidate>
-) : KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
-}
-
-class NotCallableExpectedType(
-        val argument: CallableReferenceKotlinCallArgument,
-        val expectedType: UnwrappedType,
-        val notCallableTypeConstructor: TypeConstructor
-) : KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
+        return emptyList()
+    }
 }

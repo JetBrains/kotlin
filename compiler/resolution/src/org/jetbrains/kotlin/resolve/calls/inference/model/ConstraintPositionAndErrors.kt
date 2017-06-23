@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -61,20 +63,20 @@ class IncorporationConstraintPosition(val from: ConstraintPosition, val initialC
 @Deprecated("Should be used only in SimpleConstraintSystemImpl")
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
-
-class NewConstraintError(val lowerType: UnwrappedType, val upperType: UnwrappedType, val position: IncorporationConstraintPosition) :
-        KotlinCallDiagnostic(
-                if (position.from is ReceiverConstraintPosition) ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
-                else ResolutionCandidateApplicability.INAPPLICABLE
-        ) {
+abstract class ConstraintSystemCallDiagnostic(applicability: ResolutionCandidateApplicability) : KotlinCallDiagnostic(applicability) {
     override fun report(reporter: DiagnosticReporter) = reporter.constraintError(this)
 }
 
-class CapturedTypeFromSubtyping(val typeVariable: NewTypeVariable, val constraintType: UnwrappedType, val position: ConstraintPosition) :
-        KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.constraintError(this)
-}
+class NewConstraintError(
+        val lowerType: UnwrappedType,
+        val upperType: UnwrappedType,
+        val position: IncorporationConstraintPosition
+) : ConstraintSystemCallDiagnostic(if (position.from is ReceiverConstraintPosition) INAPPLICABLE_WRONG_RECEIVER else INAPPLICABLE)
 
-class NotEnoughInformationForTypeParameter(val typeVariable: NewTypeVariable) : KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.constraintError(this)
-}
+class CapturedTypeFromSubtyping(
+        val typeVariable: NewTypeVariable,
+        val constraintType: UnwrappedType,
+        val position: ConstraintPosition
+) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+
+class NotEnoughInformationForTypeParameter(val typeVariable: NewTypeVariable) : ConstraintSystemCallDiagnostic(INAPPLICABLE)

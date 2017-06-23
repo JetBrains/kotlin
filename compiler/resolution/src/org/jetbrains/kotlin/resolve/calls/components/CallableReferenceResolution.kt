@@ -52,6 +52,7 @@ sealed class CallableReceiver(val receiver: ReceiverValueWithSmartCastInfo) {
     class ExplicitValueReceiver(val lhsArgument: SimpleKotlinCallArgument, receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
 }
 
+// todo investigate similar code in CheckVisibility
 private val CallableReceiver.asReceiverValueForVisibilityChecks: ReceiverValue
     get() = receiver.receiverValue
 
@@ -322,20 +323,4 @@ class CallableReferencesCandidateFactory(
             else -> throw IllegalStateException("Unsupported kind of lhsResult: $lhsResult")
         }
     }
-}
-
-class CallableReferenceNotCompatible(
-        val argument: CallableReferenceKotlinCallArgument,
-        val candidate: CallableMemberDescriptor,
-        val expectedType: UnwrappedType?,
-        val callableReverenceType: UnwrappedType
-) : KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
-}
-
-class NotCallableMemberReference(
-        val argument: CallableReferenceKotlinCallArgument,
-        val candidate: CallableDescriptor
-) : KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
