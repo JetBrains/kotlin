@@ -49,6 +49,8 @@ abstract class PSIKotlinCallArgument : KotlinCallArgument {
     override fun toString() = valueArgument.getArgumentExpression()?.text?.replace('\n', ' ') ?: valueArgument.toString()
 }
 
+abstract class SimplePSIKotlinCallArgument : PSIKotlinCallArgument(), SimpleKotlinCallArgument
+
 val KotlinCallArgument.psiCallArgument: PSIKotlinCallArgument get() {
     assert(this is PSIKotlinCallArgument) {
         "Incorrect KotlinCallArgument: $this. Java class: ${javaClass.canonicalName}"
@@ -67,7 +69,7 @@ class ParseErrorKotlinCallArgument(
         override val valueArgument: ValueArgument,
         override val dataFlowInfoAfterThisArgument: DataFlowInfo,
         builtIns: KotlinBuiltIns
-): ExpressionKotlinCallArgument, PSIKotlinCallArgument() {
+): ExpressionKotlinCallArgument, SimplePSIKotlinCallArgument() {
     override val receiver = ReceiverValueWithSmartCastInfo(TransientReceiver(builtIns.nothingType), emptySet(), isStable = true)
 
     override val isSafeCall: Boolean get() = false
@@ -132,7 +134,7 @@ class SubKotlinCallArgumentImpl(
         override val dataFlowInfoAfterThisArgument: DataFlowInfo,
         override val receiver: ReceiverValueWithSmartCastInfo,
         override val resolvedCall: ResolvedKotlinCall.OnlyResolvedKotlinCall
-): PSIKotlinCallArgument(), SubKotlinCallArgument {
+): SimplePSIKotlinCallArgument(), SubKotlinCallArgument {
     override val isSpread: Boolean get() = valueArgument.getSpreadElement() != null
     override val argumentName: Name? get() = valueArgument.getArgumentName()?.asName
     override val isSafeCall: Boolean get() = false
@@ -143,7 +145,7 @@ class ExpressionKotlinCallArgumentImpl(
         override val dataFlowInfoBeforeThisArgument: DataFlowInfo,
         override val dataFlowInfoAfterThisArgument: DataFlowInfo,
         override val receiver: ReceiverValueWithSmartCastInfo
-): PSIKotlinCallArgument(), ExpressionKotlinCallArgument {
+): SimplePSIKotlinCallArgument(), ExpressionKotlinCallArgument {
     override val isSpread: Boolean get() = valueArgument.getSpreadElement() != null
     override val argumentName: Name? get() = valueArgument.getArgumentName()?.asName
     override val isSafeCall: Boolean get() = false
@@ -185,7 +187,7 @@ internal fun createSimplePSICallArgument(
         valueArgument: ValueArgument,
         dataFlowInfoBeforeThisArgument: DataFlowInfo,
         typeInfoForArgument: KotlinTypeInfo
-): PSIKotlinCallArgument? {
+): SimplePSIKotlinCallArgument? {
 
     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
     val onlyResolvedCall = ktExpression.getCall(bindingContext)?.let {

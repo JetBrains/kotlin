@@ -77,7 +77,7 @@ class KotlinResolutionCallbacksImpl(
             receiverType: UnwrappedType?,
             parameters: List<UnwrappedType>,
             expectedReturnType: UnwrappedType?
-    ): List<KotlinCallArgument> {
+    ): List<SimpleKotlinCallArgument> {
         val psiCallArgument = lambdaArgument.psiCallArgument
         val outerCallContext = (psiCallArgument as? LambdaKotlinCallArgumentImpl)?.outerCallContext ?:
                                (psiCallArgument as FunctionExpressionImpl).outerCallContext
