@@ -2203,7 +2203,7 @@
                      displayName="Class member can have 'private' visibility"
                      groupName="Kotlin"
                      enabledByDefault="true"
-                     level="WEAK WARNING"
+                     level="INFO"
                      language="kotlin"
     />
 
