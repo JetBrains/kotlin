@@ -91,7 +91,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             return INTERNAL_ERROR
         }
 
-        if (!arguments.script && arguments.module == null) {
+        if (!arguments.script && arguments.buildFile == null) {
             for (arg in arguments.freeArgs) {
                 val file = File(arg)
                 if (file.extension == JavaFileType.DEFAULT_EXTENSION) {
@@ -114,7 +114,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
-        if (arguments.module == null && arguments.freeArgs.isEmpty() && !arguments.version) {
+        if (arguments.buildFile == null && arguments.freeArgs.isEmpty() && !arguments.version) {
             if (arguments.script) {
                 messageCollector.report(ERROR, "Specify script source path to evaluate")
                 return COMPILATION_ERROR
@@ -150,18 +150,18 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         try {
             val destination = arguments.destination
 
-            if (arguments.module != null) {
+            if (arguments.buildFile != null) {
                 val sanitizedCollector = FilteringMessageCollector(messageCollector, VERBOSE::contains)
-                val moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(arguments.module, sanitizedCollector)
+                val moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(arguments.buildFile, sanitizedCollector)
 
                 if (destination != null) {
                     messageCollector.report(
                             STRONG_WARNING,
-                            "The '-d' option with a directory destination is ignored because '-module' is specified"
+                            "The '-d' option with a directory destination is ignored because '-Xbuild-file' is specified"
                     )
                 }
 
-                val moduleFile = File(arguments.module)
+                val moduleFile = File(arguments.buildFile)
                 val directory = moduleFile.absoluteFile.parentFile
 
                 KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, moduleScript.modules, directory)

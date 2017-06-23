@@ -398,15 +398,15 @@ class CompileServiceImpl(
         val reporter = RemoteICReporter(servicesFacade, compilationResults, incrementalCompilationOptions)
         val annotationFileUpdater = if (servicesFacade.hasAnnotationsFileUpdater()) RemoteAnnotationsFileUpdater(servicesFacade) else null
 
-        val moduleFile = k2jvmArgs.module?.let(::File)
-        assert(moduleFile?.exists() ?: false) { "Module does not exist ${k2jvmArgs.module}" }
+        val moduleFile = k2jvmArgs.buildFile?.let(::File)
+        assert(moduleFile?.exists() ?: false) { "Module does not exist ${k2jvmArgs.buildFile}" }
 
         // todo: pass javaSourceRoots and allKotlinFiles using IncrementalCompilationOptions
         val parsedModule = run {
             val bytesOut = ByteArrayOutputStream()
             val printStream = PrintStream(bytesOut)
             val mc = PrintingMessageCollector(printStream, MessageRenderer.PLAIN_FULL_PATHS, false)
-            val parsedModule = ModuleXmlParser.parseModuleScript(k2jvmArgs.module, mc)
+            val parsedModule = ModuleXmlParser.parseModuleScript(k2jvmArgs.buildFile, mc)
             if (mc.hasErrors()) {
                 daemonMessageReporter.report(ReportSeverity.ERROR, bytesOut.toString("UTF8"))
             }

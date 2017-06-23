@@ -168,12 +168,11 @@ public class CompileEnvironmentUtil {
             if (vFile == null) {
                 String message = "Source file or directory not found: " + sourceRootPath;
 
-                File moduleFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE);
-                if (moduleFilePath != null && Logger.isInitialized()) {
-                    String moduleFileContent = FileUtil.loadFile(moduleFilePath);
+                File buildFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE);
+                if (buildFilePath != null && Logger.isInitialized()) {
                     LOG.warn(message +
-                              "\n\nmodule file path: " + moduleFilePath +
-                              "\ncontent:\n" + moduleFileContent);
+                             "\n\nbuild file path: " + buildFilePath +
+                             "\ncontent:\n" + FileUtil.loadFile(buildFilePath));
                 }
 
                 reportError.invoke(message);

@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -106,32 +108,24 @@ abstract class CLITool<A : CommonToolArguments> {
 
     private fun reportArgumentParseProblems(collector: MessageCollector, errors: ArgumentParseErrors) {
         for (flag in errors.unknownExtraFlags) {
-            collector.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "Flag is not supported by this version of the compiler: " + flag, null)
+            collector.report(STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
         }
         for (argument in errors.extraArgumentsPassedInObsoleteForm) {
-            collector.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "Advanced option value is passed in an obsolete form. Please use the '=' character " +
-                    "to specify the value: " + argument + "=...", null)
+            collector.report(STRONG_WARNING, "Advanced option value is passed in an obsolete form. Please use the '=' character " +
+                                             "to specify the value: $argument=...")
         }
         for ((key, value) in errors.duplicateArguments) {
-            collector.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "Argument $key is passed multiple times. Only the last value will be used: $value", null)
+            collector.report(STRONG_WARNING, "Argument $key is passed multiple times. Only the last value will be used: $value")
+        }
+        for ((deprecatedName, newName) in errors.deprecatedArguments) {
+            collector.report(STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
         }
     }
 
-    protected fun <A : CommonToolArguments> printVersionIfNeeded(messageCollector: MessageCollector, arguments: A) {
-        if (!arguments.version) return
-
+    private fun <A : CommonToolArguments> printVersionIfNeeded(messageCollector: MessageCollector, arguments: A) {
         if (arguments.version) {
             val jreVersion = System.getProperty("java.runtime.version")
-            messageCollector.report(CompilerMessageSeverity.INFO,
-                                    "${executableScriptFileName()} ${KotlinCompilerVersion.VERSION} (JRE $jreVersion)",
-                                    null
-            )
+            messageCollector.report(INFO, "${executableScriptFileName()} ${KotlinCompilerVersion.VERSION} (JRE $jreVersion)")
         }
     }
 

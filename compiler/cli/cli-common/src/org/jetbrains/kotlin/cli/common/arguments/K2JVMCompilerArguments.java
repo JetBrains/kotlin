@@ -51,9 +51,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "-no-reflect", description = "Don't include Kotlin reflection implementation into classpath")
     public boolean noReflect;
 
-    @Argument(value = "-module", valueDescription = "<path>", description = "Path to the module file to compile")
-    public String module;
-
     @Argument(value = "-script", description = "Evaluate the script file")
     public boolean script;
 
@@ -110,6 +107,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
 
     @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
     public boolean reportPerf;
+
+    @Argument(value = "-Xbuild-file", deprecatedName = "-module", valueDescription = "<path>", description = "Path to the .xml build file to compile")
+    public String buildFile;
 
     @Argument(value = "-Xmultifile-parts-inherit", description = "Compile multifile classes as a hierarchy of parts and facade")
     public boolean inheritMultifileParts;

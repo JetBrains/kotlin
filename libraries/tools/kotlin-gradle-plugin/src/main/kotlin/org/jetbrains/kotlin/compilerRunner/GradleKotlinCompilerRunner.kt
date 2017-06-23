@@ -88,7 +88,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             args: K2JVMCompilerArguments,
             environment: GradleCompilerEnvironment
     ): ExitCode {
-        val moduleFile = makeModuleFile(
+        val buildFile = makeModuleFile(
                 args.moduleName,
                 isTest = false,
                 outputDir = args.destinationAsFile,
@@ -96,22 +96,22 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 javaSourceRoots = javaSourceRoots,
                 classpath = args.classpathAsList,
                 friendDirs = args.friendPaths?.map(::File) ?: emptyList())
-        args.module = moduleFile.absolutePath
+        args.buildFile = buildFile.absolutePath
 
         if (environment !is GradleIncrementalCompilerEnvironment) {
             args.destination = null
         }
 
-        var deleteModuleFile = true
+        var deleteBuildFile = true
 
         try {
             val res = runCompiler(K2JVM_COMPILER, args, environment)
-            deleteModuleFile = (res == ExitCode.OK || System.getProperty("kotlin.compiler.leave.module.file.on.error") == null)
+            deleteBuildFile = (res == ExitCode.OK || System.getProperty("kotlin.compiler.leave.module.file.on.error") == null)
             return res
         }
         finally {
-            if (deleteModuleFile) {
-                moduleFile.delete()
+            if (deleteBuildFile) {
+                buildFile.delete()
             }
         }
     }

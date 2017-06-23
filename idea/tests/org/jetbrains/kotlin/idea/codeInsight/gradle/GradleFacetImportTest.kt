@@ -716,7 +716,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         with (facetSettings) {
             Assert.assertEquals(
-                    listOf("-module", "module with spaces"),
+                    listOf("-Xbuild-file=module with spaces"),
                     compilerSettings!!.additionalArgumentsAsList
             )
         }

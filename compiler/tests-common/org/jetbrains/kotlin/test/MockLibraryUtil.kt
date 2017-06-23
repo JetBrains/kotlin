@@ -193,8 +193,8 @@ object MockLibraryUtil {
         runJsCompiler(listOf("-meta-info", "-output", outputFile.absolutePath, sourcesPath))
     }
 
-    fun compileKotlinModule(modulePath: String) {
-        runJvmCompiler(listOf("-no-stdlib", "-module", modulePath))
+    fun compileKotlinModule(buildFilePath: String) {
+        runJvmCompiler(listOf("-no-stdlib", "-Xbuild-file", buildFilePath))
     }
 
     private val compiler2JVMClass: Class<*>

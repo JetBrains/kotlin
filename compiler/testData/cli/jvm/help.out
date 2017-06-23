@@ -7,7 +7,6 @@ where possible options include:
   -no-jdk                    Don't include Java runtime into classpath
   -no-stdlib                 Don't include Kotlin runtime into classpath
   -no-reflect                Don't include Kotlin reflection implementation into classpath
-  -module <path>             Path to the module file to compile
   -script                    Evaluate the script file
   -script-templates <fully qualified class name[,]>
                              Script definition template classes

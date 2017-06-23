@@ -205,7 +205,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
 
     private fun setupK2JvmArguments(moduleFile: File, settings: K2JVMCompilerArguments) {
         with(settings) {
-            module = moduleFile.absolutePath
+            buildFile = moduleFile.absolutePath
             destination = null
             noStdlib = true
             noReflect = true

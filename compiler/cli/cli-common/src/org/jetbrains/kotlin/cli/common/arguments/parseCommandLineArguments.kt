@@ -23,6 +23,7 @@ import java.util.*
 annotation class Argument(
         val value: String,
         val shortName: String = "",
+        val deprecatedName: String = "",
         val delimiter: String = ",",
         val valueDescription: String = "",
         val description: String
@@ -44,7 +45,10 @@ data class ArgumentParseErrors(
 
     // Non-boolean arguments which have been passed multiple times, possibly with different values.
     // The key in the map is the name of the argument, the value is the last passed value.
-    val duplicateArguments: MutableMap<String, String> = LinkedHashMap<String, String>(),
+    val duplicateArguments: MutableMap<String, String> = mutableMapOf(),
+
+    // Arguments where [Argument.deprecatedName] was used; the key is the deprecated name, the value is the new name ([Argument.value])
+    val deprecatedArguments: MutableMap<String, String> = mutableMapOf(),
 
     var argumentWithoutValue: String? = null
 )
@@ -62,6 +66,23 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: Array<out String>,
     val visitedArgs = mutableSetOf<String>()
     var freeArgsStarted = false
 
+    fun ArgumentField.matches(arg: String): Boolean {
+        if (argument.deprecatedName.takeUnless(String::isEmpty) == arg) {
+            errors.deprecatedArguments[argument.deprecatedName] = argument.value
+            return true
+        }
+
+        if (argument.value == arg) {
+            if (argument.isAdvanced && field.type != Boolean::class.java) {
+                errors.extraArgumentsPassedInObsoleteForm.add(arg)
+            }
+            return true
+        }
+
+        return argument.shortName.takeUnless(String::isEmpty) == arg ||
+               (argument.isAdvanced && arg.startsWith(argument.value + "="))
+    }
+
     var i = 0
     loop@ while (i < args.size) {
         val arg = args[i++]
@@ -75,12 +96,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: Array<out String>,
             continue
         }
 
-        val argumentField = fields.firstOrNull { (_, argument) ->
-            argument.value == arg ||
-            argument.shortName.takeUnless(String::isEmpty) == arg ||
-            (argument.isAdvanced && arg.startsWith(argument.value + "="))
-        }
-
+        val argumentField = fields.firstOrNull { it.matches(arg) }
         if (argumentField == null) {
             when {
                 arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.unknownExtraFlags.add(arg)
@@ -96,17 +112,12 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: Array<out String>,
             argument.isAdvanced && arg.startsWith(argument.value + "=") -> {
                 arg.substring(argument.value.length + 1)
             }
+            i == args.size -> {
+                errors.argumentWithoutValue = arg
+                break@loop
+            }
             else -> {
-                if (i == args.size) {
-                    errors.argumentWithoutValue = arg
-                    break@loop
-                }
-                else {
-                    if (argument.isAdvanced) {
-                        errors.extraArgumentsPassedInObsoleteForm.add(arg)
-                    }
-                    args[i++]
-                }
+                args[i++]
             }
         }
 
