@@ -18,11 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallKind
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isSuperOrDelegatingConstructorCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
@@ -57,11 +53,7 @@ class PSIKotlinCallImpl(
         override val externalArgument: KotlinCallArgument?,
         override val startingDataFlowInfo: DataFlowInfo,
         override val resultDataFlowInfo: DataFlowInfo
-) : PSIKotlinCall() {
-    override val isInfixCall: Boolean get() = isInfixCall(psiCall)
-    override val isOperatorCall: Boolean get() = isConventionCall(psiCall)
-    override val isSuperOrDelegatingConstructorCall: Boolean get() = isSuperOrDelegatingConstructorCall(psiCall)
-}
+) : PSIKotlinCall()
 
 class PSIKotlinCallForVariable(
         val baseCall: PSIKotlinCallImpl,
@@ -80,10 +72,6 @@ class PSIKotlinCallForVariable(
     override val psiCall: Call = CallTransformer.stripCallArguments(baseCall.psiCall).let {
         if (explicitReceiver == null) CallTransformer.stripReceiver(it) else it
     }
-
-    override val isInfixCall: Boolean get() = false
-    override val isOperatorCall: Boolean get() = false
-    override val isSuperOrDelegatingConstructorCall: Boolean get() = false
 }
 
 class PSIKotlinCallForInvoke(
@@ -101,10 +89,6 @@ class PSIKotlinCallForInvoke(
     override val resultDataFlowInfo: DataFlowInfo get() = baseCall.resultDataFlowInfo
     override val psiCall: Call
     override val tracingStrategy: TracingStrategy
-
-    override val isInfixCall: Boolean get() = false
-    override val isOperatorCall: Boolean get() = true
-    override val isSuperOrDelegatingConstructorCall: Boolean get() = false
 
     init {
         val variableReceiver = dispatchReceiverForInvokeExtension ?: explicitReceiver

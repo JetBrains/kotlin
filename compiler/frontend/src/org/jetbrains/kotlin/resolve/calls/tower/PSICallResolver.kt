@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
-import org.jetbrains.kotlin.resolve.calls.components.ArgumentsToParametersMapper
-import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
-import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
-import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper
+import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
@@ -75,11 +72,12 @@ class PSICallResolver(
         private val dynamicCallableDescriptors: DynamicCallableDescriptors,
         private val syntheticScopes: SyntheticScopes,
         private val argumentsToParametersMapper: ArgumentsToParametersMapper,
-        val typeArgumentsToParametersMapper: TypeArgumentsToParametersMapper,
-        val resultTypeResolver: ResultTypeResolver,
-        val callableReferenceResolver: CallableReferenceResolver,
-        val constraintInjector: ConstraintInjector,
-        val reflectionTypes: ReflectionTypes,
+        private val externalPredicates: KotlinResolutionExternalPredicates,
+        private val typeArgumentsToParametersMapper: TypeArgumentsToParametersMapper,
+        private val resultTypeResolver: ResultTypeResolver,
+        private val callableReferenceResolver: CallableReferenceResolver,
+        private val constraintInjector: ConstraintInjector,
+        private val reflectionTypes: ReflectionTypes,
         private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
         private val kotlinCallResolver: KotlinCallResolver,
         private val typeApproximator: TypeApproximator,
@@ -179,7 +177,8 @@ class PSICallResolver(
     }
 
     private fun createCallContext(scopeTower: ASTScopeTower, resolutionCallbacks: KotlinResolutionCallbacks) =
-            KotlinCallContext(scopeTower, resolutionCallbacks, argumentsToParametersMapper, typeArgumentsToParametersMapper, resultTypeResolver,
+            KotlinCallContext(scopeTower, resolutionCallbacks, externalPredicates, argumentsToParametersMapper,
+                              typeArgumentsToParametersMapper, resultTypeResolver,
                               callableReferenceResolver, constraintInjector, reflectionTypes)
 
     private fun <D : CallableDescriptor> convertToOverloadResolutionResults(

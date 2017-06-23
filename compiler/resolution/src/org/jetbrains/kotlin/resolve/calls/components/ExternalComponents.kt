@@ -21,7 +21,14 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
 
-interface IsDescriptorFromSourcePredicate: (CallableDescriptor) -> Boolean
+// stateless component
+interface KotlinResolutionExternalPredicates {
+    fun isDescriptorFromSource(descriptor: CallableDescriptor): Boolean
+    fun isInfixCall(kotlinCall: KotlinCall): Boolean
+    fun isOperatorCall(kotlinCall: KotlinCall): Boolean
+    fun isSuperOrDelegatingConstructorCall(kotlinCall: KotlinCall): Boolean
+    fun isHiddenInResolution(descriptor: DeclarationDescriptor, kotlinCall: KotlinCall): Boolean
+}
 
 // This components hold state (trace). Work with this carefully.
 interface KotlinResolutionCallbacks {
@@ -41,6 +48,4 @@ interface KotlinResolutionCallbacks {
                                   resultTypeParameters: List<UnwrappedType>)
 
     fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralArgument)
-
-    fun isHiddenInResolution(descriptor: DeclarationDescriptor, isSuperCall: Boolean = false): Boolean
 }
