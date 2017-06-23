@@ -36,7 +36,7 @@ For some tests, use:
 	./gradlew backend.native:tests:run
 
 To generate interoperability stubs create library definition file
-(take a look on [`samples/tetris/sdl.def`](https://github.com/JetBrains/kotlin-native/blob/master/samples/tetris/sdl.def)) and run `cinterop` tool like this:
+(take a look on [`samples/tetris/.../sdl.def`](https://github.com/JetBrains/kotlin-native/blob/master/samples/tetris/src/main/c_interop/sdl.def)) and run `cinterop` tool like this:
 
     cinterop -def lib.def
 
