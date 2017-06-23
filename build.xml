@@ -182,6 +182,9 @@
     <target name="init">
         <mkdir dir="${kotlin-home}"/>
         <mkdir dir="${kotlin-home}/lib"/>
+
+        <fail unless="env.JDK_16" message="JDK_16 environment variable is not set."/>
+        <fail unless="env.JDK_18" message="JDK_18 environment variable is not set."/>
     </target>
 
     <target name="prepare-dist">
