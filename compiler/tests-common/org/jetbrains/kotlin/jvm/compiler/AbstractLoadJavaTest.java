@@ -85,6 +85,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkJavaPackage(expectedFile, binaryPackageAndContext.first, binaryPackageAndContext.second, COMPARATOR_CONFIGURATION);
     }
 
+    @NotNull
+    protected File getExpectedFile(@NotNull String expectedFileName) {
+        return new File(expectedFileName);
+    }
+
     protected void doTestCompiledJavaIncludeObjectMethods(@NotNull String javaFileName) throws Exception {
         doTestCompiledJava(javaFileName, RECURSIVE.renderDeclarationsFromOtherModules(true));
     }
@@ -243,7 +248,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 srcFiles, compiledDir, ConfigurationKind.ALL
         );
 
-        checkJavaPackage(getTxtFile(javaFileName), javaPackageAndContext.first, javaPackageAndContext.second, configuration);
+        checkJavaPackage(getExpectedFile(javaFileName.replaceFirst("\\.java$", ".txt")), javaPackageAndContext.first, javaPackageAndContext.second, configuration);
     }
 
     @NotNull

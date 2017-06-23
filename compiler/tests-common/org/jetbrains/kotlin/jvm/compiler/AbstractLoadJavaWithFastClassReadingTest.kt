@@ -16,6 +16,15 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
+
 abstract class AbstractLoadJavaWithFastClassReadingTest : AbstractLoadJavaTest() {
     override fun useFastClassFilesReading() = true
+
+    override fun getExpectedFile(expectedFileName: String): File {
+        val differentResultFile = KotlinTestUtils.replaceExtension(File(expectedFileName), "fast.txt")
+        if (differentResultFile.exists()) return differentResultFile
+        return super.getExpectedFile(expectedFileName)
+    }
 }
