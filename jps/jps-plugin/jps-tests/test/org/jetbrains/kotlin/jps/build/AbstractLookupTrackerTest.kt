@@ -149,13 +149,6 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
     // ignore KDoc like comments which starts with `/**`, example: /** text */
     private val COMMENT_WITH_LOOKUP_INFO = "/\\*[^*]+\\*/".toRegex()
 
-    private fun removeCommentsCommentsWithLookupInfo(files: Iterable<File>) {
-        files.forEach {
-            val content = it.readText()
-            it.writeText(content.replace(COMMENT_WITH_LOOKUP_INFO, ""))
-        }
-    }
-
     protected lateinit var srcDir: File
     protected lateinit var outDir: File
     private var isICEnabledBackup: Boolean = false
@@ -185,11 +178,11 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
 
             sb.appendln("Compiling files:")
             for (compiledFile in compiledFiles.sortedBy { it.canonicalPath }) {
-                val lookupCount = lookupsCount[compiledFile]
+                val lookupsFromFile = lookups[compiledFile]
                 val lookupStatus = when {
-                    lookupCount == 0 -> "(no lookups)"
-                    lookupCount != null && lookupCount > 0 -> ""
-                    else -> "(unknown)"
+                    lookupsFromFile == null -> "(unknown)"
+                    lookupsFromFile.isEmpty() -> "(no lookups)"
+                    else -> ""
                 }
                 sb.indentln("${compiledFile.toRelativeString(workingDir)}$lookupStatus")
             }
@@ -207,30 +200,50 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         val steps = getModificationsToPerform(testDir, moduleNames = null, allowNoFilesWithSuffixInTestData = true, touchPolicy = TouchPolicy.CHECKSUM)
                 .filter { it.isNotEmpty() }
 
-        makeAndCheckLookups(dirtyFiles, workToOriginalFileMap, incrementalData).logOutput("INITIAL BUILD")
+        val filesToLookups = arrayListOf<Map<File, List<LookupInfo>>>()
+        fun CompilerOutput.originalFilesToLookups() =
+                compiledFiles.associateBy({ workToOriginalFileMap[it]!! }, { lookups[it] ?: emptyList() })
+
+        make(dirtyFiles, incrementalData).apply {
+            logOutput("INITIAL BUILD")
+            filesToLookups.add(originalFilesToLookups())
+
+        }
         for ((i, modifications) in steps.withIndex()) {
             dirtyFiles = modifications.mapNotNullTo(HashSet()) { it.perform(workingDir, workToOriginalFileMap) }
-            makeAndCheckLookups(dirtyFiles, workToOriginalFileMap, incrementalData).logOutput("STEP ${i + 1}")
+            make(dirtyFiles, incrementalData).apply {
+                logOutput("STEP ${i + 1}")
+                filesToLookups.add(originalFilesToLookups())
+            }
         }
 
         val expectedBuildLog = File(testDir, "build.log")
         UsefulTestCase.assertSameLinesWithFile(expectedBuildLog.canonicalPath, sb.toString())
+
+        assertEquals(steps.size + 1, filesToLookups.size)
+        for ((i, lookupsAtStepI) in filesToLookups.withIndex()) {
+            val step = if (i == 0) "INITIAL BUILD" else "STEP $i"
+            for ((file, lookups) in lookupsAtStepI) {
+                checkLookupsInFile(step, file, lookups)
+            }
+        }
     }
 
     private class CompilerOutput(
         val exitCode: String,
         val errors: List<String>,
         val compiledFiles: Iterable<File>,
-        val lookupsCount: Map<File, Int>
+        val lookups: Map<File, List<LookupInfo>>
     )
     private class IncrementalData(val sourceToOutput: MutableMap<File, MutableSet<File>> = hashMapOf())
 
-    private fun makeAndCheckLookups(
+    private fun make(
             filesToCompile: Iterable<File>,
-            workingToOriginalFileMap: Map<File, File>,
             incrementalData: IncrementalData
     ): CompilerOutput {
-        removeCommentsCommentsWithLookupInfo(filesToCompile)
+        filesToCompile.forEach {
+            it.writeText(it.readText().replace(COMMENT_WITH_LOOKUP_INFO, ""))
+        }
 
         for (dirtyFile in filesToCompile) {
             incrementalData.sourceToOutput.remove(dirtyFile)?.forEach {
@@ -259,74 +272,54 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
             }
         }
 
-        val lookupsCount = checkLookups(filesToCompile, lookupTracker, workingToOriginalFileMap)
-        return CompilerOutput(exitCode.toString(), messageCollector.errors, filesToCompile, lookupsCount)
+        val lookups = lookupTracker.lookups.groupBy { File(it.filePath) }
+        val lookupsFromCompiledFiles = filesToCompile.associate { it to (lookups[it] ?: emptyList()) }
+        return CompilerOutput(exitCode.toString(), messageCollector.errors, filesToCompile, lookupsFromCompiledFiles)
     }
 
     protected open fun Services.Builder.registerAdditionalServices() {}
 
-    private fun checkLookups(
-            compiledFiles: Iterable<File>,
-            lookupTracker: TestLookupTracker,
-            workingToOriginalFileMap: Map<File, File>
-    ): Map<File, Int> {
-        fun checkLookupsInFile(expectedFile: File, actualFile: File, lookupsFromFile: List<LookupInfo>) {
-            val text = actualFile.readText()
+    private fun checkLookupsInFile(step: String, expectedFile: File, lookupsFromFile: List<LookupInfo>) {
+        val text = expectedFile.readText().replace(COMMENT_WITH_LOOKUP_INFO, "")
+        val lines = text.lines().toMutableList()
 
-            val matchResult = COMMENT_WITH_LOOKUP_INFO.find(text)
-            if (matchResult != null) {
-                throw AssertionError("File $actualFile contains multiline comment in range ${matchResult.range}")
-            }
+        for ((line, lookupsFromLine) in lookupsFromFile.groupBy { it.position.line }) {
+            val columnToLookups = lookupsFromLine.groupBy { it.position.column }.toList().sortedBy { it.first }
 
-            val lines = text.lines().toMutableList()
+            val lineContent = lines[line - 1]
+            val parts = ArrayList<CharSequence>(columnToLookups.size * 2)
 
-            for ((line, lookupsFromLine) in lookupsFromFile.groupBy { it.position.line }) {
-                val columnToLookups = lookupsFromLine.groupBy { it.position.column }.toList().sortedBy { it.first }
+            var start = 0
 
-                val lineContent = lines[line - 1]
-                val parts = ArrayList<CharSequence>(columnToLookups.size * 2)
+            for ((column, lookupsFromColumn) in columnToLookups) {
+                val end = column - 1
+                parts.add(lineContent.subSequence(start, end))
 
-                var start = 0
+                val lookups = lookupsFromColumn.distinct().joinToString(separator = " ", prefix = "/*", postfix = "*/") {
+                    val rest = lineContent.substring(end)
 
-                for ((column, lookupsFromColumn) in columnToLookups) {
-                    val end = column - 1
-                    parts.add(lineContent.subSequence(start, end))
+                    val name =
+                            when {
+                                rest.startsWith(it.name) || // same name
+                                rest.startsWith("$" + it.name) || // backing field
+                                DECLARATION_STARTS_WITH.any { rest.startsWith(it) } // it's declaration
+                                -> ""
+                                else -> "(" + it.name + ")"
+                            }
 
-                    val lookups = lookupsFromColumn.distinct().joinToString(separator = " ", prefix = "/*", postfix = "*/") {
-                        val rest = lineContent.substring(end)
-
-                        val name =
-                                when {
-                                    rest.startsWith(it.name) || // same name
-                                    rest.startsWith("$" + it.name) || // backing field
-                                    DECLARATION_STARTS_WITH.any { rest.startsWith(it) } // it's declaration
-                                         -> ""
-                                    else -> "(" + it.name + ")"
-                                }
-
-                        it.scopeKind.toString()[0].toLowerCase().toString() + ":" + it.scopeFqName.let { if (it.isNotEmpty()) it else "<root>" } + name
-                    }
-
-                    parts.add(lookups)
-
-                    start = end
+                    it.scopeKind.toString()[0].toLowerCase().toString() + ":" + it.scopeFqName.let { if (it.isNotEmpty()) it else "<root>" } + name
                 }
 
-                lines[line - 1] = parts.joinToString("") + lineContent.subSequence(start, lineContent.length)
+                parts.add(lookups)
+
+                start = end
             }
 
-            val actual = lines.joinToString("\n")
-
-            KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
+            lines[line - 1] = parts.joinToString("") + lineContent.subSequence(start, lineContent.length)
         }
 
-        val fileToLookups = lookupTracker.lookups.groupBy { File(it.filePath) }
-        return compiledFiles.associate { actualFile ->
-            val expectedFile = workingToOriginalFileMap[actualFile]!!
-            val lookupsInFile = fileToLookups[actualFile]
-            lookupsInFile?.let { checkLookupsInFile(expectedFile, actualFile, it) }
-            actualFile to (lookupsInFile?.size ?: 0)
-        }
+        val actual = lines.joinToString("\n")
+        KotlinTestUtils.assertEqualsToFile("Lookups do not match after $step", expectedFile, actual)
     }
 }
 
