@@ -20,7 +20,7 @@
   },
   "homepage": "kotlinlang.org",
   "bin": {
-    "kotlinc-js": "bin/kotlinc-js"
+    "kotlinc-js": "bin/kotlinc-js-runner.js"
   },
   "publishConfig" : {
     "tag" : "dev"
