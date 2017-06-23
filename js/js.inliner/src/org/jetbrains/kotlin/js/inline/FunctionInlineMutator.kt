@@ -50,7 +50,7 @@ private constructor(
         val parameters = getParameters()
 
         removeDefaultInitializers(arguments, parameters, body)
-        aliasArgumentsIfNeeded(namingContext, arguments, parameters)
+        aliasArgumentsIfNeeded(namingContext, arguments, parameters, call.source)
         renameLocalNames(namingContext, invokedFunction)
         processReturns()
 
@@ -89,7 +89,7 @@ private constructor(
         val namingContext = inliningContext.newNamingContext()
         val arguments = call.arguments
         val parameters = outer.parameters
-        aliasArgumentsIfNeeded(namingContext, arguments, parameters)
+        aliasArgumentsIfNeeded(namingContext, arguments, parameters, call.source)
         namingContext.applyRenameTo(inner)
     }
 
@@ -100,7 +100,7 @@ private constructor(
         if (thisReplacement == null || thisReplacement is JsThisRef) return
 
         val thisName = JsScope.declareTemporaryName(getThisAlias())
-        namingContext.newVar(thisName, thisReplacement)
+        namingContext.newVar(thisName, thisReplacement, source = call.source)
         thisReplacement = thisName.makeRef()
 
         replaceThisReference(block, thisReplacement)
@@ -121,7 +121,7 @@ private constructor(
 
         val resultName = JsScope.declareTemporaryName(getResultLabel())
         this.resultName = resultName
-        namingContext.newVar(resultName, null)
+        namingContext.newVar(resultName, source = call.source)
         return resultName.makeRef()
     }
 

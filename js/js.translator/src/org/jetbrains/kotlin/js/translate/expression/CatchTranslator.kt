@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.expression
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.types.isDynamic
 
 class CatchTranslator(
         val catches: List<KtCatchClause>,
+        val psi: PsiElement,
         context: TranslationContext
 ) : AbstractTranslator(context) {
 
@@ -86,7 +88,7 @@ class CatchTranslator(
             catches: Iterator<KtCatchClause>
     ): JsStatement {
         if (!catches.hasNext()) {
-            return JsThrow(initialCatchParameterRef)
+            return JsThrow(initialCatchParameterRef).apply { source = psi }
         }
 
         var nextContext = context

@@ -32,7 +32,7 @@ class TryTranslator(
     fun translate(): JsTry {
         val tryBlock = translateAsBlock(expression.tryBlock)
 
-        val catchTranslator = CatchTranslator(expression.catchClauses, context())
+        val catchTranslator = CatchTranslator(expression.catchClauses, expression, context())
         val catchBlock = catchTranslator.translate()
 
         val finallyExpression = expression.finallyBlock?.finalExpression

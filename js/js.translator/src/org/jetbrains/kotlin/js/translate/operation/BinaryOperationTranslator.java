@@ -154,6 +154,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             JsExpression testExpression = TranslationUtils.isNullCheck(leftExpression);
             ifStatement = JsAstUtils.newJsIf(testExpression, rightBlock);
         }
+        ifStatement.setSource(expression);
         context().addStatementToCurrentBlock(ifStatement);
         return result;
     }

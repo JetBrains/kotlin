@@ -81,7 +81,7 @@ internal class ExpressionDecomposer private constructor(
 
         for (jsVar in vars) {
             if (jsVar in containsExtractable && prevVars.isNotEmpty()) {
-                addStatement(JsVars(prevVars, x.isMultiline))
+                addStatement(JsVars(prevVars, x.isMultiline).apply { source = prevVars.first().source })
                 prevVars = SmartList<JsVars.JsVar>()
             }
 
@@ -89,8 +89,11 @@ internal class ExpressionDecomposer private constructor(
             prevVars.add(jsVar)
         }
 
-        vars.clear()
-        vars.addAll(prevVars)
+        if (vars.size != prevVars.size) {
+            vars.clear()
+            vars.addAll(prevVars)
+            x.source = prevVars.first().source
+        }
         return false
     }
 
@@ -168,7 +171,7 @@ internal class ExpressionDecomposer private constructor(
             additionalStatements.toStatement()
         }
 
-        addStatement(JsIf(test, arg2Eval))
+        addStatement(JsIf(test, arg2Eval).also { it.source = source })
         ctx.replaceMe(tmp.nameRef)
     }
 

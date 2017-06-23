@@ -115,12 +115,13 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
 
             val currentVarInit =
                 if (destructuringParameter == null) {
-                    newVar(parameterName, itemValue)
+                    newVar(parameterName, itemValue).apply { source = expression.loopRange }
                 }
                 else {
                     val innerBlockContext = context.innerBlock(block)
                     if (itemValue != null) {
-                        innerBlockContext.addStatementToCurrentBlock(JsAstUtils.newVar(parameterName, itemValue))
+                        val parameterStatement = JsAstUtils.newVar(parameterName, itemValue).apply { source = expression.loopRange }
+                        innerBlockContext.addStatementToCurrentBlock(parameterStatement)
                     }
                     DestructuringDeclarationTranslator.translate(
                             destructuringParameter, JsAstUtils.pureFqn(parameterName, null), innerBlockContext)

@@ -92,8 +92,12 @@ public class DestructuringDeclarationTranslator extends AbstractTranslator {
                 entryInitializer = JsAstUtils.wrapValue(alias, entryInitializer);
             }
 
-            jsVars.add(new JsVars.JsVar(name, entryInitializer));
+            JsVars.JsVar jsVar = new JsVars.JsVar(name, entryInitializer);
+            jsVar.setSource(entry);
+            jsVars.add(jsVar);
         }
-        return new JsVars(jsVars, true);
+        JsVars result = new JsVars(jsVars, true);
+        result.setSource(multiDeclaration);
+        return result;
     }
 }

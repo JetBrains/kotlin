@@ -391,7 +391,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitIsExpression(@NotNull KtIsExpression expression,
             @NotNull TranslationContext context) {
-        return Translation.patternTranslator(context).translateIsExpression(expression);
+        return Translation.patternTranslator(context).translateIsExpression(expression).source(expression);
     }
 
     @Override

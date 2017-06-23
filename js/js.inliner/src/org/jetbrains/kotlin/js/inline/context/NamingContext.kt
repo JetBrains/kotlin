@@ -45,9 +45,10 @@ class NamingContext(private val statementContext: JsContext<JsStatement>) {
         renamings.put(name, replacement)
     }
 
-    fun newVar(name: JsName, value: JsExpression? = null) {
+    fun newVar(name: JsName, value: JsExpression? = null, source: Any?) {
         val vars = JsAstUtils.newVar(name, value)
         vars.synthetic = true
+        vars.source = source
         declarations.add(vars)
     }
 }
