@@ -32,7 +32,7 @@ interface KotlinResolutionCallbacks {
             receiverType: UnwrappedType?,
             parameters: List<UnwrappedType>,
             expectedReturnType: UnwrappedType? // null means, that return type is not proper i.e. it depends on some type variables
-    ): List<KotlinCallArgument>
+    ): List<SimpleKotlinCallArgument>
 
     // todo this is hack for some client which try to read ResolvedCall from trace before all calls completed
     fun bindStubResolvedCallForCandidate(candidate: KotlinResolutionCandidate)
