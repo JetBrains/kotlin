@@ -123,8 +123,6 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                                               verbose = true,
                                               reportPerf = true)
 
-            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
-
             val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
             val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
@@ -163,8 +161,6 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
                                               verbose = true,
                                               reportPerf = true)
-
-            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
 
             val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
