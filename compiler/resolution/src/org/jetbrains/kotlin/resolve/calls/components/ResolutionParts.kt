@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (candidateDescriptor is ConstructorDescriptor && !kotlinCall.isSuperOrDelegatingConstructorCall) {
+        if (candidateDescriptor is ConstructorDescriptor && !callContext.externalPredicates.isSuperOrDelegatingConstructorCall(kotlinCall)) {
             if (candidateDescriptor.constructedClass.modality == Modality.ABSTRACT) {
                 return listOf(InstantiationOfAbstractClass)
             }
@@ -251,7 +251,8 @@ internal object CheckArguments : ResolutionPart {
 
 internal object CheckInfixResolutionPart : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (kotlinCall.isInfixCall && (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isInfix)) {
+        if (callContext.externalPredicates.isInfixCall(kotlinCall) &&
+            (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isInfix)) {
             return listOf(InfixCallNoInfixModifier)
         }
 
@@ -261,7 +262,8 @@ internal object CheckInfixResolutionPart : ResolutionPart {
 
 internal object CheckOperatorResolutionPart : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (kotlinCall.isOperatorCall && (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isOperator)) {
+        if (callContext.externalPredicates.isOperatorCall(kotlinCall) &&
+            (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isOperator)) {
             return listOf(InvokeConventionCallNoOperatorModifier)
         }
 

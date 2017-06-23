@@ -31,7 +31,7 @@ import java.util.*
 class NewOverloadingConflictResolver(
         builtIns: KotlinBuiltIns,
         specificityComparator: TypeSpecificityComparator,
-        isDescriptorFromSourcePredicate: IsDescriptorFromSourcePredicate,
+        externalPredicates: KotlinResolutionExternalPredicates,
         constraintInjector: ConstraintInjector,
         typeResolver: ResultTypeResolver
 ) : OverloadingConflictResolver<KotlinResolutionCandidate>(
@@ -45,7 +45,7 @@ class NewOverloadingConflictResolver(
         { SimpleConstraintSystemImpl(constraintInjector, typeResolver) },
         Companion::createFlatSignature,
         { (it as? VariableAsFunctionKotlinResolutionCandidate)?.resolvedVariable },
-        isDescriptorFromSourcePredicate
+        { externalPredicates.isDescriptorFromSource(it) }
 ) {
 
     companion object {

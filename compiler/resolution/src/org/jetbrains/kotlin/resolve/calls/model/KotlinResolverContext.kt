@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 class KotlinCallContext(
         val scopeTower: ImplicitScopeTower,
         val resolutionCallbacks: KotlinResolutionCallbacks,
+        val externalPredicates: KotlinResolutionExternalPredicates,
         val argumentsToParametersMapper: ArgumentsToParametersMapper,
         val typeArgumentsToParametersMapper: TypeArgumentsToParametersMapper,
         val resultTypeResolver: ResultTypeResolver,
@@ -77,7 +78,7 @@ class SimpleCandidateFactory(val callContext: KotlinCallContext, val kotlinCall:
         }
 
         val candidateDiagnostics = towerCandidate.diagnostics.toMutableList()
-        if (callContext.resolutionCallbacks.isHiddenInResolution(towerCandidate.descriptor, kotlinCall.isSuperOrDelegatingConstructorCall)) {
+        if (callContext.externalPredicates.isHiddenInResolution(towerCandidate.descriptor, kotlinCall)) {
             candidateDiagnostics.add(HiddenDescriptor)
         }
 

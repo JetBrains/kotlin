@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 class CallableReferenceOverloadConflictResolver(
         builtIns: KotlinBuiltIns,
         specificityComparator: TypeSpecificityComparator,
-        isDescriptorFromSourcePredicate: IsDescriptorFromSourcePredicate,
+        externalPredicates: KotlinResolutionExternalPredicates,
         constraintInjector: ConstraintInjector,
         typeResolver: ResultTypeResolver
 ) : OverloadingConflictResolver<CallableReferenceCandidate>(
@@ -44,7 +44,7 @@ class CallableReferenceOverloadConflictResolver(
         { SimpleConstraintSystemImpl(constraintInjector, typeResolver) },
         Companion::createFlatSignature,
         { null },
-        isDescriptorFromSourcePredicate
+        { externalPredicates.isDescriptorFromSource(it) }
         ) {
     companion object {
         private fun createFlatSignature(candidate: CallableReferenceCandidate) =
