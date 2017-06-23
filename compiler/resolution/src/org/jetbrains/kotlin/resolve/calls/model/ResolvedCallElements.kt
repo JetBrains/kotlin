@@ -47,7 +47,7 @@ class ResolvedLambdaArgument(
     override val inputTypes: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
     override val outputType: UnwrappedType get() = returnType
 
-    lateinit var resultArguments: List<KotlinCallArgument>
+    lateinit var resultArguments: List<SimpleKotlinCallArgument>
     lateinit var finalReturnType: UnwrappedType
 }
 

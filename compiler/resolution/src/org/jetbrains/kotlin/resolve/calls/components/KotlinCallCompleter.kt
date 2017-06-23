@@ -104,7 +104,7 @@ class KotlinCallCompleter(
 
     private fun resolveCallableReferenceArguments(candidate: SimpleKotlinResolutionCandidate) {
         for (callableReferenceArgument in candidate.postponeCallableReferenceArguments) {
-            CheckArguments.processCallableReferenceArgument(candidate.callContext, candidate.kotlinCall, candidate.csBuilder,
+            processCallableReferenceArgument(candidate.callContext, candidate.kotlinCall, candidate.csBuilder,
                                                             callableReferenceArgument.argument, callableReferenceArgument.expectedType)
         }
         candidate.postponeCallableReferenceArguments.clear()
@@ -242,7 +242,7 @@ class KotlinCallCompleter(
 
         val lambda = c.lambdaArguments.find { canWeAnalyzeIt(c, it) }
         if (lambda != null) {
-            analyzeLambda(c, resolutionCallbacks, callContext, kotlinCall, lambda)
+            analyzeLambda(c, resolutionCallbacks, lambda)
             return false
         }
 
@@ -262,7 +262,7 @@ class KotlinCallCompleter(
         return true
     }
 
-    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, topLevelCallContext: KotlinCallContext, topLevelCall: KotlinCall, lambda: ResolvedLambdaArgument) {
+    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: ResolvedLambdaArgument) {
         val currentSubstitutor = c.buildCurrentSubstitutor()
         fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type)
 
@@ -273,8 +273,7 @@ class KotlinCallCompleter(
         lambda.resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(lambda.outerCall, lambda.argument, lambda.isSuspend, receiver, parameters, expectedType)
 
         for (innerCall in lambda.resultArguments) {
-            // todo strange code -- why top-level kotlinCall? may be it isn't right outer call
-            CheckArguments.checkArgument(topLevelCallContext, topLevelCall, c.getBuilder(), innerCall, lambda.returnType.let(::substitute))
+            checkSimpleArgument(c.getBuilder(), innerCall, lambda.returnType.let(::substitute))
         }
 
         if (lambda.resultArguments.isEmpty()) {

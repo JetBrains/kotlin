@@ -32,10 +32,11 @@ import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.RUNTIME_ERROR
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
@@ -220,27 +221,36 @@ internal object CheckReceivers : ResolutionPart {
 
         val expectedType = receiverParameter.type.unwrap()
 
-        return when (receiverArgument) {
-            is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, receiverArgument, expectedType, isReceiver = true)
-            is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, receiverArgument, expectedType, isReceiver = true)
-            else -> incorrectReceiver(receiverArgument)
-        }
+        return checkSimpleArgument(csBuilder, receiverArgument, expectedType, isReceiver = true)
     }
-
-    private fun incorrectReceiver(callReceiver: SimpleKotlinCallArgument): Nothing =
-            error("Incorrect receiver type: $callReceiver. Class name: ${callReceiver.javaClass.canonicalName}")
 
     override fun SimpleKotlinResolutionCandidate.process() =
             listOfNotNull(checkReceiver(dispatchReceiverArgument, descriptorWithFreshTypes.dispatchReceiverParameter),
                           checkReceiver(extensionReceiver, descriptorWithFreshTypes.extensionReceiverParameter))
 }
 
+internal object CheckArguments : ResolutionPart {
+    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+        val diagnostics = SmartList<KotlinCallDiagnostic>()
+        for (parameterDescriptor in descriptorWithFreshTypes.valueParameters) {
+            // error was reported in ArgumentsToParametersMapper
+            val resolvedCallArgument = argumentMappingByOriginal[parameterDescriptor.original] ?: continue
+            for (argument in resolvedCallArgument.arguments) {
 
-fun <D : CallableDescriptor> D.safeSubstitute(substitutor: TypeSubstitutor): D =
-        @Suppress("UNCHECKED_CAST") (substitute(substitutor) as D)
+                val diagnostic = when (argument) {
+                    is SimpleKotlinCallArgument -> checkSimpleArgument(csBuilder, argument, argument.getExpectedType(parameterDescriptor))
+                    is PostponableCallArgument ->
+                        createPostponedArgumentAndPerformInitialChecks(kotlinCall, csBuilder, argument, parameterDescriptor, postponeCallableReferenceArguments)
+                    else -> unexpectedArgument(argument)
+                }
+                diagnostics.addIfNotNull(diagnostic)
 
-fun UnwrappedType.substitute(substitutor: TypeSubstitutor): UnwrappedType = substitutor.substitute(this, Variance.INVARIANT)!!.unwrap()
-
+                if (diagnostic != null && !diagnostic.candidateApplicability.isSuccess) break
+            }
+        }
+        return diagnostics
+    }
+}
 
 object InstantiationOfAbstractClass : KotlinCallDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
@@ -253,22 +263,6 @@ class UnstableSmartCast(val expressionArgument: ExpressionKotlinCallArgument, va
 
 class UnsafeCallError(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallReceiver(receiver, this)
-}
-
-class ExpectedLambdaParametersCountMismatch(
-        val lambdaArgument: LambdaKotlinCallArgument,
-        val expected: Int,
-        val actual: Int
-) : KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(lambdaArgument, this)
-}
-
-class UnexpectedReceiver(val functionExpression: FunctionExpression) : KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(functionExpression, this)
-}
-
-class MissingReceiver(val functionExpression: FunctionExpression) : KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(functionExpression, this)
 }
 
 class NoneCallableReferenceCandidates(val argument: CallableReferenceKotlinCallArgument) : KotlinCallDiagnostic(INAPPLICABLE) {
