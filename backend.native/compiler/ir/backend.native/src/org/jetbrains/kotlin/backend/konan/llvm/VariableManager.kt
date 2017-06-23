@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 
 
-internal class VariableManager(val codegen: CodeGenerator) {
+internal class VariableManager(val functionGenerationContext: FunctionGenerationContext) {
     internal interface Record {
         fun load() : LLVMValueRef
         fun store(value: LLVMValueRef)
@@ -29,8 +29,8 @@ internal class VariableManager(val codegen: CodeGenerator) {
     }
 
     inner class SlotRecord(val address: LLVMValueRef, val refSlot: Boolean, val isVar: Boolean) : Record {
-        override fun load() : LLVMValueRef = codegen.loadSlot(address, isVar)
-        override fun store(value: LLVMValueRef) = codegen.storeAnyLocal(value, address)
+        override fun load() : LLVMValueRef = functionGenerationContext.loadSlot(address, isVar)
+        override fun store(value: LLVMValueRef) = functionGenerationContext.storeAnyLocal(value, address)
         override fun address() : LLVMValueRef = this.address
         override fun toString() = (if (refSlot) "refslot" else "slot") + " for ${address}"
     }
@@ -67,11 +67,11 @@ internal class VariableManager(val codegen: CodeGenerator) {
                       isVar: Boolean, value: LLVMValueRef? = null) : Int {
         assert(!contextVariablesToIndex.contains(descriptor))
         val index = variables.size
-        val type = codegen.getLLVMType(descriptor.type)
-        val slot = codegen.alloca(type, descriptor.name.asString())
+        val type = functionGenerationContext.getLLVMType(descriptor.type)
+        val slot = functionGenerationContext.alloca(type, descriptor.name.asString())
         if (value != null)
-            codegen.storeAnyLocal(value, slot)
-        variables.add(SlotRecord(slot, codegen.isObjectType(type), isVar))
+            functionGenerationContext.storeAnyLocal(value, slot)
+        variables.add(SlotRecord(slot, functionGenerationContext.isObjectType(type), isVar))
         contextVariablesToIndex[descriptor] = index
         return index
     }
@@ -79,16 +79,16 @@ internal class VariableManager(val codegen: CodeGenerator) {
     // Creates anonymous mutable variable.
     // Think of slot reuse.
     fun createAnonymousSlot(value: LLVMValueRef? = null) : LLVMValueRef {
-        val index = createAnonymousMutable(codegen.kObjHeaderPtr, value)
+        val index = createAnonymousMutable(functionGenerationContext.kObjHeaderPtr, value)
         return addressOf(index)
     }
 
     private fun createAnonymousMutable(type: LLVMTypeRef, value: LLVMValueRef? = null) : Int {
         val index = variables.size
-        val slot = codegen.alloca(type)
+        val slot = functionGenerationContext.alloca(type)
         if (value != null)
-            codegen.storeAnyLocal(value, slot)
-        variables.add(SlotRecord(slot, codegen.isObjectType(type), true))
+            functionGenerationContext.storeAnyLocal(value, slot)
+        variables.add(SlotRecord(slot, functionGenerationContext.isObjectType(type), true))
         return index
     }
 
@@ -119,17 +119,17 @@ internal class VariableManager(val codegen: CodeGenerator) {
 
     fun debugInfoLocalVariableLocation(functionScope: DIScopeOpaqueRef, diType: DITypeOpaqueRef, name:Name, variable: LLVMValueRef, file: DIFileRef, line: Int, location: DILocationRef?) {
         val variableDeclaration = DICreateAutoVariable(
-                builder = codegen.context.debugInfo.builder,
+                builder = functionGenerationContext.context.debugInfo.builder,
                 scope = functionScope,
                 name = name.asString(),
                 file = file,
                 line = line,
                 type = diType)
         DIInsertDeclarationWithEmptyExpression(
-                builder = codegen.context.debugInfo.builder,
+                builder = functionGenerationContext.context.debugInfo.builder,
                 value = variable,
                 localVariable = variableDeclaration,
                 location = location,
-                bb = LLVMGetInsertBlock(codegen.builder))
+                bb = LLVMGetInsertBlock(functionGenerationContext.builder))
     }
 }
