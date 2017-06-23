@@ -40,6 +40,15 @@ subprojects {
         tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all { task ->
             task.kotlinOptions.freeCompilerArgs += ["-module-name", "${project.name}"]
         }
+
+        artifacts {
+            if (tasks.findByName('javadocJar')) {
+                archives javadocJar
+            }
+            if (tasks.findByName('sourcesJar')) {
+                archives sourcesJar
+            }
+        }
     }
 }
 
