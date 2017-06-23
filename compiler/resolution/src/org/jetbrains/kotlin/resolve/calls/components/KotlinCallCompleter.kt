@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.FixationOrderCalculator
@@ -38,16 +37,14 @@ import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 class KotlinCallCompleter(
-        val resultTypeResolver: ResultTypeResolver,
-        val fixationOrderCalculator: FixationOrderCalculator
+        private val resultTypeResolver: ResultTypeResolver,
+        private val fixationOrderCalculator: FixationOrderCalculator,
+        private val additionalDiagnosticReporter: AdditionalDiagnosticReporter
 ) {
     interface Context {
         val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall>
@@ -165,58 +162,9 @@ class KotlinCallCompleter(
     }
 
     private fun computeStatus(candidate: SimpleKotlinResolutionCandidate, resultingDescriptor: CallableDescriptor): ResolutionCandidateStatus {
-        val smartCasts = reportSmartCasts(candidate, resultingDescriptor).takeIf { it.isNotEmpty() } ?: return candidate.status
+        val smartCasts = additionalDiagnosticReporter.createAdditionalDiagnostics(candidate, resultingDescriptor).takeIf { it.isNotEmpty() } ?:
+                         return candidate.status
         return ResolutionCandidateStatus(candidate.status.diagnostics + smartCasts)
-    }
-
-    private fun createSmartCastDiagnostic(argument: KotlinCallArgument, expectedResultType: UnwrappedType): SmartCastDiagnostic? {
-        if (argument !is ExpressionKotlinCallArgument) return null
-        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(argument.receiver.receiverValue.type, expectedResultType)) {
-            return SmartCastDiagnostic(argument, expectedResultType.unwrap())
-        }
-        return null
-    }
-
-    private fun reportSmartCastOnReceiver(
-            candidate: KotlinResolutionCandidate,
-            receiver: SimpleKotlinCallArgument?,
-            parameter: ReceiverParameterDescriptor?
-    ): SmartCastDiagnostic? {
-        if (receiver == null || parameter == null) return null
-        val expectedType = parameter.type.unwrap().let { if (receiver.isSafeCall) it.makeNullableAsSpecified(true) else it }
-
-        val smartCastDiagnostic = createSmartCastDiagnostic(receiver, expectedType) ?: return null
-
-        // todo may be we have smart cast to Int?
-        return smartCastDiagnostic.takeIf {
-            candidate.status.diagnostics.filterIsInstance<UnsafeCallError>().none {
-                it.receiver == receiver
-            }
-            &&
-            candidate.status.diagnostics.filterIsInstance<UnstableSmartCast>().none {
-                it.expressionArgument == receiver
-            }
-        }
-    }
-
-
-    private fun reportSmartCasts(candidate: SimpleKotlinResolutionCandidate, resultingDescriptor: CallableDescriptor): List<KotlinCallDiagnostic> = SmartList<KotlinCallDiagnostic>().apply {
-        addIfNotNull(reportSmartCastOnReceiver(candidate, candidate.extensionReceiver, resultingDescriptor.extensionReceiverParameter))
-        addIfNotNull(reportSmartCastOnReceiver(candidate, candidate.dispatchReceiverArgument, resultingDescriptor.dispatchReceiverParameter))
-
-        for (parameter in resultingDescriptor.valueParameters) {
-            for (argument in candidate.argumentMappingByOriginal[parameter.original]?.arguments ?: continue) {
-                val smartCastDiagnostic = createSmartCastDiagnostic(argument, argument.getExpectedType(parameter)) ?: continue
-
-                val thereIsUnstableSmartCastError = candidate.status.diagnostics.filterIsInstance<UnstableSmartCast>().any {
-                    it.expressionArgument == argument
-                }
-
-                if (!thereIsUnstableSmartCastError) {
-                    add(smartCastDiagnostic)
-                }
-            }
-        }
     }
 
     // true if we should complete this call
@@ -289,8 +237,4 @@ class KotlinCallCompleter(
         }
         return lambda.parameters.all { c.canBeProper(it) }
     }
-}
-
-class SmartCastDiagnostic(val expressionArgument: ExpressionKotlinCallArgument, val smartCastType: UnwrappedType): KotlinCallDiagnostic(ResolutionCandidateApplicability.RESOLVED) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(expressionArgument, this)
 }
