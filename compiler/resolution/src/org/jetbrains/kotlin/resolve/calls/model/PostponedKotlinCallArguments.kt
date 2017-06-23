@@ -25,48 +25,40 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 
-sealed class ArgumentWithPostponeResolution {
-    abstract val outerCall: KotlinCall
-    abstract val argument: KotlinCallArgument
-    abstract val inputTypes: Collection<UnwrappedType> // parameters and implicit receiver
-    abstract val outputType: UnwrappedType?
+sealed class PostponedKotlinCallArgument {
+    abstract val argument: PostponableKotlinCallArgument
 }
 
-class ResolvedLambdaArgument(
-        override val outerCall: KotlinCall,
+class PostponedLambdaArgument(
+        val outerCall: KotlinCall,
         override val argument: LambdaKotlinCallArgument,
         val isSuspend: Boolean,
         val receiver: UnwrappedType?,
         val parameters: List<UnwrappedType>,
         val returnType: UnwrappedType
-) : ArgumentWithPostponeResolution() {
+) : PostponedKotlinCallArgument() {
     var analyzed: Boolean = false
 
     val type: SimpleType = createFunctionType(returnType.builtIns, Annotations.EMPTY, receiver, parameters, null, returnType, isSuspend) // todo support annotations
 
-    override val inputTypes: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
-    override val outputType: UnwrappedType get() = returnType
+    val inputTypes: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
+    val outputType: UnwrappedType get() = returnType
 
     lateinit var resultArguments: List<SimpleKotlinCallArgument>
     lateinit var finalReturnType: UnwrappedType
 }
 
-class ResolvedCallableReferenceArgument(
-        override val outerCall: KotlinCall,
+class PostponedCallableReferenceArgument(
         override val argument: CallableReferenceKotlinCallArgument,
-        val myTypeVariables: List<NewTypeVariable>,
-        val callableResolutionCandidate: CallableReferenceCandidate,
-        val reflectionType: UnwrappedType // via myTypeVariables variables
-) : ArgumentWithPostponeResolution() {
-    override val inputTypes: Collection<UnwrappedType> get() = reflectionType.arguments.dropLast(1).map { it.type.unwrap() }
-    override val outputType: UnwrappedType? = reflectionType.arguments.last().type.unwrap()
+        val expectedType: UnwrappedType
+) : PostponedKotlinCallArgument() {
+    var analyzedAndThereIsResult: Boolean = false
+
+    lateinit var myTypeVariables: List<NewTypeVariable>
+    lateinit var callableResolutionCandidate: CallableReferenceCandidate
 }
 
-class ResolvedCollectionLiteralArgument(
-        override val outerCall: KotlinCall,
+class PostponedCollectionLiteralArgument(
         override val argument: CollectionLiteralKotlinCallArgument,
         val expectedType: UnwrappedType
-) : ArgumentWithPostponeResolution() {
-    override val inputTypes: Collection<UnwrappedType> get() = emptyList()
-    override val outputType: UnwrappedType? = null
-}
+) : PostponedKotlinCallArgument()

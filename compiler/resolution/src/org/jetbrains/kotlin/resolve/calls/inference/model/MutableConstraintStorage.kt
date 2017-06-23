@@ -81,8 +81,6 @@ internal class MutableConstraintStorage : ConstraintStorage {
     override var maxTypeDepthFromInitialConstraints: Int = 1
     override val errors: MutableList<KotlinCallDiagnostic> = ArrayList()
     override val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType> = LinkedHashMap()
-    override val lambdaArguments: MutableList<ResolvedLambdaArgument> = ArrayList()
-    override val callableReferenceArguments: MutableList<ResolvedCallableReferenceArgument> = ArrayList()
-    override val collectionLiteralArguments: MutableList<ResolvedCollectionLiteralArgument> = ArrayList()
+    override val postponedArguments: MutableList<PostponedKotlinCallArgument> = ArrayList()
     override val innerCalls: MutableList<ResolvedKotlinCall.OnlyResolvedKotlinCall> = ArrayList()
 }

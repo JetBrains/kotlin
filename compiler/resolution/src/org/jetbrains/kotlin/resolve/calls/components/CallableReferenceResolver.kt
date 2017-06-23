@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.components.SimpleConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallContext
-import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
@@ -52,10 +52,38 @@ class CallableReferenceOverloadConflictResolver(
     }
 }
 
-class PostponeCallableReferenceArgument(
-        val argument: CallableReferenceKotlinCallArgument,
-        val expectedType: UnwrappedType
-)
+fun processCallableReferenceArgument(
+        callContext: KotlinCallContext,
+        csBuilder: ConstraintSystemBuilder,
+        postponedArgument: PostponedCallableReferenceArgument
+): KotlinCallDiagnostic? {
+    val argument = postponedArgument.argument
+    val expectedType = postponedArgument.expectedType
+
+    val subLHSCall = ((argument.lhsResult as? LHSResult.Expression)?.lshCallArgument as? SubKotlinCallArgument)
+    if (subLHSCall != null) {
+        csBuilder.addInnerCall(subLHSCall.resolvedCall)
+    }
+    val candidates = callContext.callableReferenceResolver.runRLSResolution(callContext, argument, expectedType) { checkCallableReference ->
+        csBuilder.runTransaction { checkCallableReference(this); false }
+    }
+    val chosenCandidate = when (candidates.size) {
+        0 -> return NoneCallableReferenceCandidates(argument)
+        1 -> candidates.single()
+        else -> return CallableReferenceCandidatesAmbiguity(argument, candidates)
+    }
+    val (toFreshSubstitutor, diagnostic) = with(chosenCandidate) {
+        csBuilder.checkCallableReference(argument, dispatchReceiver, extensionReceiver, candidate,
+                                         reflectionCandidateType, expectedType, callContext.scopeTower.lexicalScope.ownerDescriptor)
+    }
+
+    postponedArgument.analyzedAndThereIsResult = true
+    postponedArgument.myTypeVariables = toFreshSubstitutor.freshVariables
+    postponedArgument.callableResolutionCandidate = chosenCandidate
+
+    return diagnostic
+}
+
 
 class CallableReferenceResolver(
         val towerResolver: TowerResolver,

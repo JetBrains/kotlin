@@ -44,8 +44,8 @@ interface KotlinResolutionCallbacks {
     // todo this is hack for some client which try to read ResolvedCall from trace before all calls completed
     fun bindStubResolvedCallForCandidate(candidate: KotlinResolutionCandidate)
 
-    fun completeCallableReference(callableReferenceArgument: ResolvedCallableReferenceArgument,
+    fun completeCallableReference(callableReferenceArgument: PostponedCallableReferenceArgument,
                                   resultTypeParameters: List<UnwrappedType>)
 
-    fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralArgument)
+    fun completeCollectionLiteralCalls(collectionLiteralArgument: PostponedCollectionLiteralArgument)
 }

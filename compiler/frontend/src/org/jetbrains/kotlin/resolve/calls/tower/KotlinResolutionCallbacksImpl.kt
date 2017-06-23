@@ -156,7 +156,7 @@ class KotlinResolutionCallbacksImpl(
     }
 
     override fun completeCallableReference(
-            callableReferenceArgument: ResolvedCallableReferenceArgument,
+            callableReferenceArgument: PostponedCallableReferenceArgument,
             resultTypeParameters: List<UnwrappedType>
     ) {
         val callableCandidate = callableReferenceArgument.callableResolutionCandidate
@@ -208,7 +208,7 @@ class KotlinResolutionCallbacksImpl(
         doubleColonExpressionResolver.checkReferenceIsToAllowedMember(callableCandidate.candidate, topLevelCallContext.trace, callableReferenceExpression)
     }
 
-    override fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralArgument) {
+    override fun completeCollectionLiteralCalls(collectionLiteralArgument: PostponedCollectionLiteralArgument) {
         val psiCallArgument = collectionLiteralArgument.argument.psiCallArgument as CollectionLiteralKotlinCallArgumentImpl
         val context = psiCallArgument.outerCallContext
 

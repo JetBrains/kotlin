@@ -143,19 +143,9 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         return false
     }
 
-    override fun addLambdaArgument(resolvedLambdaArgument: ResolvedLambdaArgument) {
+    override fun addPostponedArgument(postponedArgument: PostponedKotlinCallArgument) {
         checkState(State.BUILDING, State.COMPLETION)
-        storage.lambdaArguments.add(resolvedLambdaArgument)
-    }
-
-    override fun addCallableReferenceArgument(resolvedCallableReferenceArgument: ResolvedCallableReferenceArgument) {
-        checkState(State.BUILDING, State.COMPLETION)
-        storage.callableReferenceArguments.add(resolvedCallableReferenceArgument)
-    }
-
-    override fun addCollectionLiteralArgument(collectionLiteralArgument: ResolvedCollectionLiteralArgument) {
-        checkState(State.BUILDING, State.COMPLETION)
-        storage.collectionLiteralArguments.add(collectionLiteralArgument)
+        storage.postponedArguments.add(postponedArgument)
     }
 
     private fun getVariablesForFixation(): Map<NewTypeVariable, UnwrappedType> {
@@ -205,8 +195,7 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         storage.maxTypeDepthFromInitialConstraints = Math.max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
         storage.errors.addAll(otherSystem.errors)
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
-        storage.lambdaArguments.addAll(otherSystem.lambdaArguments)
-        storage.callableReferenceArguments.addAll(otherSystem.callableReferenceArguments)
+        storage.postponedArguments.addAll(otherSystem.postponedArguments)
         storage.innerCalls.addAll(otherSystem.innerCalls)
     }
 
@@ -249,29 +238,15 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         storage.errors.add(error)
     }
 
-    //  KotlinCallCompleter.Context
-    override val lambdaArguments: List<ResolvedLambdaArgument> get() {
+    //  KotlinCallCompleter.Context, FixationOrderCalculator.Context
+    override val lambdaArguments: List<PostponedLambdaArgument> get() {
         checkState(State.COMPLETION)
-        return storage.lambdaArguments
+        return storage.postponedArguments.filterIsInstance<PostponedLambdaArgument>()
     }
 
     // FixationOrderCalculator.Context
-    override val lambdaAndCallableReferenceArguments: List<ArgumentWithPostponeResolution> get() {
-        checkState(State.COMPLETION)
-        return storage.lambdaArguments + storage.callableReferenceArguments
-    }
-
-    override val callableReferenceArguments: List<ResolvedCallableReferenceArgument>
-        get() {
-            checkState(State.COMPLETION)
-            return storage.callableReferenceArguments
-        }
-
-    override val collectionLiteralArguments: List<ResolvedCollectionLiteralArgument>
-        get() {
-            checkState(State.COMPLETION)
-            return storage.collectionLiteralArguments
-        }
+    override val postponedArguments: List<PostponedKotlinCallArgument>
+        get() = storage.postponedArguments
 
     // KotlinCallCompleter.Context
     override fun asResultTypeResolverContext() = apply { checkState(State.COMPLETION) }

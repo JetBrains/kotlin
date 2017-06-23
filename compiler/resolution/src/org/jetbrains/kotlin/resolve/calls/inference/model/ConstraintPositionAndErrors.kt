@@ -50,7 +50,7 @@ class FixVariableConstraintPosition(val variable: NewTypeVariable) : ConstraintP
 class KnownTypeParameterConstraintPosition(val typeArgument: KotlinType) : ConstraintPosition() {
     override fun toString() = "TypeArgument $typeArgument"
 }
-class LambdaArgumentConstraintPosition(val lambdaArgument: ResolvedLambdaArgument) : ConstraintPosition() {
+class LambdaArgumentConstraintPosition(val lambdaArgument: PostponedLambdaArgument) : ConstraintPosition() {
     override fun toString(): String {
         return "LambdaArgument $lambdaArgument"
     }
