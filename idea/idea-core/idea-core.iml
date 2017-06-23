@@ -18,5 +18,6 @@
     <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="library" exported="" name="kotlinx-coroutines-core" level="project" />
     <orderEntry type="module" module-name="frontend.script" />
+    <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
   </component>
 </module>
