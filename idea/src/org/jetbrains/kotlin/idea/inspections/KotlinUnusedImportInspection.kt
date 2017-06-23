@@ -39,8 +39,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiUtilBase
 import com.intellij.util.DocumentUtil
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.OptimizedImportsBuilder
@@ -152,16 +152,14 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         val highlightingSession = HighlightingSessionImpl.getHighlightingSession(file, progress)
 
         val project = highlightingSession.project
-        val editor = highlightingSession.editor
+        val editor = PsiUtilBase.findEditor(file)
         if (editor != null) {
             val modificationStamp = editor.document.modificationStamp
-            val invokeFixLater = object : Disposable {
-                override fun dispose() {
-                    // later because should invoke when highlighting is finished
-                    ApplicationManager.getApplication().invokeLater {
-                        if (timeToOptimizeImportsOnTheFly(file, editor, project) && editor.document.modificationStamp == modificationStamp) {
-                            optimizeImportsOnTheFly(file, optimizedImports, editor, project)
-                        }
+            val invokeFixLater = Disposable {
+                // later because should invoke when highlighting is finished
+                ApplicationManager.getApplication().invokeLater {
+                    if (timeToOptimizeImportsOnTheFly(file, editor, project) && editor.document.modificationStamp == modificationStamp) {
+                        optimizeImportsOnTheFly(file, optimizedImports, editor, project)
                     }
                 }
             }
@@ -193,7 +191,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
 
         val document = editor.document
         var hasErrors = false
-        DaemonCodeAnalyzerEx.processHighlights(document, project, HighlightSeverity.ERROR, 0, document.textLength, Processor { highlightInfo ->
+        DaemonCodeAnalyzerEx.processHighlights(document, project, HighlightSeverity.ERROR, 0, document.textLength, { highlightInfo ->
             if (!importsRange.containsRange(highlightInfo.startOffset, highlightInfo.endOffset)) {
                 hasErrors = true
                 false
@@ -215,7 +213,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         }
     }
 
-    private class OptimizeImportsQuickFix(private val file: KtFile): LocalQuickFix {
+    private class OptimizeImportsQuickFix(private val file: KtFile) : LocalQuickFix {
         override fun getName() = "Optimize imports"
 
         override fun getFamilyName() = name
