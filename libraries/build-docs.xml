@@ -24,9 +24,19 @@
     </target>
 
     <target name="preprocess-js-common">
-        <exec dir="${basedir}" executable="./gradlew">
-            <arg value=":kotlin-stdlib-js:preprocessSourcesMain"/>
-        </exec>
+        <java classname="org.gradle.wrapper.GradleWrapperMain"
+              fork="true"
+              dir="${basedir}"
+              failonerror="true"
+              timeout="4000000"
+              maxmemory="400m"
+              taskname="gradle">
+            <classpath>
+                <pathelement location="${basedir}/gradle/wrapper/gradle-wrapper.jar"/>
+            </classpath>
+            <arg line="--no-daemon"/>
+            <arg line=":kotlin-stdlib-js:preprocessSourcesMain"/>
+        </java>
     </target>
 
     <target name="document" depends="clean,preprocess-js-common">
