@@ -74,6 +74,7 @@ public final class WhenTranslator extends AbstractTranslator {
 
             if (resultIf == null) {
                 currentIf = JsAstUtils.newJsIf(translateConditions(entry, context()), statement);
+                currentIf.setSource(entry);
                 resultIf = currentIf;
             }
             else {
@@ -83,6 +84,7 @@ public final class WhenTranslator extends AbstractTranslator {
                 }
                 JsBlock conditionsBlock = new JsBlock();
                 JsIf nextIf = JsAstUtils.newJsIf(translateConditions(entry, context().innerBlock(conditionsBlock)), statement);
+                nextIf.setSource(entry);
                 JsStatement statementToAdd = JsAstUtils.mergeStatementInBlockIfNeeded(nextIf, conditionsBlock);
                 currentIf.setElseStatement(statementToAdd);
                 currentIf = nextIf;
@@ -147,6 +149,7 @@ public final class WhenTranslator extends AbstractTranslator {
             JsNameRef result = (JsNameRef) rightExpression;
             JsIf ifStatement = JsAstUtils.newJsIf(leftExpression, JsAstUtils.assignment(result, new JsBooleanLiteral(true)).makeStmt(),
                                                   rightContext.getCurrentBlock());
+            ifStatement.setSource(condition);
             context.addStatementToCurrentBlock(ifStatement);
             return result;
         }
