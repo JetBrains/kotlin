@@ -2,6 +2,7 @@ package org.jetbrains.dokka
 
 import org.jetbrains.dokka.DokkaConfiguration.PackageOptions
 import ru.yole.jkid.deserialization.deserialize
+import java.io.File
 import java.util.function.BiConsumer
 
 
@@ -64,7 +65,8 @@ class DokkaBootstrapImpl : DokkaBootstrap {
                         perPackageOptions,
                         externalDocumentationLinks,
                         noStdlibLink,
-                        cacheRoot
+                        cacheRoot,
+                        suppressedFiles.map { File(it) }
                 )
         )
     }
