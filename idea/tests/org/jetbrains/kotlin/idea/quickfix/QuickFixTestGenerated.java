@@ -8624,6 +8624,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("assignmentArray.kt")
+        public void testAssignmentArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/assignmentArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentBinaryOperator.kt")
+        public void testAssignmentBinaryOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/assignmentBinaryOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentCallExpression.kt")
+        public void testAssignmentCallExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/assignmentCallExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentList.kt")
+        public void testAssignmentList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/assignmentList.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("binaryOperator.kt")
         public void testBinaryOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/binaryOperator.kt");
@@ -8753,6 +8777,36 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/assignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentFromImplicitParameter.kt")
+        public void testAssignmentFromImplicitParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/assignmentFromImplicitParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentToNullable.kt")
+        public void testAssignmentToNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/assignmentToNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentToProperty.kt")
+        public void testAssignmentToProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/assignmentToProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expression.kt")
+        public void testExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/expression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extFunction.kt")
         public void testExtFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/extFunction.kt");
@@ -8843,6 +8897,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("applyWithoutThisMethodCall.kt")
         public void testApplyWithoutThisMethodCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction/applyWithoutThisMethodCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction/assignment.kt");
             doTest(fileName);
         }
 

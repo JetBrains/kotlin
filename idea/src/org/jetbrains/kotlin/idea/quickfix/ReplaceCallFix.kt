@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 abstract class ReplaceCallFix(
         expression: KtQualifiedExpression,
-        private val operation: String
+        private val operation: String,
+        private val notNullNeeded: Boolean = false
 ) : KotlinQuickFixAction<KtQualifiedExpression>(expression) {
 
     override fun getFamilyName() = text
@@ -44,25 +45,39 @@ abstract class ReplaceCallFix(
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val newExpression = KtPsiFactory(element).createExpressionByPattern("$0$operation$1",
+        val elvis = elvisOrEmpty(notNullNeeded)
+        val newExpression = KtPsiFactory(element).createExpressionByPattern("$0$operation$1$elvis",
                                                                             element.receiverExpression, element.selectorExpression!!)
-        element.replace(newExpression)
+        val replacement = element.replace(newExpression)
+        if (notNullNeeded) {
+            replacement.moveCaretToEnd(editor, project)
+        }
     }
 }
 
-class ReplaceImplicitReceiverCallFix(expression: KtExpression) : KotlinQuickFixAction<KtExpression>(expression) {
+class ReplaceImplicitReceiverCallFix(
+        expression: KtExpression,
+        private val notNullNeeded: Boolean
+) : KotlinQuickFixAction<KtExpression>(expression) {
     override fun getFamilyName() = text
 
     override fun getText() = "Replace with safe (this?.) call"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val newExpression = KtPsiFactory(element).createExpressionByPattern("this?.$0", element)
-        element.replace(newExpression)
+        val elvis = elvisOrEmpty(notNullNeeded)
+        val newExpression = KtPsiFactory(element).createExpressionByPattern("this?.$0$elvis", element)
+        val replacement = element.replace(newExpression)
+        if (notNullNeeded) {
+            replacement.moveCaretToEnd(editor, project)
+        }
     }
 }
 
-class ReplaceWithSafeCallFix(expression: KtDotQualifiedExpression): ReplaceCallFix(expression, "?.") {
+class ReplaceWithSafeCallFix(
+        expression: KtDotQualifiedExpression,
+        notNullNeeded: Boolean
+) : ReplaceCallFix(expression, "?.", notNullNeeded) {
 
     override fun getText() = "Replace with safe (?.) call"
 
@@ -71,12 +86,13 @@ class ReplaceWithSafeCallFix(expression: KtDotQualifiedExpression): ReplaceCallF
             val psiElement = diagnostic.psiElement
             val qualifiedExpression = psiElement.parent as? KtDotQualifiedExpression
             if (qualifiedExpression != null) {
-                return ReplaceWithSafeCallFix(qualifiedExpression)
-            } else {
+                return ReplaceWithSafeCallFix(qualifiedExpression, qualifiedExpression.shouldHaveNotNullType())
+            }
+            else {
                 psiElement as? KtNameReferenceExpression ?: return null
                 if (psiElement.getResolvedCall(psiElement.analyze())?.getImplicitReceiverValue() != null) {
                     val expressionToReplace: KtExpression = psiElement.parent as? KtCallExpression ?: psiElement
-                    return ReplaceImplicitReceiverCallFix(expressionToReplace)
+                    return ReplaceImplicitReceiverCallFix(expressionToReplace, expressionToReplace.shouldHaveNotNullType())
                 }
                 return null
             }
@@ -84,7 +100,10 @@ class ReplaceWithSafeCallFix(expression: KtDotQualifiedExpression): ReplaceCallF
     }
 }
 
-class ReplaceWithSafeCallForScopeFunctionFix(expression: KtDotQualifiedExpression) : ReplaceCallFix(expression, "?.") {
+class ReplaceWithSafeCallForScopeFunctionFix(
+        expression: KtDotQualifiedExpression,
+        notNullNeeded: Boolean
+) : ReplaceCallFix(expression, "?.", notNullNeeded) {
 
     override fun getText() = "Replace scope function with safe (?.) call"
 
@@ -118,7 +137,8 @@ class ReplaceWithSafeCallForScopeFunctionFix(expression: KtDotQualifiedExpressio
                 }
             }
 
-            return ReplaceWithSafeCallForScopeFunctionFix(scopeDotQualifiedExpression)
+            return ReplaceWithSafeCallForScopeFunctionFix(
+                    scopeDotQualifiedExpression, scopeDotQualifiedExpression.shouldHaveNotNullType())
         }
 
         private fun KtCallExpression.scopeFunctionKind(context: BindingContext): ScopeFunctionKind? {
@@ -133,7 +153,7 @@ class ReplaceWithSafeCallForScopeFunctionFix(expression: KtDotQualifiedExpressio
     }
 }
 
-class ReplaceWithDotCallFix(expression: KtSafeQualifiedExpression): ReplaceCallFix(expression, "."), CleanupFix {
+class ReplaceWithDotCallFix(expression: KtSafeQualifiedExpression) : ReplaceCallFix(expression, "."), CleanupFix {
     override fun getText() = "Replace with dot call"
 
     companion object : KotlinSingleIntentionActionFactory() {
@@ -143,3 +163,4 @@ class ReplaceWithDotCallFix(expression: KtSafeQualifiedExpression): ReplaceCallF
         }
     }
 }
+
