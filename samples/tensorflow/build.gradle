@@ -12,3 +12,12 @@ konanArtifacts {
         linkerOpts "-L${System.getProperty("user.home")}/.konan/third-party/tensorflow/lib -ltensorflow"
     }
 }
+
+task downloadTensorflow(type: Exec) {
+    workingDir getProjectDir()
+    commandLine './downloadTensorflow.sh'
+}
+
+genTensorflowInteropStubs {
+    dependsOn 'downloadTensorflow'
+}
