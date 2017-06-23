@@ -35,6 +35,7 @@ import java.util.logging.*
 import kotlin.concurrent.schedule
 
 val DAEMON_PERIODIC_CHECK_INTERVAL_MS = 1000L
+val DAEMON_PERIODIC_SELDOM_CHECK_INTERVAL_MS = 60000L
 
 class LogStream(name: String) : OutputStream() {
 
