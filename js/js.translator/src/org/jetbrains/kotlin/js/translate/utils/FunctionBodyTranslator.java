@@ -91,6 +91,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, Namer.getUndefinedExpression());
             checkArgIsUndefined.source(KotlinSourceElementKt.getPsi(valueParameter.getSource()));
             JsIf jsIf = JsAstUtils.newJsIf(checkArgIsUndefined, thenStatement);
+            jsIf.setSource(checkArgIsUndefined.getSource());
             result.add(jsIf);
         }
 
