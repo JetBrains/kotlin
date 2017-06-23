@@ -5,7 +5,9 @@ built using either command line tools (via `build.sh` script presented in each s
 See `README.md` in sample directories to learn more about specific samples and the building process.
 
 **Note**: If the samples are built from a source tree (not from a distribution archive) the compiler and the gradle
-plugin built from the sources are used.
+plugin built from the sources are used. So one must build the compiler by running `./gradlew cross_dist` from the 
+Kotlin/Native root directory before building samples (see
+[README.md](https://github.com/JetBrains/kotlin-native/blob/master/README.md) for details).
 
 One may also build all the samples with one command. To build them using the command line tools run:
 

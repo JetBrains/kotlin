@@ -56,7 +56,6 @@ dependencies {
 
 jar {
     dependsOn(':tools:helpers:jar')
-    dependsOn(':cross_dist')
     from (rootProject.findProject(':tools:helpers').sourceSets.main.output)
     from (rootProject.findProject(':shared').sourceSets.main.output)
 }
