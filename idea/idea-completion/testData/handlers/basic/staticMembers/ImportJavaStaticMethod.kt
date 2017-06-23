@@ -6,4 +6,4 @@ fun foo() {
 
 // INVOCATION_COUNT: 1
 // ELEMENT_TEXT: "SwingUtilities.invokeAndWait"
-// TAIL_TEXT: " {...} ((() -> Unit)!) (javax.swing)"
+// TAIL_TEXT: " {...} (doRun: (() -> Unit)!) (javax.swing)"

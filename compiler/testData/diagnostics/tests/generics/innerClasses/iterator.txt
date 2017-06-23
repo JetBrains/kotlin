@@ -19,7 +19,7 @@ public final class A</*0*/ T> : java.util.AbstractCollection<T> {
     public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<T!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<T!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
-    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public final inner class MyIt /*captured type parameters: /*0*/ T*/ : kotlin.collections.MutableIterator<T> {

@@ -1,4 +1,4 @@
-// ERROR: None of the following functions can be called with the arguments supplied:  public constructor FileInputStream(p0: File!) defined in java.io.FileInputStream public constructor FileInputStream(p0: FileDescriptor!) defined in java.io.FileInputStream public constructor FileInputStream(p0: String!) defined in java.io.FileInputStream
+// ERROR: None of the following functions can be called with the arguments supplied:  public constructor FileInputStream(file: File!) defined in java.io.FileInputStream public constructor FileInputStream(fdObj: FileDescriptor!) defined in java.io.FileInputStream public constructor FileInputStream(name: String!) defined in java.io.FileInputStream
 // ERROR: Type mismatch: inferred type is DataInputStream but InputStream! was expected
 // ERROR: Assignments are not expressions, and only expressions are allowed in this context
 // ERROR: Unresolved reference: close

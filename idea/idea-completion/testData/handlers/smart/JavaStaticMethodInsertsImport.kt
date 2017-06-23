@@ -3,4 +3,4 @@ fun foo(){
 }
 
 // ELEMENT_TEXT: "Calendar.getInstance"
-// TAIL_TEXT: "(TimeZone!) (java.util)"
+// TAIL_TEXT: "(zone: TimeZone!) (java.util)"

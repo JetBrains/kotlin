@@ -23,15 +23,15 @@ public final class Test : java.lang.Thread {
     invisible_fake final override /*1*/ /*fake_override*/ var threadStatus: kotlin.Int
     invisible_fake final override /*1*/ /*fake_override*/ var tid: kotlin.Long
     invisible_fake final override /*1*/ /*fake_override*/ var uncaughtExceptionHandler: java.lang.Thread.UncaughtExceptionHandler!
-    invisible_fake open override /*1*/ /*fake_override*/ fun blockedOn(/*0*/ p0: sun.nio.ch.Interruptible!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun blockedOn(/*0*/ b: sun.nio.ch.Interruptible!): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun checkAccess(): kotlin.Unit
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
     @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun countStackFrames(): kotlin.Int
     @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun destroy(): kotlin.Unit
-    invisible_fake open override /*1*/ /*fake_override*/ fun dispatchUncaughtException(/*0*/ p0: kotlin.Throwable!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun dispatchUncaughtException(/*0*/ e: kotlin.Throwable!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     invisible_fake open override /*1*/ /*fake_override*/ fun exit(): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun getContextClassLoader(): java.lang.ClassLoader!
+    @sun.reflect.CallerSensitive /* annotation class not found */ public open override /*1*/ /*fake_override*/ fun getContextClassLoader(): java.lang.ClassLoader!
     public open override /*1*/ /*fake_override*/ fun getId(): kotlin.Long
     public final override /*1*/ /*fake_override*/ fun getName(): kotlin.String!
     public final override /*1*/ /*fake_override*/ fun getPriority(): kotlin.Int
@@ -40,7 +40,8 @@ public final class Test : java.lang.Thread {
     public final override /*1*/ /*fake_override*/ fun getThreadGroup(): java.lang.ThreadGroup!
     public open override /*1*/ /*fake_override*/ fun getUncaughtExceptionHandler(): java.lang.Thread.UncaughtExceptionHandler!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    invisible_fake open override /*1*/ /*fake_override*/ fun init(/*0*/ p0: java.lang.ThreadGroup!, /*1*/ p1: java.lang.Runnable!, /*2*/ p2: kotlin.String!, /*3*/ p3: kotlin.Long): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun init(/*0*/ g: java.lang.ThreadGroup!, /*1*/ target: java.lang.Runnable!, /*2*/ name: kotlin.String!, /*3*/ stackSize: kotlin.Long): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun init(/*0*/ g: java.lang.ThreadGroup!, /*1*/ target: java.lang.Runnable!, /*2*/ name: kotlin.String!, /*3*/ stackSize: kotlin.Long, /*4*/ acc: java.security.AccessControlContext!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun interrupt(): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun interrupt0(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun isAlive(): kotlin.Boolean
@@ -48,22 +49,22 @@ public final class Test : java.lang.Thread {
     public open override /*1*/ /*fake_override*/ fun isInterrupted(): kotlin.Boolean
     invisible_fake open override /*1*/ /*fake_override*/ fun isInterrupted(/*0*/ p0: kotlin.Boolean): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun join(): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun join(/*0*/ p0: kotlin.Long): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun join(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun join(/*0*/ millis: kotlin.Long): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun join(/*0*/ millis: kotlin.Long, /*1*/ nanos: kotlin.Int): kotlin.Unit
     @kotlin.Deprecated(message = "Deprecated in Java") public final override /*1*/ /*fake_override*/ fun resume(): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun resume0(): kotlin.Unit
     public open override /*1*/ fun run(): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun setContextClassLoader(/*0*/ p0: java.lang.ClassLoader!): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun setDaemon(/*0*/ p0: kotlin.Boolean): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun setName(/*0*/ p0: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setContextClassLoader(/*0*/ cl: java.lang.ClassLoader!): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun setDaemon(/*0*/ on: kotlin.Boolean): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun setNativeName(/*0*/ p0: kotlin.String!): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun setPriority(/*0*/ p0: kotlin.Int): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun setPriority(/*0*/ newPriority: kotlin.Int): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun setPriority0(/*0*/ p0: kotlin.Int): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun setUncaughtExceptionHandler(/*0*/ p0: java.lang.Thread.UncaughtExceptionHandler!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setUncaughtExceptionHandler(/*0*/ eh: java.lang.Thread.UncaughtExceptionHandler!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun start(): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun start0(): kotlin.Unit
     @kotlin.Deprecated(message = "Deprecated in Java") public final override /*1*/ /*fake_override*/ fun stop(): kotlin.Unit
-    @kotlin.Deprecated(message = "Deprecated in Java") public final override /*1*/ /*fake_override*/ fun stop(/*0*/ p0: kotlin.Throwable!): kotlin.Unit
+    @kotlin.Deprecated(message = "Deprecated in Java") public final override /*1*/ /*fake_override*/ fun stop(/*0*/ obj: kotlin.Throwable!): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun stop0(/*0*/ p0: kotlin.Any!): kotlin.Unit
     @kotlin.Deprecated(message = "Deprecated in Java") public final override /*1*/ /*fake_override*/ fun suspend(): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun suspend0(): kotlin.Unit

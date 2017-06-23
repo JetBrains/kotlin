@@ -4,14 +4,14 @@ FILE /jvmStaticFieldReference.kt
       CALL 'println(String!): Unit' type=kotlin.Unit origin=null
         $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
           GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
-        p0: CONST String type=kotlin.String value='testFun'
+        x: CONST String type=kotlin.String value='testFun'
   PROPERTY public var testProp: kotlin.Any
     FUN public fun <get-testProp>(): kotlin.Any
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
-          p0: CONST String type=kotlin.String value='testProp/get'
+          x: CONST String type=kotlin.String value='testProp/get'
         RETURN type=kotlin.Nothing from='<get-testProp>(): Any'
           CONST Int type=kotlin.Int value='42'
     FUN public fun <set-testProp>(value: kotlin.Any): kotlin.Unit
@@ -20,7 +20,7 @@ FILE /jvmStaticFieldReference.kt
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
-          p0: CONST String type=kotlin.String value='testProp/set'
+          x: CONST String type=kotlin.String value='testProp/set'
   CLASS CLASS TestClass
     $this: VALUE_PARAMETER this@TestClass: TestClass
     CONSTRUCTOR public constructor TestClass()
@@ -37,7 +37,7 @@ FILE /jvmStaticFieldReference.kt
                 CALL 'println(String!): Unit' type=kotlin.Unit origin=null
                   $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
                     GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
-                  p0: CONST String type=kotlin.String value='TestClass/test'
+                  x: CONST String type=kotlin.String value='TestClass/test'
                 CONST Int type=kotlin.Int value='42'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test>(): kotlin.Int
         $this: VALUE_PARAMETER this@TestClass: TestClass
@@ -50,7 +50,7 @@ FILE /jvmStaticFieldReference.kt
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
-          p0: CONST String type=kotlin.String value='TestClass/init'
+          x: CONST String type=kotlin.String value='TestClass/init'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
       $this: VALUE_PARAMETER this@Any: Any
       VALUE_PARAMETER value-parameter other: kotlin.Any?

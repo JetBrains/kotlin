@@ -1,12 +1,9 @@
 // WITH_RUNTIME
 
-import java.io.File
+lateinit var x: java.lang.Readable
 
-val file = File(<caret>)
+val file = x.read(<caret>)
 
 /*
-Text: (<highlight>File!</highlight>, String!), Disabled: false, Strikeout: false, Green: false
-Text: (<highlight>String!</highlight>), Disabled: false, Strikeout: false, Green: false
-Text: (<highlight>String!</highlight>, String!), Disabled: false, Strikeout: false, Green: false
-Text: (<highlight>URI!</highlight>), Disabled: false, Strikeout: false, Green: false
+Text: (<highlight>CharBuffer!</highlight>), Disabled: false, Strikeout: false, Green: true
 */

@@ -37,7 +37,7 @@ FILE /coercionToUnit.kt
               then: CALL 'println(String!): Unit' type=kotlin.Unit origin=null
                 $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
                   GET_VAR 'tmp0_safe_receiver: PrintStream!' type=java.io.PrintStream! origin=null
-                p0: CONST String type=kotlin.String value='Hello,'
+                x: CONST String type=kotlin.String value='Hello,'
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Unit? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp1_safe_receiver: java.io.PrintStream!
@@ -53,5 +53,4 @@ FILE /coercionToUnit.kt
               then: CALL 'println(String!): Unit' type=kotlin.Unit origin=null
                 $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
                   GET_VAR 'tmp1_safe_receiver: PrintStream!' type=java.io.PrintStream! origin=null
-                p0: CONST String type=kotlin.String value='world!'
-
+                x: CONST String type=kotlin.String value='world!'
