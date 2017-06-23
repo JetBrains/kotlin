@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -107,7 +108,11 @@ open class GenericReplCompiler(disposable: Disposable,
                     getChildOfType<KtScriptInitializer>()?.
                     getChildOfType<KtExpression>()
 
-            val type = if (expression != null) compilerState.analyzerEngine.trace.bindingContext.getType(expression) else null
+            val type = expression?.let {
+                compilerState.analyzerEngine.trace.bindingContext.getType(it)
+            }?.let {
+                DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it)
+            }
 
             return ReplCompileResult.CompiledClasses(LineId(codeLine),
                                                      compilerState.history.map { it.id },

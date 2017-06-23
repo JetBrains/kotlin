@@ -85,7 +85,7 @@ sealed class ReplCompileResult : Serializable {
                           val classes: List<CompiledClassData>,
                           val hasResult: Boolean,
                           val classpathAddendum: List<File>,
-                          val type: KotlinType?) : ReplCompileResult()
+                          val type: String?) : ReplCompileResult()
 
     class Incomplete : ReplCompileResult()
 
@@ -112,7 +112,7 @@ interface ReplEvalAction {
 }
 
 sealed class ReplEvalResult : Serializable {
-    class ValueResult(val value: Any?, val type: KotlinType?) : ReplEvalResult() {
+    class ValueResult(val value: Any?, val type: String?) : ReplEvalResult() {
         override fun toString(): String = "$value : $type"
     }
 
