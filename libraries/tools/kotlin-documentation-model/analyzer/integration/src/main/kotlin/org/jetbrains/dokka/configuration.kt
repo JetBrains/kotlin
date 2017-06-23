@@ -38,6 +38,7 @@ interface DokkaConfiguration {
     val externalDocumentationLinks: List<DokkaConfiguration.ExternalDocumentationLink>
     val noStdlibLink: Boolean
     val cacheRoot: String?
+    val suppressedFiles: List<String>
 
     interface SourceRoot {
         val path: String
@@ -96,7 +97,8 @@ data class SerializeOnlyDokkaConfiguration(override val moduleName: String,
                                            override val perPackageOptions: List<DokkaConfiguration.PackageOptions>,
                                            override val externalDocumentationLinks: List<DokkaConfiguration.ExternalDocumentationLink>,
                                            override val noStdlibLink: Boolean,
-                                           override val cacheRoot: String?) : DokkaConfiguration
+                                           override val cacheRoot: String?,
+                                           override val suppressedFiles: List<String>) : DokkaConfiguration
 
 
 data class ExternalDocumentationLinkImpl(@CustomSerializer(UrlSerializer::class) override val url: URL,
