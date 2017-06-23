@@ -50,13 +50,17 @@ class CoreJrtFileSystem(private val fileSystem: FileSystem) : DeprecatedVirtualF
                         FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath))
                     }
                     else {
-                        val jrtFsJar = File(jdkHome, "lib/jrt-fs.jar")
-                        if (!jrtFsJar.exists()) return null
-
+                        val jrtFsJar = loadJrtFsJar(jdkHome) ?: return null
                         val classLoader = URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
                         FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
                     }
             return CoreJrtFileSystem(fileSystem)
         }
+
+        private fun loadJrtFsJar(jdkHome: File): File? =
+                File(jdkHome, "lib/jrt-fs.jar").takeIf(File::exists)
+
+        fun isModularJdk(jdkHome: File): Boolean =
+                loadJrtFsJar(jdkHome) != null
     }
 }

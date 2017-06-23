@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import org.jetbrains.kotlin.codegen.CompilationException
@@ -404,21 +405,23 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     return OK
                 }
 
-                if (arguments.jdkHome != null) {
+                val (jdkHome, classesRoots) = if (arguments.jdkHome != null) {
                     val jdkHome = File(arguments.jdkHome)
-                    configuration.put(JVMConfigurationKeys.JDK_HOME, jdkHome)
-                    val classesRoots = PathUtil.getJdkClassesRoots(jdkHome)
-                    configuration.addJvmClasspathRoots(classesRoots)
-
                     messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
+                    jdkHome to PathUtil.getJdkClassesRoots(jdkHome)
+                }
+                else {
+                    File(System.getProperty("java.home")) to PathUtil.getJdkClassesRootsFromCurrentJre()
+                }
+
+                configuration.put(JVMConfigurationKeys.JDK_HOME, jdkHome)
+
+                if (!CoreJrtFileSystem.isModularJdk(jdkHome)) {
+                    configuration.addJvmClasspathRoots(classesRoots)
                     if (classesRoots.isEmpty()) {
                         messageCollector.report(ERROR, "No class roots are found in the JDK path: $jdkHome")
                         return COMPILATION_ERROR
                     }
-                }
-                else {
-                    configuration.put(JVMConfigurationKeys.JDK_HOME, File(System.getProperty("java.home")))
-                    configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
                 }
             }
             catch (t: Throwable) {
