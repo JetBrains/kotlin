@@ -58,7 +58,3 @@ class TypeArgumentsToParametersMapper {
 
 }
 
-class WrongCountOfTypeArguments(val descriptor: CallableDescriptor, val currentCount: Int) :
-        KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onTypeArguments(this)
-}

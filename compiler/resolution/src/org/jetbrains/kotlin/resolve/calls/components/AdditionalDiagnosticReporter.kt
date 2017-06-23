@@ -58,7 +58,7 @@ class AdditionalDiagnosticReporter {
             }
             &&
             candidate.status.diagnostics.filterIsInstance<UnstableSmartCast>().none {
-                it.expressionArgument == receiver
+                it.argument == receiver
             }
         }
     }
@@ -73,7 +73,7 @@ class AdditionalDiagnosticReporter {
                         val smartCastDiagnostic = createSmartCastDiagnostic(argument, argument.getExpectedType(parameter)) ?: continue
 
                         val thereIsUnstableSmartCastError = candidate.status.diagnostics.filterIsInstance<UnstableSmartCast>().any {
-                            it.expressionArgument == argument
+                            it.argument == argument
                         }
 
                         if (!thereIsUnstableSmartCastError) {

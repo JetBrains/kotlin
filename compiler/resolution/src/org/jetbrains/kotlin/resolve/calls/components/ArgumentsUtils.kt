@@ -40,8 +40,6 @@ internal val ReceiverValueWithSmartCastInfo.stableType: UnwrappedType
         return intersectWrappedTypes(possibleTypes + receiverValue.type)
     }
 
-
-
 internal fun KotlinCallArgument.getExpectedType(parameter: ValueParameterDescriptor) =
         if (this.isSpread) {
             parameter.type.unwrap()
@@ -49,3 +47,5 @@ internal fun KotlinCallArgument.getExpectedType(parameter: ValueParameterDescrip
         else {
             parameter.varargElementType?.unwrap() ?: parameter.type.unwrap()
         }
+
+val ValueParameterDescriptor.isVararg: Boolean get() = varargElementType != null
