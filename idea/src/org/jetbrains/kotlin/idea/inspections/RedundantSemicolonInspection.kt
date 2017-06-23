@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 
@@ -56,6 +57,16 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
         }
 
         if (semicolon.parent is KtEnumEntry) return false
+
+        (semicolon.parent.parent as? KtClass)?.let {
+            if (it.isEnum() && it.getChildrenOfType<KtEnumEntry>().isEmpty()) {
+                if (semicolon.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment && !it.isLineBreak() }?.node?.elementType == KtTokens.LBRACE
+                    && it.declarations.isNotEmpty()) {
+                    //first semicolon in enum with no entries, but with some declarations
+                    return false
+                }
+            }
+        }
 
         (semicolon.prevLeaf()?.parent as? KtLoopExpression)?.let {
             if (it !is KtDoWhileExpression && it.body == null)
