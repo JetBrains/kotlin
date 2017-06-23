@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.idea.debugger.stepping
 import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.psi.PsiElement
 import com.intellij.util.Range
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.KotlinIcons
@@ -43,8 +44,19 @@ class KotlinMethodSmartStepTarget(
 
         if (other == null || other !is KotlinMethodSmartStepTarget) return false
 
+        if (descriptor is FunctionInvokeDescriptor && other.descriptor is FunctionInvokeDescriptor) {
+            // Don't allow to choose several invoke targets in smart step into as we can't distinguish them reliably during debug
+            return true
+        }
+
         return descriptor == other.descriptor
     }
 
-    override fun hashCode() = descriptor.hashCode()
+    override fun hashCode(): Int {
+        if (descriptor is FunctionInvokeDescriptor) {
+            // Predefined value to make all FunctionInvokeDescriptor targets equal
+            return 42
+        }
+        return descriptor.hashCode()
+    }
 }

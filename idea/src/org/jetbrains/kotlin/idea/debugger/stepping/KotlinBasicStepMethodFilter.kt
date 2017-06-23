@@ -72,11 +72,13 @@ class KotlinBasicStepMethodFilter(
         if (currentDescriptor !is CallableMemberDescriptor) return false
         if (currentDescriptor.kind != DECLARATION) return false
 
-        if (compareDescriptors(currentDescriptor, targetDescriptor)) return true
-
-        if (targetDescriptor is FunctionInvokeDescriptor && currentDescriptor is FunctionDescriptor) {
-            return isCompatibleSignatures(targetDescriptor, currentDescriptor)
+        if (targetDescriptor is FunctionInvokeDescriptor) {
+            // There can be only one 'invoke' target at the moment so consider position as expected.
+            // Descriptors can be not-equal, say when parameter has type `(T) -> T` and lambda is `Int.() -> Int`.
+            return true
         }
+
+        if (compareDescriptors(currentDescriptor, targetDescriptor)) return true
 
         // We should stop if current descriptor overrides the target one or some base descriptor of target
         // (if target descriptor is delegation or fake override)
@@ -100,24 +102,4 @@ class KotlinBasicStepMethodFilter(
 
 private fun compareDescriptors(d1: DeclarationDescriptor, d2: DeclarationDescriptor): Boolean {
     return d1 == d2 || d1.original == d2.original
-}
-
-private fun isCompatibleSignatures(target: FunctionDescriptor, current: FunctionDescriptor): Boolean {
-    // A very primitive approximation
-    if (target.valueParameters.size != current.valueParameters.size) {
-        return false
-    }
-
-    if (target.returnType != current.returnType) {
-        return false
-    }
-
-    for ((i, targetParam) in target.valueParameters.withIndex()) {
-        val currentParam = current.valueParameters[i]
-        if (targetParam.type != currentParam.type) {
-            return false
-        }
-    }
-
-    return true
 }
