@@ -105,6 +105,7 @@
         <element id="library" level="project" name="uast-java" />
         <element id="library" level="project" name="kotlinx-coroutines-core" />
         <element id="library" level="project" name="javaslang" />
+        <element id="library" level="project" name="kotlinx-coroutines-jdk8" />
       </element>
       <element id="directory" name="kotlinc">
         <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
