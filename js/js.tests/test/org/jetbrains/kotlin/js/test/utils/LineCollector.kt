@@ -132,6 +132,8 @@ class LineCollector : RecursiveJsVisitor() {
 
     override fun visit(x: JsSwitch) {
         withStatement(x) {
+            handleNodeLocation(x)
+            lineNumbersByStatement[x]?.add(-1)
             x.expression.accept(this)
             x.cases.forEach { accept(it) }
         }

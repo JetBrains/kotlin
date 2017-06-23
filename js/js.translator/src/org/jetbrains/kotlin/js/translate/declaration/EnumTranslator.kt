@@ -44,7 +44,7 @@ class EnumTranslator(
         val values = entries.map {
             JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(it), null)).source(psi)
         }
-        function.body.statements += JsReturn(JsArrayLiteral(values))
+        function.body.statements += JsReturn(JsArrayLiteral(values).source(psi)).apply { source = psi }
     }
 
     private fun generateValueOfFunction() {
@@ -55,8 +55,9 @@ class EnumTranslator(
 
         val clauses = entries.map { entry ->
             JsCase().apply {
-                caseExpression = JsStringLiteral(entry.name.asString())
+                caseExpression = JsStringLiteral(entry.name.asString()).source(psi)
                 statements += JsReturn(JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(entry), null)).source(psi))
+                        .apply { source = psi }
                 source = psi
             }
         }
@@ -67,18 +68,21 @@ class EnumTranslator(
         val throwStatement = JsExpressionStatement(JsInvocation(Namer.throwIllegalStateExceptionFunRef(), message).source(psi))
 
         if (clauses.isNotEmpty()) {
-            val defaultCase = JsDefault().apply { statements += throwStatement }
-            function.body.statements += JsSwitch(nameParam.makeRef().source(psi), clauses + defaultCase)
+            val defaultCase = JsDefault().apply {
+                statements += throwStatement
+                source = psi
+            }
+            function.body.statements += JsSwitch(nameParam.makeRef().source(psi), clauses + defaultCase).apply { source = psi }
         }
         else {
             function.body.statements += throwStatement
         }
-
     }
 
     private fun createFunction(functionDescriptor: FunctionDescriptor): JsFunction {
         val function = context().getFunctionObject(functionDescriptor)
         function.name = context().getInnerNameForDescriptor(functionDescriptor)
+        function.source = psi
         context().addDeclarationStatement(function.makeStmt())
 
         val classRef = context().getInnerReference(descriptor)

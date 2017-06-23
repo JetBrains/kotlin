@@ -156,12 +156,11 @@ class ClassTranslator private constructor(
     }
 
     private fun createEnumInitFunction(): JsFunction {
-        val function = context().createRootScopedFunction(descriptor)
+        val function = context().createRootScopedFunction(descriptor).withDefaultLocation()
         function.name = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor) + "_initFields")
-        function.source = classDeclaration
-        val emptyFunction = context().createRootScopedFunction(descriptor)
+        val emptyFunction = context().createRootScopedFunction(descriptor).withDefaultLocation()
         function.body.statements += JsAstUtils.assignment(JsAstUtils.pureFqn(function.name, null), emptyFunction)
-                .source(classDeclaration).makeStmt()
+                .withDefaultLocation().makeStmt()
         context().addDeclarationStatement(function.makeStmt())
         return function
     }
@@ -243,7 +242,7 @@ class ClassTranslator private constructor(
             val nameParamName = JsScope.declareTemporaryName("name")
             val ordinalParamName = JsScope.declareTemporaryName("ordinal")
             constructorInitializer.parameters.addAll(0, listOf(JsParameter(nameParamName), JsParameter(ordinalParamName)))
-            leadingArgs += listOf(nameParamName.makeRef(), ordinalParamName.makeRef())
+            leadingArgs += listOf(nameParamName.makeRef().withDefaultLocation(), ordinalParamName.makeRef().withDefaultLocation())
         }
         if (outerClassName != null) {
             constructorInitializer.parameters.add(0, JsParameter(outerClassName))
@@ -287,7 +286,7 @@ class ClassTranslator private constructor(
                     usageTracker.getNameForCapturedDescriptor(it)!!.makeRef()
                 }
                 it += JsInvocation(Namer.getFunctionCallRef(referenceToClass), listOf(thisNameRef.deepCopy()) + closure + leadingArgs)
-                        .source(classDeclaration).makeStmt()
+                        .withDefaultLocation().makeStmt()
             }
         }
 
@@ -448,31 +447,29 @@ class ClassTranslator private constructor(
 
     private fun addObjectCache(statements: MutableList<JsStatement>) {
         cachedInstanceName = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_VAR_SUFFIX)
-        statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsThisRef()).source(classDeclaration).makeStmt()
+        statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsThisRef()).withDefaultLocation().makeStmt()
     }
 
     private fun addObjectMethods() {
         context().addDeclarationStatement(JsAstUtils.newVar(cachedInstanceName, JsNullLiteral()))
 
-        val instanceFun = context().createRootScopedFunction("Instance function: " + descriptor)
+        val instanceFun = context().createRootScopedFunction("Instance function: " + descriptor).withDefaultLocation()
         instanceFun.name = context().getNameForObjectInstance(descriptor)
-        instanceFun.source = classDeclaration
 
         if (enumInitializerName != null) {
-            instanceFun.body.statements += JsInvocation(pureFqn(enumInitializerName, null)).source(classDeclaration).makeStmt()
+            instanceFun.body.statements += JsInvocation(pureFqn(enumInitializerName, null)).withDefaultLocation().makeStmt()
         }
         if (descriptor.kind != ClassKind.ENUM_ENTRY) {
-            val instanceCreatedCondition = JsAstUtils.equality(cachedInstanceName.makeRef(), JsNullLiteral())
-                    .source(classDeclaration)
+            val instanceCreatedCondition = JsAstUtils.equality(cachedInstanceName.makeRef(), JsNullLiteral()).withDefaultLocation()
             val instanceCreationBlock = JsBlock()
-            val instanceCreatedGuard = JsIf(instanceCreatedCondition, instanceCreationBlock)
+            val instanceCreatedGuard = JsIf(instanceCreatedCondition, instanceCreationBlock).withDefaultLocation()
             instanceFun.body.statements += instanceCreatedGuard
 
             val objectRef = context().getInnerReference(descriptor)
-            instanceCreationBlock.statements += JsNew(objectRef).source(classDeclaration).makeStmt()
+            instanceCreationBlock.statements += JsNew(objectRef).withDefaultLocation().makeStmt()
         }
 
-        instanceFun.body.statements += JsReturn(cachedInstanceName.makeRef().source(classDeclaration))
+        instanceFun.body.statements += JsReturn(cachedInstanceName.makeRef().withDefaultLocation()).withDefaultLocation()
 
         context().addDeclarationStatement(instanceFun.makeStmt())
     }
@@ -497,6 +494,8 @@ class ClassTranslator private constructor(
             context.addAccessorsToPrototype(descriptor, property, literal)
         }
     }
+
+    private fun <T : JsNode> T.withDefaultLocation(): T = apply { source = classDeclaration }
 
     companion object {
         @JvmStatic fun translate(classDeclaration: KtClassOrObject, context: TranslationContext, enumInitializerName: JsName?) {

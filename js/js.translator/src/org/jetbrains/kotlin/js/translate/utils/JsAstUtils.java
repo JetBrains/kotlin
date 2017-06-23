@@ -356,7 +356,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsStatement assignmentToThisField(@NotNull String fieldName, @NotNull JsExpression right) {
-        return assignment(new JsNameRef(fieldName, new JsThisRef()), right).makeStmt();
+        return assignment(new JsNameRef(fieldName, new JsThisRef()), right).source(right.getSource()).makeStmt();
     }
 
     public static JsStatement asSyntheticStatement(@NotNull JsExpression expression) {
