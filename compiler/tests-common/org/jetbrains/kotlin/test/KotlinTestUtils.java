@@ -583,7 +583,15 @@ public class KotlinTestUtils {
         assertEqualsToFile(expectedFile, actual, s -> s);
     }
 
+    public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual) {
+        assertEqualsToFile(message, expectedFile, actual, s -> s);
+    }
+
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
+        assertEqualsToFile("Actual data differs from file content", expectedFile, actual, sanitizer);
+    }
+
+    public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
         try {
             String actualText = JetTestUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
 
@@ -596,7 +604,7 @@ public class KotlinTestUtils {
             String expectedText = JetTestUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
 
             if (!Comparing.equal(sanitizer.invoke(expectedText), sanitizer.invoke(actualText))) {
-                throw new FileComparisonFailure("Actual data differs from file content: " + expectedFile.getName(),
+                throw new FileComparisonFailure(message + ": " + expectedFile.getName(),
                                                 expected, actual, expectedFile.getAbsolutePath());
             }
         }
