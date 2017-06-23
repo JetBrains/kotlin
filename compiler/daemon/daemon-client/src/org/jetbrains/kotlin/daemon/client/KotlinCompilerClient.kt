@@ -93,22 +93,26 @@ object KotlinCompilerClient {
                         leaseSession: Boolean,
                         sessionAliveFlagFile: File? = null
     ): CompileServiceSession? = connectLoop(reportingTargets, autostart) { isLastAttempt ->
+
+        fun CompileService.leaseImpl(): CompileServiceSession? {
+            // the newJVMOptions could be checked here for additional parameters, if needed
+            registerClient(clientAliveFlagFile.absolutePath)
+            reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
+
+            if (!leaseSession) return CompileServiceSession(this, CompileService.NO_SESSION)
+
+            return leaseCompileSession(sessionAliveFlagFile?.absolutePath).takeUnless { it is CompileService.CallResult.Dying }?.let {
+                CompileServiceSession(this, it.get())
+            }
+        }
+
         ensureServerHostnameIsSetUp()
         val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
+
         if (service != null) {
-            // the newJVMOptions could be checked here for additional parameters, if needed
-            service.registerClient(clientAliveFlagFile.absolutePath)
-            reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
-            if (!leaseSession) CompileServiceSession(service, CompileService.NO_SESSION)
-            else {
-                val sessionId = service.leaseCompileSession(sessionAliveFlagFile?.absolutePath)
-                if (sessionId is CompileService.CallResult.Dying)
-                    null
-                else
-                    CompileServiceSession(service, sessionId.get())
-            }
-        } else {
-            reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found")
+            service.leaseImpl()
+        }
+        else {
             if (!isLastAttempt && autostart) {
                 startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)
                 reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
@@ -315,9 +319,11 @@ object KotlinCompilerClient {
 
                 if (res != null) return res
 
-                reportingTargets.report(DaemonReportCategory.INFO,
-                                        (if (attempts >= DAEMON_CONNECT_CYCLE_ATTEMPTS || !autostart) "no more retries on: " else "retrying($attempts) on: ")
-                                        + err?.toString())
+                if (err != null) {
+                    reportingTargets.report(DaemonReportCategory.INFO,
+                                            (if (attempts >= DAEMON_CONNECT_CYCLE_ATTEMPTS || !autostart) "no more retries on: " else "retrying($attempts) on: ")
+                                            + err?.toString())
+                }
 
                 if (attempts++ > DAEMON_CONNECT_CYCLE_ATTEMPTS || !autostart) {
                     return null
