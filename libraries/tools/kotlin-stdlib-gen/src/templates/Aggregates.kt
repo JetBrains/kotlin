@@ -87,17 +87,25 @@ fun aggregates(): List<GenericFunction> {
     }
 
     templates add f("count()") {
+        val progressionCount = "(this.last - this.first) / this.step + 1"
+
         doc { f -> "Returns the number of ${f.element.pluralize()} in this ${f.collection}." }
         returns("Int")
         body {
             """
+            when (this) {
+                is CharProgression -> return $progressionCount
+                is IntProgression -> return $progressionCount
+                is LongProgression -> return $progressionCount
+            }
+
             var count = 0
             for (element in this) count++
             return count
             """
         }
         inline(CharSequences, Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) { Inline.Only }
-        doc(CharSequences) { "Returns the length of this char sequence."}
+        doc(CharSequences) { "Returns the length of this char sequence." }
         body(CharSequences) {
             "return length"
         }
@@ -141,6 +149,7 @@ fun aggregates(): List<GenericFunction> {
 
     templates addAll listOf("min", "max").flatMap { op ->
         val genericSpecializations = PrimitiveType.numericPrimitives.filterNot { it.isIntegral() } + listOf(null)
+        val progressionResult = if (op == "max") "this.last" else "this.first"
 
         listOf(
             Iterables to genericSpecializations,
@@ -185,6 +194,15 @@ fun aggregates(): List<GenericFunction> {
                         """
                         val iterator = iterator()
                         if (!iterator.hasNext()) return null
+                        ${if (f == Iterables && !isFloat) {
+                        """
+                        when (this) {
+                            is CharProgression -> return $progressionResult
+                            is IntProgression -> return $progressionResult
+                            is LongProgression -> return $progressionResult
+                        }
+                        """
+                        } else ""}
                         var $op = iterator.next()
                         ${if (isFloat) "if ($op.isNaN()) return $op" else "\\"}
 
@@ -783,7 +801,8 @@ fun aggregates(): List<GenericFunction> {
             Performs the given [action] on each ${f.element}, providing sequential index with the ${f.element}.
             @param [action] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
             and performs the desired action on the ${f.element}.
-            """ }
+            """
+        }
         returns("Unit")
         body {
             """

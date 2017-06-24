@@ -20,12 +20,25 @@ fun numeric(): List<GenericFunction> {
             return sum
             """
         }
+        bodyForTypes(Iterables, PrimitiveType.Char, PrimitiveType.Int, PrimitiveType.Long) {
+            """
+            if (this is TProgression) {
+                return (this.first + this.last) * this.count() / 2
+            }
+
+            var sum: SUM = ZERO
+            for (element in this) {
+                sum += element
+            }
+            return sum
+            """
+        }
     }
 
     templates add f("average()") {
         exclude(Strings)
         buildFamilies.default!!.forEach { family -> onlyPrimitives(family, numericPrimitives) }
-        doc { f -> "Returns an average value of elements in the ${f.collection}."}
+        doc { f -> "Returns an average value of elements in the ${f.collection}." }
         returns("Double")
         platformName("averageOf<T>")
         body {
