@@ -4,7 +4,7 @@
 
 To produce a library with Kotlin/Native compiler use `-produce library` or `-p library` flag. For example:
 
-    $ kotlic foo.kt -p library -o bar
+    $ kotlinc foo.kt -p library -o bar
 
 the above command will produce a `bar.klib` with compiled contents of `foo.kt`.
 
