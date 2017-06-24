@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.test.util.DescriptorValidator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL
+import org.jetbrains.kotlin.utils.keysToMap
 import org.junit.Assert
 import java.io.File
 import java.util.*
@@ -363,7 +364,15 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val comparator = RecursiveDescriptorComparator(createdAffectedPackagesConfiguration(testFiles, modules.values))
 
         val isMultiModuleTest = modules.size != 1
-        val rootPackageText = StringBuilder()
+
+        val packages =
+                (testFiles.flatMap {
+                    InTextDirectivesUtils.findListWithPrefixes(it.expectedText, "// RENDER_PACKAGE:").map {
+                        FqName(it.trim())
+                    }
+                } + FqName.ROOT).toSet()
+
+        val textByPackage = packages.keysToMap { StringBuilder() }
 
         val sortedModules = modules.keys.sortedWith(Comparator { x, y ->
             when {
@@ -375,32 +384,37 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             }
         })
 
-        val module = sortedModules.iterator()
-        while (module.hasNext()) {
-            val moduleDescriptor = modules[module.next()]!!
-            val aPackage = moduleDescriptor.getPackage(FqName.ROOT)
-            assertFalse(aPackage.isEmpty())
+        for ((packageName, packageText) in textByPackage.entries) {
+            val module = sortedModules.iterator()
+            while (module.hasNext()) {
+                val moduleDescriptor = modules[module.next()]!!
 
-            if (isMultiModuleTest) {
-                rootPackageText.append(String.format("// -- Module: %s --\n", moduleDescriptor.name))
-            }
+                val aPackage = moduleDescriptor.getPackage(packageName)
+                assertFalse(aPackage.isEmpty())
 
-            val actualSerialized = comparator.serializeRecursively(aPackage)
-            rootPackageText.append(actualSerialized)
+                if (isMultiModuleTest) {
+                    packageText.append(String.format("// -- Module: %s --\n", moduleDescriptor.name))
+                }
 
-            if (isMultiModuleTest && module.hasNext()) {
-                rootPackageText.append("\n\n")
+                val actualSerialized = comparator.serializeRecursively(aPackage)
+                packageText.append(actualSerialized)
+
+                if (isMultiModuleTest && module.hasNext()) {
+                    packageText.append("\n\n")
+                }
             }
         }
 
-        val lineCount = StringUtil.getLineBreakCount(rootPackageText)
+        val allPackagesText = textByPackage.values.joinToString("\n")
+
+        val lineCount = StringUtil.getLineBreakCount(allPackagesText)
         assert(lineCount < 1000) {
             "Rendered descriptors of this test take up $lineCount lines. " +
             "Please ensure you don't render JRE contents to the .txt file. " +
             "Such tests are hard to maintain, take long time to execute and are subject to sudden unreviewed changes anyway."
         }
 
-        KotlinTestUtils.assertEqualsToFile(expectedFile, rootPackageText.toString())
+        KotlinTestUtils.assertEqualsToFile(expectedFile, allPackagesText)
     }
 
     private fun createdAffectedPackagesConfiguration(

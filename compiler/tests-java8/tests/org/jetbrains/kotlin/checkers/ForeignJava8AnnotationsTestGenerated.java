@@ -48,6 +48,12 @@ public class ForeignJava8AnnotationsTestGenerated extends AbstractForeignJava8An
         doTest(fileName);
     }
 
+    @TestMetadata("springNullableWithTypeUse.kt")
+    public void testSpringNullableWithTypeUse() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/springNullableWithTypeUse.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

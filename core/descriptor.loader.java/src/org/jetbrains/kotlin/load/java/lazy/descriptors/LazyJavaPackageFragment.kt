@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+import org.jetbrains.kotlin.load.java.lazy.childForClassOrPackage
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
@@ -31,9 +32,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.getValue
 
 class LazyJavaPackageFragment(
-        private val c: LazyJavaResolverContext,
+        outerContext: LazyJavaResolverContext,
         private val jPackage: JavaPackage
-) : PackageFragmentDescriptorImpl(c.module, jPackage.fqName) {
+) : PackageFragmentDescriptorImpl(outerContext.module, jPackage.fqName) {
+    private val c = outerContext.childForClassOrPackage(this)
+
     internal val binaryClasses by c.storageManager.createLazyValue {
         c.components.packageMapper.findPackageParts(fqName.asString()).mapNotNull { partName ->
             val classId = ClassId(fqName, Name.identifier(partName))
@@ -49,10 +52,7 @@ class LazyJavaPackageFragment(
             onRecursiveCall = listOf()
     )
 
-    private val packageAnnotations = c.resolveAnnotations(jPackage)
-
-    // Test only method
-    fun getPackageAnnotations() = packageAnnotations
+    override val annotations = c.resolveAnnotations(jPackage)
 
     internal fun getSubPackageFqNames(): List<FqName> = subPackages()
 

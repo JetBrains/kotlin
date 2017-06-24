@@ -20,12 +20,16 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 private val TYPE_QUALIFIER_NICKNAME_FQNAME = FqName("javax.annotation.meta.TypeQualifierNickname")
 private val TYPE_QUALIFIER_FQNAME = FqName("javax.annotation.meta.TypeQualifier")
+private val TYPE_QUALIFIER_DEFAULT_FQNAME = FqName("javax.annotation.meta.TypeQualifierDefault")
 
 class AnnotationTypeQualifierResolver(storageManager: StorageManager) {
     private val resolvedNicknames =
@@ -49,6 +53,58 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager) {
 
         return resolveTypeQualifierNickname(annotationClass)
     }
+
+    enum class QualifierApplicabilityType {
+        METHOD_RETURN_TYPE, VALUE_PARAMETER, FIELD, TYPE_USE
+    }
+
+    class TypeQualifierWithApplicability(
+            private val typeQualifier: AnnotationDescriptor,
+            private val applicability: Int
+    ) {
+        private fun isApplicableTo(elementType: QualifierApplicabilityType) = (applicability and (1 shl elementType.ordinal)) != 0
+
+        operator fun component1() = typeQualifier
+        operator fun component2() = QualifierApplicabilityType.values().filter(this::isApplicableTo)
+    }
+
+    fun resolveTypeQualifierDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): TypeQualifierWithApplicability? {
+        val typeQualifierDefaultAnnotatedClass =
+                annotationDescriptor.annotationClass?.takeIf { it.annotations.hasAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) }
+                ?: return null
+
+        val elementTypesMask =
+                annotationDescriptor.annotationClass!!
+                        .annotations.findAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME)!!
+                        .allValueArguments
+                        .flatMap { (parameter, argument) ->
+                            if (parameter.name == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME)
+                                argument.mapConstantToQualifierApplicabilityTypes()
+                            else
+                                emptyList()
+                        }
+                        .fold(0) { acc: Int, applicabilityType -> acc or (1 shl applicabilityType.ordinal) }
+
+        val typeQualifier =
+                typeQualifierDefaultAnnotatedClass.annotations.firstNotNullResult(this::resolveTypeQualifierAnnotation)
+                ?: return null
+        return TypeQualifierWithApplicability(typeQualifier, elementTypesMask)
+    }
+
+    private fun ConstantValue<*>.mapConstantToQualifierApplicabilityTypes(): List<QualifierApplicabilityType> =
+        when (this) {
+            is ArrayValue -> value.flatMap { it.mapConstantToQualifierApplicabilityTypes() }
+            is EnumValue -> listOfNotNull(
+                    when (value.name.identifier) {
+                        "METHOD" -> QualifierApplicabilityType.METHOD_RETURN_TYPE
+                        "FIELD" -> QualifierApplicabilityType.FIELD
+                        "PARAMETER" -> QualifierApplicabilityType.VALUE_PARAMETER
+                        "TYPE_USE" -> QualifierApplicabilityType.TYPE_USE
+                        else -> null
+                    }
+            )
+            else -> emptyList()
+        }
 }
 
 private val ClassDescriptor.isAnnotatedWithTypeQualifier: Boolean

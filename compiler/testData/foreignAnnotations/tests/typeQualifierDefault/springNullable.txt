@@ -1,0 +1,14 @@
+package
+
+public fun main(/*0*/ a: A): kotlin.Unit
+
+@spr.NonNullApi public open class A {
+    public constructor A()
+    public final var field: kotlin.String!
+    public open fun bar(): kotlin.String
+    @spr.Nullable public open fun baz(): kotlin.collections.(Mutable)List<kotlin.String!>?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ x: kotlin.String, /*1*/ @spr.Nullable y: kotlin.CharSequence?): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

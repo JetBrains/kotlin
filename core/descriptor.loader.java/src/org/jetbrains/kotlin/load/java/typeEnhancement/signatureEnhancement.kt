@@ -19,12 +19,17 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+import org.jetbrains.kotlin.load.java.lazy.computeNewDefaultTypeQualifiers
+import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -36,17 +41,40 @@ import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 class SignatureEnhancement(private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver) {
-    fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {
+
+    fun extractNullability(annotationDescriptor: AnnotationDescriptor): NullabilityQualifier? {
+        when (annotationDescriptor.annotationClass?.fqNameSafe) {
+            in NULLABLE_ANNOTATIONS -> return NullabilityQualifier.NULLABLE
+            in NOT_NULL_ANNOTATIONS -> return NullabilityQualifier.NOT_NULL
+        }
+
+        val typeQualifier =
+                annotationTypeQualifierResolver
+                        .resolveTypeQualifierAnnotation(annotationDescriptor)
+                        ?.takeIf { it.annotationClass?.fqNameSafe == JAVAX_NONNULL_ANNOTATION }
+                ?: return null
+
+        return typeQualifier.allValueArguments.values.singleOrNull()?.value?.let {
+            enumEntryDescriptor ->
+            if (enumEntryDescriptor !is ClassDescriptor) return@let null
+            if (enumEntryDescriptor.name.asString() == "ALWAYS") NullabilityQualifier.NOT_NULL else NullabilityQualifier.NULLABLE
+        } ?: NullabilityQualifier.NOT_NULL
+    }
+
+
+    fun <D : CallableMemberDescriptor> enhanceSignatures(c: LazyJavaResolverContext, platformSignatures: Collection<D>): Collection<D> {
         return platformSignatures.map {
-            it.enhanceSignature()
+            it.enhanceSignature(c)
         }
     }
 
-    private fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
+    private fun <D : CallableMemberDescriptor> D.enhanceSignature(c: LazyJavaResolverContext): D {
+        val outerScopeQualifiers = c.computeNewDefaultTypeQualifiers(annotations)
         // TODO type parameters
         // TODO use new type parameters while enhancing other types
         // TODO Propagation into generic type arguments
@@ -62,7 +90,10 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                             typeContainer =
                                 this.safeAs<FunctionDescriptor>()
                                     ?.getUserData(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER),
-                            isCovariant = false
+                            isCovariant = false,
+                            defaultTopLevelQualifiers =
+                                outerScopeQualifiers
+                                        ?.get(AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER)
                     ) { it.extensionReceiverParameter!!.type }.enhance()
                 else null
 
@@ -81,12 +112,28 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
         val valueParameterEnhancements = valueParameters.map {
             p ->
-            parts(typeContainer = p, isCovariant = false) { it.valueParameters[p.index].type }
+            parts(
+                    typeContainer = p, isCovariant = false,
+                    defaultTopLevelQualifiers =
+                            outerScopeQualifiers
+                                    ?.get(AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER)
+            ) { it.valueParameters[p.index].type }
                     .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
         }
 
         val returnTypeEnhancement =
-                parts(typeContainer = this, isCovariant = true) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
+                parts(
+                        typeContainer = this, isCovariant = true,
+                        defaultTopLevelQualifiers =
+                            outerScopeQualifiers?.get(
+                                    if (this.safeAs<PropertyDescriptor>()?.isJavaField == true)
+                                        AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
+                                    else
+                                        AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
+                            )
+
+
+                ) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
 
         if ((receiverTypeEnhancement?.wereChanges ?: false)
             || returnTypeEnhancement.wereChanges || valueParameterEnhancements.any { it.wereChanges }) {
@@ -101,7 +148,8 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             private val typeContainer: Annotated?,
             private val fromOverride: KotlinType,
             private val fromOverridden: Collection<KotlinType>,
-            private val isCovariant: Boolean
+            private val isCovariant: Boolean,
+            private val defaultTopLevelQualifiers: JavaTypeQualifiers?
     ) {
         fun enhance(predefined: TypeEnhancementInfo? = null): PartEnhancementResult {
             val qualifiers = computeIndexedQualifiersForOverride()
@@ -152,7 +200,10 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
             fun <T: Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
 
-            val nullability = composedAnnotation.extractNullability()
+            val defaultTypeQualifier = defaultTopLevelQualifiers?.takeIf { isHeadTypeConstructor }
+            val nullability =
+                    composedAnnotation.extractNullability()
+                    ?: defaultTypeQualifier?.nullability
 
             return JavaTypeQualifiers(
                     nullability,
@@ -168,28 +219,8 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             )
         }
 
-        private fun Annotations.extractNullability(): NullabilityQualifier? {
-            for (annotationDescriptor in this) {
-                when (annotationDescriptor.annotationClass?.fqNameSafe) {
-                    in NULLABLE_ANNOTATIONS -> return NullabilityQualifier.NULLABLE
-                    in NOT_NULL_ANNOTATIONS -> return NullabilityQualifier.NOT_NULL
-                }
-
-                val typeQualifier =
-                        annotationTypeQualifierResolver
-                                .resolveTypeQualifierAnnotation(annotationDescriptor)
-                                ?.takeIf { it.annotationClass?.fqNameSafe == JAVAX_NONNULL_ANNOTATION }
-                        ?: continue
-
-                return typeQualifier.allValueArguments.values.singleOrNull()?.value?.let {
-                    enumEntryDescriptor ->
-                    if (enumEntryDescriptor !is ClassDescriptor) return@let null
-                    if (enumEntryDescriptor.name.asString() == "ALWAYS") NullabilityQualifier.NOT_NULL else NullabilityQualifier.NULLABLE
-                } ?: NullabilityQualifier.NOT_NULL
-            }
-
-            return null
-        }
+        private fun Annotations.extractNullability(): NullabilityQualifier? =
+                this.firstNotNullResult(this@SignatureEnhancement::extractNullability)
 
         private fun computeIndexedQualifiersForOverride(): (Int) -> JavaTypeQualifiers {
             fun KotlinType.toIndexed(): List<KotlinType> {
@@ -292,6 +323,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
     private fun <D : CallableMemberDescriptor> D.parts(
             typeContainer: Annotated?,
             isCovariant: Boolean,
+            defaultTopLevelQualifiers: JavaTypeQualifiers?,
             collector: (D) -> KotlinType
     ): SignatureParts {
         return SignatureParts(
@@ -301,7 +333,8 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                     @Suppress("UNCHECKED_CAST")
                     collector(it as D)
                 },
-                isCovariant
+                isCovariant,
+                defaultTopLevelQualifiers
         )
     }
 

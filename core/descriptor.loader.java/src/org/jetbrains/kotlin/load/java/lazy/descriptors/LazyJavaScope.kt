@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.lazy.child
+import org.jetbrains.kotlin.load.java.lazy.childForMethod
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeAttributes
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
@@ -87,7 +87,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
         computeNonDeclaredFunctions(result, name)
 
-        c.components.signatureEnhancement.enhanceSignatures(result).toList()
+        c.components.signatureEnhancement.enhanceSignatures(c, result).toList()
     }
 
     open protected fun JavaMethodDescriptor.isVisibleAsFunction() = true
@@ -114,7 +114,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
                 ownerDescriptor, annotations, method.name, c.components.sourceElementFactory.source(method)
         )
 
-        val c = c.child(functionDescriptorImpl, method)
+        val c = c.childForMethod(functionDescriptorImpl, method)
 
         val methodTypeParameters = method.typeParameters.map { p -> c.typeParameterResolver.resolveTypeParameter(p)!! }
         val valueParameters = resolveValueParameters(c, functionDescriptorImpl, method.valueParameters)
@@ -246,7 +246,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         if (DescriptorUtils.isAnnotationClass(ownerDescriptor))
             properties.toList()
         else
-            c.components.signatureEnhancement.enhanceSignatures(properties).toList()
+            c.components.signatureEnhancement.enhanceSignatures(c, properties).toList()
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {

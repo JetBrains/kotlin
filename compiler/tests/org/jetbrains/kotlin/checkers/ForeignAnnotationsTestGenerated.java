@@ -89,4 +89,55 @@ public class ForeignAnnotationsTestGenerated extends AbstractForeignAnnotationsT
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/rxjava.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeQualifierDefault extends AbstractForeignAnnotationsTest {
+        public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("fieldsAreNullable.kt")
+        public void testFieldsAreNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/fieldsAreNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullabilityFromOverridden.kt")
+        public void testNullabilityFromOverridden() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/nullabilityFromOverridden.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overridingDefaultQualifier.kt")
+        public void testOverridingDefaultQualifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/overridingDefaultQualifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parametersAreNonnullByDefault.kt")
+        public void testParametersAreNonnullByDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/parametersAreNonnullByDefault.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parametersAreNonnullByDefaultPackage.kt")
+        public void testParametersAreNonnullByDefaultPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/parametersAreNonnullByDefaultPackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("springNullable.kt")
+        public void testSpringNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/springNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("springNullablePackage.kt")
+        public void testSpringNullablePackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/springNullablePackage.kt");
+            doTest(fileName);
+        }
+    }
 }

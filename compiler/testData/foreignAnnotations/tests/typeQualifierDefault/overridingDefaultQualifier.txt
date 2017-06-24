@@ -1,0 +1,60 @@
+package
+
+public fun main(/*0*/ a: A, /*1*/ b: A.B, /*2*/ c: A.C): kotlin.Unit
+
+@NonNullApi public open class A {
+    public constructor A()
+    public final var field: kotlin.String
+    public open fun bar(): kotlin.String
+    @javax.annotation.Nullable public open fun baz(): kotlin.collections.(Mutable)List<kotlin.String!>?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ x: kotlin.String, /*1*/ @javax.annotation.CheckForNull y: kotlin.CharSequence?): kotlin.String
+    @NullableApi public open fun foobar(/*0*/ x: kotlin.String?, /*1*/ @javax.annotation.Nonnull y: kotlin.CharSequence): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    @NullableApi public open inner class B {
+        public constructor B()
+        public final var field: kotlin.String?
+        public open fun bar(): kotlin.String?
+        @javax.annotation.Nullable public open fun baz(): kotlin.collections.(Mutable)List<kotlin.String!>?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(/*0*/ x: kotlin.String?, /*1*/ @javax.annotation.Nonnull y: kotlin.CharSequence): kotlin.String?
+        @NonNullApi public open fun foobar(/*0*/ x: kotlin.String, /*1*/ @javax.annotation.Nullable y: kotlin.CharSequence?): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @FieldsAreNullable public open inner class C {
+        public constructor C()
+        public final var field: kotlin.String?
+        public open fun bar(): kotlin.String
+        @javax.annotation.Nullable public open fun baz(): kotlin.collections.(Mutable)List<kotlin.String!>?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(/*0*/ x: kotlin.String, /*1*/ @javax.annotation.Nullable y: kotlin.CharSequence?): kotlin.String
+        @NullableApi public open fun foobar(/*0*/ x: kotlin.String?, /*1*/ @javax.annotation.Nullable y: kotlin.CharSequence?): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+@kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented @javax.annotation.CheckForNull @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.FIELD}) public final annotation class FieldsAreNullable : kotlin.Annotation {
+    public constructor FieldsAreNullable()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented @javax.annotation.Nonnull @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD}) public final annotation class NonNullApi : kotlin.Annotation {
+    public constructor NonNullApi()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented @javax.annotation.CheckForNull @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD}) public final annotation class NullableApi : kotlin.Annotation {
+    public constructor NullableApi()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

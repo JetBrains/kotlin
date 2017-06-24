@@ -1,0 +1,21 @@
+package
+
+public fun main(/*0*/ a: A): kotlin.Unit
+
+@FieldsAreNullable public open class A {
+    public constructor A()
+    public final var field: kotlin.String?
+    @javax.annotation.Nonnull public final var nonNullField: kotlin.String
+    @javax.annotation.Nonnull public open fun bar(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ q: kotlin.String!, /*1*/ @javax.annotation.Nonnull x: kotlin.String, /*2*/ @javax.annotation.CheckForNull y: kotlin.CharSequence?): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented @javax.annotation.CheckForNull @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.FIELD}) public final annotation class FieldsAreNullable : kotlin.Annotation {
+    public constructor FieldsAreNullable()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

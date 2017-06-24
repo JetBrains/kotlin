@@ -68,10 +68,10 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
                             it.getMemberScope().getContributedClassifier(Name.identifier("A"), NoLookupLocation.FROM_TEST) != null
                         }.let { assertInstanceOf(it, LazyJavaPackageFragment::class.java) }
 
-        val annotation = packageFragmentDescriptor.getPackageAnnotations().findAnnotation(FqName("test.Ann"))
+        val annotation = packageFragmentDescriptor.annotations.findAnnotation(FqName("test.Ann"))
         assertNotNull(annotation)
 
-        val singleAnnotation = packageFragmentDescriptor.getPackageAnnotations().singleOrNull()
+        val singleAnnotation = packageFragmentDescriptor.annotations.singleOrNull()
         assertNotNull(singleAnnotation)
 
         val annotationFqName = singleAnnotation!!.type.constructor.declarationDescriptor?.fqNameSafe

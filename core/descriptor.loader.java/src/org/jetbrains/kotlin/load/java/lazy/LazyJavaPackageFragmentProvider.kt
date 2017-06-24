@@ -26,7 +26,7 @@ class LazyJavaPackageFragmentProvider(
         components: JavaResolverComponents
 ) : PackageFragmentProvider {
 
-    private val c = LazyJavaResolverContext(components, TypeParameterResolver.EMPTY)
+    private val c = LazyJavaResolverContext(components, TypeParameterResolver.EMPTY) { null }
 
     private val packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
             c.storageManager.createMemoizedFunctionWithNullableValues {

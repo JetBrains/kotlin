@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.lazy.child
+import org.jetbrains.kotlin.load.java.lazy.childForClassOrPackage
 import org.jetbrains.kotlin.load.java.lazy.replaceComponents
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
@@ -64,7 +64,7 @@ class LazyJavaClassDescriptor(
         private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString")
     }
 
-    private val c: LazyJavaResolverContext = outerContext.child(this, jClass)
+    private val c: LazyJavaResolverContext = outerContext.childForClassOrPackage(this, jClass)
 
     init {
         c.components.javaResolverCache.recordClass(jClass, this)
