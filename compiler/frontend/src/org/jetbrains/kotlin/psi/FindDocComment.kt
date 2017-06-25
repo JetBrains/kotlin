@@ -16,14 +16,19 @@
 
 package org.jetbrains.kotlin.psi.findDocComment
 
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationModifierList
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 
 fun findDocComment(declaration: KtDeclaration): KDoc? {
     return declaration.allChildren
-            .dropWhile { it !is KDoc && (it is PsiWhiteSpace || it is PsiComment) }
-            .first() as? KDoc
+            .flatMap {
+                if (it is KtDeclarationModifierList) {
+                    return@flatMap it.children.asSequence()
+                }
+                sequenceOf(it)
+            }
+            .dropWhile { it !is KDoc }
+            .firstOrNull() as? KDoc
 }
