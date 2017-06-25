@@ -39,6 +39,15 @@ class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
         Assert.assertEquals("Doc for constructor of class C.", doc!!.getContent())
     }
 
+    fun testAnnotated() {
+        myFixture.configureByFile(getTestName(false) + ".kt")
+        val declaration = (myFixture.file as KtFile).declarations[0]
+        val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
+        val overriddenFunctionDescriptor = descriptor.defaultType.memberScope.getContributedFunctions(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
+        val doc = overriddenFunctionDescriptor.findKDoc()
+        Assert.assertEquals("Doc for method xyzzy", doc!!.getContent())
+    }
+
     fun testOverridden() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         val declaration = (myFixture.file as KtFile).declarations.single { it.name == "Bar" }
