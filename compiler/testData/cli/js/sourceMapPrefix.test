@@ -1,2 +1,2 @@
 // EXISTS: out.js
-// CONTAINS: out.js.map, "http://localhost:8080/src/sourceMap.kt"
+// CONTAINS: out.js.map, "/localhost/src/sourceMap.kt"

@@ -2,6 +2,6 @@ $TESTDATA_DIR$/sourceMap.kt
 -no-stdlib
 -source-map
 -source-map-prefix
-http://localhost:8080/src/
+/localhost/src/
 -output
 $TEMP_DIR$/out.js
