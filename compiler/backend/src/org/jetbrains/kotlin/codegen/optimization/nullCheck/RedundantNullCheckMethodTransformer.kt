@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.isInsn
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -41,9 +42,6 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
 
     private class TransformerPass(val internalClassName: String, val methodNode: MethodNode) {
         private var changes = false
-
-        private fun AbstractInsnNode.getIndex() =
-                methodNode.instructions.indexOf(this)
 
         fun run(): Boolean {
             val checkedReferenceTypes = analyzeTypesAndRemoveDeadCode()
@@ -236,7 +234,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                 for ((varIndex, dependentChecks) in checksDependingOnVariable) {
                     for (checkInsn in dependentChecks) {
                         val varType = checkedReferenceTypes[checkInsn]
-                                      ?: throw AssertionError("No var type @${checkInsn.getIndex()}")
+                                      ?: AsmTypes.OBJECT_TYPE
                         nullabilityAssumptions.injectAssumptionsForCheck(varIndex, checkInsn, varType)
                     }
                 }
