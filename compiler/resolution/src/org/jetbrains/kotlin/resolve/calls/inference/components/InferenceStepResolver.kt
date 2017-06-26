@@ -16,8 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
+import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+
+typealias VariableResolutionNode = FixationOrderCalculator.NodeWithDirection
 
 class InferenceStepResolver(
         private val resultTypeResolver: ResultTypeResolver
@@ -26,18 +32,28 @@ class InferenceStepResolver(
      * Resolves one or more of the `variables`.
      * Returns `true` if type variable resolution should stop.
      */
-    fun resolveVariables(c: KotlinCallCompleter.Context, variables: List<FixationOrderCalculator.NodeWithDirection>): Boolean {
-        for ((variableWithConstraints, direction) in variables) {
-            if (c.hasContradiction) return true
-            val variable = variableWithConstraints.typeVariable
-            val resultType = resultTypeResolver.findResultType(c.asResultTypeResolverContext(), variableWithConstraints, direction)
-            if (resultType == null) {
-                c.addError(NotEnoughInformationForTypeParameter(variable))
-                break
-            }
-            c.fixVariable(variable, resultType)
-            return false
+    fun resolveVariables(c: KotlinCallCompleter.Context, variables: List<VariableResolutionNode>): Boolean {
+        if (variables.isEmpty()) return true
+        if (c.hasContradiction) return true
+
+        val nodeToResolve = variables.firstOrNull { it.variableWithConstraints.hasProperConstraint(c) } ?:
+                            variables.first()
+        val (variableWithConstraints, direction) = nodeToResolve
+        val variable = variableWithConstraints.typeVariable
+
+        val resultType = resultTypeResolver.findResultType(c.asResultTypeResolverContext(), variableWithConstraints, direction)
+        if (resultType == null) {
+            c.addError(NotEnoughInformationForTypeParameter(variable))
+            return true
         }
-        return true
+        c.fixVariable(variable, resultType)
+        return false
     }
+
+    private fun VariableWithConstraints.hasProperConstraint(c: KotlinCallCompleter.Context) =
+            constraints.any { !it.isTrivial() && c.canBeProper(it.type) }
+
+    private fun Constraint.isTrivial() =
+            kind == ConstraintKind.LOWER && KotlinBuiltIns.isNothing(type) ||
+            kind == ConstraintKind.UPPER && KotlinBuiltIns.isNullableAny(type)
 }

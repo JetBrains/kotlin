@@ -1,0 +1,44 @@
+FILE /fixationOrder1.kt
+  FUN public fun <X, Y> foo(): (X) -> Y
+    TYPE_PARAMETER <X>
+    TYPE_PARAMETER <Y>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='foo(): (X) -> Y'
+        CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
+  CLASS INTERFACE Inv2
+    $this: VALUE_PARAMETER this@Inv2: Inv2<A, B>
+    TYPE_PARAMETER <A>
+    TYPE_PARAMETER <B>
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  FUN public fun <T, R> check(x: T, y: R, f: (T) -> R): Inv2<T, R>
+    TYPE_PARAMETER <T>
+    TYPE_PARAMETER <R>
+    VALUE_PARAMETER value-parameter x: T
+    VALUE_PARAMETER value-parameter y: R
+    VALUE_PARAMETER value-parameter f: (T) -> R
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='check(T, R, (T) -> R): Inv2<T, R>'
+        CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
+  FUN public fun test(): Inv2<kotlin.String, kotlin.Int>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test(): Inv2<String, Int>'
+        CALL 'check(String, Int, (String) -> Int): Inv2<String, Int>' type=Inv2<kotlin.String, kotlin.Int> origin=null
+          <T>: String
+          <R>: Int
+          x: CONST String type=kotlin.String value=''
+          y: CONST Int type=kotlin.Int value='1'
+          f: CALL 'foo(): (String) -> Int' type=(kotlin.String) -> kotlin.Int origin=null
+            <X>: String
+            <Y>: Int
+  FUN public fun box(): kotlin.String
+    BLOCK_BODY
+      VAR val x: Inv2<kotlin.String, kotlin.Int>
+        CALL 'test(): Inv2<String, Int>' type=Inv2<kotlin.String, kotlin.Int> origin=null
+      RETURN type=kotlin.Nothing from='box(): String'
+        CONST String type=kotlin.String value='OK'

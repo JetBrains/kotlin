@@ -1,0 +1,40 @@
+FILE /fixationOrder2.kt
+  FUN public fun <X, Y, Z> foo(f: (Y) -> Z, g: (X) -> Y, x: X): Z
+    TYPE_PARAMETER <X>
+    TYPE_PARAMETER <Y>
+    TYPE_PARAMETER <Z>
+    VALUE_PARAMETER value-parameter f: (Y) -> Z
+    VALUE_PARAMETER value-parameter g: (X) -> Y
+    VALUE_PARAMETER value-parameter x: X
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='foo((Y) -> Z, (X) -> Y, X): Z'
+        CALL 'invoke(Y): Z' type=Z origin=INVOKE
+          $this: GET_VAR 'value-parameter f: (Y) -> Z' type=(Y) -> Z origin=VARIABLE_AS_FUNCTION
+          p1: CALL 'invoke(X): Y' type=Y origin=INVOKE
+            $this: GET_VAR 'value-parameter g: (X) -> Y' type=(X) -> Y origin=VARIABLE_AS_FUNCTION
+            p1: GET_VAR 'value-parameter x: X' type=X origin=null
+  FUN public fun test(): kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test(): Int'
+        CALL 'foo((Int) -> Int, (String) -> Int, String): Int' type=kotlin.Int origin=null
+          <X>: String
+          <Y>: Int
+          <Z>: Int
+          f: BLOCK type=(kotlin.Int) -> kotlin.Int origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(it: kotlin.Int): kotlin.Int
+              VALUE_PARAMETER value-parameter it: kotlin.Int
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<anonymous>(Int): Int'
+                  CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
+                    $this: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
+                    other: CONST Int type=kotlin.Int value='1'
+            FUNCTION_REFERENCE '<anonymous>(Int): Int' type=(kotlin.Int) -> kotlin.Int origin=LAMBDA
+          g: BLOCK type=(kotlin.String) -> kotlin.Int origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(it: kotlin.String): kotlin.Int
+              VALUE_PARAMETER value-parameter it: kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<anonymous>(String): Int'
+                  CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
+                    $this: GET_VAR 'value-parameter it: String' type=kotlin.String origin=null
+            FUNCTION_REFERENCE '<anonymous>(String): Int' type=(kotlin.String) -> kotlin.Int origin=LAMBDA
+          x: CONST String type=kotlin.String value=''
