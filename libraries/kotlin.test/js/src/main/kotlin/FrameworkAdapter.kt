@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import kotlin.test.assertHook
-
 @JsName("suite")
 fun suite(name: String, suiteFn: () -> Unit) {
     currentAdapter.suite(name, suiteFn)
@@ -53,12 +51,10 @@ fun setAdapter(adapter: dynamic) {
     if (js("typeof adapter === 'string'")) {
         if (adapter in DefaultAdapters.NAME_TO_ADAPTER) {
             setAdapter(DefaultAdapters.NAME_TO_ADAPTER[adapter])
-        }
-        else {
+        } else {
             throw IllegalArgumentException("Unsupported test framework adapter: '$adapter'")
         }
-    }
-    else {
+    } else {
         currentAdapter = adapter
     }
 }
@@ -86,36 +82,58 @@ external interface FrameworkAdapter {
 enum class DefaultAdapters : FrameworkAdapter {
 
     QUNIT {
-        override fun suite(name: String, suiteFn: () -> Unit) {
-            QUnit.module(name, suiteFn)
+        var scopeStack = mutableListOf<String>()
+
+        var shouldSkip = false
+
+        val testName: String
+            get() = scopeStack.joinToString(separator = " ")
+
+        private fun withName(name: String, block: () -> Unit) {
+            scopeStack.add(name)
+            block()
+            scopeStack.removeAt(scopeStack.size - 1)
         }
+
+        override fun suite(name: String, suiteFn: () -> Unit) = withName(name, suiteFn)
 
         override fun xsuite(name: String, suiteFn: () -> Unit) {
-            // QUnit doesn't support ignoring modules, so just don't execute it
+            if (shouldSkip) {
+                suiteFn()
+            }
+            else {
+                shouldSkip = true
+                suiteFn()
+                shouldSkip = false
+            }
         }
 
-        override fun fsuite(name: String, suiteFn: () -> Unit) {
-            // QUnit doesn't support focusing on a single module
-            QUnit.module(name, suiteFn)
-        }
+        // QUnit doesn't support focusing on a single module
+        override fun fsuite(name: String, suiteFn: () -> Unit) = withName(name, suiteFn)
 
         override fun test(name: String, testFn: () -> Unit) {
-            QUnit.test(name, wrapTest(testFn))
+            if (shouldSkip) {
+                xtest(name, testFn)
+            }
+            else {
+                withName(name) {
+                    QUnit.test(testName, wrapTest(testFn))
+                }
+            }
         }
 
-        override fun xtest(name: String, testFn: () -> Unit) {
-            QUnit.skip(name, wrapTest(testFn))
+        override fun xtest(name: String, testFn: () -> Unit) = withName(name) {
+            QUnit.skip(testName, wrapTest(testFn))
         }
 
-        override fun ftest(name: String, testFn: () -> Unit) {
-            QUnit.only(name, wrapTest(testFn))
+        override fun ftest(name: String, testFn: () -> Unit) = withName(name) {
+            QUnit.only(testName, wrapTest(testFn))
         }
 
         private fun wrapTest(testFn: () -> Unit): (dynamic) -> Unit = { assert ->
             if (js("typeof assert !== 'function'")) {
                 assertHook = { result, _, _, msgFn -> assert.ok(result, msgFn()) }
-            }
-            else {
+            } else {
                 assertHook = { result, expected, actual, msgFn ->
                     val data = js("{}")
                     data.result = result
@@ -208,19 +226,26 @@ enum class DefaultAdapters : FrameworkAdapter {
     };
 
     companion object {
-        val AUTO_DETECTED = when {
-            js("typeof QUnit !== 'undefined'") -> QUNIT
-            js("typeof describe === 'function' && typeof it === 'function'") -> {
-                if (js("typeof xit === 'function'")) JASMINE else MOCHA
+        val AUTO_DETECTED: FrameworkAdapter
+            get() = when {
+                js("typeof QUnit !== 'undefined'") -> QUNIT
+                js("typeof describe === 'function' && typeof it === 'function'") -> {
+                    if (js("typeof xit === 'function'")) JASMINE else MOCHA
+                }
+                else -> BARE
             }
-            else -> BARE
-        }
 
         val NAME_TO_ADAPTER = mapOf(
                 "qunit" to QUNIT,
                 "jasmine" to JASMINE,
                 "mocha" to MOCHA,
                 "auto" to AUTO_DETECTED)
+    }
+}
+
+internal var assertHook: (result: Boolean, expected: Any?, actual: Any?, () -> String?) -> Unit = { result, _, _, msgFun ->
+    if (js("typeof QUnit !== 'undefined'")) {
+        ok(result, msgFun())
     }
 }
 
@@ -241,6 +266,7 @@ external fun ok(result: Boolean, message: String?)
  * Jasmine/Mocha API
  */
 external fun describe(name: String, fn: () -> Unit)
+
 external fun xdescribe(name: String, fn: () -> Unit)
 external fun fdescribe(name: String, fn: () -> Unit)
 

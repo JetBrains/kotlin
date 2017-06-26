@@ -16,6 +16,7 @@
 
 package kotlin.test
 
+import assertHook
 import kotlin.reflect.KClass
 
 /**
@@ -45,8 +46,6 @@ impl fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: Str
 internal impl fun lookupAsserter(): Asserter = qunitAsserter
 
 private val qunitAsserter = QUnitAsserter()
-
-internal var assertHook: (result: Boolean, expected: Any?, actual: Any?, () -> String?) -> Unit = { _, _, _, _ -> }
 
 // TODO: make object in 1.2
 class QUnitAsserter : Asserter {

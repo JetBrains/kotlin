@@ -7,7 +7,7 @@
     "test-jasmine": "jasmine js/paths.js js/jasmine-reporter.js build/classes/test/it_test.js",
     "test-jest": "jest",
     "test-mocha": "mocha -r js/paths.js --reporter js/mocha-reporter.js build/classes/test/it_test.js",
-    "test-qunit": "qunit -c js/paths.js -d js/qunit-reporter.js -t build/classes/test/it_test.js",
+    "test-qunit": "qunit -d js/paths.js -c js/qunit-reporter.js -t build/classes/test/it_test.js",
     "test-tape": "tape js/paths.js js/tape-reporter.js js/tape-plugin.js build/classes/test/it_test.js"
   },
   "author": "",
