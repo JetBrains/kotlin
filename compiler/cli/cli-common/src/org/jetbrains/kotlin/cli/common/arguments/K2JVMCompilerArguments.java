@@ -151,6 +151,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "-Xuse-javac", description = "Use javac for Java source and class files analysis")
     public boolean useJavac;
 
+    @Argument(value = "-Xcompile-java", description = "Reuse javac analysis and compile Java source files")
+    public boolean compileJava;
+
     @Argument(
             value = "-Xjavac-arguments",
             valueDescription = "<option[,]>",

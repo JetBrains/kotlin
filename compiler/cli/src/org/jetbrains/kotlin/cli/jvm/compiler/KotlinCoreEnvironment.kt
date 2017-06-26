@@ -271,9 +271,10 @@ class KotlinCoreEnvironment private constructor(
     fun registerJavac(
             javaFiles: List<File> = allJavaFiles,
             kotlinFiles: List<KtFile> = sourceFiles,
+            compileJava: Boolean = false,
             arguments: Array<String>? = null
     ): Boolean {
-        return JavacWrapperRegistrar.registerJavac(projectEnvironment.project, configuration, javaFiles, kotlinFiles, arguments)
+        return JavacWrapperRegistrar.registerJavac(projectEnvironment.project, configuration, javaFiles, kotlinFiles, compileJava, arguments)
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment
