@@ -1,0 +1,489 @@
+MODULE_FRAGMENT <dependencies of test-module>
+  EXTERNAL_PACKAGE_FRAGMENT java.util
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedHashMap
+      TYPE_PARAMETER <K : kotlin.Any!>
+      TYPE_PARAMETER <V : kotlin.Any!>
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor LinkedHashMap<K : kotlin.Any!, V : kotlin.Any!>()
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor LinkedHashMap<K : kotlin.Any!, V : kotlin.Any!>(p0: (kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?))
+        VALUE_PARAMETER value-parameter p0: (kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?)
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor LinkedHashMap<K : kotlin.Any!, V : kotlin.Any!>(p0: kotlin.Int)
+        VALUE_PARAMETER value-parameter p0: kotlin.Int
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor LinkedHashMap<K : kotlin.Any!, V : kotlin.Any!>(p0: kotlin.Int, p1: kotlin.Float)
+        VALUE_PARAMETER value-parameter p0: kotlin.Int
+        VALUE_PARAMETER value-parameter p1: kotlin.Float
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor LinkedHashMap<K : kotlin.Any!, V : kotlin.Any!>(p0: kotlin.Int, p1: kotlin.Float, p2: kotlin.Boolean)
+        VALUE_PARAMETER value-parameter p0: kotlin.Int
+        VALUE_PARAMETER value-parameter p1: kotlin.Float
+        VALUE_PARAMETER value-parameter p2: kotlin.Boolean
+      FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun readObject(p0: java.io.ObjectInputStream!): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: java.io.ObjectInputStream!
+      FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun writeObject(p0: java.io.ObjectOutputStream!): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: java.io.ObjectOutputStream!
+      FUN IR_EXTERNAL_DECLARATION_STUB private open fun linkNodeLast(p0: java.util.LinkedHashMap.Entry<K!, V!>!): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: java.util.LinkedHashMap.Entry<K!, V!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB private open fun transferLinks(p0: java.util.LinkedHashMap.Entry<K!, V!>!, p1: java.util.LinkedHashMap.Entry<K!, V!>!): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: java.util.LinkedHashMap.Entry<K!, V!>!
+        VALUE_PARAMETER value-parameter p1: java.util.LinkedHashMap.Entry<K!, V!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB protected/*protected and package*/ open fun removeEldestEntry(p0: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!): kotlin.Boolean
+        VALUE_PARAMETER value-parameter p0: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun clone(): kotlin.Any
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun compute(p0: K, p1: java.util.function.BiFunction<in K, in V?, out V?>): V?
+        VALUE_PARAMETER value-parameter p0: K
+        VALUE_PARAMETER value-parameter p1: java.util.function.BiFunction<in K, in V?, out V?>
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun computeIfAbsent(p0: K, p1: java.util.function.Function<in K, out V>): V
+        VALUE_PARAMETER value-parameter p0: K
+        VALUE_PARAMETER value-parameter p1: java.util.function.Function<in K, out V>
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun computeIfPresent(p0: K, p1: java.util.function.BiFunction<in K, in V, out V?>): V?
+        VALUE_PARAMETER value-parameter p0: K
+        VALUE_PARAMETER value-parameter p1: java.util.function.BiFunction<in K, in V, out V?>
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun containsKey(key: K): kotlin.Boolean
+        VALUE_PARAMETER value-parameter key: K
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun isEmpty(): kotlin.Boolean
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun merge(p0: K, p1: V, p2: java.util.function.BiFunction<in V, in V, out V?>): V?
+        VALUE_PARAMETER value-parameter p0: K
+        VALUE_PARAMETER value-parameter p1: V
+        VALUE_PARAMETER value-parameter p2: java.util.function.BiFunction<in V, in V, out V?>
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun put(key: K, value: V): V?
+        VALUE_PARAMETER value-parameter key: K
+        VALUE_PARAMETER value-parameter value: V
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun putAll(from: kotlin.collections.Map<out K, V>): kotlin.Unit
+        VALUE_PARAMETER value-parameter from: kotlin.collections.Map<out K, V>
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun putIfAbsent(p0: K, p1: V): V?
+        VALUE_PARAMETER value-parameter p0: K
+        VALUE_PARAMETER value-parameter p1: V
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun remove(key: K): V?
+        VALUE_PARAMETER value-parameter key: K
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun remove(key: K, value: V): kotlin.Boolean
+        VALUE_PARAMETER value-parameter key: K
+        VALUE_PARAMETER value-parameter value: V
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun replace(p0: K, p1: V): V?
+        VALUE_PARAMETER value-parameter p0: K
+        VALUE_PARAMETER value-parameter p1: V
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun replace(p0: K, p1: V, p2: V): kotlin.Boolean
+        VALUE_PARAMETER value-parameter p0: K
+        VALUE_PARAMETER value-parameter p1: V
+        VALUE_PARAMETER value-parameter p2: V
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public open override val size: kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <get-size>(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun clear(): kotlin.Unit
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun containsValue(value: V): kotlin.Boolean
+        VALUE_PARAMETER value-parameter value: V
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun forEach(p0: java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: java.util.function.BiConsumer<in K, in V>
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun get(key: K): V?
+        VALUE_PARAMETER value-parameter key: K
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun getOrDefault(key: K, defaultValue: V): V
+        VALUE_PARAMETER value-parameter key: K
+        VALUE_PARAMETER value-parameter defaultValue: V
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun replaceAll(p0: java.util.function.BiFunction<in K, in V, out V>): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: java.util.function.BiFunction<in K, in V, out V>
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public open override val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <get-entries>(): kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public open override val keys: kotlin.collections.MutableSet<K>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <get-keys>(): kotlin.collections.(Mutable)Set<K!>!
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public open override val values: kotlin.collections.MutableCollection<V>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <get-values>(): kotlin.collections.(Mutable)Collection<V!>!
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedHashIterator
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedHashIterator()
+        FUN IR_EXTERNAL_DECLARATION_STUB public final fun remove(): kotlin.Unit
+        FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun hasNext(): kotlin.Boolean
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+        FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final fun nextNode(): java.util.LinkedHashMap.Entry<K!, V!>!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var current: java.util.LinkedHashMap.Entry<K!, V!>!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var current: java.util.LinkedHashMap.Entry<K!, V!>!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var expectedModCount: kotlin.Int
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var expectedModCount: kotlin.Int
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var next: java.util.LinkedHashMap.Entry<K!, V!>!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var next: java.util.LinkedHashMap.Entry<K!, V!>!
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedEntryIterator
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedEntryIterator()
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun next(): kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun hasNext(): kotlin.Boolean
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun remove(): kotlin.Unit
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun forEachRemaining(p0: java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Unit
+          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+        FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun nextNode(): java.util.LinkedHashMap.Entry<K!, V!>!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedEntrySet
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedEntrySet()
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun clear(): kotlin.Unit
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun contains(element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!): kotlin.Boolean
+          VALUE_PARAMETER value-parameter element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun forEach(p0: java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!): kotlin.Unit
+          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun iterator(): kotlin.collections.MutableIterator<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun remove(element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!): kotlin.Boolean
+          VALUE_PARAMETER value-parameter element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun spliterator(): java.util.Spliterator<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val size: kotlin.Int
+          FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-size>(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <T : kotlin.Any!> toArray(p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+          TYPE_PARAMETER <T : kotlin.Any!>
+          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun add(element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!): kotlin.Boolean
+          VALUE_PARAMETER value-parameter element: kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun addAll(elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun isEmpty(): kotlin.Boolean
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun parallelStream(): java.util.stream.Stream<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeAll(elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeIf(p0: java.util.function.Predicate<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter p0: java.util.function.Predicate<in kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun retainAll(elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun stream(): java.util.stream.Stream<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toArray(): kotlin.Array<(out) kotlin.Any!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
+          FIELD IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
+        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun <T : kotlin.Any!> finishToArray(p0: kotlin.Array<(out) T!>!, p1: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
+          TYPE_PARAMETER <T : kotlin.Any!>
+          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
+          VALUE_PARAMETER value-parameter p1: kotlin.collections.(Mutable)Iterator<*>!
+        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun hugeCapacity(p0: kotlin.Int): kotlin.Int
+          VALUE_PARAMETER value-parameter p0: kotlin.Int
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedKeyIterator
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedKeyIterator()
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun next(): K!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun hasNext(): kotlin.Boolean
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun remove(): kotlin.Unit
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun forEachRemaining(p0: java.util.function.Consumer<in K!>): kotlin.Unit
+          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in K!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+        FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun nextNode(): java.util.LinkedHashMap.Entry<K!, V!>!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedKeySet
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedKeySet()
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun clear(): kotlin.Unit
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun contains(element: K!): kotlin.Boolean
+          VALUE_PARAMETER value-parameter element: K!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun forEach(p0: java.util.function.Consumer<in K!>!): kotlin.Unit
+          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in K!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun iterator(): kotlin.collections.MutableIterator<K!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun remove(element: K!): kotlin.Boolean
+          VALUE_PARAMETER value-parameter element: K!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun spliterator(): java.util.Spliterator<K!>
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val size: kotlin.Int
+          FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-size>(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <T : kotlin.Any!> toArray(p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+          TYPE_PARAMETER <T : kotlin.Any!>
+          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun add(element: K!): kotlin.Boolean
+          VALUE_PARAMETER value-parameter element: K!
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun addAll(elements: kotlin.collections.Collection<K!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<K!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun containsAll(elements: kotlin.collections.Collection<K!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<K!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun isEmpty(): kotlin.Boolean
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun parallelStream(): java.util.stream.Stream<K!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeAll(elements: kotlin.collections.Collection<K!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<K!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeIf(p0: java.util.function.Predicate<in K!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter p0: java.util.function.Predicate<in K!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun retainAll(elements: kotlin.collections.Collection<K!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<K!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun stream(): java.util.stream.Stream<K!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toArray(): kotlin.Array<(out) kotlin.Any!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
+          FIELD IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
+        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun <T : kotlin.Any!> finishToArray(p0: kotlin.Array<(out) T!>!, p1: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
+          TYPE_PARAMETER <T : kotlin.Any!>
+          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
+          VALUE_PARAMETER value-parameter p1: kotlin.collections.(Mutable)Iterator<*>!
+        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun hugeCapacity(p0: kotlin.Int): kotlin.Int
+          VALUE_PARAMETER value-parameter p0: kotlin.Int
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedValueIterator
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedValueIterator()
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun next(): V!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun hasNext(): kotlin.Boolean
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun remove(): kotlin.Unit
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun forEachRemaining(p0: java.util.function.Consumer<in V!>): kotlin.Unit
+          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in V!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+        FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun nextNode(): java.util.LinkedHashMap.Entry<K!, V!>!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var current: java.util.LinkedHashMap.Entry<K!, V!>!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var expectedModCount: kotlin.Int
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.LinkedHashMap.Entry<K!, V!>!
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS LinkedValues
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor LinkedValues()
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun clear(): kotlin.Unit
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun contains(element: V!): kotlin.Boolean
+          VALUE_PARAMETER value-parameter element: V!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun forEach(p0: java.util.function.Consumer<in V!>!): kotlin.Unit
+          VALUE_PARAMETER value-parameter p0: java.util.function.Consumer<in V!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun iterator(): kotlin.collections.MutableIterator<V!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun spliterator(): java.util.Spliterator<V!>
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val size: kotlin.Int
+          FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-size>(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun <T : kotlin.Any!> toArray(p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+          TYPE_PARAMETER <T : kotlin.Any!>
+          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun add(element: V!): kotlin.Boolean
+          VALUE_PARAMETER value-parameter element: V!
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun addAll(elements: kotlin.collections.Collection<V!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<V!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun containsAll(elements: kotlin.collections.Collection<V!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<V!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun isEmpty(): kotlin.Boolean
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun parallelStream(): java.util.stream.Stream<V!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun remove(element: V!): kotlin.Boolean
+          VALUE_PARAMETER value-parameter element: V!
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeAll(elements: kotlin.collections.Collection<V!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<V!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun removeIf(p0: java.util.function.Predicate<in V!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter p0: java.util.function.Predicate<in V!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun retainAll(elements: kotlin.collections.Collection<V!>): kotlin.Boolean
+          VALUE_PARAMETER value-parameter elements: kotlin.collections.Collection<V!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun stream(): java.util.stream.Stream<V!>
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toArray(): kotlin.Array<(out) kotlin.Any!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
+          FIELD IR_EXTERNAL_DECLARATION_STUB invisible_fake const final override val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
+        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun <T : kotlin.Any!> finishToArray(p0: kotlin.Array<(out) T!>!, p1: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
+          TYPE_PARAMETER <T : kotlin.Any!>
+          VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) T!>!
+          VALUE_PARAMETER value-parameter p1: kotlin.collections.(Mutable)Iterator<*>!
+        FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun hugeCapacity(p0: kotlin.Int): kotlin.Int
+          VALUE_PARAMETER value-parameter p0: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun capacity(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun getNode(p0: kotlin.Int, p1: kotlin.Any!): java.util.HashMap.Node<K!, V!>!
+        VALUE_PARAMETER value-parameter p0: kotlin.Int
+        VALUE_PARAMETER value-parameter p1: kotlin.Any!
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun loadFactor(): kotlin.Float
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun putMapEntries(p0: (kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?), p1: kotlin.Boolean): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: (kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?)
+        VALUE_PARAMETER value-parameter p1: kotlin.Boolean
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun putVal(p0: kotlin.Int, p1: K!, p2: V!, p3: kotlin.Boolean, p4: kotlin.Boolean): V!
+        VALUE_PARAMETER value-parameter p0: kotlin.Int
+        VALUE_PARAMETER value-parameter p1: K!
+        VALUE_PARAMETER value-parameter p2: V!
+        VALUE_PARAMETER value-parameter p3: kotlin.Boolean
+        VALUE_PARAMETER value-parameter p4: kotlin.Boolean
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun removeNode(p0: kotlin.Int, p1: kotlin.Any!, p2: kotlin.Any!, p3: kotlin.Boolean, p4: kotlin.Boolean): java.util.HashMap.Node<K!, V!>!
+        VALUE_PARAMETER value-parameter p0: kotlin.Int
+        VALUE_PARAMETER value-parameter p1: kotlin.Any!
+        VALUE_PARAMETER value-parameter p2: kotlin.Any!
+        VALUE_PARAMETER value-parameter p3: kotlin.Boolean
+        VALUE_PARAMETER value-parameter p4: kotlin.Boolean
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun resize(): kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun treeifyBin(p0: kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!, p1: kotlin.Int): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!
+        VALUE_PARAMETER value-parameter p1: kotlin.Int
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val loadFactor: kotlin.Float
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val loadFactor: kotlin.Float
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var entrySet: kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var entrySet: kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var keySet: kotlin.collections.(Mutable)Set<K!>!
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var keySet: kotlin.collections.(Mutable)Set<K!>!
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var modCount: kotlin.Int
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var modCount: kotlin.Int
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var size: kotlin.Int
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var size: kotlin.Int
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var table: kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var table: kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var threshold: kotlin.Int
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var threshold: kotlin.Int
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var values: kotlin.collections.(Mutable)Collection<V!>!
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var values: kotlin.collections.(Mutable)Collection<V!>!
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final val accessOrder: kotlin.Boolean
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final val accessOrder: kotlin.Boolean
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var head: java.util.LinkedHashMap.Entry<K!, V!>!
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var head: java.util.LinkedHashMap.Entry<K!, V!>!
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var tail: java.util.LinkedHashMap.Entry<K!, V!>!
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var tail: java.util.LinkedHashMap.Entry<K!, V!>!
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS Entry
+        TYPE_PARAMETER <K : kotlin.Any!>
+        TYPE_PARAMETER <V : kotlin.Any!>
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public/*package*/ constructor Entry<K : kotlin.Any!, V : kotlin.Any!>(p0: kotlin.Int, p1: K!, p2: V!, p3: java.util.HashMap.Node<K!, V!>!)
+          VALUE_PARAMETER value-parameter p0: kotlin.Int
+          VALUE_PARAMETER value-parameter p1: K!
+          VALUE_PARAMETER value-parameter p2: V!
+          VALUE_PARAMETER value-parameter p3: java.util.HashMap.Node<K!, V!>!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun setValue(newValue: V!): V!
+          VALUE_PARAMETER value-parameter newValue: V!
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun toString(): kotlin.String
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val key: K!
+          FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-key>(): K!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val value: V!
+          FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-value>(): V!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val hash: kotlin.Int
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val hash: kotlin.Int
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val key: K!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override val key: K!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.HashMap.Node<K!, V!>!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var next: java.util.HashMap.Node<K!, V!>!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var value: V!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override var value: V!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var after: java.util.LinkedHashMap.Entry<K!, V!>!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var after: java.util.LinkedHashMap.Entry<K!, V!>!
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var before: java.util.LinkedHashMap.Entry<K!, V!>!
+          FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ final var before: java.util.LinkedHashMap.Entry<K!, V!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun afterNodeAccess(p0: java.util.HashMap.Node<K!, V!>!): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: java.util.HashMap.Node<K!, V!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun afterNodeInsertion(p0: kotlin.Boolean): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: kotlin.Boolean
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun afterNodeRemoval(p0: java.util.HashMap.Node<K!, V!>!): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: java.util.HashMap.Node<K!, V!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun internalWriteEntries(p0: java.io.ObjectOutputStream!): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: java.io.ObjectOutputStream!
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun newNode(p0: kotlin.Int, p1: K!, p2: V!, p3: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.Node<K!, V!>!
+        VALUE_PARAMETER value-parameter p0: kotlin.Int
+        VALUE_PARAMETER value-parameter p1: K!
+        VALUE_PARAMETER value-parameter p2: V!
+        VALUE_PARAMETER value-parameter p3: java.util.HashMap.Node<K!, V!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun newTreeNode(p0: kotlin.Int, p1: K!, p2: V!, p3: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.TreeNode<K!, V!>!
+        VALUE_PARAMETER value-parameter p0: kotlin.Int
+        VALUE_PARAMETER value-parameter p1: K!
+        VALUE_PARAMETER value-parameter p2: V!
+        VALUE_PARAMETER value-parameter p3: java.util.HashMap.Node<K!, V!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun reinitialize(): kotlin.Unit
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun replacementNode(p0: java.util.HashMap.Node<K!, V!>!, p1: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.Node<K!, V!>!
+        VALUE_PARAMETER value-parameter p0: java.util.HashMap.Node<K!, V!>!
+        VALUE_PARAMETER value-parameter p1: java.util.HashMap.Node<K!, V!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun replacementTreeNode(p0: java.util.HashMap.Node<K!, V!>!, p1: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.TreeNode<K!, V!>!
+        VALUE_PARAMETER value-parameter p0: java.util.HashMap.Node<K!, V!>!
+        VALUE_PARAMETER value-parameter p1: java.util.HashMap.Node<K!, V!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB invisible_fake open override fun eq(p0: kotlin.Any!, p1: kotlin.Any!): kotlin.Boolean
+        VALUE_PARAMETER value-parameter p0: kotlin.Any!
+        VALUE_PARAMETER value-parameter p1: kotlin.Any!
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB private const final val serialVersionUID: kotlin.Long = 3801124242820219131.toLong()
+        FIELD IR_EXTERNAL_DECLARATION_STUB private const final val serialVersionUID: kotlin.Long = 3801124242820219131.toLong()
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val DEFAULT_INITIAL_CAPACITY: kotlin.Int = 16
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val DEFAULT_INITIAL_CAPACITY: kotlin.Int = 16
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val DEFAULT_LOAD_FACTOR: kotlin.Float = 0.75.toFloat()
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val DEFAULT_LOAD_FACTOR: kotlin.Float = 0.75.toFloat()
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val MAXIMUM_CAPACITY: kotlin.Int = 1073741824
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val MAXIMUM_CAPACITY: kotlin.Int = 1073741824
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val MIN_TREEIFY_CAPACITY: kotlin.Int = 64
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val MIN_TREEIFY_CAPACITY: kotlin.Int = 64
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val TREEIFY_THRESHOLD: kotlin.Int = 8
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val TREEIFY_THRESHOLD: kotlin.Int = 8
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val UNTREEIFY_THRESHOLD: kotlin.Int = 6
+        FIELD IR_EXTERNAL_DECLARATION_STUB public/*package*/ const final override val UNTREEIFY_THRESHOLD: kotlin.Int = 6
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun hash(p0: kotlin.Any!): kotlin.Int
+        VALUE_PARAMETER value-parameter p0: kotlin.Any!
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ final override fun tableSizeFor(p0: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter p0: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun comparableClassFor(p0: kotlin.Any!): java.lang.Class<*>!
+        VALUE_PARAMETER value-parameter p0: kotlin.Any!
+      FUN IR_EXTERNAL_DECLARATION_STUB public/*package*/ open override fun compareComparables(p0: java.lang.Class<*>!, p1: kotlin.Any!, p2: kotlin.Any!): kotlin.Int
+        VALUE_PARAMETER value-parameter p0: java.lang.Class<*>!
+        VALUE_PARAMETER value-parameter p1: kotlin.Any!
+        VALUE_PARAMETER value-parameter p2: kotlin.Any!
+  EXTERNAL_PACKAGE_FRAGMENT kotlin.collections
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE Map
+      TYPE_PARAMETER <K>
+      TYPE_PARAMETER <out V>
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin @kotlin.internal.PlatformDependent public open fun getOrDefault(key: K, defaultValue: @kotlin.UnsafeVariance V): V
+        VALUE_PARAMETER value-parameter key: K
+        VALUE_PARAMETER value-parameter defaultValue: @kotlin.UnsafeVariance V
+      FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun containsKey(key: K): kotlin.Boolean
+        VALUE_PARAMETER value-parameter key: K
+      FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun containsValue(value: @kotlin.UnsafeVariance V): kotlin.Boolean
+        VALUE_PARAMETER value-parameter value: @kotlin.UnsafeVariance V
+      FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun isEmpty(): kotlin.Boolean
+      FUN IR_EXTERNAL_DECLARATION_STUB public abstract operator fun get(key: K): V?
+        VALUE_PARAMETER value-parameter key: K
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
+        FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-entries>(): kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val keys: kotlin.collections.Set<K>
+        FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-keys>(): kotlin.collections.Set<K>
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val size: kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-size>(): kotlin.Int
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val values: kotlin.collections.Collection<V>
+        FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-values>(): kotlin.collections.Collection<V>
+      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE Entry
+        TYPE_PARAMETER <out K>
+        TYPE_PARAMETER <out V>
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val key: K
+          FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-key>(): K
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public abstract val value: V
+          FUN IR_EXTERNAL_DECLARATION_STUB public abstract fun <get-value>(): V
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+      FUN IR_EXTERNAL_DECLARATION_STUB public open fun forEach(p0: java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+        VALUE_PARAMETER value-parameter p0: java.util.function.BiConsumer<in K, in V>
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+  EXTERNAL_PACKAGE_FRAGMENT kotlin.collections
+    FUN IR_EXTERNAL_DECLARATION_STUB public fun <K, V> mapOf(pair: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
+      TYPE_PARAMETER <K>
+      TYPE_PARAMETER <V>
+      VALUE_PARAMETER value-parameter pair: kotlin.Pair<K, V>
+  EXTERNAL_PACKAGE_FRAGMENT kotlin
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS Pair
+      TYPE_PARAMETER <out A>
+      TYPE_PARAMETER <out B>
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor Pair<out A, out B>(first: A, second: B)
+        VALUE_PARAMETER value-parameter first: A
+        VALUE_PARAMETER value-parameter second: B
+      FUN IR_EXTERNAL_DECLARATION_STUB public final fun copy(first: A = ..., second: B = ...): kotlin.Pair<A, B>
+        VALUE_PARAMETER value-parameter first: A = ...
+          EXPRESSION_BODY
+            ERROR_EXPR 'Stub expression for default value of first' type=A
+        VALUE_PARAMETER value-parameter second: B = ...
+          EXPRESSION_BODY
+            ERROR_EXPR 'Stub expression for default value of second' type=B
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun component1(): A
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun component2(): B
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public final val first: A
+        FUN IR_EXTERNAL_DECLARATION_STUB public final fun <get-first>(): A
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public final val second: B
+        FUN IR_EXTERNAL_DECLARATION_STUB public final fun <get-second>(): B
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+    FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.internal.InlineOnly public inline fun <T> T.apply(block: T.() -> kotlin.Unit): T
+      TYPE_PARAMETER <T>
+      VALUE_PARAMETER value-parameter block: T.() -> kotlin.Unit
