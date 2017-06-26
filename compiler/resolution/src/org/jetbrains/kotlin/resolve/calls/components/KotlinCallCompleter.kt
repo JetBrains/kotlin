@@ -20,14 +20,10 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
-import org.jetbrains.kotlin.resolve.calls.inference.components.FixationOrderCalculator
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
+import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -41,9 +37,9 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.contains
 
 class KotlinCallCompleter(
-        private val resultTypeResolver: ResultTypeResolver,
         private val fixationOrderCalculator: FixationOrderCalculator,
-        private val additionalDiagnosticReporter: AdditionalDiagnosticReporter
+        private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
+        private val inferenceStepResolver: InferenceStepResolver
 ) {
     interface Context {
         val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall>
@@ -194,19 +190,7 @@ class KotlinCallCompleter(
         }
 
         val completionOrder = fixationOrderCalculator.computeCompletionOrder(c.asFixationOrderCalculatorContext(), descriptorWithFreshTypes.returnTypeOrNothing)
-        for ((variableWithConstraints, direction) in completionOrder) {
-            if (c.hasContradiction) return true
-            val variable = variableWithConstraints.typeVariable
-
-            val resultType = resultTypeResolver.findResultType(c.asResultTypeResolverContext(), variableWithConstraints, direction)
-            if (resultType == null) {
-                c.addError(NotEnoughInformationForTypeParameter(variable))
-                break
-            }
-            c.fixVariable(variable, resultType)
-            return false
-        }
-        return true
+        return inferenceStepResolver.resolveVariables(c, completionOrder)
     }
 
     private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: PostponedLambdaArgument) {
