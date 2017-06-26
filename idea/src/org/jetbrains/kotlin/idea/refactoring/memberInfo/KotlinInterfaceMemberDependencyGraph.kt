@@ -32,7 +32,7 @@ class KotlinInterfaceMemberDependencyGraph<T : KtNamedDeclaration, M : MemberInf
     private val delegateGraph = InterfaceMemberDependencyGraph<PsiMember, MemberInfoBase<PsiMember>>(klass.toLightClass())
 
     override fun memberChanged(memberInfo: M) {
-        delegateGraph.memberChanged(memberInfo.toJavaMemberInfo()!!)
+        delegateGraph.memberChanged(memberInfo.toJavaMemberInfo() ?: return)
     }
 
     @Suppress("UNCHECKED_CAST")
