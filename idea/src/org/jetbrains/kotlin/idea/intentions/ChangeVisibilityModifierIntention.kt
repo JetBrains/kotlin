@@ -56,14 +56,9 @@ open class ChangeVisibilityModifierIntention protected constructor(
 
         text = defaultText
 
-        val modifierElement = element.visibilityModifier()
-        if (modifierElement != null) {
-            return modifierElement.textRange
-        }
-
         val defaultRange = noModifierYetApplicabilityRange(element) ?: return null
 
-        if (element is KtPrimaryConstructor && defaultRange.isEmpty) {
+        if (element is KtPrimaryConstructor && defaultRange.isEmpty && element.visibilityModifier() == null) {
             text = "Make primary constructor ${modifier.value}" // otherwise it may be confusing
         }
 
