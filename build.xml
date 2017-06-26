@@ -413,9 +413,6 @@
 
                     <attribute name="Class-Path" value="${compiler.manifest.class.path}"/>
                     <attribute name="Main-Class" value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
-
-                    <!-- This is needed if the compiler is run on Java 9 via "java -jar kotlin-compiler.jar" -->
-                    <attribute name="Add-Opens" value="java.base/java.lang java.base/java.util java.base/java.util.concurrent.atomic java.base/jdk.internal.misc"/>
                 </manifest>
             </jar>
         </sequential>
