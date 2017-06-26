@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.utils
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.naming.encodeSignature
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 // Unfortunately, our descriptor serializer can't serialize references to descriptors.
 // We have to serialize entire class or package to serialize function or property.
@@ -50,7 +51,9 @@ fun generateSignature(descriptor: DeclarationDescriptor): String? {
             parent + separator + escape(descriptor.name.asString()) + "|" + encodeSignature(descriptor)
         }
         is PackageFragmentDescriptor -> {
-            if (descriptor.fqName.isRoot) "" else escape(descriptor.fqName.pathSegments().map { escape(it.identifier) }.joinToString("."))
+            val module = descriptor.module.name.asString()
+            val parts = sequenceOf(module) + descriptor.fqName.pathSegments().map { it.identifier }
+            parts.joinToString(".") { escape(it) }
         }
         is ClassDescriptor -> {
             val parent = generateSignature(descriptor.containingDeclaration) ?: return null
