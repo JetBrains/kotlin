@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -106,8 +105,8 @@ class LazyJavaClassDescriptor(
     override fun isHeader() = false
     override fun isImpl() = false
 
-    private val typeConstructor = c.storageManager.createLazyValue { LazyJavaClassTypeConstructor() }
-    override fun getTypeConstructor(): TypeConstructor = typeConstructor()
+    private val typeConstructor = LazyJavaClassTypeConstructor()
+    override fun getTypeConstructor(): TypeConstructor = typeConstructor
 
     private val unsubstitutedMemberScope = LazyJavaClassMemberScope(c, this, jClass)
     override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope
@@ -124,7 +123,7 @@ class LazyJavaClassDescriptor(
 
     override fun getConstructors() = unsubstitutedMemberScope.constructors()
 
-    override val annotations by c.storageManager.createLazyValue { c.resolveAnnotations(jClass) }
+    override val annotations = c.resolveAnnotations(jClass)
 
     private val declaredParameters = c.storageManager.createLazyValue {
         jClass.typeParameters.map {
@@ -152,7 +151,7 @@ class LazyJavaClassDescriptor(
         if (candidates.count { it.name.identifier !in PUBLIC_METHOD_NAMES_IN_OBJECT } > 1) return true
 
         // Check if any of the super-interfaces contain too many methods to be a SAM
-        return typeConstructor().supertypes.any {
+        return typeConstructor.supertypes.any {
             it.constructor.declarationDescriptor.safeAs<LazyJavaClassDescriptor>()?.isDefinitelyNotSamInterface == true
         }
     }
