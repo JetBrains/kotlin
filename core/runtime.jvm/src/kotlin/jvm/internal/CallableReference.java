@@ -19,8 +19,6 @@ package kotlin.jvm.internal;
 import kotlin.SinceKotlin;
 import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
@@ -140,7 +138,6 @@ public abstract class CallableReference implements KCallable, Serializable {
         return getReflected().getAnnotations();
     }
 
-    @NotNull
     @Override
     @SinceKotlin(version = "1.1")
     public List<KTypeParameter> getTypeParameters() {
@@ -148,16 +145,15 @@ public abstract class CallableReference implements KCallable, Serializable {
     }
 
     @Override
-    public Object call(@NotNull Object... args) {
+    public Object call(Object... args) {
         return getReflected().call(args);
     }
 
     @Override
-    public Object callBy(@NotNull Map args) {
+    public Object callBy(Map args) {
         return getReflected().callBy(args);
     }
 
-    @Nullable
     @Override
     @SinceKotlin(version = "1.1")
     public KVisibility getVisibility() {
