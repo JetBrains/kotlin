@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -103,7 +104,7 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
         return replacedFunctionCall.copy(
                 VariableAsFunctionResolvedCallImpl(
                         replacedFunctionCall.resolvedCall as MutableResolvedCall<FunctionDescriptor>,
-                        variableCall as MutableResolvedCall<VariableDescriptor>
+                        variableCall.asMutableResolvedCall(bindingContext)
                 )
         )
     }
@@ -146,6 +147,24 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
             TypeConstructorSubstitution.createByParametersMap(newTypeArguments).buildSubstitutor())
 
     return ResolvedCallWithRealDescriptor(newCall, thisExpression)
+}
+
+private fun ResolvedCall<VariableDescriptor>.asMutableResolvedCall(bindingContext: BindingContext): MutableResolvedCall<VariableDescriptor> {
+    return when (this) {
+        is ResolvedCallImpl<*> -> this as MutableResolvedCall<VariableDescriptor>
+        is NewResolvedCallImpl<*> -> (this as NewResolvedCallImpl<VariableDescriptor>).asDummyOldResolvedCall(bindingContext)
+        else -> throw IllegalStateException("No mutable resolved call for $this")
+    }
+}
+
+private fun NewResolvedCallImpl<VariableDescriptor>.asDummyOldResolvedCall(bindingContext: BindingContext): ResolvedCallImpl<VariableDescriptor> {
+    return ResolvedCallImpl(
+            call,
+            candidateDescriptor,
+            dispatchReceiver, extensionReceiver, explicitReceiverKind,
+            null, DelegatingBindingTrace(bindingContext, "Trace for old call"),
+            TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
+    )
 }
 
 fun ResolvedCall<*>.isSuspendNoInlineCall() =
