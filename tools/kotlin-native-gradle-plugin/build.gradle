@@ -60,12 +60,8 @@ jar {
     from (rootProject.findProject(':shared').sourceSets.main.output)
 }
 
-task deleteDist(type: Delete) {
-    delete 'dist'
-}
-
-clean {
-    dependsOn 'deleteDist'
+processResources {
+    expand('konanVersion': konanVersion)
 }
 
 publishing {

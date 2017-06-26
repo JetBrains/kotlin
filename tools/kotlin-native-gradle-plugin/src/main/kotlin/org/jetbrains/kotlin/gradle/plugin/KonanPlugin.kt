@@ -26,6 +26,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -191,7 +192,10 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         internal const val KONAN_VERSION_PROPERTY_NAME = "konan.version"
         internal const val KONAN_BUILD_TARGETS = "konan.build.targets"
 
-        internal const val DEFAULT_KONAN_VERSION = "0.3"
+        internal val DEFAULT_KONAN_VERSION = Properties().apply {
+            load(KonanPlugin::class.java.getResourceAsStream("/META-INF/gradle-plugins/konan.properties") ?:
+                throw RuntimeException("Cannot find a properties file"))
+        }.getProperty("default-konan-version") ?: throw RuntimeException("Cannot read the default compiler version")
 
         internal const val DOWNLOAD_COMPILER_PROPERTY_NAME = "DownloadCompiler"
     }
