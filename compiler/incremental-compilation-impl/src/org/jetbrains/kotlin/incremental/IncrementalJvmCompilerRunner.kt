@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import com.intellij.util.io.PersistentEnumeratorBase
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
-import java.io.IOException
 import java.util.*
 
 fun makeIncrementally(
@@ -64,7 +62,7 @@ fun makeIncrementally(
                                                     sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
                                                     versions, reporter)
         compiler.compile(kotlinFiles, args, messageCollector) {
-            it.incrementalCache.sourceSnapshotMap.compareAndUpdate(sourceFiles)
+            it.inputsCache.sourceSnapshotMap.compareAndUpdate(sourceFiles)
         }
     }
 }
@@ -107,16 +105,15 @@ class IncrementalJvmCompilerRunner(
             getChangedFiles: (IncrementalCachesManager)->ChangedFiles
     ): ExitCode {
         val targetId = TargetId(name = args.moduleName!!, type = "java-production")
-        var caches = IncrementalCachesManager(targetId, cacheDirectory, File(args.destination), reporter)
+        var caches = IncrementalJvmCachesManager(targetId, cacheDirectory, File(args.destination), reporter)
 
-        fun onError(e: Exception): ExitCode {
+        fun rebuild(): ExitCode {
             caches.clean()
+            dirtySourcesSinceLastTimeFile.delete()
+            args.destinationAsFile.deleteRecursively()
 
-            // todo: warn?
-            reporter.report { "Possible cache corruption. Rebuilding. $e" }
-            // try to rebuild
             val javaFilesProcessor = ChangedJavaFilesProcessor(reporter)
-            caches = IncrementalCachesManager(targetId, cacheDirectory, args.destinationAsFile, reporter)
+            caches = IncrementalJvmCachesManager(targetId, cacheDirectory, args.destinationAsFile, reporter)
             return compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, CompilationMode.Rebuild, messageCollector)
         }
 
@@ -124,17 +121,24 @@ class IncrementalJvmCompilerRunner(
             val javaFilesProcessor = ChangedJavaFilesProcessor(reporter)
             val changedFiles = getChangedFiles(caches)
             val compilationMode = calculateSourcesToCompile(javaFilesProcessor, caches, changedFiles, args)
-            compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, messageCollector)
+
+            val exitCode = when (compilationMode) {
+                is CompilationMode.Incremental -> {
+                    compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, messageCollector)
+                }
+                is CompilationMode.Rebuild -> {
+                    rebuild()
+                }
+            }
+
+            if (!caches.close(flush = true)) throw RuntimeException("Could not flush caches")
+
+            return exitCode
         }
-        catch (e: PersistentEnumeratorBase.CorruptedException) {
-            onError(e)
-        }
-        catch (e: IOException) {
-            onError(e)
-        }
-        finally {
-            caches.close(flush = true)
-            reporter.report { "flushed incremental caches" }
+        catch (e: Exception) {
+            // todo: warn?
+            reporter.report { "Possible cache corruption. Rebuilding. $e" }
+            rebuild()
         }
     }
 
@@ -147,15 +151,12 @@ class IncrementalJvmCompilerRunner(
 
     private fun calculateSourcesToCompile(
             javaFilesProcessor: ChangedJavaFilesProcessor,
-            caches: IncrementalCachesManager,
+            caches: IncrementalJvmCachesManager,
             changedFiles: ChangedFiles,
             args: K2JVMCompilerArguments
     ): CompilationMode {
         fun rebuild(reason: ()->String): CompilationMode {
             reporter.report {"Non-incremental compilation will be performed: ${reason()}"}
-            caches.clean()
-            dirtySourcesSinceLastTimeFile.delete()
-            args.destinationAsFile.deleteRecursively()
             return CompilationMode.Rebuild
         }
 
@@ -196,9 +197,9 @@ class IncrementalJvmCompilerRunner(
             dirtyFiles.addAll(dirtyFilesFromLookups)
         }
 
-        val dirtyClassesFqNames = classpathChanges.fqNames.flatMap {withSubtypes(it, listOf(caches.incrementalCache))}
+        val dirtyClassesFqNames = classpathChanges.fqNames.flatMap { withSubtypes(it, listOf(caches.jvmCache)) }
         if (dirtyClassesFqNames.any()) {
-            val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassesFqNames, reporter)
+            val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(listOf(caches.jvmCache), dirtyClassesFqNames, reporter)
             dirtyFiles.addAll(dirtyFilesFromFqNames)
         }
 
@@ -250,7 +251,7 @@ class IncrementalJvmCompilerRunner(
 
     private fun compileIncrementally(
             args: K2JVMCompilerArguments,
-            caches: IncrementalCachesManager,
+            caches: IncrementalJvmCachesManager,
             javaFilesProcessor: ChangedJavaFilesProcessor,
             allKotlinSources: List<File>,
             targetId: TargetId,
@@ -283,9 +284,9 @@ class IncrementalJvmCompilerRunner(
         var exitCode = ExitCode.OK
         while (dirtySources.any()) {
             val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
-            val outdatedClasses = caches.incrementalCache.classesBySources(dirtySources)
-            caches.incrementalCache.markOutputClassesDirty(dirtySources)
-            caches.incrementalCache.removeOutputForSourceFiles(dirtySources)
+            val outdatedClasses = caches.jvmCache.classesBySources(dirtySources)
+            caches.jvmCache.markOutputClassesDirty(dirtySources)
+            caches.inputsCache.removeOutputForSourceFiles(dirtySources)
 
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
 
@@ -295,7 +296,7 @@ class IncrementalJvmCompilerRunner(
             val text = allSourcesToCompile.joinToString(separator = System.getProperty("line.separator")) { it.canonicalPath }
             dirtySourcesSinceLastTimeFile.writeText(text)
 
-            val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), args, { caches.incrementalCache }, lookupTracker, messageCollector)
+            val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), args, caches.jvmCache, lookupTracker, messageCollector)
             exitCode = compilerOutput.exitCode
             val generatedFiles = compilerOutput.generatedFiles
             anyClassesCompiled = anyClassesCompiled || generatedFiles.isNotEmpty() || removedKotlinSources.isNotEmpty()
@@ -310,7 +311,7 @@ class IncrementalJvmCompilerRunner(
 
             if (compilationMode is CompilationMode.Incremental) {
                 val dirtySourcesSet = dirtySources.toHashSet()
-                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles).filter { it !in dirtySourcesSet }
+                val additionalDirtyFiles = additionalDirtyFiles(caches.jvmCache, generatedFiles).filter { it !in dirtySourcesSet }
                 if (additionalDirtyFiles.isNotEmpty()) {
                     dirtySources.addAll(additionalDirtyFiles)
                     continue
@@ -318,10 +319,10 @@ class IncrementalJvmCompilerRunner(
             }
 
             allGeneratedFiles.addAll(generatedFiles)
-            caches.incrementalCache.registerOutputForSourceFiles(generatedFiles)
+            caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
             val compilationResult = updateIncrementalCaches(listOf(targetId), generatedFiles,
                     compiledWithErrors = exitCode != ExitCode.OK,
-                    getIncrementalCache = { caches.incrementalCache })
+                    getIncrementalCache = { caches.jvmCache })
 
             caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
 
@@ -329,13 +330,13 @@ class IncrementalJvmCompilerRunner(
                 break
             }
 
-            val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(listOf(caches.incrementalCache), reporter)
+            val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(listOf(caches.jvmCache), reporter)
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
 
             with (dirtySources) {
                 clear()
                 addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
-                addAll(mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, reporter, excludes = compiledInThisIterationSet))
+                addAll(mapClassesFqNamesToFiles(listOf(caches.jvmCache), dirtyClassFqNames, reporter, excludes = compiledInThisIterationSet))
             }
 
             buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
@@ -364,14 +365,14 @@ class IncrementalJvmCompilerRunner(
     }
 
     private fun additionalDirtyFiles(
-            caches: IncrementalCachesManager,
+            cache: IncrementalCacheImpl<TargetId>,
             generatedFiles: List<GeneratedFile<TargetId>>
     ): Collection<File> {
         val result = HashSet<File>()
 
         fun partsByFacadeName(facadeInternalName: String): List<File> {
-            val parts = caches.incrementalCache.getStableMultifileFacadeParts(facadeInternalName) ?: emptyList()
-            return parts.flatMap { caches.incrementalCache.sourcesByInternalName(it) }
+            val parts = cache.getStableMultifileFacadeParts(facadeInternalName) ?: emptyList()
+            return parts.flatMap { cache.sourcesByInternalName(it) }
         }
 
         for (generatedFile in generatedFiles) {
@@ -382,7 +383,7 @@ class IncrementalJvmCompilerRunner(
             when (outputClass.classHeader.kind) {
                 KotlinClassHeader.Kind.CLASS -> {
                     val fqName = outputClass.className.fqNameForClassNameWithoutDollars
-                    val cachedSourceFile = caches.incrementalCache.getSourceFileIfClass(fqName)
+                    val cachedSourceFile = cache.getSourceFileIfClass(fqName)
 
                     if (cachedSourceFile != null) {
                         result.add(cachedSourceFile)
@@ -405,7 +406,7 @@ class IncrementalJvmCompilerRunner(
             targets: List<TargetId>,
             sourcesToCompile: Set<File>,
             args: K2JVMCompilerArguments,
-            getIncrementalCache: (TargetId)->GradleIncrementalCacheImpl,
+            cache: IncrementalCacheImpl<TargetId>,
             lookupTracker: LookupTracker,
             messageCollector: MessageCollector
     ): CompileChangedResults {
@@ -428,7 +429,7 @@ class IncrementalJvmCompilerRunner(
         val messageCollector = MessageCollectorWrapper(messageCollector, outputItemCollector)
 
         try {
-            val incrementalCaches = makeIncrementalCachesMap(targets, { listOf<TargetId>() }, getIncrementalCache, { this })
+            val incrementalCaches = makeIncrementalCachesMap(targets, { listOf<TargetId>() }, { cache }, { this })
             val compilationCanceledStatus = object : CompilationCanceledStatus {
                 override fun checkCanceled() {
                 }

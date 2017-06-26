@@ -19,18 +19,17 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.incremental.snapshots.FileSnapshotMap
+import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.incremental.storage.BasicStringMap
 import org.jetbrains.kotlin.incremental.storage.PathStringDescriptor
 import org.jetbrains.kotlin.incremental.storage.StringCollectionExternalizer
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.File
 
-class GradleIncrementalCacheImpl(
-        targetDataRoot: File,
-        targetOutputDir: File?,
-        target: TargetId,
+class InputsCache(
+        workingDir: File,
         private val reporter: ICReporter
-) : IncrementalCacheImpl<TargetId>(targetDataRoot, targetOutputDir, target) {
+) : BasicMapsOwner(workingDir) {
     companion object {
         private val SOURCE_TO_OUTPUT_FILES = "source-to-output"
         private val SOURCE_SNAPSHOTS = "source-snapshot"

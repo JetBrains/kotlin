@@ -29,15 +29,14 @@ import java.io.File
 /**
  * "Global" cache holder. Should be created once per root project.
  */
-internal class BuildCacheStorage(workingDir: File) : BasicMapsOwner(), ArtifactDifferenceRegistryProvider {
+internal class BuildCacheStorage(private val workingDir: File) : BasicMapsOwner(workingDir), ArtifactDifferenceRegistryProvider {
     companion object {
         private val OWN_VERSION = 0
         private val ARTIFACT_DIFFERENCE = "artifact-difference"
     }
 
     private val log = Logging.getLogger(this.javaClass)
-    private val cachesDir: File = File(workingDir, "caches").apply { mkdirs() }
-    private val versionFile = File(cachesDir, "version.txt")
+    private val versionFile = File(workingDir, "version.txt")
     private val version = CacheVersion(
             OWN_VERSION,
             versionFile,
@@ -49,9 +48,6 @@ internal class BuildCacheStorage(workingDir: File) : BasicMapsOwner(), ArtifactD
 
     @Volatile
     private var artifactDifferenceRegistry: ArtifactDifferenceRegistryImpl? = null
-
-    private val String.storageFile: File
-        get() = File(cachesDir, this + "." + CACHE_EXTENSION)
 
     @Synchronized
     override fun <T> withRegistry(report: (String)->Unit, fn: (ArtifactDifferenceRegistry)->T): T? {
@@ -95,8 +91,8 @@ internal class BuildCacheStorage(workingDir: File) : BasicMapsOwner(), ArtifactD
             log.kotlinDebug { "Exception while closing caches: ${e.stackTraceStr}" }
         }
 
-        cachesDir.deleteRecursively()
-        cachesDir.mkdirs()
+        workingDir.deleteRecursively()
+        workingDir.mkdirs()
         versionFile.delete()
     }
 
