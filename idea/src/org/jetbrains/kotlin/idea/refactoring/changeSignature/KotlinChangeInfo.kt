@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.keysToMap
@@ -555,11 +556,14 @@ fun ChangeInfo.toJetChangeInfo(
                 }
 
         val parameterType = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].type else currentType
+        val originalKtParameter = originalParameterDescriptors.getOrNull(oldIndex)?.source?.getPsi() as? KtParameter
+        val valOrVar = originalKtParameter?.valOrVarKeyword?.toValVar() ?: KotlinValVar.None
         KotlinParameterInfo(callableDescriptor = functionDescriptor,
                             originalIndex = oldIndex,
                             name = info.name,
                             originalTypeInfo = KotlinTypeInfo(false, parameterType),
-                            defaultValueForCall = defaultValueExpr).apply {
+                            defaultValueForCall = defaultValueExpr,
+                            valOrVar = valOrVar).apply {
             currentTypeInfo = KotlinTypeInfo(false, currentType)
         }
     }
