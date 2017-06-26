@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+import org.jetbrains.kotlin.resolve.calls.model.PostponedKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.PostponedLambdaArgument
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
@@ -43,6 +44,7 @@ class FixationOrderCalculator {
     interface Context {
         val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints>
         val lambdaArguments: List<PostponedLambdaArgument>
+        val postponedArguments: List<PostponedKotlinCallArgument>
     }
 
     fun computeCompletionOrder(
@@ -104,10 +106,11 @@ class FixationOrderCalculator {
             }
         }
 
-        private fun UnwrappedType.findTypeVariables(to: MutableCollection<Variable>) = contains {
-            c.notFixedTypeVariables[it.constructor]?.let { variable -> to.add(variable) }
-            false
-        }
+        private fun UnwrappedType.findTypeVariables(to: MutableCollection<Variable>) =
+                contains {
+                    c.notFixedTypeVariables[it.constructor]?.let { variable -> to.add(variable) }
+                    false
+                }
 
         private fun topologicalOrderWith0Priority(): List<Variable> {
             val handler = object : DFS.CollectingNodeHandler<Variable, Variable, LinkedHashSet<Variable>>(LinkedHashSet()) {
