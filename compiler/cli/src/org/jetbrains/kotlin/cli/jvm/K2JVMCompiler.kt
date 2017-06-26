@@ -242,7 +242,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                                       arguments: K2JVMCompilerArguments): Boolean {
         if (arguments.useJavac) {
             environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
-            return environment.registerJavac(arguments = arguments.javacArguments)
+            return environment.registerJavac(compileJava = arguments.compileJava, arguments = arguments.javacArguments)
         }
 
         return true

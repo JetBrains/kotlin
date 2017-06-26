@@ -22,6 +22,12 @@ where advanced options include:
   -Xskip-runtime-version-check Allow Kotlin runtime libraries of incompatible versions in the classpath
   -Xuse-javac                Use javac for Java source and class files analysis
   -Xuse-old-class-files-reading Use old class files reading implementation (may slow down the build and should be used in case of problems with the new implementation)
+  -Xcompile-java             Reuse javac analysis and compile Java source files
+  -Xjavac-arguments=<option[,]> Java compiler arguments
+  -Xload-jsr305-annotations  Load JSR-305 nullability annotations
+  -Xno-inline                Disable method inlining
+  -Xrepeat=<count>           Repeat compilation (for performance analysis)
+  -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin'
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier

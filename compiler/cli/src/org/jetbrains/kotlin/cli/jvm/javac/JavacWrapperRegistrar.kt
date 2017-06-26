@@ -36,6 +36,7 @@ object JavacWrapperRegistrar {
             configuration: CompilerConfiguration,
             javaFiles: List<File>,
             kotlinFiles: List<KtFile>,
+            compileJava: Boolean,
             arguments: Array<String>?
     ): Boolean {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -54,7 +55,7 @@ object JavacWrapperRegistrar {
         val jvmClasspathRoots = configuration.jvmClasspathRoots
         val outputDirectory = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
 
-        val javacWrapper = JavacWrapper(javaFiles, kotlinFiles, arguments, jvmClasspathRoots, outputDirectory, context)
+        val javacWrapper = JavacWrapper(javaFiles, kotlinFiles, arguments, jvmClasspathRoots, compileJava, outputDirectory, context)
 
         project.registerService(JavacWrapper::class.java, javacWrapper)
 
