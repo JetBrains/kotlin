@@ -35,8 +35,6 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
         val ENTRY_POINT_ANNOTATION = "test.anno.EntryPoint"
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
-
     override fun setUp() {
         super.setUp()
         EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(ENTRY_POINT_ANNOTATION)
@@ -90,27 +88,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                 }
             }.toList()
 
-            val isJs = srcDir.endsWith("js")
-
-            val isWithRuntime = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.text, "// WITH_RUNTIME") != null }
-            val fullJdk = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.text, "// FULL_JDK") != null }
-
-            if (isJs) {
-                assertFalse(isWithRuntime)
-                assertFalse(fullJdk)
-            }
-
             try {
-                if (isJs) {
-                    ConfigLibraryUtil.configureKotlinJsRuntime(myFixture.module)
-                }
-                if (isWithRuntime) {
-                    ConfigLibraryUtil.configureKotlinRuntimeAndSdk(
-                            myFixture.module,
-                            if (fullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
-                    )
-                }
-
                 fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, myFixture.module) }
 
                 configExtra(psiFiles, options)
@@ -137,13 +115,6 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
             }
             finally {
                 fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
-
-                if (isWithRuntime) {
-                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myFixture.module, IdeaTestUtil.getMockJdk17())
-                }
-                if (isJs) {
-                    ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(myFixture.module, IdeaTestUtil.getMockJdk17())
-                }
             }
         }
     }
