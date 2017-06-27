@@ -281,9 +281,7 @@ class KotlinIntroduceParameterDialog private constructor(
                                 val function = declaration as KtFunction
                                 val receiverType = function.receiverTypeReference?.text
                                 val parameterTypes = function
-                                        .valueParameters
-                                        .map { it.typeReference!!.text }
-                                        .joinToString()
+                                        .valueParameters.joinToString { it.typeReference!!.text }
                                 val returnType = function.typeReference?.text ?: "Unit"
 
                                 chosenType = (receiverType?.let { "$it." } ?: "") + "($parameterTypes) -> $returnType"

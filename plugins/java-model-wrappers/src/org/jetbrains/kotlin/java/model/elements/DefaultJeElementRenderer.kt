@@ -71,7 +71,7 @@ class DefaultJeElementRenderer : JeElementRenderer {
         return if (modifiers.isEmpty())
             renderedAnnotations
         else
-            renderedAnnotations + modifiers.map { it.name.toLowerCase() }.joinToString(" ", postfix = " ")
+            renderedAnnotations + modifiers.joinToString(" ", postfix = " ") { it.name.toLowerCase() }
     }
     
     private fun renderAnnotations(element: Element): String {
@@ -111,7 +111,7 @@ class DefaultJeElementRenderer : JeElementRenderer {
         }
     }
     
-    private fun String.withMargin() = lines().map { MARGIN + it }.joinToString(LINE_SEPARATOR)
+    private fun String.withMargin() = lines().joinToString(LINE_SEPARATOR) { MARGIN + it }
     
     private companion object {
         val MARGIN = "    "

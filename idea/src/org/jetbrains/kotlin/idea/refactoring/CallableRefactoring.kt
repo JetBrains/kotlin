@@ -75,9 +75,9 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
     private fun showSuperFunctionWarningDialog(superCallables: Collection<CallableDescriptor>,
                                                callableFromEditor: CallableDescriptor,
                                                options: List<String>): Int {
-        val superString = superCallables.map {
+        val superString = superCallables.joinToString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n") {
             it.containingDeclaration.name.asString()
-        }.joinToString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n")
+        }
         val message = KotlinBundle.message("x.overrides.y.in.class.list",
                                            DescriptorRenderer.COMPACT.render(callableFromEditor),
                                            callableFromEditor.containingDeclaration.name.asString(), superString,

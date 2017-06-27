@@ -86,7 +86,7 @@ object KDocRenderer {
 
         val lines = text.split('\n')
         val minIndent = lines.filter { it.trim().isNotEmpty() }.map(String::leadingIndent).min() ?: 0
-        return lines.map { it.drop(minIndent) }.joinToString("\n")
+        return lines.joinToString("\n") { it.drop(minIndent) }
     }
 
 
@@ -161,7 +161,7 @@ object KDocRenderer {
         val markdownNode = MarkdownNode(markdownTree, null, markdown)
 
         // Avoid wrapping the entire converted contents in a <p> tag if it's just a single paragraph
-        val maybeSingleParagraph = markdownNode.children.filter { it.type != MarkdownTokenTypes.EOL }.singleOrNull()
+        val maybeSingleParagraph = markdownNode.children.singleOrNull { it.type != MarkdownTokenTypes.EOL }
         if (maybeSingleParagraph != null && !allowSingleParagraph) {
             return maybeSingleParagraph.children.joinToString("") { it.toHtml() }
         }

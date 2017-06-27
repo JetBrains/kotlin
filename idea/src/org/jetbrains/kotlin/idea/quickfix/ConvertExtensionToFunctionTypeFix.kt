@@ -51,7 +51,7 @@ class ConvertExtensionToFunctionTypeFix(element: KtTypeReference, type: KotlinTy
 
     private fun KotlinType.renderType(renderer: DescriptorRenderer) = buildString {
         append('(')
-        arguments.dropLast(1).map { renderer.renderType(it.type) }.joinTo(this@buildString, ", ")
+        arguments.dropLast(1).joinTo(this@buildString, ", ") { renderer.renderType(it.type) }
         append(") -> ")
         append(renderer.renderType(this@renderType.getReturnTypeFromFunctionType()))
     }

@@ -145,7 +145,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             var typeForCast = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classDescriptor)
             val typeParams = classDescriptor.declaredTypeParameters
             if (typeParams.isNotEmpty()) {
-                typeForCast += typeParams.map { "*" }.joinToString(prefix = "<", postfix = ">")
+                typeForCast += typeParams.joinToString(prefix = "<", postfix = ">") { "*" }
             }
 
             val useIsCheck = CodeInsightSettings.getInstance().USE_INSTANCEOF_ON_EQUALS_PARAMETER

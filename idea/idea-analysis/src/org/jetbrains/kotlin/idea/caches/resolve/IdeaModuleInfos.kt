@@ -216,7 +216,7 @@ class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo, 
         get() = LibrarySourceInfo(project, library)
 
     override fun getLibraryRoots(): Collection<String> =
-            library.getFiles(OrderRootType.CLASSES).map(PathUtil::getLocalPath).filterNotNull()
+            library.getFiles(OrderRootType.CLASSES).mapNotNull(PathUtil::getLocalPath)
 
     override fun toString() = "LibraryInfo(libraryName=${library.name})"
 

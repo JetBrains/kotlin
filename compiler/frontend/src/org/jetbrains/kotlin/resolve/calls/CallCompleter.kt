@@ -377,7 +377,7 @@ class CallCompleter(
             expression = deparenthesizeOrGetSelector(expression)
         }
 
-        var shouldBeMadeNullable: Boolean = false
+        var shouldBeMadeNullable = false
         expressions.asReversed().forEach { expression ->
             if (!(expression is KtParenthesizedExpression || expression is KtLabeledExpression || expression is KtAnnotatedExpression)) {
                 shouldBeMadeNullable = hasNecessarySafeCall(expression, trace)

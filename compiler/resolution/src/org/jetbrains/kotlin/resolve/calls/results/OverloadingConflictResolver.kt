@@ -147,12 +147,11 @@ class OverloadingConflictResolver<C : Any>(
                 candidates.firstOrNull()
             else when (checkArgumentsMode) {
                 CheckArgumentTypesMode.CHECK_CALLABLE_TYPE ->
-                    uniquifyCandidatesSet(candidates).filter {
-                        isDefinitelyMostSpecific(it, candidates) {
-                            call1, call2 ->
+                    uniquifyCandidatesSet(candidates).singleOrNull {
+                        isDefinitelyMostSpecific(it, candidates) { call1, call2 ->
                             isNotLessSpecificCallableReference(call1.resultingDescriptor, call2.resultingDescriptor)
                         }
-                    }.singleOrNull()
+                    }
 
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->
                     findMaximallySpecificCall(candidates, discriminateGenerics, isDebuggerContext)

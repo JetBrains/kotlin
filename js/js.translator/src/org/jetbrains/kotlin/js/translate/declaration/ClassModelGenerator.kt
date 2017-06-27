@@ -157,8 +157,7 @@ class ClassModelGenerator(val context: StaticContext) {
         // When none found, we have nothing to copy, ignore.
         // When multiple found, our current class should provide implementation, ignore.
         val memberToCopy = member.findNonRepeatingOverriddenDescriptors({ overriddenDescriptors }, { original })
-                .filter { it.modality != Modality.ABSTRACT }
-                .singleOrNull() ?: return null
+                                   .singleOrNull { it.modality != Modality.ABSTRACT } ?: return null
 
         // If found member is not from interface, we don't need to copy it, it's already in prototype
         if ((memberToCopy.containingDeclaration as ClassDescriptor).kind != ClassKind.INTERFACE) return null
@@ -172,8 +171,7 @@ class ClassModelGenerator(val context: StaticContext) {
         // When non found, we have nothing to copy, ignore.
         // When multiple found, our current class should provide implementation, ignore.
         val memberToCopy = member.findNonRepeatingOverriddenDescriptors({ overriddenDescriptors }, { original })
-                .filter { it.hasOrInheritsParametersWithDefaultValue() }
-                .singleOrNull() ?: return null
+                                   .singleOrNull { it.hasOrInheritsParametersWithDefaultValue() } ?: return null
 
         // If found member is not from interface, we don't need to copy it, it's already in prototype
         if ((memberToCopy.containingDeclaration as ClassDescriptor).kind != ClassKind.INTERFACE) return null

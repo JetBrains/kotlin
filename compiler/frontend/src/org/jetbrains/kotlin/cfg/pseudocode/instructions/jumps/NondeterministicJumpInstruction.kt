@@ -71,7 +71,7 @@ class NondeterministicJumpInstruction(
 
     override fun toString(): String {
         val inVal = if (inputValue != null) "|$inputValue" else ""
-        val labels = targetLabels.map { it.name }.joinToString(", ")
+        val labels = targetLabels.joinToString(", ") { it.name }
         return "jmp?($labels$inVal)"
     }
 

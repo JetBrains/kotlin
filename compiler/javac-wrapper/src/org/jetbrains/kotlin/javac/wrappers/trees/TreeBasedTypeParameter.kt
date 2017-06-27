@@ -45,12 +45,12 @@ class TreeBasedTypeParameter(
         get() = false
 
     override val upperBounds: Collection<JavaClassifierType>
-        get() = tree.bounds.map {
+        get() = tree.bounds.mapNotNull {
             when (it) {
                 is JCTree.JCTypeApply -> TreeBasedGenericClassifierType(it, TreePath(treePath, it), javac)
                 is JCTree.JCIdent -> TreeBasedNonGenericClassifierType(it, TreePath(treePath, it), javac)
                 else -> null
             }
-        }.filterNotNull()
+        }
 
 }

@@ -215,7 +215,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         val classParams = classElement.typeParameters
         if (classParams.isEmpty()) return null
         val allTypeParameters = classParams + member.typeParameters
-        val text = allTypeParameters.map { it.text }.joinToString(",", "<", ">")
+        val text = allTypeParameters.joinToString(",", "<", ">") { it.text }
         return KtPsiFactory(member).createDeclaration<KtFunction>("fun $text foo()").typeParameterList
     }
 

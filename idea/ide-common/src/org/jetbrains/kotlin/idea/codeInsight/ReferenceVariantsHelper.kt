@@ -264,8 +264,7 @@ class ReferenceVariantsHelper(
 
             if (isStatic) {
                 explicitReceiverTypes
-                        .map { (it.constructor.declarationDescriptor as? ClassDescriptor)?.staticScope }
-                        .filterNotNull()
+                        .mapNotNull { (it.constructor.declarationDescriptor as? ClassDescriptor)?.staticScope }
                         .flatMapTo(descriptors) { it.collectStaticMembers(resolutionFacade, kindFilter, nameFilter) }
             }
         }

@@ -27,7 +27,7 @@ interface ICReporter {
     fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {}
 
     fun pathsAsString(files: Iterable<File>): String =
-            files.map { it.canonicalPath }.joinToString()
+            files.joinToString { it.canonicalPath }
 
     fun pathsAsString(vararg files: File): String =
             pathsAsString(files.toList())

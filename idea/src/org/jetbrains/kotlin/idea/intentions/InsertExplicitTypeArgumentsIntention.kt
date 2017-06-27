@@ -65,7 +65,7 @@ class InsertExplicitTypeArgumentsIntention : SelfTargetingRangeIntention<KtCallE
             val args = resolvedCall.typeArguments
             val types = resolvedCall.candidateDescriptor.typeParameters
 
-            val text = types.map { IdeDescriptorRenderers.SOURCE_CODE.renderType(args[it]!!) }.joinToString(", ", "<", ">")
+            val text = types.joinToString(", ", "<", ">") { IdeDescriptorRenderers.SOURCE_CODE.renderType(args[it]!!) }
 
             return KtPsiFactory(element).createTypeArguments(text)
         }

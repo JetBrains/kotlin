@@ -54,7 +54,7 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
 
         val members = defaultImplsIrClass.declarations
 
-        irClass.declarations.filterIsInstance<IrFunction>().mapNotNull {
+        irClass.declarations.filterIsInstance<IrFunction>().forEach {
             val descriptor = it.descriptor
             if (descriptor.modality != Modality.ABSTRACT) {
                 val functionDescriptorImpl = createDefaultImplFunDescriptor(defaultImplsDescriptor, descriptor, interfaceDescriptor, state.typeMapper)

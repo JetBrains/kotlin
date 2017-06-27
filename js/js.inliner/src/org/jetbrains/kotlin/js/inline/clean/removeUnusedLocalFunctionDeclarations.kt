@@ -55,8 +55,7 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
         tracker.addCandidateForRemoval(name, currentStatement!!)
 
         val references = collectUsedNames(x)
-        references.filterNotNull()
-                .forEach { tracker.addRemovableReference(name, it) }
+        references.forEach { tracker.addRemovableReference(name, it) }
 
         return false
     }

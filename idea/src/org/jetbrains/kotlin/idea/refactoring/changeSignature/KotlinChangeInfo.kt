@@ -288,9 +288,9 @@ open class KotlinChangeInfo(
             return signatureParameters[0].getDeclarationSignature(0, inheritedCallable).text
         }
 
-        return signatureParameters.indices
-                .map { i -> signatureParameters[i].getDeclarationSignature(i, inheritedCallable).text }
-                .joinToString(separator = ", ")
+        return signatureParameters.indices.joinToString(separator = ", ") { i ->
+            signatureParameters[i].getDeclarationSignature(i, inheritedCallable).text
+        }
     }
 
     fun renderReceiverType(inheritedCallable: KotlinCallableDefinitionUsage<*>): String? {

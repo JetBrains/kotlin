@@ -176,7 +176,7 @@ fun <T : KtDeclaration> insertMembersAfter(
             val body = classOrObject.getOrCreateBody()
 
             var afterAnchor = anchor ?: findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList<T>()
-            otherMembers.mapNotNullTo(insertedMembers) {
+            otherMembers.mapTo(insertedMembers) {
                 if (classOrObject is KtClass && classOrObject.isEnum()) {
                     val enumEntries = classOrObject.declarations.filterIsInstance<KtEnumEntry>()
                     val bound = (enumEntries.lastOrNull() ?: classOrObject.allChildren.firstOrNull { it.node.elementType == KtTokens.SEMICOLON })

@@ -29,8 +29,7 @@ class KotlinCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
         if (!packageName.isNullOrEmpty()) {
             props[FileTemplate.ATTRIBUTE_PACKAGE_NAME] = packageName!!
                     .split('.')
-                    .map(String::quoteIfNeeded)
-                    .joinToString(".")
+                    .joinToString(".", transform = String::quoteIfNeeded)
         }
 
         val name = props[FileTemplate.ATTRIBUTE_NAME] as? String

@@ -90,7 +90,7 @@ internal var KtSimpleNameExpression.internalUsageInfos: MutableMap<FqName, (KtSi
 
 internal fun preProcessInternalUsages(element: KtElement, usages: Collection<KtElement>) {
     val mainFile = element.containingKtFile
-    val targetPackages = usages.mapNotNullTo(LinkedHashSet()) { it.containingKtFile.packageFqName }
+    val targetPackages = usages.mapTo(LinkedHashSet()) { it.containingKtFile.packageFqName }
     for (targetPackage in targetPackages) {
         if (targetPackage == mainFile.packageFqName) continue
         val packageNameInfo = ContainerChangeInfo(ContainerInfo.Package(mainFile.packageFqName), ContainerInfo.Package(targetPackage))

@@ -51,7 +51,7 @@ internal fun ClassLoader.listAllUrlsAsFiles(): List<File> {
 }
 
 internal fun URLClassLoader.listLocalUrlsAsFiles(): List<File> {
-    return this.urLs.map { it.toString().removePrefix("file:") }.filterNotNull().map(::File)
+    return this.urLs.mapNotNull { it.toString().removePrefix("file:") }.map(::File)
 }
 
 internal fun <T : Any> List<T>.ensureNotEmpty(error: String): List<T> {

@@ -55,13 +55,13 @@ fun getFunctionForExtractedFragment(
                                       attachmentByPsiFile(codeFragment),
                                       Attachment("breakpoint.info", "line: $breakpointLine"),
                                       Attachment("context.info", codeFragment.context?.text ?: "null"),
-                                      Attachment("errors.info", analysisResult.messages.map { "$it: ${it.renderMessage()}" }.joinToString("\n")))
+                                      Attachment("errors.info", analysisResult.messages.joinToString("\n") { "$it: ${it.renderMessage()}" }))
             LOG.error(LogMessageEx.createEvent(
                     "Internal error during evaluate expression",
                     ExceptionUtil.getThrowableText(Throwable("Extract function fails with ${analysisResult.messages.joinToString { it.name }}")),
                     mergeAttachments(*attachments)))
         }
-        return analysisResult.messages.map { errorMessage ->
+        return analysisResult.messages.joinToString(", ") { errorMessage ->
             val message = when(errorMessage) {
                 ErrorMessage.NO_EXPRESSION -> "Cannot perform an action without an expression"
                 ErrorMessage.NO_CONTAINER -> "Cannot perform an action at this breakpoint ${breakpointFile.name}:$breakpointLine"
@@ -76,7 +76,7 @@ fun getFunctionForExtractedFragment(
                 ErrorMessage.MULTIPLE_OUTPUT -> throw AssertionError("Unexpected error: $errorMessage")
             }
             errorMessage.additionalInfo?.let { "$message: ${it.joinToString(", ")}" } ?: message
-        }.joinToString(", ")
+        }
     }
 
     fun generateFunction(): ExtractionResult? {
@@ -104,7 +104,7 @@ fun getFunctionForExtractedFragment(
 
         val validationResult = analysisResult.descriptor!!.validate()
         if (!validationResult.conflicts.isEmpty) {
-            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().map { it.text }.joinToString(",")}")
+            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().joinToString(",") { it.text }}")
         }
 
         val generatorOptions = ExtractionGeneratorOptions(inTempFile = true,

@@ -124,7 +124,7 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
                                 restoredOriginalTypeElement.textRange.intersects(textRange)
                                 || restoredOwner.typeParameterList?.textRange?.intersects(textRange) ?: false
                             }
-                            .mapNotNull { it.range.elements.toRange() }
+                            .map { it.range.elements.toRange() }
 
                     restoredOriginalTypeElement.replace(parameterRefElement)
 

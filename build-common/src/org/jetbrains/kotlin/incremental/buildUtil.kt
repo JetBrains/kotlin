@@ -41,9 +41,7 @@ import java.util.*
 
 
 fun Iterable<File>.javaSourceRoots(roots: Iterable<File>): Iterable<File> =
-        filter(File::isJavaFile)
-                .map { findSrcDirRoot(it, roots) }
-                .filterNotNull()
+        filter(File::isJavaFile).mapNotNull { findSrcDirRoot(it, roots) }
 
 fun makeModuleFile(name: String, isTest: Boolean, outputDir: File, sourcesToCompile: Iterable<File>, javaSourceRoots: Iterable<File>, classpath: Iterable<File>, friendDirs: Iterable<File>): File {
     val builder = KotlinModuleXmlBuilder()
@@ -166,7 +164,7 @@ fun<Target> OutputItemsCollectorImpl.generatedFiles(
     return outputs.map { outputItem ->
         val target =
                 outputItem.sourceFiles.firstOrNull()?.let { sourceToTarget[it] } ?:
-                targets.filter { getOutputDir(it)?.let { outputItem.outputFile.startsWith(it) } ?: false }.singleOrNull() ?:
+                targets.singleOrNull { getOutputDir(it)?.let { outputItem.outputFile.startsWith(it) } ?: false } ?:
                 representativeTarget
 
         when (outputItem.outputFile.extension) {

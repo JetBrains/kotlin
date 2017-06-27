@@ -427,7 +427,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 fun renderParamList(): String {
                     val prefix = if (classKind == ClassKind.ANNOTATION_CLASS) "val " else ""
-                    val list = callableInfo.parameterInfos.indices.map { i -> "${prefix}p$i: Any" }.joinToString(", ")
+                    val list = callableInfo.parameterInfos.indices.joinToString(", ") { i -> "${prefix}p$i: Any" }
                     return if (callableInfo.parameterInfos.isNotEmpty()
                                || callableInfo.kind == CallableKind.FUNCTION
                                || callableInfo.kind == CallableKind.SECONDARY_CONSTRUCTOR) "($list)" else list
@@ -972,7 +972,7 @@ internal fun <D : KtNamedDeclaration> placeDeclarationInContainer(
     val newLine = psiFactory.createNewLine()
 
     fun calcNecessaryEmptyLines(decl: KtDeclaration, after: Boolean): Int {
-        var lineBreaksPresent: Int = 0
+        var lineBreaksPresent = 0
         var neighbor: PsiElement? = null
 
         siblingsLoop@

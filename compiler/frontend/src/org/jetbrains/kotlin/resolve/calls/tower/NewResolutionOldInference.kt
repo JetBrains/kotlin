@@ -198,12 +198,12 @@ class NewResolutionOldInference(
             tracing: TracingStrategy,
             candidates: Collection<ResolutionCandidate<D>>
     ): OverloadResolutionResultsImpl<D> {
-        val resolvedCandidates = candidates.mapNotNull { candidate ->
+        val resolvedCandidates = candidates.map { candidate ->
             val candidateTrace = TemporaryBindingTrace.create(basicCallContext.trace, "Context for resolve candidate")
             val resolvedCall = ResolvedCallImpl.create(candidate, candidateTrace, tracing, basicCallContext.dataFlowInfoForArguments)
 
             if (candidate.descriptor.isHiddenInResolution(languageVersionSettings, basicCallContext.isSuperCall)) {
-                return@mapNotNull MyCandidate(ResolutionCandidateStatus(listOf(HiddenDescriptor)), resolvedCall)
+                return@map MyCandidate(ResolutionCandidateStatus(listOf(HiddenDescriptor)), resolvedCall)
             }
 
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(
@@ -238,7 +238,7 @@ class NewResolutionOldInference(
             basicCallContext: BasicCallResolutionContext,
             languageVersionSettings: LanguageVersionSettings
     ): OverloadResolutionResultsImpl<D> {
-        val resolvedCalls = candidates.mapNotNull {
+        val resolvedCalls = candidates.map {
             val (status, resolvedCall) = it
             if (resolvedCall is VariableAsFunctionResolvedCallImpl) {
                 // todo hacks

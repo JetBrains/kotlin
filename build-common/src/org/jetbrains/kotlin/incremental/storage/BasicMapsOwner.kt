@@ -42,5 +42,5 @@ open class BasicMapsOwner {
         maps.forEach { it.flush(memoryCachesOnly) }
     }
 
-    @TestOnly fun dump(): String = maps.map { it.dump() }.joinToString("\n\n")
+    @TestOnly fun dump(): String = maps.joinToString("\n\n") { it.dump() }
 }

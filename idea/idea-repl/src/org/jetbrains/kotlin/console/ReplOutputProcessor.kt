@@ -111,9 +111,9 @@ class ReplOutputProcessor(
         )
         val lastCommandStartOffset = lastUnprocessedHistoryEntry.rangeInHistoryDocument.startOffset
         val lastCommandStartLine = historyDocument.getLineNumber(lastCommandStartOffset)
-        val historyCommandRunIndicator = historyMarkup.allHighlighters.filter {
+        val historyCommandRunIndicator = historyMarkup.allHighlighters.first {
             historyDocument.getLineNumber(it.startOffset) == lastCommandStartLine && it.gutterIconRenderer != null
-        }.first()
+        }
 
         val highlighterAndMessagesByLine = compilerMessages.filter {
             it.severity == Severity.ERROR || it.severity == Severity.WARNING

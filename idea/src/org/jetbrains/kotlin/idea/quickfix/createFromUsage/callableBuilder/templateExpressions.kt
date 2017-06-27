@@ -174,7 +174,7 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
         currentTypeParameters = sortedRenderedTypeParameters.map { it.typeParameter }
 
         return TextResult(
-                if (sortedRenderedTypeParameters.isEmpty()) "" else sortedRenderedTypeParameters.map { it.text }.joinToString(", ", prefix, ">")
+                if (sortedRenderedTypeParameters.isEmpty()) "" else sortedRenderedTypeParameters.joinToString(", ", prefix, ">") { it.text }
         )
     }
 

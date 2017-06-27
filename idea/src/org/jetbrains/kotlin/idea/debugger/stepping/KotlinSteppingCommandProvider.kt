@@ -381,7 +381,7 @@ fun getStepOverAction(
     val patchedLineNumber = patchedLocation.ktLineNumber()
 
     val lambdaArgumentRanges = runReadAction {
-        inlineFunctionArguments.filterIsInstance<KtElement>().map {
+        inlineFunctionArguments.map {
             val startLineNumber = it.getLineNumber(true) + 1
             val endLineNumber = it.getLineNumber(false) + 1
 

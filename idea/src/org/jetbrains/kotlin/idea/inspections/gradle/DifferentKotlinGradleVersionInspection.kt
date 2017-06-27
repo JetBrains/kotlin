@@ -60,9 +60,9 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
             val buildScriptCall = dependenciesCall.getStrictParentOfType<GrMethodCall>() ?: return
             if (buildScriptCall.invokedExpression.text != "buildscript") return
 
-            val kotlinPluginStatement = findClassPathStatements(closure).filter {
+            val kotlinPluginStatement = findClassPathStatements(closure).firstOrNull {
                 it.text.contains(KOTLIN_PLUGIN_CLASSPATH_MARKER)
-            }.firstOrNull() ?: return
+            } ?: return
 
             val kotlinPluginVersion =
                     getHeuristicKotlinPluginVersion(kotlinPluginStatement) ?:

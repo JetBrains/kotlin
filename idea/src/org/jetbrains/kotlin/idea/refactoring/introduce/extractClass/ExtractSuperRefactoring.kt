@@ -245,7 +245,7 @@ class ExtractSuperRefactoring(
         }
 
         if (typeParameters.isNotEmpty()) {
-            val typeParameterListText = typeParameters.sortedBy { it.startOffset }.map { it.text }.joinToString(prefix = "<", postfix = ">")
+            val typeParameterListText = typeParameters.sortedBy { it.startOffset }.joinToString(prefix = "<", postfix = ">") { it.text }
             newClass.addAfter(psiFactory.createTypeParameterList(typeParameterListText), newClass.nameIdentifier)
         }
 

@@ -82,7 +82,7 @@ private fun findDeclarationInCompiledFile(file: KtClsFile, member: PsiMember, si
             file
         else {
             val topClassOrObject = file.declarations.singleOrNull() as? KtClassOrObject
-            relativeClassName.fold<Name, KtClassOrObject?>(topClassOrObject) { classOrObject, name ->
+            relativeClassName.fold(topClassOrObject) { classOrObject, name ->
                 classOrObject?.declarations?.singleOrNull { it.name == name.asString() } as? KtClassOrObject
             }
         }
@@ -113,7 +113,7 @@ private fun PsiMember.relativeClassName(): List<Name> {
 }
 
 private fun ClassDescriptor.relativeClassName(): List<Name> {
-    return classId!!.relativeClassName.pathSegments().drop(1).orEmpty()
+    return classId!!.relativeClassName.pathSegments().drop(1)
 }
 
 private fun ClassDescriptor.desc(): String = "L" + JvmClassName.byClassId(classId!!).internalName + ";"

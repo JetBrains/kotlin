@@ -148,8 +148,8 @@ class KotlinChangeSignatureDialog(
     override fun isListTableViewSupported() = true
 
     override fun isEmptyRow(row: ParameterTableModelItemBase<KotlinParameterInfo>): Boolean {
-        if (!row.parameter.name.isNullOrEmpty()) return false
-        if (!row.parameter.typeText.isNullOrEmpty()) return false
+        if (!row.parameter.name.isEmpty()) return false
+        if (!row.parameter.typeText.isEmpty()) return false
         return true
     }
 

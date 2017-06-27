@@ -239,8 +239,7 @@ class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerL
                         functionDescriptor.parentsWithSelf
                                 .takeWhile { it is FunctionDescriptor }
                                 .toList().reversed()
-                                .map { suggestLocalName(it) }
-                                .joinToString(separator = "$")
+                                .joinToString(separator = "$") { suggestLocalName(it) }
                         )
 
         private fun createTransformedDescriptor(localFunctionContext: LocalFunctionContext): FunctionDescriptor {

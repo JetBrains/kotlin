@@ -89,9 +89,9 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
     private data class JsNativeAnnotations(val annotations: List<KtAnnotationEntry>, val nativeAnnotation: KtAnnotationEntry?, val isGetter: Boolean, val isSetter: Boolean, val isInvoke: Boolean)
 
     private fun fetchJsNativeAnnotations(declaration: KtNamedDeclaration) : JsNativeAnnotations {
-        var isGetter: Boolean = false
-        var isSetter: Boolean = false
-        var isInvoke: Boolean = false
+        var isGetter = false
+        var isSetter = false
+        var isInvoke = false
         var nativeAnnotation: KtAnnotationEntry? = null
         val nativeAnnotations = ArrayList<KtAnnotationEntry>()
 

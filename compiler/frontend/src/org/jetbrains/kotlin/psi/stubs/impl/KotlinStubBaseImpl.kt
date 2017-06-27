@@ -33,7 +33,7 @@ val STUB_TO_STRING_PREFIX = "KotlinStub$"
 open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) : StubBase<T>(parent, elementType) {
 
     override fun toString(): String {
-        val stubInterface = this::class.java.interfaces.filter { it.name.contains("Stub") }.single()
+        val stubInterface = this::class.java.interfaces.single { it.name.contains("Stub") }
         val propertiesValues = renderPropertyValues(stubInterface)
         if (propertiesValues.isEmpty()) {
             return "$STUB_TO_STRING_PREFIX$stubType"

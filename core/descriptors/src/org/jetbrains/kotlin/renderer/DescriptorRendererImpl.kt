@@ -290,7 +290,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun StringBuilder.appendTypeProjections(typeProjections: List<TypeProjection>) {
-        typeProjections.map {
+        typeProjections.joinTo(this, ", ") {
             if (it.isStarProjection) {
                 "*"
             }
@@ -298,7 +298,7 @@ internal class DescriptorRendererImpl(
                 val type = renderType(it.type)
                 if (it.projectionKind == Variance.INVARIANT) type else "${it.projectionKind} $type"
             }
-        }.joinTo(this, ", ")
+        }
     }
 
     private fun StringBuilder.renderFunctionType(type: KotlinType) {
@@ -454,7 +454,7 @@ internal class DescriptorRendererImpl(
 
     private fun renderConstant(value: ConstantValue<*>): String {
         return when (value) {
-            is ArrayValue -> value.value.map { renderConstant(it) }.joinToString(", ", "{", "}")
+            is ArrayValue -> value.value.joinToString(", ", "{", "}") { renderConstant(it) }
             is AnnotationValue -> renderAnnotation(value.value).removePrefix("@")
             is KClassValue -> renderType(value.value) + "::class"
             else -> value.toString()
@@ -975,8 +975,7 @@ internal class DescriptorRendererImpl(
 
         renderSpaceIfNeeded(builder)
         builder.append(": ")
-        supertypes.map { renderType(it) }
-                .joinTo(builder, ", ")
+        supertypes.joinTo(builder, ", ") { renderType(it) }
     }
 
     private fun renderClassKindPrefix(klass: ClassDescriptor, builder: StringBuilder) {

@@ -109,9 +109,7 @@ object LambdaSignatureTemplates {
             }
         }
 
-        return functionParameterTypes(lambdaType)
-                       .map(::parameterPresentation)
-                       .joinToString(", ") + " ->"
+        return functionParameterTypes(lambdaType).joinToString(", ", transform = ::parameterPresentation) + " ->"
     }
 
     fun explicitParameterTypesRequired(file: KtFile, placeholderRange: TextRange, lambdaType: KotlinType): Boolean {

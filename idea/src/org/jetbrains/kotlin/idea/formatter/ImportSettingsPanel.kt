@@ -145,7 +145,7 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
 
             add(rbUseSingleImports, true)
             add(rbUseStarImports, true)
-            val jPanel: JPanel = JPanel(GridBagLayout())
+            val jPanel = JPanel(GridBagLayout())
             add(jPanel.apply {
                 val constraints = GridBagConstraints().apply { gridx = GridBagConstraints.RELATIVE }
                 this.add(rbUseStarImportsIfAtLeast, constraints)
