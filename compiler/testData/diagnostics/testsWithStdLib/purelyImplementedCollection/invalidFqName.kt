@@ -1,7 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
+// JAVAC_EXPECTED_FILE
 
 // FILE: A.java
-import java.util.*
+import java.util.*;
 
 @kotlin.jvm.PurelyImplements("")
 public class A<T> extends AbstractList<T> {
@@ -17,7 +18,7 @@ public class A<T> extends AbstractList<T> {
 }
 
 // FILE: B.java
-import java.util.*
+import java.util.*;
 
 @kotlin.jvm.PurelyImplements("[INVALID]")
 public class B<T> extends AbstractList<T> {}

@@ -1,7 +1,7 @@
 // !CHECK_TYPE
 // FILE: test/A.java
 
-package test
+package test;
 
 import java.util.Arrays;
 

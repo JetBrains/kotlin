@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.SimpleGlobalContext
@@ -72,6 +69,7 @@ import org.junit.Assert
 import java.io.File
 import java.util.*
 import java.util.function.Predicate
+import java.util.regex.Pattern
 
 abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
@@ -144,7 +142,12 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         var exceptionFromDescriptorValidation: Throwable? = null
         try {
-            val expectedFile = File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".txt")
+            val expectedFile = if (InTextDirectivesUtils.isDirectiveDefined(testDataFile.readText(), "// JAVAC_EXPECTED_FILE")
+                                   && environment.configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC)) {
+                File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".javac.txt")
+            } else {
+                File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".txt")
+            }
             validateAndCompareDescriptorWithFile(expectedFile, files, modules)
         }
         catch (e: Throwable) {
@@ -308,6 +311,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         val moduleContentScope = GlobalSearchScope.allScope(moduleContext.project)
         val moduleClassResolver = SingleModuleClassResolver()
+
         val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
                 moduleTrace,
@@ -319,6 +323,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 JvmTarget.JVM_1_6,
                 languageVersionSettings
         )
+
         container.initJvmBuiltInsForTopDownAnalysis()
         moduleClassResolver.resolver = container.get<JavaDescriptorResolver>()
 
@@ -419,13 +424,34 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         KotlinTestUtils.assertEqualsToFile(expectedFile, allPackagesText)
     }
 
+
     protected open fun skipDescriptorsValidation(): Boolean = false
+
+    private fun getJavaFilePackage(testFile: TestFile): Name {
+        val pattern = Pattern.compile("^\\s*package [.\\w\\d]*", Pattern.MULTILINE)
+        val matcher = pattern.matcher(testFile.expectedText)
+
+        if (matcher.find()) {
+            return testFile.expectedText
+                    .substring(matcher.start(), matcher.end())
+                    .split(" ")
+                    .last()
+                    .filter { !it.isWhitespace() }
+                    .let { Name.identifier(it.split(".").first()) }
+        }
+
+        return SpecialNames.ROOT_PACKAGE
+    }
 
     private fun createdAffectedPackagesConfiguration(
             testFiles: List<TestFile>,
             modules: Collection<ModuleDescriptor>
     ): RecursiveDescriptorComparator.Configuration {
-        val packagesNames = getTopLevelPackagesFromFileList(getKtFiles(testFiles, false))
+        val packagesNames = (
+                testFiles.filter { it.ktFile == null }
+                        .map { getJavaFilePackage(it) } +
+                getTopLevelPackagesFromFileList(getKtFiles(testFiles, false))
+                            ).toSet()
 
         val stepIntoFilter = Predicate<DeclarationDescriptor> { descriptor ->
             val module = DescriptorUtils.getContainingModuleOrNull(descriptor)

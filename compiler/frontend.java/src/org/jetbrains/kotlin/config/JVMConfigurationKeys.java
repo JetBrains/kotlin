@@ -115,7 +115,10 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("use fast class files reading implementation [experimental]");
 
     public static final CompilerConfigurationKey<Boolean> USE_JAVAC =
-            CompilerConfigurationKey.create("use javac");
+            CompilerConfigurationKey.create("use javac [experimental]");
+
+    public static final CompilerConfigurationKey<Boolean> COMPILE_JAVA =
+            CompilerConfigurationKey.create("compile java files [experimental]");
 
     public static final CompilerConfigurationKey<List<String>> ADDITIONAL_JAVA_MODULES =
             CompilerConfigurationKey.create("additional Java modules");

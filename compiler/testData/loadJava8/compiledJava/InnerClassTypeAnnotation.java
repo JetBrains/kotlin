@@ -1,3 +1,4 @@
+// JAVAC_EXPECTED_FILE
 package test;
 
 // SKIP_IN_RUNTIME_TEST

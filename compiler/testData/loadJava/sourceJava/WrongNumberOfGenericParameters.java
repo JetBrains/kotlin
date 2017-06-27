@@ -1,3 +1,4 @@
+// JAVAC_EXPECTED_FILE
 package test;
 
 public interface WrongNumberOfGenericParameters {

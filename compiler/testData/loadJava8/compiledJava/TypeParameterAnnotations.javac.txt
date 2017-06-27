@@ -1,0 +1,14 @@
+package test
+
+public open class TypeParameterAnnotations {
+    public constructor TypeParameterAnnotations()
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) public final annotation class A : kotlin.Annotation {
+        public constructor A(/*0*/ value: kotlin.String = ...)
+        public final val value: kotlin.String
+    }
+
+    public interface G</*0*/ @test.TypeParameterAnnotations.A T : kotlin.Any!> {
+        public abstract fun </*0*/ @test.TypeParameterAnnotations.A(value = "abc") R : kotlin.Any!> foo(/*0*/ p0: R!): kotlin.Unit
+    }
+}

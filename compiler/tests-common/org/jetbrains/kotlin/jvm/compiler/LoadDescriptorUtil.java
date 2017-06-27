@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
+import org.jetbrains.kotlin.jvm.compiler.javac.JavacRegistrarForTests;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -72,7 +73,8 @@ public class LoadDescriptorUtil {
             @NotNull TestJdkKind testJdkKind,
             @NotNull ConfigurationKind configurationKind,
             boolean isBinaryRoot,
-            boolean useFastClassReading
+            boolean useFastClassReading,
+            boolean useJavacWrapper
     ) {
         List<File> javaBinaryRoots = new ArrayList<>();
         javaBinaryRoots.add(KotlinTestUtils.getAnnotationsJar());
@@ -88,9 +90,12 @@ public class LoadDescriptorUtil {
         CompilerConfiguration configuration =
                 KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, javaBinaryRoots, javaSourceRoots);
         configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, useFastClassReading);
+        configuration.put(JVMConfigurationKeys.USE_JAVAC, useJavacWrapper);
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
-
+        if (useJavacWrapper) {
+            JavacRegistrarForTests.INSTANCE.registerJavac(environment);
+        }
         AnalysisResult analysisResult = JvmResolveUtil.analyze(environment);
 
         PackageViewDescriptor packageView = analysisResult.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);

@@ -32,7 +32,7 @@ abstract class TreeBasedMember<out T : JCTree>(
 ) : TreeBasedElement<T>(tree, treePath, javac), JavaMember {
 
     override val isDeprecatedInJavaDoc: Boolean
-        get() = false
+        get() = javac.isDeprecatedInJavaDoc(treePath)
 
     override val annotations: Collection<JavaAnnotation> by lazy {
         tree.annotations().map { TreeBasedAnnotation(it, treePath, javac) }
