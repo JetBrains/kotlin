@@ -13439,6 +13439,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeUnnecessaryParentheses"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("callInsideCallWithLambdaOnly.kt")
+        public void testCallInsideCallWithLambdaOnly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryParentheses/callInsideCallWithLambdaOnly.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("necessaryParentheses1.kt")
         public void testNecessaryParentheses1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryParentheses/necessaryParentheses1.kt");

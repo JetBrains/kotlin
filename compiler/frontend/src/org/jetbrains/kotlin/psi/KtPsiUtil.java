@@ -467,8 +467,11 @@ public class KtPsiUtil {
         }
 
         if (parentElement instanceof KtCallExpression && currentInner == ((KtCallExpression) parentElement).getCalleeExpression()) {
+            KtCallExpression parentCall = (KtCallExpression) parentElement;
             if (innerExpression instanceof KtSimpleNameExpression) return false;
             if (KtPsiUtilKt.getQualifiedExpressionForSelector(parentElement) != null) return true;
+            if (innerExpression instanceof KtCallExpression
+                && parentCall.getValueArgumentList() == null) return true;
             return !(innerExpression instanceof KtThisExpression
                      || innerExpression instanceof KtArrayAccessExpression
                      || innerExpression instanceof KtConstantExpression
