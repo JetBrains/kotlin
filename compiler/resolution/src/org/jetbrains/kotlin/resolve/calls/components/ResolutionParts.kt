@@ -84,7 +84,7 @@ internal object NoTypeArguments : ResolutionPart {
 
 internal object MapArguments : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        val mapping = callContext.argumentsToParametersMapper.mapArguments(kotlinCall, candidateDescriptor.original)
+        val mapping = callContext.argumentsToParametersMapper.mapArguments(kotlinCall, candidateDescriptor)
         argumentMappingByOriginal = mapping.parameterToCallArgumentMap
         return mapping.diagnostics
     }
