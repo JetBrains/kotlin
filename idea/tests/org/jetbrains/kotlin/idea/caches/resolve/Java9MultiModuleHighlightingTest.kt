@@ -73,4 +73,9 @@ class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module("unnamed").addDependency(d)
         checkHighlightingInAllFiles()
     }
+
+    fun testExportedPackageIsInaccessibleWithoutRequires() = doTest {
+        module("main").addDependency(module("dependency"))
+        checkHighlightingInAllFiles()
+    }
 }

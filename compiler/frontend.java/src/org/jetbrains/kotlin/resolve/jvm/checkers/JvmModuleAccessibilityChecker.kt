@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageChecker
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -76,21 +75,19 @@ class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
             return null
         }
 
-        val containingPackage = DescriptorUtils.getParentOfType(targetClassOrPackage, PackageFragmentDescriptor::class.java, false)
-        val fqName = containingPackage?.fqNameUnsafe?.toSafe() ?: return null
-        if (theirModule.exports(fqName)) return null
+        if (ourModule?.name == theirModule.name) return null
 
-        if (ourModule != null) {
-            if (ourModule.name == theirModule.name) return null
-
-            if (!moduleResolver.moduleGraph.reads(ourModule.name, theirModule.name)) {
-                return ErrorsJvm.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE.on(reportOn, theirModule.name)
-            }
-
-            if (theirModule.exportsTo(fqName, ourModule.name)) return null
+        if (ourModule != null && !moduleResolver.moduleGraph.reads(ourModule.name, theirModule.name)) {
+            return ErrorsJvm.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE.on(reportOn, theirModule.name)
         }
 
-        return ErrorsJvm.JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.on(reportOn, theirModule.name, fqName.asString())
+        val containingPackage = DescriptorUtils.getParentOfType(targetClassOrPackage, PackageFragmentDescriptor::class.java, false)
+        val fqName = containingPackage?.fqName ?: return null
+        if (!theirModule.exports(fqName) && (ourModule == null || !theirModule.exportsTo(fqName, ourModule.name))) {
+            return ErrorsJvm.JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.on(reportOn, theirModule.name, fqName.asString())
+        }
+
+        return null
     }
 
     private fun findVirtualFile(
