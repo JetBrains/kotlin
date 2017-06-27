@@ -22,7 +22,7 @@
 // GCC unwinder for backtrace.
 #include <unwind.h>
 #else
-// Glibc backtrace function.
+// Glibc backtrace() function.
 #include <execinfo.h>
 #endif
 #endif // OMIT_BACKTRACE
@@ -36,20 +36,6 @@
 #include "Types.h"
 
 namespace {
-
-class KotlinException {
- public:
-
-  KRef exception_;
-
-  KotlinException(KRef exception) : exception_(exception) {
-      ::AddRef(exception_->container());
-  };
-
-  ~KotlinException() {
-      ::Release(exception_->container());
-  };
-};
 
 // TODO: it seems to be very common case; does C++ std library provide something like this?
 class AutoFree {
@@ -66,20 +52,25 @@ class AutoFree {
 
 #if USE_GCC_UNWIND
 struct Backtrace {
-  Backtrace(int count, int skip) : index(0), skipCount(skip), array(nullptr) {
+  Backtrace(int count, int skip) : index(0), skipCount(skip) {
     auto result = AllocArrayInstance(
-	theArrayTypeInfo, count - skipCount, &array);
+	theArrayTypeInfo, count - skipCount, arrayHolder.slot());
+    // TODO: throw cached OOME?
     RuntimeAssert(result != nullptr, "Cannot create backtrace array");
   }
 
   void setNextElement(const char* element) {
-    CreateStringFromCString(
-	element, ArrayAddressOfElementAt(array->array(), index++));
+    auto result = CreateStringFromCString(
+      element, ArrayAddressOfElementAt(obj()->array(), index++));
+    // TODO: throw cached OOME?
+    RuntimeAssert(result != nullptr, "Cannot create backtrace array element");
   }
+
+  ObjHeader* obj() { return arrayHolder.obj(); }
 
   int index;
   int skipCount;
-  ObjHeader* array;
+  ObjHolder arrayHolder;
 };
 
 _Unwind_Reason_Code depthCountCallback(
@@ -132,13 +123,15 @@ OBJ_GETTER0(GetCurrentStackTrace) {
   CreateStringFromCString("<UNIMPLEMENTED>", ArrayAddressOfElementAt(array, 0));
   return result;
 #else
+  // Skips first 3 elements as irrelevant.
+  constexpr int kSkipFrames = 3;
 #if USE_GCC_UNWIND
   int depth = 0;
   _Unwind_Backtrace(depthCountCallback, &depth);
-  // Skips first 3 elements as irrelevant.
-  Backtrace result(depth, 3);
+  if (depth < kSkipFrames) RETURN_OBJ(nullptr);
+  Backtrace result(depth, kSkipFrames);
   _Unwind_Backtrace(unwindCallback, &result);
-  RETURN_OBJ(result.array);
+  RETURN_OBJ(result.obj());
 #else
   const int maxSize = 32;
   void* buffer[maxSize];
@@ -146,15 +139,17 @@ OBJ_GETTER0(GetCurrentStackTrace) {
   int size = backtrace(buffer, maxSize);
   char** symbols = backtrace_symbols(buffer, size);
   RuntimeAssert(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
-
+  if (size < kSkipFrames) RETURN_OBJ(nullptr);
   AutoFree autoFree(symbols);
-  ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, size, OBJ_RESULT);
+  ObjHolder resultHolder;
+  ObjHeader* result = AllocArrayInstance(
+      theArrayTypeInfo, size - kSkipFrames, resultHolder.slot());
   ArrayHeader* array = result->array();
-  for (int index = 0; index < size; ++index) {
+  for (int index = kSkipFrames; index < size; ++index) {
     CreateStringFromCString(
-      symbols[index], ArrayAddressOfElementAt(array, index));
+      symbols[index], ArrayAddressOfElementAt(array, index - kSkipFrames));
   }
-  return result;
+  RETURN_OBJ(result);
 #endif
 #endif  // !OMIT_BACKTRACE
 }
@@ -162,7 +157,7 @@ OBJ_GETTER0(GetCurrentStackTrace) {
 void ThrowException(KRef exception) {
   RuntimeAssert(exception != nullptr && IsInstance(exception, theThrowableTypeInfo),
 		"Throwing something non-throwable");
-  throw KotlinException(exception);
+  throw ObjHolder(exception);
 }
 
 
