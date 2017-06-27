@@ -61,7 +61,7 @@ public final class TranslationUtils {
             @NotNull TranslationContext context) {
         JsExpression functionExpression = function;
         if (InlineUtil.isInline(descriptor)) {
-            InlineMetadata metadata = InlineMetadata.compose(function, descriptor, context.getConfig());
+            InlineMetadata metadata = InlineMetadata.compose(function, descriptor, context);
             functionExpression = metadata.getFunctionWithMetadata();
         }
 

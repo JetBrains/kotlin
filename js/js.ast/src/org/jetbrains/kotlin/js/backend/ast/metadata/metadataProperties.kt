@@ -29,6 +29,8 @@ var JsName.staticRef: JsNode? by MetadataProperty(default = null)
 
 var JsName.descriptor: DeclarationDescriptor? by MetadataProperty(default = null)
 
+var JsName.localAlias: JsName? by MetadataProperty(default = null)
+
 // TODO: move this to module 'js.inliner' and change dependency on 'frontend' to dependency on 'descriptors'
 var JsInvocation.inlineStrategy: InlineStrategy? by MetadataProperty(default = null)
 

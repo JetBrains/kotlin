@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.inline.context
+package org.jetbrains.kotlin.js.translate.context
 
-import org.jetbrains.kotlin.js.backend.ast.JsContext
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
+import org.jetbrains.kotlin.js.backend.ast.JsName
 
-interface InliningContext {
-    val statementContext: JsContext<JsStatement>
-
-    val statementContextBeforeCurrentFunction: JsContext<JsStatement>
-
-    val functionContext: FunctionContext
-
-    fun newNamingContext(): NamingContext
+class InlineFunctionContext(val descriptor: CallableDescriptor) {
+    val imports = mutableMapOf<String, JsName>()
+    val importBlock = JsGlobalBlock()
+    val prototypeBlock = JsGlobalBlock()
+    val declarationsBlock = JsGlobalBlock()
 }

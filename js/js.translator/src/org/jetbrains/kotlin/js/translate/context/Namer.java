@@ -94,6 +94,7 @@ public final class Namer {
 
     public static final JsNameRef IS_ARRAY_FUN_REF = new JsNameRef("isArray", "Array");
     public static final String DEFINE_INLINE_FUNCTION = "defineInlineFunction";
+    public static final String WRAP_FUNCTION = "wrapFunction";
     public static final String DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX = "$default";
 
     private static final JsNameRef JS_OBJECT = new JsNameRef("Object");
@@ -353,6 +354,11 @@ public final class Namer {
     @NotNull
     public static JsNameRef createInlineFunction() {
         return pureFqn(DEFINE_INLINE_FUNCTION, kotlinObject());
+    }
+
+    @NotNull
+    public static JsNameRef wrapFunction() {
+        return pureFqn(WRAP_FUNCTION, kotlinObject());
     }
 
     @NotNull

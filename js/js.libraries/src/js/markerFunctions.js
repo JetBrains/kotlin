@@ -25,6 +25,16 @@ Kotlin.defineInlineFunction = function(tag, fun) {
     return fun;
 };
 
+Kotlin.wrapFunction = function(fun) {
+    var f = function() {
+        f = fun();
+        return f.apply(this, arguments);
+    };
+    return function() {
+        return f.apply(this, arguments);
+    };
+};
+
 Kotlin.isTypeOf = function(type) {
     return function (object) {
         return typeof object === type;

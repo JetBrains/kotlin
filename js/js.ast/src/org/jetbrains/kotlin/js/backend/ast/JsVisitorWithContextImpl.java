@@ -33,7 +33,7 @@ import java.util.*;
  */
 public class JsVisitorWithContextImpl extends JsVisitorWithContext {
 
-    private final Stack<JsContext<JsStatement>> statementContexts = new Stack<JsContext<JsStatement>>();
+    protected final Stack<JsContext<JsStatement>> statementContexts = new Stack<JsContext<JsStatement>>();
 
     public class ListContext<T extends JsNode> extends JsContext<T> {
         private List<T> nodes;
@@ -76,7 +76,7 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
             return null;
         }
 
-        protected void traverse(List<T> nodes) {
+        public void traverse(List<T> nodes) {
             assert previous.isEmpty(): "addPrevious() was called before traverse()";
             assert next.isEmpty(): "addNext() was called before traverse()";
             this.nodes = nodes;
@@ -102,6 +102,9 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
                     index += next.size();
                 }
             }
+
+            previous.clear();
+            next.clear();
         }
     }
 

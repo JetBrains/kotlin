@@ -533,6 +533,9 @@ public final class StaticContext {
     private final class InnerNameGenerator extends Generator<JsName> {
         public InnerNameGenerator() {
             addRule(descriptor -> {
+                if (descriptor instanceof PackageFragmentDescriptor && DescriptorUtils.getContainingModule(descriptor) == currentModule) {
+                    return exporter.getLocalPackageName(((PackageFragmentDescriptor) descriptor).getFqName());
+                }
                 if (descriptor instanceof FunctionDescriptor) {
                     FunctionDescriptor initialDescriptor = ((FunctionDescriptor) descriptor).getInitialSignatureDescriptor();
                     if (initialDescriptor != null) {

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
@@ -71,6 +72,9 @@ public class TranslationContext {
     private final ClassDescriptor classDescriptor;
     @Nullable
     private final VariableDescriptor continuationParameterDescriptor;
+
+    @Nullable
+    private InlineFunctionContext inlineFunctionContext;
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext) {
@@ -104,6 +108,14 @@ public class TranslationContext {
         }
 
         continuationParameterDescriptor = calculateContinuationParameter();
+        inlineFunctionContext = parent != null ? parent.inlineFunctionContext : null;
+
+        DeclarationDescriptor parentDescriptor = parent != null ? parent.declarationDescriptor : null;
+        if (parentDescriptor != declarationDescriptor &&
+            declarationDescriptor instanceof CallableDescriptor &&
+            InlineUtil.isInline(declarationDescriptor)) {
+            inlineFunctionContext = new InlineFunctionContext((CallableDescriptor) declarationDescriptor);
+        }
     }
 
     private VariableDescriptor calculateContinuationParameter() {
@@ -135,6 +147,11 @@ public class TranslationContext {
     @NotNull
     public DynamicContext dynamicContext() {
         return dynamicContext;
+    }
+
+    @Nullable
+    public InlineFunctionContext getInlineFunctionContext() {
+        return inlineFunctionContext;
     }
 
     @NotNull
@@ -323,8 +340,42 @@ public class TranslationContext {
 
     @NotNull
     public JsExpression getInnerReference(@NotNull DeclarationDescriptor descriptor) {
+        JsName name;
+        if (inlineFunctionContext == null || !isPublicInlineFunction() ||
+            DescriptorUtils.isAncestor(inlineFunctionContext.getDescriptor(), descriptor, false)) {
+            name = getInnerNameForDescriptor(descriptor);
+        }
+        else {
+            String tag = staticContext.getTag(descriptor);
+            name = inlineFunctionContext.getImports().computeIfAbsent(tag, t -> {
+                JsExpression imported = createInlineLocalImportExpression(descriptor);
+                if (imported instanceof JsNameRef) {
+                    JsNameRef importedNameRef = (JsNameRef) imported;
+                    if (importedNameRef.getQualifier() == null && importedNameRef.getIdent().equals(Namer.getRootPackageName()) &&
+                        (descriptor instanceof PackageFragmentDescriptor || descriptor instanceof ModuleDescriptor)) {
+                        return importedNameRef.getName();
+                    }
+                }
+
+                JsName result = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor));
+                if (isFromCurrentModule(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
+                    MetadataProperties.setLocalAlias(result, getInnerNameForDescriptor(descriptor));
+                }
+                MetadataProperties.setDescriptor(result, descriptor);
+                MetadataProperties.setStaticRef(result, imported);
+                MetadataProperties.setImported(result, true);
+                inlineFunctionContext.getImportBlock().getStatements().add(JsAstUtils.newVar(result, imported));
+                return result;
+            });
+        }
+
+        return pureFqn(name, null);
+    }
+
+    @NotNull
+    private JsExpression createInlineLocalImportExpression(@NotNull DeclarationDescriptor descriptor) {
+        JsExpression result = getQualifiedReference(descriptor);
         JsName name = getInnerNameForDescriptor(descriptor);
-        JsExpression result = pureFqn(name, null);
 
         SuggestedName suggested = staticContext.suggestName(descriptor);
         if (suggested != null && getConfig().getModuleKind() != ModuleKind.PLAIN && isPublicInlineFunction()) {
@@ -695,7 +746,12 @@ public class TranslationContext {
     }
 
     public void addDeclarationStatement(@NotNull JsStatement statement) {
-        staticContext.getDeclarationStatements().add(statement);
+        if (inlineFunctionContext != null) {
+            inlineFunctionContext.getDeclarationsBlock().getStatements().add(statement);
+        }
+        else {
+            staticContext.getDeclarationStatements().add(statement);
+        }
     }
 
     public void addTopLevelStatement(@NotNull JsStatement statement) {
@@ -725,15 +781,10 @@ public class TranslationContext {
     }
 
     public boolean isPublicInlineFunction() {
-        DeclarationDescriptor descriptor = declarationDescriptor;
-        while (descriptor instanceof FunctionDescriptor) {
-            FunctionDescriptor function = (FunctionDescriptor) descriptor;
-            if (function.isInline() && DescriptorUtilsKt.isEffectivelyPublicApi(function)) {
-                return true;
-            }
-            descriptor = descriptor.getContainingDeclaration();
-        }
-        return false;
+        if (inlineFunctionContext == null) return false;
+
+        CallableDescriptor function = inlineFunctionContext.getDescriptor();
+        return function.getVisibility().effectiveVisibility(function, true).getPublicApi();
     }
 
     @Nullable

@@ -212,3 +212,19 @@ val PsiElement.finalElement: PsiElement
         is KtLambdaExpression -> bodyExpression?.rBrace ?: this
         else -> this
     }
+
+fun TranslationContext.addFunctionButNotExport(descriptor: FunctionDescriptor, expression: JsExpression): JsName =
+        addFunctionButNotExport(getInnerNameForDescriptor(descriptor), expression)
+
+fun TranslationContext.addFunctionButNotExport(name: JsName, expression: JsExpression): JsName {
+    when (expression) {
+        is JsFunction -> {
+            expression.name = name
+            addDeclarationStatement(expression.makeStmt())
+        }
+        else -> {
+            addDeclarationStatement(JsAstUtils.newVar(name, expression))
+        }
+    }
+    return name
+}

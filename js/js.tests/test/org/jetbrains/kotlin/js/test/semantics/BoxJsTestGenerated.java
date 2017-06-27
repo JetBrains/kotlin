@@ -3935,6 +3935,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineInInlineWithLambda.kt")
+        public void testInlineInInlineWithLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/inlineInInlineWithLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineInInlineWithLambdaPrivate.kt")
+        public void testInlineInInlineWithLambdaPrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/inlineInInlineWithLambdaPrivate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineInc.kt")
         public void testInlineInc() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/inlineInc.kt");
@@ -4721,6 +4733,24 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("externalInlineNewDecomposed.kt")
         public void testExternalInlineNewDecomposed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/externalInlineNewDecomposed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("importObjectInstance.kt")
+        public void testImportObjectInstance() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/importObjectInstance.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineInInlineWithLambdaMultiModule.kt")
+        public void testInlineInInlineWithLambdaMultiModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/inlineInInlineWithLambdaMultiModule.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("internalNameClash.kt")
+        public void testInternalNameClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/internalNameClash.kt");
             doTest(fileName);
         }
 

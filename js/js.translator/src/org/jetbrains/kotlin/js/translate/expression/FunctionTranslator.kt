@@ -19,18 +19,14 @@ package org.jetbrains.kotlin.js.translate.expression
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsFunction
-import org.jetbrains.kotlin.js.backend.ast.JsParameter
-import org.jetbrains.kotlin.js.backend.ast.JsScope
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.functionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.hasDefaultValue
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator.shouldBeInlined
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -104,9 +100,9 @@ fun TranslationContext.translateFunction(declaration: KtDeclarationWithBody, fun
     function.functionDescriptor = descriptor
 }
 
-fun TranslationContext.wrapWithInlineMetadata(function: JsFunction, descriptor: FunctionDescriptor, config: JsConfig): JsExpression {
-    return if (shouldBeInlined(descriptor, this) && descriptor.isEffectivelyPublicApi) {
-        val metadata = InlineMetadata.compose(function, descriptor, config)
+fun TranslationContext.wrapWithInlineMetadata(function: JsFunction, descriptor: FunctionDescriptor): JsExpression {
+    return if (descriptor.isInline && descriptor.isEffectivelyPublicApi) {
+        val metadata = InlineMetadata.compose(function, descriptor, this)
         val functionWithMetadata = metadata.functionWithMetadata
 
         config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]?.apply {
@@ -129,6 +125,15 @@ fun TranslationContext.wrapWithInlineMetadata(function: JsFunction, descriptor: 
         functionWithMetadata
     }
     else {
-        function
+        val block = if (descriptor.isInline) {
+            inlineFunctionContext!!.let {
+                JsBlock(it.importBlock.statements + it.prototypeBlock.statements + it.declarationsBlock.statements +
+                        JsReturn(function))
+            }
+        }
+        else {
+            null
+        }
+        if (block != null) InlineMetadata.wrapFunction(FunctionWithWrapper(function, block)) else function
     }
 }

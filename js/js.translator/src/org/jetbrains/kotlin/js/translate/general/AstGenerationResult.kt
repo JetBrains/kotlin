@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.js.translate.general
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
-import org.jetbrains.kotlin.js.backend.ast.JsName
-import org.jetbrains.kotlin.js.backend.ast.JsProgram
-import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.psi.KtFile
 
 class AstGenerationResult(
@@ -29,6 +26,7 @@ class AstGenerationResult(
         val fragments: List<JsProgramFragment>,
         val fragmentMap: Map<KtFile, JsProgramFragment>,
         val newFragments: List<JsProgramFragment>,
+        val importStatements: List<JsStatement>,
         val fileMemberScopes: Map<KtFile, List<DeclarationDescriptor>>,
         val importedModuleList: List<JsImportedModule>
 )

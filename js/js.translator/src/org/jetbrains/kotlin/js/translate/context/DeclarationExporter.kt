@@ -51,7 +51,7 @@ internal class DeclarationExporter(val context: StaticContext) {
 
         val qualifier = when {
             container is PackageFragmentDescriptor -> {
-                getLocalPackageReference(container.fqName)
+                getLocalPackageName(container.fqName).makeRef()
             }
             DescriptorUtils.isObject(container) -> {
                 JsAstUtils.prototypeOf(context.getInnerNameForDescriptor(container).makeRef())
@@ -129,18 +129,18 @@ internal class DeclarationExporter(val context: StaticContext) {
         statements += JsAstUtils.defineProperty(qualifier, name, propertyLiteral).exportStatement(declaration)
     }
 
-    private fun getLocalPackageReference(packageName: FqName): JsExpression {
+    fun getLocalPackageName(packageName: FqName): JsName {
         if (packageName.isRoot) {
-            return context.fragment.scope.declareName(Namer.getRootPackageName()).makeRef()
+            return context.fragment.scope.declareName(Namer.getRootPackageName())
         }
         var name = localPackageNames[packageName]
         if (name == null) {
             name = JsScope.declareTemporaryName("package$" + packageName.shortName().asString())
             localPackageNames[packageName] = name
             statements += definePackageAlias(packageName.shortName().asString(), name, packageName.asString(),
-                                             getLocalPackageReference(packageName.parent()))
+                                             getLocalPackageName(packageName.parent()).makeRef())
         }
-        return name.makeRef()
+        return name
     }
 
     private fun JsExpression.exportStatement(declaration: DeclarationDescriptor) = JsExpressionStatement(this).also {

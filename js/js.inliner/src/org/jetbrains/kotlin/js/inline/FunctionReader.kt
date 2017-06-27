@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 import org.jetbrains.kotlin.js.parser.OffsetToSourceMapping
@@ -154,8 +155,8 @@ class FunctionReader(
         override fun toString() = text.substring(offset)
     }
 
-    private val functionCache = object : SLRUCache<CallableDescriptor, JsFunction>(50, 50) {
-        override fun createValue(descriptor: CallableDescriptor): JsFunction =
+    private val functionCache = object : SLRUCache<CallableDescriptor, FunctionWithWrapper>(50, 50) {
+        override fun createValue(descriptor: CallableDescriptor): FunctionWithWrapper =
                 readFunction(descriptor).sure { "Could not read function: $descriptor" }
     }
 
@@ -165,9 +166,9 @@ class FunctionReader(
         return currentModuleName != moduleName && moduleName in moduleNameToInfo.keys()
     }
 
-    operator fun get(descriptor: CallableDescriptor): JsFunction = functionCache.get(descriptor)
+    operator fun get(descriptor: CallableDescriptor): FunctionWithWrapper = functionCache.get(descriptor)
 
-    private fun readFunction(descriptor: CallableDescriptor): JsFunction? {
+    private fun readFunction(descriptor: CallableDescriptor): FunctionWithWrapper? {
         if (descriptor !in this) return null
 
         val moduleName = getModuleName(descriptor)
@@ -180,7 +181,7 @@ class FunctionReader(
         return null
     }
 
-    private fun readFunctionFromSource(descriptor: CallableDescriptor, info: ModuleInfo): JsFunction? {
+    private fun readFunctionFromSource(descriptor: CallableDescriptor, info: ModuleInfo): FunctionWithWrapper? {
         val source = info.fileContent
         val tag = Namer.getFunctionTag(descriptor, config)
         val index = source.indexOf(tag)
@@ -206,7 +207,7 @@ class FunctionReader(
                                      info.kotlinVariable to Namer.kotlinObject())
         replaceExternalNames(function, replacements)
         function.markInlineArguments(descriptor)
-        return function
+        return FunctionWithWrapper(function, null)
     }
 }
 

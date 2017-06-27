@@ -55,13 +55,13 @@ public final class ReferenceTranslator {
         JsExpression alias = context.getAliasForDescriptor(descriptor);
         if (alias != null) return alias;
 
-        if (shouldTranslateAsFQN(descriptor, context)) {
+        if (shouldTranslateAsFQN(descriptor)) {
             return context.getQualifiedReference(descriptor);
         }
 
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor property = (PropertyDescriptor) descriptor;
-            if (context.isFromCurrentModule(property)) {
+            if (isLocallyAvailableDeclaration(context, property)) {
                 return context.getInnerReference(property);
             }
             else {
@@ -72,7 +72,7 @@ public final class ReferenceTranslator {
         }
 
         if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
-            if (!context.isFromCurrentModule(descriptor)) {
+            if (!isLocallyAvailableDeclaration(context, descriptor)) {
                 return getLazyReferenceToObject((ClassDescriptor) descriptor, context);
             }
             else {
@@ -89,16 +89,12 @@ public final class ReferenceTranslator {
         if (AnnotationsUtils.isNativeObject(descriptor) || AnnotationsUtils.isLibraryObject(descriptor)) {
             return context.getInnerReference(descriptor);
         }
-        if (!shouldTranslateAsFQN(descriptor, context)) {
-            if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
-                if (!context.isFromCurrentModule(descriptor)) {
-                    return getPrototypeIfNecessary(descriptor, getLazyReferenceToObject(descriptor, context));
-                }
+        if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
+            if (!isLocallyAvailableDeclaration(context, descriptor)) {
+                return getPrototypeIfNecessary(descriptor, getLazyReferenceToObject(descriptor, context));
             }
-            return context.getInnerReference(descriptor);
         }
-
-        return getPrototypeIfNecessary(descriptor, context.getQualifiedReference(descriptor));
+        return context.getInnerReference(descriptor);
     }
 
     @NotNull
@@ -112,6 +108,10 @@ public final class ReferenceTranslator {
         return reference;
     }
 
+    private static boolean isLocallyAvailableDeclaration(@NotNull TranslationContext context, @NotNull DeclarationDescriptor descriptor) {
+        return context.isFromCurrentModule(descriptor) && !context.isPublicInlineFunction();
+    }
+
     @NotNull
     private static JsExpression getLazyReferenceToObject(@NotNull ClassDescriptor descriptor, @NotNull TranslationContext context) {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
@@ -119,8 +119,8 @@ public final class ReferenceTranslator {
         return new JsNameRef(context.getNameForDescriptor(descriptor), qualifier);
     }
 
-    private static boolean shouldTranslateAsFQN(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
-        return isLocalVarOrFunction(descriptor) || context.isPublicInlineFunction();
+    private static boolean shouldTranslateAsFQN(@NotNull DeclarationDescriptor descriptor) {
+        return isLocalVarOrFunction(descriptor);
     }
 
     private static boolean isLocalVarOrFunction(DeclarationDescriptor descriptor) {
