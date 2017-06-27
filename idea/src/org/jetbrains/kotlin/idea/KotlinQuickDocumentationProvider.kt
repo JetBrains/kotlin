@@ -60,6 +60,25 @@ import org.jetbrains.kotlin.utils.addToStdlib.constant
 
 class HtmlClassifierNamePolicy(val base: ClassifierNamePolicy) : ClassifierNamePolicy {
     override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
+        if (DescriptorUtils.isAnonymousObject(classifier)) {
+
+            val supertypes = classifier.typeConstructor.supertypes
+            return buildString {
+                append("&lt;anonymous object")
+                if (supertypes.isNotEmpty()) {
+                    append(" : ")
+                    supertypes.joinTo(this) {
+                        val ref = it.constructor.declarationDescriptor
+                        if (ref != null)
+                            renderClassifier(ref, renderer)
+                        else
+                            "&lt;ERROR CLASS&gt;"
+                    }
+                }
+                append("&gt;")
+            }
+        }
+
         val name = base.renderClassifier(classifier, renderer)
         if (classifier.isBoringBuiltinClass())
             return name

@@ -36,6 +36,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/quickDoc"), Pattern.compile("^([^_]+)\\.[^\\.]*$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("AnonymousObjectLocalVariable.kt")
+    public void testAnonymousObjectLocalVariable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AnonymousObjectLocalVariable.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AtConstantWithUnderscore.kt")
     public void testAtConstantWithUnderscore() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AtConstantWithUnderscore.kt");
