@@ -120,6 +120,12 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         doTest(fileName);
     }
 
+    @TestMetadata("kt18545")
+    public void testKt18545() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/kt18545/");
+        doTest(fileName);
+    }
+
     @TestMetadata("multiFile")
     public void testMultiFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/multiFile/");
