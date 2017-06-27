@@ -20,5 +20,6 @@
     <orderEntry type="module" module-name="incremental-compilation-impl" scope="TEST" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
+    <orderEntry type="library" scope="PROVIDED" name="native-platform-uberjar" level="project" />
   </component>
 </module>

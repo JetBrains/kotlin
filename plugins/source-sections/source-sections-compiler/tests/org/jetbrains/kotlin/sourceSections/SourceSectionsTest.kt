@@ -59,7 +59,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
     }
 
     val compilerClassPath = listOf(kotlinPaths.compilerPath)
-    val scriptRuntimeClassPath = listOf( kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
+    val scriptRuntimeClassPath = listOf( kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
     val sourceSectionsPluginJar = File(kotlinPaths.libPath, "kotlin-source-sections-compiler-plugin.jar")
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
@@ -201,7 +201,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
 
             val daemonWithSession = KotlinCompilerClient.connectAndLease(compilerId, aliveFile, daemonJVMOptions, daemonOptions,
                                                                          DaemonReportingTargets(messageCollector = messageCollector), autostart = true, leaseSession = true)
-            assertNotNull("failed to connect daemon", daemonWithSession)
+            assertNotNull("failed to connect daemon:\ncompiler id: $compilerId\ndaemon opts: $daemonOptions\njvm opts: $daemonJVMOptions\nalive file: $aliveFile\n", daemonWithSession)
 
             try {
 
