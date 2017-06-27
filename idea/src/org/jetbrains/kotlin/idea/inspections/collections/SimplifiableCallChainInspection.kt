@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.inspections.collections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.psi.*
@@ -29,6 +28,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class SimplifiableCallChainInspection : AbstractKotlinInspection() {
 
@@ -46,11 +47,19 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
                             firstCallExpression.calleeExpression?.text to secondCallExpression.calleeExpression?.text
                             ] ?: return
 
-                    val context = expression.analyze(BodyResolveMode.PARTIAL)
+                    val context = expression.analyze()
                     val firstResolvedCall = firstQualifiedExpression.getResolvedCall(context) ?: return
                     val conversion = actualConversions.firstOrNull {
                         firstResolvedCall.resultingDescriptor.fqNameOrNull()?.asString() == it.firstFqName
                     } ?: return
+                    // Do not apply on maps due to lack of relevant stdlib functions
+                    val firstReceiverType = firstResolvedCall.extensionReceiver?.type ?: return
+                    val builtIns = firstReceiverType.builtIns
+                    val mapType = builtIns.map.defaultType
+                    if (firstReceiverType.isSubtypeOf(mapType)) return
+                    // Do not apply for lambdas with return inside
+                    val lambdaArgument = firstCallExpression.lambdaArguments.firstOrNull()
+                    if (lambdaArgument?.anyDescendantOfType<KtReturnExpression>() == true) return
 
                     val secondResolvedCall = expression.getResolvedCall(context) ?: return
                     val secondResultingDescriptor = secondResolvedCall.resultingDescriptor
@@ -62,7 +71,9 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
 
                     if (conversion.replacement.startsWith("joinTo")) {
                         // Function parameter in map must have String result type
-                        if (!firstResolvedCall.hasLastFunctionalParameterWithResult(context) { KotlinBuiltIns.isString(it) }) return
+                        if (!firstResolvedCall.hasLastFunctionalParameterWithResult(context) {
+                            it.isSubtypeOf(builtIns.charSequence.defaultType)
+                        }) return
                     }
 
                     val descriptor = holder.manager.createProblemDescriptor(

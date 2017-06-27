@@ -139,9 +139,27 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("joinToForHashMap.kt")
+            public void testJoinToForHashMap() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinToForHashMap.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("joinToForMap.kt")
+            public void testJoinToForMap() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinToForMap.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("joinToString.kt")
             public void testJoinToString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinToString.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("joinToStringViaBuilder.kt")
+            public void testJoinToStringViaBuilder() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinToStringViaBuilder.kt");
                 doTest(fileName);
             }
 
@@ -160,6 +178,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("mapNotNull.kt")
             public void testMapNotNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapNotNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mapWithReturn.kt")
+            public void testMapWithReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapWithReturn.kt");
                 doTest(fileName);
             }
         }

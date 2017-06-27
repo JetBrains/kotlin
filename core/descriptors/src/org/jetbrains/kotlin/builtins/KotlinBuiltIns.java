@@ -616,6 +616,11 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getCharSequence() {
+        return getBuiltInClassByName("CharSequence");
+    }
+
+    @NotNull
     public ClassDescriptor getComparable() {
         return getBuiltInClassByName("Comparable");
     }
