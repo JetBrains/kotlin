@@ -117,15 +117,23 @@ class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
                 element: PsiElement,
                 languageVersionSettings: LanguageVersionSettings
         ) {
-            val targetClassOrPackage = when (targetDescriptor) {
-                is ClassDescriptor -> targetDescriptor
-                is TypeAliasDescriptor -> {
-                    DescriptorUtils.getParentOfType(targetDescriptor, ClassOrPackageFragmentDescriptor::class.java) ?: return
+            val virtualFile = element.containingFile.virtualFile
+            when (targetDescriptor) {
+                is ClassDescriptor -> {
+                    diagnosticFor(targetDescriptor, targetDescriptor, virtualFile, element)?.let(trace::report)
                 }
-                else -> return
-            }
+                is TypeAliasDescriptor -> {
+                    val containingClassOrPackage = DescriptorUtils.getParentOfType(targetDescriptor, ClassOrPackageFragmentDescriptor::class.java)
+                    if (containingClassOrPackage != null) {
+                        diagnosticFor(containingClassOrPackage, targetDescriptor, virtualFile, element)?.let(trace::report)
+                    }
 
-            diagnosticFor(targetClassOrPackage, targetDescriptor, element.containingFile.virtualFile, element)?.let(trace::report)
+                    val expandedClass = targetDescriptor.expandedType.constructor.declarationDescriptor as? ClassDescriptor
+                    if (expandedClass != null) {
+                        diagnosticFor(expandedClass, expandedClass, virtualFile, element)?.let(trace::report)
+                    }
+                }
+            }
         }
     }
 }

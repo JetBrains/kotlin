@@ -78,4 +78,9 @@ class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module("main").addDependency(module("dependency"))
         checkHighlightingInAllFiles()
     }
+
+    fun testTypealiasToUnexported() = doTest {
+        module("main").addDependency(module("dependency"))
+        checkHighlightingInAllFiles()
+    }
 }
