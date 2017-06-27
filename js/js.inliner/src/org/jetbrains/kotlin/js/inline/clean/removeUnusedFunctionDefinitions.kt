@@ -17,9 +17,8 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.backend.ast.metadata.isLocal
-
+import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.inline.util.collectFunctionReferencesInside
 
@@ -30,21 +29,23 @@ import org.jetbrains.kotlin.js.inline.util.collectFunctionReferencesInside
  * At now, it only removes unused local functions and function literals,
  * because named functions can be referenced from another module.
  */
-fun removeUnusedFunctionDefinitions(root: JsNode, functions: Map<JsName, JsFunction>) {
+fun removeUnusedFunctionDefinitions(roots: List<JsNode>, functions: Map<JsName, JsFunction>) {
     val removable = with(UnusedLocalFunctionsCollector(functions)) {
         process()
-        accept(root)
-        removableFunctions.toSet()
-    }
+        roots.forEach { accept(it) }
+        removableFunctions
+    }.toSet()
 
-    NodeRemover(JsStatement::class.java) { statement ->
+    val remover = NodeRemover(JsStatement::class.java) { statement ->
         val expression = when (statement) {
             is JsExpressionStatement -> statement.expression
             is JsVars -> if (statement.vars.size == 1) statement.vars[0].initExpression else null
             else -> null
         }
         expression is JsFunction && expression in removable
-    }.accept(root)
+    }
+
+    roots.forEach { remover.accept(it) }
 }
 
 private class UnusedLocalFunctionsCollector(private val functions: Map<JsName, JsFunction>) : JsVisitorWithContextImpl() {

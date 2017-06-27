@@ -79,6 +79,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         }
         FunctionReader functionReader = new FunctionReader(reporter, config, currentModuleName, fragments);
         JsInliner inliner = new JsInliner(config, functions, accessors, functionReader, trace);
+        List<JsNode> nodesToPostProcess = new ArrayList<>();
         for (JsProgramFragment fragment : fragmentsToProcess) {
             inliner.inliningContexts.push(inliner.new JsInliningContext());
             inliner.accept(fragment.getDeclarationBlock());
@@ -89,8 +90,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
             inliner.inliningContexts.pop();
             JsBlock block = new JsBlock(fragment.getDeclarationBlock(), fragment.getInitializerBlock(), fragment.getExportBlock());
-            RemoveUnusedFunctionDefinitionsKt.removeUnusedFunctionDefinitions(block, functions);
+            nodesToPostProcess.add(block);
         }
+
+        RemoveUnusedFunctionDefinitionsKt.removeUnusedFunctionDefinitions(nodesToPostProcess, functions);
     }
 
     private JsInliner(
