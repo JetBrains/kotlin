@@ -45,6 +45,8 @@ targetList.each { targetName ->
 
 task hostRuntime(dependsOn: "${rootProject.ext.host}Runtime")
 
-task clean << {
-    delete buildDir
+task clean {
+    doLast {
+        delete buildDir
+    }
 }

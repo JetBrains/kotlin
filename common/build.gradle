@@ -30,6 +30,8 @@ task build {
     dependsOn "${host}Hash"
 }
 
-task clean << {
-    delete buildDir
+task clean {
+    doLast {
+        delete buildDir
+    }
 }
