@@ -370,8 +370,47 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
                 if (isCleanupCallPredicate.apply(call)) {
                     return true;
                 }
+
+                //If function taking lambda
+                for (UExpression argument : call.getValueArguments()) {
+                    if (argument instanceof ULambdaExpression) {
+                        if (isCleanedUpInLambda((ULambdaExpression) argument, isCleanupCallPredicate)) {
+                            return true;
+                        }
+                    }
+                }
             }
         }
+        return false;
+    }
+
+    private static boolean isCleanedUpInLambda(ULambdaExpression lambda, Predicate<UCallExpression> isCleanupCallPredicate) {
+        UExpression body = lambda.getBody();
+        if (body instanceof UBlockExpression) {
+            List<UExpression> expressions = ((UBlockExpression) body).getExpressions();
+            for (UExpression expression : expressions) {
+                //Might be a single cleanup call
+                if (expression instanceof UCallExpression) {
+                    if (isCleanupCallPredicate.apply((UCallExpression) expression)) {
+                        return true;
+                    }
+                } else {
+                    //Might be a chain containing the cleanup call
+                    List<UExpression> chain = getQualifiedChain(getOutermostQualified(expression));
+                    if (!chain.isEmpty()) {
+                        for (UExpression e : chain) {
+                            if (e instanceof UCallExpression) {
+                                UCallExpression call = (UCallExpression) e;
+                                if (isCleanupCallPredicate.apply(call)) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return false;
     }
 
@@ -555,11 +594,11 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
     private static void checkEditorApplied(@NonNull JavaContext context,
             @NonNull UCallExpression node, @NonNull PsiMethod calledMethod) {
         if (isSharedEditorCreation(context, calledMethod)) {
-            PsiVariable boundVariable = getVariableElement(node, true);
             if (isEditorCommittedInChainedCalls(context, node)) {
                 return;
             }
 
+            PsiVariable boundVariable = getVariableElement(node, true);
             if (boundVariable != null) {
                 UMethod method = getParentOfType(node, UMethod.class, true);
                 if (method == null) {
@@ -612,6 +651,8 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
             } else if (UastUtils.getParentOfType(node, UReturnExpression.class) != null) {
                 // Allocation is in a return statement
                 return;
+            } else if (isEditorCommittedInParentLambda(context, node)) {
+                return;
             }
 
             String message = "`SharedPreferences.edit()` without a corresponding `commit()` or "
@@ -641,6 +682,26 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
                 return isEditorCommitMethodCall(context, call) || isEditorApplyMethodCall(context, call);
             }
         });
+    }
+
+    private static boolean isEditorCommittedInParentLambda(@NonNull JavaContext context, @NonNull UCallExpression node) {
+        UCallExpression call = UastUtils.getParentOfType(node, UCallExpression.class, true);
+        if (call != null) {
+            //If function taking lambda
+            for (UExpression argument : call.getValueArguments()) {
+                if (argument instanceof ULambdaExpression) {
+                    if (isCleanedUpInLambda((ULambdaExpression) argument, new Predicate<UCallExpression>() {
+                        @Override
+                        public boolean apply(@org.jetbrains.annotations.Nullable UCallExpression call) {
+                            return isEditorCommitMethodCall(context, call) || isEditorApplyMethodCall(context, call);
+                        }
+                    })) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private static boolean isEditorCommitMethodCall(@NonNull JavaContext context,

@@ -29,6 +29,35 @@ class SharedPrefsText(context: Context) : Activity() {
         }
     }
 
+    // OK using with lambda
+    fun withLambda() {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        with(preferences.edit()) {
+            putString("foo", "bar")
+            putInt("bar", 42)
+            apply()
+        }
+    }
+
+    // OK using apply lambda
+    fun testApplyLambda() {
+        PreferenceManager.getDefaultSharedPreferences(this).edit().apply {
+            putString("foo", "bar")
+            putInt("bar", 42)
+            apply()
+        }
+    }
+
+    // OK using also lambda
+    fun testAlsoLambda() {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        preferences.edit().also {
+            it.putString("foo", "bar")
+            it.putInt("bar", 42)
+            it.apply()
+        }
+    }
+
     // Not a bug
     fun test(foo: Foo) {
         val bar1 = foo.edit()
@@ -59,6 +88,30 @@ class SharedPrefsText(context: Context) : Activity() {
         val editor = preferences.<warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">edit()</warning>
         editor.putString("foo", "bar")
         editor.putInt("bar", 42)
+    }
+
+    // Bug missing commit in apply lambda
+    fun applyLambdaMissingCommit() {
+        PreferenceManager.getDefaultSharedPreferences(this).<warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">edit()</warning>.apply {
+            putString("foo", "bar")
+            putInt("bar", 42)
+        }
+    }
+
+    // Bug missing commit in also lambda
+    fun alsoLambdaMissingCommit() {
+        PreferenceManager.getDefaultSharedPreferences(this).<warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">edit()</warning>.also {
+            it.putString("foo", "bar")
+            it.putInt("bar", 42)
+        }
+    }
+
+    // Bug missing commit in with lambda
+    fun withLambdaMissingCommit() {
+        with(PreferenceManager.getDefaultSharedPreferences(this).<warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">edit()</warning>) {
+            putString("foo", "bar")
+            putInt("bar", 42)
+        }
     }
 
     init {
