@@ -103,6 +103,8 @@ class NewKotlinFileAction
         return obj is NewKotlinFileAction
     }
 
+    override fun startInWriteAction() = false
+
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory) =
             Companion.createFileFromTemplate(name, template, dir)
 
