@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.collectionUtils.concat
@@ -104,7 +104,7 @@ class LazyImportResolver(
         Unit
     }
 
-    override fun forceResolveAllImports() {
+    private val forceResolveAllImportsTask: NotNullLazyValue<Unit> = storageManager.createLazyValue {
         val explicitClassImports = HashMultimap.create<String, KtImportDirective>()
         for (importDirective in indexedImports.imports) {
             forceResolveImport(importDirective)
@@ -132,6 +132,10 @@ class LazyImportResolver(
                 }
             }
         }
+    }
+
+    override fun forceResolveAllImports() {
+        forceResolveAllImportsTask()
     }
 
     private fun checkResolvedImportDirective(importDirective: KtImportDirective) {
