@@ -20,6 +20,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.android.parcel.ParcelableCodegenExtension
+import org.jetbrains.kotlin.android.parcel.ParcelableDeclarationChecker
 import org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidExtensionsExpressionCodegenExtension
@@ -118,6 +119,7 @@ class AndroidExtensionPropertiesComponentContainerContributor : StorageComponent
     override fun addDeclarations(container: StorageComponentContainer, platform: TargetPlatform) {
         if (platform is JvmPlatform) {
             container.useInstance(AndroidExtensionPropertiesCallChecker())
+            container.useInstance(ParcelableDeclarationChecker())
         }
     }
 }

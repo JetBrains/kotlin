@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.android.synthetic.diagnostic;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.KtExpression;
 
+import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
 import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
 
 public interface ErrorsAndroid {
@@ -28,6 +30,15 @@ public interface ErrorsAndroid {
     DiagnosticFactory1<KtExpression, String> SYNTHETIC_UNRESOLVED_WIDGET_TYPE = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<KtExpression> SYNTHETIC_DEPRECATED_PACKAGE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtExpression> UNSAFE_CALL_ON_PARTIALLY_DEFINED_RESOURCE = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory0<PsiElement> PARCELABLE_SHOULD_BE_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PARCELABLE_SHOULD_BE_INSTANTIABLE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PARCELABLE_CANT_BE_INNER_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PARCELABLE_CANT_BE_LOCAL_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> NO_PARCELABLE_SUPERTYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PROPERTY_WONT_BE_SERIALIZED = DiagnosticFactory0.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
