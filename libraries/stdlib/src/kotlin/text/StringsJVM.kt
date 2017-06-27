@@ -385,7 +385,7 @@ public inline fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
  * Returns a copy of this string having its first letter uppercased, or the original string,
  * if it's empty or already starts with an upper case letter.
  *
- * @sample samples.text.Strings.captialize
+ * @sample samples.text.Strings.capitalize
  */
 public fun String.capitalize(): String {
     return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
@@ -395,7 +395,7 @@ public fun String.capitalize(): String {
  * Returns a copy of this string having its first letter lowercased, or the original string,
  * if it's empty or already starts with a lower case letter.
  *
- * @sample samples.text.Strings.decaptialize
+ * @sample samples.text.Strings.decapitalize
  */
 public fun String.decapitalize(): String {
     return if (isNotEmpty() && this[0].isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
