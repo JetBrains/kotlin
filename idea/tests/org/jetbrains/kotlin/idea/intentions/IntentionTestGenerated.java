@@ -1152,6 +1152,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("insideLoop.kt")
+                public void testInsideLoop() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/whenToAssignment/insideLoop.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("simpleWhen.kt")
                 public void testSimpleWhen() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/whenToAssignment/simpleWhen.kt");
@@ -1200,6 +1206,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 @TestMetadata("innerWhenTransformed.kt")
                 public void testInnerWhenTransformed() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/whenToReturn/innerWhenTransformed.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("insideLoop.kt")
+                public void testInsideLoop() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/whenToReturn/insideLoop.kt");
                     doTest(fileName);
                 }
 

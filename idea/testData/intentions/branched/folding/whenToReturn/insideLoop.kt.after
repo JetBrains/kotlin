@@ -1,0 +1,12 @@
+fun foo(): Int {
+    loop@ while (true) {
+        return when (1) {
+            1 -> 1
+            2 -> throw Exception()
+            3 -> break@loop
+            4 -> continue@loop
+            else -> -1
+        }
+    }
+    return 0
+}

@@ -75,6 +75,8 @@ object BranchedFoldingUtils {
                 is KtCallExpression -> {
                     e.analyze().getType(e)?.isNothing() ?: false
                 }
+                is KtBreakExpression, is KtContinueExpression,
+                is KtThrowExpression, is KtReturnExpression -> true
                 else -> false
             }
         }
@@ -104,6 +106,7 @@ object BranchedFoldingUtils {
         is KtCallExpression -> {
             expression.analyze().getType(expression)?.isNothing() ?: false
         }
+        is KtBreakExpression, is KtContinueExpression, is KtThrowExpression -> true
         else -> false
     }
 
