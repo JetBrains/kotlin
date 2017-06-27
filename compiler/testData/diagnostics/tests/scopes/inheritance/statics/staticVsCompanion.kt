@@ -24,7 +24,7 @@ class C: B() {
 // FILE: X.java
 public class X extends B {
     static double foo() {
-        return 1.0
+        return 1.0;
     }
 }
 

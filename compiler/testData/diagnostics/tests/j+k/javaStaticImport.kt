@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: backend/asmutil/AsmUtil.java
 package backend.asmutil;
 

@@ -111,10 +111,24 @@ sealed class TreeBasedClassifierType<out T : JCTree>(
         get() = javac.resolve(treePath)
 
     override val classifierQualifiedName: String
-        get() = (classifier as? JavaClass)?.fqName?.asString() ?: treePath.leaf.toString()
+        get() = (classifier as? JavaClass)?.fqName?.asString() ?: treePath.leaf.toString().substringBefore("<")
 
     override val presentableText: String
         get() = classifierQualifiedName
+
+    override val typeArguments: List<JavaType>
+        get() {
+            val classifier = classifier as? JavaClass ?: return emptyList()
+            if (classifier is MockKotlinClassifier || classifier.isStatic) return emptyList()
+
+            return arrayListOf<JavaClass>().apply {
+                var outer = classifier.outerClass
+                while (outer != null && !outer.isStatic) {
+                    add(outer)
+                    outer = outer.outerClass
+                }
+            }.flatMap { it.typeParameters.map(::TreeBasedTypeParameterType) }
+        }
 
     private val typeParameter: JCTree.JCTypeParameter?
         get() = treePath.flatMap {
@@ -128,14 +142,34 @@ sealed class TreeBasedClassifierType<out T : JCTree>(
 
 }
 
+class TreeBasedTypeParameterType(override val classifier: JavaTypeParameter) : JavaClassifierType {
+
+    override val typeArguments: List<JavaType>
+        get() = emptyList()
+
+    override val isRaw: Boolean
+        get() = false
+
+    override val annotations: Collection<JavaAnnotation>
+        get() = emptyList()
+
+    override val classifierQualifiedName: String
+        get() = classifier.name.asString()
+
+    override val presentableText: String
+        get() = classifierQualifiedName
+
+    override fun findAnnotation(fqName: FqName) = null
+
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = false
+}
+
 class TreeBasedNonGenericClassifierType(
         tree: JCTree.JCExpression,
         treePath: TreePath,
         javac: JavacWrapper
 ) : TreeBasedClassifierType<JCTree.JCExpression>(tree, treePath, javac) {
-
-    override val typeArguments: List<JavaType>
-        get() = emptyList()
 
     override val isRaw: Boolean
         get() = (classifier as? MockKotlinClassifier)?.hasTypeParameters
@@ -152,8 +186,16 @@ class TreeBasedGenericClassifierType(
 
     override val typeArguments: List<JavaType>
         get() = tree.arguments.map { create(it, treePath, javac) }
+                .toMutableList<JavaType>()
+                .apply { addAll(super.typeArguments) }
 
     override val isRaw: Boolean
-        get() = false
+        get() = classifier.let {
+            when (it) {
+                is MockKotlinClassifier -> tree.arguments.size != it.typeParametersNumber
+                else -> tree.arguments.size != (classifier as? JavaClass)?.typeParameters?.size
+            }
+        }
+
 
 }

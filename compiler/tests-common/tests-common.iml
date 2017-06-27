@@ -32,5 +32,6 @@
     <orderEntry type="library" exported="" name="idea-full" level="project" />
     <orderEntry type="module" module-name="backend.jvm" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
+    <orderEntry type="module" module-name="javac-wrapper" scope="TEST" />
   </component>
 </module>

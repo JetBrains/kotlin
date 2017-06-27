@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass): String {
     return javaClass.doSomething("") { it }

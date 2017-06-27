@@ -12,7 +12,7 @@ abstract public class B implements java.util.Collection<String> {
 }
 
 // FILE: IC.java
-public interface IC implements java.util.Collection<String> {
+public interface IC extends java.util.Collection<String> {
     public boolean contains(Object x);
 }
 

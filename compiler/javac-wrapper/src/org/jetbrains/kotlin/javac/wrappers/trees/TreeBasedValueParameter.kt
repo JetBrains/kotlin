@@ -40,7 +40,7 @@ class TreeBasedValueParameter(
             annotations.find { it.classId?.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc: Boolean
-        get() = false
+        get() = javac.isDeprecatedInJavaDoc(treePath)
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())

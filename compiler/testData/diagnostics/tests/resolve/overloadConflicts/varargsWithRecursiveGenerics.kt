@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: J.java
-import java.util.*
+import java.util.*;
 
 public class J {
     public static <E1 extends Enum<E1>> String foo(E1 e) { return ""; }

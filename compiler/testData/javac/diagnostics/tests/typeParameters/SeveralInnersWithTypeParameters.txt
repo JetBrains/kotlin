@@ -1,0 +1,35 @@
+package
+
+package a {
+
+    public open class x</*0*/ T : kotlin.Any!> {
+        public constructor x</*0*/ T : kotlin.Any!>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public open inner class y</*0*/ Z : kotlin.Any!> /*captured type parameters: /*1*/ T : kotlin.Any!*/ {
+            public constructor y</*0*/ Z : kotlin.Any!>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public open inner class z</*0*/ I : kotlin.Any!, /*1*/ Z : kotlin.Any!> /*captured type parameters: /*2*/ Z : kotlin.Any!, /*3*/ T : kotlin.Any!*/ {
+                public constructor z</*0*/ I : kotlin.Any!, /*1*/ Z : kotlin.Any!>()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open fun getI(): I!
+                public open fun getT(): T!
+                public open fun getZ(): Z!
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+}
+
+package test {
+    public fun test(): a.x<kotlin.String>.y<kotlin.Int>.z<kotlin.Double, kotlin.Double>
+    public fun test2(): kotlin.String!
+    public fun test3(): kotlin.Double!
+    public fun test4(): kotlin.Double!
+}

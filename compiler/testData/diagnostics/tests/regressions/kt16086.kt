@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: com/winterbe/domain/IEntity.java
 package com.winterbe.domain;
 import com.winterbe.observer.ObserverSupport;

@@ -1,3 +1,23 @@
 package
 
 public fun test(): kotlin.Unit
+
+package p {
+
+    public interface SAM</*0*/ R : kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public abstract fun foo(): R!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class Util {
+        public constructor Util()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public open fun sam(/*0*/ sam: p.SAM<java.lang.Void!>!): kotlin.Unit
+    }
+}

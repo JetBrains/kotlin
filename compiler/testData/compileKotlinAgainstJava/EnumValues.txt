@@ -1,0 +1,27 @@
+package test
+
+public fun findCode(/*0*/ kotlin.Int): kotlin.Array<java.util.Locale.Category>
+
+public final enum class EnumValues : kotlin.Enum<test.EnumValues!> {
+    enum entry OK
+
+    enum entry COMPILATION_ERROR
+
+    enum entry INTERNAL_ERROR
+
+    enum entry SCRIPT_EXECUTION_ERROR
+
+    private constructor EnumValues(/*0*/ kotlin.Int)
+    private final val code: kotlin.Int
+    public final /*fake_override*/ val name: kotlin.String
+    public final /*fake_override*/ val ordinal: kotlin.Int
+    protected final /*fake_override*/ fun clone(): kotlin.Any
+    public final /*fake_override*/ fun compareTo(/*0*/ test.EnumValues!): kotlin.Int
+    protected/*protected and package*/ final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public open fun getCode(): kotlin.Int
+    public final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.EnumValues!>!
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.EnumValues
+    public final /*synthesized*/ fun values(): kotlin.Array<test.EnumValues>
+}

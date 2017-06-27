@@ -14,7 +14,7 @@ public class JavaClass {
 }
 
 // FILE: foo/JavaClassSamePackage.java
-package foo
+package foo;
 
 public class JavaClassSamePackage extends bar.JavaClass {
     protected static void bar2() {}

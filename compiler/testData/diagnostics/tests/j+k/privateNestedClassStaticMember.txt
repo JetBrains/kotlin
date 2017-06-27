@@ -1,3 +1,23 @@
 package
 
 public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+
+package javaPackage {
+
+    public open class Foo {
+        public constructor Foo()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        private open class Bar {
+            private constructor Bar()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            // Static members
+            public open fun doSmth(): kotlin.Unit
+        }
+    }
+}

@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 package test
 
 import javax.swing.JFrame

@@ -1,5 +1,5 @@
 // FILE: B.java
-import java.util.List
+import java.util.List;
 
 public class B implements X {
     @Override

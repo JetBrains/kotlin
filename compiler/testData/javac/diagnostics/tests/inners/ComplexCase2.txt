@@ -1,0 +1,71 @@
+package
+
+package p {
+
+    public open class X {
+        public constructor X()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun getI(): p2.I!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public open inner class I1</*0*/ I : kotlin.Any!> {
+            public constructor I1</*0*/ I : kotlin.Any!>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open fun getI(): I!
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public open inner class N {
+            public constructor N()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open fun getI(): p.X.N.I!
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public open inner class I {
+                public constructor I()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            private open inner class M</*0*/ I : kotlin.Any!, /*1*/ I1 : kotlin.Any!> {
+                private constructor M</*0*/ I : kotlin.Any!, /*1*/ I1 : kotlin.Any!>()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open fun getI(): I!
+                public open fun getI1(): I1!
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                public/*package*/ open inner class I1 /*captured type parameters: /*0*/ I : kotlin.Any!, /*1*/ I1 : kotlin.Any!*/ {
+                    public/*package*/ constructor I1()
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public/*package*/ open fun getI1(): p.X.N.M<I!, I1!>.I1!
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+            }
+        }
+    }
+}
+
+package p1 {
+
+    public interface I {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package p2 {
+
+    public open class I {
+        public constructor I()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

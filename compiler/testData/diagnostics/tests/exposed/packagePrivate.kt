@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: test/My.java
 
 package test;

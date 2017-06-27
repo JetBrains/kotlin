@@ -1,7 +1,7 @@
 // !CHECK_TYPE
 
 // FILE: Predicate.java
-import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.NotNull;
 
 public interface Predicate<T extends CharSequence> {
     // Same effect with @Nullable here

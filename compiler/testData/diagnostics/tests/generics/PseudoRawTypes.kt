@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: java/util/Collection.java
 package java.util;
 

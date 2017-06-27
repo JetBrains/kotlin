@@ -7,3 +7,29 @@ public abstract class K : p.C {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+package p {
+
+    public interface A {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public abstract fun </*0*/ TA : kotlin.Any!> foo(/*0*/ p: TA!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class B : p.A {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public/*package*/ open override /*1*/ fun </*0*/ TB : kotlin.Any!> foo(/*0*/ p: TB!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class C : p.B, p.A {
+        public constructor C()
+        public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*2*/ /*fake_override*/ fun </*0*/ TA : kotlin.Any!> foo(/*0*/ p: TA!): kotlin.Unit
+        public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

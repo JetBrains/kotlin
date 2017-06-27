@@ -1,0 +1,85 @@
+package
+
+package p {
+    public fun test(): kotlin.Int!
+
+    public open class D</*0*/ Z : kotlin.Any!> : p.J {
+        public constructor D</*0*/ Z : kotlin.Any!>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun getI(): p.J.I!
+        public open fun getZ(): Z!
+        public open fun </*0*/ Z : kotlin.Any!> getZ2(/*0*/ z: Z!): Z!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public open inner class O /*captured type parameters: /*0*/ Z : kotlin.Any!*/ {
+            public constructor O()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open fun getZ(): p.D<Z!>.O.Z!
+            public open fun </*0*/ Z : kotlin.Any!> getZ2(): Z!
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public open inner class Z /*captured type parameters: /*0*/ Z : kotlin.Any!*/ {
+                public constructor Z()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        public open inner class Test</*0*/ Z : kotlin.Any!, /*1*/ T : kotlin.Any!> /*captured type parameters: /*2*/ Z : kotlin.Any!*/ {
+            public constructor Test</*0*/ Z : kotlin.Any!, /*1*/ T : kotlin.Any!>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open fun getZ(): Z!
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public open inner class Inner</*0*/ I : kotlin.Any!, /*1*/ T : kotlin.Any!> /*captured type parameters: /*2*/ Z : kotlin.Any!, /*3*/ T : kotlin.Any!, /*4*/ Z : kotlin.Any!*/ {
+                public constructor Inner</*0*/ I : kotlin.Any!, /*1*/ T : kotlin.Any!>()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open fun getI(): I!
+                public open fun getT(): T!
+                public open fun getZ(): Z!
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        public open inner class Z</*0*/ I : kotlin.Any!> /*captured type parameters: /*1*/ Z : kotlin.Any!*/ {
+            public constructor Z</*0*/ I : kotlin.Any!>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open fun getI(): I!
+            public open fun getZ(): p.D<(raw) kotlin.Any!, (raw) kotlin.Any!>!
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public open class J {
+        public constructor J()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public open inner class I {
+            public constructor I()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public open inner class T {
+            public constructor T()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public interface Z {
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
