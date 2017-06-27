@@ -1208,6 +1208,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val srcArg        = evaluateExpression(value.argument)                         // Evaluate src expression.
         val srcObjInfoPtr = codegen.bitcast(codegen.kObjHeaderPtr, srcArg)             // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
+        debugLocation(value)
         call(context.llvm.checkInstanceFunction, args)                                 // Check if dst is subclass of src.
         return srcArg
     }
