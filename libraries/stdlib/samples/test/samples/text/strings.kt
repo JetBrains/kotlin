@@ -13,7 +13,7 @@ class Strings {
     }
 
     @Sample
-    fun decaptialize() {
+    fun decapitalize() {
         assertPrints("abcd".decapitalize(), "abcd")
         assertPrints("Abcd".decapitalize(), "abcd")
     }
