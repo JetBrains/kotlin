@@ -29,7 +29,7 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
 /**
  * Retains only the elements in this collection that are contained in the specified collection.
  *
- * Allows to overcome type-safety restriction of `retailAll` that requires to pass a collection of type `Collection<E>`.
+ * Allows to overcome type-safety restriction of `retainAll` that requires to pass a collection of type `Collection<E>`.
  *
  * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
  */
