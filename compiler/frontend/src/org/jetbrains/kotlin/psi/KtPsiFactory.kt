@@ -69,14 +69,13 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return (createExpression("a?.b") as KtSafeQualifiedExpression).operationTokenNode
     }
 
-    private fun doCreateExpression(text: String): KtExpression {
-        //TODO: '\n' below if important - some strange code indenting problems appear without it
-        val expression = createProperty("val x =\n$text").initializer ?: error("Failed to create expression from text: '$text'")
-        return expression
+    private fun doCreateExpression(text: String): KtExpression? {
+        //NOTE: '\n' below is important - some strange code indenting problems appear without it
+        return createProperty("val x =\n$text").initializer
     }
 
     fun createExpression(text: String): KtExpression {
-        val expression = doCreateExpression(text)
+        val expression = doCreateExpression(text) ?: error("Failed to create expression from text: '$text'")
         assert(expression.text == text) {
             "Failed to create expression from text: '$text', resulting expression's text was: '${expression.text}'"
         }
@@ -84,7 +83,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createExpressionIfPossible(text: String): KtExpression? {
-        val expression = doCreateExpression(text)
+        val expression = doCreateExpression(text) ?: return null
         return if (expression.text == text) expression else null
     }
 

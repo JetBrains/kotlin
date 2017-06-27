@@ -231,8 +231,8 @@ class KotlinIntroduceParameterDialog private constructor(
 
     override fun canRun() {
         val psiFactory = KtPsiFactory(myProject)
-        psiFactory.createSimpleName(nameField.enteredName.quoteIfNeeded()).validateElement("Invalid parameter name")
-        psiFactory.createType(typeField.enteredName).validateElement("Invalid parameter type")
+        psiFactory.createExpressionIfPossible(nameField.enteredName.quoteIfNeeded()).validateElement("Invalid parameter name")
+        psiFactory.createTypeIfPossible(typeField.enteredName).validateElement("Invalid parameter type")
     }
 
     override fun doAction() {
