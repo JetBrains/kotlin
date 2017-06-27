@@ -1,0 +1,14 @@
+<html>
+<body>
+This inspection reports if and when statements that can be converted to expressions
+by lifting return or assignment out. Typical example:
+<code><pre>
+<b>fun</b> foo(arg: Boolean): String {
+    <b>when</b> (arg) {
+        <b>true</b> -> <b>return</b> "Truth"
+        <b>false</b> -> <b>return</b> "Falsehood"
+    }
+}
+</pre></code>
+</body>
+</html>
