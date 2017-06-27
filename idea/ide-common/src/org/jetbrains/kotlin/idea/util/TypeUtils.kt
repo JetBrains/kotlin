@@ -102,8 +102,9 @@ fun KotlinType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Bo
     if (descriptor is TypeParameterDescriptor) {
         if (checkTypeParameters) {
             val owner = descriptor.containingDeclaration
-            if (owner is FunctionDescriptor && owner.typeParameters.any { it == descriptor }) return true
-        } else {
+            if (owner is FunctionDescriptor && owner.typeParameters.contains(descriptor)) return true
+        }
+        else {
             return true
         }
     }
