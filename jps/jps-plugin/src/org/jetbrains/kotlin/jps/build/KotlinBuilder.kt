@@ -507,7 +507,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             val outputFile = outputItem.outputFile
             val target =
                     sourceFiles.firstOrNull()?.let { sourceToTarget[it] } ?:
-                    chunk.targets.filter { it.outputDir?.let { outputFile.startsWith(it) } ?: false }.singleOrNull() ?:
+                    chunk.targets.singleOrNull { it.outputDir?.let { outputFile.startsWith(it) } ?: false } ?:
                     representativeTarget
 
             if (outputFile.name.endsWith(".class")) {
@@ -642,7 +642,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             environment.messageCollector.report(
                     STRONG_WARNING,
                     "Circular dependencies are not supported. The following JS modules depend on each other: "
-                    + chunk.modules.map { it.name }.joinToString(", ") + ". "
+                    + chunk.modules.joinToString(", ") { it.name } + ". "
                     + "Kotlin is not compiled for these modules"
             )
             return null
@@ -700,7 +700,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             environment.messageCollector.report(
                     STRONG_WARNING,
                     "Circular dependencies are only partially supported. The following modules depend on each other: "
-                    + chunk.modules.map { it.name }.joinToString(", ") + ". "
+                    + chunk.modules.joinToString(", ") { it.name } + ". "
                     + "Kotlin will compile them, but some strange effect may happen"
             )
         }
