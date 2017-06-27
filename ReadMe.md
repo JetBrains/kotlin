@@ -177,6 +177,6 @@ which will help keep your pull request simple and easy to apply.
 
 ## Commit comments
 
-If you include in your comment this text (where KT-1234 is the Issue ID in the [Issue Tracker](https://youtrack.jetbrains.com/issues/KT), the issue will get automatically marked as fixed.
+If you include in your comment this text (where KT-1234 is the Issue ID in the [Issue Tracker](https://youtrack.jetbrains.com/issues/KT)), the issue will get automatically marked as fixed.
 
     #KT-1234 Fixed
