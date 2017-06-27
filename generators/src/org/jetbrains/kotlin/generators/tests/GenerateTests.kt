@@ -1325,6 +1325,10 @@ fun main(args: Array<String>) {
         testClass<AbstractAndroidExtractionTest> {
             model("android/extraction", recursive = false, extension = null)
         }
+
+        testClass<AbstractParcelCheckerTest> {
+            model("android/parcel/checker", excludeParentDirs = true)
+        }
     }
 
     testGroup("idea/idea-android/tests", "idea/testData") {

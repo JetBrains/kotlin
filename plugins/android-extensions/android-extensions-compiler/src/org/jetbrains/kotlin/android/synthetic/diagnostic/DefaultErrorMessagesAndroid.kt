@@ -39,6 +39,30 @@ class DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
 
             MAP.put(ErrorsAndroid.UNSAFE_CALL_ON_PARTIALLY_DEFINED_RESOURCE,
                     "Potential NullPointerException. The resource is missing in some of layout versions")
+
+            MAP.put(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS,
+                    "'Parcelable' should be a class")
+
+            MAP.put(ErrorsAndroid.PARCELABLE_SHOULD_BE_INSTANTIABLE,
+                    "'Parcelable' should not be a 'sealed' or 'abstract' class")
+
+            MAP.put(ErrorsAndroid.PARCELABLE_CANT_BE_INNER_CLASS,
+                    "'Parcelable' can't be an inner class")
+
+            MAP.put(ErrorsAndroid.PARCELABLE_CANT_BE_LOCAL_CLASS,
+                    "'Parcelable' can't be a local class")
+
+            MAP.put(ErrorsAndroid.NO_PARCELABLE_SUPERTYPE,
+                    "No 'Parcelable' supertype")
+
+            MAP.put(ErrorsAndroid.PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR,
+                    "'Parcelable' should have a primary constructor")
+
+            MAP.put(ErrorsAndroid.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR,
+                    "'Parcelable' constructor parameter should be 'val' or 'var'")
+
+            MAP.put(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED,
+                    "Property would not be serialized into a 'Parcel'. Add '@Transient' annotation to it")
         }
     }
 
