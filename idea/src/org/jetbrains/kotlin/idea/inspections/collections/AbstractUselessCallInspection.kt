@@ -48,7 +48,7 @@ abstract class AbstractUselessCallInspection : AbstractKotlinInspection() {
             val calleeExpression = selector.calleeExpression ?: return
             if (calleeExpression.text !in uselessNames) return
 
-            val context = expression.analyze(BodyResolveMode.PARTIAL)
+            val context = expression.analyze()
             val resolvedCall = expression.getResolvedCall(context) ?: return
             val conversion = uselessFqNames[resolvedCall.resultingDescriptor.fqNameOrNull()?.asString()] ?: return
 
