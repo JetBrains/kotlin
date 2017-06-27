@@ -1778,6 +1778,13 @@ public abstract interface class kotlin/coroutines/experimental/ContinuationInter
 	public abstract fun interceptContinuation (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 }
 
+public final class kotlin/coroutines/experimental/ContinuationInterceptor$DefaultImpls {
+	public static fun fold (Lkotlin/coroutines/experimental/ContinuationInterceptor;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public static fun get (Lkotlin/coroutines/experimental/ContinuationInterceptor;Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
+	public static fun minusKey (Lkotlin/coroutines/experimental/ContinuationInterceptor;Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
+	public static fun plus (Lkotlin/coroutines/experimental/ContinuationInterceptor;Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
+}
+
 public final class kotlin/coroutines/experimental/ContinuationInterceptor$Key : kotlin/coroutines/experimental/CoroutineContext$Key {
 }
 
@@ -1788,8 +1795,22 @@ public abstract interface class kotlin/coroutines/experimental/CoroutineContext 
 	public abstract fun plus (Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
 }
 
+public final class kotlin/coroutines/experimental/CoroutineContext$DefaultImpls {
+	public static fun plus (Lkotlin/coroutines/experimental/CoroutineContext;Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
+}
+
 public abstract interface class kotlin/coroutines/experimental/CoroutineContext$Element : kotlin/coroutines/experimental/CoroutineContext {
+	public abstract fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public abstract fun get (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
 	public abstract fun getKey ()Lkotlin/coroutines/experimental/CoroutineContext$Key;
+	public abstract fun minusKey (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
+}
+
+public final class kotlin/coroutines/experimental/CoroutineContext$Element$DefaultImpls {
+	public static fun fold (Lkotlin/coroutines/experimental/CoroutineContext$Element;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public static fun get (Lkotlin/coroutines/experimental/CoroutineContext$Element;Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
+	public static fun minusKey (Lkotlin/coroutines/experimental/CoroutineContext$Element;Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
+	public static fun plus (Lkotlin/coroutines/experimental/CoroutineContext$Element;Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
 }
 
 public abstract interface class kotlin/coroutines/experimental/CoroutineContext$Key {

@@ -22,20 +22,7 @@ import kotlin.coroutines.experimental.CoroutineContext.*
  * Base class for [CoroutineContext.Element] implementations.
  */
 @SinceKotlin("1.1")
-public abstract class AbstractCoroutineContextElement(public override val key: Key<*>) : Element {
-    @Suppress("UNCHECKED_CAST")
-    public override operator fun <E : Element> get(key: Key<E>): E? =
-            if (this.key === key) this as E else null
-
-    public override fun <R> fold(initial: R, operation: (R, Element) -> R): R =
-            operation(initial, this)
-
-    public override operator fun plus(context: CoroutineContext): CoroutineContext =
-            plusImpl(context)
-
-    public override fun minusKey(key: Key<*>): CoroutineContext =
-            if (this.key === key) EmptyCoroutineContext else this
-}
+public abstract class AbstractCoroutineContextElement(public override val key: Key<*>) : Element
 
 /**
  * An empty coroutine context.
@@ -50,11 +37,11 @@ public object EmptyCoroutineContext : CoroutineContext {
     public override fun toString(): String = "EmptyCoroutineContext"
 }
 
-//--------------------- private impl ---------------------
+//--------------------- internal impl ---------------------
 
 // this class is not exposed, but is hidden inside implementations
 // this is a left-biased list, so that `plus` works naturally
-private class CombinedContext(val left: CoroutineContext, val element: Element) : CoroutineContext {
+internal class CombinedContext(val left: CoroutineContext, val element: Element) : CoroutineContext {
     override fun <E : Element> get(key: Key<E>): E? {
         var cur = this
         while (true) {
@@ -70,9 +57,6 @@ private class CombinedContext(val left: CoroutineContext, val element: Element) 
 
     public override fun <R> fold(initial: R, operation: (R, Element) -> R): R =
             operation(left.fold(initial, operation), element)
-
-    public override operator fun plus(context: CoroutineContext): CoroutineContext =
-            plusImpl(context)
 
     public override fun minusKey(key: Key<*>): CoroutineContext {
         element[key]?.let { return left }
@@ -113,19 +97,3 @@ private class CombinedContext(val left: CoroutineContext, val element: Element) 
                 if (acc.isEmpty()) element.toString() else acc + ", " + element
             } + "]"
 }
-
-private fun CoroutineContext.plusImpl(context: CoroutineContext): CoroutineContext =
-        if (context === EmptyCoroutineContext) this else // fast path -- avoid lambda creation
-            context.fold(this) { acc, element ->
-                val removed = acc.minusKey(element.key)
-                if (removed === EmptyCoroutineContext) element else {
-                    // make sure interceptor is always last in the context (and thus is fast to get when present)
-                    val interceptor = removed[ContinuationInterceptor]
-                    if (interceptor == null) CombinedContext(removed, element) else {
-                        val left = removed.minusKey(ContinuationInterceptor)
-                        if (left === EmptyCoroutineContext) CombinedContext(element, interceptor) else
-                            CombinedContext(CombinedContext(left, element), interceptor)
-                    }
-                }
-            }
-
