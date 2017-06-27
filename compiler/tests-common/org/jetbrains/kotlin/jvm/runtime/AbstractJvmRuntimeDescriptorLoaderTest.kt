@@ -105,7 +105,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         }
 
         val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, testRootDisposable, jdkKind, ConfigurationKind.ALL, true, false
+                tmpdir, testRootDisposable, jdkKind, ConfigurationKind.ALL, true, false, false
         ).first
 
         RecursiveDescriptorComparator.validateAndCompareDescriptors(expected, actual, comparatorConfiguration, null)

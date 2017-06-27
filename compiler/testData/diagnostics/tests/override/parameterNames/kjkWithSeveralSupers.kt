@@ -20,19 +20,19 @@ interface JSuper2 {
 // FILE: Sub1.java
 interface Sub1 extends KSuper, JSuper1, JSuper2 {
     @Override
-    void foo(int sub1Name)
+    void foo(int sub1Name);
 }
 
 // FILE: Sub2.java
 interface Sub2 extends JSuper1, KSuper, JSuper2 {
     @Override
-    void foo(int sub2Name)
+    void foo(int sub2Name);
 }
 
 // FILE: Sub3.java
 interface Sub3 extends JSuper1, JSuper2, KSuper {
     @Override
-    void foo(int sub3Name)
+    void foo(int sub3Name);
 }
 
 

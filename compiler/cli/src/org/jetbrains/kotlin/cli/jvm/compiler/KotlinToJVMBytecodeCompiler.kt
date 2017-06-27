@@ -159,7 +159,7 @@ object KotlinToJVMBytecodeCompiler {
                 writeOutput(state.configuration, state.factory, null)
             }
 
-            if (projectConfiguration.getBoolean(JVMConfigurationKeys.USE_JAVAC)) {
+            if (projectConfiguration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
                 val singleModule = chunk.singleOrNull()
                 if (singleModule != null) {
                     return JavacWrapper.getInstance(environment.project).use {

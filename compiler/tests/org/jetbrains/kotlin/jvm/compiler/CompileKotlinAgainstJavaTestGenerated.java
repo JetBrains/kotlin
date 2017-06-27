@@ -126,6 +126,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("EnumValues.kt")
+    public void testEnumValues() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/EnumValues.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Inheritance.kt")
     public void testInheritance() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/Inheritance.kt");
@@ -162,6 +168,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("InnerWithGenericOuter.kt")
+    public void testInnerWithGenericOuter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/InnerWithGenericOuter.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Interface.kt")
     public void testInterface() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/Interface.kt");
@@ -183,6 +195,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
     @TestMetadata("InterfaceWithDefault.kt")
     public void testInterfaceWithDefault() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/InterfaceWithDefault.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("JavaLangClass.kt")
+    public void testJavaLangClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/JavaLangClass.kt");
         doTest(fileName);
     }
 
@@ -327,12 +345,6 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
     @TestMetadata("TypeParameter.kt")
     public void testTypeParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/TypeParameter.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("UseKotlinInner.kt")
-    public void testUseKotlinInner() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/UseKotlinInner.kt");
         doTest(fileName);
     }
 

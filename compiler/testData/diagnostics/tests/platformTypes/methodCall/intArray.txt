@@ -1,3 +1,14 @@
 package
 
 public fun test(/*0*/ ia: kotlin.IntArray): kotlin.Unit
+
+package p {
+
+    public open class J {
+        public constructor J()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun intArr(/*0*/ s: kotlin.IntArray!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

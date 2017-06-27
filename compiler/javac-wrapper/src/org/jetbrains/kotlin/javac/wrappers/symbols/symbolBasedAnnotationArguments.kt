@@ -32,7 +32,7 @@ sealed class SymbolBasedAnnotationArgument(
     companion object {
         fun create(value: Any, name: Name, javac: JavacWrapper): JavaAnnotationArgument = when (value) {
             is AnnotationMirror -> SymbolBasedAnnotationAsAnnotationArgument(value, name, javac)
-            is VariableElement -> SymbolBasedReferenceAnnotationArgument(value, javac)
+            is VariableElement -> SymbolBasedReferenceAnnotationArgument(value, name, javac)
             is TypeMirror -> SymbolBasedClassObjectAnnotationArgument(value, name, javac)
             is Collection<*> -> arrayAnnotationArguments(value, name, javac)
             is AnnotationValue -> create(value.value, name, javac)
@@ -59,10 +59,11 @@ class SymbolBasedAnnotationAsAnnotationArgument(
 
 class SymbolBasedReferenceAnnotationArgument(
         val element: VariableElement,
+        name: Name,
         javac: JavacWrapper
-) : SymbolBasedAnnotationArgument(Name.identifier(element.simpleName.toString()), javac), JavaEnumValueAnnotationArgument {
+) : SymbolBasedAnnotationArgument(name, javac), JavaEnumValueAnnotationArgument {
     override val entryName: Name?
-        get() = Name.identifier(element.simpleName.toString())
+        get() = Name.identifier(name)
 
     override fun resolve() = SymbolBasedField(element, javac)
 

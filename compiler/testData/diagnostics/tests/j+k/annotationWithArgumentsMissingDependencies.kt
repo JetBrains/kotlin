@@ -1,3 +1,4 @@
+// JAVAC_EXPECTED_FILE
 // FILE: A.java
 @missing.Ann(x = "")
 public class A {

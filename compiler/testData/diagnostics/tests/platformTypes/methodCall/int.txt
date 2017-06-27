@@ -1,3 +1,14 @@
 package
 
 public fun test(): kotlin.Unit
+
+package p {
+
+    public open class J {
+        public constructor J()
+        public open fun _int(/*0*/ s: kotlin.Int): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

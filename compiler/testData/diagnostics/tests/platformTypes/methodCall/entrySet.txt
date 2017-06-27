@@ -1,3 +1,14 @@
 package
 
 public fun test(): kotlin.Unit
+
+package p {
+
+    public open class MultiMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> {
+        public constructor MultiMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!>()
+        public open fun entrySet(): kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Collection<V!>!>!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

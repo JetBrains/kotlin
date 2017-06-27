@@ -31,6 +31,7 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.NoType
 import javax.lang.model.type.TypeKind
+import javax.lang.model.type.TypeMirror
 import javax.tools.JavaFileObject
 
 class SymbolBasedClass(
@@ -61,10 +62,11 @@ class SymbolBasedClass(
         get() = FqName(element.qualifiedName.toString())
 
     override val supertypes: Collection<JavaClassifierType>
-        get() = element.interfaces.toMutableList()
+        get() = arrayListOf<TypeMirror>()
                 .apply {
                     element.superclass.takeIf { it !is NoType }?.let(this::add)
                 }
+                .apply { addAll(element.interfaces) }
                 .mapTo(arrayListOf()) { SymbolBasedClassifierType(it, javac) }
                 .apply {
                     if (isEmpty() && element.qualifiedName.toString() != CommonClassNames.JAVA_LANG_OBJECT) {
@@ -97,8 +99,16 @@ class SymbolBasedClass(
 
     override val methods: Collection<JavaMethod>
         get() = element.enclosedElements
-                .filter { it.kind == ElementKind.METHOD }
+                .filter { it.kind == ElementKind.METHOD && !isEnumValuesOrValueOf(it as ExecutableElement)}
                 .map { SymbolBasedMethod(it as ExecutableElement, javac) }
+
+    private fun isEnumValuesOrValueOf(method: ExecutableElement): Boolean {
+        return isEnum && when (method.simpleName.toString()) {
+            "values" -> method.parameters.isEmpty()
+            "valueOf" -> method.parameters.let { it.size == 1 && it.first().asType().toString() == "java.lang.String" }
+            else -> false
+        }
+    }
 
     override val fields: Collection<JavaField>
         get() = element.enclosedElements

@@ -1,5 +1,18 @@
 package
 
+package a {
+
+    public interface JC</*0*/ T : kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public abstract fun getIterable(): kotlin.collections.(Mutable)Iterable<T!>!
+        public abstract fun getIterator(): kotlin.collections.(Mutable)Iterator<T!>!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract fun setIterable(/*0*/ iterable: kotlin.collections.(Mutable)Iterable<T!>!): kotlin.Unit
+        public abstract fun setIterator(/*0*/ iterator: kotlin.collections.(Mutable)Iterator<T!>!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
 package n {
     public fun foo(/*0*/ c: a.JC<kotlin.Int>, /*1*/ iterator: kotlin.collections.Iterator<kotlin.Int>, /*2*/ iterable: kotlin.collections.Iterable<kotlin.Int>): kotlin.Unit
 }

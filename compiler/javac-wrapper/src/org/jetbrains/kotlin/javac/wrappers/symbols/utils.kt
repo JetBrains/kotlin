@@ -62,7 +62,7 @@ internal fun TypeElement.computeClassId(): ClassId? {
 internal fun ExecutableElement.valueParameters(javac: JavacWrapper): List<JavaValueParameter> =
         parameters.mapIndexed { index, parameter ->
             SymbolBasedValueParameter(parameter,
-                                      parameter.simpleName.toString(),
+                                      if (!parameter.simpleName.contentEquals("arg$index")) parameter.simpleName.toString() else "p$index",
                                       index == parameters.lastIndex && isVarArgs,
                                       javac)
         }

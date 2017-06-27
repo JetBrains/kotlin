@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: A.java
 public class A {
     public B b() {}

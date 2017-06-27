@@ -42,15 +42,22 @@ class TreeBasedTypeParameter(
             annotations.firstOrNull { it.classId?.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc: Boolean
-        get() = false
+        get() = javac.isDeprecatedInJavaDoc(treePath)
 
     override val upperBounds: Collection<JavaClassifierType>
         get() = tree.bounds.mapNotNull {
-            when (it) {
-                is JCTree.JCTypeApply -> TreeBasedGenericClassifierType(it, TreePath(treePath, it), javac)
-                is JCTree.JCIdent -> TreeBasedNonGenericClassifierType(it, TreePath(treePath, it), javac)
-                else -> null
-            }
+            TreeBasedType.create(it, TreePath(treePath, it), javac, emptyList()) as? JavaClassifierType
         }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is TreeBasedTypeParameter) return false
+        return other.name == name && other.upperBounds == upperBounds
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        upperBounds.forEach { result = 37 * result + it.hashCode() }
+        return result
+    }
 
 }

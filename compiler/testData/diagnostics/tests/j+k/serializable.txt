@@ -41,3 +41,17 @@ public final class S : java.io.Serializable {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+package aa {
+
+    public open class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public open fun use(/*0*/ s: java.io.Serializable!): kotlin.Unit
+        public open fun useList(/*0*/ s: (kotlin.collections.MutableList<out java.io.Serializable!>..kotlin.collections.List<java.io.Serializable!>?)): kotlin.Unit
+    }
+}
