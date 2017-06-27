@@ -489,6 +489,10 @@ fun main(args: Array<String>) {
         testClass<AbstractWriteFlagsTest> {
             model("codegen/java8/writeFlags")
         }
+
+        testClass<AbstractBytecodeTextTest>("BytecodeTextJava8TestGenerated") {
+            model("codegen/java8/bytecodeText")
+        }
     }
 
     testGroup("idea/tests", "idea/testData") {

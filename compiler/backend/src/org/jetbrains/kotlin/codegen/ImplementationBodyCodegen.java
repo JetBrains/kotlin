@@ -573,7 +573,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifnull(ifNull);
                 }
 
-                genHashCode(mv, iv, asmType);
+                genHashCode(mv, iv, asmType, state.getTarget());
 
                 if (ifNull != null) {
                     Label end = new Label();
