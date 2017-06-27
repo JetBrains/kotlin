@@ -25,7 +25,14 @@ import kotlin.concurrent.thread
 import kotlin.concurrent.withLock
 
 // TODO: Try to use some dependency management system (Ivy?)
-class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, val dependencies: List<String>) {
+/**
+ * Inspects [dependencies] and downloads all the missing ones into [dependenciesDirectory] from [dependenciesUrl].
+ * If [airplaneMode] is true will throw a RuntimeException instead of downloading.
+ */
+class DependencyDownloader(dependenciesRoot: File,
+                           val dependenciesUrl: String,
+                           val dependencies: List<String>,
+                           val airplaneMode: Boolean = false) {
 
     val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
     val cacheDirectory = System.getProperty("user.home")?.let {
@@ -85,7 +92,14 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
 
         val archive = File(cacheDirectory.canonicalPath, "$depName.$archiveExtension")
         if (!archive.exists()) {
-            download(depName, archive)
+            if (!airplaneMode) {
+                download(depName, archive)
+            } else {
+                throw RuntimeException("""
+                    Cannot find a dependency locally: $dependency.
+                    Set `airplaneMode = false` in konan.properties to download it.
+                """.trimIndent())
+            }
         }
         extract(archive, dependenciesDirectory)
         extractedDependencies.addWithSave(depName)

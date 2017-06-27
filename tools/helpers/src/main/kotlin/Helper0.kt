@@ -27,7 +27,8 @@ class Helper0(val dependenciesDir: String,
         DependencyDownloader(
                 File(dependenciesDir),
                 properties.getProperty("dependenciesUrl", "https://download.jetbrains.com/kotlin/native"),
-                dependencies
+                dependencies,
+                airplaneMode = properties.getProperty("airplaneMode")?.toBoolean() ?: false
         ).run()
     }
 }
