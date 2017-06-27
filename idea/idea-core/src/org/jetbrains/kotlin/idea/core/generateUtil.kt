@@ -204,10 +204,10 @@ fun <T : KtDeclaration> insertMembersAfter(
             moveCaretIntoGeneratedElement(editor, insertedMembers.first())
         }
 
-        insertedMembers
-    }.apply {
         val codeStyleManager = CodeStyleManager.getInstance(classOrObject.project)
-        forEach { codeStyleManager.reformat(it) }
+        insertedMembers.forEach { codeStyleManager.reformat(it) }
+
+        insertedMembers
     }
 }
 
