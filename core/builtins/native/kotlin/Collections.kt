@@ -403,19 +403,19 @@ public interface MutableMap<K, V> : Map<K, V> {
 
     // Views
     /**
-     * Returns a mutable [Set] of all keys in this map.
+     * Returns a [MutableSet] of all keys in this map.
      */
     override val keys: MutableSet<K>
 
     /**
-     * Returns a mutable [Collection] of all values in this map. Note that this collection may contain duplicate values.
-     */
-    override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
-
-    /**
-     * Returns a mutable [Set] of all key/value pairs in this map.
+     * Returns a [MutableCollection] of all values in this map. Note that this collection may contain duplicate values.
      */
     override val values: MutableCollection<V>
+
+    /**
+     * Returns a [MutableSet] of all key/value pairs in this map.
+     */
+    override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
 
     /**
      * Represents a key/value pair held by a [MutableMap].
