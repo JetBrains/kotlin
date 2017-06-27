@@ -69,6 +69,6 @@ public class JsLabel extends SourceInfoAwareJsNode implements JsStatement, HasNa
     @NotNull
     @Override
     public JsLabel deepCopy() {
-        return new JsLabel(label, AstUtil.deepCopy(statement.deepCopy())).withMetadataFrom(this);
+        return new JsLabel(label, AstUtil.deepCopy(statement)).withMetadataFrom(this);
     }
 }
