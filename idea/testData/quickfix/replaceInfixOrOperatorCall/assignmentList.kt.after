@@ -1,0 +1,7 @@
+// "Replace with safe (?.) call" "true"
+// WITH_RUNTIME
+
+fun foo(list: List<String>?) {
+    var s = ""
+    s = list?.get(0) ?: <caret>
+}

@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixAction<KtExpression>(element) {
+class ReplaceInfixOrOperatorCallFix(
+        element: KtExpression,
+        private val isNeededElvis: Boolean
+) : KotlinQuickFixAction<KtExpression>(element) {
 
     override fun getText() = "Replace with safe (?.) call"
 
@@ -38,6 +41,7 @@ class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixActio
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val psiFactory = KtPsiFactory(file)
+        val elvis = ReplaceCallFixUtils.elvis(isNeededElvis)
         when (element) {
             is KtArrayAccessExpression -> {
                 val assignment = element.getAssignmentByLHS()
@@ -51,28 +55,32 @@ class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixActio
                 }
                 else {
                     val newExpression = psiFactory.createExpressionByPattern(
-                            "$0?.get($1)", arrayExpression, element.indexExpressions.joinToString(", ") { it.text })
-                    element.replace(newExpression)
+                            "$0?.get($1)$elvis", arrayExpression, element.indexExpressions.joinToString(", ") { it.text })
+                    val replace = element.replace(newExpression)
+                    ReplaceCallFixUtils.moveCaretIfNeededElvis(isNeededElvis, replace, editor, project)
                 }
             }
             is KtCallExpression -> {
                 val newExpression = psiFactory.createExpressionByPattern(
-                        "$0?.invoke($1)", element.calleeExpression ?: return, element.valueArguments.joinToString(", ") { it.text })
-                element.replace(newExpression)
+                        "$0?.invoke($1)$elvis", element.calleeExpression ?: return, element.valueArguments.joinToString(", ") { it.text })
+                val replace = element.replace(newExpression)
+                ReplaceCallFixUtils.moveCaretIfNeededElvis(isNeededElvis, replace, editor, project)
             }
             is KtBinaryExpression -> {
                 if (element.operationToken == KtTokens.IDENTIFIER) {
                     val newExpression = psiFactory.createExpressionByPattern(
-                            "$0?.$1($2)", element.left ?: return, element.operationReference, element.right ?: return)
-                    element.replace(newExpression)
+                            "$0?.$1($2)$elvis", element.left ?: return, element.operationReference, element.right ?: return)
+                    val replace = element.replace(newExpression)
+                    ReplaceCallFixUtils.moveCaretIfNeededElvis(isNeededElvis, replace, editor, project)
                 }
                 else {
                     val nameExpression = OperatorToFunctionIntention.convert(element).second
                     val callExpression = nameExpression.parent as KtCallExpression
                     val qualifiedExpression = callExpression.parent as KtDotQualifiedExpression
                     val safeExpression = psiFactory.createExpressionByPattern(
-                            "$0?.$1", qualifiedExpression.receiverExpression, callExpression)
-                    qualifiedExpression.replace(safeExpression)
+                            "$0?.$1$elvis", qualifiedExpression.receiverExpression, callExpression)
+                    val replace = qualifiedExpression.replace(safeExpression)
+                    ReplaceCallFixUtils.moveCaretIfNeededElvis(isNeededElvis, replace, editor, project)
                 }
             }
         }
@@ -85,22 +93,21 @@ class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixActio
             val expression = diagnostic.psiElement
             if (expression is KtArrayAccessExpression) {
                 if (expression.arrayExpression == null) return null
-                return ReplaceInfixOrOperatorCallFix(expression)
+                return ReplaceInfixOrOperatorCallFix(expression, ReplaceCallFixUtils.isNeededElvis(expression))
             }
             val parent = expression.parent
             return when (parent) {
                 is KtBinaryExpression -> {
                     if (parent.left == null || parent.right == null) null
-                    else {
-                        if (parent.operationToken in OperatorConventions.COMPARISON_OPERATIONS) null
-                        else ReplaceInfixOrOperatorCallFix(parent)
-                    }
+                    else if (parent.operationToken == KtTokens.EQ) null
+                    else if (parent.operationToken in OperatorConventions.COMPARISON_OPERATIONS) null
+                    else ReplaceInfixOrOperatorCallFix(parent, ReplaceCallFixUtils.isNeededElvis(parent))
                 }
                 is KtCallExpression -> {
                     if (parent.calleeExpression == null) null
                     else if (parent.parent is KtQualifiedExpression) null
                     else if (parent.getResolvedCall(parent.analyze())?.getImplicitReceiverValue() != null) null
-                    else ReplaceInfixOrOperatorCallFix(parent)
+                    else ReplaceInfixOrOperatorCallFix(parent, ReplaceCallFixUtils.isNeededElvis(parent))
                 }
                 else -> null
             }
