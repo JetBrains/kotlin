@@ -101,4 +101,10 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     fun testJdkModulesFromUnnamed() {
         module("main")
     }
+
+    fun testUnnamedDoesNotReadNotAdded() {
+        // Test that although we have moduleA in the module path, it's not in the module graph
+        // because we did not provide -Xadd-modules=moduleA
+        module("moduleB", listOf(module("moduleA")), addModules = emptyList())
+    }
 }

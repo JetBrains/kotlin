@@ -144,7 +144,7 @@ internal class ClasspathRootsResolver(
         val rootModules = when {
             sourceModules.isNotEmpty() -> listOf(sourceModules.single().name) + additionalModules
             addAllModulePathToRoots -> modules.map(JavaModule::name)
-            else -> computeDefaultRootModules() + modules.map(JavaModule::name)
+            else -> computeDefaultRootModules() + additionalModules
         }
 
         // TODO: if at least one automatic module is added, add all automatic modules as per java.lang.module javadoc
