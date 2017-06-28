@@ -141,23 +141,23 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     }
 
     private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irWhen: IrWhen): IrExpression {
-        if (irSubject == null) {
+        return if (irSubject == null) {
             if (irWhen.branches.isEmpty())
-                return IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrStatementOrigin.WHEN)
+                IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrStatementOrigin.WHEN)
             else
-                return irWhen
+                irWhen
         }
         else {
             if (irWhen.branches.isEmpty()) {
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrStatementOrigin.WHEN)
                 irBlock.statements.add(irSubject)
-                return irBlock
+                irBlock
             }
             else {
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irWhen.type, IrStatementOrigin.WHEN)
                 irBlock.statements.add(irSubject)
                 irBlock.statements.add(irWhen)
-                return irBlock
+                irBlock
             }
         }
     }

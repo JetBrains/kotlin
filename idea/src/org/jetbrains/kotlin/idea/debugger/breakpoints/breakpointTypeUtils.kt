@@ -68,11 +68,11 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
         }
 
         if (element is KtProperty || element is KtParameter) {
-            if ((element is KtParameter && element.hasValOrVar()) || (element is KtProperty && !element.isLocal)) {
-                result = KotlinFieldBreakpointType::class.java
+            result = if ((element is KtParameter && element.hasValOrVar()) || (element is KtProperty && !element.isLocal)) {
+                KotlinFieldBreakpointType::class.java
             }
             else {
-                result = KotlinLineBreakpointType::class.java
+                KotlinLineBreakpointType::class.java
             }
             return false
         }

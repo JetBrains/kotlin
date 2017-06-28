@@ -139,7 +139,7 @@ class CreateTypeParameterFromUsageFix(
 
                 callsToExplicateArguments.forEach {
                     val typeArgumentList = it.typeArgumentList
-                    if (typeArgumentList == null) {
+                    elementsToShorten += if (typeArgumentList == null) {
                         InsertExplicitTypeArgumentsIntention.applyTo(it, shortenReferences = false)
 
                         val newTypeArgument = it.typeArguments.lastOrNull()
@@ -147,10 +147,10 @@ class CreateTypeParameterFromUsageFix(
                             newTypeArgument.replaced(anonymizedUpperBoundAsTypeArg)
                         }
 
-                        elementsToShorten += it.typeArgumentList
+                        it.typeArgumentList
                     }
                     else {
-                        elementsToShorten += typeArgumentList.addArgument(anonymizedUpperBoundAsTypeArg)
+                        typeArgumentList.addArgument(anonymizedUpperBoundAsTypeArg)
                     }
                 }
 

@@ -332,20 +332,20 @@ class BasicCompletionSession(
             if (callTypeAndReceiver.receiver == null && prefix.isNotEmpty()) {
                 val classKindFilter: ((ClassKind) -> Boolean)?
                 val includeTypeAliases: Boolean
-                when (callTypeAndReceiver) {
+                includeTypeAliases = when (callTypeAndReceiver) {
                     is CallTypeAndReceiver.ANNOTATION -> {
                         classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
-                        includeTypeAliases = true
+                        true
                     }
 
                     is CallTypeAndReceiver.DEFAULT, is CallTypeAndReceiver.TYPE -> {
                         classKindFilter = { it != ClassKind.ENUM_ENTRY }
-                        includeTypeAliases = true
+                        true
                     }
 
                     else -> {
                         classKindFilter = null
-                        includeTypeAliases = false
+                        false
                     }
                 }
 
@@ -728,24 +728,24 @@ class BasicCompletionSession(
 
     private fun referenceScope(declaration: KtNamedDeclaration): KtElement? {
         val parent = declaration.parent
-        when (parent) {
-            is KtParameterList -> return parent.parent as KtElement
+        return when (parent) {
+            is KtParameterList -> parent.parent as KtElement
 
             is KtClassBody -> {
                 val classOrObject = parent.parent as KtClassOrObject
                 if (classOrObject is KtObjectDeclaration && classOrObject.isCompanion()) {
-                    return classOrObject.containingClassOrObject
+                    classOrObject.containingClassOrObject
                 }
                 else {
-                    return classOrObject
+                    classOrObject
                 }
             }
 
-            is KtFile -> return parent
+            is KtFile -> parent
 
-            is KtBlockExpression -> return parent
+            is KtBlockExpression -> parent
 
-            else -> return null
+            else -> null
         }
     }
 

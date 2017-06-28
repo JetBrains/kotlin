@@ -325,18 +325,18 @@ class CallArgumentTranslator private constructor(
         ): JsExpression {
             assert(concatArguments.isNotEmpty()) { "concatArguments.size should not be 0" }
 
-            if (concatArguments.size > 1) {
+            return if (concatArguments.size > 1) {
                 if (varargPrimitiveType != null) {
                     val method = if (isMixed) "arrayConcat" else "primitiveArrayConcat"
-                    return JsAstUtils.invokeKotlinFunction(method, concatArguments[0],
-                                                           *concatArguments.subList(1, concatArguments.size).toTypedArray())
+                    JsAstUtils.invokeKotlinFunction(method, concatArguments[0],
+                                                    *concatArguments.subList(1, concatArguments.size).toTypedArray())
                 }
                 else {
-                    return JsInvocation(JsNameRef("concat", concatArguments[0]), concatArguments.subList(1, concatArguments.size))
+                    JsInvocation(JsNameRef("concat", concatArguments[0]), concatArguments.subList(1, concatArguments.size))
                 }
             }
             else {
-                return concatArguments[0]
+                concatArguments[0]
             }
         }
     }

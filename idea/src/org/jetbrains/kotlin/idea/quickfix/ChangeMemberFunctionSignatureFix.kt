@@ -260,11 +260,11 @@ class ChangeMemberFunctionSignatureFix private constructor(
         object MatchTypes : ParameterChooser {
             override fun choose(parameter: ValueParameterDescriptor, superParameter: ValueParameterDescriptor): ValueParameterDescriptor? {
                 // TODO: support for generic functions
-                if (KotlinTypeChecker.DEFAULT.equalTypes(parameter.type, superParameter.type)) {
-                    return superParameter.copy(parameter.containingDeclaration, parameter.name, parameter.index)
+                return if (KotlinTypeChecker.DEFAULT.equalTypes(parameter.type, superParameter.type)) {
+                    superParameter.copy(parameter.containingDeclaration, parameter.name, parameter.index)
                 }
                 else {
-                    return null
+                    null
                 }
             }
         }

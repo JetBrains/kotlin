@@ -259,13 +259,13 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
 
         is CallTypeAndReceiver.SUPER_MEMBERS -> {
             val qualifier = receiver.superTypeQualifier
-            if (qualifier != null) {
-                return listOfNotNull(bindingContext.getType(receiver)).map { ReceiverType(it, 0) }
+            return if (qualifier != null) {
+                listOfNotNull(bindingContext.getType(receiver)).map { ReceiverType(it, 0) }
             }
             else {
                 val resolutionScope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
                 val classDescriptor = resolutionScope.ownerDescriptor.parentsWithSelf.firstIsInstanceOrNull<ClassDescriptor>() ?: return emptyList()
-                return classDescriptor.typeConstructor.supertypesWithAny().map { ReceiverType(it, 0) }
+                classDescriptor.typeConstructor.supertypesWithAny().map { ReceiverType(it, 0) }
             }
         }
 

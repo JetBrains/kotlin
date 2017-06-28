@@ -121,11 +121,11 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
         }
 
         fun buildDialogOptions(isSingleFunctionSelected: Boolean): List<String> {
-            if (isSingleFunctionSelected) {
-                return arrayListOf(Messages.YES_BUTTON, Messages.NO_BUTTON, Messages.CANCEL_BUTTON)
+            return if (isSingleFunctionSelected) {
+                arrayListOf(Messages.YES_BUTTON, Messages.NO_BUTTON, Messages.CANCEL_BUTTON)
             }
             else {
-                return arrayListOf(Messages.OK_BUTTON, Messages.CANCEL_BUTTON)
+                arrayListOf(Messages.OK_BUTTON, Messages.CANCEL_BUTTON)
             }
         }
 
@@ -185,14 +185,14 @@ fun getAffectedCallables(project: Project, descriptorsForChange: Collection<Call
 fun DeclarationDescriptor.getContainingScope(): LexicalScope? {
     val declaration = DescriptorToSourceUtils.descriptorToDeclaration(this)
     val block = declaration?.parent as? KtBlockExpression
-    if (block != null) {
+    return if (block != null) {
         val lastStatement = block.statements.last()
         val bindingContext = lastStatement.analyze()
-        return lastStatement.getResolutionScope(bindingContext, lastStatement.getResolutionFacade())
+        lastStatement.getResolutionScope(bindingContext, lastStatement.getResolutionFacade())
     }
     else {
         val containingDescriptor = containingDeclaration ?: return null
-        return when (containingDescriptor) {
+        when (containingDescriptor) {
             is ClassDescriptorWithResolutionScopes -> containingDescriptor.scopeForInitializerResolution
             is PackageFragmentDescriptor -> LexicalScope.Base(containingDescriptor.getMemberScope().memberScopeAsImportingScope(), this)
             else -> null

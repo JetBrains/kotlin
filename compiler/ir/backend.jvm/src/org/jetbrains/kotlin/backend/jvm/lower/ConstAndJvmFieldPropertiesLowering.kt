@@ -65,11 +65,11 @@ class ConstAndJvmFieldPropertiesLowering : IrElementTransformerVoid(), FileLower
 
         val property = descriptor.correspondingProperty
         if (JvmCodegenUtil.isConstOrHasJvmFieldAnnotation(property)) {
-            if (descriptor is PropertyGetterDescriptor) {
-                return substituteGetter(descriptor, expression)
+            return if (descriptor is PropertyGetterDescriptor) {
+                substituteGetter(descriptor, expression)
             }
             else {
-                return substituteSetter(descriptor, expression)
+                substituteSetter(descriptor, expression)
             }
         }
         else if (property is SyntheticJavaPropertyDescriptor) {

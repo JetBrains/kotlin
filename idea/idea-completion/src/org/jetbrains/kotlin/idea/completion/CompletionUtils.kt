@@ -59,11 +59,11 @@ tailrec fun <T : Any> LookupElement.putUserDataDeep(key: Key<T>, value: T?) {
 }
 
 tailrec fun <T : Any> LookupElement.getUserDataDeep(key: Key<T>): T? {
-    if (this is LookupElementDecorator<*>) {
-        return getDelegate().getUserDataDeep(key)
+    return if (this is LookupElementDecorator<*>) {
+        getDelegate().getUserDataDeep(key)
     }
     else {
-        return getUserData(key)
+        getUserData(key)
     }
 }
 
@@ -298,10 +298,10 @@ fun breakOrContinueExpressionItems(position: KtElement, breakOrContinue: String)
 fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): LookupElement? {
     if (type.isError) return null
 
-    if (type.isFunctionType) {
+    return if (type.isFunctionType) {
         val text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
         val baseLookupElement = LookupElementBuilder.create(text).withIcon(KotlinIcons.LAMBDA)
-        return BaseTypeLookupElement(type, baseLookupElement)
+        BaseTypeLookupElement(type, baseLookupElement)
     }
     else {
         val classifier = type.constructor.declarationDescriptor ?: return null
@@ -317,7 +317,7 @@ fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): Look
         }
 
         // if type is simply classifier without anything else, use classifier's lookup element to avoid duplicates (works after "as" in basic completion)
-        return if (typeLookupElement.fullText == IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier))
+        if (typeLookupElement.fullText == IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier))
             baseLookupElement
         else
             typeLookupElement

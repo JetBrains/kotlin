@@ -105,12 +105,12 @@ class AddToCollectionTransformation(
                         ?.let { return it }
             }
 
-            if (state.indexVariable == null && argumentValue.isVariableReference(state.inputVariable)) {
-                return TransformationMatch.Result(AddToCollectionTransformation(state.outerLoop, targetCollection))
+            return if (state.indexVariable == null && argumentValue.isVariableReference(state.inputVariable)) {
+                TransformationMatch.Result(AddToCollectionTransformation(state.outerLoop, targetCollection))
             }
             else {
                 //TODO: recognize "?: continue" in the argument
-                return TransformationMatch.Result(MapToTransformation.create(
+                TransformationMatch.Result(MapToTransformation.create(
                         state.outerLoop, state.inputVariable, state.indexVariable, targetCollection, argumentValue, mapNotNull = false))
             }
         }
@@ -127,19 +127,19 @@ class AddToCollectionTransformation(
                 CollectionKind.LIST -> {
                     when {
                         canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.list, state.outerLoop) -> {
-                            if (argumentIsInputVariable) {
+                            return if (argumentIsInputVariable) {
                                 val assignToList = AssignToListTransformation(state.outerLoop, collectionInitialization, state.lazySequence)
-                                return TransformationMatch.Result(assignToList)
+                                TransformationMatch.Result(assignToList)
                             }
                             else {
                                 val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, null, addOperationArgument, mapNotNull = false)
                                 if (state.lazySequence) {
                                     val assignToList = AssignToListTransformation(state.outerLoop, collectionInitialization, lazySequence = true)
-                                    return TransformationMatch.Result(assignToList, mapTransformation)
+                                    TransformationMatch.Result(assignToList, mapTransformation)
                                 }
                                 else {
                                     val assignSequence = AssignSequenceResultTransformation(mapTransformation, collectionInitialization)
-                                    return TransformationMatch.Result(assignSequence)
+                                    TransformationMatch.Result(assignSequence)
                                 }
                             }
                         }
@@ -166,12 +166,12 @@ class AddToCollectionTransformation(
                         else -> return null
                     }
 
-                    if (argumentIsInputVariable) {
-                        return TransformationMatch.Result(assignToSetTransformation)
+                    return if (argumentIsInputVariable) {
+                        TransformationMatch.Result(assignToSetTransformation)
                     }
                     else {
                         val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, null, addOperationArgument, mapNotNull = false)
-                        return TransformationMatch.Result(assignToSetTransformation, mapTransformation)
+                        TransformationMatch.Result(assignToSetTransformation, mapTransformation)
                     }
                 }
             }
@@ -236,12 +236,12 @@ class FilterToTransformation private constructor(
                 isFilterNot: Boolean
         ): ResultTransformation {
             val initialization = targetCollection.findVariableInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
-            if (initialization != null && initialization.initializer.hasNoSideEffect()) {
+            return if (initialization != null && initialization.initializer.hasNoSideEffect()) {
                 val transformation = FilterToTransformation(loop, inputVariable, indexVariable, initialization.initializer, condition, isFilterNot)
-                return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
+                AssignToVariableResultTransformation.createDelegated(transformation, initialization)
             }
             else {
-                return FilterToTransformation(loop, inputVariable, indexVariable, targetCollection, condition, isFilterNot)
+                FilterToTransformation(loop, inputVariable, indexVariable, targetCollection, condition, isFilterNot)
             }
         }
     }
@@ -265,12 +265,12 @@ class FilterNotNullToTransformation private constructor(
                 targetCollection: KtExpression
         ): ResultTransformation {
             val initialization = targetCollection.findVariableInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
-            if (initialization != null && initialization.initializer.hasNoSideEffect()) {
+            return if (initialization != null && initialization.initializer.hasNoSideEffect()) {
                 val transformation = FilterNotNullToTransformation(loop, initialization.initializer)
-                return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
+                AssignToVariableResultTransformation.createDelegated(transformation, initialization)
             }
             else {
-                return FilterNotNullToTransformation(loop, targetCollection)
+                FilterNotNullToTransformation(loop, targetCollection)
             }
         }
     }
@@ -308,12 +308,12 @@ class MapToTransformation private constructor(
                 mapNotNull: Boolean
         ): ResultTransformation {
             val initialization = targetCollection.findVariableInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
-            if (initialization != null && initialization.initializer.hasNoSideEffect()) {
+            return if (initialization != null && initialization.initializer.hasNoSideEffect()) {
                 val transformation = MapToTransformation(loop, inputVariable, indexVariable, initialization.initializer, mapping, mapNotNull)
-                return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
+                AssignToVariableResultTransformation.createDelegated(transformation, initialization)
             }
             else {
-                return MapToTransformation(loop, inputVariable, indexVariable, targetCollection, mapping, mapNotNull)
+                MapToTransformation(loop, inputVariable, indexVariable, targetCollection, mapping, mapNotNull)
             }
         }
     }
@@ -347,12 +347,12 @@ class FlatMapToTransformation private constructor(
                 transform: KtExpression
         ): ResultTransformation {
             val initialization = targetCollection.findVariableInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
-            if (initialization != null && initialization.initializer.hasNoSideEffect()) {
+            return if (initialization != null && initialization.initializer.hasNoSideEffect()) {
                 val transformation = FlatMapToTransformation(loop, inputVariable, initialization.initializer, transform)
-                return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
+                AssignToVariableResultTransformation.createDelegated(transformation, initialization)
             }
             else {
-                return FlatMapToTransformation(loop, inputVariable, targetCollection, transform)
+                FlatMapToTransformation(loop, inputVariable, targetCollection, transform)
             }
         }
     }

@@ -75,7 +75,7 @@ class ConstructorConsistencyChecker private constructor(
                 return true
             }
             if (descriptor.containingDeclaration != classDescriptor) return true
-            if (insideLValue(reference)) return descriptor.setter?.isDefault != false else return descriptor.getter?.isDefault != false
+            return if (insideLValue(reference)) descriptor.setter?.isDefault != false else descriptor.getter?.isDefault != false
         }
         return true
     }

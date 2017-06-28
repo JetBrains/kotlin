@@ -58,7 +58,7 @@ abstract class AssignToVariableResultTransformation(
     override fun generateExpressionToReplaceLoopAndCheckErrors(resultCallChain: KtExpression): KtExpression {
         val psiFactory = KtPsiFactory(resultCallChain)
         val initializationStatement = initialization.initializationStatement
-        if (initializationStatement is KtVariableDeclaration) {
+        return if (initializationStatement is KtVariableDeclaration) {
             val resolutionScope = loop.getResolutionScope()
 
             fun isUniqueName(name: String): Boolean {
@@ -73,10 +73,10 @@ abstract class AssignToVariableResultTransformation(
             val copy = initializationStatement.copied()
             copy.initializer!!.replace(resultCallChain)
             copy.setName(uniqueName)
-            return copy
+            copy
         }
         else {
-            return psiFactory.createExpressionByPattern("$0 = $1", initialization.variable.nameAsSafeName, resultCallChain)
+            psiFactory.createExpressionByPattern("$0 = $1", initialization.variable.nameAsSafeName, resultCallChain)
         }
     }
 

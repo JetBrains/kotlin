@@ -86,11 +86,11 @@ internal fun JavaPropertyDescriptor.getResourceReferenceType(): AndroidPsiUtils.
     val rClass = containingClass.containingDeclaration as? JavaClassDescriptor ?: return NONE
 
     if (R_CLASS == rClass.name.asString()) {
-        if ((rClass.containingDeclaration as? PackageFragmentDescriptor)?.fqName?.asString() == ANDROID_PKG) {
-            return FRAMEWORK
+        return if ((rClass.containingDeclaration as? PackageFragmentDescriptor)?.fqName?.asString() == ANDROID_PKG) {
+            FRAMEWORK
         }
         else {
-            return APP
+            APP
         }
     }
 

@@ -129,18 +129,17 @@ class AnnotationConverter(private val converter: Converter) {
         }
         if (qualifiedName == CommonClassNames.JAVA_LANG_ANNOTATION_TARGET) {
             val attributes = annotation.parameterList.attributes
-            val arguments: Set<KotlinTarget>
-            if (attributes.isEmpty()) {
-                arguments = setOf<KotlinTarget>()
+            val arguments: Set<KotlinTarget> = if (attributes.isEmpty()) {
+                setOf()
             }
             else {
                 val value = attributes[0].value
-                arguments = when (value) {
+                when (value) {
                     is PsiArrayInitializerMemberValue -> value.initializers.filterIsInstance<PsiReferenceExpression>()
                             .flatMap { mapTargetByName(it) }
                             .toSet()
                     is PsiReferenceExpression -> mapTargetByName(value)
-                    else -> setOf<KotlinTarget>()
+                    else -> setOf()
                 }
             }
             val deferredExpressionList = arguments.map {

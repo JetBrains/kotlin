@@ -68,11 +68,7 @@ private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<Psi
         val project = placeholder.project
         val codeStyleManager = CodeStyleManager.getInstance(project)
 
-        if (argument.isEmpty) {
-            placeholder.delete()
-            return PsiChildRange.EMPTY
-        }
-        else {
+        return if (!argument.isEmpty) {
             val first = placeholder.parent.addRangeBefore(argument.first!!, argument.last!!, placeholder)
             val last = placeholder.prevSibling
             placeholder.delete()
@@ -81,7 +77,11 @@ private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<Psi
             if (last != first) {
                 codeStyleManager.reformatNewlyAddedElement(last.node.treeParent, last.node)
             }
-            return PsiChildRange(first, last)
+            PsiChildRange(first, last)
+        }
+        else {
+            placeholder.delete()
+            PsiChildRange.EMPTY
         }
     }
 }
@@ -155,8 +155,8 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, re
                 .sortedByDescending { it.startOffset }
 
         // reformat whole text except for String arguments (as they can contain user's formatting to be preserved)
-        if (stringPlaceholderRanges.none()) {
-            resultElement = codeStyleManager.reformat(resultElement, true) as TElement
+        resultElement = if (stringPlaceholderRanges.none()) {
+            codeStyleManager.reformat(resultElement, true) as TElement
         }
         else {
             var bound = resultElement.endOffset - 1
@@ -165,7 +165,7 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, re
                 resultElement = codeStyleManager.reformatRange(resultElement, range.endOffset + start, bound + 1, true) as TElement
                 bound = range.startOffset + start
             }
-            resultElement = codeStyleManager.reformatRange(resultElement, start, bound + 1, true) as TElement
+            codeStyleManager.reformatRange(resultElement, start, bound + 1, true) as TElement
         }
 
         // do not reformat the whole expression in PostprocessReformattingAspect

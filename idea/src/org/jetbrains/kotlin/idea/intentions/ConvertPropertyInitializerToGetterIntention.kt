@@ -28,10 +28,10 @@ class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<
 
     override fun applicabilityRange(element: KtProperty): TextRange? {
         val initializer = element.initializer
-        if (initializer != null && element.getter == null && !element.isExtensionDeclaration() && !element.isLocal)
-            return initializer.textRange
+        return if (initializer != null && element.getter == null && !element.isExtensionDeclaration() && !element.isLocal)
+            initializer.textRange
         else
-            return null
+            null
     }
 
     override fun allowCaretInsideElement(element: PsiElement): Boolean {

@@ -52,11 +52,11 @@ class CountTransformation(
             chainedCallGenerator.generate("count()")
         }
 
-        if (initialization.initializer.isZeroConstant()) {
-            return call
+        return if (initialization.initializer.isZeroConstant()) {
+            call
         }
         else {
-            return KtPsiFactory(call).createExpressionByPattern("$0 + $1", initialization.initializer, call)
+            KtPsiFactory(call).createExpressionByPattern("$0 + $1", initialization.initializer, call)
         }
     }
 

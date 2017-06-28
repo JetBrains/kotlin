@@ -38,11 +38,11 @@ class CommandHistory {
     }
 
     fun lastUnprocessedEntry(): CommandHistory.Entry? {
-        if (processedEntriesCount < size) {
-            return get(processedEntriesCount)
+        return if (processedEntriesCount < size) {
+            get(processedEntriesCount)
         }
         else {
-            return null
+            null
         }
     }
 

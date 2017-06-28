@@ -26,9 +26,9 @@ class ConvertBinaryExpressionWithDemorgansLawIntention : SelfTargetingOffsetInde
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         val expr = element.parentsWithSelf.takeWhile { it is KtBinaryExpression }.last() as KtBinaryExpression
 
-        when (expr.operationToken) {
-            KtTokens.ANDAND -> text = "Replace '&&' with '||'"
-            KtTokens.OROR -> text = "Replace '||' with '&&'"
+        text = when (expr.operationToken) {
+            KtTokens.ANDAND -> "Replace '&&' with '||'"
+            KtTokens.OROR -> "Replace '||' with '&&'"
             else -> return false
         }
 

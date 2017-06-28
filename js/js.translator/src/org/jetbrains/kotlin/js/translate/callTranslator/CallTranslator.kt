@@ -73,11 +73,11 @@ object CallTranslator {
         val functionName = context.getNameForDescriptor(functionDescriptor)
         val isNative = AnnotationsUtils.isNativeObject(functionDescriptor)
         val hasSpreadOperator = false
-        if (dispatchReceiver != null) {
-            return DefaultFunctionCallCase.buildDefaultCallWithDispatchReceiver(argumentsInfo, dispatchReceiver, functionName, isNative,
-                                                                                hasSpreadOperator)
+        return if (dispatchReceiver != null) {
+            DefaultFunctionCallCase.buildDefaultCallWithDispatchReceiver(argumentsInfo, dispatchReceiver, functionName, isNative,
+                                                                         hasSpreadOperator)
         } else {
-            return DefaultFunctionCallCase.buildDefaultCallWithoutReceiver(context, argumentsInfo, functionDescriptor, isNative, hasSpreadOperator)
+            DefaultFunctionCallCase.buildDefaultCallWithoutReceiver(context, argumentsInfo, functionDescriptor, isNative, hasSpreadOperator)
         }
     }
 }
@@ -240,10 +240,10 @@ interface DelegateIntrinsic<in I : CallInfo> {
                     null
                 }
 
-        if (result != null) {
-            return callInfo.constructSafeCallIfNeeded(result)
+        return if (result != null) {
+            callInfo.constructSafeCallIfNeeded(result)
         } else {
-            return null
+            null
         }
     }
 

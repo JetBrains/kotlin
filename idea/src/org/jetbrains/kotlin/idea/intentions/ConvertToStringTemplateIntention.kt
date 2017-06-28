@@ -65,13 +65,13 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
         private fun fold(left: KtExpression?, right: String, factory: KtPsiFactory): KtStringTemplateExpression {
             val forceBraces = !right.isEmpty() && right.first() != '$' && right.first().isJavaIdentifierPart()
 
-            if (left is KtBinaryExpression && isApplicableToNoParentCheck(left)) {
+            return if (left is KtBinaryExpression && isApplicableToNoParentCheck(left)) {
                 val leftRight = buildText(left.right, forceBraces)
-                return fold(left.left, leftRight + right, factory)
+                fold(left.left, leftRight + right, factory)
             }
             else {
                 val leftText = buildText(left, forceBraces)
-                return factory.createExpression("\"$leftText$right\"") as KtStringTemplateExpression
+                factory.createExpression("\"$leftText$right\"") as KtStringTemplateExpression
             }
         }
 

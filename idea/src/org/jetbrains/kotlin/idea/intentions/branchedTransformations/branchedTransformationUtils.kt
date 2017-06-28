@@ -24,19 +24,19 @@ import org.jetbrains.kotlin.psi.*
 
 fun KtWhenCondition.toExpression(subject: KtExpression?): KtExpression {
     val factory = KtPsiFactory(this)
-    when (this) {
+    return when (this) {
         is KtWhenConditionIsPattern -> {
             val op = if (isNegated) "!is" else "is"
-            return factory.createExpressionByPattern("$0 $op $1", subject ?: "_", typeReference ?: "")
+            factory.createExpressionByPattern("$0 $op $1", subject ?: "_", typeReference ?: "")
         }
 
         is KtWhenConditionInRange -> {
             val op = operationReference.text
-            return factory.createExpressionByPattern("$0 $op $1", subject ?: "_", rangeExpression ?: "")
+            factory.createExpressionByPattern("$0 $op $1", subject ?: "_", rangeExpression ?: "")
         }
 
         is KtWhenConditionWithExpression -> {
-            return if (subject != null) {
+            if (subject != null) {
                 factory.createExpressionByPattern("$0 == $1", subject, expression ?: "")
             }
             else {
@@ -165,14 +165,10 @@ private fun BuilderByPattern<KtExpression>.appendConditionWithSubjectRemoved(con
     }
 }
 
-fun KtPsiFactory.combineWhenConditions(conditions: Array<KtWhenCondition>, subject: KtExpression?): KtExpression? {
-    when (conditions.size) {
-        0 -> return null
-        1 -> return conditions[0].toExpression(subject)
-        else -> {
-            return buildExpression {
-                appendExpressions(conditions.map { it.toExpression(subject) }, separator = "||")
-            }
-        }
+fun KtPsiFactory.combineWhenConditions(conditions: Array<KtWhenCondition>, subject: KtExpression?) = when (conditions.size) {
+    0 -> null
+    1 -> conditions[0].toExpression(subject)
+    else -> buildExpression {
+        appendExpressions(conditions.map { it.toExpression(subject) }, separator = "||")
     }
 }

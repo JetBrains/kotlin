@@ -164,18 +164,17 @@ object CastDiagnosticsUtil {
         val variables = subtypeWithVariables.constructor.parameters
         val variableConstructors = variables.map { descriptor -> descriptor.typeConstructor }.toSet()
 
-        val substitution: MutableMap<TypeConstructor, TypeProjection>
-        if (supertypeWithVariables != null) {
+        val substitution: MutableMap<TypeConstructor, TypeProjection> = if (supertypeWithVariables != null) {
             // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
             val solution = TypeUnifier.unify(
                     TypeProjectionImpl(supertype), TypeProjectionImpl(supertypeWithVariables), variableConstructors::contains
             )
-            substitution = Maps.newHashMap(solution.substitution)
+            Maps.newHashMap(solution.substitution)
         }
         else {
             // If there's no corresponding supertype, no variables are determined
             // This may be OK, e.g. in case 'Any as List<*>'
-            substitution = Maps.newHashMapWithExpectedSize<TypeConstructor, TypeProjection>(variables.size)
+            Maps.newHashMapWithExpectedSize<TypeConstructor, TypeProjection>(variables.size)
         }
 
         // If some of the parameters are not determined by unification, it means that these parameters are lost,

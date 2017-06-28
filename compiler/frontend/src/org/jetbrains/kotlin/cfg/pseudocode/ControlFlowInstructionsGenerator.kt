@@ -56,11 +56,11 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
 
     private fun popBuilder(): ControlFlowInstructionsGeneratorWorker {
         val worker = builders.pop()
-        if (!builders.isEmpty()) {
-            builder = builders.peek()
+        builder = if (!builders.isEmpty()) {
+            builders.peek()
         }
         else {
-            builder = null
+            null
         }
         return worker
     }
@@ -400,13 +400,10 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             return magic(expression, expression, inputValues, getMagicKind(operation))
         }
 
-        private fun getMagicKind(operation: ControlFlowBuilder.PredefinedOperation): MagicKind {
-            when (operation) {
-                ControlFlowBuilder.PredefinedOperation.AND -> return MagicKind.AND
-                ControlFlowBuilder.PredefinedOperation.OR -> return MagicKind.OR
-                ControlFlowBuilder.PredefinedOperation.NOT_NULL_ASSERTION -> return MagicKind.NOT_NULL_ASSERTION
-                else -> throw IllegalArgumentException("Invalid operation: " + operation)
-            }
+        private fun getMagicKind(operation: ControlFlowBuilder.PredefinedOperation) = when (operation) {
+            ControlFlowBuilder.PredefinedOperation.AND -> MagicKind.AND
+            ControlFlowBuilder.PredefinedOperation.OR -> MagicKind.OR
+            ControlFlowBuilder.PredefinedOperation.NOT_NULL_ASSERTION -> MagicKind.NOT_NULL_ASSERTION
         }
 
         override fun read(

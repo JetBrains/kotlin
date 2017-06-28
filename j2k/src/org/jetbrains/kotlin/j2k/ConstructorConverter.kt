@@ -178,13 +178,13 @@ class ConstructorConverter(
 
         val statement = primaryConstructor.body?.statements?.firstOrNull()
         val methodCall = (statement as? PsiExpressionStatement)?.expression as? PsiMethodCallExpression
-        if (methodCall != null && methodCall.isSuperConstructorCall()) {
-            baseClassParams = methodCall.argumentList.expressions.map {
+        baseClassParams = if (methodCall != null && methodCall.isSuperConstructorCall()) {
+            methodCall.argumentList.expressions.map {
                 converter.deferredElement { codeConverter -> codeConverter.correct().convertExpression(it) }
             }
         }
         else {
-            baseClassParams = emptyList()
+            emptyList()
         }
 
         val parameterList = converter.convertParameterList(

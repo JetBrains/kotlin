@@ -67,13 +67,13 @@ fun VariableAccessInfo.getAccessDescriptor(): PropertyAccessorDescriptor {
 }
 
 fun VariableAccessInfo.getAccessDescriptorIfNeeded(): CallableDescriptor {
-    if (variableDescriptor is PropertyDescriptor &&
-        (variableDescriptor.isExtension || TranslationUtils.shouldAccessViaFunctions(variableDescriptor))
-    ) {
-        return getAccessDescriptor()
+    return if (variableDescriptor is PropertyDescriptor &&
+               (variableDescriptor.isExtension || TranslationUtils.shouldAccessViaFunctions(variableDescriptor))
+                   ) {
+        getAccessDescriptor()
     }
     else {
-        return variableDescriptor
+        variableDescriptor
     }
 }
 

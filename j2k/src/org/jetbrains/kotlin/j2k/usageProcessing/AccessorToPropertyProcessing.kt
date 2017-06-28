@@ -80,16 +80,16 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
                 assignment.right!!.replace(value)
 
                 val qualifiedExpression = callExpr.parent as? KtQualifiedExpression
-                if (qualifiedExpression != null && qualifiedExpression.selectorExpression == callExpr) {
+                return if (qualifiedExpression != null && qualifiedExpression.selectorExpression == callExpr) {
                     callExpr.replace(propertyNameExpr)
                     assignment.left!!.replace(qualifiedExpression)
                     assignment = qualifiedExpression.replace(assignment) as KtBinaryExpression
-                    return (assignment.left as KtQualifiedExpression).selectorExpression!!.references
+                    (assignment.left as KtQualifiedExpression).selectorExpression!!.references
                 }
                 else {
                     assignment.left!!.replace(propertyNameExpr)
                     assignment = callExpr.replace(assignment) as KtBinaryExpression
-                    return assignment.left!!.references
+                    assignment.left!!.references
                 }
             }
 

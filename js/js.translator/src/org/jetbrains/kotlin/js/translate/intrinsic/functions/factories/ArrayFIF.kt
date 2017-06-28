@@ -66,11 +66,11 @@ object ArrayFIF : CompositeFIF() {
     fun castOrCreatePrimitiveArray(ctx: TranslationContext, type: PrimitiveType?, arg: JsArrayLiteral): JsExpression {
         if (type == null || !typedArraysEnabled(ctx.config)) return arg
 
-        if (type in TYPED_ARRAY_MAP) {
-            return createTypedArray(type, arg)
+        return if (type in TYPED_ARRAY_MAP) {
+            createTypedArray(type, arg)
         }
         else {
-            return JsAstUtils.invokeKotlinFunction(type.lowerCaseName + "ArrayOf", *arg.expressions.toTypedArray())
+            JsAstUtils.invokeKotlinFunction(type.lowerCaseName + "ArrayOf", *arg.expressions.toTypedArray())
         }
     }
 

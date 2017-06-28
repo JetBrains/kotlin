@@ -340,16 +340,16 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
 
     private companion object {
         operator fun <T> List<T>.plus(other: List<T>): List<T> {
-            when {
-                isEmpty() -> return other
+            return when {
+                isEmpty() -> other
 
-                other.isEmpty() -> return this
+                other.isEmpty() -> this
 
                 else -> {
                     val result = ArrayList<T>(size + other.size)
                     result.addAll(this)
                     result.addAll(other)
-                    return result
+                    result
                 }
             }
         }

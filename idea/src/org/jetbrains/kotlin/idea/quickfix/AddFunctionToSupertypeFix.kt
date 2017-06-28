@@ -139,7 +139,7 @@ class AddFunctionToSupertypeFix private constructor(
             var sourceCode = IdeDescriptorRenderers.SOURCE_CODE.render(functionDescriptor)
             if (classDescriptor.kind != ClassKind.INTERFACE && functionDescriptor.modality != Modality.ABSTRACT) {
                 val returnType = functionDescriptor.returnType
-                if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) {
+                sourceCode += if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) {
                     val bodyText = getFunctionBodyTextFromTemplate(
                             project,
                             TemplateKind.FUNCTION,
@@ -147,10 +147,10 @@ class AddFunctionToSupertypeFix private constructor(
                             functionDescriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "Unit",
                             classDescriptor.importableFqName
                     )
-                    sourceCode += "{ $bodyText }"
+                    "{ $bodyText }"
                 }
                 else {
-                    sourceCode += "{}"
+                    "{}"
                 }
             }
 

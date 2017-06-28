@@ -36,15 +36,13 @@ fun KotlinType.getJetTypeFqName(printTypeArguments: Boolean): String {
     }
 
     val typeArguments = arguments
-    val typeArgumentsAsString: String
-
-    if (printTypeArguments && !typeArguments.isEmpty()) {
+    val typeArgumentsAsString = if (printTypeArguments && !typeArguments.isEmpty()) {
         val joinedTypeArguments = StringUtil.join(typeArguments, { projection -> projection.type.getJetTypeFqName(false) }, ", ")
 
-        typeArgumentsAsString = "<$joinedTypeArguments>"
+        "<$joinedTypeArguments>"
     }
     else {
-        typeArgumentsAsString = ""
+        ""
     }
 
     return DescriptorUtils.getFqName(declaration).asString() + typeArgumentsAsString

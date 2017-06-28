@@ -254,15 +254,15 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 NavigationUtil.activateFileWithPsiElement(containingElement)
             }
 
-            if (containingElement is KtElement) {
+            dialogWithEditor = if (containingElement is KtElement) {
                 jetFileToEdit = containingElement.containingKtFile
-                if (jetFileToEdit != config.currentFile) {
-                    containingFileEditor = FileEditorManager.getInstance(project).selectedTextEditor!!
+                containingFileEditor = if (jetFileToEdit != config.currentFile) {
+                    FileEditorManager.getInstance(project).selectedTextEditor!!
                 }
                 else {
-                    containingFileEditor = config.currentEditor!!
+                    config.currentEditor!!
                 }
-                dialogWithEditor = null
+                null
             } else {
                 val dialog = object: DialogWithEditor(project, "Create from usage", "") {
                     override fun doOKAction() {
@@ -279,7 +279,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
                 jetFileToEdit = PsiDocumentManager.getInstance(project).getPsiFile(containingFileEditor.document) as KtFile
                 jetFileToEdit.analysisContext = config.currentFile
-                dialogWithEditor = dialog
+                dialog
             }
 
             val scope = getDeclarationScope()
@@ -645,15 +645,14 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             if (candidates.isEmpty()) return null
 
             val elementToReplace: KtElement?
-            val expression: TypeExpression
-            when (declaration) {
+            val expression: TypeExpression = when (declaration) {
                 is KtCallableDeclaration -> {
                     elementToReplace = declaration.typeReference
-                    expression = TypeExpression.ForTypeReference(candidates)
+                    TypeExpression.ForTypeReference(candidates)
                 }
                 is KtClassOrObject -> {
                     elementToReplace = declaration.superTypeListEntries.firstOrNull()
-                    expression = TypeExpression.ForDelegationSpecifier(candidates)
+                    TypeExpression.ForDelegationSpecifier(candidates)
                 }
                 else -> throw AssertionError("Unexpected declaration kind: ${declaration.text}")
             }

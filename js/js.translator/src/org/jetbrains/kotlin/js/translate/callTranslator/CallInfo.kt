@@ -175,12 +175,12 @@ private fun TranslationContext.createCallInfo(
         val notNullConditionalForSafeCall: JsConditional? = notNullConditional
 
         override fun constructSafeCallIfNeeded(result: JsExpression): JsExpression {
-            if (notNullConditionalForSafeCall == null) {
-                return result
+            return if (notNullConditionalForSafeCall == null) {
+                result
             }
             else {
                 notNullConditionalForSafeCall.thenExpression = result
-                return notNullConditionalForSafeCall
+                notNullConditionalForSafeCall
             }
         }
     }

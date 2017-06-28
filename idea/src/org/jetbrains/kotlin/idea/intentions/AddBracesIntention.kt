@@ -28,18 +28,18 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         if (expression is KtBlockExpression) return false
 
         val parent = expression.parent
-        when (parent) {
+        return when (parent) {
             is KtContainerNode -> {
                 val description = parent.description()!!
                 text = "Add braces to '$description' statement"
-                return true
+                true
             }
             is KtWhenEntry -> {
                 text = "Add braces to 'when' entry"
-                return true
+                true
             }
             else -> {
-                return false
+                false
             }
         }
     }

@@ -65,16 +65,16 @@ fun JsExpression.toInvocationWith(
     fun padArguments(arguments: List<JsExpression>) = arguments + (1..(parameterCount - arguments.size))
             .map { Namer.getUndefinedExpression() }
 
-    when (this) {
+    return when (this) {
         is JsNew -> {
             qualifier = Namer.getFunctionCallRef(constructorExpression)
             // `new A(a, b, c)` -> `A.call($this, a, b, c)`
-            return JsInvocation(qualifier, listOf(thisExpr) + leadingExtraArgs + arguments).source(source)
+            JsInvocation(qualifier, listOf(thisExpr) + leadingExtraArgs + arguments).source(source)
         }
         is JsInvocation -> {
             qualifier = getQualifier()
             // `A(a, b, c)` -> `A(a, b, c, $this)`
-            return JsInvocation(qualifier, leadingExtraArgs + padArguments(arguments) + thisExpr).source(source)
+            JsInvocation(qualifier, leadingExtraArgs + padArguments(arguments) + thisExpr).source(source)
         }
         else -> throw IllegalStateException("Unexpected node type: " + this::class.java)
     }

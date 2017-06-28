@@ -123,12 +123,12 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
             else -> error("Unsupported annotation argument type: ${value.type} (expected $expectedType)")
         }
 
-        if (result.type.isSubtypeOf(expectedType)) {
-            return result
+        return if (result.type.isSubtypeOf(expectedType)) {
+            result
         }
         else {
             // This means that an annotation class has been changed incompatibly without recompiling clients
-            return factory.createErrorValue("Unexpected argument value")
+            factory.createErrorValue("Unexpected argument value")
         }
     }
 

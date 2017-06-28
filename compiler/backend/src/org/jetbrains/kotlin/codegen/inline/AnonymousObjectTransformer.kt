@@ -78,11 +78,11 @@ class AnonymousObjectTransformer(
 
             override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
                 addUniqueField(name)
-                if (isCapturedFieldName(name)) {
-                    return null
+                return if (isCapturedFieldName(name)) {
+                    null
                 }
                 else {
-                    return classBuilder.newField(JvmDeclarationOrigin.NO_ORIGIN, access, name, desc, signature, value)
+                    classBuilder.newField(JvmDeclarationOrigin.NO_ORIGIN, access, name, desc, signature, value)
                 }
             }
 
@@ -95,12 +95,12 @@ class AnonymousObjectTransformer(
         }, ClassReader.SKIP_FRAMES)
 
         if (!inliningContext.isInliningLambda) {
-            if (debugInfo != null && !debugInfo!!.isEmpty()) {
-                sourceMapper = SourceMapper.createFromSmap(SMAPParser.parse(debugInfo!!))
+            sourceMapper = if (debugInfo != null && !debugInfo!!.isEmpty()) {
+                SourceMapper.createFromSmap(SMAPParser.parse(debugInfo!!))
             }
             else {
                 //seems we can't do any clever mapping cause we don't know any about original class name
-                sourceMapper = IdenticalSourceMapper
+                IdenticalSourceMapper
             }
             if (sourceInfo != null && !GENERATE_SMAP) {
                 classBuilder.visitSource(sourceInfo!!, debugInfo)
@@ -458,12 +458,12 @@ class AnonymousObjectTransformer(
 
     private fun getNewFieldName(oldName: String, originalField: Boolean): String {
         if (THIS_0 == oldName) {
-            if (!originalField) {
-                return oldName
+            return if (!originalField) {
+                oldName
             }
             else {
                 //rename original 'this$0' in declaration site lambda (inside inline function) to use this$0 only for outer lambda/object access on call site
-                return addUniqueField(oldName + INLINE_FUN_THIS_0_SUFFIX)
+                addUniqueField(oldName + INLINE_FUN_THIS_0_SUFFIX)
             }
         }
         return addUniqueField(oldName + INLINE_TRANSFORMATION_SUFFIX)

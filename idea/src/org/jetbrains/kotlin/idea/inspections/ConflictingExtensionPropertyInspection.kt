@@ -114,12 +114,12 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
     }
 
     private fun checkGetterBodyIsGetMethodCall(getter: KtPropertyAccessor, getMethod: FunctionDescriptor): Boolean {
-        if (getter.hasBlockBody()) {
+        return if (getter.hasBlockBody()) {
             val statement = (getter.bodyExpression as? KtBlockExpression)?.statements?.singleOrNull() ?: return false
-            return (statement as? KtReturnExpression)?.returnedExpression.isGetMethodCall(getMethod)
+            (statement as? KtReturnExpression)?.returnedExpression.isGetMethodCall(getMethod)
         }
         else {
-            return getter.bodyExpression.isGetMethodCall(getMethod)
+            getter.bodyExpression.isGetMethodCall(getMethod)
         }
     }
 
@@ -134,20 +134,18 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
         }
     }
 
-    private fun KtExpression?.isGetMethodCall(getMethod: FunctionDescriptor): Boolean {
-        when (this) {
-            is KtCallExpression -> {
-                val resolvedCall = getResolvedCall(analyze())
-                return resolvedCall != null && resolvedCall.isReallySuccess() && resolvedCall.resultingDescriptor.original == getMethod.original
-            }
-
-            is KtQualifiedExpression -> {
-                val receiver = receiverExpression
-                return receiver is KtThisExpression && receiver.labelQualifier == null && selectorExpression.isGetMethodCall(getMethod)
-            }
-
-            else -> return false
+    private fun KtExpression?.isGetMethodCall(getMethod: FunctionDescriptor): Boolean = when (this) {
+        is KtCallExpression -> {
+            val resolvedCall = getResolvedCall(analyze())
+            resolvedCall != null && resolvedCall.isReallySuccess() && resolvedCall.resultingDescriptor.original == getMethod.original
         }
+
+        is KtQualifiedExpression -> {
+            val receiver = receiverExpression
+            receiver is KtThisExpression && receiver.labelQualifier == null && selectorExpression.isGetMethodCall(getMethod)
+        }
+
+        else -> false
     }
 
     private fun KtExpression?.isSetMethodCall(setMethod: FunctionDescriptor, valueParameterName: Name): Boolean {
@@ -242,15 +240,15 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
         //TODO: move into PSI?
         private fun KtNamedDeclaration.addAnnotationWithLineBreak(annotationEntry: KtAnnotationEntry): KtAnnotationEntry {
             val newLine = KtPsiFactory(this).createNewLine()
-            if (modifierList != null) {
+            return if (modifierList != null) {
                 val result = addAnnotationEntry(annotationEntry)
                 modifierList!!.addAfter(newLine, result)
-                return result
+                result
             }
             else {
                 val result = addAnnotationEntry(annotationEntry)
                 addAfter(newLine, modifierList)
-                return result
+                result
             }
         }
     }

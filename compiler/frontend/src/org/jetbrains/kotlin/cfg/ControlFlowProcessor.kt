@@ -518,13 +518,12 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             val incrementOrDecrement = isIncrementOrDecrement(operationType)
             val resolvedCall = expression.getResolvedCall(trace.bindingContext)
 
-            val rhsValue: PseudoValue?
-            if (resolvedCall != null) {
-                rhsValue = generateCall(resolvedCall).outputValue
+            val rhsValue: PseudoValue? = if (resolvedCall != null) {
+                generateCall(resolvedCall).outputValue
             }
             else {
                 generateInstructions(baseExpression)
-                rhsValue = createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, baseExpression)
+                createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, baseExpression)
             }
 
             if (incrementOrDecrement) {
@@ -866,12 +865,12 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             if (labelName != null) {
                 val targetLabel = expression.getTargetLabel()!!
                 val labeledElement = trace.get(BindingContext.LABEL_TARGET, targetLabel)
-                if (labeledElement is KtLoopExpression) {
-                    loop = labeledElement
+                loop = if (labeledElement is KtLoopExpression) {
+                    labeledElement
                 }
                 else {
                     trace.report(NOT_A_LOOP_LABEL.on(expression, targetLabel.text))
-                    loop = null
+                    null
                 }
             }
             else {
@@ -946,18 +945,18 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             val labelElement = expression.getTargetLabel()
             val subroutine: KtElement?
             val labelName = expression.getLabelName()
-            if (labelElement != null && labelName != null) {
+            subroutine = if (labelElement != null && labelName != null) {
                 val labeledElement = trace.get(BindingContext.LABEL_TARGET, labelElement)
                 if (labeledElement != null) {
                     assert(labeledElement is KtElement)
-                    subroutine = labeledElement as KtElement?
+                    labeledElement as KtElement?
                 }
                 else {
-                    subroutine = null
+                    null
                 }
             }
             else {
-                subroutine = builder.returnSubroutine
+                builder.returnSubroutine
                 // TODO : a context check
             }
 
@@ -1147,15 +1146,15 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                 val resolvedCall = trace.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)
 
                 val writtenValue: PseudoValue?
-                if (resolvedCall != null) {
-                    writtenValue = builder.call(
+                writtenValue = if (resolvedCall != null) {
+                    builder.call(
                             entry,
                             resolvedCall,
                             getReceiverValues(resolvedCall),
                             emptyMap<PseudoValue, ValueParameterDescriptor>()).outputValue
                 }
                 else {
-                    writtenValue = initializer?.let { createSyntheticValue(entry, MagicKind.UNRESOLVED_CALL, it) }
+                    initializer?.let { createSyntheticValue(entry, MagicKind.UNRESOLVED_CALL, it) }
                 }
 
                 if (generateWriteForEntries) {

@@ -61,12 +61,12 @@ abstract class ChangeCallableReturnTypeFix(
     private val isUnitType = type.isUnit()
 
     init {
-        if (element is KtFunctionLiteral) {
+        changeFunctionLiteralReturnTypeFix = if (element is KtFunctionLiteral) {
             val functionLiteralExpression = PsiTreeUtil.getParentOfType(element, KtLambdaExpression::class.java) ?: error("FunctionLiteral outside any FunctionLiteralExpression: " + element.getElementTextWithContext())
-            changeFunctionLiteralReturnTypeFix = ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, type)
+            ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, type)
         }
         else {
-            changeFunctionLiteralReturnTypeFix = null
+            null
         }
     }
 

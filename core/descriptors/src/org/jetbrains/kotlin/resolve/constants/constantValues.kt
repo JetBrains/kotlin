@@ -101,16 +101,14 @@ class CharValue(
 
     override fun toString() = "\\u%04X ('%s')".format(value.toInt(), getPrintablePart(value))
 
-    private fun getPrintablePart(c: Char): String {
-        when (c) {
-            '\b' -> return "\\b"
-            '\t' -> return "\\t"
-            '\n' -> return "\\n"
-        //TODO: KT-8507
-            12.toChar() -> return "\\f"
-            '\r' -> return "\\r"
-            else -> return if (isPrintableUnicode(c)) Character.toString(c) else "?"
-        }
+    private fun getPrintablePart(c: Char): String = when (c) {
+        '\b' -> "\\b"
+        '\t' -> "\\t"
+        '\n' -> "\\n"
+    //TODO: KT-8507
+        12.toChar() -> "\\f"
+        '\r' -> "\\r"
+        else -> if (isPrintableUnicode(c)) Character.toString(c) else "?"
     }
 
     private fun isPrintableUnicode(c: Char): Boolean {
