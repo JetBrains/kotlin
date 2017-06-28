@@ -2,42 +2,50 @@ var tape = require('tape');
 var kotlin_test = require('kotlin-test');
 
 var setAssertHook = function(t) {
-    kotlin_test.setAssertHook(function (result, expected, actual, lazyMessage) {
-        t.ok(result, lazyMessage());
-        if (!result) {
+    kotlin_test.setAssertHook(function (result) {
+        t.ok(result.result, result.lazyMessage());
+        if (!result.result) {
             t.end();
         }
     });
 };
 
 
-var suiteContext;
+var suiteContext = {
+    test: tape
+};
 
 kotlin_test.setAdapter({
     suite: function (name, fn) {
-        tape(name, function(t) {
+        suiteContext.test(name, function(t) {
             var prevContext = suiteContext;
             suiteContext = t;
             fn();
             suiteContext = prevContext;
+            t.pass('fake suite assert');
+            t.end();
         });
     },
 
     xsuite: function (name, fn) {
-        tape.skip(name, function(t) {
+        suiteContext.test(name, {skip: true}, function(t) {
             var prevContext = suiteContext;
             suiteContext = t;
             fn();
             suiteContext = prevContext;
+            t.pass('fake suite assert');
+            t.end();
         });
     },
 
     fsuite: function (name, fn) {
-        tape(name, function(t) {
+        suiteContext.test(name, function(t) {
             var prevContext = suiteContext;
             suiteContext = t;
             fn();
             suiteContext = prevContext;
+            t.pass('fake suite assert');
+            t.end();
         });
     },
 
@@ -45,6 +53,7 @@ kotlin_test.setAdapter({
         suiteContext.test(name, function (t) {
             setAssertHook(t);
             fn();
+            t.pass('fake assert');
             t.end();
         });
     },
@@ -53,6 +62,7 @@ kotlin_test.setAdapter({
         suiteContext.test(name, { skip: true}, function (t) {
             setAssertHook(t);
             fn();
+            t.pass('fake assert');
             t.end();
         });
     },
@@ -61,6 +71,7 @@ kotlin_test.setAdapter({
         suiteContext.test(name, function (t) {
             setAssertHook(t);
             fn();
+            t.pass('fake assert');
             t.end();
         });
     }

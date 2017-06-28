@@ -1,5 +1,5 @@
 var Tester = require('./test-result-checker');
-var tester = new Tester(require('./expected-outcomes').full);
+var tester = new Tester(require('./expected-outcomes'));
 
 process.on('exit', function() {
     tester.end();
@@ -8,14 +8,15 @@ process.on('exit', function() {
 jasmine.getEnv().addReporter({
     specDone: function(result) {
         var status = result.status;
+        var name = result.fullName.trim();
         if (status === 'passed') {
-            tester.passed(result.fullName);
+            tester.passed(name);
         }
         else if (status === 'failed') {
-            tester.failed(result.fullName);
+            tester.failed(name);
         }
         else {
-            tester.pending(result.fullName);
+            tester.pending(name);
         }
     }
 });
