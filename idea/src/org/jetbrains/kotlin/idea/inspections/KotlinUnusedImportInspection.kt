@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInsight.CodeInsightWorkspaceSettings
+import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx
@@ -120,7 +120,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         val problems = data.unusedImports.map {
             val fixes = arrayListOf<LocalQuickFix>()
             fixes.add(OptimizeImportsQuickFix(file))
-            if (!CodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) {
+            if (!CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
                 fixes.add(EnableOptimizeImportsOnTheFlyFix(file))
             }
             manager.createProblemDescriptor(it,
@@ -138,7 +138,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
     }
 
     private fun scheduleOptimizeImportsOnTheFly(file: KtFile, data: OptimizedImportsBuilder.InputData) {
-        if (!CodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) return
+        if (!CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) return
         val optimizedImports = KotlinImportOptimizer.prepareOptimizedImports(file, data) ?: return // return if already optimized
 
         // unwrap progress indicator
@@ -225,7 +225,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            CodeInsightWorkspaceSettings.getInstance(project).optimizeImportsOnTheFly = true
+            CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY = true
             OptimizeImportsProcessor(project, file).run() // we optimize imports manually because on-the-fly import optimization won't work while the caret is in imports
         }
     }
