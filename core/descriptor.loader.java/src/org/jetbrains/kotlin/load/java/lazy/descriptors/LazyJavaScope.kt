@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.childForMethod
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
-import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeAttributes
+import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
@@ -147,8 +147,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     protected fun computeMethodReturnType(method: JavaMethod, c: LazyJavaResolverContext): KotlinType {
         val annotationMethod = method.containingClass.isAnnotationType
-        val returnTypeAttrs = LazyJavaTypeAttributes(
-                TypeUsage.COMMON,
+        val returnTypeAttrs = TypeUsage.COMMON.toAttributes(
                 isForAnnotationParameter = annotationMethod
         )
         return c.typeResolver.transformJavaType(method.returnType, returnTypeAttrs)
@@ -166,10 +165,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             val (index, javaParameter) = pair
 
             val annotations = c.resolveAnnotations(javaParameter)
-            val typeUsage =
-                    LazyJavaTypeAttributes(
-                            TypeUsage.COMMON
-                    )
+            val typeUsage = TypeUsage.COMMON.toAttributes()
             val (outType, varargElementType) =
                     if (javaParameter.isVararg) {
                         val paramType = javaParameter.type as? JavaArrayType
@@ -287,9 +283,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         val isNotNullable = !(field.isFinalStatic && field.hasConstantNotNullInitializer)
         val propertyType = c.typeResolver.transformJavaType(
                 field.type,
-                LazyJavaTypeAttributes(
-                        TypeUsage.COMMON
-                )
+                TypeUsage.COMMON.toAttributes()
         )
         if (!isNotNullable) {
             return TypeUtils.makeNotNullable(propertyType)

@@ -282,15 +282,14 @@ internal fun makeStarProjection(
         StarProjectionImpl(typeParameter)
 }
 
-interface JavaTypeAttributes {
-    val howThisTypeIsUsed: TypeUsage
-    val flexibility: JavaTypeFlexibility
-        get() = INFLEXIBLE
-    val isForAnnotationParameter: Boolean
-        get() = false
-    // Current type is upper bound of this type parameter
-    val upperBoundOfTypeParameter: TypeParameterDescriptor?
-        get() = null
+data class JavaTypeAttributes(
+        val howThisTypeIsUsed: TypeUsage,
+        val flexibility: JavaTypeFlexibility = INFLEXIBLE,
+        val isForAnnotationParameter: Boolean = false,
+        // Current type is upper bound of this type parameter
+        val upperBoundOfTypeParameter: TypeParameterDescriptor? = null
+) {
+    fun withFlexibility(flexibility: JavaTypeFlexibility) = copy(flexibility = flexibility)
 }
 
 enum class JavaTypeFlexibility {
@@ -299,26 +298,14 @@ enum class JavaTypeFlexibility {
     FLEXIBLE_LOWER_BOUND
 }
 
-class LazyJavaTypeAttributes(
-        override val howThisTypeIsUsed: TypeUsage,
-        override val isForAnnotationParameter: Boolean = false
-): JavaTypeAttributes
-
 fun TypeUsage.toAttributes(
         isForAnnotationParameter: Boolean = false,
         upperBoundForTypeParameter: TypeParameterDescriptor? = null
-) = object : JavaTypeAttributes {
-    override val howThisTypeIsUsed: TypeUsage = this@toAttributes
-
-    override val isForAnnotationParameter: Boolean = isForAnnotationParameter
-    override val upperBoundOfTypeParameter: TypeParameterDescriptor? = upperBoundForTypeParameter
-}
-
-fun JavaTypeAttributes.withFlexibility(flexibility: JavaTypeFlexibility) =
-        object : JavaTypeAttributes by this {
-            override val flexibility = flexibility
-        }
-
+) = JavaTypeAttributes(
+        this,
+        isForAnnotationParameter = isForAnnotationParameter,
+        upperBoundOfTypeParameter = upperBoundForTypeParameter
+)
 
 // Definition:
 // ErasedUpperBound(T : G<t>) = G<*> // UpperBound(T) is a type G<t> with arguments
