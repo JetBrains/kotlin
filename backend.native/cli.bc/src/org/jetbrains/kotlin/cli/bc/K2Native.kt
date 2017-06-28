@@ -42,7 +42,7 @@ private fun maybeExecuteHelper(targetName: String) {
         val distribution = Distribution(TargetManager(targetName))
         val result = ctor.call(
                 distribution.dependenciesDir,
-                distribution.properties.properties,
+                distribution.properties,
                 distribution.dependencies
         )
         result.run()

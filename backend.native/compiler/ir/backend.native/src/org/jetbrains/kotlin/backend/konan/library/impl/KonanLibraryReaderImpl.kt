@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.backend.konan.library.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.MetadataReader
 import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
-import org.jetbrains.kotlin.backend.konan.util.File
-import org.jetbrains.kotlin.backend.konan.util.loadProperties
-import org.jetbrains.kotlin.backend.konan.util.Properties
-import org.jetbrains.kotlin.backend.konan.util.unzipAs
+import org.jetbrains.kotlin.backend.konan.util.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 
 abstract class FileBasedLibraryReader(

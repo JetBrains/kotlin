@@ -16,21 +16,20 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import java.io.File
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.backend.konan.util.*
 
 class Distribution(val targetManager: TargetManager,
     val propertyFileOverride: String? = null,
     val runtimeFileOverride: String? = null) {
 
+    val target = targetManager.target
     val targetName = targetManager.targetName
     val hostSuffix = targetManager.hostSuffix
     val hostTargetSuffix = targetManager.hostTargetSuffix
     val targetSuffix = targetManager.targetSuffix
 
-    private fun findUserHome() = File(System.getProperty("user.home")).absolutePath
-    val userHome = findUserHome()
-    val localKonanDir = "$userHome/.konan"
+    val localKonanDir = "${File.userHome}/.konan"
 
     private fun findKonanHome(): String {
         val value = System.getProperty("konan.home", "dist")
@@ -39,8 +38,8 @@ class Distribution(val targetManager: TargetManager,
     }
 
     val konanHome = findKonanHome()
-    val propertyFile = propertyFileOverride ?: "$konanHome/konan/konan.properties"
-    val properties = KonanProperties(propertyFile)
+    val propertyFileName = propertyFileOverride ?: "$konanHome/konan/konan.properties"
+    val properties = File(propertyFileName).loadProperties()
 
     val klib = "$konanHome/klib"
 

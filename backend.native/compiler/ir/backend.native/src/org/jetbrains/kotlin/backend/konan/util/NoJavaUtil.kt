@@ -55,6 +55,7 @@ class File(val path: String) {
     fun mkdirs() = javaFile.mkdirs()
     fun delete() = javaFile.delete()
     fun deleteRecursively() = javaFile.deleteRecursively()
+    fun deleteOnExit() = javaFile.deleteOnExit()
     fun readText() = javaFile.readText()
     fun readBytes() = javaFile.readBytes()
     fun writeText(text: String) = javaFile.writeText(text)
@@ -73,6 +74,11 @@ class File(val path: String) {
 
         val userHome
             get() = File(System.getProperty("user.home"))
+
+        fun createTempFile(name: String, suffix: String? = null, directory: File? = null): File {
+            val javaDirectory = directory ?.let { java.io.File(directory.path) }
+            return java.io.File.createTempFile(name, suffix, javaDirectory).path.File()
+        }
     }
 }
 

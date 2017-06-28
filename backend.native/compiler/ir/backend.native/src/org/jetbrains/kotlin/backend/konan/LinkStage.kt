@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.util.bufferedReader
-import java.io.File
 import java.lang.ProcessBuilder
 import java.lang.ProcessBuilder.Redirect
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.backend.konan.util.*
 
 typealias BitcodeFile = String
 typealias ObjectFile = String
@@ -32,7 +32,7 @@ internal abstract class PlatformFlags(val distribution: Distribution) {
     val properties = distribution.properties
 
     val hostSuffix = distribution.hostTargetSuffix
-    val targetSuffix = distribution.targetSuffix
+    val target = distribution.target
 
     open val llvmLtoNooptFlags 
         = propertyTargetList("llvmLtoNooptFlags")
@@ -56,14 +56,10 @@ internal abstract class PlatformFlags(val distribution: Distribution) {
 
     open fun linkCommandSuffix(): List<String> = emptyList()
 
-    protected fun propertyHostString(name: String)
-        = properties.propertyString(name, hostSuffix)!!
-    protected fun propertyHostList(name: String)
-        = properties.propertyList(name, hostSuffix)
     protected fun propertyTargetString(name: String)
-        = properties.propertyString(name, targetSuffix)!!
+        = properties.targetString(name, target)!!
     protected fun propertyTargetList(name: String) 
-        = properties.propertyList(name, targetSuffix)
+        = properties.targetList(name, target)
 }
 
 

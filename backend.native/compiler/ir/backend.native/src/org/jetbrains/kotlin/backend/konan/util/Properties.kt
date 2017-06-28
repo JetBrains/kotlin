@@ -33,3 +33,20 @@ fun File.saveProperties(properties: Properties) {
 }
 
 fun Properties.saveToFile(file: File) = file.saveProperties(this)
+
+fun Properties.propertyString(key: String, suffix: String? = null): String?
+    = this.getProperty(key.suffix(suffix))
+
+fun Properties.propertyList(key: String, suffix: String? = null): List<String> {
+    val value = this.getProperty(key.suffix(suffix))
+    return value?.split(' ') ?: emptyList()
+}
+
+fun Properties.hasProperty(key: String, suffix: String? = null): Boolean
+    = this.getProperty(key.suffix(suffix)) != null
+
+fun String.suffix(suf: String?): String =
+    if (suf == null) this
+    else "${this}.${suf}"
+
+
