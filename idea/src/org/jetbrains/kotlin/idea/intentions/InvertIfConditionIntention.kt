@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.unblockDocument
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -58,9 +59,15 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         commentSaver.restore(commentRestoreRange)
 
         val newIfCondition = newIf.condition
-        val simplifyIntention = ConvertNegatedExpressionWithDemorgansLawIntention()
-        if (newIfCondition is KtPrefixExpression && simplifyIntention.isApplicableTo(newIfCondition)) {
-            simplifyIntention.applyTo(newIfCondition)
+        val simplifyIntention = ConvertBinaryExpressionWithDemorgansLawIntention()
+        (newIfCondition as? KtPrefixExpression)?.let {
+            //use De Morgan's law only for negated condition to not make it more complex
+            if (it.operationReference.getReferencedNameElementType() == KtTokens.EXCL) {
+                val binaryExpr = (it.baseExpression as? KtParenthesizedExpression)?.expression as? KtBinaryExpression
+                if (binaryExpr != null && simplifyIntention.isApplicableTo(binaryExpr)) {
+                    simplifyIntention.applyTo(binaryExpr)
+                }
+            }
         }
 
         editor?.apply {

@@ -3,5 +3,5 @@ operator fun Boolean.unaryPlus(): Boolean {
 }
 
 fun foo(a: Boolean, b: Boolean) : Boolean {
-    return !<caret>(+a || b)
+    return !(<caret>+a || b)
 }
