@@ -1,0 +1,7 @@
+// "Simplify expression" "true"
+
+fun foo(s: String) {}
+
+fun bar() {
+<caret>
+}
