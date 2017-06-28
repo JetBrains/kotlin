@@ -48,6 +48,12 @@ public class BlackBoxCodegenTestForNoArgGenerated extends AbstractBlackBoxCodege
         doTest(fileName);
     }
 
+    @TestMetadata("kt18245.kt")
+    public void testKt18245() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/noarg/noarg-cli/testData/box/kt18245.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("kt18667.kt")
     public void testKt18667() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/noarg/noarg-cli/testData/box/kt18667.kt");
