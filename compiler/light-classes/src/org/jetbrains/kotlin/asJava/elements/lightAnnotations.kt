@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
+import com.intellij.lang.Language
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
@@ -59,10 +60,10 @@ class KtLightAnnotationForSourceEntry(
 
     override fun getQualifiedName() = qualifiedName
 
-    open inner class LightExpressionValue<out D : PsiExpression>(
+    open inner class LightElementValue<out D : PsiElement>(
             val delegate: D,
             private val parent: PsiElement
-    ) : PsiAnnotationMemberValue, PsiExpression by delegate {
+    ) : PsiAnnotationMemberValue, PsiElement by delegate {
         val originalExpression: PsiElement? by lazyPub {
             val nameAndValue = delegate.getStrictParentOfType<PsiNameValuePair>() ?: return@lazyPub null
             val annotationEntry = this@KtLightAnnotationForSourceEntry.kotlinOrigin
@@ -111,7 +112,7 @@ class KtLightAnnotationForSourceEntry(
 
         override fun getReference() = references.singleOrNull()
         override fun getReferences() = originalExpression?.references ?: PsiReference.EMPTY_ARRAY
-        override fun getLanguage() = KotlinLanguage.INSTANCE
+        override fun getLanguage(): Language = KotlinLanguage.INSTANCE
         override fun getNavigationElement() = originalExpression
         override fun getTextRange() = originalExpression?.textRange ?: TextRange.EMPTY_RANGE
         override fun getParent() = parent
@@ -132,6 +133,11 @@ class KtLightAnnotationForSourceEntry(
             return this
         }
     }
+
+    open inner class LightExpressionValue<out D : PsiExpression>(
+            delegate: D,
+            parent: PsiElement
+    ) : LightElementValue<D>(delegate, parent), PsiExpression by delegate
 
     inner class LightStringLiteral(
             delegate: PsiLiteralExpression,
@@ -165,7 +171,7 @@ class KtLightAnnotationForSourceEntry(
             value is PsiClassObjectAccessExpression -> LightClassLiteral(value, parent)
             value is PsiExpression -> LightExpressionValue(value, parent)
             value is PsiArrayInitializerMemberValue -> LightArrayInitializerValue(value, parent)
-            else -> value
+            else -> LightElementValue(value, parent)
         }
     }
 

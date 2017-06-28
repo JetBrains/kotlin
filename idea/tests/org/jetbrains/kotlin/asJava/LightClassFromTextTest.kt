@@ -132,7 +132,7 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
         val annotationAttributeVal = annotation.findAttributeValue("attribute") as PsiElement
 
         TestCase.assertEquals("@OuterAnnotation.InnerAnnotation", annotationAttributeVal.text)
-        TestCase.assertEquals(TextRange(1, 1), annotationAttributeVal.textRange)
+        TestCase.assertEquals(TextRange(29, 62), annotationAttributeVal.textRange)
     }
 
     private fun classesFromText(text: String, fileName: String = "A.kt"): Array<out PsiClass> {
