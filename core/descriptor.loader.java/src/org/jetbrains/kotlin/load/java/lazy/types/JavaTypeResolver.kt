@@ -73,7 +73,7 @@ class JavaTypeResolver(
             }
 
             val componentType = transformJavaType(javaComponentType,
-                                                  TYPE_ARGUMENT.toAttributes(attr.allowFlexible, attr.isForAnnotationParameter))
+                                                  COMMON.toAttributes(attr.allowFlexible, attr.isForAnnotationParameter))
 
             if (attr.allowFlexible) {
                 return@run KotlinTypeFactory.flexibleType(
@@ -113,7 +113,7 @@ class JavaTypeResolver(
         val annotations = CompositeAnnotations(listOf(LazyJavaAnnotations(c, javaType), attr.typeAnnotations))
         val constructor = computeTypeConstructor(javaType, attr) ?: return null
         val arguments = computeArguments(javaType, attr, constructor)
-        val isNullable = isNullable(javaType, attr)
+        val isNullable = attr.isNullable()
 
         return KotlinTypeFactory.simpleType(annotations, constructor, arguments, isNullable)
     }
@@ -232,7 +232,6 @@ class JavaTypeResolver(
             // Most of the time this means there is an error in the Java code
             return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.name.asString())) }.toList()
         }
-        val howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
         return javaType.typeArguments.withIndex().map {
             indexedArgument ->
             val (i, javaTypeArgument) = indexedArgument
@@ -242,7 +241,7 @@ class JavaTypeResolver(
             }
 
             val parameter = typeParameters[i]
-            transformToTypeProjection(javaTypeArgument, howTheProjectionIsUsed.toAttributes(), parameter)
+            transformToTypeProjection(javaTypeArgument, COMMON.toAttributes(), parameter)
         }.toList()
     }
 
@@ -259,7 +258,7 @@ class JavaTypeResolver(
                     makeStarProjection(typeParameter, attr)
                 else {
                     createProjection(
-                            type = transformJavaType(bound, UPPER_BOUND.toAttributes()),
+                            type = transformJavaType(bound, COMMON.toAttributes()),
                             projectionKind = projectionKind,
                             typeParameterDescriptor = typeParameter
                     )
@@ -274,21 +273,11 @@ class JavaTypeResolver(
         return this != typeParameter.variance
     }
 
-    private fun isNullable(javaType: JavaClassifierType, attr: JavaTypeAttributes): Boolean {
-        if (attr.flexibility == FLEXIBLE_LOWER_BOUND) return false
-        if (attr.flexibility == FLEXIBLE_UPPER_BOUND) return true
+    private fun JavaTypeAttributes.isNullable(): Boolean {
+        if (flexibility == FLEXIBLE_LOWER_BOUND) return false
+        if (flexibility == FLEXIBLE_UPPER_BOUND) return true
 
-        return !attr.isMarkedNotNull &&
-        // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
-        // nullability will be taken care of in individual member signatures
-        when (javaType.classifier) {
-            is JavaTypeParameter -> {
-                attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
-            }
-            is JavaClass,
-            null -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE)
-            else -> error("Unknown classifier: ${javaType.classifier}")
-        }
+        return !isMarkedNotNull && !isForAnnotationParameter && howThisTypeIsUsed != SUPERTYPE
     }
 }
 

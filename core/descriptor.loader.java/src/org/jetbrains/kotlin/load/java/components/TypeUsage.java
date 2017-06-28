@@ -21,12 +21,9 @@ package org.jetbrains.kotlin.load.java.components;
  * This enum encodes the kinds of occurrences
  */
 public enum TypeUsage {
-    // Type T occurs somewhere as a generic argument, e.g.: List<T> or List<? extends T>
-    TYPE_ARGUMENT,
-    UPPER_BOUND,
     MEMBER_SIGNATURE_COVARIANT,
     MEMBER_SIGNATURE_CONTRAVARIANT,
     MEMBER_SIGNATURE_INVARIANT,
     SUPERTYPE,
-    SUPERTYPE_ARGUMENT
+    COMMON
 }
