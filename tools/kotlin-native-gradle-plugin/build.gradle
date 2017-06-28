@@ -14,11 +14,12 @@ buildscript {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
-
 apply plugin: 'java'
 apply plugin: 'kotlin'
+apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'java-gradle-plugin'
 
 group = 'org.jetbrains.kotlin'
 version = konanVersion
@@ -44,15 +45,52 @@ allprojects {
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 evaluationDependsOn(':tools:helpers')
+
+sourceSets {
+    integrationTest {
+        groovy.srcDir file('src/integrationTest/groovy')
+
+        compileClasspath += sourceSets.main.output
+        compileClasspath += configurations.integrationTestCompile
+        compileClasspath += configurations.testCompile
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+gradlePlugin {
+    testSourceSets sourceSets.integrationTest
+}
+
 dependencies {
     compile project(':shared')
     compile project(':tools:helpers')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile gradleApi()
+
+    integrationTestCompile gradleTestKit()
+    integrationTestCompile 'junit:junit:4.12'
+    integrationTestCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
+        exclude module: 'groovy-all'
+    }
+
+  //  integrationTestCompile 'com.netflix.nebula:nebula-test:6.0.1'
+  //  testCompile 'com.netflix.nebula:nebula-test:6.0.1'
 }
+
+task integrationTest(type: Test) {
+    dependsOn(test)
+    testLogging.showStandardStreams = true
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    systemProperty("konan.home", rootProject.file('dist'))
+    systemProperty("konan.root", rootProject.projectDir)
+}
+
+check.dependsOn integrationTest
 
 jar {
     dependsOn(':tools:helpers:jar')
