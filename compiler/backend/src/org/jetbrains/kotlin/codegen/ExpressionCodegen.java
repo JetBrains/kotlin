@@ -2874,8 +2874,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         assert deparenthesized != null : "For with empty range expression";
         boolean isInverted = operationReference.getReferencedNameElementType() == KtTokens.NOT_IN;
         return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
-            if (RangeCodegenUtil.isPrimitiveRangeSpecializationOfType(leftValue.type, deparenthesized, bindingContext) ||
-                RangeCodegenUtil.isPrimitiveRangeToExtension(operationReference, bindingContext)) {
+            if (RangeCodegenUtilKt.isPrimitiveRangeSpecializationOfType(leftValue.type, deparenthesized, bindingContext) ||
+                RangeCodegenUtilKt.isPrimitiveRangeToExtension(operationReference, bindingContext)) {
                 generateInPrimitiveRange(leftValue, (KtBinaryExpression) deparenthesized, isInverted);
             }
             else {

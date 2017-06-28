@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,228 +14,160 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-import com.google.common.collect.ImmutableMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.builtins.PrimitiveType;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.org.objectweb.asm.Type
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME;
-import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor;
-
-public class RangeCodegenUtil {
-    private static final ImmutableMap<FqName, PrimitiveType> RANGE_TO_ELEMENT_TYPE;
-    private static final ImmutableMap<FqName, PrimitiveType> PROGRESSION_TO_ELEMENT_TYPE;
-
-    @NotNull
-    public static List<PrimitiveType> supportedRangeTypes() {
-        return Arrays.asList(PrimitiveType.CHAR, PrimitiveType.INT, PrimitiveType.LONG);
-    }
-
-    static {
-        ImmutableMap.Builder<FqName, PrimitiveType> rangeBuilder = ImmutableMap.builder();
-        ImmutableMap.Builder<FqName, PrimitiveType> progressionBuilder = ImmutableMap.builder();
-        for (PrimitiveType primitiveType : supportedRangeTypes()) {
-            FqName rangeClassFqName = RANGES_PACKAGE_FQ_NAME.child(Name.identifier(primitiveType.getTypeName() + "Range"));
-            FqName progressionClassFqName = RANGES_PACKAGE_FQ_NAME.child(Name.identifier(primitiveType.getTypeName() + "Progression"));
-            rangeBuilder.put(rangeClassFqName, primitiveType);
-            progressionBuilder.put(progressionClassFqName, primitiveType);
+private val RANGE_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
+        supportedRangeTypes().associateBy {
+            RANGES_PACKAGE_FQ_NAME.child(Name.identifier(it.typeName.toString() + "Range"))
         }
-        RANGE_TO_ELEMENT_TYPE = rangeBuilder.build();
-        PROGRESSION_TO_ELEMENT_TYPE = progressionBuilder.build();
-    }
 
-    private RangeCodegenUtil() {}
+private val PROGRESSION_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
+        supportedRangeTypes().associateBy {
+            RANGES_PACKAGE_FQ_NAME.child(Name.identifier(it.typeName.toString() + "Progression"))
+        }
 
-    public static boolean isRange(KotlinType rangeType) {
-        return !rangeType.isMarkedNullable() && getPrimitiveRangeElementType(rangeType) != null;
-    }
+fun supportedRangeTypes() =
+        listOf(PrimitiveType.CHAR, PrimitiveType.INT, PrimitiveType.LONG)
 
-    public static boolean isProgression(KotlinType rangeType) {
-        return !rangeType.isMarkedNullable() && getPrimitiveProgressionElementType(rangeType) != null;
-    }
+fun isRange(rangeType: KotlinType) =
+        !rangeType.isMarkedNullable && getPrimitiveRangeElementType(rangeType) != null
 
-    @Nullable
-    private static PrimitiveType getPrimitiveRangeElementType(KotlinType rangeType) {
-        return getPrimitiveRangeOrProgressionElementType(rangeType, RANGE_TO_ELEMENT_TYPE);
-    }
+fun isProgression(rangeType: KotlinType) =
+        !rangeType.isMarkedNullable && getPrimitiveProgressionElementType(rangeType) != null
 
-    @Nullable
-    private static PrimitiveType getPrimitiveProgressionElementType(KotlinType rangeType) {
-        return getPrimitiveRangeOrProgressionElementType(rangeType, PROGRESSION_TO_ELEMENT_TYPE);
-    }
+private fun getPrimitiveRangeElementType(rangeType: KotlinType) =
+        getPrimitiveRangeOrProgressionElementType(rangeType, RANGE_TO_ELEMENT_TYPE)
 
-    @Nullable
-    private static PrimitiveType getPrimitiveRangeOrProgressionElementType(
-            @NotNull KotlinType rangeOrProgression,
-            @NotNull ImmutableMap<FqName, PrimitiveType> map
-    ) {
-        ClassifierDescriptor declarationDescriptor = rangeOrProgression.getConstructor().getDeclarationDescriptor();
-        if (declarationDescriptor == null) return null;
-        FqNameUnsafe fqName = DescriptorUtils.getFqName(declarationDescriptor);
-        if (!fqName.isSafe()) return null;
-        return map.get(fqName.toSafe());
-    }
+private fun getPrimitiveProgressionElementType(rangeType: KotlinType) =
+        getPrimitiveRangeOrProgressionElementType(rangeType, PROGRESSION_TO_ELEMENT_TYPE)
 
-    @Nullable
-    public static PrimitiveType getPrimitiveRangeOrProgressionElementType(@NotNull FqName rangeOrProgressionName) {
-        PrimitiveType result = RANGE_TO_ELEMENT_TYPE.get(rangeOrProgressionName);
-        return result != null ? result : PROGRESSION_TO_ELEMENT_TYPE.get(rangeOrProgressionName);
-    }
+private fun getPrimitiveRangeOrProgressionElementType(
+        rangeOrProgression: KotlinType,
+        map: Map<FqName, PrimitiveType>
+): PrimitiveType? {
+    val declarationDescriptor = rangeOrProgression.constructor.declarationDescriptor ?: return null
+    val fqName = DescriptorUtils.getFqName(declarationDescriptor).takeIf { it.isSafe } ?: return null
+    return map[fqName.toSafe()]
+}
 
-    public static boolean isRangeOrProgression(@NotNull FqName className) {
-        return getPrimitiveRangeOrProgressionElementType(className) != null;
-    }
+fun getPrimitiveRangeOrProgressionElementType(rangeOrProgressionName: FqName): PrimitiveType? =
+        RANGE_TO_ELEMENT_TYPE[rangeOrProgressionName] ?:
+        PROGRESSION_TO_ELEMENT_TYPE[rangeOrProgressionName]
 
-    public static boolean isPrimitiveNumberRangeTo(CallableDescriptor rangeTo) {
-        if (!"rangeTo".equals(rangeTo.getName().asString())) return false;
+fun isRangeOrProgression(className: FqName) =
+        getPrimitiveRangeOrProgressionElementType(className) != null
 
-        if (!isPrimitiveNumberClassDescriptor(rangeTo.getContainingDeclaration())) return false;
+fun isPrimitiveNumberRangeTo(rangeTo: CallableDescriptor) =
+        "rangeTo" == rangeTo.name.asString() &&
+        isPrimitiveNumberClassDescriptor(rangeTo.containingDeclaration)
 
-        return true;
-    }
+private fun isPrimitiveRangeToExtension(descriptor: CallableDescriptor): Boolean {
+    if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) return false
 
-    private static boolean isPrimitiveRangeToExtension(@NotNull CallableDescriptor descriptor) {
-        if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) return false;
+    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
+    return KotlinBuiltIns.isPrimitiveType(extensionReceiver.type)
+}
 
-        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
-        if (extensionReceiver == null) return false;
+fun isPrimitiveNumberDownTo(descriptor: CallableDescriptor): Boolean {
+    if (!isTopLevelInPackage(descriptor, "downTo", "kotlin.ranges")) return false
 
-        return KotlinBuiltIns.isPrimitiveType(extensionReceiver.getType());
-    }
+    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
+    val extensionReceiverClassifier = extensionReceiver.type.constructor.declarationDescriptor
+    return isPrimitiveNumberClassDescriptor(extensionReceiverClassifier)
+}
 
-    public static boolean isPrimitiveNumberDownTo(@NotNull CallableDescriptor descriptor) {
-        if (!isTopLevelInPackage(descriptor, "downTo", "kotlin.ranges")) return false;
+fun isPrimitiveNumberUntil(descriptor: CallableDescriptor): Boolean {
+    if (!isTopLevelInPackage(descriptor, "until", "kotlin.ranges")) return false
 
-        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
-        if (extensionReceiver == null) return false;
-        ClassifierDescriptor extensionReceiverClassifier = extensionReceiver.getType().getConstructor().getDeclarationDescriptor();
-        if (!isPrimitiveNumberClassDescriptor(extensionReceiverClassifier)) return false;
+    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
+    val extensionReceiverClassifier = extensionReceiver.type.constructor.declarationDescriptor
+    return isPrimitiveNumberClassDescriptor(extensionReceiverClassifier)
+}
 
-        return true;
-    }
+fun isArrayOrPrimitiveArrayIndices(descriptor: CallableDescriptor): Boolean {
+    if (!isTopLevelInPackage(descriptor, "indices", "kotlin.collections")) return false
 
-    public static boolean isPrimitiveNumberUntil(@NotNull CallableDescriptor descriptor) {
-        if (!isTopLevelInPackage(descriptor, "until", "kotlin.ranges")) return false;
+    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
+    val extensionReceiverType = extensionReceiver.type
+    return KotlinBuiltIns.isArray(extensionReceiverType) || KotlinBuiltIns.isPrimitiveArray(extensionReceiverType)
+}
 
-        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
-        if (extensionReceiver == null) return false;
-        ClassifierDescriptor extensionReceiverClassifier = extensionReceiver.getType().getConstructor().getDeclarationDescriptor();
-        if (!isPrimitiveNumberClassDescriptor(extensionReceiverClassifier)) return false;
+fun isCollectionIndices(descriptor: CallableDescriptor): Boolean {
+    if (!isTopLevelInPackage(descriptor, "indices", "kotlin.collections")) return false
 
-        return true;
-    }
+    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
+    val extensionReceiverType = extensionReceiver.type
+    return KotlinBuiltIns.isCollectionOrNullableCollection(extensionReceiverType)
+}
 
-    public static boolean isArrayOrPrimitiveArrayIndices(@NotNull CallableDescriptor descriptor) {
-        if (!isTopLevelInPackage(descriptor, "indices", "kotlin.collections")) return false;
+fun isCharSequenceIndices(descriptor: CallableDescriptor): Boolean {
+    if (!isTopLevelInPackage(descriptor, "indices", "kotlin.text")) return false
 
-        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
-        if (extensionReceiver == null) return false;
-        KotlinType extensionReceiverType = extensionReceiver.getType();
-        if (!KotlinBuiltIns.isArray(extensionReceiverType) && !KotlinBuiltIns.isPrimitiveArray(extensionReceiverType)) return false;
+    val extensionReceiver = descriptor.extensionReceiverParameter ?: return false
+    val extensionReceiverType = extensionReceiver.type
+    return KotlinBuiltIns.isCharSequenceOrNullableCharSequence(extensionReceiverType)
+}
 
-        return true;
-    }
-
-    public static boolean isCollectionIndices(@NotNull CallableDescriptor descriptor) {
-        if (!isTopLevelInPackage(descriptor, "indices", "kotlin.collections")) return false;
-
-        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
-        if (extensionReceiver == null) return false;
-        KotlinType extensionReceiverType = extensionReceiver.getType();
-        if (!KotlinBuiltIns.isCollectionOrNullableCollection(extensionReceiverType)) return false;
-
-        return true;
-    }
-
-    public static boolean isCharSequenceIndices(@NotNull CallableDescriptor descriptor) {
-        if (!isTopLevelInPackage(descriptor, "indices", "kotlin.text")) return false;
-
-        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
-        if (extensionReceiver == null) return false;
-        KotlinType extensionReceiverType = extensionReceiver.getType();
-        if (!KotlinBuiltIns.isCharSequenceOrNullableCharSequence(extensionReceiverType)) return false;
-
-        return true;
-    }
-
-    public static boolean isPrimitiveRangeToExtension(@NotNull KtSimpleNameExpression operationReference, @NotNull BindingContext bindingContext) {
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt
-                .getResolvedCallWithAssert(operationReference, bindingContext);
-        ReceiverValue receiver = resolvedCall.getDispatchReceiver();
-
-        /*
-         * Range is optimizable if
-         * 'in' receiver is expression 'rangeTo' from stdlib package
-         * and its argument has same primitive type as generic range parameter.
-         * For non-matching primitive types (e.g. int in double range)
-         * dispatch receiver will be null, because extension method will be called.
-         */
-        if (!(receiver instanceof ExpressionReceiver)) return false;
-        ExpressionReceiver e = (ExpressionReceiver) receiver;
-
-        ResolvedCall<? extends CallableDescriptor> resolvedReceiver =
-                CallUtilKt.getResolvedCall(e.getExpression(), bindingContext);
-        if (resolvedReceiver == null) return false;
-
-        return isPrimitiveRangeToExtension(resolvedReceiver.getResultingDescriptor());
-    }
+fun isPrimitiveRangeToExtension(operationReference: KtSimpleNameExpression, bindingContext: BindingContext): Boolean {
+    val resolvedCall = operationReference.getResolvedCallWithAssert(bindingContext)
+    val receiver = resolvedCall.dispatchReceiver as? ExpressionReceiver ?: return false
 
     /*
-     * Checks whether for expression 'x in a..b' a..b is primitive integral range
-     * with same type as x.
+     * Range is optimizable if
+     * receiver is a call for 'rangeTo' from stdlib package
+     * and its argument has same primitive type as generic range parameter.
+     * For non-matching primitive types (e.g. int in double range)
+     * dispatch receiver will be null, because extension method will be called.
      */
-    public static boolean isPrimitiveRangeSpecializationOfType(
-            @NotNull Type argumentType,
-            @NotNull KtExpression rangeExpression,
-            @NotNull BindingContext bindingContext
-    ) {
-        if (rangeExpression instanceof KtBinaryExpression &&
-            ((KtBinaryExpression) rangeExpression).getOperationReference().getReferencedNameElementType() == KtTokens.RANGE) {
-            KotlinType kotlinType = bindingContext.getType(rangeExpression);
-            assert kotlinType != null;
-            DeclarationDescriptor descriptor = kotlinType.getConstructor().getDeclarationDescriptor();
-            if (descriptor != null) {
-                FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
-                if (fqName.equals(KotlinBuiltIns.FQ_NAMES.longRange)) {
-                    return argumentType == Type.LONG_TYPE;
-                }
-                if (fqName.equals(KotlinBuiltIns.FQ_NAMES.charRange) || fqName.equals(KotlinBuiltIns.FQ_NAMES.intRange)) {
-                    return AsmUtil.isIntPrimitive(argumentType);
-                }
-            }
-        }
 
-        return false;
+    val resolvedReceiver = receiver.expression.getResolvedCall(bindingContext) ?: return false
+    return isPrimitiveRangeToExtension(resolvedReceiver.resultingDescriptor)
+}
+
+/*
+ * Checks whether for expression 'x in a..b' a..b is primitive integral range
+ * with same type as x.
+ */
+fun isPrimitiveRangeSpecializationOfType(
+        argumentType: Type,
+        rangeExpression: KtExpression,
+        bindingContext: BindingContext
+): Boolean {
+    if (rangeExpression is KtBinaryExpression && rangeExpression.operationReference.getReferencedNameElementType() === KtTokens.RANGE) {
+        val kotlinType = bindingContext.getType(rangeExpression)!!
+        val descriptor = kotlinType.constructor.declarationDescriptor ?: return false
+        val fqName = DescriptorUtils.getFqName(descriptor)
+        return (fqName == KotlinBuiltIns.FQ_NAMES.longRange && argumentType === Type.LONG_TYPE) ||
+               (fqName == KotlinBuiltIns.FQ_NAMES.charRange || fqName == KotlinBuiltIns.FQ_NAMES.intRange) && AsmUtil.isIntPrimitive(argumentType)
     }
 
-    private static boolean isTopLevelInPackage(@NotNull CallableDescriptor descriptor, @NotNull String name, @NotNull String packageName) {
-        if (!name.equals(descriptor.getName().asString())) return false;
+    return false
+}
 
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (!(containingDeclaration instanceof PackageFragmentDescriptor)) return false;
-        String packageFqName = ((PackageFragmentDescriptor) containingDeclaration).getFqName().asString();
-        if (!packageName.equals(packageFqName)) return false;
+private fun isTopLevelInPackage(descriptor: CallableDescriptor, name: String, packageName: String): Boolean {
+    if (name != descriptor.name.asString()) return false
 
-        return true;
-    }
+    val containingDeclaration = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
+    val packageFqName = containingDeclaration.fqName.asString()
+    return packageName == packageFqName
 }
