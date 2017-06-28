@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
@@ -112,6 +113,16 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertContains(":kaptKotlin UP-TO-DATE")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
+        }
+    }
+
+    @Test
+    fun testDisableIcForGenerateStubs() {
+        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        project.build("build", options = defaultBuildOptions().copy(incremental = false)) {
+            assertSuccessful()
+            assertContains(":kaptGenerateStubsKotlin")
+            assertNotContains(USING_INCREMENTAL_COMPILATION_MESSAGE)
         }
     }
 
