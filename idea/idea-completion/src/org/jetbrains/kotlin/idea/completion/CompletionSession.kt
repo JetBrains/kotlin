@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.TypeUtils
@@ -127,14 +127,9 @@ abstract class CompletionSession(
                                                                     isVisibleFilter,
                                                                     NotPropertiesService.getNotProperties(position))
 
-    protected val callTypeAndReceiver: CallTypeAndReceiver<*, *>
-    protected val receiverTypes: Collection<ReceiverType>?
+    protected val callTypeAndReceiver = if (nameExpression == null) CallTypeAndReceiver.UNKNOWN else CallTypeAndReceiver.detect(nameExpression)
+    protected val receiverTypes = nameExpression?.let { detectReceiverTypes(bindingContext, nameExpression, callTypeAndReceiver) }
 
-    init {
-        val (callTypeAndReceiver, receiverTypes) = detectCallTypeAndReceiverTypes()
-        this.callTypeAndReceiver = callTypeAndReceiver
-        this.receiverTypes = receiverTypes
-    }
 
     protected val basicLookupElementFactory = BasicLookupElementFactory(project, InsertHandlerProvider(callTypeAndReceiver.callType) { expectedInfos })
 
@@ -374,13 +369,9 @@ abstract class CompletionSession(
                                     callTypeAndReceiver.callType, inDescriptor, contextVariablesProvider)
     }
 
-    private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<ReceiverType>?> {
-        if (nameExpression == null) {
-            return CallTypeAndReceiver.UNKNOWN to null
-        }
-
-        val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression)
-
+    protected fun detectReceiverTypes(bindingContext: BindingContext,
+                                      nameExpression: KtSimpleNameExpression,
+                                      callTypeAndReceiver: CallTypeAndReceiver<*, *>): Collection<ReceiverType>? {
         var receiverTypes = callTypeAndReceiver.receiverTypesWithIndex(
                 bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
                 stableSmartCastsOnly = true /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */)
@@ -389,6 +380,6 @@ abstract class CompletionSession(
             receiverTypes = receiverTypes?.map { ReceiverType(it.type.makeNotNullable(), it.receiverIndex) }
         }
 
-        return callTypeAndReceiver to receiverTypes
+        return receiverTypes
     }
 }

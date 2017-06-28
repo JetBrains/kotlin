@@ -1,0 +1,6 @@
+package bar
+
+object FooBar {
+
+}
+

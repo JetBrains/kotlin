@@ -1,0 +1,9 @@
+package buz
+
+import foo.Bar
+
+fun foo() {
+    Bar.member()
+}
+
+// ELEMENT: member

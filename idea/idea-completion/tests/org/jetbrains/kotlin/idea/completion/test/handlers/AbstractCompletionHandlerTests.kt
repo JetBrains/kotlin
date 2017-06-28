@@ -21,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
+import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -86,7 +87,7 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
     }
 
     protected open fun setUpFixture(testPath: String) {
-        fixture.configureByFile(testPath)
+        fixture.configureWithExtraFile(testPath, ".dependency", ".dependency.1", ".dependency.2")
     }
 
     protected open fun tearDownFixture() {

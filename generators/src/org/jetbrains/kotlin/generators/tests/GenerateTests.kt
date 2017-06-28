@@ -1116,7 +1116,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBasicCompletionHandlerTest> {
-            model("handlers/basic")
+            model("handlers/basic", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractSmartCompletionHandlerTest> {

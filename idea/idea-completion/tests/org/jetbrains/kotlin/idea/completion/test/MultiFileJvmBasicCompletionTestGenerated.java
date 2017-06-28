@@ -90,6 +90,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("EntriesOfNotImportedEnumFromKotlin")
+    public void testEntriesOfNotImportedEnumFromKotlin() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/EntriesOfNotImportedEnumFromKotlin/");
+        doTest(fileName);
+    }
+
     @TestMetadata("EnumEntry")
     public void testEnumEntry() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/EnumEntry/");
@@ -393,6 +399,30 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
     @TestMetadata("PropertyKeysWithPrefix")
     public void testPropertyKeysWithPrefix() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/PropertyKeysWithPrefix/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StaticMembersOfNotImportedClassFromJava")
+    public void testStaticMembersOfNotImportedClassFromJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/StaticMembersOfNotImportedClassFromJava/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StaticMembersOfNotImportedClassFromKotlin")
+    public void testStaticMembersOfNotImportedClassFromKotlin() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/StaticMembersOfNotImportedClassFromKotlin/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StaticMembersOfNotImportedClassFromKotlinObject")
+    public void testStaticMembersOfNotImportedClassFromKotlinObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/StaticMembersOfNotImportedClassFromKotlinObject/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StaticMembersOfNotImportedClassNameConflict")
+    public void testStaticMembersOfNotImportedClassNameConflict() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/StaticMembersOfNotImportedClassNameConflict/");
         doTest(fileName);
     }
 
