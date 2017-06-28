@@ -32,13 +32,29 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
             // Automatic modules have no transitive exports, so we only consider explicit modules here
             val moduleInfo = (module(moduleName) as? JavaModule.Explicit)?.moduleInfo ?: return
             for ((dependencyModuleName, isTransitive) in moduleInfo.requires) {
-                if (!visited.add(dependencyModuleName) && isTransitive) {
+                if (isTransitive && visited.add(dependencyModuleName)) {
                     dfs(dependencyModuleName)
                 }
             }
         }
 
-        moduleNames.forEach(::dfs)
+        for (moduleName in moduleNames) {
+            val module = module(moduleName) ?: continue
+            when (module) {
+                is JavaModule.Automatic -> {
+                    // Do nothing; all automatic modules should be added to compilation roots at call site as per java.lang.module javadoc
+                }
+                is JavaModule.Explicit -> {
+                    for ((dependencyModuleName) in module.moduleInfo.requires) {
+                        if (visited.add(dependencyModuleName)) {
+                            dfs(dependencyModuleName)
+                        }
+                    }
+                }
+                else -> error("Unknown module: $module (${module.javaClass})")
+            }
+        }
+
         return visited.toList()
     }
 
@@ -50,7 +66,7 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
         fun dfs(name: String): Boolean {
             if (!visited.add(name)) return false
 
-            val module = module(name)
+            val module = module(name) ?: return false
             when (module) {
                 is JavaModule.Automatic -> return true
                 is JavaModule.Explicit -> {
@@ -60,8 +76,17 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
                     }
                     return false
                 }
-                null -> return false
                 else -> error("Unsupported module type: $module")
+            }
+        }
+
+        val module = module(moduleName) ?: return false
+        when (module) {
+            is JavaModule.Automatic -> return true
+            is JavaModule.Explicit -> {
+                for ((dependencyModuleName) in module.moduleInfo.requires) {
+                    if (dfs(dependencyModuleName)) return true
+                }
             }
         }
 

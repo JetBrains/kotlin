@@ -107,4 +107,27 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         // because we did not provide -Xadd-modules=moduleA
         module("moduleB", listOf(module("moduleA")), addModules = emptyList())
     }
+
+    fun testNamedReadsTransitive() {
+        val a = module("moduleA")
+        val b = module("moduleB", listOf(a))
+        module("moduleC", listOf(a, b))
+    }
+
+    fun testUnnamedReadsTransitive() {
+        val a = module("moduleA")
+        val b = module("moduleB", listOf(a))
+        module("moduleC", listOf(a, b), addModules = listOf("moduleB"))
+    }
+
+    fun testNonTransitiveDoesNotAffectExplicitDependency() {
+        // In this test, D depends on C (which requires B non-transitively) and on B; also B transitively requires A.
+        // We check that if we depend on both C and B, we still transitively depend on A (via B).
+        // This is a check against an incorrectly implemented DFS which, upon entering C, would write off B as "visited"
+        // and not enter it later even though we explicitly depend on it in D's module-info
+        val a = module("moduleA")
+        val b = module("moduleB", listOf(a))
+        val c = module("moduleC", listOf(a, b))
+        module("moduleD", listOf(c, b, a))
+    }
 }
