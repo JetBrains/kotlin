@@ -1,0 +1,38 @@
+@kotlin.Metadata()
+public abstract class Foo {
+
+    public Foo() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class Kt18682Kt {
+
+    public Kt18682Kt() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.util.List<java.lang.Object> test1() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.util.List<java.lang.Runnable> test2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.util.List<Foo> test3() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.util.List<Foo> test4() {
+        return null;
+    }
+}
