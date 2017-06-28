@@ -408,6 +408,57 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/constantConditionIf")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConstantConditionIf extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInConstantConditionIf() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/constantConditionIf"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("delete.kt")
+        public void testDelete() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/delete.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expression.kt")
+        public void testExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/expression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noStatements.kt")
+        public void testNoStatements() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/noStatements.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleBlock.kt")
+        public void testSimpleBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/simpleBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleFalse.kt")
+        public void testSimpleFalse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/simpleFalse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleTrue.kt")
+        public void testSimpleTrue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/simpleTrue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("statement.kt")
+        public void testStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/statement.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/copyWithoutNamedArguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
