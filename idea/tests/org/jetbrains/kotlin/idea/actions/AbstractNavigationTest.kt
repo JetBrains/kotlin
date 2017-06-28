@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -42,12 +40,8 @@ abstract class AbstractNavigationTest : KotlinLightCodeInsightFixtureTestCase() 
     protected fun doTest(path: String) {
         val mainFile = File(path)
         val fileText = FileUtil.loadFile(mainFile, true)
-        val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null
 
         try {
-            if (addKotlinRuntime) {
-                ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
-            }
             ConfigLibraryUtil.configureLibrariesByDirective(myModule, PlatformTestUtil.getCommunityPath(), fileText)
 
             myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
@@ -66,9 +60,6 @@ abstract class AbstractNavigationTest : KotlinLightCodeInsightFixtureTestCase() 
         }
         finally {
             ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
-            if (addKotlinRuntime) {
-                ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
-            }
         }
     }
 }
