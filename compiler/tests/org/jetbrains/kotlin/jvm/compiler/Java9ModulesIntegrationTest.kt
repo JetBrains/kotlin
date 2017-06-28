@@ -54,10 +54,12 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
                     }
                     KotlinTestUtils.compileJavaFilesExternallyWithJava9(javaFiles, javaOptions)
                 },
-                checkKotlinOutput = { actual ->
-                    KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "$name.txt"), actual)
-                }
+                checkKotlinOutput = checkKotlinOutput(name)
         )
+    }
+
+    private fun checkKotlinOutput(moduleName: String): (String) -> Unit = { actual ->
+        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "$moduleName.txt"), actual)
     }
 
     fun testSimple() {
@@ -129,5 +131,22 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val b = module("moduleB", listOf(a))
         val c = module("moduleC", listOf(a, b))
         module("moduleD", listOf(c, b, a))
+    }
+
+    fun testSpecifyPathToModuleInfoInArguments() {
+        val a = module("moduleA")
+
+        val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return
+        val kotlinOptions = mutableListOf(
+                "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
+                "-jdk-home", jdk9Home.path,
+                "-Xmodule-path=${a.path}"
+        )
+        compileLibrary(
+                "moduleB",
+                additionalOptions = kotlinOptions,
+                compileJava = { _, _, _ -> error("No .java files in moduleB in this test") },
+                checkKotlinOutput = checkKotlinOutput("moduleB")
+        )
     }
 }

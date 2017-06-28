@@ -28,8 +28,9 @@ interface JavaModule {
     val name: String
 
     /**
-     * A directory or the root of a .jar file on the module path. In case of an explicit module,
-     * module-info.class file can be found in its children.
+     * A directory or the root of a .jar file on the module path. Can also be the path to the `module-info.java` file if that path
+     * was passed as an explicit argument to the compiler.
+     * In case of an explicit module, module-info.class file can be found in its children.
      */
     val moduleRoot: VirtualFile
 

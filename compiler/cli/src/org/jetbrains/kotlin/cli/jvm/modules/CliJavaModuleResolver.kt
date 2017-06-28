@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.cli.jvm.modules
 
 import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
@@ -27,10 +29,20 @@ class CliJavaModuleResolver(
         override val moduleGraph: JavaModuleGraph,
         private val javaModules: List<JavaModule>
 ) : JavaModuleResolver {
-    override fun findJavaModule(file: VirtualFile): JavaModule? {
-        val isBinary = file.fileType == JavaClassFileType.INSTANCE
-        return javaModules.firstOrNull { module ->
-            module.isBinary == isBinary && VfsUtilCore.isAncestor(module.moduleRoot, file, false)
+    init {
+        assert(javaModules.count { !it.isBinary } <= 1) {
+            "Modules computed by ClasspathRootsResolver cannot have more than one source module: $javaModules"
         }
     }
+
+    private val sourceModule = javaModules.firstOrNull { !it.isBinary }
+
+    override fun findJavaModule(file: VirtualFile): JavaModule? =
+            when (file.fileType) {
+                KotlinFileType.INSTANCE, JavaFileType.INSTANCE -> sourceModule
+                JavaClassFileType.INSTANCE -> javaModules.firstOrNull { module ->
+                    module.isBinary && VfsUtilCore.isAncestor(module.moduleRoot, file, false)
+                }
+                else -> null
+            }
 }
