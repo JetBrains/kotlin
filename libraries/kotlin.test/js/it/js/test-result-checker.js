@@ -4,12 +4,10 @@ var Tester = function(testMap) {
     this._testCount = {};
 
     this._passed = 0;
-    this._total = 0;
+    this._total = Object.keys(testMap).length;
 };
 
 Tester.prototype._check = function(name, result) {
-    this._total++;
-
     var count = this._testCount[name] | 0;
     this._testCount = count + 1;
     if (count === 1) {

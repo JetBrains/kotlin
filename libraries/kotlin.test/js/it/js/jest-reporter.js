@@ -1,5 +1,5 @@
 var Tester = require('./test-result-checker');
-var expectedOutcomes = require('./expected-outcomes').full;
+var expectedOutcomes = require('./expected-outcomes');
 
 module.exports = function (results) {
     var tester = new Tester(expectedOutcomes);
@@ -7,15 +7,15 @@ module.exports = function (results) {
     for (var i = 0; i < testResults.length; i++) {
         var tr = testResults[i];
 
-
+        var name = tr.fullName.trim();
         if (tr.status === 'passed') {
-            tester.passed(tr.fullName);
+            tester.passed(name);
         }
         else if (tr.status === 'failed') {
-            tester.failed(tr.fullName);
+            tester.failed(name);
         }
         else {
-            tester.pending(tr.fullName);
+            tester.pending(name);
         }
     }
     tester.end();

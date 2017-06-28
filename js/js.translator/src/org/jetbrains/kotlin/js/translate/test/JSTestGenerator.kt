@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.js.translate.test
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -42,25 +40,39 @@ class JSTestGenerator(val context: TranslationContext) {
         return JsNameRef(name, JsNameRef("Kotlin"))
     }
 
-    fun generateTestCalls(moduleDescriptor: ModuleDescriptor) = generateTestCalls(moduleDescriptor, FqName.ROOT)
+    fun generateTestCalls(moduleDescriptor: ModuleDescriptor) {
+        val rootFunction = JsFunction(context.scope(), JsBlock(), "root suite function")
 
-    private fun generateTestCalls(moduleDescriptor: ModuleDescriptor, packageName: FqName) {
+        generateTestCalls(moduleDescriptor, FqName.ROOT, rootFunction)
+
+        if (!rootFunction.body.isEmpty) {
+            context.addTopLevelStatement(JsInvocation(suiteRef, JsStringLiteral(""), rootFunction).makeStmt())
+        }
+    }
+
+    private fun generateTestCalls(moduleDescriptor: ModuleDescriptor, packageName: FqName, parentFun: JsFunction) {
         for (packageDescriptor in moduleDescriptor.getPackage(packageName).fragments) {
             if (DescriptorUtils.getContainingModule(packageDescriptor) !== moduleDescriptor) continue
 
             packageDescriptor.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER).forEach {
                 if (it is ClassDescriptor) {
-                    generateTestFunctions(it)
+                    generateTestFunctions(it, parentFun)
                 }
             }
         }
 
         for (subpackageName in moduleDescriptor.getSubPackagesOf(packageName, MemberScope.ALL_NAME_FILTER)) {
-            generateTestCalls(moduleDescriptor, subpackageName)
+            val subPackageFunction = JsFunction(context.scope(), JsBlock(), "${subpackageName.asString()} package suite function")
+
+            generateTestCalls(moduleDescriptor, subpackageName, subPackageFunction)
+
+            if (!subPackageFunction.body.isEmpty) {
+                parentFun.body.statements += JsInvocation(suiteRef, JsStringLiteral(subpackageName.shortName().asString()), subPackageFunction).makeStmt()
+            }
         }
     }
 
-    private fun generateTestFunctions(classDescriptor: ClassDescriptor) {
+    private fun generateTestFunctions(classDescriptor: ClassDescriptor, parentFun: JsFunction) {
         if (classDescriptor.modality === Modality.ABSTRACT) return
 
         val suiteFunction = JsFunction(context.scope(), JsBlock(), "suite function")
@@ -74,7 +86,7 @@ class JSTestGenerator(val context: TranslationContext) {
         if (!suiteFunction.body.isEmpty) {
             val suiteName = JsStringLiteral(classDescriptor.name.toString())
 
-            context.addTopLevelStatement(JsInvocation(classDescriptor.ref, suiteName, suiteFunction).makeStmt())
+            parentFun.body.statements += JsInvocation(classDescriptor.ref, suiteName, suiteFunction).makeStmt()
         }
     }
 
@@ -124,18 +136,15 @@ class JSTestGenerator(val context: TranslationContext) {
      * }
      */
     private val FunctionDescriptor.isTest
-            get() = annotationFinder("Test", "kotlin.test", "org.junit")
+        get() = annotationFinder("Test", "kotlin.test", "org.junit") // Support both ways for now.
 
     private val DeclarationDescriptor.isIgnored
-            get() = annotationFinder("Ignore", "kotlin.test")
+        get() = annotationFinder("Ignore", "kotlin.test")
 
     private val DeclarationDescriptor.isFocused
-            get() = annotationFinder("Only", "kotlin.test")
+        get() = annotationFinder("Only", "kotlin.test")
 
-    private fun DeclarationDescriptor.annotationFinder(shortName: String, vararg packages: String) = this.annotations.any { annotation: AnnotationDescriptor ->
-        annotation.type.toString() == shortName && packages.any { packageName ->
-            val descriptor = annotation.type.constructor.declarationDescriptor
-            descriptor != null && FqNameUnsafe("$packageName.$shortName") == DescriptorUtils.getFqName(descriptor)
-        }
+    private fun DeclarationDescriptor.annotationFinder(shortName: String, vararg packages: String) = packages.any { packageName ->
+        annotations.hasAnnotation(FqName("$packageName.$shortName"))
     }
 }
