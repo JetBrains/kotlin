@@ -35,15 +35,14 @@ class ImportableFqNameClassifier(private val file: KtFile) {
         for (import in file.importDirectives) {
             val importPath = import.importPath ?: continue
             val fqName = importPath.fqName
-            if (importPath.isAllUnder) {
-                allUnderImports.add(fqName)
-            }
-            else if (!importPath.hasAlias()) {
-                preciseImports.add(fqName)
-                preciseImportPackages.add(fqName.parent())
-            } else {
-                excludedImports.add(fqName)
-                // TODO: support aliased imports in completion
+            when {
+                importPath.isAllUnder -> allUnderImports.add(fqName)
+                !importPath.hasAlias() -> {
+                    preciseImports.add(fqName)
+                    preciseImportPackages.add(fqName.parent())
+                }
+                else -> excludedImports.add(fqName)
+            // TODO: support aliased imports in completion
             }
         }
     }

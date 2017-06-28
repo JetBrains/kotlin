@@ -168,14 +168,11 @@ data class IfThenToSelectData(
             if (condition is KtIsExpression) newReceiver!! else baseClause
         }
         else {
-            if (condition is KtIsExpression) {
-                (baseClause as KtDotQualifiedExpression).replaceFirstReceiver(
+            when {
+                condition is KtIsExpression -> (baseClause as KtDotQualifiedExpression).replaceFirstReceiver(
                         factory, newReceiver!!, safeAccess = true)
-            }
-            else if (hasImplicitReceiver()) {
-                factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
-            } else {
-                baseClause.insertSafeCalls(factory)
+                hasImplicitReceiver() -> factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
+                else -> baseClause.insertSafeCalls(factory)
             }
         }
     }

@@ -100,16 +100,20 @@ class ReplaceInfixOrOperatorCallFix(
             val parent = expression.parent
             return when (parent) {
                 is KtBinaryExpression -> {
-                    if (parent.left == null || parent.right == null) null
-                    else if (parent.operationToken == KtTokens.EQ) null
-                    else if (parent.operationToken in OperatorConventions.COMPARISON_OPERATIONS) null
-                    else ReplaceInfixOrOperatorCallFix(parent, parent.shouldHaveNotNullType())
+                    when {
+                        parent.left == null || parent.right == null -> null
+                        parent.operationToken == KtTokens.EQ -> null
+                        parent.operationToken in OperatorConventions.COMPARISON_OPERATIONS -> null
+                        else -> ReplaceInfixOrOperatorCallFix(parent, parent.shouldHaveNotNullType())
+                    }
                 }
                 is KtCallExpression -> {
-                    if (parent.calleeExpression == null) null
-                    else if (parent.parent is KtQualifiedExpression) null
-                    else if (parent.getResolvedCall(parent.analyze())?.getImplicitReceiverValue() != null) null
-                    else ReplaceInfixOrOperatorCallFix(parent, parent.shouldHaveNotNullType())
+                    when {
+                        parent.calleeExpression == null -> null
+                        parent.parent is KtQualifiedExpression -> null
+                        parent.getResolvedCall(parent.analyze())?.getImplicitReceiverValue() != null -> null
+                        else -> ReplaceInfixOrOperatorCallFix(parent, parent.shouldHaveNotNullType())
+                    }
                 }
                 else -> null
             }

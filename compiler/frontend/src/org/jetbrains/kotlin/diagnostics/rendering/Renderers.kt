@@ -458,7 +458,11 @@ object Renderers {
 
     private fun renderTypeBounds(typeBounds: TypeBounds, short: Boolean): String {
         val renderBound = { bound: Bound ->
-            val arrow = if (bound.kind == LOWER_BOUND) ">: " else if (bound.kind == UPPER_BOUND) "<: " else ":= "
+            val arrow = when (bound.kind) {
+                LOWER_BOUND -> ">: "
+                UPPER_BOUND -> "<: "
+                else -> ":= "
+            }
             val renderer = if (short) DescriptorRenderer.SHORT_NAMES_IN_TYPES else DescriptorRenderer.FQ_NAMES_IN_TYPES
             val renderedBound = arrow + renderer.renderType(bound.constrainingType) +  if (!bound.isProper) "*" else ""
             if (short) renderedBound else renderedBound + '(' + bound.position + ')'

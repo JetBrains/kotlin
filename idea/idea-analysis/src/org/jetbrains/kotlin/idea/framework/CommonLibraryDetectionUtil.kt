@@ -49,12 +49,11 @@ object CommonLibraryDetectionUtil {
 
             var platform: TargetPlatform? = null
             VfsUtilCore.processFilesRecursively(root) { file ->
-                if (file.fileType == JavaClassFileType.INSTANCE)
-                    platform = JvmPlatform
-                else if (isKotlinMetadataFile(file))
-                    platform = TargetPlatform.Default
-                else if (KotlinJavaScriptLibraryDetectionUtil.isJsFileWithMetadata(file))
-                    platform = JsPlatform
+                when {
+                    file.fileType == JavaClassFileType.INSTANCE -> platform = JvmPlatform
+                    isKotlinMetadataFile(file) -> platform = TargetPlatform.Default
+                    KotlinJavaScriptLibraryDetectionUtil.isJsFileWithMetadata(file) -> platform = JsPlatform
+                }
 
                 platform == null
             }

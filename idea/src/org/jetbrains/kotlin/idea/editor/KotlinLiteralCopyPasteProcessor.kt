@@ -187,33 +187,33 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
         val wrapped = '"' + input.substring(from) + '"'
         val lexer = KotlinLexer().apply { start(wrapped) }.apply { advance() }
 
-        if (lexer.tokenType == KtTokens.SHORT_TEMPLATE_ENTRY_START) {
-            lexer.advance()
-            return if (lexer.tokenType == KtTokens.IDENTIFIER) {
-                from + lexer.tokenEnd - 1
-            }
-            else {
-                -1
-            }
-        }
-        else if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
-            var depth = 0
-            while (lexer.tokenType != null) {
-                if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
-                    depth++
-                }
-                else if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_END) {
-                    depth--
-                    if (depth == 0) {
-                        return from + lexer.currentPosition.offset
-                    }
-                }
+        when (lexer.tokenType) {
+            KtTokens.SHORT_TEMPLATE_ENTRY_START -> {
                 lexer.advance()
+                return if (lexer.tokenType == KtTokens.IDENTIFIER) {
+                    from + lexer.tokenEnd - 1
+                }
+                else {
+                    -1
+                }
             }
-            return -1
-        }
-        else {
-            return -1
+            KtTokens.LONG_TEMPLATE_ENTRY_START -> {
+                var depth = 0
+                while (lexer.tokenType != null) {
+                    if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
+                        depth++
+                    }
+                    else if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_END) {
+                        depth--
+                        if (depth == 0) {
+                            return from + lexer.currentPosition.offset
+                        }
+                    }
+                    lexer.advance()
+                }
+                return -1
+            }
+            else -> return -1
         }
     }
 

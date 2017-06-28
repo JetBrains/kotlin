@@ -168,25 +168,27 @@ private fun <C : Candidate> createSimpleProcessor(
         classValueReceiver: Boolean,
         collectCandidates: CandidatesCollector
 ) : ScopeTowerProcessor<C> {
-    if (explicitReceiver is ReceiverValueWithSmartCastInfo) {
-        return ExplicitReceiverScopeTowerProcessor(scopeTower, context, explicitReceiver, collectCandidates)
-    }
-    else if (explicitReceiver is QualifierReceiver) {
-        val qualifierProcessor = QualifierScopeTowerProcessor(scopeTower, context, explicitReceiver, collectCandidates)
-        if (!classValueReceiver) return qualifierProcessor
-
-        // todo enum entry, object.
-        val classValue = explicitReceiver.classValueReceiverWithSmartCastInfo ?: return qualifierProcessor
-        return CompositeScopeTowerProcessor(
-                qualifierProcessor,
-                ExplicitReceiverScopeTowerProcessor(scopeTower, context, classValue, collectCandidates)
-        )
-    }
-    else {
-        assert(explicitReceiver == null) {
-            "Illegal explicit receiver: $explicitReceiver(${explicitReceiver!!::class.java.simpleName})"
+    return when (explicitReceiver) {
+        is ReceiverValueWithSmartCastInfo -> {
+            ExplicitReceiverScopeTowerProcessor(scopeTower, context, explicitReceiver, collectCandidates)
         }
-        return NoExplicitReceiverScopeTowerProcessor(context, collectCandidates)
+        is QualifierReceiver -> {
+            val qualifierProcessor = QualifierScopeTowerProcessor(scopeTower, context, explicitReceiver, collectCandidates)
+            if (!classValueReceiver) return qualifierProcessor
+
+            // todo enum entry, object.
+            val classValue = explicitReceiver.classValueReceiverWithSmartCastInfo ?: return qualifierProcessor
+            CompositeScopeTowerProcessor(
+                    qualifierProcessor,
+                    ExplicitReceiverScopeTowerProcessor(scopeTower, context, classValue, collectCandidates)
+            )
+        }
+        else -> {
+            assert(explicitReceiver == null) {
+                "Illegal explicit receiver: $explicitReceiver(${explicitReceiver!!::class.java.simpleName})"
+            }
+            NoExplicitReceiverScopeTowerProcessor(context, collectCandidates)
+        }
     }
 }
 

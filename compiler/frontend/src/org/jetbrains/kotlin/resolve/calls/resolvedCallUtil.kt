@@ -50,18 +50,18 @@ fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
     if (resultingDescriptor.dispatchReceiverParameter == null || dispatchReceiverValue == null) return true
 
     var dispatchReceiverDescriptor: DeclarationDescriptor? = null
-    if (dispatchReceiverValue is ImplicitReceiver) {
-        // foo() -- implicit receiver
-        dispatchReceiverDescriptor = dispatchReceiverValue.declarationDescriptor
-    }
-    else if (dispatchReceiverValue is ClassValueReceiver) {
-        dispatchReceiverDescriptor = dispatchReceiverValue.classQualifier.descriptor
-    }
-    else if (dispatchReceiverValue is ExpressionReceiver) {
-        val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.expression)
-        if (expression is KtThisExpression) {
-            // this.foo() -- explicit receiver
-            dispatchReceiverDescriptor = context.get(BindingContext.REFERENCE_TARGET, expression.instanceReference)
+    when (dispatchReceiverValue) {
+        is ImplicitReceiver -> // foo() -- implicit receiver
+            dispatchReceiverDescriptor = dispatchReceiverValue.declarationDescriptor
+        is ClassValueReceiver -> {
+            dispatchReceiverDescriptor = dispatchReceiverValue.classQualifier.descriptor
+        }
+        is ExpressionReceiver -> {
+            val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.expression)
+            if (expression is KtThisExpression) {
+                // this.foo() -- explicit receiver
+                dispatchReceiverDescriptor = context.get(BindingContext.REFERENCE_TARGET, expression.instanceReference)
+            }
         }
     }
 

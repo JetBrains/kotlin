@@ -418,19 +418,19 @@ class DeclarationsChecker(
         FiniteBoundRestrictionChecker.check(aClass, classDescriptor, trace)
         NonExpansiveInheritanceRestrictionChecker.check(aClass, classDescriptor, trace)
 
-        if (aClass.isInterface()) {
-            checkConstructorInInterface(aClass)
-            checkMethodsOfAnyInInterface(classDescriptor)
-            if (aClass.isLocal && classDescriptor.containingDeclaration !is ClassDescriptor) {
-                trace.report(LOCAL_INTERFACE_NOT_ALLOWED.on(aClass, classDescriptor))
+        when {
+            aClass.isInterface() -> {
+                checkConstructorInInterface(aClass)
+                checkMethodsOfAnyInInterface(classDescriptor)
+                if (aClass.isLocal && classDescriptor.containingDeclaration !is ClassDescriptor) {
+                    trace.report(LOCAL_INTERFACE_NOT_ALLOWED.on(aClass, classDescriptor))
+                }
             }
-        }
-        else if (classDescriptor.kind == ClassKind.ANNOTATION_CLASS) {
-            checkAnnotationClassWithBody(aClass)
-            checkValOnAnnotationParameter(aClass)
-        }
-        else if (aClass is KtEnumEntry) {
-            checkEnumEntry(aClass, classDescriptor)
+            classDescriptor.kind == ClassKind.ANNOTATION_CLASS -> {
+                checkAnnotationClassWithBody(aClass)
+                checkValOnAnnotationParameter(aClass)
+            }
+            aClass is KtEnumEntry -> checkEnumEntry(aClass, classDescriptor)
         }
     }
 
@@ -692,17 +692,11 @@ class DeclarationsChecker(
         val delegate = property.delegate
         val isHeader = propertyDescriptor.isHeader
         if (initializer != null) {
-            if (inInterface) {
-                trace.report(PROPERTY_INITIALIZER_IN_INTERFACE.on(initializer))
-            }
-            else if (isHeader) {
-                trace.report(HEADER_PROPERTY_INITIALIZER.on(initializer))
-            }
-            else if (!backingFieldRequired) {
-                trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer))
-            }
-            else if (property.receiverTypeReference != null) {
-                trace.report(EXTENSION_PROPERTY_WITH_BACKING_FIELD.on(initializer))
+            when {
+                inInterface -> trace.report(PROPERTY_INITIALIZER_IN_INTERFACE.on(initializer))
+                isHeader -> trace.report(HEADER_PROPERTY_INITIALIZER.on(initializer))
+                !backingFieldRequired -> trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer))
+                property.receiverTypeReference != null -> trace.report(EXTENSION_PROPERTY_WITH_BACKING_FIELD.on(initializer))
             }
         }
         else if (delegate != null) {

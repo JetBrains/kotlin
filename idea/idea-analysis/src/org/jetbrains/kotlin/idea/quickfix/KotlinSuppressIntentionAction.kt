@@ -129,16 +129,12 @@ class KotlinSuppressIntentionAction private constructor(
         val args = entry.valueArgumentList
         val psiFactory = KtPsiFactory(entry)
         val newArgList = psiFactory.createCallArguments("($id)")
-        if (args == null) {
-            // new argument list
-            entry.addAfter(newArgList, entry.lastChild)
-        }
-        else if (args.arguments.isEmpty()) {
-            // replace '()' with a new argument list
-            args.replace(newArgList)
-        }
-        else {
-            args.addArgument(newArgList.arguments[0])
+        when {
+            args == null -> // new argument list
+                entry.addAfter(newArgList, entry.lastChild)
+            args.arguments.isEmpty() -> // replace '()' with a new argument list
+                args.replace(newArgList)
+            else -> args.addArgument(newArgList.arguments[0])
         }
     }
 

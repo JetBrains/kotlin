@@ -1123,15 +1123,10 @@ class ControlFlowInformationProvider private constructor(
                 kind
             }
             else {
-                if (check(kind, existingKind, IN_TRY, TAIL_CALL)) {
-                    IN_TRY
-                }
-                else if (check(kind, existingKind, IN_TRY, NON_TAIL)) {
-                    IN_TRY
-                }
-                else {
-                    // TAIL_CALL, NON_TAIL
-                    NON_TAIL
+                when {
+                    check(kind, existingKind, IN_TRY, TAIL_CALL) -> IN_TRY
+                    check(kind, existingKind, IN_TRY, NON_TAIL) -> IN_TRY
+                    else -> NON_TAIL // TAIL_CALL, NON_TAIL
                 }
             }
         }

@@ -212,14 +212,13 @@ class OptimizedImportsBuilder(
         val explicitImportPath = ImportPath(fqName, false)
         val starImportPath = ImportPath(fqName.parent(), true)
         val importPaths = file.importDirectives.map { it.importPath }
-        if (explicitImportPath in importPaths) {
-            importRules.add(ImportRule.Add(explicitImportPath))
-        }
-        else if (starImportPath in importPaths) {
-            importRules.add(ImportRule.Add(starImportPath))
-        }
-        else { // there is no import for this descriptor in the original import list, so do not allow to import it by star-import
-            importRules.add(ImportRule.DoNotAdd(starImportPath))
+        when {
+            explicitImportPath in importPaths ->
+                importRules.add(ImportRule.Add(explicitImportPath))
+            starImportPath in importPaths ->
+                importRules.add(ImportRule.Add(starImportPath))
+            else -> // there is no import for this descriptor in the original import list, so do not allow to import it by star-import
+                importRules.add(ImportRule.DoNotAdd(starImportPath))
         }
     }
 
@@ -277,14 +276,10 @@ class OptimizedImportsBuilder(
         val iterator1 = tower1.iterator()
         val iterator2 = tower2.iterator()
         while (true) {
-            if (!iterator1.hasNext()) {
-                return !iterator2.hasNext()
-            }
-            else if (!iterator2.hasNext()) {
-                return false
-            }
-            else {
-                if (!areTargetsEqual(iterator1.next(), iterator2.next())) return false
+            when {
+                !iterator1.hasNext() -> return !iterator2.hasNext()
+                !iterator2.hasNext() -> return false
+                else -> if (!areTargetsEqual(iterator1.next(), iterator2.next())) return false
             }
         }
     }

@@ -116,14 +116,10 @@ class MaxOrMinTransformation(
             val functionName = if (isMax) "max" else "min"
             val arguments = assignment.right.extractStaticFunctionCallArguments("java.lang.Math." + functionName) ?: return null
             if (arguments.size != 2) return null
-            val value = if (arguments[0].isVariableReference(variableInitialization.variable)) {
-                arguments[1] ?: return null
-            }
-            else if (arguments[1].isVariableReference(variableInitialization.variable)) {
-                arguments[0] ?: return null
-            }
-            else {
-                return null
+            val value = when {
+                arguments[0].isVariableReference(variableInitialization.variable) -> arguments[1] ?: return null
+                arguments[1].isVariableReference(variableInitialization.variable) -> arguments[0] ?: return null
+                else -> return null
             }
 
             val mapTransformation = if (value.isVariableReference(state.inputVariable))
@@ -148,14 +144,10 @@ class MaxOrMinTransformation(
             if (comparison !in setOf(KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ)) return null
             val left = condition.left as? KtNameReferenceExpression ?: return null
             val right = condition.right as? KtNameReferenceExpression ?: return null
-            val otherHand = if (left.isVariableReference(inputVariable)) {
-                right
-            }
-            else if (right.isVariableReference(inputVariable)) {
-                left
-            }
-            else {
-                return null
+            val otherHand = when {
+                left.isVariableReference(inputVariable) -> right
+                right.isVariableReference(inputVariable) -> left
+                else -> return null
             }
 
             val variableInitialization = otherHand.findVariableInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = false)
@@ -163,14 +155,10 @@ class MaxOrMinTransformation(
 
             if (!assignmentTarget.isVariableReference(variableInitialization.variable)) return null
 
-            val valueToBeVariable = if (valueAssignedIfTrue.isVariableReference(inputVariable)) {
-                valueAssignedIfFalse
-            }
-            else if (valueAssignedIfFalse.isVariableReference(inputVariable)) {
-                valueAssignedIfTrue
-            }
-            else {
-                return null
+            val valueToBeVariable = when {
+                valueAssignedIfTrue.isVariableReference(inputVariable) -> valueAssignedIfFalse
+                valueAssignedIfFalse.isVariableReference(inputVariable) -> valueAssignedIfTrue
+                else -> return null
             }
             if (valueToBeVariable != null && !valueToBeVariable.isVariableReference(variableInitialization.variable)) return null
 

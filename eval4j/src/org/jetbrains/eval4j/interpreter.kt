@@ -181,13 +181,10 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
 
             CHECKCAST -> {
                 val targetType = Type.getObjectType((insn as TypeInsnNode).desc)
-                if (value == NULL_VALUE) {
-                    NULL_VALUE
-                } else if (eval.isInstanceOf(value, targetType)) {
-                    ObjectValue(value.obj(), targetType)
-                }
-                else {
-                    throwEvalException(ClassCastException("${value.asmType.className} cannot be cast to ${targetType.className}"))
+                when {
+                    value == NULL_VALUE -> NULL_VALUE
+                    eval.isInstanceOf(value, targetType) -> ObjectValue(value.obj(), targetType)
+                    else -> throwEvalException(ClassCastException("${value.asmType.className} cannot be cast to ${targetType.className}"))
                 }
             }
 

@@ -387,14 +387,10 @@ private class PropertyDetector(
             modifiers.add(Modifier.OVERRIDE)
         }
 
-        if (getMethod != null) {
-            modifiers.addIfNotNull(getterModifiers.accessModifier())
-        }
-        else if (setMethod != null) {
-            modifiers.addIfNotNull(getterModifiers.accessModifier())
-        }
-        else {
-            modifiers.addIfNotNull(fieldModifiers.accessModifier())
+        when {
+            getMethod != null -> modifiers.addIfNotNull(getterModifiers.accessModifier())
+            setMethod != null -> modifiers.addIfNotNull(getterModifiers.accessModifier())
+            else -> modifiers.addIfNotNull(fieldModifiers.accessModifier())
         }
 
         val prototypes = listOfNotNull<PsiElement>(field, getMethod, setMethod)
@@ -432,16 +428,20 @@ private class PropertyDetector(
         val superMethod = converter.services.superMethodsSearcher.findDeepestSuperMethods(getOrSetMethod).firstOrNull() ?: return null
 
         val containingClass = superMethod.containingClass!!
-        if (converter.inConversionScope(containingClass)) {
-            val propertyInfo = converter.propertyDetectionCache[containingClass][superMethod]
-            return if (propertyInfo != null) SuperInfo.Property(propertyInfo.isVar, propertyInfo.name, propertyInfo.modifiers.contains(Modifier.ABSTRACT)) else SuperInfo.Function
-        }
-        else if (superMethod is KtLightMethod) {
-            val origin = superMethod.kotlinOrigin
-            return if (origin is KtProperty) SuperInfo.Property(origin.isVar, origin.name ?: "", origin.hasModifier(KtTokens.ABSTRACT_KEYWORD)) else SuperInfo.Function
-        }
-        else {
-            return SuperInfo.Function
+        return when {
+            converter.inConversionScope(containingClass) -> {
+                val propertyInfo = converter.propertyDetectionCache[containingClass][superMethod]
+                if (propertyInfo != null) SuperInfo.Property(propertyInfo.isVar, propertyInfo.name, propertyInfo.modifiers.contains(Modifier.ABSTRACT))
+                else SuperInfo.Function
+            }
+            superMethod is KtLightMethod -> {
+                val origin = superMethod.kotlinOrigin
+                if (origin is KtProperty) SuperInfo.Property(origin.isVar, origin.name ?: "", origin.hasModifier(KtTokens.ABSTRACT_KEYWORD))
+                else SuperInfo.Function
+            }
+            else -> {
+                SuperInfo.Function
+            }
         }
     }
 

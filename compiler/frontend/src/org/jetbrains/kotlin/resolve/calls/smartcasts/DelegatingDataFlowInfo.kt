@@ -283,9 +283,11 @@ internal class DelegatingDataFlowInfo private constructor(
     private fun Set<KotlinType>.containsNothing() = any { KotlinBuiltIns.isNothing(it) }
 
     private fun Set<KotlinType>.intersect(other: Set<KotlinType>) =
-            if (other.containsNothing()) this
-            else if (this.containsNothing()) other
-            else Sets.intersection(this, other)
+            when {
+                other.containsNothing() -> this
+                this.containsNothing() -> other
+                else -> Sets.intersection(this, other)
+            }
 
     override fun or(other: DataFlowInfo): DataFlowInfo {
         if (other === DataFlowInfo.EMPTY) return DataFlowInfo.EMPTY

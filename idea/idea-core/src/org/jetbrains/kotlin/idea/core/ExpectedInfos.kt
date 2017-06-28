@@ -343,12 +343,11 @@ class ExpectedInfos(
         }
 
         val tail = if (argumentName == null) {
-            if (parameter == parameters.last())
-                rparenthTail
-            else if (parameters.dropWhile { it != parameter }.drop(1).any(::needCommaForParameter))
-                Tail.COMMA
-            else
-                null
+            when {
+                parameter == parameters.last() -> rparenthTail
+                parameters.dropWhile { it != parameter }.drop(1).any(::needCommaForParameter) -> Tail.COMMA
+                else -> null
+            }
         }
         else {
             namedArgumentTail(argumentToParameter, argumentName, descriptor)
@@ -404,12 +403,11 @@ class ExpectedInfos(
     private fun namedArgumentTail(argumentToParameter: Map<ValueArgument, ValueParameterDescriptor>, argumentName: Name, descriptor: FunctionDescriptor): Tail? {
         val usedParameterNames = (argumentToParameter.values.map { it.name } + listOf(argumentName)).toSet()
         val notUsedParameters = descriptor.valueParameters.filter { it.name !in usedParameterNames }
-        return if (notUsedParameters.isEmpty())
-            Tail.RPARENTH // named arguments no supported for []
-        else if (notUsedParameters.all { it.hasDefaultValue() })
-            null
-        else
-            Tail.COMMA
+        return when {
+            notUsedParameters.isEmpty() -> Tail.RPARENTH // named arguments no supported for []
+            notUsedParameters.all { it.hasDefaultValue() } -> null
+            else -> Tail.COMMA
+        }
     }
 
     private fun calculateForEqAndAssignment(expressionWithType: KtExpression): Collection<ExpectedInfo>? {

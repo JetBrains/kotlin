@@ -266,12 +266,14 @@ class TypeConverter(val converter: Converter) {
 
         override fun fromAnnotations(owner: PsiModifierListOwner): Nullability {
             val manager = NullableNotNullManager.getInstance(owner.project)
-            return if (manager.isNotNull(owner, false/* we do not check bases because they are checked by callers of this method*/))
-                Nullability.NotNull
-            else if (manager.isNullable(owner, false))
-                Nullability.Nullable
-            else
-                Nullability.Default
+            return when {
+                manager.isNotNull(owner, false/* we do not check bases because they are checked by callers of this method*/) ->
+                    Nullability.NotNull
+                manager.isNullable(owner, false) ->
+                    Nullability.Nullable
+                else ->
+                    Nullability.Default
+            }
         }
 
         override fun forVariableTypeBeforeUsageSearch(variable: PsiVariable): Nullability {

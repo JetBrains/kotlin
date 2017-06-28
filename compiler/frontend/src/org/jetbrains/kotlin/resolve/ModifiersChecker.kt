@@ -340,14 +340,10 @@ object ModifierCheckerCore {
                 checkCompatibility(trace, first, second, list.owner, incorrectNodes)
             }
             if (second !in incorrectNodes) {
-                if (!checkTarget(trace, second, actualTargets)) {
-                    incorrectNodes += second
-                }
-                else if (!checkParent(trace, second, parentDescriptor)) {
-                    incorrectNodes += second
-                }
-                else if (!checkLanguageLevelSupport(trace, second, languageVersionSettings, actualTargets)) {
-                    incorrectNodes += second
+                when {
+                    !checkTarget(trace, second, actualTargets) -> incorrectNodes += second
+                    !checkParent(trace, second, parentDescriptor) -> incorrectNodes += second
+                    !checkLanguageLevelSupport(trace, second, languageVersionSettings, actualTargets) -> incorrectNodes += second
                 }
             }
         }

@@ -96,32 +96,29 @@ class CompletionBindingContextProvider(project: Project) {
         val psiElementsBeforeAndAfter = modificationScope?.let { collectPsiElementsBeforeAndAfter(modificationScope, inStatement) }
 
         val prevCompletionData = prevCompletionDataCache.value.data
-        if (prevCompletionData == null) {
-            log("No up-to-date data from previous completion\n")
-        }
-        else if (block != prevCompletionData.block) {
-            log("Not in the same block\n")
-        }
-        else if (prevStatement != prevCompletionData.prevStatement) {
-            log("Previous statement is not the same\n")
-        }
-        else if (psiElementsBeforeAndAfter != prevCompletionData.psiElementsBeforeAndAfter) {
-            log("PSI-tree has changed inside current scope\n")
-        }
-        else if (inStatement.isTooComplex()) {
-            log("Current statement is too complex to use optimization\n")
-        }
-        else {
-            log("Statement position is the same - analyzing only one statement:\n${inStatement.text.prependIndent("    ")}\n")
-            LOG.debug("Reusing data from completion of \"${prevCompletionData.debugText}\"")
+        when {
+            prevCompletionData == null ->
+                log("No up-to-date data from previous completion\n")
+            block != prevCompletionData.block ->
+                log("Not in the same block\n")
+            prevStatement != prevCompletionData.prevStatement ->
+                log("Previous statement is not the same\n")
+            psiElementsBeforeAndAfter != prevCompletionData.psiElementsBeforeAndAfter ->
+                log("PSI-tree has changed inside current scope\n")
+            inStatement.isTooComplex() ->
+                log("Current statement is too complex to use optimization\n")
+            else -> {
+                log("Statement position is the same - analyzing only one statement:\n${inStatement.text.prependIndent("    ")}\n")
+                LOG.debug("Reusing data from completion of \"${prevCompletionData.debugText}\"")
 
-            //TODO: expected type?
-            val statementContext = inStatement.analyzeInContext(scope = prevCompletionData.statementResolutionScope,
-                                                                contextExpression = block,
-                                                                dataFlowInfo = prevCompletionData.statementDataFlowInfo,
-                                                                isStatement = true)
-            // we do not update prevCompletionDataCache because the same data should work
-            return CompositeBindingContext.create(listOf(statementContext, prevCompletionData.bindingContext))
+                //TODO: expected type?
+                val statementContext = inStatement.analyzeInContext(scope = prevCompletionData.statementResolutionScope,
+                                                                    contextExpression = block,
+                                                                    dataFlowInfo = prevCompletionData.statementDataFlowInfo,
+                                                                    isStatement = true)
+                // we do not update prevCompletionDataCache because the same data should work
+                return CompositeBindingContext.create(listOf(statementContext, prevCompletionData.bindingContext))
+            }
         }
 
         val bindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<KtElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)

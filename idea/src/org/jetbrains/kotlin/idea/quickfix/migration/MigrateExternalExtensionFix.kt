@@ -96,19 +96,23 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
         val nativeAnnotations = ArrayList<KtAnnotationEntry>()
 
         declaration.modifierList?.annotationEntries?.forEach {
-            if (it.isJsAnnotation(PredefinedAnnotation.NATIVE_GETTER)) {
-                isGetter = true
-                nativeAnnotations.add(it)
-            } else if (it.isJsAnnotation(PredefinedAnnotation.NATIVE_SETTER)) {
-                isSetter = true
-                nativeAnnotations.add(it)
-            } else if (it.isJsAnnotation(PredefinedAnnotation.NATIVE_INVOKE)) {
-                isInvoke = true
-                nativeAnnotations.add(it)
-            } else if (it.isJsAnnotation(PredefinedAnnotation.NATIVE)) {
-                nativeAnnotations.add(it)
-                nativeAnnotation = it
-
+            when {
+                it.isJsAnnotation(PredefinedAnnotation.NATIVE_GETTER) -> {
+                    isGetter = true
+                    nativeAnnotations.add(it)
+                }
+                it.isJsAnnotation(PredefinedAnnotation.NATIVE_SETTER) -> {
+                    isSetter = true
+                    nativeAnnotations.add(it)
+                }
+                it.isJsAnnotation(PredefinedAnnotation.NATIVE_INVOKE) -> {
+                    isInvoke = true
+                    nativeAnnotations.add(it)
+                }
+                it.isJsAnnotation(PredefinedAnnotation.NATIVE) -> {
+                    nativeAnnotations.add(it)
+                    nativeAnnotation = it
+                }
             }
         }
         return JsNativeAnnotations(nativeAnnotations, nativeAnnotation, isGetter, isSetter, isInvoke)
@@ -122,30 +126,35 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
         val ktPsiFactory = KtPsiFactory(declaration)
         val body = ktPsiFactory.buildExpression {
             appendName(Name.identifier("asDynamic"))
-            if (annotations.isGetter) {
-                appendFixedText("()")
-                if (declaration is KtNamedFunction) {
-                    appendParameters(declaration, "[", "]")
-                }
-            } else if (annotations.isSetter) {
-                appendFixedText("()")
-                if (declaration is KtNamedFunction) {
-                    appendParameters(declaration, "[", "]", skipLast = true)
-                    declaration.valueParameters.last().nameAsName?.let {
-                        appendFixedText(" = ")
-                        appendName(it)
+            when {
+                annotations.isGetter -> {
+                    appendFixedText("()")
+                    if (declaration is KtNamedFunction) {
+                        appendParameters(declaration, "[", "]")
                     }
                 }
-            } else if (annotations.isInvoke) {
-                appendFixedText("()")
-                if (declaration is KtNamedFunction) {
-                    appendParameters(declaration, "(", ")")
+                annotations.isSetter -> {
+                    appendFixedText("()")
+                    if (declaration is KtNamedFunction) {
+                        appendParameters(declaration, "[", "]", skipLast = true)
+                        declaration.valueParameters.last().nameAsName?.let {
+                            appendFixedText(" = ")
+                            appendName(it)
+                        }
+                    }
                 }
-            } else {
-                appendFixedText("().")
-                appendName(name)
-                if (declaration is KtNamedFunction) {
-                    appendParameters(declaration, "(", ")")
+                annotations.isInvoke -> {
+                    appendFixedText("()")
+                    if (declaration is KtNamedFunction) {
+                        appendParameters(declaration, "(", ")")
+                    }
+                }
+                else -> {
+                    appendFixedText("().")
+                    appendName(name)
+                    if (declaration is KtNamedFunction) {
+                        appendParameters(declaration, "(", ")")
+                    }
                 }
             }
         }

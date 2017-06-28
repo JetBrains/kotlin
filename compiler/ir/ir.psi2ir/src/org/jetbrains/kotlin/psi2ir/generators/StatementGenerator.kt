@@ -163,16 +163,18 @@ class StatementGenerator(
             }
             else {
                 val label = expression.getTargetLabel()
-                if (label != null) {
-                    val labelTarget = getOrFail(BindingContext.LABEL_TARGET, label)
-                    val labelTargetDescriptor = getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, labelTarget)
-                    labelTargetDescriptor as CallableDescriptor
-                }
-                else if (ExpressionTypingUtils.isFunctionLiteral(scopeOwner)) {
-                    BindingContextUtils.getContainingFunctionSkipFunctionLiterals(scopeOwner, true).first
-                }
-                else {
-                    scopeOwnerAsCallable()
+                when {
+                    label != null -> {
+                        val labelTarget = getOrFail(BindingContext.LABEL_TARGET, label)
+                        val labelTargetDescriptor = getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, labelTarget)
+                        labelTargetDescriptor as CallableDescriptor
+                    }
+                    ExpressionTypingUtils.isFunctionLiteral(scopeOwner) -> {
+                        BindingContextUtils.getContainingFunctionSkipFunctionLiterals(scopeOwner, true).first
+                    }
+                    else -> {
+                        scopeOwnerAsCallable()
+                    }
                 }
             }
 

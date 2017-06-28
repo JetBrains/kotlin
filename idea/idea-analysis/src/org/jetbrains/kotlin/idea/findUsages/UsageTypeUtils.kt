@@ -101,11 +101,18 @@ object UsageTypeUtils {
                     CLASS_CAST_TO
 
                 with(refExpr.getNonStrictParentOfType<KtDotQualifiedExpression>()) {
-                    if (this == null) false
-                    else if (receiverExpression == refExpr) true
-                    else
-                        selectorExpression == refExpr
-                        && getParentOfTypeAndBranch<KtDotQualifiedExpression>(strict = true) { receiverExpression } != null
+                    when {
+                        this == null -> {
+                            false
+                        }
+                        receiverExpression == refExpr -> {
+                            true
+                        }
+                        else -> {
+                            selectorExpression == refExpr
+                            && getParentOfTypeAndBranch<KtDotQualifiedExpression>(strict = true) { receiverExpression } != null
+                        }
+                    }
                 } ->
                     CLASS_OBJECT_ACCESS
 

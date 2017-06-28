@@ -95,12 +95,10 @@ class KotlinTypes(
         if (extendsBound != null && extendsBound !is JePsiType) illegalArg("extendsBound should have PsiType")
         if (superBound != null && superBound !is JePsiType) illegalArg("superBound should have PsiType")
         
-        return JeWildcardType(if (extendsBound != null) {
-            PsiWildcardType.createExtends(psiManager(), (extendsBound as JePsiType).psiType)
-        } else if (superBound != null) {
-            PsiWildcardType.createSuper(psiManager(), (superBound as JePsiType).psiType)
-        } else {
-            PsiWildcardType.createUnbounded(psiManager())
+        return JeWildcardType(when {
+            extendsBound != null -> PsiWildcardType.createExtends(psiManager(), (extendsBound as JePsiType).psiType)
+            superBound != null -> PsiWildcardType.createSuper(psiManager(), (superBound as JePsiType).psiType)
+            else -> PsiWildcardType.createUnbounded(psiManager())
         }, isRaw = false)
     }
 

@@ -37,12 +37,11 @@ class FieldToPropertyProcessing(
             if (field.name != propertyName || replaceReadWithFieldReference || replaceWriteWithFieldReference) MyConvertedCodeProcessor() else null
 
     override var javaCodeProcessors =
-            if (field.hasModifierProperty(PsiModifier.PRIVATE))
-                emptyList()
-            else if (field.name != propertyName)
-                listOf(ElementRenamedCodeProcessor(propertyName), UseAccessorsJavaCodeProcessor())
-            else
-                listOf(UseAccessorsJavaCodeProcessor())
+            when {
+                field.hasModifierProperty(PsiModifier.PRIVATE) -> emptyList()
+                field.name != propertyName -> listOf(ElementRenamedCodeProcessor(propertyName), UseAccessorsJavaCodeProcessor())
+                else -> listOf(UseAccessorsJavaCodeProcessor())
+            }
 
     override val kotlinCodeProcessors =
             if (field.name != propertyName)

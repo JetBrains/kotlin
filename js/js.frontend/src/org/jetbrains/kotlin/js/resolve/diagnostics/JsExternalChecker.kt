@@ -222,15 +222,13 @@ object JsExternalChecker : SimpleDeclarationChecker {
     private fun KtDeclarationWithBody.hasValidExternalBody(bindingContext: BindingContext): Boolean {
         if (!hasBody()) return true
         val body = bodyExpression!!
-        return if (!hasBlockBody()) {
-            body.isDefinedExternallyExpression(bindingContext)
-        }
-        else if (body is KtBlockExpression) {
-            val statement = body.statements.singleOrNull() ?: return false
-            statement.isDefinedExternallyExpression(bindingContext)
-        }
-        else {
-            false
+        return when {
+            !hasBlockBody() -> body.isDefinedExternallyExpression(bindingContext)
+            body is KtBlockExpression -> {
+                val statement = body.statements.singleOrNull() ?: return false
+                statement.isDefinedExternallyExpression(bindingContext)
+            }
+            else -> false
         }
     }
 

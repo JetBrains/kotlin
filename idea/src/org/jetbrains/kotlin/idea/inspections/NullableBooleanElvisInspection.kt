@@ -72,7 +72,11 @@ class NullableBooleanElvisInspection : AbstractKotlinInspection(), CleanupLocalI
             val constPart = element.right as? KtConstantExpression ?: return
             val exprPart = element.left ?: return
 
-            val constValue = if (KtPsiUtil.isTrueConstant(constPart)) true else if (KtPsiUtil.isFalseConstant(constPart)) false else return
+            val constValue = when {
+                KtPsiUtil.isTrueConstant(constPart) -> true
+                KtPsiUtil.isFalseConstant(constPart) -> false
+                else -> return
+            }
             val equalityCheckExpression = element.replaced(KtPsiFactory(constPart).buildExpression {
                 appendExpression(exprPart)
                 appendFixedText(if (constValue) " != false" else " == true")

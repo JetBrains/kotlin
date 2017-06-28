@@ -122,33 +122,19 @@ class KotlinChangeSignatureData(
         }
     }
 
-    override fun getParameters(): List<KotlinParameterInfo> {
-        return parameters
+    override fun getParameters(): List<KotlinParameterInfo> = parameters
+
+    override fun getName() = when (baseDescriptor) {
+        is ConstructorDescriptor -> baseDescriptor.containingDeclaration.name.asString()
+        is AnonymousFunctionDescriptor -> ""
+        else -> baseDescriptor.name.asString()
     }
 
-    override fun getName(): String {
-        if (baseDescriptor is ConstructorDescriptor) {
-            return baseDescriptor.containingDeclaration.name.asString()
-        }
-        else if (baseDescriptor is AnonymousFunctionDescriptor) {
-            return ""
-        }
-        else {
-            return baseDescriptor.name.asString()
-        }
-    }
+    override fun getParametersCount(): Int = baseDescriptor.valueParameters.size
 
-    override fun getParametersCount(): Int {
-        return baseDescriptor.valueParameters.size
-    }
+    override fun getVisibility(): Visibility = baseDescriptor.visibility
 
-    override fun getVisibility(): Visibility {
-        return baseDescriptor.visibility
-    }
-
-    override fun getMethod(): PsiElement {
-        return baseDeclaration
-    }
+    override fun getMethod(): PsiElement = baseDeclaration
 
     override fun canChangeVisibility(): Boolean {
         if (DescriptorUtils.isLocal(baseDescriptor)) return false
@@ -156,15 +142,10 @@ class KotlinChangeSignatureData(
         return !(baseDescriptor is AnonymousFunctionDescriptor || parent is ClassDescriptor && parent.kind == ClassKind.INTERFACE)
     }
 
-    override fun canChangeParameters(): Boolean {
-        return true
-    }
+    override fun canChangeParameters() = true
 
-    override fun canChangeName(): Boolean {
-        return !(baseDescriptor is ConstructorDescriptor || baseDescriptor is AnonymousFunctionDescriptor)
-    }
+    override fun canChangeName() = !(baseDescriptor is ConstructorDescriptor || baseDescriptor is AnonymousFunctionDescriptor)
 
-    override fun canChangeReturnType(): MethodDescriptor.ReadWriteOption {
-        return if (baseDescriptor is ConstructorDescriptor) MethodDescriptor.ReadWriteOption.None else MethodDescriptor.ReadWriteOption.ReadWrite
-    }
+    override fun canChangeReturnType(): MethodDescriptor.ReadWriteOption =
+            if (baseDescriptor is ConstructorDescriptor) MethodDescriptor.ReadWriteOption.None else MethodDescriptor.ReadWriteOption.ReadWrite
 }

@@ -75,12 +75,12 @@ class MavenPluginSourcesMoveToExecutionIntention : PsiElementBaseIntentionAction
         val domElement = DomManager.getDomManager(project).getDomElement(tag) as? GenericDomValue<*> ?: return
         val dir = domElement.rawText ?: return
 
-        val relevantExecutions = if (domElement.getParentOfType(MavenDomBuild::class.java, false)?.sourceDirectory === domElement) {
-            pomFile.findKotlinExecutions(PomFile.KotlinGoals.Compile, PomFile.KotlinGoals.Js)
-        } else if (domElement.getParentOfType(MavenDomBuild::class.java, false)?.testSourceDirectory === domElement) {
-            pomFile.findKotlinExecutions(PomFile.KotlinGoals.TestCompile, PomFile.KotlinGoals.TestJs)
-        } else {
-            emptyList()
+        val relevantExecutions = when {
+            domElement.getParentOfType(MavenDomBuild::class.java, false)?.sourceDirectory === domElement ->
+                pomFile.findKotlinExecutions(PomFile.KotlinGoals.Compile, PomFile.KotlinGoals.Js)
+            domElement.getParentOfType(MavenDomBuild::class.java, false)?.testSourceDirectory === domElement ->
+                pomFile.findKotlinExecutions(PomFile.KotlinGoals.TestCompile, PomFile.KotlinGoals.TestJs)
+            else -> emptyList()
         }
 
         if (relevantExecutions.isNotEmpty()) {

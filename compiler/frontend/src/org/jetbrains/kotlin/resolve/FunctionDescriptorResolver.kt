@@ -122,14 +122,13 @@ class FunctionDescriptorResolver(
         assert(function.typeReference == null) {
             "Return type must be initialized early for function: " + function.text + ", at: " + DiagnosticUtils.atLocation(function) }
 
-        val returnType = if (function.hasBlockBody()) {
-            builtIns.unitType
-        }
-        else if (function.hasBody()) {
-            descriptorResolver.inferReturnTypeFromExpressionBody(trace, scope, dataFlowInfo, function, functionDescriptor)
-        }
-        else {
-            ErrorUtils.createErrorType("No type, no body")
+        val returnType = when {
+            function.hasBlockBody() ->
+                builtIns.unitType
+            function.hasBody() ->
+                descriptorResolver.inferReturnTypeFromExpressionBody(trace, scope, dataFlowInfo, function, functionDescriptor)
+            else ->
+                ErrorUtils.createErrorType("No type, no body")
         }
         functionDescriptor.setReturnType(returnType)
     }

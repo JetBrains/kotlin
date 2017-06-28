@@ -40,32 +40,34 @@ class KotlinRainbowVisitor : RainbowVisitor() {
     override fun clone() = KotlinRainbowVisitor()
 
     override fun visit(element: PsiElement) {
-        if (element.isRainbowDeclaration()) {
-            val rainbowElement = (element as KtNamedDeclaration).nameIdentifier ?: return
-            addRainbowHighlight(element, rainbowElement)
-        }
-        else if (element is KtSimpleNameExpression) {
-            val qualifiedExpression = PsiTreeUtil.getParentOfType(element, KtQualifiedExpression::class.java, true,
-                                                                  KtLambdaExpression::class.java, KtValueArgumentList::class.java)
-            if (qualifiedExpression?.selectorExpression?.isAncestor(element) == true) return
+        when {
+            element.isRainbowDeclaration() -> {
+                val rainbowElement = (element as KtNamedDeclaration).nameIdentifier ?: return
+                addRainbowHighlight(element, rainbowElement)
+            }
+            element is KtSimpleNameExpression -> {
+                val qualifiedExpression = PsiTreeUtil.getParentOfType(element, KtQualifiedExpression::class.java, true,
+                                                                      KtLambdaExpression::class.java, KtValueArgumentList::class.java)
+                if (qualifiedExpression?.selectorExpression?.isAncestor(element) == true) return
 
-            val bindingContext = element.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-            val targets = element.getReferenceTargets(bindingContext)
-            val targetVariable = targets.firstIsInstanceOrNull<VariableDescriptor>()
-            if (targetVariable != null) {
-                val targetElement = DescriptorToSourceUtils.getSourceFromDescriptor(targetVariable)
-                if (targetElement.isRainbowDeclaration()) {
-                    addRainbowHighlight(targetElement!!, element)
-                }
-                else if (targetElement == null && element.getReferencedName() == "it") {
-                    addRainbowHighlight(element, element)
+                val bindingContext = element.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+                val targets = element.getReferenceTargets(bindingContext)
+                val targetVariable = targets.firstIsInstanceOrNull<VariableDescriptor>()
+                if (targetVariable != null) {
+                    val targetElement = DescriptorToSourceUtils.getSourceFromDescriptor(targetVariable)
+                    if (targetElement.isRainbowDeclaration()) {
+                        addRainbowHighlight(targetElement!!, element)
+                    }
+                    else if (targetElement == null && element.getReferencedName() == "it") {
+                        addRainbowHighlight(element, element)
+                    }
                 }
             }
-        }
-        else if (element is KDocName) {
-            val target = element.reference?.resolve() ?: return
-            if (target.isRainbowDeclaration()) {
-                addRainbowHighlight(target, element, KDOC_LINK)
+            element is KDocName -> {
+                val target = element.reference?.resolve() ?: return
+                if (target.isRainbowDeclaration()) {
+                    addRainbowHighlight(target, element, KDOC_LINK)
+                }
             }
         }
     }

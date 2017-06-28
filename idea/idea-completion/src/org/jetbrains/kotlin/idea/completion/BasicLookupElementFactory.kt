@@ -276,12 +276,11 @@ class BasicLookupElementFactory(
                 appendTailText(" for $receiverPresentation")
 
                 val container = descriptor.containingDeclaration
-                val containerPresentation = if (container is ClassDescriptor)
-                    DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
-                else if (container is PackageFragmentDescriptor)
-                    container.fqName.toString()
-                else
-                    null
+                val containerPresentation = when (container) {
+                    is ClassDescriptor -> DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
+                    is PackageFragmentDescriptor -> container.fqName.toString()
+                    else -> null
+                }
                 if (containerPresentation != null) {
                     appendTailText(" in $containerPresentation")
                 }

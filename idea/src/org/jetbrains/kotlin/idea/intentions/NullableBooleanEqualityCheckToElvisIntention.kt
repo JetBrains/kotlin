@@ -47,7 +47,11 @@ class NullableBooleanEqualityCheckToElvisIntention : SelfTargetingIntention<KtBi
         val constPart = element.left as? KtConstantExpression ?:
                         element.right as? KtConstantExpression ?: return
         val exprPart = (if (element.right == constPart) element.left else element.right) ?: return
-        val constValue = if (KtPsiUtil.isTrueConstant(constPart)) true else if (KtPsiUtil.isFalseConstant(constPart)) false else return
+        val constValue = when {
+            KtPsiUtil.isTrueConstant(constPart) -> true
+            KtPsiUtil.isFalseConstant(constPart) -> false
+            else -> return
+        }
 
         val factory = KtPsiFactory(constPart)
         val elvis = factory.createExpressionByPattern("$0 ?: ${!constValue}", exprPart)

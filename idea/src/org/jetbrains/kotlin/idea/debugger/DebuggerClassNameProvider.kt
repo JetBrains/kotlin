@@ -120,26 +120,27 @@ class DebuggerClassNameProvider(
             }
             is KtClassOrObject -> {
                 val enclosingElementForLocal = runReadAction { KtPsiUtil.getEnclosingElementForLocalDeclaration(element) }
-                if (enclosingElementForLocal != null) { // A local class
-                    getOuterClassNamesForElement(enclosingElementForLocal)
-                }
-                else if (runReadAction { element.isObjectLiteral() }) {
-                    getOuterClassNamesForElement(element.relevantParentInReadAction)
-                }
-                else { // Guaranteed to be non-local class or object
-                    element.readAction {
-                        if (it is KtClass && runReadAction { it.isInterface() }) {
-                            val name = getNameForNonLocalClass(it)
+                when {
+                    enclosingElementForLocal != null ->
+                        // A local class
+                        getOuterClassNamesForElement(enclosingElementForLocal)
+                    runReadAction { element.isObjectLiteral() } ->
+                        getOuterClassNamesForElement(element.relevantParentInReadAction)
+                    else ->
+                        // Guaranteed to be non-local class or object
+                        element.readAction {
+                            if (it is KtClass && runReadAction { it.isInterface() }) {
+                                val name = getNameForNonLocalClass(it)
 
-                            if (name != null)
-                                Cached(listOf(name, name + JvmAbi.DEFAULT_IMPLS_SUFFIX))
-                            else
-                                ComputedClassNames.EMPTY
+                                if (name != null)
+                                    Cached(listOf(name, name + JvmAbi.DEFAULT_IMPLS_SUFFIX))
+                                else
+                                    ComputedClassNames.EMPTY
+                            }
+                            else {
+                                getNameForNonLocalClass(it)?.let { ComputedClassNames.Cached(it) } ?: ComputedClassNames.EMPTY
+                            }
                         }
-                        else {
-                            getNameForNonLocalClass(it)?.let { ComputedClassNames.Cached(it) } ?: ComputedClassNames.EMPTY
-                        }
-                    }
                 }
             }
             is KtProperty -> {

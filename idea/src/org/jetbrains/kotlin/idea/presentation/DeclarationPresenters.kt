@@ -54,14 +54,10 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
             qualifiedContainer
         }
         val receiverTypeRef = (declaration as? KtCallableDeclaration)?.receiverTypeReference
-        if (receiverTypeRef != null) {
-            return "(for " + receiverTypeRef.text + " in " + containerText + ")"
-        }
-        else if (parent is KtFile) {
-            return "(" + containerText + ")"
-        }
-        else {
-            return "(in " + containerText + ")"
+        return when {
+            receiverTypeRef != null -> "(for " + receiverTypeRef.text + " in " + containerText + ")"
+            parent is KtFile -> "($containerText)"
+            else -> "(in $containerText)"
         }
     }
 

@@ -145,14 +145,10 @@ abstract class KotlinSuppressCache {
         var suppressor: Suppressor? = suppressors[annotated]
         if (suppressor == null) {
             val strings = getSuppressingStrings(annotated)
-            if (strings.isEmpty()) {
-                suppressor = EmptySuppressor(annotated)
-            }
-            else if (strings.size == 1) {
-                suppressor = SingularSuppressor(annotated, strings.iterator().next())
-            }
-            else {
-                suppressor = MultiSuppressor(annotated, strings)
+            suppressor = when {
+                strings.isEmpty() -> EmptySuppressor(annotated)
+                strings.size == 1 -> SingularSuppressor(annotated, strings.iterator().next())
+                else -> MultiSuppressor(annotated, strings)
             }
             suppressors.put(annotated, suppressor)
         }

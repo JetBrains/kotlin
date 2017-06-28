@@ -248,16 +248,18 @@ class KotlinChangeSignatureDialog(
                 return JBTableRow { column ->
                     val columnInfo = parametersTableModel.columnInfos[column]
 
-                    if (KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo))
-                        (components[column] as @Suppress("NO_TYPE_ARGUMENTS_ON_RHS") JComboBox).selectedItem
-                    else if (KotlinCallableParameterTableModel.isTypeColumn(columnInfo))
-                        item.typeCodeFragment
-                    else if (KotlinCallableParameterTableModel.isNameColumn(columnInfo))
-                        (components[column] as EditorTextField).text
-                    else if (KotlinCallableParameterTableModel.isDefaultValueColumn(columnInfo))
-                        item.defaultValueCodeFragment
-                    else
-                        null
+                    when {
+                        KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo) ->
+                            (components[column] as @Suppress("NO_TYPE_ARGUMENTS_ON_RHS") JComboBox).selectedItem
+                        KotlinCallableParameterTableModel.isTypeColumn(columnInfo) ->
+                            item.typeCodeFragment
+                        KotlinCallableParameterTableModel.isNameColumn(columnInfo) ->
+                            (components[column] as EditorTextField).text
+                        KotlinCallableParameterTableModel.isDefaultValueColumn(columnInfo) ->
+                            item.defaultValueCodeFragment
+                        else ->
+                            null
+                    }
                 }
             }
 
@@ -291,9 +293,11 @@ class KotlinChangeSignatureDialog(
 
             override fun getPreferredFocusedComponent(): JComponent {
                 val me = mouseEvent
-                val index = if (me != null)
-                    getEditorIndex(me.point.getX().toInt())
-                else if (myMethod.kind === Kind.PRIMARY_CONSTRUCTOR) 1 else 0
+                val index = when {
+                    me != null -> getEditorIndex(me.point.getX().toInt())
+                    myMethod.kind === Kind.PRIMARY_CONSTRUCTOR -> 1
+                    else -> 0
+                }
                 val component = components[index]
                 return if (component is EditorTextField) component.focusTarget else component
             }

@@ -47,4 +47,8 @@ class SyntheticFieldDescriptor private constructor(
 }
 
 val DeclarationDescriptor.referencedProperty: PropertyDescriptor?
-    get() = if (this is SyntheticFieldDescriptor) this.propertyDescriptor else if (this is PropertyDescriptor) this else null
+    get() = when (this) {
+        is SyntheticFieldDescriptor -> this.propertyDescriptor
+        is PropertyDescriptor -> this
+        else -> null
+    }

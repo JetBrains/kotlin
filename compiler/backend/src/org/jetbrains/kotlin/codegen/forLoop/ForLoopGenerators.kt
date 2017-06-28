@@ -83,18 +83,16 @@ private fun ExpressionCodegen.createOptimizedForLoopGeneratorOrNull(
 private fun getLoopRangeResolvedCall(forExpression: KtForExpression, bindingContext: BindingContext): ResolvedCall<out CallableDescriptor>? {
     val loopRange = KtPsiUtil.deparenthesize(forExpression.loopRange)
 
-    if (loopRange is KtQualifiedExpression) {
-        val qualifiedExpression = loopRange as KtQualifiedExpression?
-        val selector = qualifiedExpression!!.selectorExpression
-        if (selector is KtCallExpression || selector is KtSimpleNameExpression) {
-            return selector.getResolvedCall(bindingContext)
+    when (loopRange) {
+        is KtQualifiedExpression -> {
+            val qualifiedExpression = loopRange as KtQualifiedExpression?
+            val selector = qualifiedExpression!!.selectorExpression
+            if (selector is KtCallExpression || selector is KtSimpleNameExpression) {
+                return selector.getResolvedCall(bindingContext)
+            }
         }
-    }
-    else if (loopRange is KtSimpleNameExpression || loopRange is KtCallExpression) {
-        return loopRange.getResolvedCall(bindingContext)
-    }
-    else if (loopRange is KtBinaryExpression) {
-        return loopRange.operationReference.getResolvedCall(bindingContext)
+        is KtSimpleNameExpression, is KtCallExpression -> return loopRange.getResolvedCall(bindingContext)
+        is KtBinaryExpression -> return loopRange.operationReference.getResolvedCall(bindingContext)
     }
 
     return null

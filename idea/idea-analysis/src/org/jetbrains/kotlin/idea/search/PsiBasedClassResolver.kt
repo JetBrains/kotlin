@@ -151,14 +151,10 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
         val file = ref.containingKtFile
         var result: Result = Result.NothingFound
         val filePackage = file.packageFqName.asString()
-        if (filePackage == targetPackage) {
-            result = result.changeTo(Result.Found)
-        }
-        else if (filePackage in conflictingPackages) {
-            result = result.changeTo(Result.FoundOther)
-        }
-        else if (filePackage in packagesWithTypeAliases) {
-            return UNSURE
+        when (filePackage) {
+            targetPackage -> result = result.changeTo(Result.Found)
+            in conflictingPackages -> result = result.changeTo(Result.FoundOther)
+            in packagesWithTypeAliases -> return UNSURE
         }
 
         for (importPath in file.getDefaultImports()) {
@@ -202,14 +198,10 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
             }
         }
         else {
-            if (qName?.asString() == targetPackage) {
-                return result.changeTo(Result.Found)
-            }
-            else if (qName?.asString() in conflictingPackages) {
-                return result.changeTo(Result.FoundOther)
-            }
-            else if (qName?.asString() in packagesWithTypeAliases) {
-                return Result.Ambiguity
+            when {
+                qName?.asString() == targetPackage -> return result.changeTo(Result.Found)
+                qName?.asString() in conflictingPackages -> return result.changeTo(Result.FoundOther)
+                qName?.asString() in packagesWithTypeAliases -> return Result.Ambiguity
             }
         }
         return result

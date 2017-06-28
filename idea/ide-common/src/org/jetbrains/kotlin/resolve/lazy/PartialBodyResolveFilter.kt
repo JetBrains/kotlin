@@ -271,18 +271,18 @@ class PartialBodyResolveFilter(
                 val left = condition.left ?: return emptyResult
                 val right = condition.right ?: return emptyResult
 
-                fun smartCastInEq(): Pair<Set<SmartCastName>, Set<SmartCastName>> {
-                    if (left.isNullLiteral()) {
-                        return Pair(setOf(), right.smartCastExpressionName().singletonOrEmptySet())
+                fun smartCastInEq(): Pair<Set<SmartCastName>, Set<SmartCastName>> = when {
+                    left.isNullLiteral() -> {
+                        Pair(setOf(), right.smartCastExpressionName().singletonOrEmptySet())
                     }
-                    else if (right.isNullLiteral()) {
-                        return Pair(setOf(), left.smartCastExpressionName().singletonOrEmptySet())
+                    right.isNullLiteral() -> {
+                        Pair(setOf(), left.smartCastExpressionName().singletonOrEmptySet())
                     }
-                    else {
+                    else -> {
                         val leftName = left.smartCastExpressionName()
                         val rightName = right.smartCastExpressionName()
                         val names = listOfNotNull(leftName, rightName).toSet()
-                        return Pair(names, setOf())
+                        Pair(names, setOf())
                     }
                 }
 

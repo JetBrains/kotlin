@@ -115,17 +115,19 @@ fun notifyOutdatedKotlinRuntime(project: Project, outdatedLibraries: Collection<
     Notifications.Bus.notify(Notification(OUTDATED_RUNTIME_GROUP_DISPLAY_ID, "Outdated Kotlin Runtime", message,
                                           NotificationType.WARNING, NotificationListener { notification, event ->
         if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-            if ("update" == event.description) {
-                val outdatedLibraries = findOutdatedKotlinLibraries(project).map { it.library }
-                ApplicationManager.getApplication().invokeLater {
-                    updateLibraries(project, outdatedLibraries)
+            when {
+                "update" == event.description -> {
+                    val outdatedLibraries = findOutdatedKotlinLibraries(project).map { it.library }
+                    ApplicationManager.getApplication().invokeLater {
+                        updateLibraries(project, outdatedLibraries)
+                    }
                 }
-            }
-            else if ("ignore" == event.description) {
-                PropertiesComponent.getInstance(project).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion)
-            }
-            else {
-                throw AssertionError()
+                "ignore" == event.description -> {
+                    PropertiesComponent.getInstance(project).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion)
+                }
+                else -> {
+                    throw AssertionError()
+                }
             }
             notification.expire()
         }

@@ -169,46 +169,48 @@ protected constructor(
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
         val result = LinkedHashSet<DeclarationDescriptor>(declarations.size)
         for (declaration in declarations) {
-            if (declaration is KtClassOrObject) {
-                val name = declaration.nameAsSafeName
-                if (nameFilter(name)) {
-                    result.addAll(classDescriptors(name))
+            when (declaration) {
+                is KtClassOrObject -> {
+                    val name = declaration.nameAsSafeName
+                    if (nameFilter(name)) {
+                        result.addAll(classDescriptors(name))
+                    }
                 }
-            }
-            else if (declaration is KtFunction) {
-                val name = declaration.nameAsSafeName
-                if (nameFilter(name)) {
-                    result.addAll(getContributedFunctions(name, location))
+                is KtFunction -> {
+                    val name = declaration.nameAsSafeName
+                    if (nameFilter(name)) {
+                        result.addAll(getContributedFunctions(name, location))
+                    }
                 }
-            }
-            else if (declaration is KtProperty) {
-                val name = declaration.nameAsSafeName
-                if (nameFilter(name)) {
-                    result.addAll(getContributedVariables(name, location))
+                is KtProperty -> {
+                    val name = declaration.nameAsSafeName
+                    if (nameFilter(name)) {
+                        result.addAll(getContributedVariables(name, location))
+                    }
                 }
-            }
-            else if (declaration is KtParameter) {
-                val name = declaration.nameAsSafeName
-                if (nameFilter(name)) {
-                    result.addAll(getContributedVariables(name, location))
+                is KtParameter -> {
+                    val name = declaration.nameAsSafeName
+                    if (nameFilter(name)) {
+                        result.addAll(getContributedVariables(name, location))
+                    }
                 }
-            }
-            else if (declaration is KtTypeAlias) {
-                val name = declaration.nameAsSafeName
-                if (nameFilter(name)) {
-                    result.addAll(getContributedTypeAliasDescriptors(name, location))
+                is KtTypeAlias -> {
+                    val name = declaration.nameAsSafeName
+                    if (nameFilter(name)) {
+                        result.addAll(getContributedTypeAliasDescriptors(name, location))
+                    }
                 }
-            }
-            else if (declaration is KtScript) {
-                val name = declaration.nameAsSafeName
-                if (nameFilter(name)) {
-                    result.addAll(classDescriptors(name))
+                is KtScript -> {
+                    val name = declaration.nameAsSafeName
+                    if (nameFilter(name)) {
+                        result.addAll(classDescriptors(name))
+                    }
                 }
+                is KtDestructuringDeclaration -> {
+                    // MultiDeclarations are not supported on global level
+                }
+                else -> throw IllegalArgumentException("Unsupported declaration kind: " + declaration)
             }
-            else if (declaration is KtDestructuringDeclaration) {
-                // MultiDeclarations are not supported on global level
-            }
-            else throw IllegalArgumentException("Unsupported declaration kind: " + declaration)
         }
         return result.toList()
     }

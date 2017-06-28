@@ -408,23 +408,27 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                     sourceFile
             )
 
-            if (descriptor is ScriptDescriptor) {
-                val earlierScripts = state.replSpecific.earlierScriptsForReplInterpreter
-                return parent.intoScript(
-                        descriptor,
-                        earlierScripts ?: emptyList(),
-                        descriptor as ClassDescriptor, state.typeMapper
-                )
-            }
-            else if (descriptor is ClassDescriptor) {
-                val kind = if (DescriptorUtils.isInterface(descriptor)) OwnerKind.DEFAULT_IMPLS else OwnerKind.IMPLEMENTATION
-                return parent.intoClass(descriptor, kind, state)
-            }
-            else if (descriptor is FunctionDescriptor) {
-                return parent.intoFunction(descriptor)
+            return when (descriptor) {
+                is ScriptDescriptor -> {
+                    val earlierScripts = state.replSpecific.earlierScriptsForReplInterpreter
+                    parent.intoScript(
+                            descriptor,
+                            earlierScripts ?: emptyList(),
+                            descriptor as ClassDescriptor, state.typeMapper
+                    )
+                }
+                is ClassDescriptor -> {
+                    val kind = if (DescriptorUtils.isInterface(descriptor)) OwnerKind.DEFAULT_IMPLS else OwnerKind.IMPLEMENTATION
+                    parent.intoClass(descriptor, kind, state)
+                }
+                is FunctionDescriptor -> {
+                    parent.intoFunction(descriptor)
+                }
+                else -> {
+                    throw IllegalStateException("Couldn't build context for " + descriptor)
+                }
             }
 
-            throw IllegalStateException("Couldn't build context for " + descriptor)
         }
     }
 }

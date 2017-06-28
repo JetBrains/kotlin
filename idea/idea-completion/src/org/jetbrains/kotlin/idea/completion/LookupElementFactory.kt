@@ -381,20 +381,17 @@ class LookupElementFactory(
         return CallableWeight(bestWeight, receiverIndexToUse)
     }
 
-    private fun CallableDescriptor.callableWeightForReceiverType(receiverType: KotlinType, receiverParameterType: KotlinType): CallableWeightEnum? {
-        if (TypeUtils.equalTypes(receiverType, receiverParameterType)) {
-            return when {
-                isExtensionForTypeParameter() -> CallableWeightEnum.typeParameterExtension
-                isExtension -> CallableWeightEnum.thisTypeExtension
-                else -> CallableWeightEnum.thisClassMember
-            }
+    private fun CallableDescriptor.callableWeightForReceiverType(
+            receiverType: KotlinType,
+            receiverParameterType: KotlinType
+    ): CallableWeightEnum? = when {
+        TypeUtils.equalTypes(receiverType, receiverParameterType) -> when {
+            isExtensionForTypeParameter() -> CallableWeightEnum.typeParameterExtension
+            isExtension -> CallableWeightEnum.thisTypeExtension
+            else -> CallableWeightEnum.thisClassMember
         }
-        else if (receiverType.isSubtypeOf(receiverParameterType)) {
-            return if (isExtension) CallableWeightEnum.baseTypeExtension else CallableWeightEnum.baseClassMember
-        }
-        else {
-            return null
-        }
+        receiverType.isSubtypeOf(receiverParameterType) -> if (isExtension) CallableWeightEnum.baseTypeExtension else CallableWeightEnum.baseClassMember
+        else -> null
     }
 
     private fun CallableDescriptor.isExtensionForTypeParameter(): Boolean {

@@ -353,16 +353,12 @@ private fun makeCall(
                 )
 
             is Jump -> {
-                if (outputValue.elementToInsertAfterCall == null) {
-                    Collections.singletonList(psiFactory.createExpression(callText))
-                }
-                else if (outputValue.conditional) {
-                    Collections.singletonList(
+                when {
+                    outputValue.elementToInsertAfterCall == null -> Collections.singletonList(psiFactory.createExpression(callText))
+                    outputValue.conditional -> Collections.singletonList(
                             psiFactory.createExpression("if ($callText) ${outputValue.elementToInsertAfterCall.text}")
                     )
-                }
-                else {
-                    listOf(
+                    else -> listOf(
                             psiFactory.createExpression(callText),
                             newLine,
                             psiFactory.createExpression(outputValue.elementToInsertAfterCall.text!!)

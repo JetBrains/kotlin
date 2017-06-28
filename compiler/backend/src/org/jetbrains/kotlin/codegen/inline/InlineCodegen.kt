@@ -610,14 +610,10 @@ class PsiInlineCodegen(
 
     override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
         activeLambda = next
-        if (next is ExpressionLambda) {
-            codegen.pushClosureOnStack(next.classDescriptor, true, this, functionReferenceReceiver)
-        }
-        else if (next is DefaultLambda) {
-            rememberCapturedForDefaultLambda(next)
-        }
-        else {
-            throw RuntimeException("Unknown lambda: $next")
+        when (next) {
+            is ExpressionLambda -> codegen.pushClosureOnStack(next.classDescriptor, true, this, functionReferenceReceiver)
+            is DefaultLambda -> rememberCapturedForDefaultLambda(next)
+            else -> throw RuntimeException("Unknown lambda: $next")
         }
         activeLambda = null
     }

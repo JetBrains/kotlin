@@ -134,14 +134,13 @@ fun IntroduceTypeAliasDescriptor.validate(): IntroduceTypeAliasDescriptorWithCon
     val conflicts = MultiMap<PsiElement, String>()
 
     val originalType = originalData.originalTypeElement
-    if (name.isEmpty()) {
-        conflicts.putValue(originalType, "No name provided for type alias")
-    }
-    else if (!KotlinNameSuggester.isIdentifier(name)) {
-        conflicts.putValue(originalType, "Type alias name must be a valid identifier: $name")
-    }
-    else if (originalData.getTargetScope().findClassifier(Name.identifier(name), NoLookupLocation.FROM_IDE) != null) {
-        conflicts.putValue(originalType, "Type $name already exists in the target scope")
+    when {
+        name.isEmpty() ->
+            conflicts.putValue(originalType, "No name provided for type alias")
+        !KotlinNameSuggester.isIdentifier(name) ->
+            conflicts.putValue(originalType, "Type alias name must be a valid identifier: $name")
+        originalData.getTargetScope().findClassifier(Name.identifier(name), NoLookupLocation.FROM_IDE) != null ->
+            conflicts.putValue(originalType, "Type $name already exists in the target scope")
     }
 
     if (typeParameters.distinctBy { it.name }.size != typeParameters.size) {

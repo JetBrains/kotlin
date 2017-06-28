@@ -202,32 +202,28 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
                     (descriptor as? ClassDescriptor)?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
                 is KtDestructuringDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
                 is KtProperty -> {
-                    if (annotated.isLocal)
-                        TargetLists.T_LOCAL_VARIABLE
-                    else if (annotated.isMember)
-                        TargetLists.T_MEMBER_PROPERTY(descriptor.hasBackingField(trace), annotated.hasDelegate())
-                    else
-                        TargetLists.T_TOP_LEVEL_PROPERTY(descriptor.hasBackingField(trace), annotated.hasDelegate())
+                    when {
+                        annotated.isLocal -> TargetLists.T_LOCAL_VARIABLE
+                        annotated.isMember -> TargetLists.T_MEMBER_PROPERTY(descriptor.hasBackingField(trace), annotated.hasDelegate())
+                        else -> TargetLists.T_TOP_LEVEL_PROPERTY(descriptor.hasBackingField(trace), annotated.hasDelegate())
+                    }
                 }
                 is KtParameter -> {
                     val destructuringDeclaration = annotated.destructuringDeclaration
-                    if (destructuringDeclaration != null)
-                        TargetLists.T_DESTRUCTURING_DECLARATION
-                    else if (annotated.hasValOrVar())
-                        TargetLists.T_VALUE_PARAMETER_WITH_VAL
-                    else
-                        TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
+                    when {
+                        destructuringDeclaration != null -> TargetLists.T_DESTRUCTURING_DECLARATION
+                        annotated.hasValOrVar() -> TargetLists.T_VALUE_PARAMETER_WITH_VAL
+                        else -> TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
+                    }
                 }
                 is KtConstructor<*> -> TargetLists.T_CONSTRUCTOR
                 is KtFunction -> {
-                    if (ExpressionTypingUtils.isFunctionExpression(descriptor))
-                        TargetLists.T_FUNCTION_EXPRESSION
-                    else if (annotated.isLocal)
-                        TargetLists.T_LOCAL_FUNCTION
-                    else if (annotated.parent is KtClassOrObject || annotated.parent is KtClassBody)
-                        TargetLists.T_MEMBER_FUNCTION
-                    else
-                        TargetLists.T_TOP_LEVEL_FUNCTION
+                    when {
+                        ExpressionTypingUtils.isFunctionExpression(descriptor) -> TargetLists.T_FUNCTION_EXPRESSION
+                        annotated.isLocal -> TargetLists.T_LOCAL_FUNCTION
+                        annotated.parent is KtClassOrObject || annotated.parent is KtClassBody -> TargetLists.T_MEMBER_FUNCTION
+                        else -> TargetLists.T_TOP_LEVEL_FUNCTION
+                    }
                 }
                 is KtTypeAlias -> TargetLists.T_TYPEALIAS
                 is KtPropertyAccessor -> if (annotated.isGetter) TargetLists.T_PROPERTY_GETTER else TargetLists.T_PROPERTY_SETTER
@@ -266,18 +262,20 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
             }
 
             fun T_MEMBER_PROPERTY(backingField: Boolean, delegate: Boolean) =
-                    targetList(if (backingField) MEMBER_PROPERTY_WITH_BACKING_FIELD
-                               else if (delegate) MEMBER_PROPERTY_WITH_DELEGATE
-                               else MEMBER_PROPERTY_WITHOUT_FIELD_OR_DELEGATE,
-                               MEMBER_PROPERTY, PROPERTY) {
+                    targetList(when {
+                        backingField -> MEMBER_PROPERTY_WITH_BACKING_FIELD
+                        delegate -> MEMBER_PROPERTY_WITH_DELEGATE
+                        else -> MEMBER_PROPERTY_WITHOUT_FIELD_OR_DELEGATE
+                    }, MEMBER_PROPERTY, PROPERTY) {
                         propertyTargets(backingField, delegate)
                     }
 
             fun T_TOP_LEVEL_PROPERTY(backingField: Boolean, delegate: Boolean) =
-                    targetList(if (backingField) TOP_LEVEL_PROPERTY_WITH_BACKING_FIELD
-                               else if (delegate) TOP_LEVEL_PROPERTY_WITH_DELEGATE
-                               else TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE,
-                               TOP_LEVEL_PROPERTY, PROPERTY) {
+                    targetList(when {
+                        backingField -> TOP_LEVEL_PROPERTY_WITH_BACKING_FIELD
+                        delegate -> TOP_LEVEL_PROPERTY_WITH_DELEGATE
+                        else -> TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE
+                    }, TOP_LEVEL_PROPERTY, PROPERTY) {
                         propertyTargets(backingField, delegate)
                     }
 

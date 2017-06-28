@@ -171,33 +171,35 @@ private fun getInlineName(
         typeMapper: KotlinTypeMapper,
         fileClassesProvider: JvmFileClassesProvider
 ): String {
-    if (currentDescriptor is PackageFragmentDescriptor) {
-        val file = DescriptorToSourceUtils.getContainingFile(codegenContext.contextDescriptor)
+    when (currentDescriptor) {
+        is PackageFragmentDescriptor -> {
+            val file = DescriptorToSourceUtils.getContainingFile(codegenContext.contextDescriptor)
 
-        val implementationOwnerType: Type? =
-                if (file == null) {
-                    CodegenContextUtil.getImplementationOwnerClassType(codegenContext)
-                }
-                else fileClassesProvider.getFileClassType(file)
+            val implementationOwnerType: Type? =
+                    if (file == null) {
+                        CodegenContextUtil.getImplementationOwnerClassType(codegenContext)
+                    }
+                    else fileClassesProvider.getFileClassType(file)
 
-        if (implementationOwnerType == null) {
-            val contextDescriptor = codegenContext.contextDescriptor
-            throw RuntimeException(
-                    "Couldn't find declaration for " +
-                    contextDescriptor.containingDeclaration!!.name + "." + contextDescriptor.name +
-                    "; context: " + codegenContext
-            )
+            if (implementationOwnerType == null) {
+                val contextDescriptor = codegenContext.contextDescriptor
+                throw RuntimeException(
+                        "Couldn't find declaration for " +
+                        contextDescriptor.containingDeclaration!!.name + "." + contextDescriptor.name +
+                        "; context: " + codegenContext
+                )
+            }
+
+            return implementationOwnerType.internalName
         }
-
-        return implementationOwnerType.internalName
-    }
-    else if (currentDescriptor is ClassifierDescriptor) {
-        return typeMapper.mapType(currentDescriptor).internalName
-    }
-    else if (currentDescriptor is FunctionDescriptor) {
-        val descriptor = typeMapper.bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, currentDescriptor)
-        if (descriptor != null) {
-            return typeMapper.mapType(descriptor).internalName
+        is ClassifierDescriptor -> {
+            return typeMapper.mapType(currentDescriptor).internalName
+        }
+        is FunctionDescriptor -> {
+            val descriptor = typeMapper.bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, currentDescriptor)
+            if (descriptor != null) {
+                return typeMapper.mapType(descriptor).internalName
+            }
         }
     }
 

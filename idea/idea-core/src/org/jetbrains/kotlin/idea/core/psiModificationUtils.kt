@@ -204,25 +204,24 @@ fun KtModifierListOwner.setVisibility(visibilityModifier: KtModifierKeywordToken
 }
 
 fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? =
-        if (this is KtConstructor<*>) {
-            val klass = getContainingClassOrObject()
-            if (klass is KtClass && (klass.isEnum() || klass.isSealed())) KtTokens.PRIVATE_KEYWORD
-            else KtTokens.DEFAULT_VISIBILITY_KEYWORD
-        }
-        else if (hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
-            (resolveToDescriptor(BodyResolveMode.PARTIAL) as? CallableMemberDescriptor)
-                    ?.overriddenDescriptors
-                    ?.let { OverridingUtil.findMaxVisibility(it) }
-                    ?.toKeywordToken()
-        }
-        else {
-            KtTokens.DEFAULT_VISIBILITY_KEYWORD
+        when {
+            this is KtConstructor<*> -> {
+                val klass = getContainingClassOrObject()
+                if (klass is KtClass && (klass.isEnum() || klass.isSealed())) KtTokens.PRIVATE_KEYWORD
+                else KtTokens.DEFAULT_VISIBILITY_KEYWORD
+            }
+            hasModifier(KtTokens.OVERRIDE_KEYWORD) -> {
+                (resolveToDescriptor(BodyResolveMode.PARTIAL) as? CallableMemberDescriptor)
+                        ?.overriddenDescriptors
+                        ?.let { OverridingUtil.findMaxVisibility(it) }
+                        ?.toKeywordToken()
+            }
+            else -> {
+                KtTokens.DEFAULT_VISIBILITY_KEYWORD
+            }
         }
 
-fun KtModifierListOwner.canBePrivate(): Boolean {
-    if (modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) ?: false) return false
-    return true
-}
+fun KtModifierListOwner.canBePrivate() = modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) != true
 
 fun KtModifierListOwner.canBeProtected(): Boolean {
     val parent = this.parent

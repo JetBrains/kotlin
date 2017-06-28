@@ -300,14 +300,13 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val jdiValue = when (this) {
                 is ValueReturned -> result
                 is ExceptionThrown -> {
-                    if (this.kind == ExceptionThrown.ExceptionKind.FROM_EVALUATED_CODE) {
-                        exception(InvocationException(this.exception.value as ObjectReference))
-                    }
-                    else if (this.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE) {
-                        throw exception.value as Throwable
-                    }
-                    else {
-                        exception(exception.toString())
+                    when {
+                        this.kind == ExceptionThrown.ExceptionKind.FROM_EVALUATED_CODE ->
+                            exception(InvocationException(this.exception.value as ObjectReference))
+                        this.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE ->
+                            throw exception.value as Throwable
+                        else ->
+                            exception(exception.toString())
                     }
                 }
                 is AbnormalTermination -> exception(message)

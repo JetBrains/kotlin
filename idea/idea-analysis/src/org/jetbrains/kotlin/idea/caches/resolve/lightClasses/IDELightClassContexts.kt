@@ -217,26 +217,26 @@ object IDELightClassContexts {
             }
 
             for (declaration in file.declarations) {
-                if (declaration is KtFunction) {
-                    val name = declaration.nameAsSafeName
-                    val functions = packageDescriptor.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
-                    for (descriptor in functions) {
-                        ForceResolveUtil.forceResolveAllContents(descriptor)
+                when (declaration) {
+                    is KtFunction -> {
+                        val name = declaration.nameAsSafeName
+                        val functions = packageDescriptor.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
+                        for (descriptor in functions) {
+                            ForceResolveUtil.forceResolveAllContents(descriptor)
+                        }
                     }
-                }
-                else if (declaration is KtProperty) {
-                    val name = declaration.nameAsSafeName
-                    val properties = packageDescriptor.memberScope.getContributedVariables(name, NoLookupLocation.FROM_IDE)
-                    for (descriptor in properties) {
-                        ForceResolveUtil.forceResolveAllContents(descriptor)
+                    is KtProperty -> {
+                        val name = declaration.nameAsSafeName
+                        val properties = packageDescriptor.memberScope.getContributedVariables(name, NoLookupLocation.FROM_IDE)
+                        for (descriptor in properties) {
+                            ForceResolveUtil.forceResolveAllContents(descriptor)
+                        }
                     }
-                }
-                else if (declaration is KtClassOrObject || declaration is KtTypeAlias || declaration is KtDestructuringDeclaration) {
-                    // Do nothing: we are not interested in classes or type aliases,
-                    // and all destructuring declarations are erroneous at top level
-                }
-                else {
-                    LOG.error("Unsupported declaration kind: " + declaration + " in file " + file.name + "\n" + file.text)
+                    is KtClassOrObject, is KtTypeAlias, is KtDestructuringDeclaration -> {
+                        // Do nothing: we are not interested in classes or type aliases,
+                        // and all destructuring declarations are erroneous at top level
+                    }
+                    else -> LOG.error("Unsupported declaration kind: " + declaration + " in file " + file.name + "\n" + file.text)
                 }
             }
 

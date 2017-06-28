@@ -252,19 +252,21 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         anySupertype(baseType, { false }) {
             val current = captureFromArguments(it, CaptureStatus.FOR_SUBTYPING)
 
-            if (areEqualTypeConstructors(current.constructor, constructor)) {
-                if (result == null) {
-                    result = SmartList()
-                }
-                result!!.add(current)
+            when {
+                areEqualTypeConstructors(current.constructor, constructor) -> {
+                    if (result == null) {
+                        result = SmartList()
+                    }
+                    result!!.add(current)
 
-                SupertypesPolicy.None
-            }
-            else if (current.arguments.isEmpty()) {
-                SupertypesPolicy.LowerIfFlexible
-            }
-            else {
-                SupertypesPolicy.LowerIfFlexibleWithCustomSubstitutor(TypeConstructorSubstitution.create(current).buildSubstitutor())
+                    SupertypesPolicy.None
+                }
+                current.arguments.isEmpty() -> {
+                    SupertypesPolicy.LowerIfFlexible
+                }
+                else -> {
+                    SupertypesPolicy.LowerIfFlexibleWithCustomSubstitutor(TypeConstructorSubstitution.create(current).buildSubstitutor())
+                }
             }
         }
 

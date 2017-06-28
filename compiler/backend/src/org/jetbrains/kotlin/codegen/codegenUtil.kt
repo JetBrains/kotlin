@@ -292,14 +292,10 @@ fun calcTypeForIEEE754ArithmeticIfNeeded(expression: KtExpression?, bindingConte
     val dataFlow = DataFlowValueFactory.createDataFlowValue(expression!!, ktType, bindingContext, descriptor)
     val stableTypes = bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow)
     return stableTypes.firstNotNullResult {
-        if (KotlinBuiltIns.isDoubleOrNullableDouble(it)) {
-            TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(it))
-        }
-        else if (KotlinBuiltIns.isFloatOrNullableFloat(it)) {
-            TypeAndNullability(Type.FLOAT_TYPE, TypeUtils.isNullableType(it))
-        }
-        else {
-            null
+        when {
+            KotlinBuiltIns.isDoubleOrNullableDouble(it) -> TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(it))
+            KotlinBuiltIns.isFloatOrNullableFloat(it) -> TypeAndNullability(Type.FLOAT_TYPE, TypeUtils.isNullableType(it))
+            else -> null
         }
     }
 }

@@ -40,17 +40,11 @@ class TypeVisitor(
 
     override fun visitPrimitiveType(primitiveType: PsiPrimitiveType): Type {
         val name = primitiveType.canonicalText
-        return if (name == "void") {
-            UnitType()
-        }
-        else if (PRIMITIVE_TYPES_NAMES.contains(name)) {
-            PrimitiveType(Identifier.withNoPrototype(StringUtil.capitalize(name)))
-        }
-        else if (name == "null") {
-            NullType()
-        }
-        else {
-            PrimitiveType(Identifier.withNoPrototype(name))
+        return when {
+            name == "void" -> UnitType()
+            PRIMITIVE_TYPES_NAMES.contains(name) -> PrimitiveType(Identifier.withNoPrototype(StringUtil.capitalize(name)))
+            name == "null" -> NullType()
+            else -> PrimitiveType(Identifier.withNoPrototype(name))
         }
     }
 

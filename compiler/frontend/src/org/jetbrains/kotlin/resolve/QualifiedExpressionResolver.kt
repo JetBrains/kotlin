@@ -568,15 +568,17 @@ class QualifiedExpressionResolver {
     ) {
         if (descriptors.size > 1) {
             val visibleDescriptors = descriptors.filter { isVisible(it, shouldBeVisibleFrom, position) }
-            if (visibleDescriptors.isEmpty()) {
-                val descriptor = descriptors.first() as DeclarationDescriptorWithVisibility
-                trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.visibility, descriptor))
-            }
-            else if (visibleDescriptors.size > 1) {
-                trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, visibleDescriptors)
-            }
-            else {
-                storeResult(trace, referenceExpression, visibleDescriptors.single(), null, position, isQualifier)
+            when {
+                visibleDescriptors.isEmpty() -> {
+                    val descriptor = descriptors.first() as DeclarationDescriptorWithVisibility
+                    trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.visibility, descriptor))
+                }
+                visibleDescriptors.size > 1 -> {
+                    trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, visibleDescriptors)
+                }
+                else -> {
+                    storeResult(trace, referenceExpression, visibleDescriptors.single(), null, position, isQualifier)
+                }
             }
         }
         else {

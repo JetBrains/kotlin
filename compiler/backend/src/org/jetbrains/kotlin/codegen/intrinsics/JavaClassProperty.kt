@@ -43,21 +43,23 @@ object JavaClassProperty : IntrinsicPropertyGetter() {
 
     fun generateImpl(v: InstructionAdapter, receiver: StackValue): Type {
         val type = receiver.type
-        if (type == Type.VOID_TYPE) {
-            receiver.put(Type.VOID_TYPE, v)
-            StackValue.unit().put(UNIT_TYPE, v)
-            v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
-        }
-        else if (isPrimitive(type)) {
-            if (!StackValue.couldSkipReceiverOnStaticCall(receiver)) {
-                receiver.put(type, v)
-                AsmUtil.pop(v, type)
+        when {
+            type == Type.VOID_TYPE -> {
+                receiver.put(Type.VOID_TYPE, v)
+                StackValue.unit().put(UNIT_TYPE, v)
+                v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
             }
-            v.getstatic(boxType(type).internalName, "TYPE", "Ljava/lang/Class;")
-        }
-        else {
-            receiver.put(type, v)
-            v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
+            isPrimitive(type) -> {
+                if (!StackValue.couldSkipReceiverOnStaticCall(receiver)) {
+                    receiver.put(type, v)
+                    AsmUtil.pop(v, type)
+                }
+                v.getstatic(boxType(type).internalName, "TYPE", "Ljava/lang/Class;")
+            }
+            else -> {
+                receiver.put(type, v)
+                v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
+            }
         }
 
         return getType(Class::class.java)

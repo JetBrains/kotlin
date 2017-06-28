@@ -263,19 +263,11 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
             targetFile: File,
             jarType: OrderRootType,
             useBundled: Boolean
-    ): FileState {
-        if (targetFile.exists()) {
-            return FileState.EXISTS
-        }
-        else if (getPathFromLibrary(project, jarType) != null) {
-            return FileState.COPY
-        }
-        else if (useBundled) {
-            return FileState.DO_NOT_COPY
-        }
-        else {
-            return FileState.COPY
-        }
+    ): FileState = when {
+        targetFile.exists() -> FileState.EXISTS
+        getPathFromLibrary(project, jarType) != null -> FileState.COPY
+        useBundled -> FileState.DO_NOT_COPY
+        else -> FileState.COPY
     }
 
     private fun getPathToCopyFileTo(

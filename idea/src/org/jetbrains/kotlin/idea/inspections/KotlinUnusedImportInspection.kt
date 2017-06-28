@@ -95,14 +95,10 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 val importPath = directive.importPath ?: continue
                 if (importPath.alias != null) continue // highlighting of unused alias imports not supported yet
 
-                val isUsed = if (!importPaths.add(importPath)) {
-                    false
-                }
-                else if (importPath.isAllUnder) {
-                    importPath.fqName in parentFqNames
-                }
-                else {
-                    importPath.fqName in fqNames
+                val isUsed = when {
+                    !importPaths.add(importPath) -> false
+                    importPath.isAllUnder -> importPath.fqName in parentFqNames
+                    else -> importPath.fqName in fqNames
                 }
 
                 if (!isUsed) {

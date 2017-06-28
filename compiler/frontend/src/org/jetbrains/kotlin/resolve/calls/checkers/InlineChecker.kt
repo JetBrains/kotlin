@@ -155,21 +155,23 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
 
         val varDescriptor: CallableDescriptor?
         val receiverExpression: KtExpression?
-        if (receiver is ExpressionReceiver) {
-            receiverExpression = receiver.expression
-            varDescriptor = getCalleeDescriptor(context, receiverExpression, true)
-        }
-        else if (receiver is ExtensionReceiver) {
-            val extension = receiver.declarationDescriptor
+        when (receiver) {
+            is ExpressionReceiver -> {
+                receiverExpression = receiver.expression
+                varDescriptor = getCalleeDescriptor(context, receiverExpression, true)
+            }
+            is ExtensionReceiver -> {
+                val extension = receiver.declarationDescriptor
 
-            varDescriptor = extension.extensionReceiverParameter
-            assert(varDescriptor != null) { "Extension should have receiverParameterDescriptor: " + extension }
+                varDescriptor = extension.extensionReceiverParameter
+                assert(varDescriptor != null) { "Extension should have receiverParameterDescriptor: " + extension }
 
-            receiverExpression = expression
-        }
-        else {
-            varDescriptor = null
-            receiverExpression = null
+                receiverExpression = expression
+            }
+            else -> {
+                varDescriptor = null
+                receiverExpression = null
+            }
         }
 
         if (inlinableParameters.contains(varDescriptor)) {

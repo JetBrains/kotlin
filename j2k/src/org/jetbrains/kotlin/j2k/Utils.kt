@@ -27,20 +27,16 @@ fun quoteKeywords(packageName: String): String = packageName.split('.').joinToSt
 
 fun getDefaultInitializer(property: Property): Expression? {
     val t = property.type
-    val result = if (t.isNullable) {
-        LiteralExpression("null")
-    }
-    else if (t is PrimitiveType) {
-        when (t.name.name) {
+    val result = when {
+        t.isNullable -> LiteralExpression("null")
+        t is PrimitiveType -> when (t.name.name) {
             "Boolean" -> LiteralExpression("false")
             "Char" -> LiteralExpression("' '")
             "Double" -> MethodCallExpression.buildNonNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.DOUBLE.toString())
             "Float" -> MethodCallExpression.buildNonNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.FLOAT.toString())
             else -> LiteralExpression("0")
         }
-    }
-    else {
-        null
+        else -> null
     }
     return result?.assignNoPrototype()
 }

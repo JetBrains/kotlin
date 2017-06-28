@@ -286,15 +286,16 @@ internal object KotlinConverter {
             is KtVariableDeclaration -> expr<UDeclarationsExpression>(build(::convertVariablesDeclaration))
 
             is KtStringTemplateExpression -> {
-                if (expression.entries.isEmpty()) {
-                    val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
-                    expr<ULiteralExpression> { KotlinStringULiteralExpression(expression, parent, "") }
-                }
-                else if (expression.entries.size == 1)
-                    convertEntry(expression.entries[0], parentCallback, requiredType)
-                else {
-                    val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
-                    expr<UExpression> { KotlinStringTemplateUPolyadicExpression(expression, parent) }
+                when {
+                    expression.entries.isEmpty() -> {
+                        val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
+                        expr<ULiteralExpression> { KotlinStringULiteralExpression(expression, parent, "") }
+                    }
+                    expression.entries.size == 1 -> convertEntry(expression.entries[0], parentCallback, requiredType)
+                    else -> {
+                        val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
+                        expr<UExpression> { KotlinStringTemplateUPolyadicExpression(expression, parent) }
+                    }
                 }
             }
             is KtDestructuringDeclaration -> expr<UDeclarationsExpression> {

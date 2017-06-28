@@ -38,9 +38,11 @@ object SenselessComparisonChecker {
             getNullability: (DataFlowValue) -> Nullability
     ) {
         val expr =
-                if (KtPsiUtil.isNullConstant(left)) right
-                else if (KtPsiUtil.isNullConstant(right)) left
-                else return
+                when {
+                    KtPsiUtil.isNullConstant(left) -> right
+                    KtPsiUtil.isNullConstant(right) -> left
+                    else -> return
+                }
 
         val type = getType(expr)
         if (type == null || type.isError) return
@@ -52,10 +54,12 @@ object SenselessComparisonChecker {
         val nullability = getNullability(value)
 
         val expressionIsAlways =
-                if (nullability == Nullability.NULL) equality
-                else if (nullability == Nullability.NOT_NULL) !equality
-                else if (nullability == Nullability.IMPOSSIBLE) false
-                else return
+                when (nullability) {
+                    Nullability.NULL -> equality
+                    Nullability.NOT_NULL -> !equality
+                    Nullability.IMPOSSIBLE -> false
+                    else -> return
+                }
 
         context.trace.report(Errors.SENSELESS_COMPARISON.on(expression, expression, expressionIsAlways))
     }

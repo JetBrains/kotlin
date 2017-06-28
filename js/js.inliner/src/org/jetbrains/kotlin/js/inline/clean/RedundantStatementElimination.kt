@@ -66,15 +66,17 @@ class RedundantStatementElimination(private val root: JsFunction) {
     private fun replace(expression: JsExpression): List<JsExpression> {
         return when (expression) {
             is JsNameRef -> {
-                if (expression.name in localVars) {
-                    listOf()
-                }
-                else if (expression.sideEffects != SideEffectKind.AFFECTS_STATE) {
-                    val qualifier = expression.qualifier
-                    if (qualifier != null) replace(qualifier) else listOf()
-                }
-                else {
-                    listOf(expression)
+                when {
+                    expression.name in localVars -> {
+                        listOf()
+                    }
+                    expression.sideEffects != SideEffectKind.AFFECTS_STATE -> {
+                        val qualifier = expression.qualifier
+                        if (qualifier != null) replace(qualifier) else listOf()
+                    }
+                    else -> {
+                        listOf(expression)
+                    }
                 }
             }
 

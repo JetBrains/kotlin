@@ -632,22 +632,20 @@ class ExpressionCodegen(
 
         val stackElement = data.peek()
 
-        if (stackElement is TryInfo) {
-            //noinspection ConstantConditions
-            genFinallyBlockOrGoto(stackElement, null, afterBreakContinueLabel, data)
-        }
-        else if (stackElement is LoopInfo) {
-            val loop = expression.loop
-            //noinspection ConstantConditions
-            if (loop == stackElement.loop) {
-                val label = if (expression is IrBreak) stackElement.breakLabel else stackElement.continueLabel
-                mv.fixStackAndJump(label)
-                mv.mark(afterBreakContinueLabel)
-                return
+        when (stackElement) {
+            is TryInfo -> //noinspection ConstantConditions
+                genFinallyBlockOrGoto(stackElement, null, afterBreakContinueLabel, data)
+            is LoopInfo -> {
+                val loop = expression.loop
+                //noinspection ConstantConditions
+                if (loop == stackElement.loop) {
+                    val label = if (expression is IrBreak) stackElement.breakLabel else stackElement.continueLabel
+                    mv.fixStackAndJump(label)
+                    mv.mark(afterBreakContinueLabel)
+                    return
+                }
             }
-        }
-        else {
-            throw UnsupportedOperationException("Wrong BlockStackElement in processing stack")
+            else -> throw UnsupportedOperationException("Wrong BlockStackElement in processing stack")
         }
 
         data.pop()
@@ -829,14 +827,12 @@ class ExpressionCodegen(
     private fun doFinallyOnReturn(afterReturnLabel: Label, data: BlockInfo) {
         if (!data.isEmpty()) {
             val stackElement = data.peek()
-            if (stackElement is TryInfo) {
-                genFinallyBlockOrGoto(stackElement, null, afterReturnLabel, data)
-            }
-            else if (stackElement is LoopInfo) {
+            when (stackElement) {
+                is TryInfo -> genFinallyBlockOrGoto(stackElement, null, afterReturnLabel, data)
+                is LoopInfo -> {
 
-            }
-            else {
-                throw UnsupportedOperationException("Wrong BlockStackElement in processing stack")
+                }
+                else -> throw UnsupportedOperationException("Wrong BlockStackElement in processing stack")
             }
 
             data.pop()

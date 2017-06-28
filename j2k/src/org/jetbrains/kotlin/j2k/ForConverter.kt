@@ -104,13 +104,14 @@ class ForConverter(
                 statement.isInSingleLine()).assignNoPrototype()
         if (initializationConverted.isEmpty) return whileStatement
 
-        val kind = if (statement.parents.filter { it !is PsiLabeledStatement }.first() !is PsiCodeBlock) {
-            WhileWithInitializationPseudoStatement.Kind.WITH_BLOCK
+        val kind = when {
+            statement.parents.filter { it !is PsiLabeledStatement }.first() !is PsiCodeBlock ->
+                WhileWithInitializationPseudoStatement.Kind.WITH_BLOCK
+            hasNameConflict() ->
+                WhileWithInitializationPseudoStatement.Kind.WITH_RUN_BLOCK
+            else ->
+                WhileWithInitializationPseudoStatement.Kind.SIMPLE
         }
-        else if (hasNameConflict())
-            WhileWithInitializationPseudoStatement.Kind.WITH_RUN_BLOCK
-        else
-            WhileWithInitializationPseudoStatement.Kind.SIMPLE
         return WhileWithInitializationPseudoStatement(initializationConverted, whileStatement, kind)
     }
 

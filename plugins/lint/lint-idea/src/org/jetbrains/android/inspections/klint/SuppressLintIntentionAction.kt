@@ -80,16 +80,13 @@ class SuppressLintIntentionAction(val id: String, val element: PsiElement) : Int
         val args = entry.valueArgumentList
         val psiFactory = KtPsiFactory(entry)
         val newArgList = psiFactory.createCallArguments("($argument)")
-        if (args == null) {
-            // new argument list
-            entry.addAfter(newArgList, entry.lastChild)
-        }
-        else if (args.arguments.isEmpty()) {
-            // replace '()' with a new argument list
-            args.replace(newArgList)
-        }
-        else if (args.arguments.none { it.textMatches(argument) }) {
-            args.addArgument(newArgList.arguments[0])
+        when {
+            args == null -> // new argument list
+                entry.addAfter(newArgList, entry.lastChild)
+            args.arguments.isEmpty() -> // replace '()' with a new argument list
+                args.replace(newArgList)
+            args.arguments.none { it.textMatches(argument) } ->
+                args.addArgument(newArgList.arguments[0])
         }
 
         return true

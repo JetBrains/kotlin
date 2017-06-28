@@ -190,35 +190,27 @@ object Constants {
     private fun formatChar(c: Char) = '\'' + quote(c) + '\''
     private fun formatString(s: String) = '"' + quote(s) + '"'
     
-    private fun formatFloat(f: Float): String {
-        if (java.lang.Float.isNaN(f))
-            return "0.0f/0.0f"
-        else if (java.lang.Float.isInfinite(f))
-            return if (f < 0) "-1.0f/0.0f" else "1.0f/0.0f"
-        else
-            return "${f}f"
+    private fun formatFloat(f: Float): String = when {
+        java.lang.Float.isNaN(f) -> "0.0f/0.0f"
+        java.lang.Float.isInfinite(f) -> if (f < 0) "-1.0f/0.0f" else "1.0f/0.0f"
+        else -> "${f}f"
     }
 
-    private fun formatDouble(d: Double): String {
-        if (java.lang.Double.isNaN(d))
-            return "0.0/0.0"
-        else if (java.lang.Double.isInfinite(d))
-            return if (d < 0) "-1.0/0.0" else "1.0/0.0"
-        else
-            return d.toString()
+    private fun formatDouble(d: Double): String = when {
+        java.lang.Double.isNaN(d) -> "0.0/0.0"
+        java.lang.Double.isInfinite(d) -> if (d < 0) "-1.0/0.0" else "1.0/0.0"
+        else -> d.toString()
     }
 
-    fun quote(ch: Char): String {
-        return when (ch) {
-            '\b' -> "\\b"
-            '\n' -> "\\n"
-            '\r' -> "\\r"
-            '\t' -> "\\t"
-            '\'' -> "\\'"
-            '\"' -> "\\\""
-            '\\' -> "\\\\"
-            else -> if (isPrintableAscii(ch)) ch.toString() else String.format("\\u%04x", ch.toInt())
-        }
+    fun quote(ch: Char): String = when (ch) {
+        '\b' -> "\\b"
+        '\n' -> "\\n"
+        '\r' -> "\\r"
+        '\t' -> "\\t"
+        '\'' -> "\\'"
+        '\"' -> "\\\""
+        '\\' -> "\\\\"
+        else -> if (isPrintableAscii(ch)) ch.toString() else String.format("\\u%04x", ch.toInt())
     }
 
     fun quote(s: String): String {
