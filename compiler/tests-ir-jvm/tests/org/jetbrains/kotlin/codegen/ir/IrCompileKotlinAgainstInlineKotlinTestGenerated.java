@@ -742,6 +742,12 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
                 doTest(fileName);
             }
 
+            @TestMetadata("mixed.kt")
+            public void testMixed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/mixed.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("objectProperty.kt")
             public void testObjectProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/objectProperty.kt");
@@ -980,6 +986,30 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
         @TestMetadata("kt14564_2.kt")
         public void testKt14564_2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt14564_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18689.kt")
+        public void testKt18689() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt18689.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18689_2.kt")
+        public void testKt18689_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt18689_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18689_3.kt")
+        public void testKt18689_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt18689_3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18689_4.kt")
+        public void testKt18689_4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt18689_4.kt");
             doTest(fileName);
         }
 
