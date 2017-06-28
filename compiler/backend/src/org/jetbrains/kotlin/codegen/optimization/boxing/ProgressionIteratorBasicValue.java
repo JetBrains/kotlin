@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
-import org.jetbrains.kotlin.codegen.RangeCodegenUtil;
+import org.jetbrains.kotlin.codegen.RangeCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.intrinsics.IteratorNext;
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue;
 import org.jetbrains.kotlin.name.FqName;
@@ -32,7 +32,7 @@ public class ProgressionIteratorBasicValue extends StrictBasicValue {
     private final static ImmutableMap<String, Type> VALUES_TYPENAME_TO_TYPE;
     static {
         ImmutableMap.Builder<String, Type> builder = ImmutableMap.builder();
-        for (PrimitiveType primitiveType : RangeCodegenUtil.supportedRangeTypes()) {
+        for (PrimitiveType primitiveType : RangeCodegenUtilKt.supportedRangeTypes()) {
             builder.put(primitiveType.getTypeName().asString(), Type.getType(JvmPrimitiveType.get(primitiveType).getDesc()));
         }
         VALUES_TYPENAME_TO_TYPE = builder.build();
@@ -41,7 +41,7 @@ public class ProgressionIteratorBasicValue extends StrictBasicValue {
     private static final ImmutableMap<PrimitiveType, ProgressionIteratorBasicValue> ITERATOR_VALUE_BY_ELEMENT_PRIMITIVE_TYPE;
     static {
         ImmutableMap.Builder<PrimitiveType, ProgressionIteratorBasicValue> builder = ImmutableMap.builder();
-        for (PrimitiveType elementType : RangeCodegenUtil.supportedRangeTypes()) {
+        for (PrimitiveType elementType : RangeCodegenUtilKt.supportedRangeTypes()) {
             builder.put(elementType, new ProgressionIteratorBasicValue(elementType.getTypeName().asString()));
         }
         ITERATOR_VALUE_BY_ELEMENT_PRIMITIVE_TYPE = builder.build();
@@ -67,7 +67,7 @@ public class ProgressionIteratorBasicValue extends StrictBasicValue {
     @Nullable
     public static ProgressionIteratorBasicValue byProgressionClassType(@NotNull Type progressionClassType) {
         FqName classFqName = new FqName(progressionClassType.getClassName());
-        PrimitiveType elementType = RangeCodegenUtil.getPrimitiveRangeOrProgressionElementType(classFqName);
+        PrimitiveType elementType = RangeCodegenUtilKt.getPrimitiveRangeOrProgressionElementType(classFqName);
         return ITERATOR_VALUE_BY_ELEMENT_PRIMITIVE_TYPE.get(elementType);
     }
 

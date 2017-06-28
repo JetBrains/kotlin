@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.RangeCodegenUtil
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.codegen.isRangeOrProgression
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.name.FqName
@@ -213,7 +213,7 @@ fun AbstractInsnNode.isIteratorMethodCallOfProgression(values: List<BasicValue>)
         }
 
 fun isProgressionClass(type: Type) =
-        RangeCodegenUtil.isRangeOrProgression(buildFqNameByInternal(type.internalName))
+        isRangeOrProgression(buildFqNameByInternal(type.internalName))
 
 fun AbstractInsnNode.isAreEqualIntrinsicForSameTypedBoxedValues(values: List<BasicValue>) =
         isAreEqualIntrinsic() && areSameTypedBoxedValues(values)

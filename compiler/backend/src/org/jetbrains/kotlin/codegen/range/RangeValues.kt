@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.RangeCodegenUtil
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -42,9 +41,9 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
     return when {
         asmRangeType.sort == Type.ARRAY ->
             ArrayRangeValue()
-        RangeCodegenUtil.isRange(rangeType) ->
+        isRange(rangeType) ->
             PrimitiveRangeRangeValue()
-        RangeCodegenUtil.isProgression(rangeType) ->
+        isProgression(rangeType) ->
             PrimitiveProgressionRangeValue()
         isSubtypeOfCharSequence(rangeType, state.module.builtIns) ->
             CharSequenceRangeValue()
@@ -84,17 +83,17 @@ private fun createIntrinsifiedRangeValueOrNull(rangeCall: ResolvedCall<out Calla
     val rangeCallee = rangeCall.resultingDescriptor
 
     return when {
-        RangeCodegenUtil.isPrimitiveNumberRangeTo(rangeCallee) ->
+        isPrimitiveNumberRangeTo(rangeCallee) ->
             PrimitiveNumberRangeToRangeValue(rangeCall)
-        RangeCodegenUtil.isPrimitiveNumberDownTo(rangeCallee) ->
+        isPrimitiveNumberDownTo(rangeCallee) ->
             DownToProgressionRangeValue(rangeCall)
-        RangeCodegenUtil.isPrimitiveNumberUntil(rangeCallee) ->
+        isPrimitiveNumberUntil(rangeCallee) ->
             PrimitiveNumberUntilRangeValue(rangeCall)
-        RangeCodegenUtil.isArrayOrPrimitiveArrayIndices(rangeCallee) ->
+        isArrayOrPrimitiveArrayIndices(rangeCallee) ->
             ArrayIndicesRangeValue(rangeCall)
-        RangeCodegenUtil.isCollectionIndices(rangeCallee) ->
+        isCollectionIndices(rangeCallee) ->
             CollectionIndicesRangeValue(rangeCall)
-        RangeCodegenUtil.isCharSequenceIndices(rangeCallee) ->
+        isCharSequenceIndices(rangeCallee) ->
             CharSequenceIndicesRangeValue(rangeCall)
         else ->
             null
