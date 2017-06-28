@@ -102,6 +102,12 @@ public class BytecodeListingTestForAllOpenGenerated extends AbstractBytecodeList
         doTest(fileName);
     }
 
+    @TestMetadata("springAnnotations.kt")
+    public void testSpringAnnotations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/allopen/allopen-cli/testData/bytecodeListing/springAnnotations.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("superClassAnnotation.kt")
     public void testSuperClassAnnotation() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/allopen/allopen-cli/testData/bytecodeListing/superClassAnnotation.kt");
