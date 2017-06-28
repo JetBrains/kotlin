@@ -30,5 +30,5 @@ fun main(a: A) {
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.field?.length
-    a.field<!UNSAFE_CALL!>.<!>length
+    a.field.length
 }
