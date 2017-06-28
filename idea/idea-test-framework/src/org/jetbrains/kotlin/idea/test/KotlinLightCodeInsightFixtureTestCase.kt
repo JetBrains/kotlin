@@ -130,7 +130,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
                     return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
                 }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
-                    return KotlinStdJSProjectDescriptor.instance
+                    return KotlinStdJSProjectDescriptor
                 }
             }
             catch (e: IOException) {
