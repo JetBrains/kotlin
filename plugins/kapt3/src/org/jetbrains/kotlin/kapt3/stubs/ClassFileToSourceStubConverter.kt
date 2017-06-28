@@ -437,7 +437,7 @@ class ClassFileToSourceStubConverter(
                     info.visibleAnnotations,
                     info.invisibleAnnotations)
 
-            val name = treeMaker.name(getValidIdentifierName(info.name) ?: "p${index}_" + info.name.hashCode())
+            val name = treeMaker.name(getValidIdentifierName(info.name) ?: "p${index}_" + info.name.hashCode().ushr(1))
             val type = treeMaker.Type(info.type)
             treeMaker.VarDef(modifiers, name, type, null)
         }
