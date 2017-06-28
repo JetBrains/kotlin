@@ -140,11 +140,11 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
     }
 
     private fun generateClassLiteralsNotEqual(paramName: String, targetClass: KtClassOrObject): String {
-        val defaultExpression = "$paramName?.javaClass != javaClass"
+        val defaultExpression = "javaClass != $paramName?.javaClass"
         if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
         return when (targetClass.platform) {
-            is JsPlatform -> "other == null || $paramName::class.js != this::class.js"
-            is TargetPlatform.Default -> "other == null || $paramName::class != this::class"
+            is JsPlatform -> "other == null || this::class.js != $paramName::class.js"
+            is TargetPlatform.Default -> "other == null || this::class != $paramName::class"
             else -> defaultExpression
         }
     }

@@ -6,7 +6,7 @@ class A {
 
     <caret>override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other::class.js != this::class.js) return false
+        if (other == null || this::class.js != other::class.js) return false
         return true
     }
 
