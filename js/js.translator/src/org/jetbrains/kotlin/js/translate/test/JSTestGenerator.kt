@@ -132,10 +132,7 @@ class JSTestGenerator(val context: TranslationContext) {
     private val DeclarationDescriptor.isFocused
             get() = annotationFinder("Only", "kotlin.test")
 
-    private fun DeclarationDescriptor.annotationFinder(shortName: String, vararg packages: String) = this.annotations.any { annotation: AnnotationDescriptor ->
-        annotation.type.toString() == shortName && packages.any { packageName ->
-            val descriptor = annotation.type.constructor.declarationDescriptor
-            descriptor != null && FqNameUnsafe("$packageName.$shortName") == DescriptorUtils.getFqName(descriptor)
-        }
+    private fun DeclarationDescriptor.annotationFinder(shortName: String, vararg packages: String) = packages.any { packageName ->
+        annotations.hasAnnotation(FqName("$packageName.$shortName"))
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,40 +16,16 @@
 
 package kotlin.test
 
-import kotlin.reflect.KClass
-
-/**
- * Comments out a block of test code until it is implemented while keeping a link to the code
- * to implement in your unit test output
- */
-impl fun todo(block: () -> Unit) {
-    // println("TODO at " + (Exception() as java.lang.Throwable).getStackTrace()?.get(1) + " for " + block)
-    println("TODO at " + block)
+external interface TestResult {
+    val result: Boolean
+    val expected: Any?
+    val actual: Any?
+    val lazyMessage: () -> String?
 }
 
+internal var assertHook: (TestResult) -> Unit = { _ -> }
 
-/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
-impl fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
-    val exception = assertFails(message, block)
-    @Suppress("INVISIBLE_MEMBER")
-    assertTrue(exceptionClass.isInstance(exception), messagePrefix(message) + "Expected an exception of $exceptionClass to be thrown, but was $exception")
-
-    @Suppress("UNCHECKED_CAST")
-    return exception as T
-}
-
-
-/**
- * Provides the JS implementation of asserter using [QUnit](http://QUnitjs.com/)
- */
-internal impl fun lookupAsserter(): Asserter = qunitAsserter
-
-private val qunitAsserter = QUnitAsserter()
-
-internal var assertHook: (result: Boolean, expected: Any?, actual: Any?, () -> String?) -> Unit = { _, _, _, _ -> }
-
-// TODO: make object in 1.2
-class QUnitAsserter : Asserter {
+internal open class DefaultAsserter : Asserter {
     private var e: Any? = undefined
     private var a: Any? = undefined
 
@@ -103,7 +79,12 @@ class QUnitAsserter : Asserter {
 
     private fun invokeHook(result: Boolean, lazyMessage: () -> String?) {
         try {
-            assertHook(result, e, a, lazyMessage)
+            assertHook(object : TestResult {
+                override val result: Boolean = result
+                override val expected: Any? = e
+                override val actual: Any? = a
+                override val lazyMessage: () -> String? = lazyMessage
+            })
         }
         finally {
             e = undefined
@@ -111,3 +92,7 @@ class QUnitAsserter : Asserter {
         }
     }
 }
+
+// TODO: remove in 1.2
+@Deprecated("To be removed in 1.2")
+class QUnitAsserter : Asserter by defaultAsserter
