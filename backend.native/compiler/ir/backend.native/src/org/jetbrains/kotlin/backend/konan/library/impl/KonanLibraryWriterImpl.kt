@@ -22,17 +22,18 @@ import org.jetbrains.kotlin.backend.konan.library.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.util.*
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class FileBasedLibraryWriter (
     val file: File, val currentAbiVersion: Int): KonanLibraryWriter {
 }
 
 class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int, 
-    override val target: String?, val nopack: Boolean = false): 
+    override val target: KonanTarget?, val nopack: Boolean = false): 
         FileBasedLibraryWriter(libDir, currentAbiVersion), KonanLibrary {
 
     public constructor(path: String, currentAbiVersion: Int, 
-        target: String, nopack: Boolean): 
+        target:KonanTarget?, nopack: Boolean): 
         this(File(path), currentAbiVersion, target, nopack)
 
     // TODO: Experiment with separate bitcode files.
@@ -79,8 +80,7 @@ class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int,
     }
 }
 
-
-internal fun buildLibrary(natives: List<String>, linkData: LinkData, abiVersion: Int, target: String, output: String, llvmModule: LLVMModuleRef, nopack: Boolean): KonanLibraryWriter {
+internal fun buildLibrary(natives: List<String>, linkData: LinkData, abiVersion: Int, target: KonanTarget, output: String, llvmModule: LLVMModuleRef, nopack: Boolean): KonanLibraryWriter {
 
     val library = LibraryWriterImpl(output, abiVersion, target, nopack)
 

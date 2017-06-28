@@ -108,14 +108,14 @@ internal fun produceOutput(context: Context) {
         CompilerOutputKind.LIBRARY -> {
             val libraryName = context.config.outputName
             val abiVersion = context.config.currentAbiVersion
-            val targetName = context.config.targetManager.targetName
+            val target = context.config.targetManager.target
             val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
 
             val library = buildLibrary(
                 context.config.nativeLibraries, 
                 context.serializedLinkData!!, 
                 abiVersion,
-                targetName,
+                target,
                 libraryName, 
                 llvmModule,
                 nopack)

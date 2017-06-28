@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.konan.library.MetadataReader
 import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
 import org.jetbrains.kotlin.backend.konan.util.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class FileBasedLibraryReader(
     val file: File, val currentAbiVersion: Int,
@@ -44,11 +45,11 @@ abstract class FileBasedLibraryReader(
 
 
 class LibraryReaderImpl(override val libDir: File, currentAbiVersion: Int,
-        override val target: String?) : 
+        override val target: KonanTarget?) : 
             FileBasedLibraryReader(libDir, currentAbiVersion, MetadataReaderImpl(libDir)), 
             KonanLibrary  {
 
-    public constructor(path: String, currentAbiVersion: Int, target: String?) : 
+    public constructor(path: String, currentAbiVersion: Int, target: KonanTarget?) : 
         this(File(path), currentAbiVersion, target) 
 
     init {

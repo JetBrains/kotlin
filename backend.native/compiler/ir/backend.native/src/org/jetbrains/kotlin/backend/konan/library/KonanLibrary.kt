@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.backend.konan.library
 
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.backend.konan.util.File
 
 // This scheme describes the Konan Library (klib) layout.
 interface KonanLibrary {
     val libDir: File
-    val target: String?
+    val target: KonanTarget?
         // This is a default implementation. Can't make it an assignment.
         get() = null 
     val klibFile 
@@ -33,7 +34,7 @@ interface KonanLibrary {
     val targetsDir
         get() = File(libDir, "targets")
     val targetDir 
-        get() = File(targetsDir, target!!)
+        get() = File(targetsDir, target!!.name.toLowerCase())
     val kotlinDir 
         get() = File(targetDir, "kotlin")
     val nativeDir 

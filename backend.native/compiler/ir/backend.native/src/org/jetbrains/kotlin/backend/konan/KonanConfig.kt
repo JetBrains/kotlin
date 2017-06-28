@@ -73,7 +73,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     internal val libraries: List<KonanLibraryReader> by lazy {
-        val target = targetManager.targetName
+        val target = targetManager.target
         // Here we have chosen a particular KonanLibraryReader implementation.
         librariesFound.map{it -> LibraryReaderImpl(it, currentAbiVersion, target)}
     }
