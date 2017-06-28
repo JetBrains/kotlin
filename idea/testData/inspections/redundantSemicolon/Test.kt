@@ -37,3 +37,14 @@ fun baz(args: Array<String>) {
     // But here redundant!
     do while (args.size > 0);
 }
+
+enum class Foo {
+    ; //not redundant
+    ;
+    companion object;
+    ;
+}
+
+enum class Bar {
+    ; //redundant
+}
