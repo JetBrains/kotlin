@@ -40,10 +40,11 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.ResolvedCallWithRealDescriptor;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.forLoop.AbstractForLoopGenerator;
-import org.jetbrains.kotlin.codegen.forLoop.ForLoopGeneratorsKt;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.*;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
+import org.jetbrains.kotlin.codegen.range.RangeValue;
+import org.jetbrains.kotlin.codegen.range.RangeValuesKt;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -599,7 +600,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private void generateFor(@NotNull KtForExpression forExpression) {
-        generateForLoop(ForLoopGeneratorsKt.getForLoopGenerator(this, forExpression));
+        KtExpression range = forExpression.getLoopRange();
+        assert range != null : "No loop range in for expression";
+        RangeValue rangeValue = RangeValuesKt.createRangeValueForExpression(this, range);
+        generateForLoop(rangeValue.createForLoopGenerator(this, forExpression));
     }
 
     @NotNull
