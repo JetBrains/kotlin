@@ -1,0 +1,54 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class org/springframework/boot/test/context/SpringBootTest
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class org/springframework/cache/annotation/Cacheable
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class org/springframework/scheduling/annotation/Async
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class org/springframework/stereotype/Component
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class org/springframework/transaction/annotation/Transactional
+
+@kotlin.Metadata
+public final class test/NoAnno {
+    public method <init>(): void
+}
+
+@org.springframework.scheduling.annotation.Async
+@kotlin.Metadata
+public class test/TestAsync {
+    public method <init>(): void
+}
+
+@org.springframework.cache.annotation.Cacheable
+@kotlin.Metadata
+public class test/TestCacheable {
+    public method <init>(): void
+}
+
+@org.springframework.stereotype.Component
+@kotlin.Metadata
+public class test/TestComponent {
+    public method <init>(): void
+}
+
+@org.springframework.boot.test.context.SpringBootTest
+@kotlin.Metadata
+public class test/TestSpringBootTest {
+    public method <init>(): void
+}
+
+@org.springframework.transaction.annotation.Transactional
+@kotlin.Metadata
+public class test/TestTransactional {
+    public method <init>(): void
+}
