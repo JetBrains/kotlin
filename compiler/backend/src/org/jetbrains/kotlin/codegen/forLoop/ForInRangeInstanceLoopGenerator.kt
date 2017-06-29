@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.forLoop
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.KtForExpression
 
 class ForInRangeInstanceLoopGenerator(
@@ -31,8 +32,7 @@ class ForInRangeInstanceLoopGenerator(
         v.dup()
 
         // ranges inherit first and last from corresponding progressions
-        generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType,
-                                           loopParameterVar)
+        generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar)
         generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar)
     }
 }
