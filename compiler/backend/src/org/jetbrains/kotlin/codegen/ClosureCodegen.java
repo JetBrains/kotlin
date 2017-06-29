@@ -250,7 +250,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
      * This is needed because once we're serializing this to a proto, there's no place to store information about external type parameters.
      */
     @NotNull
-    private static FunctionDescriptor createFreeLambdaDescriptor(@NotNull FunctionDescriptor descriptor) {
+    public static FunctionDescriptor createFreeLambdaDescriptor(@NotNull FunctionDescriptor descriptor) {
         FunctionDescriptor.CopyBuilder<? extends FunctionDescriptor> builder = descriptor.newCopyBuilder();
         List<TypeParameterDescriptor> typeParameters = new ArrayList<>(0);
         builder.setTypeParameters(typeParameters);

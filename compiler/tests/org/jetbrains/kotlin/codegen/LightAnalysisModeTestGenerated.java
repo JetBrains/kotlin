@@ -5018,6 +5018,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("coroutineToString.kt")
+        public void testCoroutineToString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/coroutineToString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("createCoroutineSafe.kt")
         public void testCreateCoroutineSafe() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/createCoroutineSafe.kt");

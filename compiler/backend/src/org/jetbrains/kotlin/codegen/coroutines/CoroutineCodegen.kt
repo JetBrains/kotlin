@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -475,8 +477,10 @@ class CoroutineCodegenForNamedFunction private constructor(
     }
 
     override fun generateKotlinMetadataAnnotation() {
-        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) {
-            // Do not write method metadata for raw coroutine state machines
+        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) { av ->
+            val serializer = DescriptorSerializer.createForLambda(JvmSerializerExtension(v.serializationBindings, state))
+            val functionProto = serializer.functionProto(createFreeLambdaDescriptor(suspendFunctionJvmView)).build()
+            AsmUtil.writeAnnotationData(av, serializer, functionProto)
         }
     }
 
