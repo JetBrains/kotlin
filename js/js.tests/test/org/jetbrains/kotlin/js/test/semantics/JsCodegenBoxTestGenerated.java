@@ -14785,6 +14785,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
+            @TestMetadata("inArray.kt")
+            public void testInArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inCharSequence.kt")
+            public void testInCharSequence() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inCharSequence.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inComparableRange.kt")
             public void testInComparableRange() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inComparableRange.kt");
@@ -14819,6 +14831,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     return;
                 }
                 throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("inIterable.kt")
+            public void testInIterable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inIterable.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("inOptimizableDoubleRange.kt")
@@ -14867,6 +14885,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     return;
                 }
                 throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("inPrimitiveProgression.kt")
+            public void testInPrimitiveProgression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inPrimitiveProgression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inPrimitiveRange.kt")
+            public void testInPrimitiveRange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inPrimitiveRange.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("inRangeWithCustomContains.kt")

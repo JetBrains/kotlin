@@ -55,7 +55,7 @@ fun isRange(rangeType: KotlinType) =
 fun isProgression(rangeType: KotlinType) =
         !rangeType.isMarkedNullable && getPrimitiveProgressionElementType(rangeType) != null
 
-private fun getPrimitiveRangeElementType(rangeType: KotlinType) =
+fun getPrimitiveRangeElementType(rangeType: KotlinType) =
         getPrimitiveRangeOrProgressionElementType(rangeType, RANGE_TO_ELEMENT_TYPE)
 
 private fun getPrimitiveProgressionElementType(rangeType: KotlinType) =
