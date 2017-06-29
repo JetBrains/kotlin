@@ -156,7 +156,7 @@ public class DefaultErrorMessages {
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "''@{0}:'' annotations could be applied only to mutable properties", TO_STRING);
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, "'@delegate:' annotations could be applied only to delegated properties");
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD, "'@field:' annotations could be applied only to properties with backing fields");
-        MAP.put(INAPPLICABLE_RECEIVER_TARGET, "'@receiver:' annotations could be applied only to extension function or extension property declarations");
+        MAP.put(INAPPLICABLE_RECEIVER_TARGET, "'@receiver:' annotations can only be applied to the receiver type of extension function or extension property declarations");
         MAP.put(INAPPLICABLE_PARAM_TARGET, "'@param:' annotations could be applied only to primary constructor parameters");
         MAP.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", STRING);
 
