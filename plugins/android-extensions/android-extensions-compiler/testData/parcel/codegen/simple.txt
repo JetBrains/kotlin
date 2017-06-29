@@ -45,7 +45,12 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public void <init>(java.lang.String p0, java.lang.String p1, int p2, boolean p3)
 
-    public final int describeContents()
+    public final int describeContents() {
+        LABEL (L0)
+          LDC (0)
+          IRETURN
+        LABEL (L1)
+    }
 
     public final int getAge()
 

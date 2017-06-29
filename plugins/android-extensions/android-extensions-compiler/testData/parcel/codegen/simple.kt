@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT writeToParcel, createFromParcel, <clinit>
+// CURIOUS_ABOUT writeToParcel, createFromParcel, <clinit>, describeContents
 
 import kotlinx.android.parcel.*
 import android.os.Parcelable

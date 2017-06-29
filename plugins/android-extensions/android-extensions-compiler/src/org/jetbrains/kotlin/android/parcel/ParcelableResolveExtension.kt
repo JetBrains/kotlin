@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.android.parcel
 
 import kotlinx.android.parcel.MagicParcel
 import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.ComponentKind.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -78,13 +79,17 @@ class ParcelableResolveExtension : SyntheticResolveExtension {
             fromSupertypes: List<SimpleFunctionDescriptor>,
             result: MutableCollection<SimpleFunctionDescriptor>
     ) {
-        if (name.asString() == DESCRIBE_CONTENTS.methodName && clazz.isMagicParcelable) {
+        if (name.asString() == DESCRIBE_CONTENTS.methodName && clazz.isMagicParcelable && result.none { it.isDescribeContents() }) {
             result += createMethod(clazz, DESCRIBE_CONTENTS, clazz.builtIns.intType)
         } else if (name.asString() == WRITE_TO_PARCEL.methodName && clazz.isMagicParcelable) {
             val builtIns = clazz.builtIns
             val parcelClassType = resolveParcelClassType(clazz.module)
             result += createMethod(clazz, WRITE_TO_PARCEL, builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType)
         }
+    }
+
+    private fun SimpleFunctionDescriptor.isDescribeContents(): Boolean {
+        return typeParameters.isEmpty() && valueParameters.isEmpty() && returnType?.let { type -> KotlinBuiltIns.isInt(type) } == true
     }
 }
 
