@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiClassType
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -119,6 +116,63 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
 
         myFixture.configureByText("AnnotatedClass.kt", """
             @OuterAnnotation(attribute = OuterAnnotation.InnerAnnotation())
+            open class AnnotatedClass
+        """.trimIndent())
+        myFixture.testHighlighting("OuterAnnotation.java", "AnnotatedClass.kt")
+
+        val headerClass = listOf(myFixture.findClass("AnnotatedClass"))
+        assertEquals(1, headerClass.size)
+        val annotations = headerClass.first().annotations
+        assertEquals(1, annotations.size)
+        val annotation = annotations.first()
+
+        val annotationAttributeVal = annotation.findAttributeValue("attribute") as PsiElement
+
+        TestCase.assertEquals("InnerAnnotation()", annotationAttributeVal.text)
+        TestCase.assertEquals(TextRange(45, 62), annotationAttributeVal.textRange)
+    }
+
+    fun testAnnotationsInAnnotationsFinalDeclarations() {
+        myFixture.addClass("""
+            public @interface OuterAnnotation {
+                InnerAnnotation attribute();
+                @interface InnerAnnotation {
+                }
+            }
+        """.trimIndent())
+
+        myFixture.configureByText("AnnotatedClass.kt", """
+            @OuterAnnotation(attribute = OuterAnnotation.InnerAnnotation())
+            class AnnotatedClass
+        """.trimIndent())
+        myFixture.testHighlighting("OuterAnnotation.java", "AnnotatedClass.kt")
+
+        val headerClass = listOf(myFixture.findClass("AnnotatedClass"))
+        assertEquals(1, headerClass.size)
+        val annotations = headerClass.first().annotations
+        assertEquals(1, annotations.size)
+        val annotation = annotations.first()
+
+        val annotationAttributeVal = annotation.findAttributeValue("attribute") as PsiElement
+
+        TestCase.assertEquals("InnerAnnotation()", annotationAttributeVal.text)
+        TestCase.assertEquals(TextRange(45, 62), annotationAttributeVal.textRange)
+    }
+
+    fun testAnnotationsInAnnotationsInAnnotationsDeclarations() {
+        myFixture.addClass("""
+            public @interface OuterAnnotation {
+                InnerAnnotation attribute();
+                @interface InnerAnnotation {
+                    InnerInnerAnnotation attribute();
+                    @interface InnerInnerAnnotation {
+                    }
+                }
+            }
+        """.trimIndent())
+
+        myFixture.configureByText("AnnotatedClass.kt", """
+            @OuterAnnotation(attribute = OuterAnnotation.InnerAnnotation(attribute = OuterAnnotation.InnerAnnotation.InnerInnerAnnotation()))
             open class AnnotatedClass //There is another exception if class is not open
         """.trimIndent())
         myFixture.testHighlighting("OuterAnnotation.java", "AnnotatedClass.kt")
@@ -131,8 +185,41 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val annotationAttributeVal = annotation.findAttributeValue("attribute") as PsiElement
 
-        TestCase.assertEquals("@OuterAnnotation.InnerAnnotation", annotationAttributeVal.text)
-        TestCase.assertEquals(TextRange(29, 62), annotationAttributeVal.textRange)
+        TestCase.assertEquals("InnerAnnotation(attribute = OuterAnnotation.InnerAnnotation.InnerInnerAnnotation())", annotationAttributeVal.text)
+        TestCase.assertEquals(TextRange(45, 128), annotationAttributeVal.textRange)
+
+        annotationAttributeVal as PsiAnnotation
+        val innerAnnotationAttributeVal = annotationAttributeVal.findAttributeValue("attribute") as PsiElement
+        TestCase.assertEquals("InnerInnerAnnotation()", innerAnnotationAttributeVal.text)
+        TestCase.assertEquals(TextRange(105, 127), innerAnnotationAttributeVal.textRange)
+    }
+
+    fun testKotlinAnnotations() {
+        myFixture.configureByText("AnnotatedClass.kt", """
+            annotation class Anno1(val anno2: Anno2)
+            annotation class Anno2(val anno3: Anno3)
+            annotation class Anno3
+
+            @Anno1(Anno2(Anno3()))
+            class AnnotatedClass
+        """.trimIndent())
+        myFixture.testHighlighting("AnnotatedClass.kt")
+
+        val headerClass = listOf(myFixture.findClass("AnnotatedClass"))
+        assertEquals(1, headerClass.size)
+        val annotations = headerClass.first().annotations
+        assertEquals(1, annotations.size)
+        val annotation = annotations.first()
+
+        val annotationAttributeVal = annotation.findAttributeValue("anno2") as PsiElement
+
+        TestCase.assertEquals("Anno2(Anno3())", annotationAttributeVal.text)
+        TestCase.assertEquals(TextRange(113, 127), annotationAttributeVal.textRange)
+
+        annotationAttributeVal as PsiAnnotation
+        val innerAnnotationAttributeVal = annotationAttributeVal.findAttributeValue("anno3") as PsiElement
+        TestCase.assertEquals("Anno3()", innerAnnotationAttributeVal.text)
+        TestCase.assertEquals(TextRange(119, 126), innerAnnotationAttributeVal.textRange)
     }
 
     private fun classesFromText(text: String, fileName: String = "A.kt"): Array<out PsiClass> {
