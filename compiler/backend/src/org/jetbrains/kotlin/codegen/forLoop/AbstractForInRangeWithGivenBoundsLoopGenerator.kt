@@ -18,22 +18,15 @@ package org.jetbrains.kotlin.codegen.forLoop
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-class ForInRangeLiteralLoopGenerator(
+abstract class AbstractForInRangeWithGivenBoundsLoopGenerator(
         codegen: ExpressionCodegen,
         forExpression: KtForExpression,
-        loopRangeCall: ResolvedCall<*>
-) : AbstractForInRangeWithGivenBoundsLoopGenerator(codegen, forExpression) {
-    private val from: ReceiverValue = loopRangeCall.dispatchReceiver!!
-    private val to: KtExpression = ExpressionCodegen.getSingleArgumentExpression(loopRangeCall)!!
-
-    override fun generateFrom(): StackValue = codegen.generateReceiverValue(from, false)
-
-    override fun generateTo(): StackValue = codegen.gen(to)
+        step: Int = 1
+) : AbstractForInRangeLoopGenerator(codegen, forExpression, step) {
+    protected abstract fun generateFrom(): StackValue
+    protected abstract fun generateTo(): StackValue
 
     override fun storeRangeStartAndEnd() {
         loopParameter().store(generateFrom(), v)

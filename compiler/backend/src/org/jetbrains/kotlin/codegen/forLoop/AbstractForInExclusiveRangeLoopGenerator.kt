@@ -25,15 +25,7 @@ import org.jetbrains.org.objectweb.asm.Type
 abstract class AbstractForInExclusiveRangeLoopGenerator(
         codegen: ExpressionCodegen,
         forExpression: KtForExpression
-) : AbstractForInRangeLoopGenerator(codegen, forExpression) {
-    protected abstract fun generateFrom(): StackValue
-    protected abstract fun generateTo(): StackValue
-
-    override fun storeRangeStartAndEnd() {
-        loopParameter().store(generateFrom(), v)
-        StackValue.local(endVar, asmElementType).store(generateTo(), v)
-    }
-
+) : AbstractForInRangeWithGivenBoundsLoopGenerator(codegen, forExpression) {
     override fun checkEmptyLoop(loopExit: Label) {}
 
     override fun checkPreCondition(loopExit: Label) {

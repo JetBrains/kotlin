@@ -27,12 +27,11 @@ class ForInDownToProgressionLoopGenerator(
         codegen: ExpressionCodegen,
         forExpression: KtForExpression,
         loopRangeCall: ResolvedCall<*>
-) : AbstractForInRangeLoopGenerator(codegen, forExpression, -1) {
+) : AbstractForInRangeWithGivenBoundsLoopGenerator(codegen, forExpression, -1) {
     private val from: ReceiverValue = loopRangeCall.extensionReceiver!!
     private val to: KtExpression = ExpressionCodegen.getSingleArgumentExpression(loopRangeCall)!!
 
-    override fun storeRangeStartAndEnd() {
-        loopParameter().store(codegen.generateReceiverValue(from, false), v)
-        StackValue.local(endVar, asmElementType).store(codegen.gen(to), v)
-    }
+    override fun generateFrom(): StackValue = codegen.generateReceiverValue(from, false)
+
+    override fun generateTo(): StackValue = codegen.gen(to)
 }
