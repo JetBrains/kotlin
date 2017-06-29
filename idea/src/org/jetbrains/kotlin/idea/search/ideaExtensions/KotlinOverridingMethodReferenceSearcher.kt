@@ -42,9 +42,14 @@ import org.jetbrains.kotlin.utils.ifEmpty
 
 class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
     override fun processQuery(p: MethodReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
+        val method = p.method
+        val isConstructor = p.project.runReadActionInSmartMode { method.isConstructor }
+        if (isConstructor) {
+            return
+        }
+
         super.processQuery(p, consumer)
 
-        val method = p.method
         p.project.runReadActionInSmartMode {
             val containingClass = method.containingClass ?: return@runReadActionInSmartMode
 
