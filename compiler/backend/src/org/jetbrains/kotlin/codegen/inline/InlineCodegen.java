@@ -941,7 +941,12 @@ public class InlineCodegen extends CallGenerator {
             assert constantValue instanceof Integer : "Mask should be of Integer type, but " + constantValue;
             maskValues.add((Integer) constantValue);
             if (maskStartIndex == -1) {
-                maskStartIndex = invocationParamBuilder.getNextParameterOffset();
+                maskStartIndex = 0;
+                List<ParameterInfo> infos = invocationParamBuilder.listAllParams();
+                for (ParameterInfo info : infos) {
+                    if (info instanceof CapturedParamInfo) continue;
+                    maskStartIndex += info.getType().getSize();
+                }
             }
         }
         else {
