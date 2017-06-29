@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 interface RangeValue {
-    fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): AbstractForLoopGenerator
+    fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator
 }
 
 class ArrayRangeValue : RangeValue {
