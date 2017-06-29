@@ -180,7 +180,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             else {
                 generateClassLiteralsNotEqual(paramName, targetClass)
             }
-            val bodyText = StringBuilder().apply {
+            val bodyText = buildString {
                 append("if (this === $paramName) return true\n")
                 append("if ($isNotInstanceCondition) return false\n")
 
@@ -213,7 +213,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                 append("return true")
             }
 
-            equalsFun.bodyExpression!!.replace(KtPsiFactory(project).createExpression("{\n$bodyText\n}"))
+            equalsFun.bodyExpression!!.replace(KtPsiFactory(project).createBlock(bodyText))
 
             return equalsFun
         }
@@ -269,7 +269,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                 }.toString()
             } else "return $initialValue"
 
-            hashCodeFun.bodyExpression!!.replace(KtPsiFactory(project).createExpression("{\n$bodyText\n}"))
+            hashCodeFun.bodyExpression!!.replace(KtPsiFactory(project).createBlock(bodyText))
 
             return hashCodeFun
         }
