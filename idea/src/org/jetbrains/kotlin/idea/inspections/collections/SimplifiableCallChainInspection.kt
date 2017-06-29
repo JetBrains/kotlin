@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
@@ -43,8 +41,10 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
                     val firstCallExpression = firstQualifiedExpression.selectorExpression as? KtCallExpression ?: return
                     val secondCallExpression = expression.selectorExpression as? KtCallExpression ?: return
 
+                    val firstCalleeExpression = firstCallExpression.calleeExpression ?: return
+                    val secondCalleeExpression = secondCallExpression.calleeExpression ?: return
                     val actualConversions = conversionGroups[
-                            firstCallExpression.calleeExpression?.text to secondCallExpression.calleeExpression?.text
+                            firstCalleeExpression.text to secondCalleeExpression.text
                             ] ?: return
 
                     val context = expression.analyze()
@@ -78,7 +78,7 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
 
                     val descriptor = holder.manager.createProblemDescriptor(
                             expression,
-                            TextRange(firstCallExpression.startOffset, firstCallExpression.endOffset).shiftRight(-expression.startOffset),
+                            firstCalleeExpression.textRange.shiftRight(-expression.startOffset),
                             "Call chain on collection type may be simplified",
                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                             isOnTheFly,
