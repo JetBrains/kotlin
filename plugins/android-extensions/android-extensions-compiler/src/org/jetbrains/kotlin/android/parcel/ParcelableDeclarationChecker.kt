@@ -20,19 +20,19 @@ import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
 import org.jetbrains.kotlin.types.TypeUtils
 
 private val ANDROID_PARCELABLE_CLASS_FQNAME = FqName("android.os.Parcelable")
+internal val ANDROID_PARCEL_CLASS_FQNAME = FqName("android.os.Parcel")
 
 class ParcelableDeclarationChecker : SimpleDeclarationChecker {
     private companion object {
@@ -47,6 +47,13 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
     ) {
         when (descriptor) {
             is ClassDescriptor -> checkParcelableClass(descriptor, declaration, diagnosticHolder)
+            is SimpleFunctionDescriptor -> {
+                val containingClass = descriptor.containingDeclaration as? ClassDescriptor
+                val ktFunction = declaration as? KtFunction
+                if (containingClass != null && ktFunction != null) {
+                    checkParcelableClassMethod(descriptor, containingClass, ktFunction, diagnosticHolder)
+                }
+            }
             is PropertyDescriptor -> {
                 val containingClass = descriptor.containingDeclaration as? ClassDescriptor
                 val ktProperty = declaration as? KtProperty
@@ -57,19 +64,41 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
         }
     }
 
+    private fun checkParcelableClassMethod(
+            method: SimpleFunctionDescriptor,
+            containingClass: ClassDescriptor,
+            declaration: KtFunction,
+            diagnosticHolder: DiagnosticSink
+    ) {
+        if (!containingClass.isMagicParcelable) return
+
+        if (method.isWriteToParcel()) {
+            val reportElement = declaration.modifierList?.getModifier(KtTokens.OVERRIDE_KEYWORD) ?: declaration.nameIdentifier ?: declaration
+            diagnosticHolder.report(ErrorsAndroid.OVERRIDING_WRITE_TO_PARCEL_IS_FORBIDDEN.on(reportElement))
+        }
+    }
+
     private fun checkParcelableClassProperty(
             property: PropertyDescriptor,
             containingClass: ClassDescriptor,
             declaration: KtProperty,
             diagnosticHolder: DiagnosticSink
     ) {
-        if (!containingClass.isMagicParcelable) return
+        if (containingClass.isMagicParcelable) {
+            // Do not report on calculated properties
+            if (declaration.getter?.hasBody() == true) return
 
-        // Do not report on calculated properties
-        if (declaration.getter?.hasBody() == true) return
+            if (!property.annotations.hasAnnotation(TRANSIENT_FQNAME)) {
+                diagnosticHolder.report(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED.on(declaration.nameIdentifier ?: declaration))
+            }
+        }
 
-        if (!property.annotations.hasAnnotation(TRANSIENT_FQNAME)) {
-            diagnosticHolder.report(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED.on(declaration.nameIdentifier ?: declaration))
+        // @JvmName is not applicable to property so we can check just the descriptor name
+        if (property.name.asString() == "CREATOR" && property.findJvmFieldAnnotation() != null && containingClass.isCompanionObject) {
+            val outerClass = containingClass.containingDeclaration as? ClassDescriptor
+            if (outerClass != null && outerClass.isMagicParcelable) {
+                diagnosticHolder.report(ErrorsAndroid.CREATOR_DEFINITION_IS_FORBIDDEN.on(declaration.nameIdentifier ?: declaration))
+            }
         }
     }
 

@@ -63,6 +63,12 @@ class DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
 
             MAP.put(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED,
                     "Property would not be serialized into a 'Parcel'. Add '@Transient' annotation to it")
+
+            MAP.put(ErrorsAndroid.OVERRIDING_WRITE_TO_PARCEL_IS_FORBIDDEN,
+                    "Overriding 'writeToParcel' is forbidden. Use 'Parceler' companion object instead.")
+
+            MAP.put(ErrorsAndroid.CREATOR_DEFINITION_IS_FORBIDDEN,
+                    "'CREATOR' definition is forbidden. Use 'Parceler' companion object instead.")
         }
     }
 
