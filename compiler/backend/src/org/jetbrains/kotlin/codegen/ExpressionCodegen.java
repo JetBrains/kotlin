@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.ResolvedCallWithRealDescriptor;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.forLoop.AbstractForLoopGenerator;
+import org.jetbrains.kotlin.codegen.forLoop.ForLoopGenerator;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.*;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
@@ -627,7 +628,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return context.getContextKind();
     }
 
-    private void generateForLoop(AbstractForLoopGenerator generator) {
+    private void generateForLoop(ForLoopGenerator generator) {
         Label loopExit = new Label();
         Label loopEntry = new Label();
         Label continueLabel = new Label();

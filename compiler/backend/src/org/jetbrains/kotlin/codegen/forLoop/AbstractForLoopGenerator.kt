@@ -30,8 +30,8 @@ import org.jetbrains.org.objectweb.asm.Type
 
 abstract class AbstractForLoopGenerator(
         protected val codegen: ExpressionCodegen,
-        val forExpression: KtForExpression
-) {
+        override val forExpression: KtForExpression
+) : ForLoopGenerator {
     protected val bindingContext = codegen.bindingContext
     protected val v = codegen.v!!
 
@@ -52,7 +52,7 @@ abstract class AbstractForLoopGenerator(
         return nextCall.resultingDescriptor.returnType!!
     }
 
-    open fun beforeLoop() {
+    override fun beforeLoop() {
         val loopParameter = forExpression.loopParameter ?: return
         val multiParameter = loopParameter.destructuringDeclaration
         if (multiParameter != null) {
@@ -75,11 +75,7 @@ abstract class AbstractForLoopGenerator(
         }
     }
 
-    abstract fun checkEmptyLoop(loopExit: Label)
-
-    abstract fun checkPreCondition(loopExit: Label)
-
-    fun beforeBody() {
+    override fun beforeBody() {
         assignToLoopParameter()
         v.mark(loopParameterStartLabel)
 
@@ -118,7 +114,7 @@ abstract class AbstractForLoopGenerator(
 
     protected abstract fun checkPostConditionAndIncrement(loopExit: Label)
 
-    fun body() {
+    override fun body() {
         codegen.generateLoopBody(forExpression.body)
     }
 
@@ -132,7 +128,7 @@ abstract class AbstractForLoopGenerator(
         return varIndex
     }
 
-    fun afterBody(loopExit: Label) {
+    override fun afterBody(loopExit: Label) {
         codegen.markStartLineNumber(forExpression)
 
         checkPostConditionAndIncrement(loopExit)
@@ -140,7 +136,7 @@ abstract class AbstractForLoopGenerator(
         v.mark(bodyEnd)
     }
 
-    fun afterLoop() {
+    override fun afterLoop() {
         for (task in leaveVariableTasks.asReversed()) {
             task.run()
         }
