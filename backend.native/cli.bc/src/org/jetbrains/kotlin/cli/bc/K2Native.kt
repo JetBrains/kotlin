@@ -124,6 +124,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(ABI_VERSION, 1)
 
                 arguments.mainPackage ?.let{ put(ENTRY, it) }
+                arguments.manifestFile ?.let{ put(MANIFEST_FILE, it) }
                 arguments.runtimeFile ?.let{ put(RUNTIME_FILE, it) }
                 arguments.propertyFile ?.let{ put(PROPERTY_FILE, it) }
 

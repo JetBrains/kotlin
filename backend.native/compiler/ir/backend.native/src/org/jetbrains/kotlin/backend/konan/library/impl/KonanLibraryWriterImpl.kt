@@ -71,6 +71,12 @@ class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int,
         File(library).copyTo(File(nativeDir, basename)) 
     }
 
+    override fun addManifestAddend(path: String) {
+        val properties = File(path).loadProperties()
+        manifestProperties.putAll(properties)
+        println("manifest addend: ${properties.stringPropertyNames().joinToString(" ")}")
+    }
+
     override fun commit() {
         manifestProperties.saveToFile(manifestFile)
         if (!nopack) {
@@ -80,7 +86,15 @@ class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int,
     }
 }
 
-internal fun buildLibrary(natives: List<String>, linkData: LinkData, abiVersion: Int, target: KonanTarget, output: String, llvmModule: LLVMModuleRef, nopack: Boolean): KonanLibraryWriter {
+internal fun buildLibrary(
+    natives: List<String>, 
+    linkData: LinkData, 
+    abiVersion: Int, 
+    target: KonanTarget, 
+    output: String, 
+    llvmModule: LLVMModuleRef, 
+    nopack: Boolean, 
+    manifest: String?): KonanLibraryWriter {
 
     val library = LibraryWriterImpl(output, abiVersion, target, nopack)
 
@@ -89,6 +103,7 @@ internal fun buildLibrary(natives: List<String>, linkData: LinkData, abiVersion:
     natives.forEach {
         library.addNativeBitcode(it)
     }
+    manifest ?.let { library.addManifestAddend(it) }
 
     library.commit()
     return library

@@ -89,5 +89,7 @@ class LibraryReaderImpl(override val libDir: File, currentAbiVersion: Int,
     override val bitcodePaths: List<String>
         get() = (kotlinDir.listFiles + nativeDir.listFiles).map{it.absolutePath}
 
+    override val linkerOpts: List<String>
+        get() = manifestProperties.propertyList("linkerOpts", target!!.targetSuffix)
 }
 

@@ -82,6 +82,9 @@ open class KonanInteropTask: KonanTargetableTask() {
     @Optional @Input var linker: String? = null
         internal set
 
+    @Optional @Input var manifest: String? = null
+        internal set
+
     @Input var dumpParameters: Boolean = false
     @Input val compilerOpts   = mutableListOf<String>()
     @Input val linkerOpts     = mutableListOf<String>()
@@ -118,6 +121,7 @@ open class KonanInteropTask: KonanTargetableTask() {
 
         addArg("-generated", stubsDir.canonicalPath)
         addArg("-natives", libsDir.canonicalPath)
+        manifest ?.let {addArg("-manifest", it)}
 
         addArgIfNotNull("-target", target)
         val defFilePath = defFile?.canonicalPath ?:
@@ -156,14 +160,16 @@ open class KonanInteropConfig(
     val generateStubsTask: KonanInteropTask = project.tasks.create(
             "gen${name.capitalize()}InteropStubs",
             KonanInteropTask::class.java
-    ) { it.init(name) }
-
-    // Config and task to compile *.kt stubs in a *.bc library
+    ) { it.init(name) 
+        it.manifest = "${it.stubsDir.path}/manifest.properties"
+    }
+    // Config and task to compile *.kt stubs into a library
     internal val compileStubsConfig = KonanCompileConfig("${name}InteropStubs", project, "compile").apply {
         compilationTask.dependsOn(generateStubsTask)
         outputDir("${project.konanInteropCompiledStubsDir}/$name")
         produce("library")
         inputFiles(project.fileTree(generateStubsTask.stubsDir).apply { builtBy(generateStubsTask) })
+        manifest("${generateStubsTask.stubsDir.path}/manifest.properties")
     }
     val compileStubsTask = compileStubsConfig.compilationTask
 

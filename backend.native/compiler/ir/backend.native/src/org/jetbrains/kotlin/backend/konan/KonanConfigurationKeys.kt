@@ -43,6 +43,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("list backend phases")
         val LIST_TARGETS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("list available targets")
+        val MANIFEST_FILE: CompilerConfigurationKey<String?> 
+                = CompilerConfigurationKey.create("provide manifest addend file")
         val META_INFO: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("generate metadata")
         val MODULE_KIND: CompilerConfigurationKey<ModuleKind> 

@@ -22,6 +22,7 @@ interface KonanLibraryWriter {
     fun addLinkData(linkData: LinkData)
     fun addNativeBitcode(library: String)
     fun addKotlinBitcode(llvmModule: LLVMModuleRef)
+    fun addManifestAddend(path: String)
     val mainBitcodeFileName: String
     fun commit()
 }

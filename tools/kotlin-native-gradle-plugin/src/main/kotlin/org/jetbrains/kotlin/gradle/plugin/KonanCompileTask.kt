@@ -131,6 +131,8 @@ open class KonanCompileTask: KonanTargetableTask() {
         internal set
     @Optional @Input var apiVersion      : String? = null
         internal set
+    @Input var manifest              : String? = null
+        internal set
 
     @Input var dumpParameters: Boolean = false
     // TODO: Is there a better way to rerun tasks when the compiler version changes?
@@ -150,6 +152,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         addArgIfNotNull("-target", target)
         addArgIfNotNull("-language-version", languageVersion)
         addArgIfNotNull("-api-version", apiVersion)
+        addArgIfNotNull("-manifest", manifest)
 
         addKey("-g", enableDebug)
         addKey("-nostdlib", noStdLib)
@@ -232,6 +235,7 @@ open class KonanCompileConfig(
             builtBy(generateStubsTask)
             include("**/*.bc")
         })
+        generateStubsTask.manifest ?.let {manifest(it)}
     }
 
     fun useInterops(interops: ArrayList<String>) {
@@ -285,6 +289,10 @@ open class KonanCompileConfig(
     fun linkerOpts(args: List<String>) = linkerOpts(*args.toTypedArray())
     fun linkerOpts(vararg args: String) = with(compilationTask) {
         linkerOpts.addAll(args)
+    }
+
+    fun manifest(arg: String) = with(compilationTask) {
+        manifest = arg
     }
 
     fun target(tgt: String) = with(compilationTask) {

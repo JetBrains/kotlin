@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 interface KonanLibraryReader {
     val libraryName: String
     val bitcodePaths: List<String>
+    val linkerOpts: List<String>
     fun moduleDescriptor(specifics: LanguageVersionSettings): ModuleDescriptor
 }
 

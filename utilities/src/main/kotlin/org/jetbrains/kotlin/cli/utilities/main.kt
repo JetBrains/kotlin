@@ -19,11 +19,13 @@ fun invokeCinterop(args: Array<String>) {
     val generatedDir = File(buildDir, "kotlin")
     val nativesDir = File(buildDir, "natives")
     val cstubsName ="cstubs"
+    val manifest = File(buildDir, "manifest.properties")
 
     val additionalArgs = listOf<String>(
         "-generated", generatedDir.path, 
         "-natives", nativesDir.path, 
         "-cstubsname", cstubsName,
+        "-manifest", manifest.path,
         "-flavor", "native")
 
     val cinteropArgs = (additionalArgs + args.toList()).toTypedArray()
@@ -34,7 +36,9 @@ fun invokeCinterop(args: Array<String>) {
         "-produce", "library", 
         "-nativelibrary", File(nativesDir, "$cstubsName.bc").path,
         "-o", outputFileName,
-        "-target", target)
+        "-target", target,
+        "-manifest", manifest.path
+     )
     konancMain(konancArgs)
 }
 

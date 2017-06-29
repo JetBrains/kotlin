@@ -30,7 +30,6 @@ fun main(args: Array<String>) {
             "arch" to (System.getenv("TARGET_ARCH") ?: "x86-64"),
             "os" to (System.getenv("TARGET_OS") ?: host)
     )
-
     processLib(konanHome, substitutions, parseArgs(args))
 }
 
@@ -256,11 +255,17 @@ private fun loadProperties(file: File?, substitutions: Map<String, String>): Pro
     return result
 }
 
-private fun parseDefFile(file: File?, substitutions: Map<String, String>): Pair<Properties, List<String>> {
+private fun Properties.storeProperties(file: File) {
+    file.outputStream().use { 
+        this.store(it, null) 
+    }
+}
+
+private fun parseDefFile(file: File?, substitutions: Map<String, String>): Triple<Properties, Properties, List<String>> {
     val properties = Properties()
 
     if (file == null) {
-        return properties to emptyList()
+        return Triple(properties, Properties(), emptyList())
     }
 
     val lines = file.readLines()
@@ -281,10 +286,17 @@ private fun parseDefFile(file: File?, substitutions: Map<String, String>): Pair<
 
     val propertiesReader = StringReader(propertyLines.joinToString(System.lineSeparator()))
     properties.load(propertiesReader)
+
+    // Pass unsubstituted copy of properties we have obtained from `.def` 
+    // to compiler `-maniest`.
+    val manifestAddendProperties = properties.duplicate()
+
     substitute(properties, substitutions)
 
-    return properties to headerLines
+    return Triple(properties, manifestAddendProperties, headerLines)
 }
+
+private fun Properties.duplicate() = Properties().apply{ putAll(this@duplicate) }
 
 private fun usage() {
     println("""
@@ -316,13 +328,15 @@ private fun processLib(konanHome: String,
     val flavor = KotlinPlatform.values().single { it.name.equals(flavorName, ignoreCase = true) }
     val target = args["-target"]?.single()?.targetSuffix() ?: defaultTarget
     val defFile = args["-def"]?.single()?.let { File(it) }
+    val manifestAddend = args["-manifest"]?.single()?.let { File(it) }
 
     if (defFile == null && args["-pkg"] == null) {
         usage()
         return
     }
 
-    val (config, defHeaderLines) = parseDefFile(defFile, substitutions)
+    val (config, manifestAddendProperties, defHeaderLines) 
+        = parseDefFile(defFile, substitutions)
 
     val konanFileName = args["-properties"]?.single() ?:
             "${konanHome}/konan/konan.properties"
@@ -408,6 +422,9 @@ private fun processLib(konanHome: String,
             gen.generateFiles(ktFile = ktFile, cFile = cFile, entryPoint = entryPoint)
         }
     }
+
+    manifestAddend?.parentFile?.mkdirs()
+    manifestAddend ?.let { manifestAddendProperties.storeProperties(it) }
 
     val workDir = defFile?.absoluteFile?.parentFile ?: File(userDir)
 

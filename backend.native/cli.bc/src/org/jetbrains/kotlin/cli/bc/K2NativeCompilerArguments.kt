@@ -36,6 +36,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @field:Argument(value = "-list_targets", description = "List available hardware targets")
     @JvmField var listTargets: Boolean = false
 
+    @field:Argument(value = "-manifest", valueDescription = "<path>", description = "Provide a maniferst addend file")
+    @JvmField var manifestFile: String? = null
+
     @field:Argument(value = "-nativelibrary", shortName = "-nl", valueDescription = "<path>", description = "Include the native library")
     @JvmField var nativeLibraries: Array<String>? = null
 

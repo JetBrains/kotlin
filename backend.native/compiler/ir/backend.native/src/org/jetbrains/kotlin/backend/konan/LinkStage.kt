@@ -248,13 +248,14 @@ internal class LinkStage(val context: Context) {
     val entryPointSelector: List<String> 
         get() = if (nomain) emptyList() else platform.entrySelector
 
-    fun link(objectFiles: List<ObjectFile>): ExecutableFile {
+    fun link(objectFiles: List<ObjectFile>, libraryProvidedLinkerFlags: List<String>): ExecutableFile {
         val executable = context.config.outputFile
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize, config.getBoolean(KonanConfigKeys.DEBUG)) +
                 distribution.libffi +
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                 entryPointSelector +
-                platform.linkCommandSuffix()
+                platform.linkCommandSuffix() +
+                libraryProvidedLinkerFlags
 
         runTool(*linkCommand.toTypedArray())
         if (platform is MacOSBasedPlatform && context.shouldContainDebugInfo()) {
@@ -312,6 +313,9 @@ internal class LinkStage(val context: Context) {
         val bitcodeFiles = listOf(emitted) +
             libraries.map{it -> it.bitcodePaths}.flatten()
 
+        val libraryProvidedLinkerFlags = 
+            libraries.map{it -> it.linkerOpts}.flatten()
+
         var objectFiles: List<String> = listOf()
 
         val phaser = PhaseManager(context)
@@ -319,7 +323,7 @@ internal class LinkStage(val context: Context) {
             objectFiles = listOf( llvmLto(bitcodeFiles ) )
         }
         phaser.phase(KonanPhase.LINKER) {
-            link(objectFiles)
+            link(objectFiles, libraryProvidedLinkerFlags)
         }
     }
 }
