@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
-import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -120,8 +119,7 @@ class CompletionBindingContextProvider(project: Project) {
             val statementContext = inStatement.analyzeInContext(scope = prevCompletionData.statementResolutionScope,
                                                                 contextExpression = block,
                                                                 dataFlowInfo = prevCompletionData.statementDataFlowInfo,
-                                                                isStatement = true,
-                                                                contextDependency = ContextDependency.DEPENDENT)
+                                                                isStatement = true)
             // we do not update prevCompletionDataCache because the same data should work
             return CompositeBindingContext.create(listOf(statementContext, prevCompletionData.bindingContext))
         }
