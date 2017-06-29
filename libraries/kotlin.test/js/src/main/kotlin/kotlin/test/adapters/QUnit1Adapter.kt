@@ -16,12 +16,13 @@
 
 package kotlin.test.adapters
 
+import kotlin.test.FrameworkAdapter
 import kotlin.test.assertHook
 
 /**
  * QUnit adapter
  */
-internal class QUnitAdapter: BareAdapter() {
+internal class QUnit1Adapter: BareAdapter() {
 
     override fun runTest(testFn: () -> Unit,
                          names: Sequence<String>,
@@ -38,18 +39,8 @@ internal class QUnitAdapter: BareAdapter() {
     }
 
     private fun wrapTest(testFn: () -> Unit): (dynamic) -> Unit = { assert ->
-        if (js("typeof assert !== 'function'")) {
-            assertHook = { result -> assert.ok(result.result, result.lazyMessage()) }
-        }
-        else {
-            assertHook = { result ->
-                val data = js("{}")
-                data.result = result.result
-                data.actual = result.actual
-                data.expected = result.expected
-                data.message = result.lazyMessage()
-                assert.pushResult(data)
-            }
+        assertHook = { testResult ->
+          assert.ok(testResult.result, testResult.lazyMessage())
         }
         testFn()
     }

@@ -16,6 +16,8 @@
 
 package kotlin.test.adapters
 
+import kotlin.test.FrameworkAdapter
+
 /**
  * A fallback adapter for the case when no framework is detected.
  */

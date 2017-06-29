@@ -67,14 +67,14 @@ internal fun ftest(name: String, testFn: () -> Unit) {
 internal var currentAdapter: FrameworkAdapter = detectAdapter()
 
 internal fun detectAdapter() = when {
-    isQUnit() -> QUnitAdapter()
+    isQUnit2() -> QUnit2Adapter()
     isJasmine() -> JasmineAdapter()
     isMocha() -> MochaAdapter()
     else -> BareAdapter()
 }
 
 private val NAME_TO_ADAPTER: Map<String, () -> FrameworkAdapter> = mapOf(
-                "qunit" to ::QUnitAdapter,
+                "qunit" to { if (isQUnit1()) QUnit2Adapter() else QUnit2Adapter() },
                 "jasmine" to ::JasmineAdapter,
                 "mocha" to ::MochaAdapter,
                 "auto" to ::detectAdapter)

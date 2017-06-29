@@ -40,9 +40,11 @@ external fun fit(name: String, fn: () -> Unit)
 external fun fdescribe(name: String, fn: () -> Unit)
 
 
-internal fun isQUnit() = jsTypeOf(QUnit) !== "undefined"
-
 private fun isFunction(a: String) = js("typeof a === 'function'")
+
+internal fun isQUnit1() = jsTypeOf(QUnit) !== "undefined" && isFunction("ok")
+
+internal fun isQUnit2() = jsTypeOf(QUnit) !== "undefined" && isFunction("QUnit.module.skip") && isFunction("QUnit.module.only")
 
 internal fun isJasmine() = isFunction("describe") && isFunction("it") && isFunction("fit")
 

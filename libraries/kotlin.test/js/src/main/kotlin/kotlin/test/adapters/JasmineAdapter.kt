@@ -16,6 +16,8 @@
 
 package kotlin.test.adapters
 
+import kotlin.test.FrameworkAdapter
+
 /**
  * Jasmine adapter
  */
