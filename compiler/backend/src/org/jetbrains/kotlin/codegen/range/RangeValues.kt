@@ -84,7 +84,7 @@ private fun createIntrinsifiedRangeValueOrNull(rangeCall: ResolvedCall<out Calla
 
     return when {
         isPrimitiveNumberRangeTo(rangeCallee) ->
-            PrimitiveNumberRangeToRangeValue(rangeCall)
+            PrimitiveNumberRangeLiteralRangeValue(rangeCall)
         isPrimitiveNumberDownTo(rangeCallee) ->
             DownToProgressionRangeValue(rangeCall)
         isPrimitiveNumberUntil(rangeCallee) ->

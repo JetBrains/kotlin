@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenForLambda;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.ResolvedCallWithRealDescriptor;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
-import org.jetbrains.kotlin.codegen.forLoop.AbstractForLoopGenerator;
 import org.jetbrains.kotlin.codegen.forLoop.ForLoopGenerator;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.*;
@@ -2871,25 +2870,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     private StackValue generateIn(StackValue leftValue, KtExpression rangeExpression, KtSimpleNameExpression operationReference) {
         KtExpression deparenthesized = KtPsiUtil.deparenthesize(rangeExpression);
-
         assert deparenthesized != null : "For with empty range expression";
-        boolean isInverted = operationReference.getReferencedNameElementType() == KtTokens.NOT_IN;
-        return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
-            if (RangeCodegenUtilKt.isPrimitiveRangeSpecializationOfType(leftValue.type, deparenthesized, bindingContext) ||
-                RangeCodegenUtilKt.isPrimitiveRangeToExtension(operationReference, bindingContext)) {
-                generateInPrimitiveRange(leftValue, (KtBinaryExpression) deparenthesized, isInverted);
-            }
-            else {
-                ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt
-                        .getResolvedCallWithAssert(operationReference, bindingContext);
-                StackValue result = invokeFunction(resolvedCall.getCall(), resolvedCall, StackValue.none());
-                result.put(result.type, v);
-                if (isInverted) {
-                    genInvertBoolean(v);
-                }
-            }
-            return null;
-        });
+        RangeValue rangeValue = RangeValuesKt.createRangeValueForExpression(this, deparenthesized);
+        return rangeValue.createInExpressionGenerator(this, operationReference).generate(leftValue);
+
+        //boolean isInverted = operationReference.getReferencedNameElementType() == KtTokens.NOT_IN;
+        //return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+        //    if (RangeCodegenUtilKt.isPrimitiveRangeSpecializationOfType(leftValue.type, deparenthesized, bindingContext) ||
+        //        RangeCodegenUtilKt.isPrimitiveRangeToExtension(operationReference, bindingContext)) {
+        //        generateInPrimitiveRange(leftValue, (KtBinaryExpression) deparenthesized, isInverted);
+        //    }
+        //    else {
+        //        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt
+        //                .getResolvedCallWithAssert(operationReference, bindingContext);
+        //        StackValue result = invokeFunction(resolvedCall.getCall(), resolvedCall, StackValue.none());
+        //        result.put(result.type, v);
+        //        if (isInverted) {
+        //            genInvertBoolean(v);
+        //        }
+        //    }
+        //    return null;
+        //});
     }
 
     /*
