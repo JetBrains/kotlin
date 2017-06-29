@@ -39,10 +39,10 @@ import kotlin.reflect.jvm.internal.getOrCreateModule
  */
 fun <R> Function<R>.reflect(): KFunction<R>? {
     val annotation = javaClass.getAnnotation(Metadata::class.java) ?: return null
-    val input = BitEncoding.decodeBytes(annotation.d1).inputStream()
-    val nameResolver = JvmNameResolver(
-            JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY), annotation.d2
-    )
+    val data = annotation.d1.takeUnless(Array<String>::isEmpty) ?: return null
+    val input = BitEncoding.decodeBytes(data).inputStream()
+    val stringTableTypes = JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
+    val nameResolver = JvmNameResolver(stringTableTypes, annotation.d2)
     val proto = ProtoBuf.Function.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
     val moduleData = javaClass.getOrCreateModule()
     val context = DeserializationContext(
