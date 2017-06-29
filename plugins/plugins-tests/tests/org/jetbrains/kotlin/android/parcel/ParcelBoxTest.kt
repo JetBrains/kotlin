@@ -42,4 +42,5 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     @Test fun sparseBooleanArray() = doTest("sparseBooleanArray")
     @Test fun bundle() = doTest("bundle")
     @Test fun sparseArrays() = doTest("sparseArrays")
+    @Test fun customSimple() = doTest("customSimple")
 }

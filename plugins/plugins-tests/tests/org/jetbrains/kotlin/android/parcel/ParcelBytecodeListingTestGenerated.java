@@ -42,6 +42,18 @@ public class ParcelBytecodeListingTestGenerated extends AbstractParcelBytecodeLi
         doTest(fileName);
     }
 
+    @TestMetadata("customSimple.kt")
+    public void testCustomSimple() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimple.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("customSimpleWithNewArray.kt")
+    public void testCustomSimpleWithNewArray() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimpleWithNewArray.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("listInsideList.kt")
     public void testListInsideList() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/listInsideList.kt");
