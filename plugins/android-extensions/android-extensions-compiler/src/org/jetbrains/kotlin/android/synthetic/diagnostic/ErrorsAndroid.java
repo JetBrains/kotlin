@@ -39,6 +39,8 @@ public interface ErrorsAndroid {
     DiagnosticFactory0<PsiElement> PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PROPERTY_WONT_BE_SERIALIZED = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> OVERRIDING_WRITE_TO_PARCEL_IS_FORBIDDEN = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> CREATOR_DEFINITION_IS_FORBIDDEN = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

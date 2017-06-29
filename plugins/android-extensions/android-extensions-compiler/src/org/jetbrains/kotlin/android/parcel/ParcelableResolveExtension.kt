@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.types.KotlinType
@@ -81,7 +82,7 @@ class ParcelableResolveExtension : SyntheticResolveExtension {
     ) {
         if (name.asString() == DESCRIBE_CONTENTS.methodName && clazz.isMagicParcelable && result.none { it.isDescribeContents() }) {
             result += createMethod(clazz, DESCRIBE_CONTENTS, clazz.builtIns.intType)
-        } else if (name.asString() == WRITE_TO_PARCEL.methodName && clazz.isMagicParcelable) {
+        } else if (name.asString() == WRITE_TO_PARCEL.methodName && clazz.isMagicParcelable && result.none { it.isWriteToParcel() }) {
             val builtIns = clazz.builtIns
             val parcelClassType = resolveParcelClassType(clazz.module)
             result += createMethod(clazz, WRITE_TO_PARCEL, builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType)
@@ -89,9 +90,20 @@ class ParcelableResolveExtension : SyntheticResolveExtension {
     }
 
     private fun SimpleFunctionDescriptor.isDescribeContents(): Boolean {
-        return typeParameters.isEmpty() && valueParameters.isEmpty() && returnType?.let { type -> KotlinBuiltIns.isInt(type) } == true
+        return typeParameters.isEmpty()
+               && valueParameters.isEmpty()
+               && returnType?.let { type -> KotlinBuiltIns.isInt(type) } == true
     }
 }
+
+internal fun SimpleFunctionDescriptor.isWriteToParcel(): Boolean {
+    return typeParameters.isEmpty()
+           && valueParameters.size == 2
+           && valueParameters[0].type.isParcel()
+           && KotlinBuiltIns.isInt(valueParameters[1].type)
+}
+
+private fun KotlinType.isParcel() = constructor.declarationDescriptor?.fqNameSafe == ANDROID_PARCEL_CLASS_FQNAME
 
 interface ParcelableSyntheticComponent {
     val componentKind: ComponentKind

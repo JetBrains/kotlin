@@ -42,6 +42,18 @@ public class ParcelCheckerTestGenerated extends AbstractParcelCheckerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("customCreator.kt")
+    public void testCustomCreator() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/customCreator.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("customWriteToParcel.kt")
+    public void testCustomWriteToParcel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/customWriteToParcel.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("modality.kt")
     public void testModality() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/modality.kt");
