@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.descriptors;
+package org.jetbrains.kotlin.load.java.sam;
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor;
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 
 public interface SamAdapterDescriptor<D extends FunctionDescriptor> extends FunctionDescriptor, JavaCallableMemberDescriptor,
                                                                             SyntheticMemberDescriptor<D> {

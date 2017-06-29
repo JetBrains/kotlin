@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor;
-import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
+import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor;
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor;
 
 public class SamCodegenUtil {
