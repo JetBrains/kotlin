@@ -20,7 +20,7 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-private val PARCEL_TYPE = Type.getObjectType("android/os/Parcel")
+internal val PARCEL_TYPE = Type.getObjectType("android/os/Parcel")
 
 internal object GenericParcelSerializer : ParcelSerializer {
     override val asmType: Type = Type.getObjectType("java/lang/Object")
