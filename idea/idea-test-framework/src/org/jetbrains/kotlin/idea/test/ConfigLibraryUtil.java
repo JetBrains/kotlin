@@ -62,7 +62,8 @@ public class ConfigLibraryUtil {
 
     public static void configureKotlinJsRuntimeAndSdk(Module module, Sdk sdk) {
         configureSdk(module, sdk);
-        configureKotlinJsRuntime(module);
+        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_JS_STDLIB_NAME,
+                                             PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath()), module);
     }
 
     public static void configureKotlinRuntime(Module module) {
@@ -70,11 +71,6 @@ public class ConfigLibraryUtil {
                    module);
         addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().getKotlinTestPath()),
                    module);
-    }
-
-    public static void configureKotlinJsRuntime(Module module) {
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_JS_STDLIB_NAME,
-                                             PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath()), module);
     }
 
     public static void unConfigureKotlinRuntime(Module module) {

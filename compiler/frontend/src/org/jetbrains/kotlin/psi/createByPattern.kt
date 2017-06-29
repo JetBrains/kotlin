@@ -97,7 +97,7 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
 fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, reformat: Boolean = true, factory: (String) -> TElement): TElement {
     val argumentTypes = args.map { arg ->
         SUPPORTED_ARGUMENT_TYPES.firstOrNull { it.klass.isInstance(arg) }
-            ?: throw IllegalArgumentException("Unsupported argument type: ${arg::class.java}, should be one of: ${SUPPORTED_ARGUMENT_TYPES.map { it.klass.simpleName }.joinToString()}")
+            ?: throw IllegalArgumentException("Unsupported argument type: ${arg::class.java}, should be one of: ${SUPPORTED_ARGUMENT_TYPES.joinToString { it.klass.simpleName }}")
     }
 
     // convert arguments that can be converted into plain text

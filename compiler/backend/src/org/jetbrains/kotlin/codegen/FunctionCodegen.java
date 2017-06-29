@@ -229,6 +229,13 @@ public class FunctionCodegen {
             }
 
             asmMethod = CoroutineCodegenUtilKt.getImplForOpenMethod(asmMethod, v.getThisName());
+            // remove generic signature as it's unnecessary for synthetic methods
+            jvmSignature =
+                    new JvmMethodGenericSignature(
+                            asmMethod,
+                            jvmSignature.getValueParameters(),
+                            null
+                    );
 
             mv.visitMethodInsn(
                     Opcodes.INVOKESTATIC,

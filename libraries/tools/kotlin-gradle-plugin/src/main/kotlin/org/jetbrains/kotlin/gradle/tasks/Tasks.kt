@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdaterImpl
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -51,7 +52,16 @@ const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_INCREMENTAL_COMPILATION_MESSAGE = "Using kotlin incremental compilation"
 
-abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile(), CompilerArgumentAware {
+abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCompile() {
+    var compilerJarFile: File? = null
+    internal val compilerJar: File
+        get() = compilerJarFile
+                ?: findKotlinCompilerJar(project)
+                ?: throw IllegalStateException("Could not find Kotlin Compiler jar. Please specify $name.compilerJarFile")
+    protected abstract fun findKotlinCompilerJar(project: Project): File?
+}
+
+abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKotlinCompileTool<T>(), CompilerArgumentAware {
     abstract protected fun createCompilerArgs(): T
 
     protected val additionalClasspath = arrayListOf<File>()
@@ -87,6 +97,20 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             System.setProperty("kotlin.incremental.compilation.experimental", value.toString())
         }
 
+    private lateinit var destinationDirProvider: Lazy<File>
+
+    override fun getDestinationDir(): File {
+        return destinationDirProvider.value
+    }
+
+    fun setDestinationDir(provider: () -> File) {
+        destinationDirProvider = lazy(provider)
+    }
+
+    override fun setDestinationDir(destinationDir: File) {
+        destinationDirProvider = lazyOf(destinationDir)
+    }
+
     init {
         incremental = true //to execute the setter as well
     }
@@ -101,13 +125,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         get() = kotlinExt.experimental.coroutines
                 ?: coroutinesFromGradleProperties
                 ?: Coroutines.DEFAULT
-
-    var compilerJarFile: File? = null
-    internal val compilerJar: File
-            get() = compilerJarFile
-                    ?: findKotlinCompilerJar(project)
-                    ?: throw IllegalStateException("Could not find Kotlin Compiler jar. Please specify $name.compilerJarFile")
-    protected abstract fun findKotlinCompilerJar(project: Project): File?
 
     internal var compilerCalled: Boolean = false
     // TODO: consider more reliable approach (see usage)

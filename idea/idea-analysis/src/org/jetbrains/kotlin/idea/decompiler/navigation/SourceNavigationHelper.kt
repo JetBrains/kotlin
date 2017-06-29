@@ -68,7 +68,7 @@ object SourceNavigationHelper {
                     .mapNotNull { it.sourcesModuleInfo?.sourceScope() }.union()
 
             NavigationKind.SOURCES_TO_CLASS_FILES -> getLibrarySourcesModuleInfos(declaration.project, vFile)
-                    .mapNotNull { it.binariesModuleInfo.binariesScope() }.union()
+                    .map { it.binariesModuleInfo.binariesScope() }.union()
         }
     }
 

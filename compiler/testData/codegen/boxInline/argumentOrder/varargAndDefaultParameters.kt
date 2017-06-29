@@ -1,6 +1,7 @@
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 // WITH_RUNTIME
+// IGNORE_BACKEND: NATIVE
 package test
 
 open class A(val value: String)
@@ -29,7 +30,7 @@ fun box(): String {
                        init = { invokeOrder += " init"; "I" }())
     if (result != "C, R, I") return "fail 1: $result"
 
-    //Change test after KT-17691 FIX
+    //Change test after KT-17691 FIX; and remove cloned test for Native (enable this).
     if (invokeOrder != " receiver initconstraints") return "fail 2: $invokeOrder"
 
     result = ""

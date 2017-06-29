@@ -108,6 +108,18 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
         doTest(fileName);
     }
 
+    @TestMetadata("multipleVarsCommon.kt")
+    public void testMultipleVarsCommon() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsCommon.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("multipleVarsJS.kt")
+    public void testMultipleVarsJS() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsJS.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("multipleVarsNullable.kt")
     public void testMultipleVarsNullable() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsNullable.kt");
@@ -129,6 +141,18 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
     @TestMetadata("noVars.kt")
     public void testNoVars() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVars.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("noVarsCommon.kt")
+    public void testNoVarsCommon() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsCommon.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("noVarsJS.kt")
+    public void testNoVarsJS() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsJS.kt");
         doTest(fileName);
     }
 

@@ -26,7 +26,7 @@ public abstract interface Intf {
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String bar(int bcd);
 
-    @kotlin.Metadata(mv = {1, 1, 6}, bv = {1, 0, 1}, k = 3)
+    @kotlin.Metadata()
     public static final class DefaultImpls {
 
         public DefaultImpls() {

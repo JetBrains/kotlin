@@ -39,6 +39,8 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         return File(testDataDirectory, "${getTestName(true)}.$extension")
     }
 
+    class JavaCompilationError : AssertionError("Java files are not compiled successfully")
+
     /**
      * Compiles all sources (.java and .kt) under the directory named [libraryName] to [destination].
      * [destination] should be either a path to the directory under [tmpdir], or a path to the resulting .jar file (also under [tmpdir]).
@@ -50,10 +52,15 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
             libraryName: String,
             destination: File = File(tmpdir, "$libraryName.jar"),
             additionalOptions: List<String> = emptyList(),
+            compileJava: (sourceDir: File, javaFiles: List<File>, outputDir: File) -> Boolean = { _, javaFiles, outputDir ->
+                KotlinTestUtils.compileJavaFiles(javaFiles, listOf("-d", outputDir.path))
+            },
+            checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) },
             vararg extraClassPath: File
     ): File {
-        val javaFiles = FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, libraryName))
-        val kotlinFiles = FileUtil.findFilesByMask(KOTLIN_FILES, File(testDataDirectory, libraryName))
+        val sourceDir = File(testDataDirectory, libraryName)
+        val javaFiles = FileUtil.findFilesByMask(JAVA_FILES, sourceDir)
+        val kotlinFiles = FileUtil.findFilesByMask(KOTLIN_FILES, sourceDir)
         assert(javaFiles.isNotEmpty() || kotlinFiles.isNotEmpty()) { "There should be either .kt or .java files in the directory" }
 
         val isJar = destination.name.endsWith(".jar")
@@ -61,12 +68,14 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         val outputDir = if (isJar) File(tmpdir, "output-$libraryName") else destination
         if (kotlinFiles.isNotEmpty()) {
             val output = compileKotlin(libraryName, outputDir, extraClassPath.toList(), K2JVMCompiler(), additionalOptions, expectedFileName = null)
-            assertEquals(normalizeOutput("" to ExitCode.OK), normalizeOutput(output))
+            checkKotlinOutput(normalizeOutput(output))
         }
 
         if (javaFiles.isNotEmpty()) {
             outputDir.mkdirs()
-            KotlinTestUtils.compileJavaFiles(javaFiles, listOf("-d", outputDir.path))
+            if (!compileJava(sourceDir, javaFiles, outputDir)) {
+                throw JavaCompilationError()
+            }
         }
 
         if (isJar) {

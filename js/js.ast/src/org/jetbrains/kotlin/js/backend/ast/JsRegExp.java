@@ -4,6 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 public final class JsRegExp extends JsLiteral.JsValueLiteral {
     private String flags;
     private String pattern;
@@ -36,5 +38,14 @@ public final class JsRegExp extends JsLiteral.JsValueLiteral {
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
         v.visit(this, ctx);
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsRegExp deepCopy() {
+        JsRegExp copy = new JsRegExp().withMetadataFrom(this);
+        copy.setFlags(flags);
+        copy.setPattern(pattern);
+        return copy;
     }
 }

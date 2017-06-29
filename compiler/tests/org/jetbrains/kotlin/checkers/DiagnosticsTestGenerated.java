@@ -12904,6 +12904,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("primaryConstructorMissingBrackets.kt")
+            public void testPrimaryConstructorMissingBrackets() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/primaryConstructorMissingBrackets.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("primaryConstructorMissingKeyword.kt")
             public void testPrimaryConstructorMissingKeyword() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/primaryConstructorMissingKeyword.kt");

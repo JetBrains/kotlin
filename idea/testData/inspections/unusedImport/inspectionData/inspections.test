@@ -1,1 +1,2 @@
 // INSPECTION_CLASS: org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection
+// RUNTIME_WITH_FULL_JDK

@@ -77,7 +77,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace("\\", "/")
                 .replace(KotlinCompilerVersion.VERSION, "$VERSION$");
 
-        return normalizedOutputWithoutExitCode + exitCode;
+        return normalizedOutputWithoutExitCode + exitCode + "\n";
     }
 
     private void doTest(@NotNull String fileName, @NotNull CLITool<?> compiler) throws Exception {

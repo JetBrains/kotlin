@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 // FILE: 1.kt
 // WITH_REFLECT
 package test

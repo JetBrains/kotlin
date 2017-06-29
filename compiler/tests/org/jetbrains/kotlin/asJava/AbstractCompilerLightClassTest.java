@@ -52,10 +52,11 @@ public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTest
 
     @Override
     protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<Void> files) throws IOException {
+        KotlinCoreEnvironment environment = createEnvironment();
         File expectedFile = KotlinTestUtils.replaceExtension(file, "java");
         LightClassTestCommon.INSTANCE.testLightClass(expectedFile, file, s -> {
             try {
-                return createFinder(getEnvironment()).findClass(s, GlobalSearchScope.allScope(getEnvironment().getProject()));
+                return createFinder(environment).findClass(s, GlobalSearchScope.allScope(environment.getProject()));
             }
             catch (IOException e) {
                 throw ExceptionUtilsKt.rethrow(e);

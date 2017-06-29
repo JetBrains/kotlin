@@ -146,6 +146,12 @@ public class CallableReferenceInlineTestsGenerated extends AbstractCallableRefer
             doTest(fileName);
         }
 
+        @TestMetadata("mixed.kt")
+        public void testMixed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/mixed.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("objectProperty.kt")
         public void testObjectProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/objectProperty.kt");

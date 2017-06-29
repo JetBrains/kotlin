@@ -1,0 +1,2 @@
+error: -Xadd-modules=ALL-MODULE-PATH can only be used when compiling the unnamed module
+COMPILATION_ERROR

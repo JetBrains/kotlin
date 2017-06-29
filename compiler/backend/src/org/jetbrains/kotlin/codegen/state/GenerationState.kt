@@ -138,7 +138,7 @@ class GenerationState @JvmOverloads constructor(
             this.bindingContext, classBuilderMode, fileClassesProvider, IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
             this.moduleName, isJvm8Target, isJvm8TargetWithDefaults
     )
-    val intrinsics: IntrinsicMethods = IntrinsicMethods()
+    val intrinsics: IntrinsicMethods = IntrinsicMethods(target)
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
     val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)

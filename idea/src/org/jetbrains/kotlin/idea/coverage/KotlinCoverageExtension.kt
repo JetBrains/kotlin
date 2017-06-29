@@ -103,7 +103,7 @@ class KotlinCoverageExtension : JavaCoverageEngineExtension() {
             if (existingClassFiles.isEmpty()) {
                 return null
             }
-            LOG.debug("Classfiles: [${existingClassFiles.map { it.name }.joinToString()}]")
+            LOG.debug("Classfiles: [${existingClassFiles.joinToString { it.name }}]")
             return existingClassFiles.map {
                 val relativePath = VfsUtilCore.getRelativePath(it, outputRoot!!)!!
                 StringUtil.trimEnd(relativePath, ".class").replace("/", ".")

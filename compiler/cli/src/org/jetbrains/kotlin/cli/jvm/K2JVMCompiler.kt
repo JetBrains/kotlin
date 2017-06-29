@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import org.jetbrains.kotlin.codegen.CompilationException
@@ -106,6 +108,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         val classpath = getClasspath(paths, arguments)
         configuration.addJvmClasspathRoots(classpath)
+        for (modularRoot in arguments.javaModulePath?.split(File.pathSeparatorChar).orEmpty()) {
+            configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(modularRoot)))
+        }
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
@@ -299,6 +304,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, components)
             }
         }
+
+        arguments.additionalJavaModules?.let { additionalJavaModules ->
+            configuration.addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, additionalJavaModules.toList())
+        }
     }
 
     override fun createArguments(): K2JVMCompilerArguments = K2JVMCompilerArguments().apply {
@@ -396,21 +405,23 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     return OK
                 }
 
-                if (arguments.jdkHome != null) {
+                val (jdkHome, classesRoots) = if (arguments.jdkHome != null) {
                     val jdkHome = File(arguments.jdkHome)
-                    configuration.put(JVMConfigurationKeys.JDK_HOME, jdkHome)
-                    val classesRoots = PathUtil.getJdkClassesRoots(jdkHome)
-                    configuration.addJvmClasspathRoots(classesRoots)
-
                     messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
+                    jdkHome to PathUtil.getJdkClassesRoots(jdkHome)
+                }
+                else {
+                    File(System.getProperty("java.home")) to PathUtil.getJdkClassesRootsFromCurrentJre()
+                }
+
+                configuration.put(JVMConfigurationKeys.JDK_HOME, jdkHome)
+
+                if (!CoreJrtFileSystem.isModularJdk(jdkHome)) {
+                    configuration.addJvmClasspathRoots(classesRoots)
                     if (classesRoots.isEmpty()) {
                         messageCollector.report(ERROR, "No class roots are found in the JDK path: $jdkHome")
                         return COMPILATION_ERROR
                     }
-                }
-                else {
-                    configuration.put(JVMConfigurationKeys.JDK_HOME, File(System.getProperty("java.home")))
-                    configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
                 }
             }
             catch (t: Throwable) {

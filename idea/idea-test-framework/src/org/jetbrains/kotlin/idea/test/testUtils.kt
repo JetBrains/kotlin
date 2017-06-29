@@ -66,7 +66,7 @@ fun Module.configureAs(kind: ModuleKind) {
         ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES ->
             this.configureAs(ProjectDescriptorWithStdlibSources.INSTANCE)
         ModuleKind.KOTLIN_JAVASCRIPT -> {
-            this.configureAs(KotlinStdJSProjectDescriptor.instance)
+            this.configureAs(KotlinStdJSProjectDescriptor)
         }
 
         else -> throw IllegalArgumentException("Unknown kind=$kind")

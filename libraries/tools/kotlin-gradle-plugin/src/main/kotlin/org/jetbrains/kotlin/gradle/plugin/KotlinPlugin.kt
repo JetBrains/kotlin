@@ -10,6 +10,8 @@ import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.InvalidPluginException
@@ -18,10 +20,12 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
+import org.jetbrains.kotlin.com.intellij.util.ReflectionUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.getKaptClasssesDir
@@ -31,6 +35,7 @@ import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilat
 import java.io.File
 import java.net.URL
 import java.util.*
+import java.util.concurrent.Callable
 import java.util.jar.Manifest
 
 val KOTLIN_AFTER_JAVA_TASK_SUFFIX = "AfterJava"
@@ -51,12 +56,18 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     abstract protected fun doTargetSpecificProcessing()
     protected val logger = Logging.getLogger(this.javaClass)!!
 
+    protected val isSeparateClassesDirSupported: Boolean =
+            sourceSet.output.javaClass.methods.any { it.name == "getClassesDirs" }
+
     protected val sourceSetName: String = sourceSet.name
     protected val sourceRootDir: String = "src/$sourceSetName/kotlin"
     protected val kotlinSourceSet: KotlinSourceSet = createKotlinSourceSet()
     protected val kotlinTask: T = createKotlinCompileTask()
+
     protected open val defaultKotlinDestinationDir: File
-            get() = sourceSet.output.classesDir
+        get() = if (isSeparateClassesDirSupported)
+            File(project.buildDir, "classes/kotlin/${sourceSet.name}") else
+            sourceSet.output.classesDir
 
     fun run() {
         addKotlinDirSetToSources()
@@ -84,7 +95,8 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         val kotlinCompile = doCreateTask(project, name)
         kotlinCompile.description = taskDescription
         kotlinCompile.mapClasspath { sourceSet.compileClasspath }
-        kotlinCompile.destinationDir = defaultKotlinDestinationDir
+        kotlinCompile.setDestinationDir { defaultKotlinDestinationDir }
+        sourceSet.output.tryAddClassesDir { project.files(kotlinTask.destinationDir).builtBy(kotlinTask) }
         return kotlinCompile
     }
 
@@ -106,7 +118,9 @@ internal class Kotlin2JvmSourceSetProcessor(
         taskDescription = "Compiles the $sourceSet.kotlin."
 ) {
     override val defaultKotlinDestinationDir: File
-        get() = File(project.buildDir, "kotlin-classes/$sourceSetName")
+        get() = if (!isSeparateClassesDirSupported)
+            File(project.buildDir, "kotlin-classes/$sourceSetName") else
+            super.defaultKotlinDestinationDir
 
     override fun doCreateTask(project: Project, taskName: String): KotlinCompile =
             tasksProvider.createKotlinJVMTask(project, taskName, sourceSet.name)
@@ -149,7 +163,11 @@ internal class Kotlin2JvmSourceSetProcessor(
                         .forEach { it.source(kotlinSourceSet.kotlin) }
 
                 configureJavaTask(kotlinTask, javaTask, logger)
-                createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
+
+                if (!isSeparateClassesDirSupported) {
+                    createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
+                }
+
                 val artifactFile = project.tryGetSingleArtifact()
                 configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
                         kotlinGradleBuildServices.artifactDifferenceRegistryProvider,
@@ -175,6 +193,21 @@ internal class Kotlin2JvmSourceSetProcessor(
     }
 }
 
+private fun SourceSetOutput.tryAddClassesDir(
+        classesDirProvider: () -> FileCollection
+): Boolean {
+    val getClassesDirs = ReflectionUtil.findMethod(
+            javaClass.methods.asList(),
+            "getClassesDirs"
+    ) ?: return false
+
+    val classesDirs = getClassesDirs(this) as? ConfigurableFileCollection
+            ?: return false
+
+    classesDirs.from(Callable { classesDirProvider() })
+    return true
+}
+
 internal class Kotlin2JsSourceSetProcessor(
         project: Project,
         javaBasePlugin: JavaBasePlugin,
@@ -187,7 +220,6 @@ internal class Kotlin2JsSourceSetProcessor(
         taskDescription = "Compiles the kotlin sources in $sourceSet to JavaScript.",
         compileTaskNameSuffix = "kotlin2Js"
 ) {
-
     override fun doCreateTask(project: Project, taskName: String): Kotlin2JsCompile =
             tasksProvider.createKotlinJSTask(project, taskName, sourceSet.name)
 
@@ -208,8 +240,11 @@ internal class Kotlin2JsSourceSetProcessor(
                         "Gradle will not be able to build the project because of the root directory lock.\n" +
                         "To fix this, consider using the default outputFile location instead of providing it explicitly.")
 
-            sourceSet.output.setClassesDir(outputDir)
             kotlinTask.destinationDir = outputDir
+
+            if (!isSeparateClassesDirSupported) {
+                sourceSet.output.setClassesDir(kotlinTask.destinationDir)
+            }
         }
     }
 
@@ -246,9 +281,6 @@ internal class KotlinCommonSourceSetProcessor(
             project.tasks.remove(javaTask)
         }
     }
-
-    override val defaultKotlinDestinationDir: File
-        get() = sourceSet.output.classesDir
 
     override fun doCreateTask(project: Project, taskName: String): KotlinCompileCommon =
             tasksProvider.createKotlinCommonTask(project, taskName, sourceSet.name)

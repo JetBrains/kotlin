@@ -52,11 +52,6 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-// These classes do not actually exist at runtime
-const val COROUTINE_MARKER_OWNER = "kotlin/coroutines/Markers"
-const val BEFORE_SUSPENSION_POINT_MARKER_NAME = "beforeSuspensionPoint"
-const val AFTER_SUSPENSION_POINT_MARKER_NAME = "afterSuspensionPoint"
-
 const val COROUTINE_LABEL_FIELD_NAME = "label"
 const val SUSPEND_FUNCTION_CREATE_METHOD_NAME = "create"
 const val DO_RESUME_METHOD_NAME = "doResume"

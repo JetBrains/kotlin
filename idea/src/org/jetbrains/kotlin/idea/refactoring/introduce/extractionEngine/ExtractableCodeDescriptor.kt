@@ -541,7 +541,7 @@ class AnalysisResult (
                     }
             )
 
-            return additionalInfo?.let { "$message\n\n${it.map { StringUtil.htmlEmphasize(it) }.joinToString("\n")}" } ?: message
+            return additionalInfo?.let { "$message\n\n${it.joinToString("\n") { StringUtil.htmlEmphasize(it) }}" } ?: message
         }
     }
 }

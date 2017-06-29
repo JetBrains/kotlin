@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
 
@@ -53,15 +54,14 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
     }
 
-    protected fun module(name: String, hasTestRoot: Boolean = false, useFullJdk: Boolean = false): Module {
+    protected fun module(name: String, jdk: TestJdkKind = TestJdkKind.MOCK_JDK, hasTestRoot: Boolean = false): Module {
         val srcDir = testDataPath + "${getTestName(true)}/$name"
         val moduleWithSrcRootSet = createModuleFromTestData(srcDir, name, StdModuleTypes.JAVA, true)!!
         if (hasTestRoot) {
             setTestRoot(moduleWithSrcRootSet, name)
         }
 
-        val jdkToUse = if (useFullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
-        ConfigLibraryUtil.configureSdk(moduleWithSrcRootSet, jdkToUse)
+        ConfigLibraryUtil.configureSdk(moduleWithSrcRootSet, PluginTestCaseBase.jdk(jdk))
 
         return moduleWithSrcRootSet
     }
@@ -86,9 +86,9 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
             exported: Boolean = false
     ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
 
-    protected fun Module.addLibrary(jar: File) {
+    protected fun Module.addLibrary(jar: File, name: String = KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME) {
         ConfigLibraryUtil.addLibrary(NewLibraryEditor().apply {
-            name = KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME
+            this.name = name
             addRoot(VfsUtil.getUrlForLibraryRoot(jar), OrderRootType.CLASSES)
         }, this)
     }

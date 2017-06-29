@@ -21,7 +21,7 @@ package kotlin.js
  */
 public open external class Promise<out T>(executor: (resolve: (T) -> Unit, reject: (Throwable) -> Unit) -> Unit) {
     companion object {
-        public fun <S> all(promise: Array<out Promise<S>>): Promise<Array<in S>>
+        public fun <S> all(promise: Array<out Promise<S>>): Promise<Array<out S>>
 
         public fun <S> race(promise: Array<out Promise<S>>): Promise<S>
 

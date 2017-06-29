@@ -1172,6 +1172,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeParameterFromExtension.kt")
+        public void testRemoveParameterFromExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeParameterFromExtension.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeParameterFromFakeOverride.kt")
         public void testRemoveParameterFromFakeOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeParameterFromFakeOverride.kt");
@@ -6741,6 +6747,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/missingConstructorBrackets")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MissingConstructorBrackets extends AbstractQuickFixTest {
+        public void testAllFilesPresentInMissingConstructorBrackets() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/missingConstructorBrackets"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/missingConstructorBrackets/basic.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/modifiers")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -8609,6 +8630,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("assignmentArray.kt")
+        public void testAssignmentArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/assignmentArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentBinaryOperator.kt")
+        public void testAssignmentBinaryOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/assignmentBinaryOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentCallExpression.kt")
+        public void testAssignmentCallExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/assignmentCallExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentList.kt")
+        public void testAssignmentList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/assignmentList.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("binaryOperator.kt")
         public void testBinaryOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/binaryOperator.kt");
@@ -8738,6 +8783,36 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/assignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentFromImplicitParameter.kt")
+        public void testAssignmentFromImplicitParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/assignmentFromImplicitParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentToNullable.kt")
+        public void testAssignmentToNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/assignmentToNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentToProperty.kt")
+        public void testAssignmentToProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/assignmentToProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expression.kt")
+        public void testExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/expression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extFunction.kt")
         public void testExtFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/extFunction.kt");
@@ -8828,6 +8903,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("applyWithoutThisMethodCall.kt")
         public void testApplyWithoutThisMethodCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction/applyWithoutThisMethodCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction/assignment.kt");
             doTest(fileName);
         }
 

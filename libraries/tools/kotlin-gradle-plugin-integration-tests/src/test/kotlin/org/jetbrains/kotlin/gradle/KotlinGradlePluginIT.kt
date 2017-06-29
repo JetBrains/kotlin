@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
+import java.util.zip.ZipFile
+import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
@@ -405,9 +407,9 @@ class KotlinGradleIT: BaseGradleIT() {
         val project = Project("kotlinProject", GRADLE_VERSION)
         project.setupWorkingDir()
 
+        val customModuleName = "custom_module_name"
+
         File(project.projectDir, "build.gradle").modify {
-            // lazy eval is important
-            val customModuleName = "\${project.name}"
             it + """
             compileKotlin {
                 kotlinOptions.freeCompilerArgs = [ "-module-name", "$customModuleName" ]
@@ -416,6 +418,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
+            assertFileExists("build/classes/main/META-INF/$customModuleName.kotlin_module")
         }
     }
 
@@ -539,6 +542,29 @@ class KotlinGradleIT: BaseGradleIT() {
             assertSuccessful()
             assertContains("-language-version 1.1")
             assertContains("-api-version 1.1")
+        }
+    }
+
+    @Test
+    fun testSeparateOutputGradle40() {
+        val project = Project("kotlinJavaProject", "4.0")
+        project.build("compileDeployKotlin", "assemble") {
+            assertSuccessful()
+
+            // Check that the Kotlin classes are placed under directories following the guideline:
+            assertFileExists("build/classes/kotlin/main/demo/KotlinGreetingJoiner.class")
+            assertFileExists("build/classes/kotlin/deploy/demo/ExampleSource.class")
+
+            // Check that the resulting JAR contains the Kotlin classes, without duplicates:
+            val jar = ZipFile(fileInWorkingDir("build/libs/${project.projectName}.jar"))
+            assertEquals(1, jar.entries().asSequence().count { it.name == "demo/KotlinGreetingJoiner.class" })
+
+            // Check that the Java output is intact:
+            assertFileExists("build/classes/java/main/demo/Greeter.class")
+
+            // Check that the sync output task is not used with Gradle 4.0+ and there's no old Kotlin output layout
+            assertNotContains(":copyMainKotlinClasses")
+            assertNoSuchFile("build/kotlin-classes")
         }
     }
 }

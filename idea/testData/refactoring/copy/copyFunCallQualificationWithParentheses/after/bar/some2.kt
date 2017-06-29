@@ -11,5 +11,5 @@ fun some2(p1: () -> Unit, p2: (() -> Unit) -> Unit) {
     parenP()
     parenBP { p1 }()
     parenPP()()
-    parenPB(p2) {}
+    (parenPB(p2)) {}
 }

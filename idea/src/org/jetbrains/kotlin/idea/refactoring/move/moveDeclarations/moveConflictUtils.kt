@@ -380,7 +380,7 @@ class MoveConflictChecker(
             val targetVisibility = visibility.normalize()
             if (targetVisibility == Visibilities.PUBLIC) return true
 
-            val referrer = ref.element.getStrictParentOfType<KtDeclaration>()
+            val referrer = ref.element.getStrictParentOfType<KtNamedDeclaration>()
             val referrerDescriptor = referrer?.resolveToDescriptor() ?: return true
 
             if (!isVisibleIn(referrerDescriptor)) return true

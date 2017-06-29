@@ -260,7 +260,7 @@ abstract class AbstractAnnotationProcessingExtension(
                 log { "Saving incremental data: ${analyzedClasses.size} class names" }
                 try {
                     incrementalDataFile.parentFile.mkdirs()
-                    incrementalDataFile.writeText(analyzedClasses.map { "i $it" }.joinToString(LINE_SEPARATOR))
+                    incrementalDataFile.writeText(analyzedClasses.joinToString(LINE_SEPARATOR) { "i $it" })
                 }
                 catch (e: IOException) {
                     log { "Unable to write $incrementalDataFile" }

@@ -3,7 +3,7 @@ import java.util.Arrays
 data class A(val a: IntArray) {
     <caret>override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other?.javaClass != javaClass) return false
+        if (javaClass != other?.javaClass) return false
 
         other as A
 

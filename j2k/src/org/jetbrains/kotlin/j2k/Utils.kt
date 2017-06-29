@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-fun quoteKeywords(packageName: String): String = packageName.split('.').map { Identifier.toKotlin(it) }.joinToString(".")
+fun quoteKeywords(packageName: String): String = packageName.split('.').joinToString(".") { Identifier.toKotlin(it) }
 
 fun getDefaultInitializer(property: Property): Expression? {
     val t = property.type

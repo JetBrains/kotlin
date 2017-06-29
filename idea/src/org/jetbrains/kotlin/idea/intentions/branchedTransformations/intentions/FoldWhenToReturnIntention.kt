@@ -20,38 +20,18 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtWhenExpression
 
 class FoldWhenToReturnIntention : SelfTargetingRangeIntention<KtWhenExpression>(
         KtWhenExpression::class.java,
         "Lift return out of 'when' expression"
 ) {
+
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
-        if (!KtPsiUtil.checkWhenExpressionHasSingleElse(element)) return null
-
-        val entries = element.entries
-
-        if (entries.isEmpty()) return null
-
-        for (entry in entries) {
-            if (BranchedFoldingUtils.getFoldableBranchedReturn(entry.expression) == null) return null
-        }
-
-        return element.whenKeyword.textRange
+        return if (BranchedFoldingUtils.canFoldToReturn(element)) element.whenKeyword.textRange else null
     }
 
     override fun applyTo(element: KtWhenExpression, editor: Editor?) {
-        assert(!element.entries.isEmpty())
-
-        val newReturnExpression = KtPsiFactory(element).createExpressionByPattern("return $0", element) as KtReturnExpression
-        val newWhenExpression = newReturnExpression.returnedExpression as KtWhenExpression
-
-        for (entry in newWhenExpression.entries) {
-            val currReturn = BranchedFoldingUtils.getFoldableBranchedReturn(entry.expression!!)!!
-            val currExpr = currReturn.returnedExpression!!
-            currReturn.replace(currExpr)
-        }
-
-        element.replace(newReturnExpression)
+        BranchedFoldingUtils.foldToReturn(element)
     }
 }

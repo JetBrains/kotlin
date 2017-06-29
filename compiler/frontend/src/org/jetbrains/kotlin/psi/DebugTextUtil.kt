@@ -285,7 +285,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
 
     fun render(element: KtElementImplStub<*>, vararg relevantChildren: KtElement?): String? {
         if (element.stub == null) return element.text
-        return relevantChildren.filterNotNull().map { it.getDebugText() }.joinToString("", "", "")
+        return relevantChildren.filterNotNull().joinToString("", "", "") { it.getDebugText() }
     }
 }
 

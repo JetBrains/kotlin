@@ -88,6 +88,17 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
 
     // Advanced options
 
+    @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
+    public String javaModulePath;
+
+    @Argument(
+            value = "-Xadd-modules",
+            valueDescription = "<module[,]>",
+            description = "Root modules to resolve in addition to the initial modules,\n" +
+                          "or all modules on the module path if <module> is ALL-MODULE-PATH"
+    )
+    public String[] additionalJavaModules;
+
     @Argument(value = "-Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
     public boolean noCallAssertions;
 

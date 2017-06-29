@@ -243,8 +243,9 @@ fun reportTarget6InheritanceErrorIfNeeded(
             state.diagnostics.report(
                     ErrorsJvm.TARGET6_INTERFACE_INHERITANCE.on(
                             classElement, classDescriptor, key,
-                            value.map { Renderers.COMPACT.render(JvmCodegenUtil.getDirectMember(it), RenderingContext.Empty) }.
-                                    joinToString(separator = "\n", prefix = "\n")
+                            value.joinToString(separator = "\n", prefix = "\n") {
+                                Renderers.COMPACT.render(JvmCodegenUtil.getDirectMember(it), RenderingContext.Empty)
+                            }
                     )
             )
         }

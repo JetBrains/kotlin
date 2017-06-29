@@ -191,9 +191,7 @@ class KotlinParameterInfo @JvmOverloads constructor (
     }
 
     private fun getOriginalParameter(inheritedCallable: KotlinCallableDefinitionUsage<*>): KtParameter? {
-        val currentFunction = inheritedCallable.declaration as? KtFunction ?: return null
-        val originalParameterIndex = if (currentFunction.receiverTypeReference == null) originalIndex else originalIndex - 1
-        return currentFunction.valueParameters.getOrNull(originalParameterIndex)
+        return (inheritedCallable.declaration as? KtFunction)?.valueParameters?.getOrNull(originalIndex)
     }
 
     private fun buildNewParameter(inheritedCallable: KotlinCallableDefinitionUsage<*>, parameterIndex: Int): KtParameter {

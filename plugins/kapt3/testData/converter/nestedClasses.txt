@@ -25,7 +25,7 @@ public final class A {
         @org.jetbrains.annotations.Nullable()
         public abstract A.B getY();
 
-        @kotlin.Metadata(mv = {1, 1, 6}, bv = {1, 0, 1}, k = 3)
+        @kotlin.Metadata()
         public static final class DefaultImpls {
 
             public DefaultImpls() {

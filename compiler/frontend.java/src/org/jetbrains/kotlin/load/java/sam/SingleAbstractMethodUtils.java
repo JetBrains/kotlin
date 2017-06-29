@@ -129,11 +129,15 @@ public class SingleAbstractMethodUtils {
 
     @Nullable
     public static FunctionDescriptor getSingleAbstractMethodOrNull(@NotNull JavaClassDescriptor klass) {
-        if (klass.isDefinitelyNotSamInterface()) return null;
-
+        // NB: this check MUST BE at start. Please do not touch until following to-do is resolved
+        // Otherwise android data binding can cause resolve re-entrance
+        // For details see KT-18687, KT-16149
+        // TODO: prevent resolve re-entrance on architecture level, or (alternatively) ask data binding owners not to do it
         if (DescriptorUtilsKt.getFqNameSafe(klass).asString().equals("android.databinding.DataBindingComponent")) {
             return null;
         }
+
+        if (klass.isDefinitelyNotSamInterface()) return null;
 
         List<CallableMemberDescriptor> abstractMembers = getAbstractMembers(klass.getDefaultType());
         if (abstractMembers.size() == 1) {

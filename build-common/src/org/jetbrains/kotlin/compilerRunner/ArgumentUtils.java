@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.compilerRunner;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.Argument;
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments;
 import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
 
@@ -32,7 +32,7 @@ public class ArgumentUtils {
     private ArgumentUtils() {}
 
     @NotNull
-    public static List<String> convertArgumentsToStringList(@NotNull CommonCompilerArguments arguments)
+    public static List<String> convertArgumentsToStringList(@NotNull CommonToolArguments arguments)
             throws InstantiationException, IllegalAccessException {
         List<String> result = new ArrayList<>();
         convertArgumentsToStringList(arguments, arguments.getClass().newInstance(), arguments.getClass(), result);
@@ -41,8 +41,8 @@ public class ArgumentUtils {
     }
 
     private static void convertArgumentsToStringList(
-            @NotNull CommonCompilerArguments arguments,
-            @NotNull CommonCompilerArguments defaultArguments,
+            @NotNull CommonToolArguments arguments,
+            @NotNull CommonToolArguments defaultArguments,
             @NotNull Class<?> clazz,
             @NotNull List<String> result
     ) throws IllegalAccessException, InstantiationException {

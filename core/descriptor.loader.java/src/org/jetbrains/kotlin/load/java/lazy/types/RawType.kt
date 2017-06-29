@@ -71,7 +71,7 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType
 
         val lowerArgs = renderArguments(lowerBound)
         val upperArgs = renderArguments(upperBound)
-        val newArgs = lowerArgs.map { "(raw) $it" }.joinToString(", ")
+        val newArgs = lowerArgs.joinToString(", ") { "(raw) $it" }
         val newUpper =
                 if (lowerArgs.zip(upperArgs).all { onlyOutDiffers(it.first, it.second) })
                     upperRendered.replaceArgs(newArgs)

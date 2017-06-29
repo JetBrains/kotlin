@@ -38,6 +38,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.types.FlexibleTypeImpl;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 
@@ -80,6 +81,8 @@ public abstract class KtUsefulTestCase extends TestCase {
     static {
         // Radar #5755208: Command line Java applications need a way to launch without a Dock icon.
         System.setProperty("apple.awt.UIElement", "true");
+
+        FlexibleTypeImpl.RUN_SLOW_ASSERTIONS = true;
     }
 
     private boolean oldDisposerDebug;

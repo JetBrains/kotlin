@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
@@ -212,6 +213,26 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertTrue("Source map should contain reference to foo.kt") { map.contains("\"foo.kt\"") }
             assertTrue("Source map should contain source of main.kt") { map.contains("\"fun main(args: Array<String>) {\\n") }
             assertTrue("Source map should contain source of foo.kt") { map.contains("\"inline fun foo(): String {\\n") }
+        }
+    }
+
+    @Test
+    fun testDce() {
+        val project = Project("kotlin2JsDceProject", "2.10", minLogLevel = LogLevel.INFO)
+
+        project.build("runRhino") {
+            println(output)
+            assertSuccessful()
+        }
+    }
+
+    /** Issue: KT-18495 */
+    @Test
+    fun testNoSeparateClassesDirWarning() {
+        val project = Project("kotlin2JsProject", "4.0")
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains("this build assumes a single directory for all classes from a source set")
         }
     }
 }

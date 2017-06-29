@@ -1,0 +1,4 @@
+compiler/testData/javaModules/jdkModulesFromUnnamed/main/test.kt:19:33: error: unresolved reference: ant
+    val x: com.sun.javafx.tools.ant.AntLog? = null
+                                ^
+COMPILATION_ERROR

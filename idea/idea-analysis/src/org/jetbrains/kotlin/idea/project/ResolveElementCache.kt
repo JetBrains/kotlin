@@ -205,8 +205,7 @@ class ResolveElementCache(
             }
             else {
                 contextElements
-                        .map { it.getNonStrictParentOfType<KtDeclaration>() }
-                        .filterNotNull()
+                        .mapNotNull { it.getNonStrictParentOfType<KtDeclaration>() }
                         .filterTo(declarationsToResolve) {
                             it !is KtAnonymousInitializer && it !is KtDestructuringDeclaration && it !is KtDestructuringDeclarationEntry
                         }

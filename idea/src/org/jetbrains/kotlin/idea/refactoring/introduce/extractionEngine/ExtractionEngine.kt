@@ -77,7 +77,7 @@ class ExtractionEngine(
             }
         }
 
-        val message = analysisResult.messages.map { it.renderMessage() }.joinToString("\n")
+        val message = analysisResult.messages.joinToString("\n") { it.renderMessage() }
         when (analysisResult.status) {
             AnalysisResult.Status.CRITICAL_ERROR -> {
                 showErrorHint(project, editor, message, helper.operationName)

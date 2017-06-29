@@ -3,6 +3,7 @@
 
     <!-- Expected that these properties will be overridden by system properties -->
     <property name="kotlin.deploy.version" value="0.0.0"/>
+    <property name="kotlin.compiler.deploy.tag" value="dev"/>
     <property name="kotlin.compiler.deploy.version" value="${kotlin.deploy.version}"/>
     <property name="kotlin.npmjs.auth.token" value="AUTH"/>
 
@@ -66,6 +67,7 @@
 
     <macrodef name="npm">
         <attribute name="command"/>
+        <attribute name="tag" default="${kotlin.compiler.deploy.tag}"/>
         <attribute name="dir" default="."/>
         <attribute name="failonerror" default="true"/>
         <element name="args" optional="true" implicit="true"/>
@@ -74,6 +76,8 @@
             <node dir="@{dir}" failonerror="@{failonerror}">
                 <arg file="${node.dir}/lib/node_modules/npm/bin/npm-cli.js"/>
                 <arg value="@{command}"/>
+                <arg value="--tag"/>
+                <arg value="@{tag}"/>
                 <args/>
             </node>
         </sequential>
@@ -117,13 +121,7 @@
             <copy todir="${package_deploy_dir}" failonerror="true" >
                 <fileset dir="${output}/kotlinc" />
             </copy>
-            <chmod perm="ugo+rx">
-                <fileset dir="${package_deploy_dir}/bin/">
-                    <include name="kotlinc"/>
-                    <include name="kotlinc-js"/>
-                    <include name="kotlinc-jvm"/>
-                </fileset>
-            </chmod>
+            <chmod perm="ugo+rx" dir="dist/deploy_to_npm/kotlin-compiler/bin" includes="*" />
         </publish-to-npm>
     </target>
 

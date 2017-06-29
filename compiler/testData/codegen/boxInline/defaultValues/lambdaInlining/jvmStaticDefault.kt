@@ -1,7 +1,7 @@
 // FILE: 1.kt
 // LANGUAGE_VERSION: 1.2
 // SKIP_INLINE_CHECK_IN: inlineFun$default
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 //WITH_RUNTIME
 package test
 

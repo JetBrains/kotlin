@@ -43,7 +43,7 @@ class KotlinIntroducePropertyHandler(
 ): RefactoringActionHandler {
     object InteractiveExtractionHelper : ExtractionEngineHelper(INTRODUCE_PROPERTY) {
         private fun getExtractionTarget(descriptor: ExtractableCodeDescriptor) =
-                propertyTargets.filter { it.isAvailable(descriptor) }.firstOrNull()
+                propertyTargets.firstOrNull { it.isAvailable(descriptor) }
 
         override fun validate(descriptor: ExtractableCodeDescriptor) =
                 descriptor.validate(getExtractionTarget(descriptor) ?: ExtractionTarget.FUNCTION)

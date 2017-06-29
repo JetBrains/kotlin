@@ -273,6 +273,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtElement> MISSING_CONSTRUCTOR_KEYWORD = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> MISSING_CONSTRUCTOR_BRACKETS = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory0<PsiElement> NON_PRIVATE_CONSTRUCTOR_IN_ENUM = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> NON_PRIVATE_CONSTRUCTOR_IN_SEALED = DiagnosticFactory0.create(ERROR);
 

@@ -1,5 +1,8 @@
 Usage: kotlinc-jvm <options> <source files>
 where advanced options include:
+  -Xmodule-path=<path>       Paths where to find Java 9+ modules
+  -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules,
+                             or all modules on the module path if <module> is ALL-MODULE-PATH
   -Xno-call-assertions       Don't generate not-null assertion after each invocation of method returning not-null
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-optimize              Disable optimizations

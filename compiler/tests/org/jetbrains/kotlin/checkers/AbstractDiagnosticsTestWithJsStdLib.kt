@@ -36,22 +36,19 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.util.*
-import kotlin.reflect.jvm.javaField
 
 abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
-    protected lateinit var config: JsConfig
-        private set
-
-    override fun setUp() {
-        super.setUp()
-        config = JsConfig(project, environment.configuration.copy().apply {
+    private var lazyConfig: Lazy<JsConfig>? = lazy(LazyThreadSafetyMode.NONE) {
+        JsConfig(project, environment.configuration.copy().apply {
             put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME)
             put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB)
         })
     }
 
+    protected val config: JsConfig get() = lazyConfig!!.value
+
     override fun tearDown() {
-        (AbstractDiagnosticsTestWithJsStdLib::config).javaField!!.set(this, null)
+        lazyConfig = null
         super.tearDown()
     }
 

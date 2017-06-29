@@ -46,11 +46,11 @@ object MockLibraryUtil {
             jarName: String,
             addSources: Boolean = false,
             extraOptions: List<String> = emptyList(),
-            extraClasspath: List<String> = emptyList()
+            extraClasspath: List<String> = emptyList(),
+            useJava9: Boolean = false
     ): File {
-        return compileLibraryToJar(
-                sourcesPath, KotlinTestUtils.tmpDir("testLibrary-" + jarName), jarName, addSources, extraOptions, extraClasspath
-        )
+        return compileLibraryToJar(sourcesPath, KotlinTestUtils.tmpDir("testLibrary-" + jarName), jarName, addSources,
+                                   extraOptions, extraClasspath, useJava9)
     }
 
     @JvmStatic
@@ -61,7 +61,8 @@ object MockLibraryUtil {
             jarName: String,
             addSources: Boolean = false,
             extraOptions: List<String> = emptyList(),
-            extraClasspath: List<String> = emptyList()
+            extraClasspath: List<String> = emptyList(),
+            useJava9: Boolean = false
     ): File {
         val classesDir = File(contentDir, "classes")
 
@@ -91,7 +92,14 @@ object MockLibraryUtil {
                     "-d", classesDir.path
             )
 
-            KotlinTestUtils.compileJavaFiles(javaFiles, options)
+            val compile =
+                    if (useJava9) KotlinTestUtils::compileJavaFilesExternallyWithJava9
+                    else KotlinTestUtils::compileJavaFiles
+
+            val success = compile(javaFiles, options)
+            if (!success) {
+                throw AssertionError("Java files are not compiled successfully")
+            }
         }
 
         return createJarFile(contentDir, classesDir, jarName, sourcesPath.takeIf { addSources })

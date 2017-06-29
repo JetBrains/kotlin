@@ -5,9 +5,6 @@ operator fun String.get(vararg value: Any) : String {
 operator fun Int.get(vararg value: Any) : Int {
     return if (value[0] == 44 && value[1] == "example") 1 else 0
 }
-fun main(args: Array<String>) {
-    12  [44, "example"]
-}
 
 fun box(): String {
     if ("foo" [44, "example"] != "OK") return "fail1"

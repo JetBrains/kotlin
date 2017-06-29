@@ -74,7 +74,7 @@ private fun inlineAccessorsJvmNames(properties: List<ProtoBuf.Property>, nameRes
         }
     }
 
-    return inlineAccessors.mapNotNull {
+    return inlineAccessors.map {
         nameResolver.getString(it.name) + nameResolver.getString(it.desc)
     }.toSet()
 }

@@ -62,7 +62,7 @@ class KotlinExtraSteppingFilter : ExtraSteppingFilter {
 
         val settings = DebuggerSettings.getInstance()
         if (settings.TRACING_FILTERS_ENABLED) {
-            val classNames = positionManager.originalClassNameForPosition(sourcePosition).map { it.replace('/', '.') }
+            val classNames = positionManager.originalClassNamesForPosition(sourcePosition).map { it.replace('/', '.') }
             if (classNames.isEmpty()) {
                 return false
             }

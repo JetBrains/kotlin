@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeAlias
 
+import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
@@ -40,6 +41,7 @@ object CreateTypeAliasFromTypeReferenceActionFactory : KotlinSingleIntentionActi
 
         val classInfo = CreateClassFromTypeReferenceActionFactory.extractFixData(element, diagnostic) ?: return null
         if (classInfo.targetParent is KtDeclaration) return null
+        if (classInfo.targetParent is PsiPackage) return null
 
         val expectedType = getTypeConstraintInfo(element)?.upperBound
         if (expectedType != null && expectedType.containsError()) return null

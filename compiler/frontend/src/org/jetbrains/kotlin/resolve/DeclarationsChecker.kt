@@ -449,6 +449,10 @@ class DeclarationsChecker(
             declaration.modifierList?.let { trace.report(MISSING_CONSTRUCTOR_KEYWORD.on(it)) }
         }
 
+        if (declaration.valueParameterList == null) {
+            declaration.getConstructorKeyword()?.let { trace.report(MISSING_CONSTRUCTOR_BRACKETS.on(it)) }
+        }
+
         if (classOrObject !is KtClass) {
             trace.report(CONSTRUCTOR_IN_OBJECT.on(declaration))
         }

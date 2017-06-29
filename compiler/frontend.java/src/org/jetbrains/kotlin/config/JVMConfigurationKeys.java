@@ -117,4 +117,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> USE_JAVAC =
             CompilerConfigurationKey.create("use javac");
 
+    public static final CompilerConfigurationKey<List<String>> ADDITIONAL_JAVA_MODULES =
+            CompilerConfigurationKey.create("additional Java modules");
 }

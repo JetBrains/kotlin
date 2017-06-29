@@ -188,7 +188,7 @@ class BasicLookupElementFactory(
             is ClassifierDescriptorWithTypeParameters -> {
                 val typeParams = descriptor.declaredTypeParameters
                 if (includeClassTypeArguments && typeParams.isNotEmpty()) {
-                    element = element.appendTailText(typeParams.map { it.name.asString() }.joinToString(", ", "<", ">"), true)
+                    element = element.appendTailText(typeParams.joinToString(", ", "<", ">") { it.name.asString() }, true)
                 }
 
                 var container = descriptor.containingDeclaration

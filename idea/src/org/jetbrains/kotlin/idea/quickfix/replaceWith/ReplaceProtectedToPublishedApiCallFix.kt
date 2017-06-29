@@ -73,7 +73,7 @@ class ReplaceProtectedToPublishedApiCallFix(
                         KtPsiFactory(classOwner).createFunction(
                                 "@kotlin.PublishedApi\n" +
                                 "internal " + newSignature +
-                                " = $originalName(${paramNames.keys.map { it }.joinToString(", ")})"
+                                " = $originalName(${paramNames.keys.joinToString(", ") { it }})"
                         )
                     }
 

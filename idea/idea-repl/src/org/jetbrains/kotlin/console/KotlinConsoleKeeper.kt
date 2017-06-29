@@ -70,8 +70,7 @@ class KotlinConsoleKeeper(val project: Project) {
 
         val kotlinPaths = PathUtil.getKotlinPathsForIdeaPlugin()
         val replClassPath = listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
-                .map { it.absolutePath }
-                .joinToString(File.pathSeparator)
+                .joinToString(File.pathSeparator) { it.absolutePath }
 
         paramList.add("-cp")
         paramList.add(replClassPath)

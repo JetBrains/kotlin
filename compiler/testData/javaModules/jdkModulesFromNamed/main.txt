@@ -1,0 +1,7 @@
+compiler/testData/javaModules/jdkModulesFromNamed/main/test.kt:11:24: error: unresolved reference: httpserver
+    val s: com.sun.net.httpserver.HttpServer? = null
+                       ^
+compiler/testData/javaModules/jdkModulesFromNamed/main/test.kt:19:20: error: unresolved reference: javafx
+    val x: com.sun.javafx.tools.ant.AntLog? = null
+                   ^
+COMPILATION_ERROR

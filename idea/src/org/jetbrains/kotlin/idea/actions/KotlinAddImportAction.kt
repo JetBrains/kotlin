@@ -61,15 +61,11 @@ internal fun createSingleImportAction(
 ): KotlinAddImportAction {
     val file = element.containingKtFile
     val prioritizer = Prioritizer(element.containingKtFile)
-    val variants = fqNames
-            .map { fqName ->
-                val sameFqNameDescriptors = file.resolveImportReference(fqName)
-                val priority = sameFqNameDescriptors.map { prioritizer.priority(it) }.min() ?: return@map null
-                Prioritizer.VariantWithPriority(SingleImportVariant(fqName, sameFqNameDescriptors), priority)
-            }
-            .filterNotNull()
-            .sortedBy { it.priority }
-            .map { it.variant }
+    val variants = fqNames.mapNotNull { fqName ->
+        val sameFqNameDescriptors = file.resolveImportReference(fqName)
+        val priority = sameFqNameDescriptors.map { prioritizer.priority(it) }.min() ?: return@mapNotNull null
+        Prioritizer.VariantWithPriority(SingleImportVariant(fqName, sameFqNameDescriptors), priority)
+    }.sortedBy { it.priority }.map { it.variant }
 
     return KotlinAddImportAction(project, editor, element, variants)
 }
@@ -82,18 +78,14 @@ internal fun createSingleImportActionForConstructor(
 ): KotlinAddImportAction {
     val file = element.containingKtFile
     val prioritizer = Prioritizer(element.containingKtFile)
-    val variants = fqNames
-            .map { fqName ->
-                val sameFqNameDescriptors = file.resolveImportReference(fqName.parent())
-                        .filterIsInstance<ClassDescriptor>()
-                        .flatMap { it.constructors }
+    val variants = fqNames.mapNotNull { fqName ->
+        val sameFqNameDescriptors = file.resolveImportReference(fqName.parent())
+                .filterIsInstance<ClassDescriptor>()
+                .flatMap { it.constructors }
 
-                val priority = sameFqNameDescriptors.map { prioritizer.priority(it) }.min() ?: return@map null
-                Prioritizer.VariantWithPriority(SingleImportVariant(fqName, sameFqNameDescriptors), priority)
-            }
-            .filterNotNull()
-            .sortedBy { it.priority }
-            .map { it.variant }
+        val priority = sameFqNameDescriptors.map { prioritizer.priority(it) }.min() ?: return@mapNotNull null
+        Prioritizer.VariantWithPriority(SingleImportVariant(fqName, sameFqNameDescriptors), priority)
+    }.sortedBy { it.priority }.map { it.variant }
     return KotlinAddImportAction(project, editor, element, variants)
 }
 

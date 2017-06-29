@@ -27,10 +27,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
+import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.serialization.JvmStringTable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -512,7 +514,7 @@ public class AsmUtil {
         });
     }
 
-    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type) {
+    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
         if (type.getSort() == Type.ARRAY) {
             Type elementType = correctElementType(type);
             if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
@@ -525,16 +527,6 @@ public class AsmUtil {
         else if (type.getSort() == Type.OBJECT) {
             iv.invokevirtual("java/lang/Object", "hashCode", "()I", false);
         }
-        else if (type.getSort() == Type.LONG) {
-            genLongHashCode(mv, iv);
-        }
-        else if (type.getSort() == Type.DOUBLE) {
-            iv.invokestatic("java/lang/Double", "doubleToLongBits", "(D)J", false);
-            genLongHashCode(mv, iv);
-        }
-        else if (type.getSort() == Type.FLOAT) {
-            iv.invokestatic("java/lang/Float", "floatToIntBits", "(F)I", false);
-        }
         else if (type.getSort() == Type.BOOLEAN) {
             Label end = new Label();
             iv.dup();
@@ -543,8 +535,24 @@ public class AsmUtil {
             iv.iconst(1);
             iv.mark(end);
         }
-        else { // byte short char int
-            // do nothing
+        else {
+            if (JvmTarget.JVM_1_6 == jvmTarget) {
+                if (type.getSort() == Type.LONG) {
+                    genLongHashCode(mv, iv);
+                }
+                else if (type.getSort() == Type.DOUBLE) {
+                    iv.invokestatic("java/lang/Double", "doubleToLongBits", "(D)J", false);
+                    genLongHashCode(mv, iv);
+                }
+                else if (type.getSort() == Type.FLOAT) {
+                    iv.invokestatic("java/lang/Float", "floatToIntBits", "(F)I", false);
+                }
+                else { // byte short char int
+                    // do nothing
+                }
+            } else {
+                HashCode.Companion.invokeHashCode(iv, type);
+            }
         }
     }
 

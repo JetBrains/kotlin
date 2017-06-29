@@ -115,7 +115,7 @@ private fun createQuickFixes(similarDiagnostics: Collection<Diagnostic>): MultiM
     val actions = MultiMap<Diagnostic, IntentionAction>()
 
     val intentionActionsFactories = QuickFixes.getInstance().getActionFactories(factory)
-    for (intentionActionsFactory in intentionActionsFactories.filterNotNull()) {
+    for (intentionActionsFactory in intentionActionsFactories) {
         val allProblemsActions = intentionActionsFactory.createActionsForAllProblems(similarDiagnostics)
         if (!allProblemsActions.isEmpty()) {
             actions.putValues(first, allProblemsActions)

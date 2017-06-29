@@ -16,27 +16,38 @@
 
 package org.jetbrains.kotlin.cli.jvm.modules
 
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.PsiJavaModule
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 
-internal class CliJavaModuleFinder(val jrtFileSystem: VirtualFileSystem?) : JavaModuleFinder {
-    internal fun computeAllSystemModules(): Map<String, JavaModuleInfo> {
-        return jrtFileSystem?.findFileByPath("/modules")?.children.orEmpty()
-                .mapNotNull { root -> root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE) }
-                .mapNotNull((JavaModuleInfo)::read)
-                .associateBy { moduleInfo -> moduleInfo.moduleName }
+internal class CliJavaModuleFinder(private val jrtFileSystem: VirtualFileSystem?) : JavaModuleFinder {
+    private val userModules = linkedMapOf<String, JavaModule>()
+
+    /**
+     * @return true if the module was added successfully, false otherwise
+     */
+    fun addUserModule(module: JavaModule): Boolean {
+        if (module.name in userModules) return false
+        userModules[module.name] = module
+        return true
     }
 
-    override fun findModule(name: String): JavaModuleInfo? {
-        val file = jrtFileSystem?.findFileByPath("/modules/$name/${PsiJavaModule.MODULE_INFO_CLS_FILE}")
-        if (file != null) {
-            val moduleInfo = JavaModuleInfo.read(file)
-            if (moduleInfo != null) {
-                return moduleInfo
-            }
-        }
-        return null
+    val allObservableModules: Sequence<JavaModule>
+        get() = systemModules + userModules.values
+
+    val systemModules: Sequence<JavaModule.Explicit>
+        get() = jrtFileSystem?.findFileByPath("/modules")?.children.orEmpty().asSequence().mapNotNull(this::findSystemModule)
+
+    override fun findModule(name: String): JavaModule? =
+            jrtFileSystem?.findFileByPath("/modules/$name")?.let(this::findSystemModule)
+            ?: userModules[name]
+
+    private fun findSystemModule(moduleRoot: VirtualFile): JavaModule.Explicit? {
+        val file = moduleRoot.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE) ?: return null
+        val moduleInfo = JavaModuleInfo.read(file) ?: return null
+        return JavaModule.Explicit(moduleInfo, moduleRoot, file, isBinary = true)
     }
 }

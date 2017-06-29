@@ -80,7 +80,7 @@ class MockKotlinClassifier(override val fqName: FqName,
 
     override val supertypes: Collection<JavaClassifierType>
         get() = classOrObject.superTypeListEntries
-                .mapNotNull { superTypeListEntry ->
+                .map { superTypeListEntry ->
                     val userType = superTypeListEntry.typeAsUserType
                     arrayListOf<String>().apply {
                         userType?.referencedName?.let { add(it) }

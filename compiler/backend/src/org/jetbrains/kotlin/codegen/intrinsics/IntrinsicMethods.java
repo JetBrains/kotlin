@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
@@ -45,7 +47,7 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod RANGE_TO = new RangeTo();
     private static final IntrinsicMethod INC = new Increment(1);
     private static final IntrinsicMethod DEC = new Increment(-1);
-    private static final IntrinsicMethod HASH_CODE = new HashCode();
+    private final IntrinsicMethod HASH_CODE;
 
     private static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     private static final Equals EQUALS = new Equals();
@@ -59,7 +61,8 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
     private final IntrinsicsMap intrinsicsMap = new IntrinsicsMap();
 
-    public IntrinsicMethods() {
+    public IntrinsicMethods(JvmTarget jvmTarget) {
+        HASH_CODE = new HashCode(jvmTarget);
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, RECEIVER_PARAMETER_FQ_NAME, "javaClass", -1, JavaClassProperty.INSTANCE);
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "java", -1, new KClassJavaProperty());
         intrinsicsMap.registerIntrinsic(KotlinBuiltIns.FQ_NAMES.kCallable.toSafe(), null, "name", -1, new KCallableNameProperty());

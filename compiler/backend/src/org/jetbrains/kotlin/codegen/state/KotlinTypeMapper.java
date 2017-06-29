@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.IrBuiltinsPackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
@@ -70,7 +69,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -1161,29 +1159,12 @@ public class KotlinTypeMapper {
     }
 
     private void checkOwnerCompatibility(@NotNull FunctionDescriptor descriptor) {
-        if (!(descriptor instanceof DeserializedCallableMemberDescriptor)) return;
+        KotlinJvmBinaryClass ownerClass = KotlinJvmBinaryClassUtilKt.getContainingKotlinJvmBinaryClass(descriptor);
+        if (ownerClass == null) return;
 
-        KotlinJvmBinaryClass ownerClass = null;
-
-        DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        if (container instanceof DeserializedClassDescriptor) {
-            SourceElement source = ((DeserializedClassDescriptor) container).getSource();
-            if (source instanceof KotlinJvmBinarySourceElement) {
-                ownerClass = ((KotlinJvmBinarySourceElement) source).getBinaryClass();
-            }
-        }
-        else if (container instanceof LazyJavaPackageFragment) {
-            SourceElement source = ((LazyJavaPackageFragment) container).getSource();
-            if (source instanceof KotlinJvmBinaryPackageSourceElement) {
-                ownerClass = ((KotlinJvmBinaryPackageSourceElement) source).getRepresentativeBinaryClass();
-            }
-        }
-
-        if (ownerClass != null) {
-            JvmBytecodeBinaryVersion version = ownerClass.getClassHeader().getBytecodeVersion();
-            if (!version.isCompatible()) {
-                incompatibleClassTracker.record(ownerClass);
-            }
+        JvmBytecodeBinaryVersion version = ownerClass.getClassHeader().getBytecodeVersion();
+        if (!version.isCompatible()) {
+            incompatibleClassTracker.record(ownerClass);
         }
     }
 

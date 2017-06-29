@@ -209,9 +209,9 @@ class LookupElementFactory(
         if (descriptor.valueParameters.isEmpty()) return null
         if (descriptor.findOriginalTopMostOverriddenDescriptors().none { it in superFunctions }) return null
 
-        val argumentText = descriptor.valueParameters.map {
+        val argumentText = descriptor.valueParameters.joinToString(", ") {
             (if (it.varargElementType != null) "*" else "") + it.name.render()
-        }.joinToString(", ") //TODO: use code formatting settings
+        } //TODO: use code formatting settings
 
         val lookupElement = createFunctionCallElementWithArguments(descriptor, argumentText, true)
         lookupElement.assignPriority(ItemPriority.SUPER_METHOD_WITH_ARGUMENTS)

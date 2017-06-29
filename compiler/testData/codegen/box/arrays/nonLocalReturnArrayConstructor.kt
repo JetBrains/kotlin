@@ -46,6 +46,14 @@ fun testFloatArray() {
     throw AssertionError()
 }
 
+fun testDoubleArray() {
+    DoubleArray(5) { i ->
+        if (i == 3) return
+        i.toDouble()
+    }
+    throw AssertionError()
+}
+
 fun box(): String {
     testArray()
     testIntArray()
@@ -53,5 +61,6 @@ fun box(): String {
     testBooleanArray()
     testCharArray()
     testFloatArray()
+    testDoubleArray()
     return "OK"
 }

@@ -245,6 +245,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager"
                     serviceImplementation="org.jetbrains.kotlin.idea.util.IdeModuleVisibilityManagerImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver"
+                    serviceImplementation="org.jetbrains.kotlin.idea.modules.IdeJavaModuleResolver"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.LightClassGenerationSupport"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IDELightClassGenerationSupport"/>
 
@@ -1102,7 +1105,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertNegatedExpressionWithDemorgansLawIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertBinaryExpressionWithDemorgansLawIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -2236,6 +2239,38 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.UselessCallOnNotNullInspection"
+                     displayName="Useless call on not-null type"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantExplicitTypeInspection"
+                     displayName="Explicitly given type is redundant here"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.UselessCallOnCollectionInspection"
+                     displayName="Useless call on collection type"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.SimplifiableCallChainInspection"
+                     displayName="Call chain on collection type can be simplified"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 

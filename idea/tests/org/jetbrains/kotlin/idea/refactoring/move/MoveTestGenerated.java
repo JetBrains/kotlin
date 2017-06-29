@@ -504,6 +504,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/classWithInitializer/delegateInObject.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_classWithInitializer_DelegateInObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/classWithInitializer/delegateInObject.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/companionExtensionMemberRef/companionExtensionMemberRef.test")
     public void testKotlin_moveTopLevelDeclarations_misc_companionExtensionMemberRef_CompanionExtensionMemberRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/companionExtensionMemberRef/companionExtensionMemberRef.test");
