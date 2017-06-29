@@ -16,6 +16,8 @@
 
 package konan.internal
 
+import kotlin.internal.getProgressionLastElement
+
 @ExportForCppRuntime
 fun ThrowNullPointerException(): Nothing {
     throw NullPointerException()
@@ -85,3 +87,12 @@ fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T>
     @Suppress("UNCHECKED_CAST")
     return result as Array<T>
 }
+
+fun checkProgressionStep(step: Int)  = if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
+fun checkProgressionStep(step: Long) = if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
+
+fun getProgressionBound(start: Char, end: Char, step: Int): Char =
+        getProgressionBound(start.toInt(), end.toInt(), step).toChar()
+
+fun getProgressionBound(start: Int, end: Int, step: Int): Int = getProgressionLastElement(start, end, step)
+fun getProgressionBound(start: Long, end: Long, step: Long): Long = getProgressionLastElement(start, end, step)

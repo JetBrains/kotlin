@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.descriptors.replace
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -9,11 +8,13 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // This is what Context collects about IR.
@@ -61,10 +62,34 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
             ) as ClassDescriptor
     )
 
+    val iterator = symbolTable.referenceClass(
+            builtInsPackage("kotlin", "collections").getContributedClassifier(
+                    Name.identifier("Iterator"), NoLookupLocation.FROM_BACKEND
+            ) as ClassDescriptor)
+
+    private fun progression(name: String) = symbolTable.referenceClass(
+            builtInsPackage("kotlin", "ranges").getContributedClassifier(
+                    Name.identifier(name), NoLookupLocation.FROM_BACKEND
+            ) as ClassDescriptor
+    )
+
+    val charProgression = progression("CharProgression")
+    val intProgression  = progression("IntProgression")
+    val longProgression = progression("LongProgression")
+    val progressionClasses = listOf(charProgression, intProgression, longProgression)
+    val progressionClassesTypes = progressionClasses.map { it.descriptor.defaultType }.toSet()
+
+    val checkProgressionStep = context.getInternalFunctions("checkProgressionStep")
+            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
+    val getProgressionBound = context.getInternalFunctions("getProgressionBound")
+            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
+
     val defaultConstructorMarker = symbolTable.referenceClass(context.getInternalClass("DefaultConstructorMarker"))
 
     val any = symbolTable.referenceClass(builtIns.any)
     val unit = symbolTable.referenceClass(builtIns.unit)
+
+    val char = symbolTable.referenceClass(builtIns.char)
 
     val byte = symbolTable.referenceClass(builtIns.byte)
     val short = symbolTable.referenceClass(builtIns.short)
@@ -72,6 +97,7 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
     val long = symbolTable.referenceClass(builtIns.long)
 
     val integerClasses = listOf(byte, short, int, long)
+    val integerClassesTypes = integerClasses.map { it.descriptor.defaultType }
 
     val arrayOf = symbolTable.referenceSimpleFunction(
             builtInsPackage("kotlin").getContributedFunctions(
@@ -143,6 +169,8 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
                     }
     )
 
+
+
     val valuesForEnum = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("valuesForEnum").single())
 
@@ -171,4 +199,21 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
     val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedPropertyImpl)
     val kLocalDelegatedMutablePropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedMutablePropertyImpl)
 
+    fun getFunction(name: Name, receiverType: KotlinType, vararg argTypes: KotlinType) =
+        symbolTable.referenceFunction(receiverType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+                .single {
+                    var i = 0
+                    it.valueParameters.size == argTypes.size && it.valueParameters.all { type -> type == argTypes[i++] }
+                }
+        )
+
+    fun getBinaryOperator(name: Name, lhsType: KotlinType, rhsType: KotlinType) =
+        symbolTable.referenceFunction(lhsType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+                .single { it.valueParameters.size == 1 && it.valueParameters[0].type == rhsType }
+        )
+
+    fun getUnaryOperator(name: Name, receiverType: KotlinType) =
+        symbolTable.referenceFunction(receiverType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+                .single { it.valueParameters.isEmpty() }
+        )
 }

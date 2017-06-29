@@ -307,6 +307,29 @@ task sum_3const(type: RunKonanTest) {
     source = "codegen/function/sum_3const.kt"
 }
 
+task codegen_basics_for_loops(type: RunKonanTest) {
+    source = "codegen/basics/for_loops.kt"
+    goldValue = "01234\n0123\n43210\n\n024\n02\n420\n\n036\n03\n630\n\n"
+}
+
+task codegen_basics_for_loops_types(type: RunKonanTest) {
+    source = "codegen/basics/for_loops_types.kt"
+    goldValue = "01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n" +
+            "01234\n01234\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n" +
+            "0123\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n" +
+            "43210\n43210\nabcd\nabc\ndcba\n"
+}
+
+task codegen_basics_for_loops_overflow(type: RunKonanTest) {
+    source = "codegen/basics/for_loops_overflow.kt"
+    goldValue = "2147483646 2147483647 \n2147483646 \n-2147483647 -2147483648 \n1073741827 \n"
+}
+
+task codegen_basics_for_loops_errors(type: RunKonanTest) {
+    source = "codegen/basics/for_loops_errors.kt"
+    goldValue = "OK\n"
+}
+
 task local_variable(type: RunKonanTest) {
     source = "codegen/basics/local_variable.kt"
 }
