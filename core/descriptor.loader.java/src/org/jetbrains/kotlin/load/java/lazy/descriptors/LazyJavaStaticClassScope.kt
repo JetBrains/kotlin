@@ -48,7 +48,6 @@ class LazyJavaStaticClassScope(
             if (jClass.isEnum) {
                 addAll(listOf(DescriptorUtils.ENUM_VALUE_OF, DescriptorUtils.ENUM_VALUES))
             }
-            addAll(jClass.innerClassNames)
         }
 
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
