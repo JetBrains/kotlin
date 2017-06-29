@@ -1,3 +1,3 @@
 // WITH_RUNTIME
 
-val x = listOf(1, 2, 3).filter <caret>{ it % 2 != 0 }.isNotEmpty()
+val x = listOf(1, 2, 3).filte<caret>r { it % 2 != 0 }.isNotEmpty()

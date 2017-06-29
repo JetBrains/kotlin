@@ -854,11 +854,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -2369,6 +2364,15 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.SimplifiableCallChainInspection"
                      displayName="Call chain on collection type can be simplified"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection"
+                     displayName="Expression body syntax is preferable here"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"

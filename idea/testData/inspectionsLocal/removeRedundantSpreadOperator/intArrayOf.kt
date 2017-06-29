@@ -1,5 +1,5 @@
 fun foo(vararg x: Int) {}
 
 fun bar() {
-    foo(*intArrayOf<caret>(1))
+    foo(<caret>*intArrayOf(1))
 }

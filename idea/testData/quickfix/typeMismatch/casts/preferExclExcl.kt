@@ -2,7 +2,6 @@
 // ACTION: Add 'toString()' call
 // ACTION: Add non-null asserted (!!) call
 // ACTION: Change parameter 's' type of function 'bar' to 'String?'
-// ACTION: Convert to expression body
 // ACTION: Create function 'bar'
 // ACTION: Surround with null check
 // ACTION: Wrap with '?.let { ... }' call

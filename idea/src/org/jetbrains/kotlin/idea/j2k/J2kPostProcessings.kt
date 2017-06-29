@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
+import org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnIntention
@@ -78,8 +79,7 @@ object J2KPostProcessingRegistrar {
         _processings.add(UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing())
         _processings.add(RemoveRedundantSamAdaptersProcessing())
         _processings.add(RemoveRedundantCastToNullableProcessing())
-
-        registerIntentionBasedProcessing(ConvertToExpressionBodyIntention(convertEmptyToUnit = false)) { it is KtPropertyAccessor }
+        _processings.add(UseExpressionBodyProcessing())
 
         registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
 
@@ -252,6 +252,19 @@ object J2KPostProcessingRegistrar {
             return {
                 RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
                         .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
+            }
+        }
+    }
+
+    private class UseExpressionBodyProcessing : J2kPostProcessing {
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtPropertyAccessor) return null
+
+            val inspection = UseExpressionBodyInspection(convertEmptyToUnit = false)
+            if (!inspection.isActiveFor(element)) return null
+
+            return {
+                inspection.simplify(element, false)
             }
         }
     }

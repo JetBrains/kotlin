@@ -837,6 +837,327 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/useExpressionBody")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UseExpressionBody extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInUseExpressionBody() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/useExpressionBody"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("if.kt")
+        public void testIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/if.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multiLine.kt")
+        public void testMultiLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/multiLine.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("oneLine.kt")
+        public void testOneLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/oneLine.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/when.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenWithEarlyReturn.kt")
+        public void testWhenWithEarlyReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/whenWithEarlyReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ConvertToExpressionBody extends AbstractLocalInspectionTest {
+            public void testAllFilesPresentInConvertToExpressionBody() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("anonymousObjectExpression.kt")
+            public void testAnonymousObjectExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/anonymousObjectExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("assignPlus.kt")
+            public void testAssignPlus() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/assignPlus.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("assignment.kt")
+            public void testAssignment() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/assignment.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructorWithEmptyBody.kt")
+            public void testConstructorWithEmptyBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/constructorWithEmptyBody.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("declaration.kt")
+            public void testDeclaration() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/declaration.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("elvisIfElseUnit.kt")
+            public void testElvisIfElseUnit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/elvisIfElseUnit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("elvisIfUnit.kt")
+            public void testElvisIfUnit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/elvisIfUnit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("elvisWhenUnitNonExhaustive.kt")
+            public void testElvisWhenUnitNonExhaustive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/elvisWhenUnitNonExhaustive.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("emptyList.kt")
+            public void testEmptyList() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/emptyList.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expressionWithReturns1.kt")
+            public void testExpressionWithReturns1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/expressionWithReturns1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expressionWithReturns2.kt")
+            public void testExpressionWithReturns2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/expressionWithReturns2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funWithEmptyBody.kt")
+            public void testFunWithEmptyBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/funWithEmptyBody.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funWithEmptyBody2.kt")
+            public void testFunWithEmptyBody2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/funWithEmptyBody2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funWithImplicitUnitTypeWithThrow.kt")
+            public void testFunWithImplicitUnitTypeWithThrow() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/funWithImplicitUnitTypeWithThrow.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funWithNoBlock.kt")
+            public void testFunWithNoBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/funWithNoBlock.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funWithNothingType.kt")
+            public void testFunWithNothingType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/funWithNothingType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funWithReturn.kt")
+            public void testFunWithReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/funWithReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funWithUnitType.kt")
+            public void testFunWithUnitType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/funWithUnitType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funWithUnitType2.kt")
+            public void testFunWithUnitType2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/funWithUnitType2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funWithUnitTypeWithThrow.kt")
+            public void testFunWithUnitTypeWithThrow() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/funWithUnitTypeWithThrow.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionLiteral.kt")
+            public void testFunctionLiteral() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/functionLiteral.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("getWithReturn.kt")
+            public void testGetWithReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/getWithReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ifElseUnit.kt")
+            public void testIfElseUnit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/ifElseUnit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ifUnit.kt")
+            public void testIfUnit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/ifUnit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ifWhenUnitExhaustive.kt")
+            public void testIfWhenUnitExhaustive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/ifWhenUnitExhaustive.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ifWhenUnitNonExhaustive.kt")
+            public void testIfWhenUnitNonExhaustive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/ifWhenUnitNonExhaustive.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaIfUnit.kt")
+            public void testLambdaIfUnit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/lambdaIfUnit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaWhenUnitNonExhaustive.kt")
+            public void testLambdaWhenUnitNonExhaustive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/lambdaWhenUnitNonExhaustive.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multipleStatements.kt")
+            public void testMultipleStatements() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/multipleStatements.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("overridePublicFun.kt")
+            public void testOverridePublicFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/overridePublicFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("returnFromLambda.kt")
+            public void testReturnFromLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/returnFromLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("returnFromLambda2.kt")
+            public void testReturnFromLambda2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/returnFromLambda2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("returnWithNoValue.kt")
+            public void testReturnWithNoValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/returnWithNoValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenIfUnitExhaustive.kt")
+            public void testWhenIfUnitExhaustive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/whenIfUnitExhaustive.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenIfUnitNonExhaustive.kt")
+            public void testWhenIfUnitNonExhaustive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/whenIfUnitNonExhaustive.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenUnitExhaustive.kt")
+            public void testWhenUnitExhaustive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/whenUnitExhaustive.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenUnitNonExhaustive.kt")
+            public void testWhenUnitNonExhaustive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/whenUnitNonExhaustive.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenUnitWithElse.kt")
+            public void testWhenUnitWithElse() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/whenUnitWithElse.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenWhenNonExhaustive.kt")
+            public void testWhenWhenNonExhaustive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/whenWhenNonExhaustive.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("while.kt")
+            public void testWhile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/while.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/keepComments")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class KeepComments extends AbstractLocalInspectionTest {
+                @TestMetadata("1.kt")
+                public void test1() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/keepComments/1.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("2.kt")
+                public void test2() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/keepComments/2.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("3.kt")
+                public void test3() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/keepComments/3.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("4.kt")
+                public void test4() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/keepComments/4.kt");
+                    doTest(fileName);
+                }
+
+                public void testAllFilesPresentInKeepComments() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/keepComments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                }
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/wrapUnaryOperator")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

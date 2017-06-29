@@ -1,5 +1,5 @@
 fun foo(vararg x: Short) {}
 
 fun bar() {
-    foo(*shortArrayOf<caret>(1))
+    foo(<caret>*shortArrayOf(1))
 }

@@ -1,5 +1,4 @@
 // "Create abstract function 'foo'" "false"
-// ACTION: Convert to expression body
 // ACTION: Create extension function 'B.foo'
 // ACTION: Create member function 'B.foo'
 // ACTION: Rename reference

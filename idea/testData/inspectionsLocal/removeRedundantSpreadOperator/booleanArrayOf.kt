@@ -1,5 +1,5 @@
 fun foo(vararg x: Boolean) {}
 
 fun bar() {
-    foo(*booleanArrayOf<caret>(true, true))
+    foo(*<caret>booleanArrayOf(true, true))
 }

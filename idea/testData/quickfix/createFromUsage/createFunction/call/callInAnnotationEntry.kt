@@ -4,7 +4,6 @@
 // ACTION: Make private
 // ACTION: Rename reference
 // ACTION: Put arguments on separate lines
-// ACTION: Convert to expression body
 // ERROR: Unresolved reference: foo
 // ERROR: Unresolved reference: bar
 

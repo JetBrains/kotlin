@@ -25,7 +25,7 @@ import com.intellij.refactoring.BaseRefactoringProcessor
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
+import org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection
 import org.jetbrains.kotlin.idea.intentions.InfixCallToOrdinaryIntention
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
@@ -552,11 +552,11 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
 
         if (generatorOptions.allowExpressionBody) {
-            val convertToExpressionBody = ConvertToExpressionBodyIntention()
             val bodyExpression = body.statements.singleOrNull()
             val bodyOwner = body.parent as KtDeclarationWithBody
-            if (bodyExpression != null && !bodyExpression.isMultiLine() && convertToExpressionBody.isApplicableTo(bodyOwner)) {
-                convertToExpressionBody.applyTo(bodyOwner, !descriptor.returnType.isFlexible())
+            val useExpressionBodyInspection = UseExpressionBodyInspection()
+            if (bodyExpression != null && !bodyExpression.isMultiLine() && useExpressionBodyInspection.isActiveFor(bodyOwner)) {
+                useExpressionBodyInspection.simplify(bodyOwner, !descriptor.returnType.isFlexible())
             }
         }
     }

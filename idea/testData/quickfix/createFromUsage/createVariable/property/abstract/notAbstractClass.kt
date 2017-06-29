@@ -1,5 +1,4 @@
 // "Create abstract property 'foo'" "false"
-// ACTION: Convert to expression body
 // ACTION: Create local variable 'foo'
 // ACTION: Create parameter 'foo'
 // ACTION: Create property 'foo'

@@ -1,3 +1,3 @@
 // WITH_RUNTIME
 
-val x = "5abc".filter { it.isDigit() }.<caret>singleOrNull()
+val x = "5abc".<caret>filter { it.isDigit() }.singleOrNull()

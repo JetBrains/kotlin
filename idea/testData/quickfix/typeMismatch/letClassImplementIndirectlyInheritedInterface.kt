@@ -1,6 +1,5 @@
 // "Let 'B' implement interface 'A<Int>'" "false"
 // ACTION: Change parameter 'a' type of function 'let.implement.foo' to 'B'
-// ACTION: Convert to expression body
 // ACTION: Create function 'foo'
 // ERROR: Type mismatch: inferred type is B but A<Int> was expected
 package let.implement
