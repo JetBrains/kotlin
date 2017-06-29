@@ -9,6 +9,5 @@ konanInterop {
 konanArtifacts {
     Curl {
         useInterop 'libcurl'
-        linkerOpts "-L/opt/local/lib -L/usr/lib/x86_64-linux-gnu -L/usr/local/opt/curl/lib -lcurl"
     }
 }

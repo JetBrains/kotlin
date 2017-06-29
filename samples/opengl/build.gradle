@@ -8,13 +8,11 @@ konanInterop {
 konanArtifacts {
     OpenGlTeapotMacbook {
         useInterop 'opengl'
-        linkerOpts "-framework OpenGL -framework GLUT"
         target "macbook"
     }
 
     OpenGlTeapotLinux {
         useInterop 'opengl'
-        linkerOpts "-L/usr/lib/x86_64-linux-gnu -lglut -lGL -lGLU"
         target "linux"
     }
 }

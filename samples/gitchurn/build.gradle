@@ -9,6 +9,5 @@ konanInterop {
 konanArtifacts {
     GitChurn {
         useInterop 'libgit2'
-        linkerOpts "-L/opt/local/lib -L/usr/lib/x86_64-linux-gnu -L/usr/local/lib -lgit2"
     }
 }

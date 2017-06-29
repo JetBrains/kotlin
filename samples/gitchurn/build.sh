@@ -5,8 +5,6 @@ PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
 
 CFLAGS_macbook="-I/opt/local/include -compilerOpts -I/usr/local/include"
 CFLAGS_linux=-I/usr/include
-LINKER_ARGS_macbook="-L/usr/local/lib -L/opt/local/lib -lgit2"
-LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lgit2"
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -29,7 +27,7 @@ mkdir -p $DIR/build/bin/
 cinterop -compilerOpts $CFLAGS -def $DIR/src/main/c_interop/libgit2.def -target $TARGET \
 	 -o $DIR/build/c_interop/libgit2 || exit 1
 
-konanc -target $TARGET $DIR/src/main/kotlin -library $DIR/build/c_interop/libgit2 -linkerOpts "$LINKER_ARGS" \
+konanc -target $TARGET $DIR/src/main/kotlin -library $DIR/build/c_interop/libgit2 \
        -o $DIR/build/bin/GitChurn || exit 1
 
 echo "Artifact path is $DIR/build/bin/GitChurn.kexe"

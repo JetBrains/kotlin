@@ -13,6 +13,5 @@ konanInterop {
 konanArtifacts {
     Gtk3Demo {
         useInterop 'gtk3'
-        linkerOpts "-L/opt/local/lib -L/usr/local/lib -L/usr/lib/x86_64-linux-gnu -lglib-2.0 -lgdk-3 -lgtk-3 -lgio-2.0 -lgobject-2.0"
     }
 }

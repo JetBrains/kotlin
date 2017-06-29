@@ -6,8 +6,6 @@ PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
 IPREFIX_macbook=-I/opt/local/include
 #IPREFIX_macbook=-I/usr/local/include
 IPREFIX_linux=-I/usr/include
-LINKER_ARGS_macbook="-L/opt/local/lib -L/usr/local/lib -lglib-2.0 -lgdk-3.0 -lgtk-3 -lgio-2.0 -lgobject-2.0"
-LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lglib-2.0 -lgdk-3 -lgtk-3 -lgio-2.0 -lgobject-2.0"
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -33,7 +31,7 @@ cinterop -J-Xmx8g -copt $IPREFIX/atk-1.0 -compilerOpts $IPREFIX/gdk-pixbuf-2.0 -
 	 -copt $IPREFIX/gtk-3.0 -copt $IPREFIX/glib-2.0 -def $DIR/src/main/c_interop/gtk3.def \
 	 -target $TARGET -o $DIR/build/c_interop/gtk3 || exit 1
 
-konanc -target $TARGET $DIR/src/main/kotlin -library $DIR/build/c_interop/gtk3 -linkerOpts "$LINKER_ARGS" \
+konanc -target $TARGET $DIR/src/main/kotlin -library $DIR/build/c_interop/gtk3 \
        -o $DIR/build/bin/Gtk3Demo || exit 1
 
 echo "Artifact path is $DIR/build/bin/Gtk3Demo.kexe"

@@ -1,2 +1,4 @@
 headers = gtk/gtk.h
 headerFilter = gtk/* gobject/* gio/*
+linkerOpts.osx = -L/opt/local/lib -L/usr/local/lib -lglib-2.0 -lgdk-3.0 -lgtk-3 -lgio-2.0 -lgobject-2.0
+linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lglib-2.0 -lgdk-3 -lgtk-3 -lgio-2.0 -lgobject-2.0
