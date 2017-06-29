@@ -194,50 +194,61 @@ open class IncrementalCacheImpl<Target>(
     }
 
     private fun computeChanges(className: JvmClassName, createChangeInfo: (FqName, Collection<String>) -> ChangeInfo): List<ChangeInfo> {
-        fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>): Set<String> =
-                members.flatMap { this.it().filterNot { it.isPrivate }.names(nameResolver) }.toSet()
-
         if (className.internalName == MODULE_MAPPING_FILE_NAME) return emptyList()
 
         val mapValue = protoMap[className] ?: return emptyList()
 
         return when {
             mapValue.isPackageFacade -> {
-                val packageData = JvmProtoBufUtil.readPackageDataFrom(mapValue.bytes, mapValue.strings)
-
-                val memberNames =
-                        packageData.packageProto.getNonPrivateNames(
-                                packageData.nameResolver,
-                                ProtoBuf.Package::getFunctionList,
-                                ProtoBuf.Package::getPropertyList
-                        )
-
-                listOf(createChangeInfo(className.packageFqName, memberNames))
+                val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(mapValue.bytes, mapValue.strings)
+                computePackageChanges(className.packageFqName, packageProto, nameResolver, createChangeInfo)
             }
             else -> {
-                val classData = JvmProtoBufUtil.readClassDataFrom(mapValue.bytes, mapValue.strings)
-
-                val classFqName = className.fqNameForClassNameWithoutDollars
-                val kind = Flags.CLASS_KIND.get(classData.classProto.flags)
-
-                if (kind == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
-                    val memberNames =
-                            classData.classProto.getNonPrivateNames(
-                                    classData.nameResolver,
-                                    ProtoBuf.Class::getConstructorList,
-                                    ProtoBuf.Class::getFunctionList,
-                                    ProtoBuf.Class::getPropertyList
-                            ) + classData.classProto.enumEntryList.map { classData.nameResolver.getString(it.name) }
-
-                    val companionObjectChanged = createChangeInfo(classFqName.parent(), listOfNotNull(classFqName.shortName().asString()))
-                    val companionObjectMembersChanged = createChangeInfo(classFqName, memberNames)
-
-                    listOf(companionObjectMembersChanged, companionObjectChanged)
-                }
-                else {
-                    listOf(ChangeInfo.SignatureChanged(classFqName, areSubclassesAffected = true))
-                }
+                val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(mapValue.bytes, mapValue.strings)
+                computeClassChanges(nameResolver, classProto, createChangeInfo)
             }
+        }
+    }
+
+    private fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>): Set<String> =
+            members.flatMap { this.it().filterNot { it.isPrivate }.names(nameResolver) }.toSet()
+
+    private fun computePackageChanges(
+            packageFqName: FqName,
+            protoData: ProtoBuf.Package,
+            nameResolver: NameResolver,
+            createChangeInfo: (FqName, Collection<String>) -> ChangeInfo
+    ): List<ChangeInfo> {
+        val memberNames =
+                protoData.getNonPrivateNames(
+                        nameResolver,
+                        ProtoBuf.Package::getFunctionList,
+                        ProtoBuf.Package::getPropertyList
+                )
+
+        return listOf(createChangeInfo(packageFqName, memberNames))
+    }
+
+    private fun computeClassChanges(nameResolver: NameResolver, classProto: ProtoBuf.Class, createChangeInfo: (FqName, Collection<String>) -> ChangeInfo): List<ChangeInfo> {
+        val classFqName = nameResolver.getClassId(classProto.fqName).asSingleFqName()
+        val kind = Flags.CLASS_KIND.get(classProto.flags)
+
+        return if (kind == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
+            val memberNames =
+                    classProto.getNonPrivateNames(
+                            nameResolver,
+                            ProtoBuf.Class::getConstructorList,
+                            ProtoBuf.Class::getFunctionList,
+                            ProtoBuf.Class::getPropertyList
+                    ) + classProto.enumEntryList.map { nameResolver.getString(it.name) }
+
+            val companionObjectChanged = createChangeInfo(classFqName.parent(), listOfNotNull(classFqName.shortName().asString()))
+            val companionObjectMembersChanged = createChangeInfo(classFqName, memberNames)
+
+            listOf(companionObjectMembersChanged, companionObjectChanged)
+        }
+        else {
+            listOf(ChangeInfo.SignatureChanged(classFqName, areSubclassesAffected = true))
         }
     }
 
