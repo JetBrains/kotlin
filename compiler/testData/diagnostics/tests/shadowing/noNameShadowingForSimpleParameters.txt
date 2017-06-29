@@ -1,0 +1,14 @@
+package
+
+public fun fff(/*0*/ x: (y: kotlin.String) -> kotlin.Unit): kotlin.Unit
+public fun test1(/*0*/ name: kotlin.String): kotlin.Unit
+public fun test2(/*0*/ param: kotlin.String): kotlin.Unit
+public fun test3(/*0*/ param: kotlin.String): kotlin.Unit
+
+public open class Base {
+    public constructor Base()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ name: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -19402,6 +19402,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/shadowing"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("noNameShadowingForSimpleParameters.kt")
+            public void testNoNameShadowingForSimpleParameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/shadowing/noNameShadowingForSimpleParameters.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ShadowLambdaParameter.kt")
             public void testShadowLambdaParameter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/shadowing/ShadowLambdaParameter.kt");
