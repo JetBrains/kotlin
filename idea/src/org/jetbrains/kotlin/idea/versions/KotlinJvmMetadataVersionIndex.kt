@@ -52,12 +52,12 @@ object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmM
 
         tryBlock(inputData) {
             val classReader = ClassReader(inputData.content)
-            classReader.accept(object : ClassVisitor(Opcodes.ASM5) {
+            classReader.accept(object : ClassVisitor(Opcodes.ASM6) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                     if (desc != METADATA_DESC) return null
 
                     annotationPresent = true
-                    return object : AnnotationVisitor(Opcodes.ASM5) {
+                    return object : AnnotationVisitor(Opcodes.ASM6) {
                         override fun visit(name: String, value: Any) {
                             when (name) {
                                 METADATA_VERSION_FIELD_NAME -> if (value is IntArray) {
