@@ -13255,6 +13255,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("inRangeLiteralComposition.kt")
+            public void testInRangeLiteralComposition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inRangeLiteralComposition.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inRangeOfComparable.kt")
             public void testInRangeOfComparable() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inRangeOfComparable.kt");
