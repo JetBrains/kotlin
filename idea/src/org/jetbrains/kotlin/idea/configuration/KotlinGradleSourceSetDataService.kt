@@ -112,6 +112,8 @@ private fun configureFacetByGradleModule(
         ideModule: Module,
         modelsProvider: IdeModifiableModelsProvider
 ): KotlinFacet? {
+    if (!moduleNode.isResolved) return null
+
     if (!moduleNode.hasKotlinPlugin) {
         val facetModel = modelsProvider.getModifiableFacetModel(ideModule)
         val facet = facetModel.getFacetByType(KotlinFacetType.TYPE_ID)
