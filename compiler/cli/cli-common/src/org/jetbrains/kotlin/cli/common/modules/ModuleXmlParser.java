@@ -103,7 +103,7 @@ public class ModuleXmlParser {
             MessageCollectorUtil.reportException(messageCollector, e);
         }
         catch (SAXException e) {
-            messageCollector.report(ERROR, OutputMessageUtil.renderException(e), null);
+            messageCollector.report(ERROR, "Build file does not have a valid XML: " + e, null);
         }
         return ModuleScriptData.EMPTY;
     }
