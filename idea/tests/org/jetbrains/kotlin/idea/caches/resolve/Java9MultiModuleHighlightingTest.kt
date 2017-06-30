@@ -83,4 +83,12 @@ class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module("main").addDependency(module("dependency"))
         checkHighlightingInAllFiles()
     }
+
+    fun testCyclicDependency() = doTest {
+        val a = module("moduleA")
+        val b = module("moduleB")
+        val c = module("moduleC")
+        module("main").addDependency(a).addDependency(b).addDependency(c)
+        checkHighlightingInAllFiles()
+    }
 }

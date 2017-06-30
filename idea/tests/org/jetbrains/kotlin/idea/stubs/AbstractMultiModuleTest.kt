@@ -84,7 +84,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
             other: Module,
             dependencyScope: DependencyScope = DependencyScope.COMPILE,
             exported: Boolean = false
-    ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
+    ): Module = this.apply { ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported) }
 
     protected fun Module.addLibrary(jar: File, name: String = KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME) {
         ConfigLibraryUtil.addLibrary(NewLibraryEditor().apply {
