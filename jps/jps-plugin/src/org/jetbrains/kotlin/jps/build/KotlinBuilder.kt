@@ -424,7 +424,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun doCompileModuleChunk(
             allCompiledFiles: MutableSet<File>, chunk: ModuleChunk, commonArguments: CommonCompilerArguments, context: CompileContext,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>, environment: JpsCompilerEnvironment,
-            filesToCompile: MultiMap<ModuleBuildTarget, File>, incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl<*>>,
+            filesToCompile: MultiMap<ModuleBuildTarget, File>, incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
             project: JpsProject
     ): OutputItemsCollector? {
 
@@ -827,7 +827,7 @@ private fun CompilationResult.processChangesUsingLookups(
         compiledFiles: Set<File>,
         dataManager: BuildDataManager,
         fsOperations: FSOperationsHelper,
-        caches: Iterable<IncrementalCacheImpl<ModuleBuildTarget>>
+        caches: Iterable<IncrementalCacheImpl>
 ) {
     val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
     val allCaches = caches.flatMap { it.thisWithDependentCaches }

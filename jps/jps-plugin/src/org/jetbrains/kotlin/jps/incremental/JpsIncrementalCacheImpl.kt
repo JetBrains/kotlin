@@ -28,7 +28,7 @@ import java.io.File
 class JpsIncrementalCacheImpl(
         target: ModuleBuildTarget,
         paths: BuildDataPaths
-) : IncrementalCacheImpl<ModuleBuildTarget>(paths.getTargetDataRoot(target), target.outputDir, target), StorageOwner {
+) : IncrementalCacheImpl(paths.getTargetDataRoot(target), target.outputDir), StorageOwner {
     override fun debugLog(message: String) {
         KotlinBuilder.LOG.debug(message)
     }
