@@ -150,6 +150,8 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
     companion object {
         private val KOTLIN_FILES = Pattern.compile(".*\\.kt$")
-        private val JAVA_FILES = Pattern.compile(".*\\.java$")
+
+        @JvmStatic
+        protected val JAVA_FILES = Pattern.compile(".*\\.java$")!!
     }
 }

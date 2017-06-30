@@ -109,7 +109,10 @@ internal class ClasspathRootsResolver(
     }
 
     private fun modularBinaryRoot(root: VirtualFile, automaticModuleName: () -> String): JavaModule? {
-        val moduleInfoFile = root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
+        val moduleInfoFile =
+                root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
+                ?: root.takeIf { it.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL }
+                        ?.findFileByRelativePath(MULTI_RELEASE_MODULE_INFO_CLS_FILE)
         return if (moduleInfoFile != null) {
             val moduleInfo = JavaModuleInfo.read(moduleInfoFile) ?: return null
             JavaModule.Explicit(moduleInfo, root, moduleInfoFile, isBinary = true)
@@ -208,5 +211,9 @@ internal class ClasspathRootsResolver(
                 severity, message,
                 if (file == null) null else CompilerMessageLocation.create(MessageUtil.virtualFileToPath(file))
         )
+    }
+
+    private companion object {
+        const val MULTI_RELEASE_MODULE_INFO_CLS_FILE = "META-INF/versions/9/${PsiJavaModule.MODULE_INFO_CLS_FILE}"
     }
 }

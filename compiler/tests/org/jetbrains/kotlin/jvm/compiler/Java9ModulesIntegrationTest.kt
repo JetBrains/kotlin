@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -60,6 +61,22 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     private fun checkKotlinOutput(moduleName: String): (String) -> Unit = { actual ->
         KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "$moduleName.txt"), actual)
+    }
+
+    private fun createMultiReleaseJar(jdk9Home: File, destination: File, mainRoot: File, java9Root: File): File {
+        val command = listOf<String>(
+                File(jdk9Home, "bin/jar").path,
+                "--create", "--file=$destination",
+                "-C", mainRoot.path, ".",
+                "--release", "9",
+                "-C", java9Root.path, "."
+        )
+
+        val process = ProcessBuilder().command(command).inheritIO().start()
+        process.waitFor()
+        assertEquals("'jar' did not finish successfully", 0, process.exitValue())
+
+        return destination
     }
 
     fun testSimple() {
@@ -148,5 +165,21 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
                 compileJava = { _, _, _ -> error("No .java files in moduleB in this test") },
                 checkKotlinOutput = checkKotlinOutput("moduleB")
         )
+    }
+
+    fun testMultiReleaseLibrary() {
+        val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return
+
+        val librarySrc = FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, "library"))
+        val libraryOut = File(tmpdir, "out")
+        KotlinTestUtils.compileJavaFilesExternallyWithJava9(librarySrc, listOf("-d", libraryOut.path))
+
+        val libraryOut9 = File(tmpdir, "out9")
+        libraryOut9.mkdirs()
+        File(libraryOut, "module-info.class").renameTo(File(libraryOut9, "module-info.class"))
+
+        val libraryJar = createMultiReleaseJar(jdk9Home, File(tmpdir, "library.jar"), libraryOut, libraryOut9)
+
+        module("main", listOf(libraryJar))
     }
 }
