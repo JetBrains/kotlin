@@ -16,160 +16,79 @@
 
 package org.jetbrains.kotlin.codegen.range
 
-import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.getPrimitiveRangeElementType
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 abstract class AbstractInPrimitiveNumberRangeExpressionGenerator(
-        val codegen: ExpressionCodegen,
+        codegen: ExpressionCodegen,
         operatorReference: KtSimpleNameExpression,
         rangeCall: ResolvedCall<*>,
-        private val isInclusiveHighBound: Boolean
-) : InExpressionGenerator {
-    protected val asmElementType =
-            AsmTypes.valueTypeForPrimitive(
-                    getPrimitiveRangeElementType(rangeCall.resultingDescriptor.returnType!!)
-            )
-
-    private val isInverted =
-            operatorReference.getReferencedNameElementType() == KtTokens.NOT_IN
-
-    protected abstract fun genLowBound(): StackValue
-    protected abstract fun genHighBound(): StackValue
-
-    override fun generate(argument: StackValue): BranchedValue =
-            gen(argument).let { if (isInverted) Invert(it) else it }
-
-    private fun gen(argument: StackValue): BranchedValue =
-            object : BranchedValue(argument, null, asmElementType, Opcodes.IFEQ) {
-                override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-                    if (jumpIfFalse) {
-                        // arg1 in low .. high
-                        // arg1 >= low && arg1 <[=] high
-                        val cmpHighLabel = Label()
-
-                        arg1.put(operandType, v)
-                        AsmUtil.dup(v, operandType)
-
-                        genLowBound().put(operandType, v)
-                        v.jumpIfGe(cmpHighLabel)
-
-                        AsmUtil.pop(v, operandType)
-                        v.goTo(jumpLabel)
-
-                        v.mark(cmpHighLabel)
-                        genHighBound().put(operandType, v)
-                        if (isInclusiveHighBound) {
-                            v.jumpIfGt(jumpLabel)
-                        }
-                        else {
-                            v.jumpIfGe(jumpLabel)
-                        }
-                    }
-                    else {
-                        // arg1 !in low .. high
-                        // arg1 < low || arg1 >[=] high
-                        val trueLabel1 = Label()
-                        val trueLabel2 = Label()
-
-                        arg1.put(operandType, v)
-                        AsmUtil.dup(v, operandType)
-
-                        genLowBound().put(operandType, v)
-                        v.jumpIfLt(trueLabel1)
-
-                        genLowBound().put(operandType, v)
-                        if (isInclusiveHighBound) {
-                            v.jumpIfLe(jumpLabel)
-                        }
-                        else {
-                            v.jumpIfLt(jumpLabel)
-                        }
-                        v.goTo(trueLabel2)
-
-                        v.mark(trueLabel1)
-                        AsmUtil.pop(v, operandType)
-
-                        v.mark(trueLabel2)
-                    }
-                }
-
-                private fun InstructionAdapter.jumpIfGe(label: Label) {
-                    when {
-                        AsmUtil.isIntPrimitive(operandType) -> ificmpge(label)
-
-                        operandType === Type.LONG_TYPE -> {
-                            lcmp()
-                            ifge(label)
-                        }
-
-                        operandType === Type.FLOAT_TYPE || operandType === Type.DOUBLE_TYPE -> {
-                            cmpg(operandType)
-                            ifge(label)
-                        }
-
-                        else -> throw UnsupportedOperationException("Unexpected type: " + operandType)
-                    }
-                }
-
-                private fun InstructionAdapter.jumpIfLe(label: Label) {
-                    when {
-                        AsmUtil.isIntPrimitive(operandType) -> ificmple(label)
-
-                        operandType === Type.LONG_TYPE -> {
-                            lcmp()
-                            ifle(label)
-                        }
-
-                        operandType === Type.FLOAT_TYPE || operandType === Type.DOUBLE_TYPE -> {
-                            cmpg(operandType)
-                            ifle(label)
-                        }
-
-                        else -> throw UnsupportedOperationException("Unexpected type: " + operandType)
-                    }
-                }
-
-                private fun InstructionAdapter.jumpIfGt(label: Label) {
-                    when {
-                        AsmUtil.isIntPrimitive(operandType) -> ificmpgt(label)
-
-                        operandType === Type.LONG_TYPE -> {
-                            lcmp()
-                            ifgt(label)
-                        }
-
-                        operandType === Type.FLOAT_TYPE || operandType === Type.DOUBLE_TYPE -> {
-                            cmpg(operandType)
-                            ifgt(label)
-                        }
-
-                        else -> throw UnsupportedOperationException("Unexpected type: " + operandType)
-                    }
-                }
-
-                private fun InstructionAdapter.jumpIfLt(label: Label) {
-                    when {
-                        AsmUtil.isIntPrimitive(operandType) -> ificmplt(label)
-
-                        operandType === Type.LONG_TYPE -> {
-                            lcmp()
-                            iflt(label)
-                        }
-
-                        operandType === Type.FLOAT_TYPE || operandType === Type.DOUBLE_TYPE -> {
-                            cmpg(operandType)
-                            iflt(label)
-                        }
-
-                        else -> throw UnsupportedOperationException("Unexpected type: " + operandType)
-                    }
-                }
+        isInclusiveHighBound: Boolean
+) : AbstractInRangeWithKnownBoundsExpressionGenerator(
+        codegen, operatorReference, isInclusiveHighBound, AsmTypes.valueTypeForPrimitive(getPrimitiveRangeElementType(rangeCall.resultingDescriptor.returnType!!))
+) {
+    override val comparisonGenerator: ComparisonGenerator =
+            when (asmElementType) {
+                Type.INT_TYPE, Type.SHORT_TYPE, Type.BYTE_TYPE, Type.CHAR_TYPE -> PrimitiveIntegerComparisonGenerator
+                Type.LONG_TYPE -> PrimitiveLongComparisonGenerator
+                Type.FLOAT_TYPE, Type.DOUBLE_TYPE -> PrimitiveFloatComparisonGenerator(asmElementType)
+                else -> throw UnsupportedOperationException("Unexpected type: " + asmElementType)
             }
+
+    private object PrimitiveIntegerComparisonGenerator : ComparisonGenerator {
+        override fun jumpIfGreaterOrEqual(v: InstructionAdapter, label: Label) = v.ificmpge(label)
+        override fun jumpIfLessOrEqual(v: InstructionAdapter, label: Label) = v.ificmple(label)
+        override fun jumpIfGreater(v: InstructionAdapter, label: Label) = v.ificmpgt(label)
+        override fun jumpIfLess(v: InstructionAdapter, label: Label) = v.ificmplt(label)
+    }
+
+    private object PrimitiveLongComparisonGenerator : ComparisonGenerator {
+        override fun jumpIfGreaterOrEqual(v: InstructionAdapter, label: Label) {
+            v.lcmp()
+            v.ifge(label)
+        }
+
+        override fun jumpIfLessOrEqual(v: InstructionAdapter, label: Label) {
+            v.lcmp()
+            v.ifle(label)
+        }
+
+        override fun jumpIfGreater(v: InstructionAdapter, label: Label) {
+            v.lcmp()
+            v.ifgt(label)
+        }
+
+        override fun jumpIfLess(v: InstructionAdapter, label: Label) {
+            v.lcmp()
+            v.iflt(label)
+        }
+    }
+
+    private class PrimitiveFloatComparisonGenerator(val floatType: Type) : ComparisonGenerator {
+        override fun jumpIfGreaterOrEqual(v: InstructionAdapter, label: Label) {
+            v.cmpg(floatType)
+            v.ifge(label)
+        }
+
+        override fun jumpIfLessOrEqual(v: InstructionAdapter, label: Label) {
+            v.cmpg(floatType)
+            v.ifle(label)
+        }
+
+        override fun jumpIfGreater(v: InstructionAdapter, label: Label) {
+            v.cmpg(floatType)
+            v.ifgt(label)
+        }
+
+        override fun jumpIfLess(v: InstructionAdapter, label: Label) {
+            v.cmpg(floatType)
+            v.iflt(label)
+        }
+    }
 }

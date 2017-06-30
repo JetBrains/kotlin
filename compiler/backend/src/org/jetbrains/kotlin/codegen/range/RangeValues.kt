@@ -95,6 +95,8 @@ private fun createIntrinsifiedRangeValueOrNull(rangeCall: ResolvedCall<out Calla
             CollectionIndicesRangeValue(rangeCall)
         isCharSequenceIndices(rangeCallee) ->
             CharSequenceIndicesRangeValue(rangeCall)
+        isComparableRangeTo(rangeCallee) ->
+            ComparableRangeLiteralRangeValue(rangeCall)
         else ->
             null
     }

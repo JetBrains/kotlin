@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.forLoop.*
+import org.jetbrains.kotlin.codegen.isClosedRangeContains
 import org.jetbrains.kotlin.codegen.isPrimitiveRange
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
@@ -86,7 +87,7 @@ abstract class CallIntrinsicRangeValue(protected val rangeCall: ResolvedCall<out
 }
 
 abstract class PrimitiveNumberRangeIntrinsicRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): CallIntrinsicRangeValue(rangeCall) {
-    override fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>): Boolean =
+    override fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>) =
             resolvedCallForIn.resultingDescriptor.dispatchReceiverParameter?.let {
                 isPrimitiveRange(it.type)
             } ?: false
@@ -96,7 +97,7 @@ class PrimitiveNumberRangeLiteralRangeValue(rangeCall: ResolvedCall<out Callable
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInRangeLiteralLoopGenerator(codegen, forExpression, rangeCall)
 
-    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
+    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression) =
             InPrimitiveNumberRangeLiteralGenerator(codegen, operatorReference, rangeCall)
 }
 
@@ -104,7 +105,7 @@ class DownToProgressionRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInDownToProgressionLoopGenerator(codegen, forExpression, rangeCall)
 
-    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
+    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression) =
             InPrimitiveNumberDownToGenerator(codegen, operatorReference, rangeCall)
 }
 
@@ -112,7 +113,7 @@ class PrimitiveNumberUntilRangeValue(rangeCall: ResolvedCall<out CallableDescrip
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInUntilRangeLoopGenerator(codegen, forExpression, rangeCall)
 
-    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
+    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression) =
             InPrimitiveNumberUntilGenerator(codegen, operatorReference, rangeCall)
 }
 
@@ -120,7 +121,7 @@ class ArrayIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): P
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInArrayIndicesRangeLoopGenerator(codegen, forExpression, rangeCall)
 
-    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
+    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression) =
             InArrayIndicesGenerator(codegen, operatorReference, rangeCall)
 }
 
@@ -128,7 +129,7 @@ class CollectionIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInCollectionIndicesRangeLoopGenerator(codegen, forExpression, rangeCall)
 
-    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
+    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression) =
             InCollectionIndicesGenerator(codegen, operatorReference, rangeCall)
 }
 
@@ -136,6 +137,17 @@ class CharSequenceIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescript
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInCharSequenceIndicesRangeLoopGenerator(codegen, forExpression, rangeCall)
 
-    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
+    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression) =
             InCharSequenceIndicesGenerator(codegen, operatorReference, rangeCall)
+}
+
+class ComparableRangeLiteralRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): CallIntrinsicRangeValue(rangeCall) {
+    override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
+            IteratorForLoopGenerator(codegen, forExpression)
+
+    override fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>) =
+            isClosedRangeContains(resolvedCallForIn.resultingDescriptor)
+
+    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression)=
+            InComparableRangeLiteralGenerator(codegen, operatorReference, rangeCall)
 }
