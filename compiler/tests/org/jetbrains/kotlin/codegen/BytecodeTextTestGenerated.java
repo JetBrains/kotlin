@@ -1865,6 +1865,18 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inCharSequenceIndices.kt")
+        public void testInCharSequenceIndices() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/inCharSequenceIndices.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inCollectionIndices.kt")
+        public void testInCollectionIndices() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/inCollectionIndices.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inComparableRangeLiteral.kt")
         public void testInComparableRangeLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/inComparableRangeLiteral.kt");
