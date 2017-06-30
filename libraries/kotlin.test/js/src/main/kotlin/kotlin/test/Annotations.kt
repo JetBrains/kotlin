@@ -19,14 +19,14 @@ package kotlin.test
 /**
  * Marks a function as a test.
  */
-annotation class Test
+public annotation class Test
 
 /**
  * Marks a test or a suite as ignored/pending.
  */
-annotation class Ignore
+public annotation class Ignore
 
 /**
  * Narrows down the set of tests to a particular test of a suite similarly to [focused specs](https://jasmine.github.io/2.1/focused_specs.html)
  */
-annotation class Only
+public annotation class Only

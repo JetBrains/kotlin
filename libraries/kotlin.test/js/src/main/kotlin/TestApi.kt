@@ -28,7 +28,7 @@ import kotlin.test.adapters.*
  *
  */
 @JsName("setAdapter")
-fun setAdapter(adapter: dynamic) {
+public fun setAdapter(adapter: dynamic) {
     if (js("typeof adapter === 'string'")) {
         NAME_TO_ADAPTER[adapter]?.let {
             setAdapter(it.invoke())
@@ -43,7 +43,7 @@ fun setAdapter(adapter: dynamic) {
  * Use in order to define which action should be taken by the test framework on the testResult.
  */
 @JsName("setAssertHook")
-fun setAssertHook(hook: (TestResult) -> Unit) {
+public fun setAssertHook(hook: (TestResult) -> Unit) {
     assertHook = hook
 }
 

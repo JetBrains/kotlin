@@ -19,7 +19,7 @@ package kotlin.test
 /**
  * Serves as a bridge to a testing framework.
  */
-external interface FrameworkAdapter {
+public external interface FrameworkAdapter {
 
     // A regular test suite.
     fun suite(name: String, suiteFn: () -> Unit)

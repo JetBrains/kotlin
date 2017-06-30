@@ -19,7 +19,7 @@ package kotlin.test.adapters
 import kotlin.test.FrameworkAdapter
 
 /**
- * Mocha adapter
+ * [Mocha](https://mochajs.org/) adapter
  */
 internal class MochaAdapter : FrameworkAdapter {
     override fun suite(name: String, suiteFn: () -> Unit) {
