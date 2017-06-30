@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jvm.compiler
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
+import java.util.jar.Manifest
 
 class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String
@@ -27,7 +28,8 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     private fun module(
             name: String,
             modulePath: List<File> = emptyList(),
-            addModules: List<String> = emptyList()
+            addModules: List<String> = emptyList(),
+            manifest: Manifest? = null
     ): File {
         val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return File("<test-skipped>")
 
@@ -55,7 +57,8 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
                     }
                     KotlinTestUtils.compileJavaFilesExternallyWithJava9(javaFiles, javaOptions)
                 },
-                checkKotlinOutput = checkKotlinOutput(name)
+                checkKotlinOutput = checkKotlinOutput(name),
+                manifest = manifest
         )
     }
 
@@ -181,5 +184,18 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val libraryJar = createMultiReleaseJar(jdk9Home, File(tmpdir, "library.jar"), libraryOut, libraryOut9)
 
         module("main", listOf(libraryJar))
+    }
+
+    fun testAutomaticModuleNames() {
+        // This name should be sanitized to just "auto.mat1c.m0d.ule"
+        val m1 = File(tmpdir, ".auto--mat1c-_-!@#\$%^&*()m0d_ule--1.0..0-release..jar")
+        module("automatic-module1").renameTo(m1)
+
+        val m2 = module("automatic-module2", manifest = Manifest().apply {
+            mainAttributes.putValue("Manifest-Version", "1.0")
+            mainAttributes.putValue("Automatic-Module-Name", "automodule2")
+        })
+
+        module("main", listOf(m1, m2))
     }
 }

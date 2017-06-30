@@ -44,11 +44,15 @@ class JavaModuleInfo(
         fun create(psiJavaModule: PsiJavaModule): JavaModuleInfo {
             return JavaModuleInfo(
                     psiJavaModule.name,
-                    psiJavaModule.requires.map { statement ->
-                        JavaModuleInfo.Requires(statement.moduleName!!, statement.hasModifierProperty(PsiModifier.TRANSITIVE))
+                    psiJavaModule.requires.mapNotNull { statement ->
+                        statement.moduleName?.let { moduleName ->
+                            JavaModuleInfo.Requires(moduleName, statement.hasModifierProperty(PsiModifier.TRANSITIVE))
+                        }
                     },
-                    psiJavaModule.exports.map { statement ->
-                        JavaModuleInfo.Exports(FqName(statement.packageName!!), statement.moduleNames)
+                    psiJavaModule.exports.mapNotNull { statement ->
+                        statement.packageName?.let { packageName ->
+                            JavaModuleInfo.Exports(FqName(packageName), statement.moduleNames)
+                        }
                     }
             )
         }

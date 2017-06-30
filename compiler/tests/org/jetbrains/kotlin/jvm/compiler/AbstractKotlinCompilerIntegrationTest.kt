@@ -26,8 +26,9 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import java.io.File
+import java.util.jar.JarOutputStream
+import java.util.jar.Manifest
 import java.util.regex.Pattern
-import java.util.zip.ZipOutputStream
 
 abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
     protected abstract val testDataPath: String
@@ -56,6 +57,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
                 KotlinTestUtils.compileJavaFiles(javaFiles, listOf("-d", outputDir.path))
             },
             checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) },
+            manifest: Manifest? = null,
             vararg extraClassPath: File
     ): File {
         val sourceDir = File(testDataDirectory, libraryName)
@@ -80,10 +82,14 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
         if (isJar) {
             destination.delete()
-            ZipOutputStream(destination.outputStream()).use { zip ->
-                ZipUtil.addDirToZipRecursively(zip, destination, outputDir, "", null, null)
+            val stream =
+                    if (manifest != null) JarOutputStream(destination.outputStream(), manifest)
+                    else JarOutputStream(destination.outputStream())
+            stream.use { jar ->
+                ZipUtil.addDirToZipRecursively(jar, destination, outputDir, "", null, null)
             }
         }
+        else assertNull("Manifest is ignored if destination is not a .jar file", manifest)
 
         return destination
     }

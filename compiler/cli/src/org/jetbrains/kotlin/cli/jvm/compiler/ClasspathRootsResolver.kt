@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.light.LightJavaModule
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -38,6 +40,9 @@ import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
+import java.io.File
+import java.io.IOException
+import java.util.jar.Manifest
 
 internal class ClasspathRootsResolver(
         private val psiManager: PsiManager,
@@ -78,11 +83,8 @@ internal class ClasspathRootsResolver(
                     result += JavaRoot(root, JavaRoot.RootType.BINARY)
                 }
                 is JvmModulePathRoot -> {
-                    // TODO: sanitize the automatic module name exactly as in javac
-                    // TODO: read Automatic-Module-Name manifest entry
-                    val module = modularBinaryRoot(root, automaticModuleName = { contentRoot.file.name })
+                    val module = modularBinaryRoot(root, contentRoot.file)
                     if (module != null) {
-                        // TODO: report something in case of several modules with the same name?
                         modules += module
                     }
                 }
@@ -108,18 +110,38 @@ internal class ClasspathRootsResolver(
         return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), root, moduleInfoFile, isBinary = false)
     }
 
-    private fun modularBinaryRoot(root: VirtualFile, automaticModuleName: () -> String): JavaModule? {
+    private fun modularBinaryRoot(root: VirtualFile, originalFile: File): JavaModule? {
         val moduleInfoFile =
                 root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
                 ?: root.takeIf { it.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL }
                         ?.findFileByRelativePath(MULTI_RELEASE_MODULE_INFO_CLS_FILE)
-        return if (moduleInfoFile != null) {
+        if (moduleInfoFile != null) {
             val moduleInfo = JavaModuleInfo.read(moduleInfoFile) ?: return null
-            JavaModule.Explicit(moduleInfo, root, moduleInfoFile, isBinary = true)
+            return JavaModule.Explicit(moduleInfo, root, moduleInfoFile, isBinary = true)
         }
-        else {
-            JavaModule.Automatic(automaticModuleName(), root)
+
+        // Only .jar files can be automatic modules
+        if (originalFile.extension == StandardFileSystems.JAR_PROTOCOL) {
+            val manifestFile = root.findChild("META-INF")?.findChild("MANIFEST.MF")
+            if (manifestFile != null) {
+                try {
+                    val moduleName = Manifest(manifestFile.inputStream).mainAttributes.getValue(AUTOMATIC_MODULE_NAME)
+                    return JavaModule.Automatic(moduleName, root)
+                }
+                catch (e: IOException) {
+                    return null
+                }
+            }
+
+            val moduleName = LightJavaModule.moduleName(originalFile.nameWithoutExtension)
+            if (moduleName.isEmpty()) {
+                report(ERROR, "Cannot infer automatic module name for the file", VfsUtilCore.getVirtualFileForJar(root) ?: root)
+                return null
+            }
+            return JavaModule.Automatic(moduleName, root)
         }
+
+        return null
     }
 
     private fun addModularRoots(modules: List<JavaModule>, result: MutableList<JavaRoot>) {
@@ -215,5 +237,6 @@ internal class ClasspathRootsResolver(
 
     private companion object {
         const val MULTI_RELEASE_MODULE_INFO_CLS_FILE = "META-INF/versions/9/${PsiJavaModule.MODULE_INFO_CLS_FILE}"
+        const val AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"
     }
 }
