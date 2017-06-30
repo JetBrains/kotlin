@@ -13183,6 +13183,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("inArrayIndices.kt")
+            public void testInArrayIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inArrayIndices.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inCharSequence.kt")
             public void testInCharSequence() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inCharSequence.kt");
