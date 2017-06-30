@@ -20,7 +20,6 @@ package kotlin.test.adapters
  * The [QUnit](http://qunitjs.com/) API
  */
 internal external object QUnit {
-    fun module(name: String, testFn: () -> Unit): Unit
     fun test(name: String, testFn: (dynamic) -> Unit): Unit
     fun skip(name: String, testFn: (dynamic) -> Unit): Unit
     fun only(name: String, testFn: (dynamic) -> Unit): Unit

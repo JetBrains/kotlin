@@ -19,7 +19,7 @@ package kotlin.test.adapters
 import kotlin.test.FrameworkAdapter
 
 /**
- * Jasmine adapter
+ * [Jasmine](https://github.com/jasmine/jasmine) adapter
  */
 internal class JasmineAdapter : FrameworkAdapter {
     override fun suite(name: String, suiteFn: () -> Unit) {

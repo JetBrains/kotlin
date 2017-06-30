@@ -19,7 +19,7 @@ package kotlin.test
 /**
  * Describes the result of an assertion execution.
  */
-external interface TestResult {
+public external interface TestResult {
     val result: Boolean
     val expected: Any?
     val actual: Any?
@@ -95,7 +95,3 @@ internal open class DefaultJsAsserter : Asserter {
         }
     }
 }
-
-// TODO: remove in 1.2
-@Deprecated("To be removed in 1.2")
-class QUnitAsserter : Asserter by defaultAsserter

@@ -20,7 +20,7 @@ import kotlin.test.assertHook
 import kotlin.test.assertTrue
 
 /**
- * QUnit adapter
+ * [QUnit](http://qunitjs.com/) adapter
  */
 internal class QUnitAdapter : BareAdapter() {
 
