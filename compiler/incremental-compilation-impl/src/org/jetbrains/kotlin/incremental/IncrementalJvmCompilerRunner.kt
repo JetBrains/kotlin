@@ -318,7 +318,7 @@ class IncrementalJvmCompilerRunner(
 
             allGeneratedFiles.addAll(generatedFiles)
             caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
-            val compilationResult = updateIncrementalCache(generatedFiles, caches.jvmCache, compiledWithErrors = exitCode != ExitCode.OK)
+            val compilationResult = updateIncrementalCache(generatedFiles, caches.platformCache)
 
             caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
 
