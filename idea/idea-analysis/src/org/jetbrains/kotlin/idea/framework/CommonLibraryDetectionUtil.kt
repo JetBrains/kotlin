@@ -16,31 +16,52 @@
 
 package org.jetbrains.kotlin.idea.framework
 
+import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 
 object CommonLibraryDetectionUtil {
     @JvmStatic
-    fun isCommonLibrary(library: Library): Boolean {
-        if (library is LibraryEx && library.isDisposed) return false
+    fun getLibraryPlatform(library: Library): TargetPlatform {
+        if (library is LibraryEx && library.isDisposed) return JvmPlatform
 
         for (root in library.getFiles(OrderRootType.CLASSES)) {
-            val hasMetadata = JarUserDataManager.hasFileWithProperty(HasCommonKotlinMetadataInJar, root)
-            if (hasMetadata != null) {
-                return hasMetadata
+            ProgressManager.checkCanceled()
+            val jarRoot = JarFileSystem.getInstance().getVirtualFileForJar(root) ?: root
+            val hasCommonMetadata = JarUserDataManager.hasFileWithProperty(HasCommonKotlinMetadataInJar, jarRoot)
+            if (hasCommonMetadata == true) {
+                return TargetPlatform.Default
+            }
+            val hasJSMetadata = JarUserDataManager.hasFileWithProperty(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar, root)
+            if (hasJSMetadata == true) {
+                return JsPlatform
             }
 
-            if (!VfsUtilCore.processFilesRecursively(root) { !isKotlinMetadataFile(it) }) {
-                return true
+            var platform: TargetPlatform? = null
+            VfsUtilCore.processFilesRecursively(root) { file ->
+                if (file.fileType == JavaClassFileType.INSTANCE)
+                    platform = JvmPlatform
+                else if (isKotlinMetadataFile(file))
+                    platform = TargetPlatform.Default
+                else if (KotlinJavaScriptLibraryDetectionUtil.isJsFileWithMetadata(file))
+                    platform = JsPlatform
+
+                platform == null
             }
+            platform?.let { return it }
         }
 
-        return false
+        return JvmPlatform
     }
 
     private fun isKotlinMetadataFile(file: VirtualFile): Boolean =

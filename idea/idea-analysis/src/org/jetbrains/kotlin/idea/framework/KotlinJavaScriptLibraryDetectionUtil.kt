@@ -17,6 +17,7 @@
 
 package org.jetbrains.kotlin.idea.framework
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
@@ -36,9 +37,10 @@ object KotlinJavaScriptLibraryDetectionUtil {
 
     @JvmStatic fun isKotlinJavaScriptLibrary(classesRoots: List<VirtualFile>): Boolean {
         // Prevent clashing with java runtime
-        if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) return false
+        if (JavaRuntimeDetectionUtil.getRuntimeJar(classesRoots) != null) return false
 
         classesRoots.forEach { root ->
+            ProgressManager.checkCanceled()
             val hasMetadata = HasKotlinJSMetadataInJar.hasMetadataFromCache(root)
             if (hasMetadata != null) {
                 return hasMetadata
@@ -52,7 +54,7 @@ object KotlinJavaScriptLibraryDetectionUtil {
         return false
     }
 
-    private fun isJsFileWithMetadata(file: VirtualFile): Boolean {
+    fun isJsFileWithMetadata(file: VirtualFile): Boolean {
         if (!file.isDirectory && JavaScript.EXTENSION == file.extension) {
             val content = try {
                 file.contentsToByteArray(false)
