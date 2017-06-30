@@ -170,14 +170,13 @@ class ParcelableCodegenExtension : ExpressionCodegenExtension {
     ) {
         val containerAsmType = codegen.typeMapper.mapType(parcelableClass)
 
-        createMethod(creatorClass, CREATE_FROM_PARCEL, parcelableClass.defaultType, "in" to parcelClassType).write(codegen) {
+        createMethod(creatorClass, CREATE_FROM_PARCEL, parcelableClass.builtIns.anyType, "in" to parcelClassType).write(codegen) {
             if (parcelerObject != null) {
                 val (companionAsmType, companionFieldName) = getCompanionClassType(containerAsmType, parcelerObject)
 
                 v.getstatic(containerAsmType.internalName, companionFieldName, companionAsmType.descriptor)
                 v.load(1, PARCEL_TYPE)
-                v.invokevirtual(companionAsmType.internalName, "create",
-                                "(${PARCEL_TYPE.descriptor})${containerAsmType.descriptor}", false)
+                v.invokevirtual(companionAsmType.internalName, "create", "(${PARCEL_TYPE.descriptor})Landroid/os/Parcelable;", false)
             }
             else {
                 v.anew(containerAsmType)
@@ -203,7 +202,7 @@ class ParcelableCodegenExtension : ExpressionCodegenExtension {
 
     private fun writeCreatorAccessField(codegen: ImplementationBodyCodegen, parcelableClass: ClassDescriptor) {
         val parcelableAsmType = codegen.typeMapper.mapType(parcelableClass.defaultType)
-        val creatorAsmType = Type.getObjectType(parcelableAsmType.internalName + "\$CREATOR")
+        val creatorAsmType = Type.getObjectType(parcelableAsmType.internalName + "\$Creator")
         codegen.v.newField(JvmDeclarationOrigin.NO_ORIGIN, ACC_STATIC or ACC_PUBLIC or ACC_FINAL, "CREATOR",
                            creatorAsmType.descriptor, null, null)
     }
@@ -217,7 +216,7 @@ class ParcelableCodegenExtension : ExpressionCodegenExtension {
             properties: List<Pair<String, KotlinType>>
     ) {
         val containerAsmType = codegen.typeMapper.mapType(parcelableClass.defaultType)
-        val creatorAsmType = Type.getObjectType(containerAsmType.internalName + "\$CREATOR")
+        val creatorAsmType = Type.getObjectType(containerAsmType.internalName + "\$Creator")
 
         val creatorClass = ClassDescriptorImpl(
                 parcelableClass.containingDeclaration, Name.identifier("Creator"), Modality.FINAL, ClassKind.CLASS, emptyList(),
