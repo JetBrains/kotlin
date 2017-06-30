@@ -72,7 +72,7 @@ internal fun xtest(name: String, testFn: () -> Unit) {
     currentAdapter.xtest(name, testFn)
 }
 
-@JsName("only")
+@JsName("ftest")
 internal fun ftest(name: String, testFn: () -> Unit) {
     currentAdapter.ftest(name, testFn)
 }

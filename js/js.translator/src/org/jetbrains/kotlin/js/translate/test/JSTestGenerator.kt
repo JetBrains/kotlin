@@ -29,16 +29,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 //TODO: use method object instead of static functions
 class JSTestGenerator(val context: TranslationContext) {
-    private fun findFunction(name: String): JsExpression {
-        for (d in context.config.moduleDescriptors) {
-            if ("<kotlin-test>" == d.name) {
-                val descriptor = DescriptorUtils.getFunctionByNameOrNull(d.data.getPackage(FqName.ROOT).memberScope,
-                                                                         Name.identifier(name)) ?: continue
-                return context.getQualifiedReference(descriptor)
-            }
-        }
-        return JsNameRef(name, JsNameRef("Kotlin"))
-    }
 
     fun generateTestCalls(moduleDescriptor: ModuleDescriptor) {
         val rootFunction = JsFunction(context.scope(), JsBlock(), "root suite function")
@@ -107,12 +97,23 @@ class JSTestGenerator(val context: TranslationContext) {
         return functionToTest
     }
 
-    private val suiteRef: JsExpression = findFunction("suite")
-    private val fsuiteRef: JsExpression = findFunction("fsuite")
-    private val xsuiteRef: JsExpression = findFunction("xsuite")
-    private val testRef: JsExpression = findFunction("test")
-    private val ignoreRef: JsExpression = findFunction("xtest")
-    private val onlyRef: JsExpression = findFunction("ftest")
+    private val suiteRef: JsExpression by lazy { findFunction("suite") }
+    private val fsuiteRef: JsExpression by lazy { findFunction("fsuite") }
+    private val xsuiteRef: JsExpression by lazy { findFunction("xsuite") }
+    private val testRef: JsExpression by lazy { findFunction("test") }
+    private val ignoreRef: JsExpression by lazy { findFunction("xtest") }
+    private val onlyRef: JsExpression by lazy { findFunction("ftest") }
+
+    private fun findFunction(name: String): JsExpression {
+        for (d in context.config.moduleDescriptors) {
+            if ("<kotlin-test>" == d.name) {
+                val descriptor = DescriptorUtils.getFunctionByNameOrNull(d.data.getPackage(FqName.ROOT).memberScope,
+                                                                         Name.identifier(name)) ?: continue
+                return ReferenceTranslator.translateAsValueReference(descriptor, context)
+            }
+        }
+        return JsNameRef(name, JsNameRef("Kotlin"))
+    }
 
     private val ClassDescriptor.ref: JsExpression
         get() = when {
