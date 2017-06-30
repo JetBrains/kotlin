@@ -28,7 +28,7 @@ class InPrimitiveNumberRangeLiteralGenerator(
         operatorReference: KtSimpleNameExpression,
         rangeCall: ResolvedCall<*>
 ) : AbstractInPrimitiveNumberRangeExpressionGenerator(codegen, operatorReference, rangeCall, isInclusiveHighBound = true) {
-    private val from: ReceiverValue = rangeCall.dispatchReceiver!!
+    private val from: ReceiverValue = rangeCall.dispatchReceiver ?: rangeCall.extensionReceiver!!
     private val to: KtExpression = ExpressionCodegen.getSingleArgumentExpression(rangeCall)!!
 
     override fun genLowBound(): StackValue = codegen.generateReceiverValue(from, false)

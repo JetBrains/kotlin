@@ -21,19 +21,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.org.objectweb.asm.Type
 
 private val RANGE_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
         supportedRangeTypes().associateBy {
@@ -77,8 +68,8 @@ fun isRangeOrProgression(className: FqName) =
         getPrimitiveRangeOrProgressionElementType(className) != null
 
 fun isPrimitiveNumberRangeTo(rangeTo: CallableDescriptor) =
-        "rangeTo" == rangeTo.name.asString() &&
-        isPrimitiveNumberClassDescriptor(rangeTo.containingDeclaration)
+        "rangeTo" == rangeTo.name.asString() && isPrimitiveNumberClassDescriptor(rangeTo.containingDeclaration) ||
+        isPrimitiveRangeToExtension(rangeTo)
 
 private fun isPrimitiveRangeToExtension(descriptor: CallableDescriptor): Boolean {
     if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) return false
@@ -139,7 +130,6 @@ fun isComparableRangeTo(descriptor: CallableDescriptor): Boolean {
     return true
 }
 
-
 fun isClosedRangeContains(descriptor: CallableDescriptor): Boolean {
     if (descriptor.name.asString() != "contains") return false
     val containingClassDescriptor = descriptor.containingDeclaration as? ClassDescriptor ?: return false
@@ -148,40 +138,47 @@ fun isClosedRangeContains(descriptor: CallableDescriptor): Boolean {
     return true
 }
 
-fun isPrimitiveRangeToExtension(operationReference: KtSimpleNameExpression, bindingContext: BindingContext): Boolean {
-    val resolvedCall = operationReference.getResolvedCallWithAssert(bindingContext)
-    val receiver = resolvedCall.dispatchReceiver as? ExpressionReceiver ?: return false
+fun isPrimitiveRangeContains(descriptor: CallableDescriptor): Boolean {
+    if (descriptor.name.asString() != "contains") return false
+    val dispatchReceiverType = descriptor.dispatchReceiverParameter?.type ?: return false
+    if (!isPrimitiveRange(dispatchReceiverType)) return false
 
-    /*
-     * Range is optimizable if
-     * receiver is a call for 'rangeTo' from stdlib package
-     * and its argument has same primitive type as generic range parameter.
-     * For non-matching primitive types (e.g. int in double range)
-     * dispatch receiver will be null, because extension method will be called.
-     */
-
-    val resolvedReceiver = receiver.expression.getResolvedCall(bindingContext) ?: return false
-    return isPrimitiveRangeToExtension(resolvedReceiver.resultingDescriptor)
+    return true
 }
 
-/*
- * Checks whether for expression 'x in a..b' a..b is primitive integral range
- * with same type as x.
- */
-fun isPrimitiveRangeSpecializationOfType(
-        argumentType: Type,
-        rangeExpression: KtExpression,
-        bindingContext: BindingContext
-): Boolean {
-    if (rangeExpression is KtBinaryExpression && rangeExpression.operationReference.getReferencedNameElementType() === KtTokens.RANGE) {
-        val kotlinType = bindingContext.getType(rangeExpression)!!
-        val descriptor = kotlinType.constructor.declarationDescriptor ?: return false
-        val fqName = DescriptorUtils.getFqName(descriptor)
-        return (fqName == KotlinBuiltIns.FQ_NAMES.longRange && argumentType === Type.LONG_TYPE) ||
-               (fqName == KotlinBuiltIns.FQ_NAMES.charRange || fqName == KotlinBuiltIns.FQ_NAMES.intRange) && AsmUtil.isIntPrimitive(argumentType)
-    }
+fun isIntPrimitiveRangeExtensionForInt(descriptor: CallableDescriptor): Boolean {
+    if (descriptor.name.asString() != "contains") return false
 
-    return false
+    val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return false
+    val extensionReceiverClassDescriptor = extensionReceiverType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
+    if (!isTopLevelInPackage(extensionReceiverClassDescriptor, "ClosedRange", "kotlin.ranges")) return false
+
+    val rangeElementType = extensionReceiverType.arguments.singleOrNull()?.type ?: return false
+    if (!isIntPrimitiveType(rangeElementType)) return false
+
+    val argumentType = descriptor.valueParameters.singleOrNull()?.type ?: return false
+    if (!isIntPrimitiveType(argumentType)) return false
+
+    return true
+}
+
+private fun isIntPrimitiveType(type: KotlinType) =
+        KotlinBuiltIns.isByte(type) ||
+        KotlinBuiltIns.isShort(type) ||
+        KotlinBuiltIns.isInt(type)
+
+fun isClosedFloatingPointRangeContains(descriptor: CallableDescriptor): Boolean {
+    if (descriptor.name.asString() != "contains") return false
+    val containingClassDescriptor = descriptor.containingDeclaration as? ClassDescriptor ?: return false
+    if (!isTopLevelInPackage(containingClassDescriptor, "ClosedFloatingPointRange", "kotlin.ranges")) return false
+
+    return true
+}
+
+fun getClosedFloatingPointRangeElementType(rangeType: KotlinType): KotlinType? {
+    val classDescriptor = rangeType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+    if (!isTopLevelInPackage(classDescriptor, "ClosedFloatingPointRange", "kotlin.ranges")) return null
+    return rangeType.arguments.singleOrNull()?.type
 }
 
 private fun isTopLevelInPackage(descriptor: DeclarationDescriptor, name: String, packageName: String): Boolean {
