@@ -1853,9 +1853,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ranges"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("ifNotInCollection.kt")
-        public void testIfNotInCollection() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/ifNotInCollection.kt");
+        @TestMetadata("ifNotInRange.kt")
+        public void testIfNotInRange() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/ifNotInRange.kt");
             doTest(fileName);
         }
 
