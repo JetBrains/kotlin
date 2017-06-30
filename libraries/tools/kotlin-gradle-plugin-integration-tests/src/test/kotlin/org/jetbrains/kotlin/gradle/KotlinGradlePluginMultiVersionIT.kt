@@ -68,4 +68,13 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
             assertSuccessful()
         }
     }
+
+    @Test
+    fun testInternalTest() {
+        Project("internalTest", gradleVersion).build("build") {
+            assertSuccessful()
+            assertReportExists()
+            assertContains(":compileKotlin", ":compileTestKotlin")
+        }
+    }
 }

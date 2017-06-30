@@ -172,15 +172,6 @@ class KotlinGradleIT: BaseGradleIT() {
     }
 
     @Test
-    fun testInternalTest() {
-        Project("internalTest", GRADLE_VERSION).build("build") {
-            assertSuccessful()
-            assertReportExists()
-            assertContains(":compileKotlin", ":compileTestKotlin")
-        }
-    }
-
-    @Test
     fun testMultiprojectPluginClasspath() {
         Project("multiprojectClassPathTest", GRADLE_VERSION).build("build") {
             assertSuccessful()

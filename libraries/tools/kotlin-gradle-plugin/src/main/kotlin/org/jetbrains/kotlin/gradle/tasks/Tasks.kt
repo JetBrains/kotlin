@@ -139,7 +139,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     protected val friendTask: AbstractKotlinCompile<T>?
             get() = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractKotlinCompile<T>
 
-    var friendPaths: Lazy<Array<String>?> = lazy { friendTask?.javaOutputDir?.absolutePath?.let { arrayOf(it) } }
+    var friendPaths: Lazy<Array<String>?> = lazy {
+        friendTask?.run { arrayOf((javaOutputDir ?: destinationDir).absolutePath) }
+    }
 
     override fun compile() {
         assert(false, { "unexpected call to compile()" })
