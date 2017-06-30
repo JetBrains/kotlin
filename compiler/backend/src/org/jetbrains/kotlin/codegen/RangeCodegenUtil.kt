@@ -49,10 +49,10 @@ private val PROGRESSION_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
 fun supportedRangeTypes() =
         listOf(PrimitiveType.CHAR, PrimitiveType.INT, PrimitiveType.LONG)
 
-fun isRange(rangeType: KotlinType) =
+fun isPrimitiveRange(rangeType: KotlinType) =
         !rangeType.isMarkedNullable && getPrimitiveRangeElementType(rangeType) != null
 
-fun isProgression(rangeType: KotlinType) =
+fun isPrimitiveProgression(rangeType: KotlinType) =
         !rangeType.isMarkedNullable && getPrimitiveProgressionElementType(rangeType) != null
 
 fun getPrimitiveRangeElementType(rangeType: KotlinType) =
