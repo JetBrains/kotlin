@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -128,6 +127,27 @@ fun isCharSequenceIndices(descriptor: CallableDescriptor): Boolean {
     return KotlinBuiltIns.isCharSequenceOrNullableCharSequence(extensionReceiverType)
 }
 
+fun isComparableRangeTo(descriptor: CallableDescriptor): Boolean {
+    if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) return false
+
+    val extensionReceiver = descriptor.original.extensionReceiverParameter ?: return false
+    val extensionReceiverTypeDescriptor = extensionReceiver.type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
+    val upperBoundType = extensionReceiverTypeDescriptor.upperBounds.singleOrNull() ?: return false
+    val upperBoundClassDescriptor = upperBoundType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
+    if (!isTopLevelInPackage(upperBoundClassDescriptor, "Comparable", "kotlin")) return false
+
+    return true
+}
+
+
+fun isClosedRangeContains(descriptor: CallableDescriptor): Boolean {
+    if (descriptor.name.asString() != "contains") return false
+    val containingClassDescriptor = descriptor.containingDeclaration as? ClassDescriptor ?: return false
+    if (!isTopLevelInPackage(containingClassDescriptor, "ClosedRange", "kotlin.ranges")) return false
+
+    return true
+}
+
 fun isPrimitiveRangeToExtension(operationReference: KtSimpleNameExpression, bindingContext: BindingContext): Boolean {
     val resolvedCall = operationReference.getResolvedCallWithAssert(bindingContext)
     val receiver = resolvedCall.dispatchReceiver as? ExpressionReceiver ?: return false
@@ -164,7 +184,7 @@ fun isPrimitiveRangeSpecializationOfType(
     return false
 }
 
-private fun isTopLevelInPackage(descriptor: CallableDescriptor, name: String, packageName: String): Boolean {
+private fun isTopLevelInPackage(descriptor: DeclarationDescriptor, name: String, packageName: String): Boolean {
     if (name != descriptor.name.asString()) return false
 
     val containingDeclaration = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
