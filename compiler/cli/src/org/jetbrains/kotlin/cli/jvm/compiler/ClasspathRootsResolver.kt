@@ -172,10 +172,20 @@ internal class ClasspathRootsResolver(
             else -> computeDefaultRootModules() + additionalModules
         }
 
-        // TODO: if at least one automatic module is added, add all automatic modules as per java.lang.module javadoc
-        val allDependencies = javaModuleGraph.getAllDependencies(rootModules).also { loadedModules ->
-            report(LOGGING, "Loading modules: $loadedModules")
+        val allDependencies = javaModuleGraph.getAllDependencies(rootModules).toMutableList()
+
+        if (allDependencies.any { moduleName -> javaModuleFinder.findModule(moduleName) is JavaModule.Automatic }) {
+            // According to java.lang.module javadoc, if at least one automatic module is added to the module graph,
+            // all observable automatic modules should be added.
+            // There are no automatic modules in the JDK, so we select all automatic modules out of user modules
+            for (module in modules) {
+                if (module is JavaModule.Automatic) {
+                    allDependencies += module.name
+                }
+            }
         }
+
+        report(LOGGING, "Loading modules: $allDependencies")
 
         for (moduleName in allDependencies) {
             val module = javaModuleFinder.findModule(moduleName)

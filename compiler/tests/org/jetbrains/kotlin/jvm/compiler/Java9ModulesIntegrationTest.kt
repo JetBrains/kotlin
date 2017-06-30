@@ -198,4 +198,19 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
         module("main", listOf(m1, m2))
     }
+
+    fun testUnnamedAgainstSeveralAutomatic() {
+        val a = module("autoA")
+        val b = module("autoB")
+        // Even though we only add autoA to the module graph, autoB should be added as well because autoA, being automatic,
+        // transitively requires every other automatic module, and in particular, autoB.
+        // Furthermore, because autoB is automatic, main should read autoB
+        module("main", listOf(a, b), addModules = listOf("autoA"))
+    }
+
+    fun testNamedAgainstSeveralAutomatic() {
+        val a = module("autoA")
+        val b = module("autoB")
+        module("main", listOf(a, b))
+    }
 }
