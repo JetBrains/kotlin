@@ -24,6 +24,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.search.PsiElementProcessorAdapter
+import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.FilteredQuery
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindClassUsagesDialog
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchPar
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.isConstructorUsage
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
-import org.jetbrains.kotlin.idea.search.usagesSearch.buildProcessDelegationCallConstructorUsagesTask
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -99,10 +98,11 @@ class KotlinFindClassUsagesHandler(
             if (kotlinOptions.searchConstructorUsages) {
                 classOrObject.toLightClass()?.constructors?.filterIsInstance<KtLightMethod>()?.forEach { constructor ->
                     val scope = constructor.useScope.intersectWith(options.searchScope)
-                    val task = constructor.buildProcessDelegationCallConstructorUsagesTask(scope) {
-                        it.calleeExpression?.mainReference?.let { referenceProcessor.process(it) } ?: false
+                    var query = MethodReferencesSearch.search(constructor, scope, true)
+                    if (kotlinOptions.isSkipImportStatements) {
+                        query = FilteredQuery(query) { !it.isImportUsage() }
                     }
-                    addTask(task)
+                    addTask { query.forEach(Processor { referenceProcessor.process(it) }) }
                 }
             }
 

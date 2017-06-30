@@ -18,4 +18,5 @@
 [kotlinInnerClassAllUsages.1.kt] Usage in cast target type 38 return if (this is Outer.A) this as Outer.A else null
 [kotlinInnerClassAllUsages.2.java] Field declaration 10 A next = new A();
 [kotlinInnerClassAllUsages.2.java] New instance creation 10 A next = new A();
+[kotlinInnerClassAllUsages.2.java] Unclassified usage 6 class Y extends A {
 [kotlinInnerClassAllUsages.2.java] Usage in extends/implements clause 6 class Y extends A {
