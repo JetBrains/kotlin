@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.android.parcel.serializers
 
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -380,6 +383,94 @@ internal class SparseArrayParcelSerializer(override val asmType: Type, private v
 
         v.visitLabel(loopIsOver)
         v.pop() // -> arr
+    }
+}
+
+internal class ObjectParcelSerializer(
+        override val asmType: Type,
+        private val type: KotlinType,
+        private val typeMapper: KotlinTypeMapper
+) : ParcelSerializer {
+    override fun writeValue(v: InstructionAdapter) {
+        v.pop2()
+    }
+
+    override fun readValue(v: InstructionAdapter) {
+        v.pop()
+
+        // Handle companion object
+        val clazz = type.constructor.declarationDescriptor as? ClassDescriptor
+        if (clazz != null && clazz.isCompanionObject) {
+            val outerClass = clazz.containingDeclaration as? ClassDescriptor
+            if (outerClass != null) {
+                v.getstatic(typeMapper.mapType(outerClass.defaultType).internalName, clazz.name.asString(), asmType.descriptor)
+                return
+            }
+        }
+
+        v.getstatic(asmType.internalName, "INSTANCE", asmType.descriptor)
+    }
+}
+
+internal class EnumParcelSerializer(override val asmType: Type) : ParcelSerializer {
+    override fun writeValue(v: InstructionAdapter) {
+        v.invokevirtual(asmType.internalName, "name", "()Ljava/lang/String;", false)
+        v.invokevirtual(PARCEL_TYPE.internalName, "writeString", "(Ljava/lang/String;)V", false)
+    }
+
+    override fun readValue(v: InstructionAdapter) {
+        v.invokevirtual(PARCEL_TYPE.internalName, "readString", "()Ljava/lang/String;", false)
+        v.invokestatic(asmType.internalName, "valueOf", "(Ljava/lang/String;)${asmType.descriptor}", false)
+    }
+}
+
+internal class CharSequenceParcelSerializer(override val asmType: Type) : ParcelSerializer {
+    override fun writeValue(v: InstructionAdapter) {
+        // -> parcel, seq
+        v.swap() // -> seq, parcel
+        v.aconst(0) // -> seq, parcel, flags
+        v.invokestatic("android/text/TextUtils", "writeToParcel", "(Ljava/lang/CharSequence;Landroid/os/Parcel;I)V", false)
+    }
+
+    override fun readValue(v: InstructionAdapter) {
+        // -> parcel
+        v.getstatic("android/text/TextUtils", "CHAR_SEQUENCE_CREATOR", "Landroid/os/Parcelable\$Creator;") // -> parcel, creator
+        v.swap() // -> creator, parcel
+        v.invokeinterface("android/os/Parcelable\$Creator", "createFromParcel", "(Landroid/os/Parcel;)Ljava/lang/Object;")
+        v.castIfNeeded(asmType)
+    }
+}
+
+internal class EfficientParcelableParcelSerializer(override val asmType: Type, private val creatorAsmType: Type) : ParcelSerializer {
+    override fun writeValue(v: InstructionAdapter) {
+        // -> parcel, parcelable
+        v.swap() // -> parcelable, parcel
+        v.aconst(0) // -> parcelable, parcel, flags
+        v.invokeinterface("android/os/Parcelable", "writeToParcel", "(Landroid/os/Parcel;I)V")
+    }
+
+    override fun readValue(v: InstructionAdapter) {
+        // -> parcel
+        v.getstatic(asmType.internalName, "CREATOR", creatorAsmType.descriptor) // -> parcel, creator
+        v.swap() // -> creator, parcel
+        v.invokeinterface("android/os/Parcelable\$Creator", "createFromParcel", "(Landroid/os/Parcel;)Ljava/lang/Object;")
+        v.castIfNeeded(asmType)
+    }
+}
+
+internal class GenericParcelableParcelSerializer(override val asmType: Type) : ParcelSerializer {
+    override fun writeValue(v: InstructionAdapter) {
+        // -> parcel, parcelable
+        v.aconst(0) // -> parcel, parcelable, flags
+        v.invokevirtual(PARCEL_TYPE.internalName, "writeParcelable", "(Landroid/os/Parcelable;I)V", false)
+    }
+
+    override fun readValue(v: InstructionAdapter) {
+        // -> parcel
+        v.aconst(asmType) // -> parcel, type
+        v.invokevirtual("java/lang/Class", "getClassLoader", "()Ljava/lang/ClassLoader;", false) // -> parcel, classloader
+        v.invokevirtual(PARCEL_TYPE.internalName, "readParcelable", "(Ljava/lang/ClassLoader;)Landroid/os/Parcelable;", false)
+        v.castIfNeeded(asmType)
     }
 }
 

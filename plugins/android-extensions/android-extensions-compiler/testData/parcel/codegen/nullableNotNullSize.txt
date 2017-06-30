@@ -1,13 +1,13 @@
-public static class TestNotNull$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+public static class TestNotNull$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final TestNotNull createFromParcel(android.os.Parcel p0)
+    public final java.lang.Object createFromParcel(android.os.Parcel p0)
 
     public final TestNotNull[] newArray(int p0)
 }
 
 public final class TestNotNull : java/lang/Object {
-    public final static TestNotNull$CREATOR CREATOR
+    public final static TestNotNull$Creator CREATOR
 
     private final android.util.Size a
 
@@ -33,16 +33,16 @@ public final class TestNotNull : java/lang/Object {
     }
 }
 
-public static class TestNullable$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+public static class TestNullable$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final TestNullable createFromParcel(android.os.Parcel p0)
+    public final java.lang.Object createFromParcel(android.os.Parcel p0)
 
     public final TestNullable[] newArray(int p0)
 }
 
 public final class TestNullable : java/lang/Object {
-    public final static TestNullable$CREATOR CREATOR
+    public final static TestNullable$Creator CREATOR
 
     private final android.util.Size a
 

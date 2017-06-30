@@ -84,6 +84,8 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
         ) {
             if (origin is KtClass) {
                 currentClass = origin
+            } else {
+                currentClass = null
             }
 
             currentClassName = name
@@ -118,7 +120,13 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
         ): MethodVisitor {
             if (name == "<clinit>" && currentClass != null && currentClassName != null) {
                 isClinitGenerated = true
-                return ClinitAwareMethodVisitor(currentClassName!!, super.newMethod(origin, access, name, desc, signature, exceptions))
+
+                val descriptor = bindingContext[BindingContext.CLASS, currentClass]
+                if (descriptor != null && descriptor.isMagicParcelable) {
+                    return ClinitAwareMethodVisitor(
+                            currentClassName!!,
+                            super.newMethod(origin, access, name, desc, signature, exceptions))
+                }
             }
 
             return super.newMethod(origin, access, name, desc, signature, exceptions)
@@ -129,7 +137,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
         override fun visitInsn(opcode: Int) {
             if (opcode == Opcodes.RETURN) {
                 val iv = InstructionAdapter(this)
-                val creatorName = "$parcelableName\$CREATOR"
+                val creatorName = "$parcelableName\$Creator"
                 val creatorType = Type.getObjectType(creatorName)
 
                 iv.anew(creatorType)
