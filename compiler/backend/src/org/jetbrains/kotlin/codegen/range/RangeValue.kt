@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.codegen.range
 
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.forLoop.*
-import org.jetbrains.kotlin.codegen.isClosedRangeContains
-import org.jetbrains.kotlin.codegen.isPrimitiveRange
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -88,9 +86,11 @@ abstract class CallIntrinsicRangeValue(protected val rangeCall: ResolvedCall<out
 
 abstract class PrimitiveNumberRangeIntrinsicRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): CallIntrinsicRangeValue(rangeCall) {
     override fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>) =
-            resolvedCallForIn.resultingDescriptor.dispatchReceiverParameter?.let {
-                isPrimitiveRange(it.type)
-            } ?: false
+            resolvedCallForIn.resultingDescriptor.let {
+                isPrimitiveRangeContains(it) ||
+                isClosedFloatingPointRangeContains(it) ||
+                isIntPrimitiveRangeExtensionForInt(it)
+            }
 }
 
 class PrimitiveNumberRangeLiteralRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {

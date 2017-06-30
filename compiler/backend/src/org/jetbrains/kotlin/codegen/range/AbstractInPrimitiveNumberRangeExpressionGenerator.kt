@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.range
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.getClosedFloatingPointRangeElementType
 import org.jetbrains.kotlin.codegen.getPrimitiveRangeElementType
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -31,7 +34,8 @@ abstract class AbstractInPrimitiveNumberRangeExpressionGenerator(
         rangeCall: ResolvedCall<*>,
         isInclusiveHighBound: Boolean
 ) : AbstractInRangeWithKnownBoundsExpressionGenerator(
-        codegen, operatorReference, isInclusiveHighBound, AsmTypes.valueTypeForPrimitive(getPrimitiveRangeElementType(rangeCall.resultingDescriptor.returnType!!))
+        codegen, operatorReference, isInclusiveHighBound,
+        getAsmRangeElementTypeForPrimitiveRange(rangeCall.resultingDescriptor)
 ) {
     override val comparisonGenerator: ComparisonGenerator =
             when (asmElementType) {
@@ -91,4 +95,23 @@ abstract class AbstractInPrimitiveNumberRangeExpressionGenerator(
             v.iflt(label)
         }
     }
+}
+
+
+internal fun getAsmRangeElementTypeForPrimitiveRange(rangeCallee: CallableDescriptor): Type {
+    val rangeType = rangeCallee.returnType!!
+
+    getPrimitiveRangeElementType(rangeType)?.let {
+        return AsmTypes.valueTypeForPrimitive(it)
+    }
+
+    val floatingPointElementType = getClosedFloatingPointRangeElementType(rangeType) ?:
+                                   throw AssertionError("Unexpected range type: $rangeType")
+
+    if (KotlinBuiltIns.isDouble(floatingPointElementType))
+        return Type.DOUBLE_TYPE
+    else if (KotlinBuiltIns.isFloat(floatingPointElementType))
+        return Type.FLOAT_TYPE
+    else
+        throw AssertionError("Unexpected ClosedFloatingPointRange element type: $floatingPointElementType")
 }
