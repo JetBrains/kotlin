@@ -29,6 +29,7 @@ class GradleVersionTest {
         assertEquals(2 to 14, "2.14.1".parseToPair())
         assertEquals(3 to 2, "3.2-rc-1".parseToPair())
         assertEquals(3 to 2, "3.2".parseToPair())
+        assertEquals(4 to 0, "4.0".parseToPair())
     }
 
     @Test
@@ -37,5 +38,6 @@ class GradleVersionTest {
         assert(ParsedGradleVersion(3, 2) > ParsedGradleVersion(2, 14))
         assert(ParsedGradleVersion(3, 2) > ParsedGradleVersion(3, 1))
         assert(ParsedGradleVersion(3, 2) < ParsedGradleVersion(3, 3))
+        assert(ParsedGradleVersion(4, 0) > ParsedGradleVersion(3, 3))
     }
 }

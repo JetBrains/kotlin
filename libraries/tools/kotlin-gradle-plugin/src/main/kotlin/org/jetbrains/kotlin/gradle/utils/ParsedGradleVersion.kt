@@ -43,7 +43,7 @@ internal data class ParsedGradleVersion(val major: Int, val minor: Int) : Compar
                     ?.let { if (it.all { (it?.value?.length ?: 0).let { it > 0 && it < 4 }}) it else null }
 
             val versions = matches?.mapNotNull { it?.value?.parseIntOrNull() } ?: emptyList()
-            if (versions.size == 2 && versions.all { it > 0 }) {
+            if (versions.size == 2 && versions.all { it >= 0 }) {
                 val (major, minor) = versions
                 return ParsedGradleVersion(major, minor)
             }
