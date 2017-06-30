@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// these functions are used in the kotlin gradle plugin
-@file:Suppress("unused")
-
 package org.jetbrains.kotlin.incremental
 
 import com.intellij.openapi.util.io.FileUtil
@@ -25,8 +22,6 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.build.isModuleMappingFile
-import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -35,13 +30,8 @@ import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.util.*
-
-
-fun Iterable<File>.javaSourceRoots(roots: Iterable<File>): Iterable<File> =
-        filter(File::isJavaFile).mapNotNull { findSrcDirRoot(it, roots) }
 
 fun makeModuleFile(
         name: String,
@@ -86,61 +76,22 @@ fun makeCompileServices(
         build()
     }
 
-fun makeLookupTracker(parentLookupTracker: LookupTracker = LookupTracker.DO_NOTHING): LookupTracker =
-        if (IncrementalCompilation.isEnabled()) LookupTrackerImpl(parentLookupTracker)
-        else parentLookupTracker
-
-fun<Target> makeIncrementalCachesMap(
-        targets: Iterable<Target>,
-        getDependencies: (Target) -> Iterable<Target>,
-        getCache: (Target) -> IncrementalCacheImpl<Target>,
-        getTargetId: Target.() -> TargetId
-): Map<TargetId, IncrementalCacheImpl<Target>>
-{
-    val dependents = targets.keysToMap { hashSetOf<Target>() }
-    val targetsWithDependents = targets.toHashSet()
-
-    for (target in targets) {
-        for (dependency in getDependencies(target)) {
-            if (dependency !in targets) continue
-
-            dependents[dependency]!!.add(target)
-            targetsWithDependents.add(target)
-        }
-    }
-
-    val caches = targetsWithDependents.keysToMap { getCache(it) }
-
-    for ((target, cache) in caches) {
-        dependents[target]?.forEach {
-            cache.addDependentCache(caches[it]!!)
-        }
-    }
-
-    return caches.mapKeys { it.key.getTargetId() }
-}
-
-fun<Target> updateIncrementalCaches(
-        targets: Iterable<Target>,
-        generatedFiles: List<GeneratedFile<Target>>,
-        compiledWithErrors: Boolean,
-        getIncrementalCache: (Target) -> IncrementalCacheImpl<Target>
+fun updateIncrementalCache(
+        generatedFiles: List<GeneratedFile<*>>,
+        cache: IncrementalCacheImpl,
+        compiledWithErrors: Boolean
 ): CompilationResult {
-
     var changesInfo = CompilationResult.NO_CHANGES
     for (generatedFile in generatedFiles) {
-        val ic = getIncrementalCache(generatedFile.target)
         when {
-            generatedFile is GeneratedJvmClass<Target> -> changesInfo += ic.saveFileToCache(generatedFile)
-            generatedFile.outputFile.isModuleMappingFile() -> changesInfo += ic.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
+            generatedFile is GeneratedJvmClass<*> -> changesInfo += cache.saveFileToCache(generatedFile)
+            generatedFile.outputFile.isModuleMappingFile() -> changesInfo += cache.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
         }
     }
 
     if (!compiledWithErrors) {
-        targets.forEach {
-            val newChangesInfo = getIncrementalCache(it).clearCacheForRemovedClasses()
-            changesInfo += newChangesInfo
-        }
+        val newChangesInfo = cache.clearCacheForRemovedClasses()
+        changesInfo += newChangesInfo
     }
 
     return changesInfo
@@ -156,30 +107,6 @@ fun LookupStorage.update(
     removeLookupsFrom(filesToCompile.asSequence() + removedFiles.asSequence())
 
     addAll(lookupTracker.lookups.entrySet(), lookupTracker.pathInterner.values)
-}
-
-fun<Target> OutputItemsCollectorImpl.generatedFiles(
-        targets: Collection<Target>,
-        representativeTarget: Target,
-        getSources: (Target) -> Iterable<File>,
-        getOutputDir: (Target) -> File?
-): List<GeneratedFile<Target>> {
-    // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
-    val sourceToTarget =
-            if (targets.size >1) targets.flatMap { target -> getSources(target).map { Pair(it, target) } }.toMap()
-            else mapOf<File, Target>()
-
-    return outputs.map { outputItem ->
-        val target =
-                outputItem.sourceFiles.firstOrNull()?.let { sourceToTarget[it] } ?:
-                targets.singleOrNull { getOutputDir(it)?.let { outputItem.outputFile.startsWith(it) } ?: false } ?:
-                representativeTarget
-
-        when (outputItem.outputFile.extension) {
-            "class" -> GeneratedJvmClass(target, outputItem.sourceFiles, outputItem.outputFile)
-            else -> GeneratedFile(target, outputItem.sourceFiles, outputItem.outputFile)
-        }
-    }
 }
 
 data class DirtyData(
@@ -261,9 +188,6 @@ fun mapClassesFqNamesToFiles(
 
     return dirtyFiles
 }
-
-private fun findSrcDirRoot(file: File, roots: Iterable<File>): File? =
-        roots.firstOrNull { FileUtil.isAncestor(it, file, false) }
 
 fun withSubtypes(
         typeFqName: FqName,

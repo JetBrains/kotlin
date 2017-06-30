@@ -47,10 +47,9 @@ import java.util.*
 
 val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 
-open class IncrementalCacheImpl<Target>(
+open class IncrementalCacheImpl(
         private val targetDataRoot: File,
-        targetOutputDir: File?,
-        target: Target
+        targetOutputDir: File?
 ) : IncrementalCacheCommon(File(targetDataRoot, KOTLIN_CACHE_DIRECTORY_NAME)), IncrementalCache {
     companion object {
         private val PROTO_MAP = "proto"
@@ -77,7 +76,7 @@ open class IncrementalCacheImpl<Target>(
     // todo: try to use internal names only?
     private val internalNameToSource = registerMap(InternalNameToSourcesMap(INTERNAL_NAME_TO_SOURCE.storageFile))
 
-    private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory: $target" } }
+    private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory" } }
 
     protected open fun debugLog(message: String) {}
 
@@ -115,7 +114,7 @@ open class IncrementalCacheImpl<Target>(
         return CompilationResult.NO_CHANGES
     }
 
-    open fun saveFileToCache(generatedClass: GeneratedJvmClass<Target>): CompilationResult {
+    open fun saveFileToCache(generatedClass: GeneratedJvmClass<*>): CompilationResult {
         val sourceFiles: Collection<File> = generatedClass.sourceFiles
         val kotlinClass: LocalFileKotlinClass = generatedClass.outputClass
         val className = kotlinClass.className
