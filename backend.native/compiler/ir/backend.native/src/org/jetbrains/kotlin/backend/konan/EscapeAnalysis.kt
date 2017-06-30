@@ -444,8 +444,8 @@ internal class ContextFinderVisitor(val needle: IrElement) : IrElementVisitorVoi
         stack.removeAt(stack.size - 1)
     }
 
-    override fun visitModuleFragment(module: IrModuleFragment) {
-        module.acceptChildrenVoid(this)
+    override fun visitModuleFragment(declaration: IrModuleFragment) {
+        declaration.acceptChildrenVoid(this)
     }
 }
 
