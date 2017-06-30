@@ -213,4 +213,10 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val b = module("autoB")
         module("main", listOf(a, b))
     }
+
+    fun testSeveralModulesWithTheSameName() {
+        val d1 = module("dependency1")
+        val d2 = module("dependency2")
+        module("main", listOf(d1, d2))
+    }
 }

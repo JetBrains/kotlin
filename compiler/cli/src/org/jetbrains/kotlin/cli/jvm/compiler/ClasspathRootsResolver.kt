@@ -154,8 +154,16 @@ internal class ClasspathRootsResolver(
         }
 
         for (module in modules) {
-            // TODO: report a diagnostic if a module with this name was already added
-            javaModuleFinder.addUserModule(module)
+            val existing = javaModuleFinder.findModule(module.name)
+            if (existing == null) {
+                javaModuleFinder.addUserModule(module)
+            }
+            else if (module.moduleRoot != existing.moduleRoot) {
+                val jar = VfsUtilCore.getVirtualFileForJar(module.moduleRoot) ?: module.moduleRoot
+                val existingPath = (VfsUtilCore.getVirtualFileForJar(existing.moduleRoot) ?: existing.moduleRoot).path
+                report(STRONG_WARNING, "The root is ignored because a module with the same name '${module.name}' " +
+                                       "has been found earlier on the module path at: $existingPath", jar)
+            }
         }
 
         if (javaModuleFinder.allObservableModules.none()) return

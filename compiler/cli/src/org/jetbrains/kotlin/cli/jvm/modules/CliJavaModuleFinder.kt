@@ -26,13 +26,8 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 internal class CliJavaModuleFinder(private val jrtFileSystem: VirtualFileSystem?) : JavaModuleFinder {
     private val userModules = linkedMapOf<String, JavaModule>()
 
-    /**
-     * @return true if the module was added successfully, false otherwise
-     */
-    fun addUserModule(module: JavaModule): Boolean {
-        if (module.name in userModules) return false
-        userModules[module.name] = module
-        return true
+    fun addUserModule(module: JavaModule) {
+        userModules.putIfAbsent(module.name, module)
     }
 
     val allObservableModules: Sequence<JavaModule>
