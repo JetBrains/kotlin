@@ -1,18 +1,3 @@
-public static class User$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
-    public void <init>()
-
-    public final User createFromParcel(android.os.Parcel p0)
-
-    public final User[] newArray(int p0) {
-        LABEL (L0)
-          GETSTATIC (Companion, LUser$Companion;)
-          ILOAD (1)
-          INVOKEVIRTUAL (User$Companion, newArray, (I)[LUser;)
-          ARETURN
-        LABEL (L1)
-    }
-}
-
 final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
     private void <init>()
 
@@ -46,8 +31,23 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
     public void write(android.os.Parcelable p0, android.os.Parcel p1, int p2)
 }
 
+public static class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final java.lang.Object createFromParcel(android.os.Parcel p0)
+
+    public final User[] newArray(int p0) {
+        LABEL (L0)
+          GETSTATIC (Companion, LUser$Companion;)
+          ILOAD (1)
+          INVOKEVIRTUAL (User$Companion, newArray, (I)[LUser;)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
 public final class User : java/lang/Object, android/os/Parcelable {
-    public final static User$CREATOR CREATOR
+    public final static User$Creator CREATOR
 
     public final static User$Companion Companion
 

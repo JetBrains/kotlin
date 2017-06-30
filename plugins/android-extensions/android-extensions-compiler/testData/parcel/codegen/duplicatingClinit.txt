@@ -1,11 +1,3 @@
-public static class User$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
-    public void <init>()
-
-    public final User createFromParcel(android.os.Parcel p0)
-
-    public final User[] newArray(int p0)
-}
-
 public final class User$Companion : java/lang/Object {
     private void <init>()
 
@@ -18,8 +10,16 @@ public final class User$Companion : java/lang/Object {
     private static void test$annotations()
 }
 
+public static class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final java.lang.Object createFromParcel(android.os.Parcel p0)
+
+    public final User[] newArray(int p0)
+}
+
 public final class User : java/lang/Object, android/os/Parcelable {
-    public final static User$CREATOR CREATOR
+    public final static User$Creator CREATOR
 
     public final static User$Companion Companion
 
@@ -41,8 +41,8 @@ public final class User : java/lang/Object, android/os/Parcelable {
           PUTSTATIC (test, Ljava/lang/StringBuilder;)
           NEW
           DUP
-          INVOKESPECIAL (User$CREATOR, <init>, ()V)
-          PUTSTATIC (CREATOR, LUser$CREATOR;)
+          INVOKESPECIAL (User$Creator, <init>, ()V)
+          PUTSTATIC (CREATOR, LUser$Creator;)
           RETURN
     }
 

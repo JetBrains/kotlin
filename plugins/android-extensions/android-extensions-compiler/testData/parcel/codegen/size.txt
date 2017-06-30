@@ -1,7 +1,7 @@
-public static class Test$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+public static class Test$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final Test createFromParcel(android.os.Parcel p0) {
+    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -29,7 +29,7 @@ public static class Test$CREATOR : java/lang/Object, android/os/Parcelable$Creat
 }
 
 public final class Test : java/lang/Object, android/os/Parcelable {
-    public final static Test$CREATOR CREATOR
+    public final static Test$Creator CREATOR
 
     private final android.util.Size nullable
 
@@ -88,10 +88,10 @@ public final class Test : java/lang/Object, android/os/Parcelable {
     }
 }
 
-public static class TestF$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+public static class TestF$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final TestF createFromParcel(android.os.Parcel p0) {
+    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -119,7 +119,7 @@ public static class TestF$CREATOR : java/lang/Object, android/os/Parcelable$Crea
 }
 
 public final class TestF : java/lang/Object, android/os/Parcelable {
-    public final static TestF$CREATOR CREATOR
+    public final static TestF$Creator CREATOR
 
     private final android.util.SizeF nullable
 

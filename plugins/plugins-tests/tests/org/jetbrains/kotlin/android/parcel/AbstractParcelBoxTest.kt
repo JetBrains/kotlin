@@ -43,10 +43,14 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
     open protected fun getClassLoaderWithGeneratedFiles(): ClassLoader {
         return object : URLClassLoader(arrayOf(), this::class.java.classLoader) {
             init {
-                for (classFile in classFileFactory.getClassFiles()) {
+                for (classFile in classFileFactory.getClassFiles().sortedBy { it.relativePath }) {
                     val bytes = classFile.asByteArray()
                     val className = ClassNode().also { ClassReader(bytes).accept(it, ClassReader.EXPAND_FRAMES) }.name
-                    defineClass(className.replace('/', '.'), ByteBuffer.wrap(bytes), null as ProtectionDomain?)
+                    try {
+                        defineClass(className.replace('/', '.'), ByteBuffer.wrap(bytes), null as ProtectionDomain?)
+                    } catch (e: Throwable) {
+                        throw RuntimeException("Can't load class $className", e)
+                    }
                 }
             }
         }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.android.parcel
 
-import android.os.Bundle
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -43,4 +42,8 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     @Test fun bundle() = doTest("bundle")
     @Test fun sparseArrays() = doTest("sparseArrays")
     @Test fun customSimple() = doTest("customSimple")
+    @Test fun charSequence() = doTest("charSequence")
+    @Test fun enums() = doTest("enums")
+    @Test fun objects() = doTest("objects")
+    @Test fun nestedParcelable() = doTest("nestedParcelable")
 }

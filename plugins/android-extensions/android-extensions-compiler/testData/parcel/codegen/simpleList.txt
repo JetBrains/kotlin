@@ -1,13 +1,13 @@
-public static class Test$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+public static class Test$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final Test createFromParcel(android.os.Parcel p0)
+    public final java.lang.Object createFromParcel(android.os.Parcel p0)
 
     public final Test[] newArray(int p0)
 }
 
 public final class Test : java/lang/Object {
-    public final static Test$CREATOR CREATOR
+    public final static Test$Creator CREATOR
 
     private final java.util.List names
 

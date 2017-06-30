@@ -16,9 +16,18 @@
 
 package org.jetbrains.kotlin.android.parcel.serializers
 
+import org.jetbrains.kotlin.android.parcel.isMagicParcelable
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -98,6 +107,14 @@ interface ParcelSerializer {
                         Method("writeBundle"),
                         Method("readBundle"))
 
+                type.isIBinder() -> NullCompliantObjectParcelSerializer(asmType,
+                        Method("writeStrongBinder", "(Landroid/os/IBinder;)V"),
+                        Method("readStrongBinder", "()Landroid/os/IBinder;"))
+
+                type.isIInterface() -> NullCompliantObjectParcelSerializer(asmType,
+                        Method("writeStrongInterface", "(Landroid/os/IInterface;)V"),
+                        Method("readStrongInterface", "()Landroid/os/IInterface;"))
+
                 asmType.isPersistableBundle() -> NullCompliantObjectParcelSerializer(asmType,
                         Method("writeBundle"),
                         Method("readBundle"))
@@ -118,13 +135,41 @@ interface ParcelSerializer {
                     wrapToNullAwareIfNeeded(type, SparseArrayParcelSerializer(asmType, elementSerializer))
                 }
 
+                type.isCharSequence() -> CharSequenceParcelSerializer(asmType)
+
                 type.isException() -> wrapToNullAwareIfNeeded(type, NullCompliantObjectParcelSerializer(asmType,
                         Method("writeException"),
                         Method("readException")))
 
+                // Write at least a nullability byte.
+                // We don't want parcel to be empty in case if all constructor parameters are objects
+                type.isNamedObject() -> NullAwareParcelSerializerWrapper(ObjectParcelSerializer(asmType, type, typeMapper))
+
+                type.isEnum() -> wrapToNullAwareIfNeeded(type, EnumParcelSerializer(asmType))
+
                 asmType.isFileDescriptor() -> wrapToNullAwareIfNeeded(type, NullCompliantObjectParcelSerializer(asmType,
                         Method("writeRawFileDescriptor"),
                         Method("readRawFileDescriptor")))
+
+                type.isParcelable() -> {
+                    val clazz = type.constructor.declarationDescriptor as? ClassDescriptor
+                    if (clazz != null && clazz.modality == Modality.FINAL) {
+                        val creatorVar = clazz.staticScope.getContributedVariables(
+                                Name.identifier("CREATOR"), NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS).firstOrNull()
+
+                        val creatorAsmType = when {
+                            creatorVar != null -> typeMapper.mapType(creatorVar.type)
+                            clazz.isMagicParcelable -> Type.getObjectType(asmType.internalName + "\$Creator")
+                            else -> null
+                        }
+
+                        creatorAsmType?.let { EfficientParcelableParcelSerializer(asmType, creatorAsmType) }
+                                ?: GenericParcelableParcelSerializer(asmType)
+                    }
+                    else {
+                        GenericParcelableParcelSerializer(asmType)
+                    }
+                }
 
                 type.isSerializable() -> NullCompliantObjectParcelSerializer(asmType,
                         Method("writeSerializable"),
@@ -151,6 +196,19 @@ interface ParcelSerializer {
         private fun Type.isSparseArray() = this.descriptor == "Landroid/util/SparseArray;"
         private fun KotlinType.isSerializable() = matchesFqNameWithSupertypes("java.io.Serializable")
         private fun KotlinType.isException() = matchesFqNameWithSupertypes("java.lang.Exception")
+        private fun KotlinType.isIBinder() = matchesFqNameWithSupertypes("android.os.IBinder")
+        private fun KotlinType.isIInterface() = matchesFqNameWithSupertypes("android.os.IInterface")
+        private fun KotlinType.isParcelable() = matchesFqNameWithSupertypes("android.os.Parcelable")
+        private fun KotlinType.isCharSequence() = matchesFqName("kotlin.CharSequence") || matchesFqName("java.lang.CharSequence")
+
+        private fun KotlinType.isNamedObject(): Boolean {
+            val classDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return false
+            if (!classDescriptor.visibility.isVisibleOutside()) return false
+            if (DescriptorUtils.isAnonymousObject(classDescriptor)) return false
+            return classDescriptor.kind == ClassKind.OBJECT
+        }
+
+        private fun KotlinType.isEnum() = (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
 
         private fun Type.isPrimitive(): Boolean = when (this.sort) {
             Type.BOOLEAN, Type.CHAR, Type.BYTE, Type.SHORT, Type.INT, Type.FLOAT, Type.LONG, Type.DOUBLE -> true
@@ -174,7 +232,7 @@ interface ParcelSerializer {
                 return true
             }
 
-            return this.constructor.supertypes.any { it.matchesFqName(fqName) }
+            return TypeUtils.getAllSupertypes(this).any { it.matchesFqName(fqName) }
         }
 
         private fun KotlinType.matchesFqName(fqName: String): Boolean {

@@ -1,7 +1,7 @@
-public static class User$CREATOR : java/lang/Object, android/os/Parcelable$Creator {
+public static class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final User createFromParcel(android.os.Parcel p0) {
+    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -25,7 +25,7 @@ public static class User$CREATOR : java/lang/Object, android/os/Parcelable$Creat
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
-    public final static User$CREATOR CREATOR
+    public final static User$Creator CREATOR
 
     private final int age
 
@@ -38,8 +38,8 @@ public final class User : java/lang/Object, android/os/Parcelable {
     static void <clinit>() {
           NEW
           DUP
-          INVOKESPECIAL (User$CREATOR, <init>, ()V)
-          PUTSTATIC (CREATOR, LUser$CREATOR;)
+          INVOKESPECIAL (User$Creator, <init>, ()V)
+          PUTSTATIC (CREATOR, LUser$Creator;)
           RETURN
     }
 
