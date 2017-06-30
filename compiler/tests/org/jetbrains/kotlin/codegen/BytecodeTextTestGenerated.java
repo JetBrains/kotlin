@@ -1882,6 +1882,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/inOptimizableRange.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("inUntil.kt")
+        public void testInUntil() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/inUntil.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/statements")

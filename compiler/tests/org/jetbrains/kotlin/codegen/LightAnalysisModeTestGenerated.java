@@ -13297,6 +13297,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("inUntil.kt")
+            public void testInUntil() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inUntil.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("rangeContainsString.kt")
             public void testRangeContainsString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/rangeContainsString.kt");
