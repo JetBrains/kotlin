@@ -30,7 +30,7 @@ internal class QUnitAdapter : BareAdapter() {
                          focused: Boolean,
                          shouldRun: Boolean) {
         val fn = wrapTest(testFn)
-        val name = names.fold("") { acc, name -> acc + " " + name }
+        val name = names.filter { !it.isBlank() }.joinToString(".")
         when {
             focused -> QUnit.only(name, fn)
             ignored -> QUnit.skip(name, fn)
