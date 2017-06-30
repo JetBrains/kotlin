@@ -19,7 +19,7 @@ package kotlin.test.adapters
 /**
  * The [QUnit](http://qunitjs.com/) API
  */
-external object QUnit {
+internal external object QUnit {
     fun module(name: String, testFn: () -> Unit): Unit
     fun test(name: String, testFn: (dynamic) -> Unit): Unit
     fun skip(name: String, testFn: (dynamic) -> Unit): Unit
@@ -29,15 +29,15 @@ external object QUnit {
 /**
  * Jasmine/Mocha API
  */
-external fun describe(name: String, fn: () -> Unit)
-external fun xdescribe(name: String, fn: () -> Unit)
-external fun it(name: String, fn: () -> Unit)
-external fun xit(name: String, fn: () -> Unit)
+internal external fun describe(name: String, fn: () -> Unit)
+internal external fun xdescribe(name: String, fn: () -> Unit)
+internal external fun it(name: String, fn: () -> Unit)
+internal external fun xit(name: String, fn: () -> Unit)
 /**
  * Jasmine-only syntax for focused spec's. Mocha uses the 'it.only' and 'describe.only' syntax
  */
-external fun fit(name: String, fn: () -> Unit)
-external fun fdescribe(name: String, fn: () -> Unit)
+internal external fun fit(name: String, fn: () -> Unit)
+internal external fun fdescribe(name: String, fn: () -> Unit)
 
 internal fun isQUnit() = jsTypeOf(QUnit) !== "undefined"
 
