@@ -41,9 +41,9 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
     return when {
         asmRangeType.sort == Type.ARRAY ->
             ArrayRangeValue()
-        isRange(rangeType) ->
+        isPrimitiveRange(rangeType) ->
             PrimitiveRangeRangeValue()
-        isProgression(rangeType) ->
+        isPrimitiveProgression(rangeType) ->
             PrimitiveProgressionRangeValue()
         isSubtypeOfCharSequence(rangeType, state.module.builtIns) ->
             CharSequenceRangeValue()
