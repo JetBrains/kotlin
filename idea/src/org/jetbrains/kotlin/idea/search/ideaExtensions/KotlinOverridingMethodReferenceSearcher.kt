@@ -48,15 +48,18 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
             return
         }
 
-        super.processQuery(p, consumer)
+        val searchScope = p.project.runReadActionInSmartMode {
+            p.effectiveSearchScope
+                    .intersectWith(method.useScope)
+                    .restrictToKotlinSources()
+        }
+
+        if (searchScope === GlobalSearchScope.EMPTY_SCOPE) return
+
+        super.processQuery(MethodReferencesSearch.SearchParameters(method, searchScope, p.isStrictSignatureSearch, p.optimizer), consumer)
 
         p.project.runReadActionInSmartMode {
             val containingClass = method.containingClass ?: return@runReadActionInSmartMode
-
-            val searchScope = p.effectiveSearchScope
-                    .intersectWith(method.useScope)
-                    .restrictToKotlinSources()
-            if (searchScope === GlobalSearchScope.EMPTY_SCOPE) return@runReadActionInSmartMode
 
             val nameCandidates = getPropertyNamesCandidatesByAccessorName(Name.identifier(method.name))
             for (name in nameCandidates) {
