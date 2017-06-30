@@ -20,8 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
-import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineOrReturn
 import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineOrReturnInJvm
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
@@ -657,7 +656,8 @@ class PsiInlineCodegen(
 
             val receiver = getBoundCallableReferenceReceiver(argumentExpression)
             if (receiver != null) {
-                putClosureParametersOnStack(lambdaInfo, codegen.gen(receiver))
+                val receiverValue = codegen.gen(receiver)
+                putClosureParametersOnStack(lambdaInfo, StackValue.coercion(receiverValue, receiverValue.type.boxReceiverForBoundReference()))
             }
         }
         else {

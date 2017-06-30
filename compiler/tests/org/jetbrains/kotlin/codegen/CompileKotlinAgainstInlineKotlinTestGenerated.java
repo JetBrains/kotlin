@@ -736,6 +736,30 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 doTest(fileName);
             }
 
+            @TestMetadata("kt18728.kt")
+            public void testKt18728() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt18728_2.kt")
+            public void testKt18728_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt18728_3.kt")
+            public void testKt18728_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt18728_4.kt")
+            public void testKt18728_4() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_4.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("map.kt")
             public void testMap() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/map.kt");
@@ -1161,9 +1185,33 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                     doTest(fileName);
                 }
 
+                @TestMetadata("boundFunctionReferenceOnInt.kt")
+                public void testBoundFunctionReferenceOnInt() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundFunctionReferenceOnInt.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundFunctionReferenceOnLong.kt")
+                public void testBoundFunctionReferenceOnLong() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundFunctionReferenceOnLong.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("boundPropertyReference.kt")
                 public void testBoundPropertyReference() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundPropertyReferenceOnInt.kt")
+                public void testBoundPropertyReferenceOnInt() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReferenceOnInt.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundPropertyReferenceOnLong.kt")
+                public void testBoundPropertyReferenceOnLong() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReferenceOnLong.kt");
                     doTest(fileName);
                 }
 

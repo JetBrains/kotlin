@@ -140,6 +140,30 @@ public class CallableReferenceInlineTestsGenerated extends AbstractCallableRefer
             doTest(fileName);
         }
 
+        @TestMetadata("kt18728.kt")
+        public void testKt18728() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18728_2.kt")
+        public void testKt18728_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18728_3.kt")
+        public void testKt18728_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18728_4.kt")
+        public void testKt18728_4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_4.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("map.kt")
         public void testMap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/map.kt");

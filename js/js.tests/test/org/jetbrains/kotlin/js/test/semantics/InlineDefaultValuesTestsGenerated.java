@@ -274,9 +274,33 @@ public class InlineDefaultValuesTestsGenerated extends AbstractInlineDefaultValu
                 doTest(fileName);
             }
 
+            @TestMetadata("boundFunctionReferenceOnInt.kt")
+            public void testBoundFunctionReferenceOnInt() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundFunctionReferenceOnInt.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("boundFunctionReferenceOnLong.kt")
+            public void testBoundFunctionReferenceOnLong() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundFunctionReferenceOnLong.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("boundPropertyReference.kt")
             public void testBoundPropertyReference() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("boundPropertyReferenceOnInt.kt")
+            public void testBoundPropertyReferenceOnInt() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReferenceOnInt.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("boundPropertyReferenceOnLong.kt")
+            public void testBoundPropertyReferenceOnLong() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReferenceOnLong.kt");
                 doTest(fileName);
             }
 

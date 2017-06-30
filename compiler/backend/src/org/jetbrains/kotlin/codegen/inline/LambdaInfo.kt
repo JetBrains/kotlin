@@ -105,6 +105,9 @@ class DefaultLambda(
 
     override fun isMyLabel(name: String): Boolean = false
 
+    var originalBoundReceiverType: Type? = null
+        private set
+
     override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner) {
         val classReader = buildClassReaderByInternalName(sourceCompiler.state, lambdaClassType.internalName)
         var isPropertyReference = false
@@ -141,7 +144,8 @@ class DefaultLambda(
         capturedVars =
                 if (isFunctionReference || isPropertyReference)
                     constructor?.desc?.let { Type.getArgumentTypes(it) }?.singleOrNull()?.let {
-                        listOf(capturedParamDesc(AsmUtil.RECEIVER_NAME, it))
+                        originalBoundReceiverType = it
+                        listOf(capturedParamDesc(AsmUtil.RECEIVER_NAME, it.boxReceiverForBoundReference()))
                     } ?: emptyList()
                 else
                     constructor?.findCapturedFieldAssignmentInstructions()?.map {
@@ -168,6 +172,9 @@ class DefaultLambda(
         }
     }
 }
+
+fun Type.boxReceiverForBoundReference() = AsmUtil.boxType(this)
+
 
 class ExpressionLambda(
         expression: KtExpression,
@@ -237,7 +244,9 @@ class ExpressionLambda(
             }
 
             if (closure.captureReceiverType != null) {
-                val type = typeMapper.mapType(closure.captureReceiverType!!)
+                val type = typeMapper.mapType(closure.captureReceiverType!!).let {
+                    if (isBoundCallableReference) it.boxReceiverForBoundReference() else it
+                }
                 val descriptor = EnclosedValueDescriptor(
                         AsmUtil.CAPTURED_RECEIVER_FIELD, null,
                         StackValue.field(type, lambdaClassType, AsmUtil.CAPTURED_RECEIVER_FIELD, false, StackValue.LOCAL_0),

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
@@ -347,6 +348,10 @@ class MethodInliner(
                     val lambda = getLambdaIfExists(index) as DefaultLambda
                     lambda.parameterOffsetsInDefault.zip(lambda.capturedVars).asReversed().forEach {
                         (_, captured) ->
+                        val originalBoundReceiverType = lambda.originalBoundReceiverType
+                        if (lambda.isBoundCallableReference && AsmUtil.isPrimitive(originalBoundReceiverType)) {
+                            StackValue.onStack(originalBoundReceiverType!!).put(captured.type, InstructionAdapter(this))
+                        }
                         super.visitFieldInsn(
                                 Opcodes.PUTSTATIC, captured.containingLambdaName, CAPTURED_FIELD_FOLD_PREFIX + captured.fieldName, captured.type.descriptor
                         )
