@@ -21,11 +21,14 @@ import com.intellij.codeInsight.PsiEquivalenceUtil.getFilteredChildren
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 
 class NullChecksToSafeCallInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
@@ -78,7 +81,7 @@ private fun collectNullCheckExpressions(expression: KtBinaryExpression): Triple<
 
 private fun isNullChecksToSafeCallFixAvailable(expression: KtBinaryExpression): Boolean {
     val (lte, rte) = collectNullCheckExpressions(expression) ?: return false
-    return getDuplicates(lte, rte)?.parent as? KtDotQualifiedExpression != null
+    return lte.isChainStable() && getDuplicates(lte, rte)?.parent as? KtDotQualifiedExpression != null
 }
 
 private fun KtBinaryExpression.getNullTestableExpression(expectedOperation: KtToken): KtExpression? {
@@ -110,6 +113,14 @@ private fun KtExpression.isEqTo(other: PsiElement?): Boolean {
         is KtReferenceExpression -> other is KtReferenceExpression && mainReference.resolve() == other.mainReference.resolve()
         is KtQualifiedExpression -> other is KtQualifiedExpression && receiverExpression.isEqTo(other.receiverExpression)
                                     && selectorExpression?.isEqTo(other.selectorExpression) ?: false
+        else -> false
+    }
+}
+
+private fun KtExpression.isChainStable(context: BindingContext = analyze()): Boolean {
+    return when (this) {
+        is KtReferenceExpression -> isStable(context)
+        is KtQualifiedExpression -> receiverExpression.isChainStable(context) && selectorExpression?.isChainStable(context) ?: false
         else -> false
     }
 }
