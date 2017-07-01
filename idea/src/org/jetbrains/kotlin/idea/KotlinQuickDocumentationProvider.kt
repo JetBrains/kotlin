@@ -175,6 +175,23 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 // element is not an KtReferenceExpression, but KtClass of enum
                 return renderEnum(element, originalElement, quickNavigation)
             }
+            else if (element is KtEnumEntry && !quickNavigation) {
+                val desc = element.resolveToDescriptorIfAny()
+                val ordinal =
+                        (desc?.containingDeclaration as? ClassDescriptor)?.let {
+                            it.unsubstitutedMemberScope.getContributedDescriptors()
+                                    .filter { it is ClassDescriptor && it.kind == ClassKind.ENUM_ENTRY }
+                                    .indexOf(desc)
+                        }
+                return buildString {
+                    append(renderKotlinDeclaration(element, quickNavigation))
+                    ordinal?.let {
+                        wrapTag("b") {
+                            append("Enum constant ordinal: $ordinal")
+                        }
+                    }
+                }
+            }
             else if (element is KtDeclaration) {
                 return renderKotlinDeclaration(element, quickNavigation)
             }
