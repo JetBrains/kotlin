@@ -407,6 +407,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 val (jdkHome, classesRoots) = if (arguments.jdkHome != null) {
                     val jdkHome = File(arguments.jdkHome)
+                    if (!jdkHome.exists()) {
+                        messageCollector.report(ERROR, "JDK home directory does not exist: $jdkHome")
+                        return COMPILATION_ERROR
+                    }
                     messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
                     jdkHome to PathUtil.getJdkClassesRoots(jdkHome)
                 }
