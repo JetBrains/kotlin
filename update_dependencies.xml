@@ -6,8 +6,8 @@
     <property name="ideaVersion" value="162.2946"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
-    <property name="android.studio.version" value="2.3.1.0"/>
-    <property name="android.studio.build.number" value="162.3871768"/>
+    <property name="android.studio.version" value="2.3.3.0"/>
+    <property name="android.studio.build.number" value="162.4069837"/>
 
     <!-- how to find this version: https://jetbrains.quip.com/4IQyAOhyghPb -->
     <property name="android.studio.intellij-core.build.number" value="162.2228.14"/>
@@ -870,11 +870,14 @@
         </condition>
 
         <exec executable="chmod" if:set="android.studio.mac">
+            <arg value="-R"/>
             <arg value="a+x"/>
-            <arg path="${android.destination.dir}/bin/fsnotifier"/>
-            <arg path="${android.destination.dir}/bin/inspect.sh"/>
-            <arg path="${android.destination.dir}/bin/printenv.py"/>
-            <arg path="${android.destination.dir}/bin/restarter"/>
+            <arg path="${android.destination.dir}/bin/"/>
+            <!-- Needed to run gradle -->
+            <arg path="${android.destination.dir}/jre/jdk/Contents/Home/bin/"/>
+            <arg path="${android.destination.dir}/jre/jdk/Contents/Home/lib/"/>
+            <arg path="${android.destination.dir}/jre/jdk/Contents/Home/jre/bin/"/>
+            <arg path="${android.destination.dir}/jre/jdk/Contents/Home/jre/lib/"/>
         </exec>
 
         <exec executable="chmod" if:set="android.studio.linux">
