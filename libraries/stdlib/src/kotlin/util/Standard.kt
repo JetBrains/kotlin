@@ -10,7 +10,6 @@ public class NotImplementedError(message: String = "An operation is not implemen
 /**
  * Always throws [NotImplementedError] stating that operation is not implemented.
  */
-
 @kotlin.internal.InlineOnly
 public inline fun TODO(): Nothing = throw NotImplementedError()
 
@@ -21,8 +20,6 @@ public inline fun TODO(): Nothing = throw NotImplementedError()
  */
 @kotlin.internal.InlineOnly
 public inline fun TODO(reason: String): Nothing = throw NotImplementedError("An operation is not implemented: $reason")
-
-
 
 /**
  * Calls the specified function [block] and returns its result.
@@ -86,3 +83,10 @@ public inline fun repeat(times: Int, action: (Int) -> Unit) {
         action(index)
     }
 }
+
+/**
+ * Returns `this` value if it is not `null` or the result of [block], if it is.
+ *
+ * @sample samples.Standard.orElse
+ */
+public inline fun <T> T?.orElse(block: () -> T): T = this ?: block()
