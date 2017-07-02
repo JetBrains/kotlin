@@ -64,7 +64,7 @@ internal fun typeParameters(typeParameters: Array<PsiTypeParameter>): List<JavaT
 internal fun classifierTypes(classTypes: Array<PsiClassType>): Collection<JavaClassifierType> =
         classTypes.convert(::JavaClassifierTypeImpl)
 
-internal fun annotations(annotations: Array<PsiAnnotation>): Collection<JavaAnnotation> =
+internal fun annotations(annotations: Array<out PsiAnnotation>): Collection<JavaAnnotation> =
         annotations.convert(::JavaAnnotationImpl)
 
 internal fun namedAnnotationArguments(nameValuePairs: Array<PsiNameValuePair>): Collection<JavaAnnotationArgument> =

@@ -63,6 +63,7 @@ fun JavaAnnotationOwner.buildLazyValueForMap() = lazy {
     annotations.associateBy { it.classId?.asSingleFqName() }
 }
 
+interface JavaPackage : JavaElement, JavaAnnotationOwner {
     val fqName: FqName
     val subPackages: Collection<JavaPackage>
 

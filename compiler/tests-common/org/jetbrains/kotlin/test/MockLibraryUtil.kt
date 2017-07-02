@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import org.jetbrains.kotlin.preloading.Preloader
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -45,12 +46,29 @@ object MockLibraryUtil {
             sourcesPath: String,
             jarName: String,
             addSources: Boolean = false,
+            allowKotlinSources: Boolean = true,
             extraOptions: List<String> = emptyList(),
             extraClasspath: List<String> = emptyList(),
             useJava9: Boolean = false
     ): File {
-        return compileLibraryToJar(sourcesPath, KotlinTestUtils.tmpDir("testLibrary-" + jarName), jarName, addSources,
-                                   extraOptions, extraClasspath, useJava9)
+        return compileLibraryToJar(
+                sourcesPath, KotlinTestUtils.tmpDir("testLibrary-" + jarName), jarName, addSources,allowKotlinSources, extraOptions, extraClasspath
+        , useJava9)}
+
+    @JvmStatic
+    @JvmOverloads
+    fun compileJavaFilesLibraryToJar(
+            sourcesPath: String,
+            jarName: String,
+            addSources: Boolean = false,
+            extraOptions: List<String> = emptyList(),
+            extraClasspath: List<String> = emptyList()
+    ): File {
+        return compileJvmLibraryToJar(
+                sourcesPath, jarName, addSources,
+                allowKotlinSources = false,
+                extraClasspath = extraClasspath, extraOptions = extraOptions
+        )
     }
 
     @JvmStatic
@@ -60,6 +78,7 @@ object MockLibraryUtil {
             contentDir: File,
             jarName: String,
             addSources: Boolean = false,
+            allowKotlinSources: Boolean = true,
             extraOptions: List<String> = emptyList(),
             extraClasspath: List<String> = emptyList(),
             useJava9: Boolean = false
@@ -69,6 +88,7 @@ object MockLibraryUtil {
         val srcFile = File(sourcesPath)
         val kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), srcFile)
         if (srcFile.isFile || kotlinFiles.isNotEmpty()) {
+            Assert.assertTrue("Only java files are expected", allowKotlinSources)
             compileKotlin(sourcesPath, classesDir, extraOptions, *extraClasspath.toTypedArray())
         }
 

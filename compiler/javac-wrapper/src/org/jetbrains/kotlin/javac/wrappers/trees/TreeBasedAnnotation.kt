@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.trees
 
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -27,10 +28,16 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class TreeBasedAnnotation(
-        val annotation: JCTree.JCAnnotation,
-        val treePath: TreePath,
-        val javac: JavacWrapper
+        private val annotation: JCTree.JCAnnotation,
+        private val compilationUnit: CompilationUnitTree,
+        private val javac: JavacWrapper
 ) : JavaElement, JavaAnnotation {
+
+    constructor(
+            annotation: JCTree.JCAnnotation,
+            treePath: TreePath,
+            javac: JavacWrapper
+    ) : this(annotation, treePath.compilationUnit, javac)
 
     override val arguments: Collection<JavaAnnotationArgument>
         get() = annotation.arguments.map { TreeBasedAnnotationArgument(Name.identifier(it.toString())) }
@@ -39,7 +46,7 @@ class TreeBasedAnnotation(
         get() = resolve()?.computeClassId()
 
     override fun resolve() =
-            javac.resolve(TreePath.getPath(treePath.compilationUnit, annotation.annotationType)) as? JavaClass
+            javac.resolve(TreePath.getPath(compilationUnit, annotation.annotationType)) as? JavaClass
 
 }
 

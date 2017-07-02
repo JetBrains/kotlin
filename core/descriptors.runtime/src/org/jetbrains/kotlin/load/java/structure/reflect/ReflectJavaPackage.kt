@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.FqName
@@ -32,6 +33,14 @@ class ReflectJavaPackage(override val fqName: FqName) : ReflectJavaElement(), Ja
             // A package at runtime can't know what sub packages it has and has not
             return listOf()
         }
+
+    // TODO: support it if possible
+    override val annotations get() = emptyList<JavaAnnotation>()
+
+    override fun findAnnotation(fqName: FqName) = null
+
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = false
 
     override fun equals(other: Any?) = other is ReflectJavaPackage && fqName == other.fqName
 

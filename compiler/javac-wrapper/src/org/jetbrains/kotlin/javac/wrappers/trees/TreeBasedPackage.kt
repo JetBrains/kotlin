@@ -18,12 +18,15 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.java.structure.MapBasedJavaAnnotationOwner
+import org.jetbrains.kotlin.load.java.structure.buildLazyValueForMap
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.tools.JavaFileObject
 
-class TreeBasedPackage(val name: String, val javac: JavacWrapper, val file: JavaFileObject) : JavaPackage {
+class TreeBasedPackage(val name: String, val javac: JavacWrapper, val file: JavaFileObject) : JavaPackage, MapBasedJavaAnnotationOwner {
 
     override val fqName: FqName
         get() = FqName(name)
@@ -37,6 +40,11 @@ class TreeBasedPackage(val name: String, val javac: JavacWrapper, val file: Java
 
     override fun getClasses(nameFilter: (Name) -> Boolean) =
             javac.findClassesFromPackage(fqName).filter { nameFilter(it.fqName!!.shortName()) }
+
+    override val annotations
+        get() = javac.getPackageAnnotationsFromSources(fqName)
+
+    override val annotationsByFqName: Map<FqName?, JavaAnnotation> by buildLazyValueForMap()
 
     override fun equals(other: Any?) = (other as? TreeBasedPackage)?.name == name
 

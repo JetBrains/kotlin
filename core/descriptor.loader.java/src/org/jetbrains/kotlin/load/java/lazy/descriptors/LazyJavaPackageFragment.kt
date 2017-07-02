@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
@@ -47,6 +48,11 @@ class LazyJavaPackageFragment(
             // This breaks infinite recursion between loading Java descriptors and building light classes
             onRecursiveCall = listOf()
     )
+
+    private val packageAnnotations = c.resolveAnnotations(jPackage)
+
+    // Test only method
+    fun getPackageAnnotations() = packageAnnotations
 
     internal fun getSubPackageFqNames(): List<FqName> = subPackages()
 

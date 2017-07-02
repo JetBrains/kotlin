@@ -43,10 +43,8 @@ import com.sun.tools.javac.util.Options
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClass
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClassifierType
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedPackage
-import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedClass
-import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedPackage
-import org.jetbrains.kotlin.javac.wrappers.trees.TreePathResolverCache
-import org.jetbrains.kotlin.javac.wrappers.trees.computeClassId
+import org.jetbrains.kotlin.javac.wrappers.trees.*
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
@@ -142,6 +140,14 @@ class JavacWrapper(
             }
             .associateBy(TreeBasedPackage::fqName)
 
+    private val packageSourceAnnotations = compilationUnits
+            .filter {
+                it.sourceFile.isNameCompatible("package-info", JavaFileObject.Kind.SOURCE) &&
+                it.packageName != null
+            }.associateBy({ FqName(it.packageName!!.toString()) }) { compilationUnit ->
+                compilationUnit.packageAnnotations.map { TreeBasedAnnotation(it, compilationUnit, this) }
+            }
+
     private val kotlinClassifiersCache = KotlinClassifiersCache(if (javaFiles.isNotEmpty()) kotlinFiles else emptyList(), this)
     private val treePathResolverCache = TreePathResolverCache(this)
     private val symbolBasedClassesCache = hashMapOf<String, SymbolBasedClass?>()
@@ -211,6 +217,9 @@ class JavacWrapper(
             javaPackages
                     .filterKeys { it.isSubpackageOf(fqName) && it != fqName }
                     .map { it.value }
+
+    fun getPackageAnnotationsFromSources(fqName: FqName): List<JavaAnnotation> =
+            packageSourceAnnotations[fqName] ?: emptyList()
 
     fun findClassesFromPackage(fqName: FqName): List<JavaClass> =
             javaClasses
