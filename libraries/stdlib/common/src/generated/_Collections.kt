@@ -411,6 +411,13 @@ public header fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T>
 public header fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T>
 
 /**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Collections.nullIfEmpty
+ */
+public header fun <T> Collection<T>.nullIfEmpty(): Collection<T>?
+
+/**
  * Returns an array of Boolean containing all of the elements of this collection.
  */
 public header fun Collection<Boolean>.toBooleanArray(): BooleanArray

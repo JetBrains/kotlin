@@ -72,4 +72,14 @@ class Collections {
         }
     }
 
+    @Sample
+    fun nullIfEmpty() {
+        val emptyList = emptyList<Int>()
+
+        assertTrue(emptyList.nullIfEmpty() == null)
+
+        val nonEmptyList = listOf(1, 2, 3)
+
+        assertTrue(nonEmptyList.nullIfEmpty() != null)
+    }
 }

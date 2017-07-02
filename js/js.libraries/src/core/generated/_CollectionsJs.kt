@@ -877,6 +877,15 @@ public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
 }
 
 /**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Collections.nullIfEmpty
+ */
+public fun <T> Collection<T>.nullIfEmpty(): Collection<T>? {
+    return if (this == null || this.isEmpty()) null else this
+}
+
+/**
  * Returns an array of Boolean containing all of the elements of this collection.
  */
 public fun Collection<Boolean>.toBooleanArray(): BooleanArray {

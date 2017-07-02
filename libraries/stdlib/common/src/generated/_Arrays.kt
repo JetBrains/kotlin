@@ -3220,6 +3220,69 @@ public header val BooleanArray.lastIndex: Int
 public header val CharArray.lastIndex: Int
 
 /**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public header fun <T> Array<out T>.nullIfEmpty(): Array<out T>?
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public header fun ByteArray.nullIfEmpty(): ByteArray?
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public header fun ShortArray.nullIfEmpty(): ShortArray?
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public header fun IntArray.nullIfEmpty(): IntArray?
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public header fun LongArray.nullIfEmpty(): LongArray?
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public header fun FloatArray.nullIfEmpty(): FloatArray?
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public header fun DoubleArray.nullIfEmpty(): DoubleArray?
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public header fun BooleanArray.nullIfEmpty(): BooleanArray?
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public header fun CharArray.nullIfEmpty(): CharArray?
+
+/**
  * Returns an array of Boolean containing all of the elements of this generic array.
  */
 public header fun Array<out Boolean>.toBooleanArray(): BooleanArray

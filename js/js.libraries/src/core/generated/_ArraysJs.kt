@@ -5732,6 +5732,87 @@ public val CharArray.lastIndex: Int
     get() = size - 1
 
 /**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public fun <T> Array<out T>.nullIfEmpty(): Array<out T>? {
+    return if (this == null || this.isEmpty()) null else this
+}
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public fun ByteArray.nullIfEmpty(): ByteArray? {
+    return if (this == null || this.isEmpty()) null else this
+}
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public fun ShortArray.nullIfEmpty(): ShortArray? {
+    return if (this == null || this.isEmpty()) null else this
+}
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public fun IntArray.nullIfEmpty(): IntArray? {
+    return if (this == null || this.isEmpty()) null else this
+}
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public fun LongArray.nullIfEmpty(): LongArray? {
+    return if (this == null || this.isEmpty()) null else this
+}
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public fun FloatArray.nullIfEmpty(): FloatArray? {
+    return if (this == null || this.isEmpty()) null else this
+}
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public fun DoubleArray.nullIfEmpty(): DoubleArray? {
+    return if (this == null || this.isEmpty()) null else this
+}
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public fun BooleanArray.nullIfEmpty(): BooleanArray? {
+    return if (this == null || this.isEmpty()) null else this
+}
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ * 
+ * @sample samples.collections.Arrays.nullIfEmpty
+ */
+public fun CharArray.nullIfEmpty(): CharArray? {
+    return if (this == null || this.isEmpty()) null else this
+}
+
+/**
  * Returns an array of Boolean containing all of the elements of this generic array.
  */
 public fun Array<out Boolean>.toBooleanArray(): BooleanArray {

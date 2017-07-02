@@ -1191,3 +1191,17 @@ public fun CharSequence.lineSequence(): Sequence<String> = splitToSequence("\r\n
  * * Splits this char sequence to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
  */
 public fun CharSequence.lines(): List<String> = lineSequence().toList()
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ *
+ * @sample samples.text.Strings.nullIfEmpty
+ */
+public inline fun CharSequence?.nullIfEmpty(): CharSequence? = if (this == null || this.isEmpty()) null else this
+
+/**
+ * Returns `this` value if it is not empty or `null`, if it is.
+ *
+ * @sample samples.text.Strings.nullIfEmpty
+ */
+public inline fun String?.nullIfEmpty(): String? = (this as CharSequence).nullIfEmpty()?.toString()

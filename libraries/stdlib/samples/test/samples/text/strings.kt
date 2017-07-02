@@ -50,5 +50,14 @@ class Strings {
         assertPrints(withoutMargin2, "XYZ\nfoo\nbar")
     }
 
+    @Sample
+    fun nullIfEmpty() {
+        val emptyText = ""
 
+        assertTrue(emptyText.nullIfEmpty() == null)
+
+        val nonEmptyText = "Hello, Kotlin!"
+
+        assertTrue(nonEmptyText.nullIfEmpty() != null)
+    }
 }

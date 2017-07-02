@@ -25,7 +25,6 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
-
     templates add pval("lastIndex") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns the last valid index for the array." }
@@ -63,7 +62,6 @@ fun arrays(): List<GenericFunction> {
             @Suppress("UNUSED_PARAMETER")
         """)
         body(Platform.JS) { "definedExternally" }
-
     }
 
     templates add f("contentDeepEquals(other: SELF)") {
@@ -184,6 +182,27 @@ fun arrays(): List<GenericFunction> {
                 return result
                 """
             }
+        }
+    }
+
+    templates add f("nullIfEmpty()") {
+        only(ArraysOfObjects, ArraysOfPrimitives, Collections)
+        doc { f ->
+            """
+            Returns `this` value if it is not empty or `null`, if it is.
+
+            ${if (f == ArraysOfObjects || f == ArraysOfPrimitives)
+                "@sample samples.collections.Arrays.nullIfEmpty"
+            else if (f == Collections)
+                "@sample samples.collections.Collections.nullIfEmpty"
+            else
+                ""
+            }
+            """
+        }
+        returns("SELF?")
+        body {
+            "return if (this == null || this.isEmpty()) null else this"
         }
     }
 

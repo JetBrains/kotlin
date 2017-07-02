@@ -42,7 +42,16 @@ class Arrays {
 
             assertPrints(matrix.contentDeepToString(), "[[3, 7, 9], [0, 1, 0], [2, 4, 8]]")
         }
-
     }
 
+    @Sample
+    fun nullIfEmpty() {
+        val emptyArray = emptyArray<Int>()
+
+        assertTrue(emptyArray.nullIfEmpty() == null)
+
+        val nonEmptyArray = intArrayOf(1, 2, 3)
+
+        assertTrue(nonEmptyArray.nullIfEmpty() != null)
+    }
 }
