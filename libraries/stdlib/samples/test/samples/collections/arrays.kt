@@ -42,6 +42,7 @@ class Arrays {
 
             assertPrints(matrix.contentDeepToString(), "[[3, 7, 9], [0, 1, 0], [2, 4, 8]]")
         }
+
     }
 
     @Sample

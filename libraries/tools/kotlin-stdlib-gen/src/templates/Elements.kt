@@ -14,7 +14,7 @@ fun elements(): List<GenericFunction> {
         doc { f -> "Returns `true` if [element] is found in the ${f.collection}." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("Boolean")
-        body(Iterables) {
+        body(Iterables) { f ->
             """
                 if (this is Collection)
                     return contains(element)
@@ -437,7 +437,7 @@ fun elements(): List<GenericFunction> {
         include(CharSequences)
         doc { f -> "Returns the first ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
-        body { "return firstOrNull(predicate)" }
+        body { "return firstOrNull(predicate)"}
     }
 
     templates add f("last()") {
@@ -571,7 +571,7 @@ fun elements(): List<GenericFunction> {
         include(CharSequences)
         doc { f -> "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
-        body {
+        body { f ->
             """
             var last: T? = null
             for (element in this) {
@@ -610,7 +610,7 @@ fun elements(): List<GenericFunction> {
         include(Lists, CharSequences)
         doc { f -> "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
-        body { "return lastOrNull(predicate)" }
+        body { "return lastOrNull(predicate)"}
     }
 
     templates add f("single()") {
@@ -753,7 +753,7 @@ fun elements(): List<GenericFunction> {
             }
             doc { "Returns ${getOrdinal(n)} *element* from the collection." }
             returns("T")
-            body { "return get(${n - 1})" }
+            body { "return get(${n-1})" }
             only(Lists, ArraysOfObjects, ArraysOfPrimitives)
         }
     }

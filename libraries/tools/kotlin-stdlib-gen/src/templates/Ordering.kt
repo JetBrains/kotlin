@@ -50,7 +50,7 @@ fun ordering(): List<GenericFunction> {
 
         doc(CharSequences, Strings) { f -> "Returns a ${f.collection} with characters in reversed order." }
         returns(CharSequences, Strings) { "SELF" }
-        body(CharSequences) {
+        body(CharSequences) { f ->
             """
             return StringBuilder(this).reverse()
             """
@@ -326,8 +326,7 @@ fun ordering(): List<GenericFunction> {
         customReceiver(Lists) { "MutableList<T>" }
 
         body {
-            "if (size > 1) sortWith(compareByDescending(selector))"
-        }
+            """if (size > 1) sortWith(compareByDescending(selector))""" }
     }
 
     templates add f("sortedByDescending(crossinline selector: (T) -> R?)") {

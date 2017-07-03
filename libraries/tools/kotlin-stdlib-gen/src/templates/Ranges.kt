@@ -98,6 +98,12 @@ fun ranges(): List<GenericFunction> {
         val fromExpr = if (elementType == fromType) "this" else "this.to$elementType()"
 
         if (elementType == toType) {
+            // hack to work around incorrect char overflow behavior in JVM and int overflow behavior in JS
+            val toExpr = when (toType) {
+                PrimitiveType.Char -> "to.toInt()"
+                PrimitiveType.Int -> "to.toLong()"
+                else -> "to"
+            }
             body {
                 // <= instead of == for JS
                 """

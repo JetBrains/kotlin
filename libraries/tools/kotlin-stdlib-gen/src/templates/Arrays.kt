@@ -25,6 +25,7 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
+
     templates add pval("lastIndex") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns the last valid index for the array." }
@@ -62,6 +63,7 @@ fun arrays(): List<GenericFunction> {
             @Suppress("UNUSED_PARAMETER")
         """)
         body(Platform.JS) { "definedExternally" }
+
     }
 
     templates add f("contentDeepEquals(other: SELF)") {
