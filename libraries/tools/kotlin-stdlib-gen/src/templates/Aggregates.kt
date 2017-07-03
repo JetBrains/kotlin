@@ -105,7 +105,7 @@ fun aggregates(): List<GenericFunction> {
             """
         }
         inline(CharSequences, Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) { Inline.Only }
-        doc(CharSequences) { "Returns the length of this char sequence." }
+        doc(CharSequences) { "Returns the length of this char sequence."}
         body(CharSequences) {
             "return length"
         }
@@ -801,8 +801,7 @@ fun aggregates(): List<GenericFunction> {
             Performs the given [action] on each ${f.element}, providing sequential index with the ${f.element}.
             @param [action] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
             and performs the desired action on the ${f.element}.
-            """
-        }
+            """ }
         returns("Unit")
         body {
             """

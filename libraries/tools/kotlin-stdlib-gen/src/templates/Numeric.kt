@@ -38,7 +38,7 @@ fun numeric(): List<GenericFunction> {
     templates add f("average()") {
         exclude(Strings)
         buildFamilies.default!!.forEach { family -> onlyPrimitives(family, numericPrimitives) }
-        doc { f -> "Returns an average value of elements in the ${f.collection}." }
+        doc { f -> "Returns an average value of elements in the ${f.collection}."}
         returns("Double")
         platformName("averageOf<T>")
         body {
