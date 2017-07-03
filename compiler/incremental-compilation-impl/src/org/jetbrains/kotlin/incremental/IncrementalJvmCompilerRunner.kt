@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -177,6 +174,13 @@ abstract class IncrementalCompilerRunner<
         return dirtyFiles
     }
 
+    protected sealed class CompilationMode {
+        class Incremental(val dirtyFiles: Set<File>) : CompilationMode()
+        class Rebuild(getReason: ()->String = { "" }) : CompilationMode() {
+            val reason: String by lazy(getReason)
+        }
+    }
+
     protected open fun markOutputDirty(caches: CacheManager, dirtySources: List<File>) {
     }
 
@@ -189,14 +193,6 @@ abstract class IncrementalCompilerRunner<
     protected open fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
             emptyList()
 
-    protected abstract fun compileIncrementally(
-            args: Args,
-            caches: CacheManager,
-            allKotlinSources: List<File>,
-            compilationMode: CompilationMode,
-            messageCollector: MessageCollector
-    ): ExitCode
-
     protected abstract fun runCompiler(
             sourcesToCompile: Set<File>,
             args: Args,
@@ -205,11 +201,108 @@ abstract class IncrementalCompilerRunner<
             messageCollector: MessageCollector
     ): ExitCode
 
-    protected sealed class CompilationMode {
-        class Incremental(val dirtyFiles: Set<File>) : CompilationMode()
-        class Rebuild(getReason: ()->String = { "" }) : CompilationMode() {
-            val reason: String by lazy(getReason)
+    private fun compileIncrementally(
+            args: Args,
+            caches: CacheManager,
+            allKotlinSources: List<File>,
+            compilationMode: CompilationMode,
+            messageCollector: MessageCollector
+    ): ExitCode {
+        preBuildHook(args, compilationMode)
+
+        val dirtySources = when (compilationMode) {
+            is CompilationMode.Incremental -> ArrayList(compilationMode.dirtyFiles)
+            is CompilationMode.Rebuild -> allKotlinSources.toMutableList()
         }
+
+        val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
+        BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
+        val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
+        val buildDirtyFqNames = HashSet<FqName>()
+        val allSourcesToCompile = HashSet<File>()
+
+        var exitCode = ExitCode.OK
+        val allGeneratedFiles = hashSetOf<GeneratedFile>()
+
+        while (dirtySources.any()) {
+            markOutputDirty(caches, dirtySources)
+            caches.inputsCache.removeOutputForSourceFiles(dirtySources)
+
+            val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
+            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
+
+            // todo: more optimal to save only last iteration, but it will require adding standalone-ic specific logs
+            // (because jps rebuilds all files from last build if it failed and gradle rebuilds everything)
+            allSourcesToCompile.addAll(sourcesToCompile)
+            val text = allSourcesToCompile.joinToString(separator = System.getProperty("line.separator")) { it.canonicalPath }
+            dirtySourcesSinceLastTimeFile.writeText(text)
+
+            val services = Services.Builder().apply {
+                register(LookupTracker::class.java, lookupTracker)
+                register(CompilationCanceledStatus::class.java, EmptyCompilationCanceledStatus)
+            }
+
+            args.reportOutputFiles = true
+            val outputItemsCollector = OutputItemsCollectorImpl()
+            val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(messageCollector, outputItemsCollector)
+
+            exitCode = runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
+            postCompilationHook(exitCode)
+
+            if (exitCode != ExitCode.OK) break
+
+            dirtySourcesSinceLastTimeFile.delete()
+            val generatedFiles = outputItemsCollector.outputs.map(SimpleOutputItem::toGeneratedFile)
+
+            if (compilationMode is CompilationMode.Incremental) {
+                // todo: feels dirty, can this be refactored?
+                val dirtySourcesSet = dirtySources.toHashSet()
+                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles).filter { it !in dirtySourcesSet }
+                if (additionalDirtyFiles.isNotEmpty()) {
+                    dirtySources.addAll(additionalDirtyFiles)
+                    continue
+                }
+            }
+
+            allGeneratedFiles.addAll(generatedFiles)
+            caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
+            caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
+            val compilationResult = compareAndUpdateCache(caches, generatedFiles)
+
+            if (compilationMode is CompilationMode.Rebuild) break
+
+            val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(listOf(caches.platformCache), reporter)
+            val compiledInThisIterationSet = sourcesToCompile.toHashSet()
+
+            with (dirtySources) {
+                clear()
+                addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
+                addAll(mapClassesFqNamesToFiles(listOf(caches.platformCache), dirtyClassFqNames, reporter, excludes = compiledInThisIterationSet))
+            }
+
+            buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
+            buildDirtyFqNames.addAll(dirtyClassFqNames)
+        }
+
+        if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
+            buildDirtyLookupSymbols.addAll(additionalDirtyLookupSymbols())
+        }
+        if (changesRegistry != null) {
+            if (compilationMode is CompilationMode.Incremental) {
+                val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
+                changesRegistry.registerChanges(currentBuildInfo.startTS, dirtyData)
+            }
+            else {
+                assert(compilationMode is CompilationMode.Rebuild) { "Unexpected compilation mode: ${compilationMode::class.java}" }
+                changesRegistry.unknownChanges(currentBuildInfo.startTS)
+            }
+        }
+
+        if (exitCode == ExitCode.OK) {
+            cacheVersions.forEach { it.saveIfNeeded() }
+        }
+
+        return exitCode
     }
 
     companion object {
@@ -350,110 +443,6 @@ class IncrementalJvmCompilerRunner(
 
     override fun compareAndUpdateCache(caches: IncrementalJvmCachesManager, generatedFiles: List<GeneratedFile>): CompilationResult =
         updateIncrementalCache(generatedFiles, caches.platformCache)
-
-    override fun compileIncrementally(
-            args: K2JVMCompilerArguments,
-            caches: IncrementalJvmCachesManager,
-            allKotlinSources: List<File>,
-            compilationMode: CompilationMode,
-            messageCollector: MessageCollector
-    ): ExitCode {
-        preBuildHook(args, compilationMode)
-
-        val dirtySources = when (compilationMode) {
-            is CompilationMode.Incremental -> ArrayList(compilationMode.dirtyFiles)
-            is CompilationMode.Rebuild -> allKotlinSources.toMutableList()
-        }
-
-        val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
-        BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
-        val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
-        val buildDirtyFqNames = HashSet<FqName>()
-        val allSourcesToCompile = HashSet<File>()
-
-        var exitCode = ExitCode.OK
-        val allGeneratedFiles = hashSetOf<GeneratedFile>()
-
-        while (dirtySources.any()) {
-            markOutputDirty(caches, dirtySources)
-            caches.inputsCache.removeOutputForSourceFiles(dirtySources)
-
-            val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
-            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
-
-            // todo: more optimal to save only last iteration, but it will require adding standalone-ic specific logs
-            // (because jps rebuilds all files from last build if it failed and gradle rebuilds everything)
-            allSourcesToCompile.addAll(sourcesToCompile)
-            val text = allSourcesToCompile.joinToString(separator = System.getProperty("line.separator")) { it.canonicalPath }
-            dirtySourcesSinceLastTimeFile.writeText(text)
-
-            val services = Services.Builder().apply {
-                register(LookupTracker::class.java, lookupTracker)
-                register(CompilationCanceledStatus::class.java, EmptyCompilationCanceledStatus)
-            }
-
-            args.reportOutputFiles = true
-            val outputItemsCollector = OutputItemsCollectorImpl()
-            val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(messageCollector, outputItemsCollector)
-
-            exitCode = runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
-            postCompilationHook(exitCode)
-
-            if (exitCode != ExitCode.OK) break
-
-            dirtySourcesSinceLastTimeFile.delete()
-            val generatedFiles = outputItemsCollector.outputs.map(SimpleOutputItem::toGeneratedFile)
-
-            if (compilationMode is CompilationMode.Incremental) {
-                // todo: feels dirty, can this be refactored?
-                val dirtySourcesSet = dirtySources.toHashSet()
-                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles).filter { it !in dirtySourcesSet }
-                if (additionalDirtyFiles.isNotEmpty()) {
-                    dirtySources.addAll(additionalDirtyFiles)
-                    continue
-                }
-            }
-
-            allGeneratedFiles.addAll(generatedFiles)
-            caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
-            caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
-            val compilationResult = compareAndUpdateCache(caches, generatedFiles)
-
-            if (compilationMode is CompilationMode.Rebuild) break
-
-            val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(listOf(caches.platformCache), reporter)
-            val compiledInThisIterationSet = sourcesToCompile.toHashSet()
-
-            with (dirtySources) {
-                clear()
-                addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
-                addAll(mapClassesFqNamesToFiles(listOf(caches.platformCache), dirtyClassFqNames, reporter, excludes = compiledInThisIterationSet))
-            }
-
-            buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
-            buildDirtyFqNames.addAll(dirtyClassFqNames)
-        }
-
-        if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
-            buildDirtyLookupSymbols.addAll(additionalDirtyLookupSymbols())
-        }
-        if (changesRegistry != null) {
-            if (compilationMode is CompilationMode.Incremental) {
-                val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
-                changesRegistry.registerChanges(currentBuildInfo.startTS, dirtyData)
-            }
-            else {
-                assert(compilationMode is CompilationMode.Rebuild) { "Unexpected compilation mode: ${compilationMode::class.java}" }
-                changesRegistry.unknownChanges(currentBuildInfo.startTS)
-            }
-        }
-
-        if (exitCode == ExitCode.OK) {
-            cacheVersions.forEach { it.saveIfNeeded() }
-        }
-
-        return exitCode
-    }
 
     override fun additionalDirtyFiles(
             caches: IncrementalJvmCachesManager,
