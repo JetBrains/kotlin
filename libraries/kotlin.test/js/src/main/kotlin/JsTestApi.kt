@@ -27,21 +27,10 @@ import kotlin.test.*
  *
  */
 @JsName("setAdapter")
-public fun setAdapter(adapter: dynamic) {
-    if (js("typeof adapter === 'string'")) {
-        NAME_TO_ADAPTER[adapter]?.let {
-            setAdapter(it.invoke())
-        }?: throw IllegalArgumentException("Unsupported test framework adapter: '$adapter'")
-    }
-    else {
-        currentAdapter = adapter
-    }
-}
+internal fun setAdapter(adapter: dynamic) = kotlin.test.setAdapter(adapter)
 
 /**
  * Use in order to define which action should be taken by the test framework on the testResult.
  */
 @JsName("setAssertHook")
-public fun setAssertHook(hook: (TestResult) -> Unit) {
-    assertHook = hook
-}
+internal fun setAssertHook(hook: (TestResult) -> Unit) = kotlin.test.setAssertHook(hook)
