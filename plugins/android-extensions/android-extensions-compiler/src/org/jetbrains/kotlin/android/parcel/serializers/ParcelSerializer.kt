@@ -22,17 +22,21 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+
+private val RAWVALUE_ANNOTATION_FQNAME = FqName("kotlinx.android.parcel.RawValue")
 
 interface ParcelSerializer {
     val asmType: Type
@@ -41,16 +45,26 @@ interface ParcelSerializer {
     fun readValue(v: InstructionAdapter)
 
     companion object {
-        fun get(type: KotlinType, asmType: Type, typeMapper: KotlinTypeMapper, forceBoxed: Boolean = false): ParcelSerializer {
+        private fun KotlinTypeMapper.mapTypeSafe(type: KotlinType): Type {
+            return if (type.isError) Type.getObjectType("java/lang/Object") else mapType(type)
+        }
+
+        fun get(
+                type: KotlinType,
+                asmType: Type,
+                typeMapper: KotlinTypeMapper,
+                forceBoxed: Boolean = false,
+                strict: Boolean = false
+        ): ParcelSerializer {
             val className = asmType.className
+            fun strict() = strict && !type.annotations.hasAnnotation(RAWVALUE_ANNOTATION_FQNAME)
 
             return when {
                 asmType.sort == Type.ARRAY -> {
                     val elementType = type.builtIns.getArrayElementType(type)
+                    val elementSerializer = get(elementType, typeMapper.mapTypeSafe(elementType), typeMapper, strict = strict())
 
-                    wrapToNullAwareIfNeeded(
-                            type,
-                            ArrayParcelSerializer(asmType, get(elementType, typeMapper.mapType(elementType), typeMapper)))
+                    wrapToNullAwareIfNeeded(type, ArrayParcelSerializer(asmType, elementSerializer))
                 }
 
                 asmType.isPrimitive() -> {
@@ -73,7 +87,8 @@ interface ParcelSerializer {
                     || className == TreeSet::class.java.canonicalName
                 -> {
                     val elementType = type.arguments.single().type
-                    val elementSerializer = get(elementType, typeMapper.mapType(elementType), typeMapper, forceBoxed = true)
+                    val elementSerializer = get(
+                            elementType, typeMapper.mapTypeSafe(elementType), typeMapper, forceBoxed = true, strict = strict())
                     wrapToNullAwareIfNeeded(type, ListSetParcelSerializer(asmType, elementSerializer))
                 }
 
@@ -84,8 +99,10 @@ interface ParcelSerializer {
                     || className == ConcurrentHashMap::class.java.canonicalName
                 -> {
                     val (keyType, valueType) = type.arguments.apply { assert(this.size == 2) }
-                    val keySerializer = get(keyType.type, typeMapper.mapType(keyType.type), typeMapper, forceBoxed = true)
-                    val valueSerializer = get(valueType.type, typeMapper.mapType(valueType.type), typeMapper, forceBoxed = true)
+                    val keySerializer = get(
+                            keyType.type, typeMapper.mapTypeSafe(keyType.type), typeMapper, forceBoxed = true, strict = strict())
+                    val valueSerializer = get(
+                            valueType.type, typeMapper.mapTypeSafe(valueType.type), typeMapper, forceBoxed = true, strict = strict())
                     wrapToNullAwareIfNeeded(type, MapParcelSerializer(asmType, keySerializer, valueSerializer))
                 }
 
@@ -131,7 +148,8 @@ interface ParcelSerializer {
 
                 asmType.isSparseArray() -> {
                     val elementType = type.arguments.single().type
-                    val elementSerializer = get(elementType, typeMapper.mapType(elementType), typeMapper, forceBoxed = true)
+                    val elementSerializer = get(
+                            elementType, typeMapper.mapTypeSafe(elementType), typeMapper, forceBoxed = true, strict = strict())
                     wrapToNullAwareIfNeeded(type, SparseArrayParcelSerializer(asmType, elementSerializer))
                 }
 
@@ -158,7 +176,7 @@ interface ParcelSerializer {
                                 Name.identifier("CREATOR"), NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS).firstOrNull()
 
                         val creatorAsmType = when {
-                            creatorVar != null -> typeMapper.mapType(creatorVar.type)
+                            creatorVar != null -> typeMapper.mapTypeSafe(creatorVar.type)
                             clazz.isMagicParcelable -> Type.getObjectType(asmType.internalName + "\$Creator")
                             else -> null
                         }
@@ -175,7 +193,12 @@ interface ParcelSerializer {
                         Method("writeSerializable"),
                         Method("readSerializable"))
 
-                else -> GenericParcelSerializer
+                else -> {
+                    if (strict && !type.annotations.hasAnnotation(RAWVALUE_ANNOTATION_FQNAME))
+                        throw IllegalArgumentException("Illegal type")
+                    else
+                        GenericParcelSerializer
+                }
             }
         }
         private fun wrapToNullAwareIfNeeded(type: KotlinType, serializer: ParcelSerializer) = when {

@@ -188,7 +188,7 @@ class ParcelableCodegenExtension : ExpressionCodegenExtension {
                     val asmType = codegen.typeMapper.mapType(type)
                     asmConstructorParameters.append(asmType.descriptor)
 
-                    val serializer = ParcelSerializer.get(type, asmType, codegen.typeMapper)
+                    val serializer = ParcelSerializer.get(type, asmType, codegen.typeMapper, forceBoxed = false, strict = false)
                     v.load(1, parcelAsmType)
                     serializer.readValue(v)
                 }
