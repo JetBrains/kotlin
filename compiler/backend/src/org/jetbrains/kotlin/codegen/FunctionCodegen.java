@@ -1002,12 +1002,19 @@ public class FunctionCodegen {
             capturedArgumentsCount++;
         }
 
-        int maskIndex = 0;
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
-        for (int index = 0; index < valueParameters.size(); index++) {
+        assert valueParameters.size() > 0 : "Expecting value parameters to generate default function " + functionDescriptor;
+        int firstMaskIndex = frameMap.enterTemp(Type.INT_TYPE);
+        for (int index = 1; index < valueParameters.size(); index++) {
             if (index % Integer.SIZE == 0) {
-                maskIndex = frameMap.enterTemp(Type.INT_TYPE);
+                frameMap.enterTemp(Type.INT_TYPE);
             }
+        }
+        //default handler or constructor marker
+        frameMap.enterTemp(AsmTypes.OBJECT_TYPE);
+
+        for (int index = 0; index < valueParameters.size(); index++) {
+            int maskIndex = firstMaskIndex + index / Integer.SIZE;
             ValueParameterDescriptor parameterDescriptor = valueParameters.get(index);
             Type type = mappedParameters.get(capturedArgumentsCount + index).getAsmType();
 
