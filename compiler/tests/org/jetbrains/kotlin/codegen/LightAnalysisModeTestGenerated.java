@@ -13315,6 +13315,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("nullableInPrimitiveRange.kt")
+            public void testNullableInPrimitiveRange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/nullableInPrimitiveRange.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("rangeContainsString.kt")
             public void testRangeContainsString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/rangeContainsString.kt");
