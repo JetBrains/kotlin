@@ -22,7 +22,7 @@ import java.rmi.RemoteException
 
 interface CompilationResults : Remote {
     @Throws(RemoteException::class)
-    fun add(compilationResultCategory: Int, value: Serializable)
+    fun add(compilationResultCategory: Int, value: Serializable): Void?
 }
 
 enum class CompilationResultCategory(val code: Int) {

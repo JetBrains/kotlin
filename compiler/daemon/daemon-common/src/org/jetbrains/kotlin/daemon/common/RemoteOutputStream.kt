@@ -22,11 +22,11 @@ import java.rmi.RemoteException
 interface RemoteOutputStream : Remote {
 
     @Throws(RemoteException::class)
-    fun close()
+    fun close(): Void?
 
     @Throws(RemoteException::class)
-    fun write(data: ByteArray, offset: Int, length: Int)
+    fun write(data: ByteArray, offset: Int, length: Int): Void?
 
     @Throws(RemoteException::class)
-    fun write(dataByte: Int)
+    fun write(dataByte: Int): Void?
 }

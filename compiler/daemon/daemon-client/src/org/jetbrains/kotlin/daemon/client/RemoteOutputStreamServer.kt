@@ -28,15 +28,18 @@ class RemoteOutputStreamServer(val out: OutputStream, port: Int = SOCKET_ANY_FRE
 : RemoteOutputStream,
   UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
 {
-    override fun close() {
+    override fun close(): Void? {
         out.close()
+        return null
     }
 
-    override fun write(data: ByteArray, offset: Int, length: Int) {
+    override fun write(data: ByteArray, offset: Int, length: Int): Void? {
         out.write(data, offset, length)
+        return null
     }
 
-    override fun write(dataByte: Int) {
+    override fun write(dataByte: Int): Void? {
         out.write(dataByte)
+        return null
     }
 }

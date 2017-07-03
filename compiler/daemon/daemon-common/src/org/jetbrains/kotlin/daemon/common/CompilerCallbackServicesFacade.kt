@@ -56,13 +56,13 @@ interface CompilerCallbackServicesFacade : Remote {
     fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray?
 
     @Throws(RemoteException::class)
-    fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String)
+    fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String): Void?
 
     @Throws(RemoteException::class)
     fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String
 
     @Throws(RemoteException::class)
-    fun incrementalCache_close(target: TargetId)
+    fun incrementalCache_close(target: TargetId): Void?
 
     @Throws(RemoteException::class)
     fun incrementalCache_getMultifileFacadeParts(target: TargetId, internalName: String): Collection<String>?
@@ -73,7 +73,7 @@ interface CompilerCallbackServicesFacade : Remote {
     fun lookupTracker_requiresPosition(): Boolean
 
     @Throws(RemoteException::class)
-    fun lookupTracker_record(lookups: Collection<LookupInfo>)
+    fun lookupTracker_record(lookups: Collection<LookupInfo>): Void?
 
     @Throws(RemoteException::class)
     fun lookupTracker_isDoNothing(): Boolean

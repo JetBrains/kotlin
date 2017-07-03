@@ -25,7 +25,7 @@ interface CompilerServicesFacadeBase : Remote {
      * Reports different kind of diagnostic messages from compile daemon to compile daemon clients (jps, gradle, ...)
      */
     @Throws(RemoteException::class)
-    fun report(category: Int, severity: Int, message: String?, attachment: Serializable?)
+    fun report(category: Int, severity: Int, message: String?, attachment: Serializable?): Void?
 }
 
 enum class ReportCategory(val code: Int) {
