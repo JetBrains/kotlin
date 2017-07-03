@@ -877,6 +877,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DefaultValues extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        @TestMetadata("33Parameters.kt")
+        public void test33Parameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/33Parameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("33ParametersInConstructor.kt")
+        public void test33ParametersInConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/33ParametersInConstructor.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInDefaultValues() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
