@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.Type
 abstract class AbstractForInProgressionOrRangeLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression)
     : AbstractForLoopGenerator(codegen, forExpression)
 {
-    protected var endVar: Int = 0
+    protected var endVar: Int = -1
 
     private var loopParameter: StackValue? = null
 
