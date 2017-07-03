@@ -14,34 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.compilerRunner;
+package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.annotations.NotNull;
+import java.io.File
 
-import java.io.File;
-import java.util.Collection;
-
-public class SimpleOutputItem {
-    private final Collection<File> sourceFiles;
-    private final File outputFile;
-
-    public SimpleOutputItem(@NotNull Collection<File> sourceFiles, @NotNull File outputFile) {
-        this.sourceFiles = sourceFiles;
-        this.outputFile = outputFile;
-    }
-
-    @NotNull
-    public Collection<File> getSourceFiles() {
-        return sourceFiles;
-    }
-
-    @NotNull
-    public File getOutputFile() {
-        return outputFile;
-    }
-
-    @Override
-    public String toString() {
-        return sourceFiles + " -> " + outputFile;
-    }
+data class SimpleOutputItem(val sourceFiles: Collection<File>, val outputFile: File) {
+    override fun toString(): String =
+            "$sourceFiles->$outputFile"
 }
