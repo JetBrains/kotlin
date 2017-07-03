@@ -177,7 +177,7 @@ class VarargInjectionLowering internal constructor(val context: CommonBackendCon
 
     private fun arrayType(type: KotlinType): ArrayHandle = when {
         KotlinBuiltIns.isPrimitiveArray(type) -> {
-            val primitiveType = KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(DescriptorUtils.getFqName(type.constructor.declarationDescriptor!!))
+            val primitiveType = KotlinBuiltIns.getPrimitiveArrayType(type.constructor.declarationDescriptor!!)
             when (primitiveType) {
                 PrimitiveType.BYTE    -> kByteArrayHandler
                 PrimitiveType.SHORT   -> kShortArrayHandler
