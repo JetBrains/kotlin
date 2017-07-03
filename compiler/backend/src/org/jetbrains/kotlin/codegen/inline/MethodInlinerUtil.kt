@@ -134,7 +134,7 @@ fun expandMaskConditionsAndUpdateVariableNodes(node: MethodNode, maskStartIndex:
     }
 
     val indexToVarNode = node.localVariables?.filter { it.index < maskStartIndex }?.associateBy { it.index } ?: emptyMap()
-    val toDelete = arrayListOf<AbstractInsnNode>()
+    val toDelete = linkedSetOf<AbstractInsnNode>()
     conditions.forEach {
         val jumpInstruction = it.jumpInstruction
         InsnSequence(it.maskInstruction, (if (it.expandNotDelete) jumpInstruction.next else jumpInstruction.label)).forEach {
@@ -146,6 +146,8 @@ fun expandMaskConditionsAndUpdateVariableNodes(node: MethodNode, maskStartIndex:
             }
         }
     }
+
+    node.localVariables.removeIf { it.start in toDelete && it.end in toDelete }
 
     toDelete.forEach {
         node.instructions.remove(it)
