@@ -56,24 +56,27 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray? = incrementalCompilationComponents!!.getIncrementalCache(target).getModuleMappingData()
 
-    override fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String) {
+    override fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String): Void? {
         incrementalCompilationComponents!!.getIncrementalCache(target).registerInline(fromPath, jvmSignature, toPath)
+        return null
     }
 
     override fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String = incrementalCompilationComponents!!.getIncrementalCache(target).getClassFilePath(internalClassName)
 
-    override fun incrementalCache_close(target: TargetId) {
+    override fun incrementalCache_close(target: TargetId): Void? {
         incrementalCompilationComponents!!.getIncrementalCache(target).close()
+        return null
     }
 
     override fun lookupTracker_requiresPosition() = incrementalCompilationComponents!!.getLookupTracker().requiresPosition
 
-    override fun lookupTracker_record(lookups: Collection<LookupInfo>) {
+    override fun lookupTracker_record(lookups: Collection<LookupInfo>): Void? {
         val lookupTracker = incrementalCompilationComponents!!.getLookupTracker()
 
         for (it in lookups) {
             lookupTracker.record(it.filePath, it.position, it.scopeFqName, it.scopeKind, it.name)
         }
+        return null
     }
 
     private val lookupTracker_isDoNothing: Boolean = incrementalCompilationComponents?.getLookupTracker() === LookupTracker.DO_NOTHING

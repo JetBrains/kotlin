@@ -444,7 +444,7 @@ class DaemonReportingTargets(val out: PrintStream? = null,
                              val messageCollector: MessageCollector? = null,
                              val compilerServices: CompilerServicesFacadeBase? = null)
 
-internal fun DaemonReportingTargets.report(category: DaemonReportCategory, message: String, source: String? = null) {
+internal fun DaemonReportingTargets.report(category: DaemonReportCategory, message: String, source: String? = null): Unit {
     val sourceMessage: String by lazy { source?.let { "[$it] $message" } ?: message }
     out?.println("${category.name}: $sourceMessage")
     messages?.add(DaemonReportMessage(category, sourceMessage))
