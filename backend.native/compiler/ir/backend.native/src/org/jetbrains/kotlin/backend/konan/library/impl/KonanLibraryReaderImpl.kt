@@ -16,66 +16,28 @@
 
 package org.jetbrains.kotlin.backend.konan.library.impl
 
-import org.jetbrains.kotlin.backend.konan.library.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
-import org.jetbrains.kotlin.backend.konan.library.MetadataReader
 import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
-import org.jetbrains.kotlin.backend.konan.util.*
+import org.jetbrains.kotlin.backend.konan.util.File
+import org.jetbrains.kotlin.backend.konan.util.Properties
+import org.jetbrains.kotlin.backend.konan.util.loadProperties
+import org.jetbrains.kotlin.backend.konan.util.propertyList
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-abstract class FileBasedLibraryReader(
-    val file: File, val currentAbiVersion: Int,
-    val reader: MetadataReader): KonanLibraryReader {
+class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int, val target: KonanTarget? = null) : KonanLibraryReader {
 
-    override val libraryName: String
-        get() = file.path
+    // For the zipped libraries inPlace gives files from zip file system
+    // whereas realFiles extracts them to /tmp.
+    // For unzipped libraries inPlace and realFiles are the same
+    // providing files in the library directory.
+    private val inPlace = KonanLibrary(libraryFile, target)
+    private val realFiles = inPlace.realFiles
 
-    val moduleHeaderData: ByteArray by lazy {
-        reader.loadSerializedModule()
-    }
-
-    fun packageMetadata(fqName: String): ByteArray =
-        reader.loadSerializedPackageFragment(fqName)
-
-    override fun moduleDescriptor(specifics: LanguageVersionSettings) 
-        = deserializeModule(specifics, {packageMetadata(it)}, 
-            moduleHeaderData)
-}
-
-
-class LibraryReaderImpl(override val libDir: File, currentAbiVersion: Int,
-        override val target: KonanTarget?) : 
-            FileBasedLibraryReader(libDir, currentAbiVersion, MetadataReaderImpl(libDir)), 
-            KonanLibrary  {
-
-    public constructor(path: String, currentAbiVersion: Int, target: KonanTarget?) : 
-        this(File(path), currentAbiVersion, target) 
-
-    init {
-        unpackIfNeeded()
-    }
-
-    // TODO: Search path processing is also goes somewhere around here.
-    fun unpackIfNeeded() {
-        // TODO: Clarify the policy here.
-        if (libDir.exists) {
-            if (libDir.isDirectory) return
-        }
-        if (!klibFile.exists) {
-            error("Could not find neither $libDir nor $klibFile.")
-        }
-        if (klibFile.isFile) {
-            klibFile.unzipAs(libDir)
-
-            if (!libDir.exists) error("Could not unpack $klibFile as $libDir.")
-        } else {
-            error("Expected $klibFile to be a regular file.")
-        }
-    }
+    private val reader = MetadataReaderImpl(inPlace)
 
     val manifestProperties: Properties by lazy {
-        manifestFile.loadProperties()
+        inPlace.manifestFile.loadProperties()
     }
 
     val abiVersion: String
@@ -86,10 +48,26 @@ class LibraryReaderImpl(override val libDir: File, currentAbiVersion: Int,
             return manifestAbiVersion
         }
 
+    val targetList = inPlace.targetsDir.listFiles.map{it.name}
+
+    override val libraryName 
+        get() = inPlace.libraryName
+
     override val bitcodePaths: List<String>
-        get() = (kotlinDir.listFiles + nativeDir.listFiles).map{it.absolutePath}
+        get() = (realFiles.kotlinDir.listFiles + realFiles.nativeDir.listFiles).map{it.absolutePath}
 
     override val linkerOpts: List<String>
         get() = manifestProperties.propertyList("linkerOpts", target!!.targetSuffix)
+
+    val moduleHeaderData: ByteArray by lazy {
+        reader.loadSerializedModule()
+    }
+
+    fun packageMetadata(fqName: String): ByteArray =
+        reader.loadSerializedPackageFragment(fqName)
+
+    override fun moduleDescriptor(specifics: LanguageVersionSettings) 
+        = deserializeModule(specifics, {packageMetadata(it)}, moduleHeaderData)
+
 }
 

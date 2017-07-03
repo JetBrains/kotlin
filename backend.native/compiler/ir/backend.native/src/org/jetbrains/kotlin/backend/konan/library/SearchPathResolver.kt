@@ -50,8 +50,7 @@ class KonanLibrarySearchPathResolver(repositories: List<String>,
         val noSuffix = File(candidate.path.removeSuffixIfPresent(".klib"))
         val withSuffix = File(candidate.path.suffixIfNot(".klib"))
         if (withSuffix.exists) {
-            // We always returing the name without suffix here.
-            return noSuffix
+            return withSuffix
         }
         if (noSuffix.exists) {
             return noSuffix

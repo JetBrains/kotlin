@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.cli.klib
 import kotlin.system.exitProcess
 import java.util.Properties
 // TODO: Extract these as a shared jar?
-import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
+import org.jetbrains.kotlin.backend.konan.library.impl.*
+import org.jetbrains.kotlin.backend.konan.library.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
 import org.jetbrains.kotlin.backend.konan.util.File
-import org.jetbrains.kotlin.backend.konan.util.copyTo
 import org.jetbrains.kotlin.konan.target.TargetManager
 
 fun printUsage() {
@@ -83,53 +83,49 @@ class Library(val name: String, val requestedRepository: String?, val target: St
     val repository = requestedRepository?.File() ?: defaultRepository
     fun info() {
         val library = libraryInRepoOrCurrentDir(repository, name)
-        val header = Properties()
-        val manifestFile = library.manifestFile
-        manifestFile.bufferedReader().use { reader ->
-            header.load(reader)
-        }
-        val headerAbiVersion = library.abiVersion
-        val moduleName = ModuleDeserializer(library.moduleHeaderData).moduleName
+        val reader = LibraryReaderImpl(library, currentAbiVersion)
+        val header = reader.manifestProperties
+        val headerAbiVersion = reader.abiVersion
+        val moduleName = ModuleDeserializer(reader.moduleHeaderData).moduleName
 
         println("")
-        println("Resolved to: ${library.libDir.absolutePath}")
+        println("Resolved to: ${reader.libraryName.File().absolutePath}")
         println("Module name: $moduleName")
         println("ABI version: $headerAbiVersion")
-        val targets = library.targetsDir.listFiles.map{it.name}.joinToString(", ")
+        val targets = reader.targetList.joinToString(", ")
         print("Available targets: $targets\n")
     }
 
     fun install() {
         remove(true) 
 
-        val klibFile = libraryInCurrentDir(name).klibFile
+        val library = ZippedKonanLibrary(libraryInCurrentDir(name))
         val newLocation = File(repository, "klib")
-        newLocation.mkdirs()
-        val newFile = File(newLocation, klibFile.name)
-        klibFile.copyTo(newFile)
+        val newLibDir = File(newLocation, library.libraryName.File().name)
+        newLibDir.mkdirs()
+        library.unpackTo(newLibDir)
     }
 
     fun remove(blind: Boolean = false) {
         if (!repository.exists) error("Repository does not exist: $repository")
 
-        val library = try {
+        val reader = try {
             val library = libraryInRepo(repository, name)
             if (blind) warn("Removing The previously installed $name from $repository.")
-            library
+            UnzippedKonanLibrary(library)
 
         } catch (e: Throwable) {
             if (!blind) println(e.message)
             null
 
         }
-        library?.libDir?.deleteRecursively()
-        library?.klibFile?.delete()
+        reader?.libDir?.deleteRecursively()
     }
 
     fun contents() {
-        val library = libraryInRepoOrCurrentDir(repository, name)
+        val reader = LibraryReaderImpl(libraryInRepoOrCurrentDir(repository, name), currentAbiVersion)
         val printer = PrettyPrinter(
-            library.moduleHeaderData, {name -> library.packageMetadata(name)})
+            reader.moduleHeaderData, {name -> reader.packageMetadata(name)})
         
         printer.packageFragmentNameList.forEach{ 
             printer.printPackageFragment(it)
@@ -140,22 +136,19 @@ class Library(val name: String, val requestedRepository: String?, val target: St
 // TODO: need to do something here.
 val currentAbiVersion = 1
 
-val File.konanLibrary 
-    get() = LibraryReaderImpl(this, currentAbiVersion, null)
-
-fun libraryInRepo(repository: File, name: String): LibraryReaderImpl {
+fun libraryInRepo(repository: File, name: String): File {
     val resolver = KonanLibrarySearchPathResolver(listOf(repository.absolutePath), null, null, skipCurrentDir = true)
-    return resolver.resolve(name).konanLibrary
+    return resolver.resolve(name)
 }
 
-fun libraryInCurrentDir(name: String): LibraryReaderImpl {
+fun libraryInCurrentDir(name: String): File {
     val resolver = KonanLibrarySearchPathResolver(emptyList(), null, null)
-    return resolver.resolve(name).konanLibrary
+    return resolver.resolve(name)
 }
 
-fun libraryInRepoOrCurrentDir(repository: File, name: String): LibraryReaderImpl {
+fun libraryInRepoOrCurrentDir(repository: File, name: String): File {
     val resolver = KonanLibrarySearchPathResolver(listOf(repository.absolutePath), null, null)
-    return resolver.resolve(name).konanLibrary
+    return resolver.resolve(name)
 }
 
 

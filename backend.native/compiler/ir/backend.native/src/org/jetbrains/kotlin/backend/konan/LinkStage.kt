@@ -203,7 +203,7 @@ internal class LinkStage(val context: Context) {
     val libraries = context.config.libraries
 
     fun llvmLto(files: List<BitcodeFile>): ObjectFile {
-        val tmpCombined = File.createTempFile("combined", ".o")
+        val tmpCombined = createTempFile("combined", ".o")
         tmpCombined.deleteOnExit()
         val combined = tmpCombined.absolutePath
 
