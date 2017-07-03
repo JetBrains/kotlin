@@ -47,7 +47,10 @@ class OptimizationMethodVisitor(
     companion object {
         private val MEMORY_LIMIT_BY_METHOD_MB = 50
 
-        private val MANDATORY_METHOD_TRANSFORMER = FixStackWithLabelNormalizationMethodTransformer()
+        private val MANDATORY_METHOD_TRANSFORMER = CompositeMethodTransformer(
+                FixStackWithLabelNormalizationMethodTransformer(),
+                MethodVerifier("AFTER mandatory stack transformations")
+        )
 
         private val OPTIMIZATION_TRANSFORMER = CompositeMethodTransformer(
                 CapturedVarsOptimizationMethodTransformer(),
@@ -59,7 +62,8 @@ class OptimizationMethodVisitor(
                 PopBackwardPropagationTransformer(),
                 DeadCodeEliminationMethodTransformer(),
                 RedundantGotoMethodTransformer(),
-                RedundantNopsCleanupMethodTransformer()
+                RedundantNopsCleanupMethodTransformer(),
+                MethodVerifier("AFTER optimizations")
         )
 
         fun canBeOptimized(node: MethodNode): Boolean {
