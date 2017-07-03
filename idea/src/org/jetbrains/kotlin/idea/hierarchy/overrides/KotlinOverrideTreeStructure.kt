@@ -16,31 +16,35 @@
 
 package org.jetbrains.kotlin.idea.hierarchy.overrides
 
-import com.intellij.ide.hierarchy.HierarchyTreeStructure
+import com.intellij.icons.AllIcons
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
+import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.ide.hierarchy.method.MethodHierarchyNodeDescriptor
-import com.intellij.ide.hierarchy.method.MethodHierarchyTreeStructure
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.asJava.toLightMethods
-import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
+import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 
-class KotlinOverrideTreeStructure(project: Project, val element: PsiElement) : HierarchyTreeStructure(project, null) {
-    val javaTreeStructures = element.toLightMethods().map { method -> MethodHierarchyTreeStructure(project, method) }
-
+class KotlinOverrideTreeStructure(project: Project, declaration: KtCallableDeclaration) : HierarchyTreeStructure(project, null) {
     init {
-        setBaseElement(javaTreeStructures.first().baseDescriptor!!)
+        setBaseElement(KotlinOverrideHierarchyNodeDescriptor(null, declaration.containingClassOrObject!!, declaration))
     }
 
-    override fun buildChildren(nodeDescriptor: HierarchyNodeDescriptor): Array<Any> {
-        fun buildChildrenByTreeStructure(javaTreeStructure: MethodHierarchyTreeStructure): Array<Any> {
-            return javaTreeStructure.getChildElements(nodeDescriptor as MethodHierarchyNodeDescriptor) ?: ArrayUtil.EMPTY_OBJECT_ARRAY
-        }
+    private val baseElement = declaration.createSmartPointer()
 
-        return javaTreeStructures
-                .asSequence()
-                .map (::buildChildrenByTreeStructure)
-                .reduce { a, b -> ContainerUtil.union(a.toSet(), b.toSet()).toTypedArray() }
+    override fun buildChildren(nodeDescriptor: HierarchyNodeDescriptor): Array<Any> {
+        val baseElement = baseElement.element ?: return ArrayUtil.EMPTY_OBJECT_ARRAY
+        val psiElement = nodeDescriptor.psiElement ?: return ArrayUtil.EMPTY_OBJECT_ARRAY
+        val subclasses = HierarchySearchRequest(psiElement, psiElement.useScope, false).searchInheritors().findAll()
+        return subclasses
+                .mapNotNull {
+                    val subclass = it.unwrapped ?: return@mapNotNull null
+                    KotlinOverrideHierarchyNodeDescriptor(nodeDescriptor, subclass, baseElement)
+                }
+                .filter { it.calculateState() != AllIcons.Hierarchy.MethodNotDefined }
+                .toTypedArray()
     }
 }

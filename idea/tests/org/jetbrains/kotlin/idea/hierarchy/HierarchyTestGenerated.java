@@ -560,6 +560,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/overrides"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
+        @TestMetadata("kotlinBuiltInMemberFunction")
+        public void testKotlinBuiltInMemberFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinBuiltInMemberFunction/");
+            doOverrideHierarchyTest(fileName);
+        }
+
         @TestMetadata("kotlinFunctionInClass")
         public void testKotlinFunctionInClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinFunctionInClass/");
@@ -581,6 +587,18 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         @TestMetadata("kotlinPropertyInTrait")
         public void testKotlinPropertyInTrait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinPropertyInTrait/");
+            doOverrideHierarchyTest(fileName);
+        }
+
+        @TestMetadata("kotlinTopLevelFunction")
+        public void testKotlinTopLevelFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinTopLevelFunction/");
+            doOverrideHierarchyTest(fileName);
+        }
+
+        @TestMetadata("kotlinVarParameter")
+        public void testKotlinVarParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinVarParameter/");
             doOverrideHierarchyTest(fileName);
         }
     }
