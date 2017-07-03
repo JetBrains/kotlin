@@ -16928,6 +16928,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("nullabilityForCommonCapturedSupertypes.kt")
+        public void testNullabilityForCommonCapturedSupertypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/nullabilityForCommonCapturedSupertypes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("objectCaptureOuterConstructorProperty.kt")
         public void testObjectCaptureOuterConstructorProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/objectCaptureOuterConstructorProperty.kt");

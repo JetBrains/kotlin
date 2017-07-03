@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.resolve.calls
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckerContext
-import org.jetbrains.kotlin.types.checker.anySuperTypeConstructor
-import org.jetbrains.kotlin.types.checker.intersectTypes
+import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 object NewCommonSuperTypeCalculator {
@@ -56,12 +53,12 @@ object NewCommonSuperTypeCalculator {
 
     private fun commonSuperTypeForSimpleTypes(types: List<SimpleType>): SimpleType {
         // i.e. result type also should be marked nullable
-        val anyMarkedNullable = types.any { it.isMarkedNullable }
-        val notNullTypes = if (anyMarkedNullable) types.map { it.makeNullableAsSpecified(false) } else types
+        val notAllNotNull = types.any { !NullabilityChecker.isSubtypeOfAny(it) }
+        val notNullTypes = if (notAllNotNull) types.map { it.makeNullableAsSpecified(false) } else types
 
         val commonSuperTypes = commonSuperTypeForNotNullTypes(notNullTypes)
 
-        return if (anyMarkedNullable) commonSuperTypes.makeNullableAsSpecified(true) else commonSuperTypes
+        return if (notAllNotNull) commonSuperTypes.makeNullableAsSpecified(true) else commonSuperTypes
     }
 
     private fun List<SimpleType>.uniquify(): List<SimpleType> {
