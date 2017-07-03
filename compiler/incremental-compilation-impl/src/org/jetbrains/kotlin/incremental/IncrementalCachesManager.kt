@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import java.io.File
 
-abstract class IncrementalCachesManager (
+abstract class IncrementalCachesManager<PlatformCache : IncrementalCacheCommon>(
     protected val cachesRootDir: File,
     protected val reporter: ICReporter
 ) {
@@ -33,6 +33,7 @@ abstract class IncrementalCachesManager (
 
     val inputsCache: InputsCache = InputsCache(inputSnapshotsCacheDir, reporter).apply { registerCache() }
     val lookupCache: LookupStorage = LookupStorage(lookupCacheDir).apply { registerCache() }
+    abstract val platformCache: PlatformCache
 
     fun clean() {
         caches.forEach { it.clean() }
@@ -70,8 +71,8 @@ class IncrementalJvmCachesManager(
     cacheDirectory: File,
     outputDir: File,
     reporter: ICReporter
-) : IncrementalCachesManager(cacheDirectory, reporter) {
+) : IncrementalCachesManager<IncrementalCacheImpl>(cacheDirectory, reporter) {
 
-    private val jvmCacheFile = File(cacheDirectory, "jvm").apply { mkdirs() }
-    val jvmCache = IncrementalCacheImpl(jvmCacheFile, outputDir).apply { registerCache() }
+    private val jvmCacheDir = File(cacheDirectory, "jvm").apply { mkdirs() }
+    override val platformCache = IncrementalCacheImpl(jvmCacheDir, outputDir).apply { registerCache() }
 }
