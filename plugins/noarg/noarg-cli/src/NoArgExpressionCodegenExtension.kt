@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.noarg
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.context.ConstructorContext
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -32,9 +31,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.codegen.FunctionGenerationStrategy.CodegenBased
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Type
 
-class NoArgExpressionCodegenExtension : ExpressionCodegenExtension {
+class NoArgExpressionCodegenExtension(val invokeInitializers: Boolean) : ExpressionCodegenExtension {
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) = with(codegen) {
         if (shouldGenerateNoArgConstructor()) {
             generateNoArgConstructor()
@@ -50,7 +48,11 @@ class NoArgExpressionCodegenExtension : ExpressionCodegenExtension {
             override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                 codegen.v.load(0, AsmTypes.OBJECT_TYPE)
                 codegen.v.visitMethodInsn(Opcodes.INVOKESPECIAL, superClassInternalName, "<init>", "()V", false)
-                generateInitializers(codegen)
+
+                if (invokeInitializers) {
+                    generateInitializers(codegen)
+                }
+
                 codegen.v.visitInsn(Opcodes.RETURN)
             }
         })

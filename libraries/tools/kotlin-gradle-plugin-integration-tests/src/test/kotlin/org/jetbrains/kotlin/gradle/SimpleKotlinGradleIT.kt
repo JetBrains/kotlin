@@ -163,4 +163,11 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             checkClass("Test2")
         }
     }
+
+    @Test
+    fun testNoArgKt18668() {
+        Project("noArgKt18668", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+        }
+    }
 }
