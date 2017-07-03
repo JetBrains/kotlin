@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCalleeTreeStructure;
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallerTreeStructure;
 import org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideTreeStructure;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.psi.KtCallableDeclaration;
 import org.jetbrains.kotlin.psi.KtElement;
 
 import java.io.File;
@@ -173,7 +174,7 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
             public HierarchyTreeStructure compute() {
                 return new KotlinOverrideTreeStructure(
                         getProject(),
-                        getElementAtCaret(LanguageCallHierarchy.INSTANCE)
+                        (KtCallableDeclaration) getElementAtCaret(LanguageMethodHierarchy.INSTANCE)
                 );
             }
         };
