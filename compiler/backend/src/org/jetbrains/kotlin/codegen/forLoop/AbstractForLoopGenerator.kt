@@ -42,7 +42,7 @@ abstract class AbstractForLoopGenerator(
     protected val elementType: KotlinType = bindingContext.getElementType(forExpression)
     protected val asmElementType: Type = codegen.asmType(elementType)
 
-    protected var loopParameterVar: Int = 0
+    protected var loopParameterVar: Int = -1
     protected lateinit var loopParameterType: Type
 
     private fun BindingContext.getElementType(forExpression: KtForExpression): KotlinType {
