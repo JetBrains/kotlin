@@ -69,6 +69,10 @@ class DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
 
             MAP.put(ErrorsAndroid.CREATOR_DEFINITION_IS_FORBIDDEN,
                     "'CREATOR' definition is forbidden. Use 'Parceler' companion object instead.")
+
+            MAP.put(ErrorsAndroid.PARCELABLE_TYPE_NOT_SUPPORTED,
+                    "Type is not supported by 'Parcelable'. " +
+                    "Annotate the parameter type with '@RawValue' if you want it to be serialized using 'writeValue()'")
         }
     }
 
