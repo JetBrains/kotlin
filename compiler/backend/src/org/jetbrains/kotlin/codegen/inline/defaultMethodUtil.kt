@@ -105,7 +105,7 @@ fun expandMaskConditionsAndUpdateVariableNodes(
         else null
     }.toList()
 
-    val toDelete = arrayListOf<AbstractInsnNode>()
+    val toDelete = linkedSetOf<AbstractInsnNode>()
     val toInsert = arrayListOf<Pair<AbstractInsnNode, AbstractInsnNode>>()
 
     val defaultLambdasInfo = extractDefaultLambdasInfo(conditions, defaultLambdas, toDelete, toInsert)
@@ -127,6 +127,8 @@ fun expandMaskConditionsAndUpdateVariableNodes(
         node.instructions.insert(position, newInsn)
     }
 
+    node.localVariables.removeIf { it.start in toDelete && it.end in toDelete }
+
     node.remove(toDelete)
 
     return defaultLambdasInfo
@@ -136,7 +138,7 @@ fun expandMaskConditionsAndUpdateVariableNodes(
 private fun extractDefaultLambdasInfo(
         conditions: List<Condition>,
         defaultLambdas: Map<Int, ValueParameterDescriptor>,
-        toDelete: MutableList<AbstractInsnNode>,
+        toDelete: MutableCollection<AbstractInsnNode>,
         toInsert: MutableList<Pair<AbstractInsnNode, AbstractInsnNode>>
 ): List<DefaultLambda> {
     val defaultLambdaConditions = conditions.filter { it.expandNotDelete && defaultLambdas.contains(it.varIndex) }
