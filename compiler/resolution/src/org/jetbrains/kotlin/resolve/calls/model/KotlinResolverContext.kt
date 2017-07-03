@@ -22,13 +22,12 @@ import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateFactory
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateWithBoundDispatchReceiver
-import org.jetbrains.kotlin.resolve.calls.tower.HiddenDescriptor
-import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
+import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.isDynamic
 
 
 class KotlinCallContext(
@@ -80,6 +79,16 @@ class SimpleCandidateFactory(val callContext: KotlinCallContext, val kotlinCall:
         val candidateDiagnostics = towerCandidate.diagnostics.toMutableList()
         if (callContext.externalPredicates.isHiddenInResolution(towerCandidate.descriptor, kotlinCall)) {
             candidateDiagnostics.add(HiddenDescriptor)
+        }
+
+        if (extensionReceiver != null) {
+            val parameterIsDynamic = towerCandidate.descriptor.extensionReceiverParameter!!.value.type.isDynamic()
+            val argumentIsDynamic = extensionReceiver.receiverValue.type.isDynamic()
+
+            if (parameterIsDynamic != argumentIsDynamic ||
+                (parameterIsDynamic && !towerCandidate.descriptor.hasDynamicExtensionAnnotation())) {
+                candidateDiagnostics.add(HiddenExtensionRelatedToDynamicTypes)
+            }
         }
 
         return SimpleKotlinResolutionCandidate(callContext, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver,
