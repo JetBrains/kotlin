@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -105,14 +106,10 @@ class JSTestGenerator(val context: TranslationContext) {
     private val onlyRef: JsExpression by lazy { findFunction("ftest") }
 
     private fun findFunction(name: String): JsExpression {
-        for (d in context.config.moduleDescriptors) {
-            if ("<kotlin-test>" == d.name) {
-                val descriptor = DescriptorUtils.getFunctionByNameOrNull(d.data.getPackage(FqName.ROOT).memberScope,
-                                                                         Name.identifier(name)) ?: continue
-                return ReferenceTranslator.translateAsValueReference(descriptor, context)
-            }
-        }
-        return JsNameRef(name, JsNameRef("Kotlin"))
+        val descriptor = DescriptorUtils.getFunctionByNameOrNull(
+                context.currentModule.getPackage(FqNameUnsafe("kotlin.test").toSafe()).memberScope,
+                Name.identifier(name)) ?: return JsNameRef(name, JsNameRef("Kotlin"))
+        return ReferenceTranslator.translateAsValueReference(descriptor, context)
     }
 
     private val ClassDescriptor.ref: JsExpression

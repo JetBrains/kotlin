@@ -15,7 +15,6 @@
  */
 
 import kotlin.test.*
-import kotlin.test.adapters.*
 
 /**
  * Overrides the framework adapter. Use in order to add support to a custom test framework.
@@ -46,49 +45,3 @@ public fun setAdapter(adapter: dynamic) {
 public fun setAssertHook(hook: (TestResult) -> Unit) {
     assertHook = hook
 }
-
-@JsName("suite")
-internal fun suite(name: String, suiteFn: () -> Unit) {
-    currentAdapter.suite(name, suiteFn)
-}
-
-@JsName("xsuite")
-internal fun xsuite(name: String, suiteFn: () -> Unit) {
-    currentAdapter.xsuite(name, suiteFn)
-}
-
-@JsName("fsuite")
-internal fun fsuite(name: String, suiteFn: () -> Unit) {
-    currentAdapter.fsuite(name, suiteFn)
-}
-
-@JsName("test")
-internal fun test(name: String, testFn: () -> Unit) {
-    currentAdapter.test(name, testFn)
-}
-
-@JsName("xtest")
-internal fun xtest(name: String, testFn: () -> Unit) {
-    currentAdapter.xtest(name, testFn)
-}
-
-@JsName("ftest")
-internal fun ftest(name: String, testFn: () -> Unit) {
-    currentAdapter.ftest(name, testFn)
-}
-
-internal var currentAdapter: FrameworkAdapter = detectAdapter()
-
-internal fun detectAdapter() = when {
-    isQUnit() -> QUnitAdapter()
-    isJasmine() -> JasmineAdapter()
-    isMocha() -> MochaAdapter()
-    else -> BareAdapter()
-}
-
-private val NAME_TO_ADAPTER: Map<String, () -> FrameworkAdapter> = mapOf(
-                "qunit" to ::QUnitAdapter,
-                "jasmine" to ::JasmineAdapter,
-                "jest" to ::JasmineAdapter, // Jest support both Mocha- and Jasmine-style test declarations.
-                "mocha" to ::MochaAdapter,
-                "auto" to ::detectAdapter)
