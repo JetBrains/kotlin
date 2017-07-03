@@ -27,35 +27,35 @@ import org.jetbrains.org.objectweb.asm.Type
 class ForInProgressionExpressionLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression)
     : AbstractForInProgressionOrRangeLoopGenerator(codegen, forExpression)
 {
-    private var incrementVar: Int = 0
-    private var incrementType: Type? = null
+    private val loopRangeType = bindingContext.getType(forExpression.loopRange!!)!!
+    private val asmLoopRangeType = codegen.asmType(loopRangeType)
+    private var incrementVar: Int = -1
+    private val incrementType: Type
+
+    init {
+        val incrementProp = loopRangeType.memberScope.getContributedVariables(Name.identifier("step"), NoLookupLocation.FROM_BACKEND)
+        assert(incrementProp.size == 1) { loopRangeType.toString() + " " + incrementProp.size }
+        incrementType = codegen.asmType(incrementProp.iterator().next().type)
+    }
 
     override fun beforeLoop() {
         super.beforeLoop()
 
         incrementVar = createLoopTempVariable(asmElementType)
 
-        val loopRangeType = bindingContext.getType(forExpression.loopRange!!)!!
-        val asmLoopRangeType = codegen.asmType(loopRangeType)
-
-        val incrementProp = loopRangeType.memberScope.getContributedVariables(Name.identifier("step"), NoLookupLocation.FROM_BACKEND)
-        assert(incrementProp.size == 1) { loopRangeType.toString() + " " + incrementProp.size }
-        incrementType = codegen.asmType(incrementProp.iterator().next().type)
-
         codegen.gen(forExpression.loopRange, asmLoopRangeType)
         v.dup()
         v.dup()
 
-        generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType,
-                                           loopParameterVar)
+        generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar)
         generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar)
-        generateRangeOrProgressionProperty(asmLoopRangeType, "getStep", incrementType!!, incrementType!!, incrementVar)
+        generateRangeOrProgressionProperty(asmLoopRangeType, "getStep", incrementType, incrementType, incrementVar)
     }
 
     override fun checkEmptyLoop(loopExit: Label) {
         loopParameter().put(asmElementType, v)
         v.load(endVar, asmElementType)
-        v.load(incrementVar, incrementType!!)
+        v.load(incrementVar, incrementType)
 
         val negativeIncrement = Label()
         val afterIf = Label()
