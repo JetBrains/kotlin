@@ -77,13 +77,13 @@ fun makeCompileServices(
     }
 
 fun updateIncrementalCache(
-        generatedFiles: List<GeneratedFile<*>>,
+        generatedFiles: Iterable<GeneratedFile>,
         cache: IncrementalCacheImpl
 ): CompilationResult {
     var changesInfo = CompilationResult.NO_CHANGES
     for (generatedFile in generatedFiles) {
         when {
-            generatedFile is GeneratedJvmClass<*> -> changesInfo += cache.saveFileToCache(generatedFile)
+            generatedFile is GeneratedJvmClass -> changesInfo += cache.saveFileToCache(generatedFile)
             generatedFile.outputFile.isModuleMappingFile() -> changesInfo += cache.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
         }
     }

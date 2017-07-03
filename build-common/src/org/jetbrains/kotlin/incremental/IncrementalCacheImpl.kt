@@ -114,7 +114,7 @@ open class IncrementalCacheImpl(
         return CompilationResult.NO_CHANGES
     }
 
-    open fun saveFileToCache(generatedClass: GeneratedJvmClass<*>): CompilationResult {
+    open fun saveFileToCache(generatedClass: GeneratedJvmClass): CompilationResult {
         val sourceFiles: Collection<File> = generatedClass.sourceFiles
         val kotlinClass: LocalFileKotlinClass = generatedClass.outputClass
         val className = kotlinClass.className

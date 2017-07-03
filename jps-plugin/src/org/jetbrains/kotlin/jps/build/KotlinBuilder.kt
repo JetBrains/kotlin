@@ -22,7 +22,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import gnu.trove.THashSet
-import jdk.nashorn.internal.lookup.Lookup
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.DirtyFilesHolder
@@ -41,17 +40,13 @@ import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmBuildMetaInfo
-import org.jetbrains.kotlin.build.isModuleMappingFile
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
-import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
-import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
-import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -311,9 +306,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return OK
         }
 
-        @Suppress("REIFIED_TYPE_UNSAFE_SUBSTITUTION")
-        val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass<ModuleBuildTarget>>()
-        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses, incrementalCaches)
+        updateJavaMappings(chunk, context, dirtyFilesHolder, filesToCompile, generatedFiles, incrementalCaches)
 
         if (!IncrementalCompilation.isEnabled()) {
             return OK
@@ -321,7 +314,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         context.checkCanceled()
 
-        val changesInfo = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedFiles)
+        val changesInfo = generatedFiles.entries.fold(CompilationResult.NO_CHANGES) { acc, (target, files) ->
+            acc + updateIncrementalCache(files, incrementalCaches[target]!!)
+        }
         updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
 
         if (isChunkRebuilding) {
@@ -517,7 +512,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun getGeneratedFiles(
             chunk: ModuleChunk,
             outputItemCollector: OutputItemsCollectorImpl
-    ): List<GeneratedFile<ModuleBuildTarget>> {
+    ): Map<ModuleBuildTarget, List<GeneratedFile>> {
         // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
         val sourceToTarget = HashMap<File, ModuleBuildTarget>()
         if (chunk.targets.size > 1) {
@@ -528,34 +523,21 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             }
         }
 
-        val result = ArrayList<GeneratedFile<ModuleBuildTarget>>()
-
         val representativeTarget = chunk.representativeTarget()
-        for (outputItem in outputItemCollector.outputs) {
-            val sourceFiles = outputItem.sourceFiles
-            val outputFile = outputItem.outputFile
-            val target =
-                    sourceFiles.firstOrNull()?.let { sourceToTarget[it] } ?:
-                    chunk.targets.singleOrNull { it.outputDir?.let { outputFile.startsWith(it) } ?: false } ?:
-                    representativeTarget
+        fun SimpleOutputItem.target() =
+                sourceFiles.firstOrNull()?.let { sourceToTarget[it] } ?:
+                chunk.targets.singleOrNull { it.outputDir?.let { outputFile.startsWith(it) } ?: false } ?:
+                representativeTarget
 
-            if (outputFile.name.endsWith(".class")) {
-                result.add(GeneratedJvmClass(target, sourceFiles, outputFile))
-            }
-            else {
-                result.add(GeneratedFile<ModuleBuildTarget>(target, sourceFiles, outputFile))
-            }
-        }
-        return result
+        return outputItemCollector.outputs.groupBy(SimpleOutputItem::target, SimpleOutputItem::toGeneratedFile)
     }
 
     private fun updateJavaMappings(
             chunk: ModuleChunk,
-            compilationErrors: Boolean,
             context: CompileContext,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
-            generatedClasses: List<GeneratedJvmClass<ModuleBuildTarget>>,
+            outputItems: Map<ModuleBuildTarget, Iterable<GeneratedFile>>,
             incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCacheImpl>
     ) {
         val previousMappings = context.projectDescriptor.dataManager.mappings
@@ -568,8 +550,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             files
         }
 
-        fun getOldSourceFiles(generatedClass: GeneratedJvmClass<ModuleBuildTarget>): Set<File> {
-            val cache = incrementalCaches[generatedClass.target] ?: return emptySet()
+        fun getOldSourceFiles(target: ModuleBuildTarget, generatedClass: GeneratedJvmClass): Set<File> {
+            val cache = incrementalCaches[target] ?: return emptySet()
             val className = generatedClass.outputClass.className
 
             if (!cache.isMultifileFacade(className)) return emptySet()
@@ -578,65 +560,34 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return previousMappings.getClassSources(name)?.toSet() ?: emptySet()
         }
 
-        for (generatedClass in generatedClasses) {
-            val sourceFiles = THashSet(FileUtil.FILE_HASHING_STRATEGY)
-            sourceFiles.addAll(getOldSourceFiles(generatedClass))
-            sourceFiles.removeAll(targetDirtyFiles[generatedClass.target] ?: emptySet())
-            sourceFiles.addAll(generatedClass.sourceFiles)
+        for ((target, outputs) in outputItems) {
+            for (output in outputs) {
+                if (output !is GeneratedJvmClass) continue
 
-            callback.associate(
-                    FileUtil.toSystemIndependentName(generatedClass.outputFile.canonicalPath),
-                    sourceFiles.map { FileUtil.toSystemIndependentName(it.canonicalPath) },
-                    ClassReader(generatedClass.outputClass.fileContents)
-            )
-        }
+                val sourceFiles = THashSet(FileUtil.FILE_HASHING_STRATEGY)
+                sourceFiles.addAll(getOldSourceFiles(target, output))
+                sourceFiles.removeAll(targetDirtyFiles[target] ?: emptySet())
+                sourceFiles.addAll(output.sourceFiles)
 
-        val allCompiled = filesToCompile.values()
-        val successfullyCompiled = if (compilationErrors) listOf<File>() else allCompiled
-
-        JavaBuilderUtil.registerFilesToCompile(context, allCompiled)
-        JavaBuilderUtil.registerSuccessfullyCompiled(context, successfullyCompiled)
-    }
-
-    private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, generatedFiles: List<GeneratedFile<ModuleBuildTarget>>) {
-        for (generatedFile in generatedFiles) {
-            outputConsumer.registerOutputFile(generatedFile.target, generatedFile.outputFile, generatedFile.sourceFiles.map { it.path })
-        }
-    }
-
-    private fun updateKotlinIncrementalCache(
-            compilationErrors: Boolean,
-            incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCacheImpl>,
-            generatedFiles: List<GeneratedFile<ModuleBuildTarget>>
-    ): CompilationResult {
-
-        assert(IncrementalCompilation.isEnabled()) { "updateKotlinIncrementalCache should not be called when incremental compilation disabled" }
-
-        var changesInfo = CompilationResult.NO_CHANGES
-        for (generatedFile in generatedFiles) {
-            val ic = incrementalCaches[generatedFile.target]!!
-            val newChangesInfo =
-                    if (generatedFile is GeneratedJvmClass<ModuleBuildTarget>) {
-                        ic.saveFileToCache(generatedFile)
-                    }
-                    else if (generatedFile.outputFile.isModuleMappingFile()) {
-                        ic.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
-                    }
-                    else {
-                        continue
-                    }
-
-            changesInfo += newChangesInfo
-        }
-
-        if (!compilationErrors) {
-            incrementalCaches.values.forEach {
-                val newChangesInfo = it.clearCacheForRemovedClasses()
-                changesInfo += newChangesInfo
+                callback.associate(
+                        FileUtil.toSystemIndependentName(output.outputFile.canonicalPath),
+                        sourceFiles.map { FileUtil.toSystemIndependentName(it.canonicalPath) },
+                        ClassReader(output.outputClass.fileContents)
+                )
             }
         }
 
-        return changesInfo
+        val allCompiled = filesToCompile.values()
+        JavaBuilderUtil.registerFilesToCompile(context, allCompiled)
+        JavaBuilderUtil.registerSuccessfullyCompiled(context, allCompiled)
+    }
+
+    private fun registerOutputItems(outputConsumer: OutputConsumer, outputItems: Map<ModuleBuildTarget, List<GeneratedFile>>) {
+        for ((target, outputs) in outputItems) {
+            for (output in outputs) {
+                outputConsumer.registerOutputFile(target, output.outputFile, output.sourceFiles.map { it.path })
+            }
+        }
     }
 
     private fun updateLookupStorage(
