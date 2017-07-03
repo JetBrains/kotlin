@@ -19895,6 +19895,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt18779.kt")
+        public void testKt18779() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt18779.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt1932.kt")
         public void testKt1932() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt1932.kt");
