@@ -110,45 +110,45 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
 
     private fun getExpressionForIntroduceCall(): ExpressionForCall? {
         val psiElement = element ?: return null
-        return if ((psiElement as? KtExpression).isNullExpression()) {
+        if ((psiElement as? KtExpression).isNullExpression()) {
             return null
         }
-        else if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
-            (psiElement.prevSibling as? KtExpression).expressionForCall()
+        if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
+            return (psiElement.prevSibling as? KtExpression).expressionForCall()
         }
-        else if (psiElement is KtArrayAccessExpression) {
-            psiElement.arrayExpression.expressionForCall()
-        }
-        else if (psiElement is KtOperationReferenceExpression) {
-            val parent = psiElement.parent
-            when (parent) {
-                is KtUnaryExpression -> parent.baseExpression.expressionForCall()
-                is KtBinaryExpression -> {
-                    val receiver = if (KtPsiUtil.isInOrNotInOperation(parent)) parent.right else parent.left
-                    receiver.expressionForCall()
-                }
-                else -> null
-            }
-        }
-        else if (psiElement is KtExpression) {
-            val context = psiElement.analyze()
-            if (checkImplicitReceivers && psiElement.getResolvedCall(context)?.getImplicitReceiverValue() != null) {
-                val expressionToReplace = psiElement.parent as? KtCallExpression ?: psiElement
-                expressionToReplace.expressionForCall(implicitReceiver = true)
-            }
-            else {
-                context[BindingContext.EXPRESSION_TYPE_INFO, psiElement]?.let {
-                    val type = it.type
-                    if (type != null) {
-                        val nullability = it.dataFlowInfo.getStableNullability(DataFlowValueFactory.createDataFlowValue(psiElement, type, context, psiElement.findModuleDescriptor()))
-                        if (!nullability.canBeNonNull()) return null
+        return when (psiElement) {
+            is KtArrayAccessExpression -> psiElement.arrayExpression.expressionForCall()
+            is KtOperationReferenceExpression -> {
+                val parent = psiElement.parent
+                when (parent) {
+                    is KtUnaryExpression -> parent.baseExpression.expressionForCall()
+                    is KtBinaryExpression -> {
+                        val receiver = if (KtPsiUtil.isInOrNotInOperation(parent)) parent.right else parent.left
+                        receiver.expressionForCall()
                     }
+                    else -> null
                 }
-                psiElement.expressionForCall()
             }
-        }
-        else {
-            null
+            is KtExpression -> {
+                val context = psiElement.analyze()
+                if (checkImplicitReceivers && psiElement.getResolvedCall(context)?.getImplicitReceiverValue() != null) {
+                    val expressionToReplace = psiElement.parent as? KtCallExpression ?: psiElement
+                    expressionToReplace.expressionForCall(implicitReceiver = true)
+                }
+                else {
+                    context[BindingContext.EXPRESSION_TYPE_INFO, psiElement]?.let {
+                        val type = it.type
+                        if (type != null) {
+                            val nullability = it.dataFlowInfo.getStableNullability(
+                                    DataFlowValueFactory.createDataFlowValue(psiElement, type, context, psiElement.findModuleDescriptor())
+                            )
+                            if (!nullability.canBeNonNull()) return null
+                        }
+                    }
+                    psiElement.expressionForCall()
+                }
+            }
+            else -> null
         }
     }
 
