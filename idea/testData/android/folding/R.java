@@ -30,5 +30,7 @@ public final class R {
         public static final int mydimen1=0x7f07005b;
         public static final int mydimen2=0x7f07005c;
         public static final int mydimen3=0x7f07005d;
+        public static final int dimenRef=0x7f07005e;
+        public static final int dimenAndroidRef=0x7f07005f;
     }
 }

@@ -15,5 +15,10 @@ class MyActivity : Activity() <fold text='{...}' expand='true'>{
         val strings = intArrayOf(<fold text='"1111"' expand='false'>R.string.string1</fold>, <fold text='"2222"' expand='false'>R.string.string2</fold>, <fold text='"3333"' expand='false'>R.string.string3</fold>)
         val dimensions = intArrayOf(<fold text='1dip' expand='false'>R.dimen.mydimen1</fold>, <fold text='2dip' expand='false'>R.dimen.mydimen2</fold>)
         val maxButtons = <fold text='max_action_buttons: 2' expand='false'>resources.getInteger(R.integer.max_action_buttons)</fold>
+        val dimensionWithReference = <fold text='1dip' expand='false'>resources.getDimension(R.dimen.dimenRef)</fold>
+        val dimensionWithAndroidReference = <fold text='@android:dimen/app_icon_size' expand='false'>resources.getDimension(R.dimen.dimenAndroidRef)</fold>
+        with(resources) <fold text='{...}' expand='true'>{
+            val dimension = <fold text='56dip' expand='false'>resources.getDimension(R.dimen.action_bar_default_height)</fold>.toInt()
+        }</fold>
     }</fold>
 }</fold>

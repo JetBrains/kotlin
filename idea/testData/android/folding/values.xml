@@ -36,4 +36,6 @@
     <dimen name="mydimen3">3dip</dimen>
     <dimen name="mydimen1">1dip</dimen>
     <dimen name="mydimen2">2dip</dimen>
+    <dimen name="dimenRef">@dimen/mydimen1</dimen>
+    <dimen name="dimenAndroidRef">@android:dimen/app_icon_size</dimen>
 </resources>

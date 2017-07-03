@@ -100,23 +100,27 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
             FoldingDescriptor(psi.node, psi.textRange, null, dependencies)
         }
 
-        val element = getOutermostQualified() ?: this
-
-        (element.uastParent as? UCallExpression)?.run {
-            if (isFoldableGetResourceValueCall()) {
-                return getOutermostQualified()?.createFoldingDescriptor() ?: createFoldingDescriptor()
+        val element = uastParent as? UQualifiedReferenceExpression ?: this
+        val getResourceValueCall = (element.uastParent as? UCallExpression)?.takeIf { it.isFoldableGetResourceValueCall() }
+        if (getResourceValueCall != null) {
+            val qualifiedCall = getResourceValueCall.uastParent as? UQualifiedReferenceExpression
+            if (qualifiedCall?.selector == getResourceValueCall) {
+                return qualifiedCall.createFoldingDescriptor()
             }
+
+            return getResourceValueCall.createFoldingDescriptor()
         }
 
         return element.createFoldingDescriptor()
     }
 
-    private fun UCallExpression.isFoldableGetResourceValueCall() =
-        methodName == "getString" ||
-        methodName == "getText" ||
-        methodName == "getInteger" ||
-        methodName?.startsWith("getDimension") ?: false ||
-        methodName?.startsWith("getQuantityString") ?: false
+    private fun UCallExpression.isFoldableGetResourceValueCall(): Boolean {
+        return methodName == "getString" ||
+               methodName == "getText" ||
+               methodName == "getInteger" ||
+               methodName?.startsWith("getDimension") ?: false ||
+               methodName?.startsWith("getQuantityString") ?: false
+    }
 
     private fun PsiElement.getAndroidResourceType(): ResourceType? {
         val elementType = parent as? PsiClass ?: return null
@@ -132,17 +136,11 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
     private fun UReferenceExpression.getAndroidResourceValue(resources: LocalResourceRepository, call: UCallExpression? = null): String? {
         val resourceType = resolve()?.getAndroidResourceType() ?: return null
         val referenceConfig = FolderConfiguration().apply { localeQualifier = LocaleQualifier("xx") }
-        val key = resolvedName
-        val resourceValue = resources.getConfiguredValue(resourceType, key, referenceConfig)?.value ?: return null
+        val key = resolvedName ?: return null
+        val resourceValue = resources.getResourceValue(resourceType, key, referenceConfig) ?: return null
         val text = if (call != null) formatArguments(call, resourceValue) else resourceValue
 
-        if (resourceType == ResourceType.PLURALS && text.startsWith(STRING_PREFIX)) {
-            resources.getConfiguredValue(ResourceType.STRING, text.substring(STRING_PREFIX.length), referenceConfig)?.value?.let {
-                return '"' + StringUtil.shortenTextWithEllipsis(it, FOLD_MAX_LENGTH - 2, 0) + '"'
-            }
-        }
-
-        if (resourceType == ResourceType.STRING) {
+        if (resourceType == ResourceType.STRING || resourceType == ResourceType.PLURALS) {
             return '"' + StringUtil.shortenTextWithEllipsis(text, FOLD_MAX_LENGTH - 2, 0) + '"'
         }
         else if (text.length <= 1) {
@@ -153,6 +151,20 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
         }
 
         return StringUtil.shortenTextWithEllipsis(text, FOLD_MAX_LENGTH, 0)
+    }
+
+    private tailrec fun LocalResourceRepository.getResourceValue(
+            type: ResourceType,
+            name: String,
+            referenceConfig: FolderConfiguration): String? {
+        val value = getConfiguredValue(type, name, referenceConfig)?.value ?: return null
+        if (!value.startsWith('@')) {
+            return value
+        }
+
+        val (referencedTypeName, referencedName) = value.substring(1).split('/').takeIf { it.size == 2 } ?: return value
+        val referencedType = ResourceType.getEnum(referencedTypeName) ?: return value
+        return getResourceValue(referencedType, referencedName, referenceConfig)
     }
 
     // Converted from com.android.tools.idea.folding.InlinedResource#insertArguments
