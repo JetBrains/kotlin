@@ -18,6 +18,36 @@ package kotlin.test
 
 import kotlin.test.adapters.*
 
+/**
+ * Overrides the framework adapter. Use in order to add support to a custom test framework.
+ *
+ * Also some string arguments are supported. Use "qunit" to set the adapter to [QUnit](https://qunitjs.com/), "mocha" for
+ * [Mocha](https://mochajs.org/), "jest" for [Jest](https://facebook.github.io/jest/),
+ * "jasmine" for [Jasmine](https://github.com/jasmine/jasmine), and "auto" to detect one of those frameworks automatically.
+ *
+ * If this function is not called, the test framework will be detected automatically (as if "auto" was passed).
+ *
+ */
+@JsName("setAdapter")
+public fun setAdapter(adapter: dynamic) {
+    if (js("typeof adapter === 'string'")) {
+        NAME_TO_ADAPTER[adapter]?.let {
+            setAdapter(it.invoke())
+        }?: throw IllegalArgumentException("Unsupported test framework adapter: '$adapter'")
+    }
+    else {
+        currentAdapter = adapter
+    }
+}
+
+/**
+ * Use in order to define which action should be taken by the test framework on the testResult.
+ */
+@JsName("setAssertHook")
+public fun setAssertHook(hook: (TestResult) -> Unit) {
+    assertHook = hook
+}
+
 @JsName("suite")
 internal fun suite(name: String, suiteFn: () -> Unit) {
     currentAdapter.suite(name, suiteFn)
