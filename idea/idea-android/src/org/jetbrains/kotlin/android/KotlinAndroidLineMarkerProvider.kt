@@ -64,7 +64,7 @@ class KotlinAndroidLineMarkerProvider : LineMarkerProvider {
                     nameIdentifier,
                     nameIdentifier.textRange,
                     AllIcons.FileTypes.Xml,
-                    Pass.LINE_MARKERS,
+                    Pass.UPDATE_OVERRIDDEN_MARKERS,
                     Function { "Related XML file" },
                     GutterIconNavigationHandler { e: MouseEvent, _: PsiElement ->
                         NavigationUtil
