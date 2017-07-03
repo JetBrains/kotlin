@@ -20702,6 +20702,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("nullabilityForCommonCapturedSupertypes.kt")
+        public void testNullabilityForCommonCapturedSupertypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/nullabilityForCommonCapturedSupertypes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("objectCaptureOuterConstructorProperty.kt")
         public void testObjectCaptureOuterConstructorProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/objectCaptureOuterConstructorProperty.kt");
