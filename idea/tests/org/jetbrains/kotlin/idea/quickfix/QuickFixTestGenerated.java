@@ -266,6 +266,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("null.kt")
+        public void testNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/null.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullExpression.kt")
+        public void testNullExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/nullExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("operationIn.kt")
         public void testOperationIn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/operationIn.kt");
