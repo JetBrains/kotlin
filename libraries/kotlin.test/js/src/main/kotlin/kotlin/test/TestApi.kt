@@ -42,7 +42,7 @@ public fun setAdapter(adapter: dynamic) {
 }
 
 /**
- * Use in order to define which action should be taken by the test framework on the [TestResult].
+ * Use in order to define which action should be taken by the test framework on the [AssertionResult].
  */
 @JsName("setAssertHook")
 public fun setAssertHook(hook: (AssertionResult) -> Unit) {
