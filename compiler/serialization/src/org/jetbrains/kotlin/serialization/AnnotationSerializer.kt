@@ -34,9 +34,9 @@ class AnnotationSerializer(private val stringTable: StringTable) {
 
         id = stringTable.getFqNameIndex(annotationClass)
 
-        for ((parameter, value) in annotation.allValueArguments) {
+        for ((name, value) in annotation.allValueArguments) {
             val argument = ProtoBuf.Annotation.Argument.newBuilder()
-            argument.nameId = stringTable.getStringIndex(parameter.name.asString())
+            argument.nameId = stringTable.getStringIndex(name.asString())
             argument.setValue(valueProto(value))
             addArgument(argument)
         }

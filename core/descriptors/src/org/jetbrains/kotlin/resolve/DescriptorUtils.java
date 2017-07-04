@@ -522,10 +522,10 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static String getJvmName(@Nullable AnnotationDescriptor jvmNameAnnotation) {
+    private static String getJvmName(@Nullable AnnotationDescriptor jvmNameAnnotation) {
         if (jvmNameAnnotation == null) return null;
 
-        Map<ValueParameterDescriptor, ConstantValue<?>> arguments = jvmNameAnnotation.getAllValueArguments();
+        Map<Name, ConstantValue<?>> arguments = jvmNameAnnotation.getAllValueArguments();
         if (arguments.isEmpty()) return null;
 
         ConstantValue<?> name = arguments.values().iterator().next();

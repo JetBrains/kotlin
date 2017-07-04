@@ -61,7 +61,7 @@ class LazyJavaAnnotationDescriptor(
 
     private val factory = ConstantValueFactory(c.module.builtIns)
 
-    override val allValueArguments by c.storageManager.createLazyValue {
+    override val valueArgumentsByParameterDescriptor by c.storageManager.createLazyValue {
         val constructors = annotationClass!!.constructors
         if (constructors.isEmpty()) return@createLazyValue emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
 

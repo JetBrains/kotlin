@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.android.synthetic.descriptors
 
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import kotlinx.android.extensions.CacheImplementation
 import kotlinx.android.extensions.CacheImplementation.*
 import kotlinx.android.extensions.ContainerOptions
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 
@@ -59,16 +59,13 @@ class ContainerOptionsProxy(val containerType: AndroidContainerType, val cache: 
     }
 }
 
-private operator fun AnnotationDescriptor.get(name: String): ConstantValue<*>? {
-    return allValueArguments.entries.firstOrNull { it.key.name.asString() == name }?.value
-}
-
-private fun <E: Enum<E>> AnnotationDescriptor.getEnumValue(name: String, defaultValue: E, factory: (String) -> E): E {
-    val valueName = (this[name] as? EnumValue)?.value?.name?.asString() ?: defaultValue.name
+private fun <E : Enum<E>> AnnotationDescriptor.getEnumValue(name: String, defaultValue: E, factory: (String) -> E): E {
+    val valueName = (allValueArguments[Name.identifier(name)] as? EnumValue)?.value?.name?.asString() ?: defaultValue.name
 
     return try {
         factory(valueName)
-    } catch (e: IllegalArgumentException) {
+    }
+    catch (e: IllegalArgumentException) {
         // Enum.valueOf() may throw this
         defaultValue
     }

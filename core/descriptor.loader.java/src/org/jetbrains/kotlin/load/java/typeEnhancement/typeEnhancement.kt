@@ -209,7 +209,7 @@ private class EnhancedTypeAnnotations(private val fqNameToMatch: FqName) : Annot
 private object EnhancedTypeAnnotationDescriptor : AnnotationDescriptor {
     private fun throwError(): Nothing = error("No methods should be called on this descriptor. Only its presence matters")
     override val type: KotlinType get() = throwError()
-    override val allValueArguments: Map<ValueParameterDescriptor, ConstantValue<*>> get() = throwError()
+    override val valueArgumentsByParameterDescriptor: Map<ValueParameterDescriptor, ConstantValue<*>> get() = throwError()
     override val source: SourceElement get() = throwError()
     override fun toString() = "[EnhancedType]"
 }

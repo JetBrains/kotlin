@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
@@ -31,7 +32,11 @@ interface AnnotationDescriptor {
     val fqName: FqName? get() =
             (type.constructor.declarationDescriptor as? ClassDescriptor)?.fqNameUnsafe?.takeIf(FqNameUnsafe::isSafe)?.toSafe()
 
-    val allValueArguments: Map<ValueParameterDescriptor, ConstantValue<*>>
+    @Deprecated("Use allValueArguments instead")
+    val valueArgumentsByParameterDescriptor: Map<ValueParameterDescriptor, ConstantValue<*>>
+
+    val allValueArguments: Map<Name, ConstantValue<*>>
+        get() = valueArgumentsByParameterDescriptor.mapKeys { (parameter) -> parameter.name }
 
     val source: SourceElement
 }
