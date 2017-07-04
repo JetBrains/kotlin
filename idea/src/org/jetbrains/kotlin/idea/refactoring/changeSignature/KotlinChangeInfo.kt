@@ -122,6 +122,11 @@ open class KotlinChangeInfo(
 
     fun getNewParametersCount(): Int = newParameters.size
 
+    fun hasAppendedParametersOnly(): Boolean {
+        val oldParamCount = originalBaseFunctionDescriptor.valueParameters.size
+        return newParameters.withIndex().all { (i, p) -> if (i < oldParamCount) p.oldIndex == i else p.isNewParameter }
+    }
+
     override fun getNewParameters(): Array<KotlinParameterInfo> = newParameters.toTypedArray()
 
     fun getNonReceiverParametersCount(): Int = newParameters.size - (if (receiverParameterInfo != null) 1 else 0)
