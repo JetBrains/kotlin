@@ -1,0 +1,12 @@
+// "Implement members" "true"
+// WITH_RUNTIME
+// ERROR: Header declaration 'InterfaceWithFuns' has no implementation in module light_idea_test_case for JVM
+header interface InterfaceWithFuns {
+    fun funInInterface()
+}
+
+class ChildOfInterface : InterfaceWithFuns{
+    override fun funInInterface() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}

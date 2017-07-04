@@ -5768,6 +5768,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("doNotAddHeader.kt")
+        public void testDoNotAddHeader() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/doNotAddHeader.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/enum.kt");
