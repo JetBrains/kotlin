@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 605
+// EXPECTED_REACHABLE_NODES: 1378
 package foo
 
 inline fun bar(f: () -> Int): Array<Int> = arrayOf(f())

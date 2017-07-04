@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 495
+// EXPECTED_REACHABLE_NODES: 1378
 package foo
 
 fun catchSomeExceptions(e: Exception) {

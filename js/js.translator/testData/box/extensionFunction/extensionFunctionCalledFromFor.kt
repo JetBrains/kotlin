@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 613
+// EXPECTED_REACHABLE_NODES: 1386
 package foo
 
 class SimpleEnumerator {

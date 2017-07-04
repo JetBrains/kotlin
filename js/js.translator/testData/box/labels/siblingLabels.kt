@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 492
+// EXPECTED_REACHABLE_NODES: 1381
 package foo
 
 // CHECK_LABELS_COUNT: function=test name=loop count=2

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 499
+// EXPECTED_REACHABLE_NODES: 1386
 open class Foo() {
     fun xyzzy(): String = "xyzzy"
 }

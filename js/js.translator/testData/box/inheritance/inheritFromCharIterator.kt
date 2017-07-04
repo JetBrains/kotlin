@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 501
+// EXPECTED_REACHABLE_NODES: 1380
 package foo
 
 class MyCharIterator : CharIterator() {

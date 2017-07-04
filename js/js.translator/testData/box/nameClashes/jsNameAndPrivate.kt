@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 493
+// EXPECTED_REACHABLE_NODES: 1380
 package foo
 
 @JsName("bar") fun foo(x: Int) = x

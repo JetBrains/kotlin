@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 493
+// EXPECTED_REACHABLE_NODES: 1380
 package foo
 
 inline fun<T> with1(value: T, p: T.() -> Unit) = value.p()

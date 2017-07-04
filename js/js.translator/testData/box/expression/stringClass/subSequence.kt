@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 500
+// EXPECTED_REACHABLE_NODES: 1384
 package foo
 
 class CC(val s: CharSequence) : CharSequence by s, MyCharSequence {}

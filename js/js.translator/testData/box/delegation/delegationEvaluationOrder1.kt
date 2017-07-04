@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 515
+// EXPECTED_REACHABLE_NODES: 1402
 package foo
 
 interface Base {
