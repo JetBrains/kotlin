@@ -204,7 +204,7 @@ fun arrays(): List<GenericFunction> {
         }
         returns("SELF?")
         body {
-            "return if (this == null || this.isEmpty()) null else this"
+            "return if (this.isEmpty()) null else this"
         }
     }
 

@@ -874,7 +874,7 @@ public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
  * @sample samples.collections.Collections.nullIfEmpty
  */
 public fun <T> Collection<T>.nullIfEmpty(): Collection<T>? {
-    return if (this == null || this.isEmpty()) null else this
+    return if (this.isEmpty()) null else this
 }
 
 /**

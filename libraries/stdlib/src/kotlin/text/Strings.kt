@@ -1197,11 +1197,11 @@ public fun CharSequence.lines(): List<String> = lineSequence().toList()
  *
  * @sample samples.text.Strings.nullIfEmpty
  */
-public inline fun CharSequence?.nullIfEmpty(): CharSequence? = if (this == null || this.isEmpty()) null else this
+public inline fun CharSequence.nullIfEmpty(): CharSequence? = if (this.isEmpty()) null else this
 
 /**
  * Returns `this` value if it is not empty or `null`, if it is.
  *
  * @sample samples.text.Strings.nullIfEmpty
  */
-public inline fun String?.nullIfEmpty(): String? = (this as CharSequence).nullIfEmpty()?.toString()
+public inline fun String.nullIfEmpty(): String? = (this as CharSequence).nullIfEmpty()?.toString()

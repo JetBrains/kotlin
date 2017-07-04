@@ -5737,7 +5737,7 @@ public val CharArray.lastIndex: Int
  * @sample samples.collections.Arrays.nullIfEmpty
  */
 public fun <T> Array<out T>.nullIfEmpty(): Array<out T>? {
-    return if (this == null || this.isEmpty()) null else this
+    return if (this.isEmpty()) null else this
 }
 
 /**
@@ -5746,7 +5746,7 @@ public fun <T> Array<out T>.nullIfEmpty(): Array<out T>? {
  * @sample samples.collections.Arrays.nullIfEmpty
  */
 public fun ByteArray.nullIfEmpty(): ByteArray? {
-    return if (this == null || this.isEmpty()) null else this
+    return if (this.isEmpty()) null else this
 }
 
 /**
@@ -5755,7 +5755,7 @@ public fun ByteArray.nullIfEmpty(): ByteArray? {
  * @sample samples.collections.Arrays.nullIfEmpty
  */
 public fun ShortArray.nullIfEmpty(): ShortArray? {
-    return if (this == null || this.isEmpty()) null else this
+    return if (this.isEmpty()) null else this
 }
 
 /**
@@ -5764,7 +5764,7 @@ public fun ShortArray.nullIfEmpty(): ShortArray? {
  * @sample samples.collections.Arrays.nullIfEmpty
  */
 public fun IntArray.nullIfEmpty(): IntArray? {
-    return if (this == null || this.isEmpty()) null else this
+    return if (this.isEmpty()) null else this
 }
 
 /**
@@ -5773,7 +5773,7 @@ public fun IntArray.nullIfEmpty(): IntArray? {
  * @sample samples.collections.Arrays.nullIfEmpty
  */
 public fun LongArray.nullIfEmpty(): LongArray? {
-    return if (this == null || this.isEmpty()) null else this
+    return if (this.isEmpty()) null else this
 }
 
 /**
@@ -5782,7 +5782,7 @@ public fun LongArray.nullIfEmpty(): LongArray? {
  * @sample samples.collections.Arrays.nullIfEmpty
  */
 public fun FloatArray.nullIfEmpty(): FloatArray? {
-    return if (this == null || this.isEmpty()) null else this
+    return if (this.isEmpty()) null else this
 }
 
 /**
@@ -5791,7 +5791,7 @@ public fun FloatArray.nullIfEmpty(): FloatArray? {
  * @sample samples.collections.Arrays.nullIfEmpty
  */
 public fun DoubleArray.nullIfEmpty(): DoubleArray? {
-    return if (this == null || this.isEmpty()) null else this
+    return if (this.isEmpty()) null else this
 }
 
 /**
@@ -5800,7 +5800,7 @@ public fun DoubleArray.nullIfEmpty(): DoubleArray? {
  * @sample samples.collections.Arrays.nullIfEmpty
  */
 public fun BooleanArray.nullIfEmpty(): BooleanArray? {
-    return if (this == null || this.isEmpty()) null else this
+    return if (this.isEmpty()) null else this
 }
 
 /**
@@ -5809,7 +5809,7 @@ public fun BooleanArray.nullIfEmpty(): BooleanArray? {
  * @sample samples.collections.Arrays.nullIfEmpty
  */
 public fun CharArray.nullIfEmpty(): CharArray? {
-    return if (this == null || this.isEmpty()) null else this
+    return if (this.isEmpty()) null else this
 }
 
 /**
