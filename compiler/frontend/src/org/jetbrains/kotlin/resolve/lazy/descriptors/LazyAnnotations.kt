@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.isError
 
 abstract class LazyAnnotationsContext(
@@ -112,39 +113,27 @@ class LazyAnnotationDescriptor(
         c.trace.record(BindingContext.ANNOTATION, annotationEntry, this)
     }
 
-    private val type = c.storageManager.createLazyValue {
-        c.annotationResolver.resolveAnnotationType(
-                scope,
-                annotationEntry,
-                c.trace
-        )
+    override val type by c.storageManager.createLazyValue {
+        c.annotationResolver.resolveAnnotationType(scope, annotationEntry, c.trace)
     }
 
-    private val valueArguments = c.storageManager.createLazyValue {
-        computeValueArguments()
-    }
+    override val source = annotationEntry.toSourceElement()
 
-    private val source = annotationEntry.toSourceElement()
-
-    val scope = if (c.scope.ownerDescriptor is PackageFragmentDescriptor) {
+    private val scope = if (c.scope.ownerDescriptor is PackageFragmentDescriptor) {
         LexicalScope.Base(c.scope, FileDescriptorForVisibilityChecks(source, c.scope.ownerDescriptor))
     }
     else {
         c.scope
     }
 
-    override fun getType() = type()
-
-    override fun getAllValueArguments() = valueArguments()
-
-    private fun computeValueArguments(): Map<ValueParameterDescriptor, ConstantValue<*>> {
+    override val allValueArguments by c.storageManager.createLazyValue {
         val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, scope, c.trace)
         AnnotationResolverImpl.checkAnnotationType(annotationEntry, c.trace, resolutionResults)
 
-        if (!resolutionResults.isSingleResult) return mapOf()
+        if (!resolutionResults.isSingleResult) return@createLazyValue emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
 
         @Suppress("UNCHECKED_CAST")
-        return resolutionResults.resultingCall.valueArguments
+        resolutionResults.resultingCall.valueArguments
                 .mapValues { val (valueParameter, resolvedArgument) = it
                     if (resolvedArgument == null) null
                     else c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)
@@ -152,10 +141,8 @@ class LazyAnnotationDescriptor(
                 .filterValues { it != null } as Map<ValueParameterDescriptor, ConstantValue<*>>
     }
 
-    override fun getSource() = source
-
     override fun forceResolveAllContents() {
-        ForceResolveUtil.forceResolveAllContents(getType())
+        ForceResolveUtil.forceResolveAllContents(type)
         allValueArguments
     }
 

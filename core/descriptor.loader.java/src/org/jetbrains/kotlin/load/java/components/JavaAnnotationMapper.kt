@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.SimpleType
 import java.lang.annotation.Documented
 import java.lang.annotation.Retention
 import java.lang.annotation.Target
@@ -98,41 +100,37 @@ open class JavaAnnotationDescriptor(
         annotation: JavaAnnotation?,
         private val kotlinAnnotationClassDescriptor: ClassDescriptor
 ): AnnotationDescriptor {
-    private val source = annotation?.let { c.components.sourceElementFactory.source(it) } ?: SourceElement.NO_SOURCE
+    override val source: SourceElement = annotation?.let { c.components.sourceElementFactory.source(it) } ?: SourceElement.NO_SOURCE
 
-    override fun getType() = kotlinAnnotationClassDescriptor.defaultType
-
-    override fun getSource() = source
+    override val type: SimpleType get() = kotlinAnnotationClassDescriptor.defaultType
 
     protected val valueParameters: List<ValueParameterDescriptor>
             get() = kotlinAnnotationClassDescriptor.constructors.single().valueParameters
 
     protected val firstArgument: JavaAnnotationArgument? = annotation?.arguments?.firstOrNull()
 
-    override fun getAllValueArguments() = emptyMap<ValueParameterDescriptor, ConstantValue<*>?>()
+    override val allValueArguments: Map<ValueParameterDescriptor, ConstantValue<*>> get() = emptyMap()
 }
 
 class JavaDeprecatedAnnotationDescriptor(
         annotation: JavaAnnotation?,
         c: LazyJavaResolverContext
 ): JavaAnnotationDescriptor(c, annotation, c.module.builtIns.deprecatedAnnotation) {
-
-    private val valueArguments = c.storageManager.createLazyValue {
+    override val allValueArguments: Map<ValueParameterDescriptor, ConstantValue<*>> by c.storageManager.createLazyValue {
         val parameterDescriptor = valueParameters.firstOrNull {
             it.name == JavaAnnotationMapper.DEPRECATED_ANNOTATION_MESSAGE
         }
-        parameterDescriptor?.let { mapOf(it to ConstantValueFactory(c.module.builtIns).createConstantValue("Deprecated in Java")) } ?: emptyMap()
+        parameterDescriptor?.let {
+            mapOf(it to ConstantValueFactory(c.module.builtIns).createStringValue("Deprecated in Java"))
+        }.orEmpty()
     }
-
-    override fun getAllValueArguments() = valueArguments()
 }
 
 class JavaTargetAnnotationDescriptor(
         annotation: JavaAnnotation,
         c: LazyJavaResolverContext
 ): JavaAnnotationDescriptor(c, annotation, c.module.builtIns.targetAnnotation) {
-
-    private val valueArguments = c.storageManager.createLazyValue {
+    override val allValueArguments by c.storageManager.createLazyValue {
         val targetArgument = when (firstArgument) {
             is JavaArrayAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments(firstArgument.getElements(), c.module.builtIns)
             is JavaEnumValueAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments(listOf(firstArgument), c.module.builtIns)
@@ -140,24 +138,16 @@ class JavaTargetAnnotationDescriptor(
         }
         mapOf(valueParameters.single() to targetArgument)
     }
-
-    override fun getAllValueArguments() = valueArguments()
 }
 
 class JavaRetentionAnnotationDescriptor(
         annotation: JavaAnnotation,
         c: LazyJavaResolverContext
 ): JavaAnnotationDescriptor(c, annotation, c.module.builtIns.retentionAnnotation) {
-
-    private val valueArguments = c.storageManager.createLazyValue {
-        val retentionArgument = when (firstArgument) {
-            is JavaEnumValueAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaRetentionArgument(firstArgument, c.module.builtIns)
-            else -> return@createLazyValue emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
-        }
-        mapOf(valueParameters.single() to retentionArgument)
+    override val allValueArguments by c.storageManager.createLazyValue {
+        val retentionArgument = JavaAnnotationTargetMapper.mapJavaRetentionArgument(firstArgument, c.module.builtIns)
+        retentionArgument?.let { mapOf(valueParameters.single() to it) }.orEmpty()
     }
-
-    override fun getAllValueArguments() = valueArguments()
 }
 
 object JavaAnnotationTargetMapper {
@@ -177,7 +167,7 @@ object JavaAnnotationTargetMapper {
 
     fun mapJavaTargetArgumentByName(argumentName: String?): Set<KotlinTarget> = targetNameLists[argumentName] ?: emptySet()
 
-    fun mapJavaTargetArguments(arguments: List<JavaAnnotationArgument>, builtIns: KotlinBuiltIns): ConstantValue<*>? {
+    internal fun mapJavaTargetArguments(arguments: List<JavaAnnotationArgument>, builtIns: KotlinBuiltIns): ConstantValue<*> {
         // Map arguments: java.lang.annotation.Target -> kotlin.annotation.Target
         val kotlinTargets = arguments.filterIsInstance<JavaEnumValueAnnotationArgument>()
                 .flatMap { mapJavaTargetArgumentByName(it.resolve()?.name?.asString()) }
@@ -195,11 +185,11 @@ object JavaAnnotationTargetMapper {
             "SOURCE"  to KotlinRetention.SOURCE
     )
 
-    fun mapJavaRetentionArgument(element: JavaAnnotationArgument, builtIns: KotlinBuiltIns): ConstantValue<*>? {
+    internal fun mapJavaRetentionArgument(element: JavaAnnotationArgument?, builtIns: KotlinBuiltIns): ConstantValue<*>? {
         // Map argument: java.lang.annotation.Retention -> kotlin.annotation.annotation
         return (element as? JavaEnumValueAnnotationArgument)?.let {
             retentionNameList[it.resolve()?.name?.asString()]?.let {
-                (builtIns.getAnnotationRetentionEnumEntry(it) as? ClassDescriptor)?.let(::EnumValue)
+                builtIns.getAnnotationRetentionEnumEntry(it)?.let(::EnumValue)
             }
         }
     }
