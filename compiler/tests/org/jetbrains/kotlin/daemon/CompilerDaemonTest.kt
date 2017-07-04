@@ -519,22 +519,20 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val msg = buildString {
                 for (i in 0..PARALLEL_THREADS_TO_START - 1) {
                     val daemonInfoRes = daemonInfos[i]?.first
-                    var compiledPort: Int? = null
                     val daemonInfo = when (daemonInfoRes) {
-                        is CompileService.CallResult.Good -> daemonInfoRes.get().also {
-                            compiledPort = split(" ").last().toIntOrNull()
-                        }
+                        is CompileService.CallResult.Good -> daemonInfoRes.get()
                         is CompileService.CallResult.Dying -> "<dying>"
                         is CompileService.CallResult.Error -> "<error: ${daemonInfoRes.message}>"
                         else -> "?"
                     }
+                    val compiledPort: Int? = daemonInfo.trim().split(" ").last().toIntOrNull()
                     appendln("#$i\tcompiled on $daemonInfo, session ${daemonInfos[i]?.second}, result ${resultCodes[i]}; started daemon on port ${port2logs[i]?.first}, log: ${logFiles[i]?.canonicalPath}")
                     if (resultCodes[i] != 0 || electionLogs[i] == null) {
                         appendln("--- out $i, result ${resultCodes[i]}:\n${outStreams[i].toByteArray().toString(Charset.defaultCharset())}\n---")
                         compiledPort?.let { port -> port2logs.find { it?.first == port } }?.second?.let { logFile ->
                             appendln("--- log file ${logFile.name}:\n${logFile.readText()}\n---")
                         }
-                        ?: appendln("--- log not found")
+                        ?: appendln("--- log not found (port: $compiledPort)")
                     }
                 }
             }
