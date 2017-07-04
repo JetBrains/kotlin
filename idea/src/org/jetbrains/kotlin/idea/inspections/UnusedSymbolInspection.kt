@@ -119,7 +119,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         // variation of IDEA's AnnotationUtil.checkAnnotatedUsingPatterns()
         private fun checkAnnotatedUsingPatterns(annotated: Annotated, annotationPatterns: Collection<String>): Boolean {
             val annotationsPresent = annotated.annotations
-                    .map(AnnotationDescriptor::getType)
+                    .map(AnnotationDescriptor::type)
                     .filterNot(KotlinType::isError)
                     .mapNotNull { it.constructor.declarationDescriptor?.let { descriptor ->
                         DescriptorUtils.getFqName(descriptor).asString()

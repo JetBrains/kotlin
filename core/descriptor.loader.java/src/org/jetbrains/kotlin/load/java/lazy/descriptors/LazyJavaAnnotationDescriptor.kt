@@ -37,19 +37,20 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
 class LazyJavaAnnotationDescriptor(
         private val c: LazyJavaResolverContext,
-        val javaAnnotation: JavaAnnotation
+        private val javaAnnotation: JavaAnnotation
 ) : AnnotationDescriptor {
 
     private val fqName = c.storageManager.createNullableLazyValue {
         javaAnnotation.classId?.asSingleFqName()
     }
 
-    private val type = c.storageManager.createLazyValue {
+    override val type by c.storageManager.createLazyValue {
         val fqName = fqName() ?: return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
         val annotationClass = JavaToKotlinClassMap.mapJavaToKotlin(fqName, c.module.builtIns)
                               ?: javaAnnotation.resolve()?.let { javaClass -> c.components.moduleClassResolver.resolveClass(javaClass) }
@@ -57,27 +58,17 @@ class LazyJavaAnnotationDescriptor(
         annotationClass.defaultType
     }
 
-    private val source = c.components.sourceElementFactory.source(javaAnnotation)
+    override val source = c.components.sourceElementFactory.source(javaAnnotation)
 
     private val factory = ConstantValueFactory(c.module.builtIns)
 
-    override fun getType(): KotlinType = type()
-
-    private val allValueArguments = c.storageManager.createLazyValue {
-        computeValueArguments()
-    }
-
-    override fun getAllValueArguments() = allValueArguments()
-
-    override fun getSource() = source
-
-    private fun computeValueArguments(): Map<ValueParameterDescriptor, ConstantValue<*>> {
-        val constructors = getAnnotationClass().constructors
-        if (constructors.isEmpty()) return mapOf()
+    override val allValueArguments by c.storageManager.createLazyValue {
+        val constructors = annotationClass!!.constructors
+        if (constructors.isEmpty()) return@createLazyValue emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
 
         val nameToArg = javaAnnotation.arguments.associateBy { it.name }
 
-        return constructors.first().valueParameters.keysToMapExceptNulls { valueParameter ->
+        constructors.first().valueParameters.keysToMapExceptNulls { valueParameter ->
             var javaAnnotationArgument = nameToArg[valueParameter.name]
             if (javaAnnotationArgument == null && valueParameter.name == DEFAULT_ANNOTATION_MEMBER_NAME) {
                 javaAnnotationArgument = nameToArg[null]
@@ -86,8 +77,6 @@ class LazyJavaAnnotationDescriptor(
             resolveAnnotationArgument(javaAnnotationArgument)
         }
     }
-
-    private fun getAnnotationClass() = annotationClass!!
 
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): ConstantValue<*>? {
         return when (argument) {
@@ -105,9 +94,9 @@ class LazyJavaAnnotationDescriptor(
     }
 
     private fun resolveFromArray(argumentName: Name, elements: List<JavaAnnotationArgument>): ConstantValue<*>? {
-        if (getType().isError) return null
+        if (type.isError) return null
 
-        val valueParameter = DescriptorResolverUtils.getAnnotationParameterByName(argumentName, getAnnotationClass()) ?: return null
+        val valueParameter = DescriptorResolverUtils.getAnnotationParameterByName(argumentName, annotationClass!!) ?: return null
 
         val values = elements.map {
             argument -> resolveAnnotationArgument(argument) ?: factory.createNullValue()
@@ -123,7 +112,7 @@ class LazyJavaAnnotationDescriptor(
         val enumClass = c.components.moduleClassResolver.resolveClass(containingJavaClass) ?: return null
 
         val classifier = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(element.name, NoLookupLocation.FROM_JAVA_LOADER)
-        if (classifier !is ClassDescriptor) return null
+                                 as? ClassDescriptor ?: return null
 
         return factory.createEnumValue(classifier)
     }
