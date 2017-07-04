@@ -27,8 +27,8 @@ import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
-import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil.*
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.w3c.dom.Document
 import java.io.File
@@ -37,7 +37,30 @@ import javax.xml.parsers.DocumentBuilderFactory
 // Use apply plugin: 'kotlin-android-extensions' to enable Android Extensions in an Android project.
 // Just a marker plugin.
 class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
-    override fun apply(target: Project?) {}
+    override fun apply(project: Project) {
+        val kotlinPluginWrapper = project.plugins.findPlugin(KotlinAndroidPluginWrapper::class.java) ?: run {
+            project.logger.error("'kotlin-android' plugin should be enabled before 'kotlin-android-extensions'")
+            return
+        }
+
+        val kotlinPluginVersion = kotlinPluginWrapper.kotlinPluginVersion
+
+        project.configurations.all { configuration ->
+            val name = configuration.name
+            if (name != "implementation" && name != "compile") return@all
+
+            val androidPluginVersion = loadAndroidPluginVersion() ?: return@all
+            val requiredConfigurationName = when {
+                compareVersionNumbers(androidPluginVersion, "2.5") > 0 -> "implementation"
+                else -> "compile"
+            }
+
+            if (name != requiredConfigurationName) return@all
+
+            configuration.dependencies.add(project.dependencies.create(
+                    "org.jetbrains.kotlin:kotlin-android-extensions-runtime:$kotlinPluginVersion"))
+        }
+    }
 }
 
 class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
