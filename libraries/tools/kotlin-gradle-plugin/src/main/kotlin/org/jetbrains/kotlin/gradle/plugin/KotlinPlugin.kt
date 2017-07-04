@@ -761,7 +761,7 @@ private fun Project.createKaptExtension() {
 }
 
 //copied from BasePlugin.getLocalVersion
-private fun loadAndroidPluginVersion(): String? {
+internal fun loadAndroidPluginVersion(): String? {
     try {
         val clazz = BasePlugin::class.java
         val className = clazz.simpleName + ".class"
