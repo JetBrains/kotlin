@@ -19,7 +19,8 @@ package kotlin.test
 import kotlin.test.adapters.*
 
 /**
- * Overrides the framework adapter. Use in order to add support to a custom test framework.
+ * Overrides the framework adapter with the provided instance of a [FrameworkAdapter]. Use in order to add support to a
+ * custom test framework.
  *
  * Also some string arguments are supported. Use "qunit" to set the adapter to [QUnit](https://qunitjs.com/), "mocha" for
  * [Mocha](https://mochajs.org/), "jest" for [Jest](https://facebook.github.io/jest/),
@@ -41,44 +42,66 @@ public fun setAdapter(adapter: dynamic) {
 }
 
 /**
- * Use in order to define which action should be taken by the test framework on the testResult.
+ * Use in order to define which action should be taken by the test framework on the [TestResult].
  */
 @JsName("setAssertHook")
-public fun setAssertHook(hook: (TestResult) -> Unit) {
+public fun setAssertHook(hook: (AssertionResult) -> Unit) {
     assertHook = hook
 }
 
+
+/**
+ * The functions below are used by the compiler to describe the tests structure, e.g.
+ *
+ * suite('a suite', function() {
+ *   suite('a subsuite', function() {
+ *     test('a test', function() {...});
+ *     xtest('an ignored/pending test', function() {...});
+ *     ftest('a focused test', function() {...});
+ *   });
+ *   xsuite('an ignored/pending test', function() {...});
+ *   fsuite('a focused suite', function() {...});
+ * });
+ */
+
 @JsName("suite")
 internal fun suite(name: String, suiteFn: () -> Unit) {
-    currentAdapter.suite(name, suiteFn)
+    adapter().suite(name, suiteFn)
 }
 
 @JsName("xsuite")
 internal fun xsuite(name: String, suiteFn: () -> Unit) {
-    currentAdapter.xsuite(name, suiteFn)
+    adapter().xsuite(name, suiteFn)
 }
 
 @JsName("fsuite")
 internal fun fsuite(name: String, suiteFn: () -> Unit) {
-    currentAdapter.fsuite(name, suiteFn)
+    adapter().fsuite(name, suiteFn)
 }
 
 @JsName("test")
 internal fun test(name: String, testFn: () -> Unit) {
-    currentAdapter.test(name, testFn)
+    adapter().test(name, testFn)
 }
 
 @JsName("xtest")
 internal fun xtest(name: String, testFn: () -> Unit) {
-    currentAdapter.xtest(name, testFn)
+    adapter().xtest(name, testFn)
 }
 
 @JsName("ftest")
 internal fun ftest(name: String, testFn: () -> Unit) {
-    currentAdapter.ftest(name, testFn)
+    adapter().ftest(name, testFn)
 }
 
-internal var currentAdapter: FrameworkAdapter = detectAdapter()
+internal var currentAdapter: FrameworkAdapter? = null
+
+internal fun adapter(): FrameworkAdapter {
+    val result = currentAdapter ?: detectAdapter()
+    currentAdapter = result
+    return result
+}
+
 
 internal fun detectAdapter() = when {
     isQUnit() -> QUnitAdapter()

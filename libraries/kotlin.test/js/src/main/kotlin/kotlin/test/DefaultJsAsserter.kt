@@ -19,16 +19,16 @@ package kotlin.test
 /**
  * Describes the result of an assertion execution.
  */
-public external interface TestResult {
+public external interface AssertionResult {
     val result: Boolean
     val expected: Any?
     val actual: Any?
     val lazyMessage: () -> String?
 }
 
-internal var assertHook: (TestResult) -> Unit = { _ -> }
+internal var assertHook: (AssertionResult) -> Unit = { _ -> }
 
-internal open class DefaultJsAsserter : Asserter {
+internal object DefaultJsAsserter : Asserter {
     private var e: Any? = undefined
     private var a: Any? = undefined
 
@@ -82,7 +82,7 @@ internal open class DefaultJsAsserter : Asserter {
 
     private fun invokeHook(result: Boolean, lazyMessage: () -> String?) {
         try {
-            assertHook(object : TestResult {
+            assertHook(object : AssertionResult {
                 override val result: Boolean = result
                 override val expected: Any? = e
                 override val actual: Any? = a
