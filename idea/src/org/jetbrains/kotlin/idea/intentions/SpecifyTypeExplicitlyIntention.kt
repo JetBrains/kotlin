@@ -23,7 +23,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -113,7 +115,17 @@ class SpecifyTypeExplicitlyIntention :
             val resolutionFacade = contextElement.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL)
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-            val types = with (exprType.getResolvableApproximations(scope, true).toList()) {
+
+            var checkTypeParameters = true
+            val descriptor = exprType.constructor.declarationDescriptor
+            if (descriptor != null && descriptor is TypeParameterDescriptor) {
+                val owner = descriptor.containingDeclaration
+                if (owner is FunctionDescriptor && owner.typeParameters.contains(descriptor)) {
+                    checkTypeParameters = false
+                }
+            }
+
+            val types = with (exprType.getResolvableApproximations(scope, checkTypeParameters).toList()) {
                 when {
                     exprType.isNullabilityFlexible() -> flatMap {
                         listOf(TypeUtils.makeNotNullable(it), TypeUtils.makeNullable(it))
