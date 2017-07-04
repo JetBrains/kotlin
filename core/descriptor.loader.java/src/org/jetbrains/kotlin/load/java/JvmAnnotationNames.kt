@@ -29,7 +29,8 @@ val NULLABLE_ANNOTATIONS = listOf(
         FqName("edu.umd.cs.findbugs.annotations.CheckForNull"),
         FqName("edu.umd.cs.findbugs.annotations.Nullable"),
         FqName("edu.umd.cs.findbugs.annotations.PossiblyNull"),
-        FqName("io.reactivex.annotations.Nullable")
+        FqName("io.reactivex.annotations.Nullable"),
+        FqName("org.gradle.api.Nullable")
 )
 
 val JAVAX_NONNULL_ANNOTATION = FqName("javax.annotation.Nonnull")
