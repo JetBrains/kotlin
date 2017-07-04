@@ -85,9 +85,10 @@ class TypeDeserializer(
         }
 
         val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
-            c.components.annotationAndConstantLoader
-                    .loadTypeAnnotations(proto, c.nameResolver)
-                    .map { AnnotationWithTarget(it, null) } + additionalAnnotations.getAllAnnotations()
+            c.components.annotationAndConstantLoader.loadTypeAnnotations(proto, c.nameResolver)
+                    .map { AnnotationWithTarget(it, null) }
+                    .plus(additionalAnnotations.getAllAnnotations())
+                    .toList()
         }
 
         fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =

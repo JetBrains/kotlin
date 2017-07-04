@@ -16,44 +16,55 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.getValue
 
 class DeserializedAnnotations(
         storageManager: StorageManager,
         compute: () -> List<AnnotationDescriptor>
-) : DeserializedAnnotationsWithPossibleTargets(
-        storageManager,
-        { compute().map { AnnotationWithTarget(it, null) } })
-
-open class DeserializedAnnotationsWithPossibleTargets(
-        storageManager: StorageManager,
-        compute: () -> List<AnnotationWithTarget>
 ) : Annotations {
-    private val annotations = storageManager.createLazyValue { compute().toList() }
+    private val annotations by storageManager.createLazyValue(compute)
 
-    override fun isEmpty(): Boolean = annotations().isEmpty()
+    override fun isEmpty(): Boolean = annotations.isEmpty()
 
-    override fun findAnnotation(fqName: FqName) = annotations().firstOrNull {
-        annotationWithTarget ->
-        if (annotationWithTarget.target != null) return@firstOrNull false
-        val descriptor = annotationWithTarget.annotation.annotationClass
-        descriptor != null && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
-    }?.annotation
+    override fun findAnnotation(fqName: FqName) =
+            annotations.firstOrNull { annotation -> annotation.annotationClass?.fqNameUnsafe == fqName.toUnsafe() }
 
     override fun findExternalAnnotation(fqName: FqName) = null
 
-    override fun getUseSiteTargetedAnnotations() = annotations().filter { it.target != null }
+    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
-    override fun getAllAnnotations() = annotations()
+    override fun getAllAnnotations(): List<AnnotationWithTarget> = annotations.map { AnnotationWithTarget(it, null) }
+
+    override fun iterator(): Iterator<AnnotationDescriptor> = annotations.iterator()
+}
+
+class DeserializedAnnotationsWithPossibleTargets(
+        storageManager: StorageManager,
+        compute: () -> List<AnnotationWithTarget>
+) : Annotations {
+    private val annotations by storageManager.createLazyValue(compute)
+
+    override fun isEmpty(): Boolean = annotations.isEmpty()
+
+    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? =
+            annotations.firstOrNull { (annotation, target) ->
+                target == null && annotation.annotationClass?.fqNameUnsafe == fqName.toUnsafe()
+            }?.annotation
+
+    override fun findExternalAnnotation(fqName: FqName) = null
+
+    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = annotations.filter { it.target != null }
+
+    override fun getAllAnnotations(): List<AnnotationWithTarget> = annotations
 
     override fun iterator(): Iterator<AnnotationDescriptor> {
-        return annotations().asSequence().filter { it.target == null }.map { it.annotation }.iterator()
+        return annotations.asSequence().filter { it.target == null }.map { it.annotation }.iterator()
     }
 }
