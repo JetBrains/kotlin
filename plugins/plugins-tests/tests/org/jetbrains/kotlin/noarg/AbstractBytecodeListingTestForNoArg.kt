@@ -34,6 +34,6 @@ abstract class AbstractBytecodeListingTestForNoArg : AbstractBytecodeListingTest
 
         val project = environment.project
         StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(NOARG_ANNOTATIONS))
-        ExpressionCodegenExtension.registerExtension(project, NoArgExpressionCodegenExtension())
+        ExpressionCodegenExtension.registerExtension(project, NoArgExpressionCodegenExtension(false))
     }
 }

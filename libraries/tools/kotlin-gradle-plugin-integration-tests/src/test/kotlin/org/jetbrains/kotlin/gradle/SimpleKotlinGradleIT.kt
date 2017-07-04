@@ -166,6 +166,13 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testNoArgKt18668() {
+        Project("noArgKt18668", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
     fun testSamWithReceiverSimple() {
         Project("samWithReceiverSimple", GRADLE_VERSION).build("build") {
             assertSuccessful()
