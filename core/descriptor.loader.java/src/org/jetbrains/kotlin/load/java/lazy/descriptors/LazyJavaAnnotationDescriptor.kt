@@ -45,13 +45,12 @@ class LazyJavaAnnotationDescriptor(
         private val c: LazyJavaResolverContext,
         private val javaAnnotation: JavaAnnotation
 ) : AnnotationDescriptor {
-
-    private val fqName = c.storageManager.createNullableLazyValue {
+    override val fqName by c.storageManager.createNullableLazyValue {
         javaAnnotation.classId?.asSingleFqName()
     }
 
     override val type by c.storageManager.createLazyValue {
-        val fqName = fqName() ?: return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
+        val fqName = fqName ?: return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
         val annotationClass = JavaToKotlinClassMap.mapJavaToKotlin(fqName, c.module.builtIns)
                               ?: javaAnnotation.resolve()?.let { javaClass -> c.components.moduleClassResolver.resolveClass(javaClass) }
                               ?: createTypeForMissingDependencies(fqName)

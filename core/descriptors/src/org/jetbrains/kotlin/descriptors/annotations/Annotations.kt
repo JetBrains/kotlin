@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 interface Annotated {
     val annotations: Annotations
@@ -55,26 +53,19 @@ interface Annotations : Iterable<AnnotationDescriptor> {
         }
 
         fun findAnyAnnotation(annotations: Annotations, fqName: FqName): AnnotationWithTarget? {
-            return annotations.getAllAnnotations().firstOrNull { checkAnnotationName(it.annotation, fqName) }
+            return annotations.getAllAnnotations().firstOrNull { it.annotation.fqName == fqName }
         }
 
         fun findUseSiteTargetedAnnotation(annotations: Annotations, target: AnnotationUseSiteTarget, fqName: FqName): AnnotationDescriptor? {
-            return getUseSiteTargetedAnnotations(annotations, target).firstOrNull { checkAnnotationName(it, fqName) }
+            return getUseSiteTargetedAnnotations(annotations, target).firstOrNull { it.fqName == fqName }
         }
 
         private fun getUseSiteTargetedAnnotations(annotations: Annotations, target: AnnotationUseSiteTarget): List<AnnotationDescriptor> {
-            return annotations.getUseSiteTargetedAnnotations().fold(arrayListOf<AnnotationDescriptor>()) { list, targeted ->
-                if (target == targeted.target) {
-                    list.add(targeted.annotation)
-                }
-                list
+            return annotations.getUseSiteTargetedAnnotations().mapNotNull { (annotation, annotationTarget) ->
+                annotation.takeIf { target == annotationTarget }
             }
         }
     }
-}
-
-fun checkAnnotationName(annotation: AnnotationDescriptor, fqName: FqName): Boolean {
-    return annotation.annotationClass?.fqNameUnsafe == fqName.toUnsafe()
 }
 
 class FilteredAnnotations(
@@ -107,8 +98,8 @@ class FilteredAnnotations(
     override fun isEmpty() = delegate.any(this::shouldBeReturned)
 
     private fun shouldBeReturned(annotation: AnnotationDescriptor): Boolean =
-            annotation.annotationClass?.fqNameUnsafe.let { fqName ->
-                fqName != null && fqName.isSafe && fqNameFilter(fqName.toSafe())
+            annotation.fqName.let { fqName ->
+                fqName != null && fqNameFilter(fqName)
             }
 }
 

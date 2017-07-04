@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.utils;
 
 import com.intellij.psi.PsiFile;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.js.PredefinedAnnotation;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getAnnotationClass;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.isEffectivelyExternal;
 
 public final class AnnotationsUtils {
@@ -221,11 +220,7 @@ public final class AnnotationsUtils {
             @NotNull FqName annotationFqName
     ) {
         for (AnnotationDescriptor annotation : getContainingFileAnnotations(bindingContext, declaration)) {
-            DeclarationDescriptor annotationType = getAnnotationClass(annotation);
-            if (annotationType == null) continue;
-
-            FqNameUnsafe fqName = DescriptorUtils.getFqName(annotationType);
-            if (fqName.equals(annotationFqName.toUnsafe())) {
+            if (annotationFqName.equals(annotation.getFqName())) {
                 return extractSingleStringArgument(annotation);
             }
         }
@@ -237,20 +232,9 @@ public final class AnnotationsUtils {
     }
 
     public static boolean isFromNonModuleFile(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor declaration) {
-        for (AnnotationDescriptor annotation : getContainingFileAnnotations(bindingContext, declaration)) {
-            DeclarationDescriptor annotationType = getAnnotationClass(annotation);
-            if (annotationType == null) continue;
-
-            DeclarationDescriptor annotationTypeDescriptor = getAnnotationClass(annotation);
-            assert annotationTypeDescriptor != null : "Annotation type should have descriptor: " + annotation.getType();
-
-            FqNameUnsafe fqName = DescriptorUtils.getFqName(annotationTypeDescriptor);
-            if (fqName.equals(JS_NON_MODULE_ANNOTATION.toUnsafe())) {
-                return true;
-            }
-        }
-
-        return false;
+        return CollectionsKt.any(getContainingFileAnnotations(bindingContext, declaration), annotation ->
+                JS_NON_MODULE_ANNOTATION.equals(annotation.getFqName())
+        );
     }
 
     @Nullable

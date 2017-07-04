@@ -34,8 +34,6 @@ import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -48,7 +46,7 @@ import java.util.*
 class SignatureEnhancement(private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver) {
 
     fun extractNullability(annotationDescriptor: AnnotationDescriptor): NullabilityQualifier? {
-        val annotationFqName = annotationDescriptor.annotationClass?.fqNameSafe ?: return null
+        val annotationFqName = annotationDescriptor.fqName ?: return null
         when (annotationFqName) {
             in NULLABLE_ANNOTATIONS -> return NullabilityQualifier.NULLABLE
             in NOT_NULL_ANNOTATIONS -> return NullabilityQualifier.NOT_NULL
@@ -58,7 +56,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 when {
                     annotationFqName == JAVAX_NONNULL_ANNOTATION -> annotationDescriptor
                     else -> annotationTypeQualifierResolver.resolveTypeQualifierAnnotation(annotationDescriptor)
-                            ?.takeIf { it.annotationClass?.fqNameSafe == JAVAX_NONNULL_ANNOTATION }
+                            ?.takeIf { it.fqName == JAVAX_NONNULL_ANNOTATION }
                 } ?: return null
 
         val enumEntryDescriptor =

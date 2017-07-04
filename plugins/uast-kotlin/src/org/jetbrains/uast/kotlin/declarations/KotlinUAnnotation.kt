@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.uast.*
 
 class KotlinUAnnotation(
@@ -15,7 +14,7 @@ class KotlinUAnnotation(
     private val resolvedAnnotation by lz { psi.analyze()[BindingContext.ANNOTATION, psi] }
 
     override val qualifiedName: String?
-        get() = resolvedAnnotation?.annotationClass?.fqNameSafe?.asString()
+        get() = resolvedAnnotation?.fqName?.asString()
 
     override val attributeValues by lz {
         val context = getUastContext()

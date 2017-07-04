@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
@@ -398,15 +397,8 @@ internal class DescriptorRendererImpl(
 
         val excluded = if (annotated is KotlinType) excludedTypeAnnotationClasses else excludedAnnotationClasses
 
-        // Sort is needed just to fix some order when annotations resolved from modifiers
-        // See AnnotationResolver.resolveAndAppendAnnotationsFromModifiers for clarification
-        // This hack can be removed when modifiers will be resolved without annotations
-
-        val sortedAnnotations = annotated.annotations.getAllAnnotations()
-        for ((annotation, target) in sortedAnnotations) {
-            val annotationClass = annotation.annotationClass!!
-
-            if (!excluded.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
+        for ((annotation, target) in annotated.annotations.getAllAnnotations()) {
+            if (annotation.fqName !in excluded) {
                 append(renderAnnotation(annotation, target)).append(" ")
             }
         }

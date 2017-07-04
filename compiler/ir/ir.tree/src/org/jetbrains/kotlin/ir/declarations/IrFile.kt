@@ -18,15 +18,12 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.checkAnnotationName
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.name.FqName
 
 interface IrPackageFragment : IrElement, IrDeclarationContainer, IrSymbolOwner {
     val packageFragmentDescriptor: PackageFragmentDescriptor
@@ -48,6 +45,3 @@ interface IrFile : IrPackageFragment {
 }
 
 val IrFile.name: String get() = fileEntry.name
-
-fun IrFile.findAnnotationsByFqName(fqName: FqName) =
-        fileAnnotations.filter { checkAnnotationName(it, fqName) }

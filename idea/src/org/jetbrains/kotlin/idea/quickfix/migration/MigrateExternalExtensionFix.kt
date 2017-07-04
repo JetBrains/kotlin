@@ -21,7 +21,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.annotations.checkAnnotationName
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -239,7 +238,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
         private fun KtAnnotationEntry.isJsAnnotation(vararg predefinedAnnotations: PredefinedAnnotation): Boolean {
             val bindingContext = analyze(BodyResolveMode.PARTIAL)
             val annotationDescriptor = bindingContext[BindingContext.ANNOTATION, this]
-            return annotationDescriptor != null && predefinedAnnotations.any { checkAnnotationName(annotationDescriptor, it.fqName) }
+            return annotationDescriptor != null && predefinedAnnotations.any { annotationDescriptor.fqName == it.fqName }
         }
 
         private fun KtAnnotationEntry.isJsNativeAnnotation(): Boolean {
