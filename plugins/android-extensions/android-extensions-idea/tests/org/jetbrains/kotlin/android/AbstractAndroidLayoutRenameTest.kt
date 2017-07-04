@@ -16,10 +16,6 @@
 
 package org.jetbrains.kotlin.android
 
-import com.intellij.codeInsight.TargetElementUtil
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
-import com.intellij.refactoring.rename.RenameProcessor
-import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import com.intellij.psi.xml.XmlFile
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.psi.KtFile
@@ -32,17 +28,11 @@ abstract class AbstractAndroidLayoutRenameTest : KotlinAndroidTestCase() {
         copyResourceDirectoryForTest(path)
         val virtualFile = myFixture.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt")
         myFixture.configureFromExistingVirtualFile(virtualFile)
+        val xmlFile = myFixture.elementAtCaret.containingFile as XmlFile
 
-        val completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(myFixture.editor, myFixture.file)
+        myFixture.renameElement(xmlFile, NEW_NAME_XML)
 
-        val element = TargetElementUtil.findTargetElement(
-                completionEditor,
-                TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtil.ELEMENT_NAME_ACCEPTED) as XmlAttributeValueImpl
-
-        val file = element.containingFile as XmlFile
-
-        RenameProcessor(myFixture.project, file, NEW_NAME_XML, false, true).run()
-
-        (myFixture.file as KtFile).importDirectives.any { it.importedFqName!!.asString() == AndroidConst.SYNTHETIC_PACKAGE + ".main." + NEW_NAME }
+        val expectedImportName = AndroidConst.SYNTHETIC_PACKAGE + ".main." + NEW_NAME
+        assertTrue((myFixture.file as KtFile).importDirectives.any { it.importedFqName?.asString() == expectedImportName })
     }
 }

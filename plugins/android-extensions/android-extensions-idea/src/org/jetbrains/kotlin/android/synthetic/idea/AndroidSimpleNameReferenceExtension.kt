@@ -18,17 +18,20 @@ package org.jetbrains.kotlin.android.synthetic.idea
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttributeValue
-import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper
+import com.intellij.psi.xml.XmlFile
+import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.android.util.AndroidResourceUtil
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.androidIdToName
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
+
+    override fun isReferenceTo(reference: KtSimpleNameReference, element: PsiElement): Boolean =
+            element is XmlFile && reference.isReferenceToXmlFile(element)
 
     private fun isLayoutPackageIdentifier(reference: KtSimpleNameReference): Boolean {
         val probablyVariant = reference.element?.parent as? KtDotQualifiedExpression ?: return false
@@ -43,9 +46,29 @@ class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
             return psiFactory.createNameIdentifier(newSyntheticPropertyName.name)
         }
         else if (isLayoutPackageIdentifier(reference)) {
-            return psiFactory.createSimpleName(newElementName.substringBeforeLast(".xml")).getIdentifier()
+            return psiFactory.createSimpleName(newElementName.removeSuffix(".xml")).getIdentifier()
         }
 
         return null
+    }
+
+    private fun KtSimpleNameReference.isReferenceToXmlFile(xmlFile: XmlFile): Boolean {
+        if (!isLayoutPackageIdentifier(this)) {
+            return false
+        }
+
+        if (xmlFile.name.removeSuffix(".xml") != element.getReferencedName()) {
+            return false
+        }
+
+        val virtualFile = xmlFile.virtualFile ?: return false
+        val layoutDir = virtualFile.parent
+        if (layoutDir.name != "layout" && !layoutDir.name.startsWith("layout-")) {
+            return false
+        }
+
+        val resourceDirectories = AndroidFacet.getInstance(element)?.allResourceDirectories ?: return false
+        val resourceDirectory = virtualFile.parent?.parent ?: return false
+        return resourceDirectories.any { it == resourceDirectory }
     }
 }
