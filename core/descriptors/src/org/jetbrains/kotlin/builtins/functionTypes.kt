@@ -168,8 +168,8 @@ fun getFunctionTypeArgumentProjections(
             val nameValue = ConstantValueFactory(builtIns).createStringValue(name.asString())
             val parameterNameAnnotation = AnnotationDescriptorImpl(
                     annotationClass.defaultType,
-                    mapOf(annotationClass.unsubstitutedPrimaryConstructor!!.valueParameters.single() to nameValue),
-                    org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
+                    mapOf(Name.identifier("name") to nameValue),
+                    SourceElement.NO_SOURCE
             )
             type.replaceAnnotations(AnnotationsImpl(type.annotations + parameterNameAnnotation))
         }

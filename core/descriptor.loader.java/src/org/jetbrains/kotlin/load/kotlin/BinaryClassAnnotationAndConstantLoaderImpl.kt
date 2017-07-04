@@ -89,16 +89,16 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
         val annotationClass = resolveClass(annotationClassId)
 
         return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-            private val arguments = HashMap<ValueParameterDescriptor, ConstantValue<*>>()
+            private val arguments = HashMap<Name, ConstantValue<*>>()
 
             override fun visit(name: Name?, value: Any?) {
                 if (name != null) {
-                    setArgumentValueByName(name, createConstant(name, value))
+                    arguments[name] = createConstant(name, value)
                 }
             }
 
             override fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name) {
-                setArgumentValueByName(name, enumEntryValue(enumClassId, enumEntryName))
+                arguments[name] = enumEntryValue(enumClassId, enumEntryName)
             }
 
             override fun visitArray(name: Name): AnnotationArrayArgumentVisitor? {
@@ -116,7 +116,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                     override fun visitEnd() {
                         val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                         if (parameter != null) {
-                            arguments[parameter] = factory.createArrayValue(elements.compact(), parameter.type)
+                            arguments[name] = factory.createArrayValue(elements.compact(), parameter.type)
                         }
                     }
                 }
@@ -128,7 +128,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                 return object: KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
                     override fun visitEnd() {
                         visitor.visitEnd()
-                        setArgumentValueByName(name, AnnotationValue(list.single()))
+                        arguments[name] = AnnotationValue(list.single())
                     }
                 }
             }
@@ -152,13 +152,6 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {
                 return factory.createConstantValue(value) ?:
                        factory.createErrorValue("Unsupported annotation argument: $name")
-            }
-
-            private fun setArgumentValueByName(name: Name, argumentValue: ConstantValue<*>) {
-                val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
-                if (parameter != null) {
-                    arguments[parameter] = argumentValue
-                }
             }
         }
     }

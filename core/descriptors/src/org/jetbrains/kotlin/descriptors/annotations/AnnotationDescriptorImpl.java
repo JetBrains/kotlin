@@ -16,33 +16,29 @@
 
 package org.jetbrains.kotlin.descriptors.annotations;
 
-import kotlin.collections.MapsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.types.KotlinType;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class AnnotationDescriptorImpl implements AnnotationDescriptor {
     private final KotlinType annotationType;
-    private final Map<ValueParameterDescriptor, ConstantValue<?>> valueArguments;
+    private final Map<Name, ConstantValue<?>> valueArguments;
     private final SourceElement source;
 
     public AnnotationDescriptorImpl(
             @NotNull KotlinType annotationType,
-            @NotNull Map<ValueParameterDescriptor, ConstantValue<?>> valueArguments,
+            @NotNull Map<Name, ConstantValue<?>> valueArguments,
             @NotNull SourceElement source
     ) {
         this.annotationType = annotationType;
-        this.valueArguments = Collections.unmodifiableMap(valueArguments);
+        this.valueArguments = valueArguments;
         this.source = source;
     }
 
@@ -61,15 +57,7 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
     @NotNull
     @Override
     public Map<Name, ConstantValue<?>> getAllValueArguments() {
-        return MapsKt.mapKeys(
-                valueArguments,
-                new Function1<Map.Entry<? extends ValueParameterDescriptor, ? extends ConstantValue<?>>, Name>() {
-                    @Override
-                    public Name invoke(Map.Entry<? extends ValueParameterDescriptor, ? extends ConstantValue<?>> entry) {
-                        return entry.getKey().getName();
-                    }
-                }
-        );
+        return valueArguments;
     }
 
     @Override

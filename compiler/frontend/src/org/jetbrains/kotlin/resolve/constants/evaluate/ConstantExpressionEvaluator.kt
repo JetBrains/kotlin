@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.*
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -80,12 +78,12 @@ class ConstantExpressionEvaluator(
     internal fun resolveAnnotationArguments(
             resolvedCall: ResolvedCall<*>,
             trace: BindingTrace
-    ): Map<ValueParameterDescriptor, ConstantValue<*>> {
-        val arguments = HashMap<ValueParameterDescriptor, ConstantValue<*>>()
+    ): Map<Name, ConstantValue<*>> {
+        val arguments = HashMap<Name, ConstantValue<*>>()
         for ((parameterDescriptor, resolvedArgument) in resolvedCall.valueArguments.entries) {
             val value = getAnnotationArgumentValue(trace, parameterDescriptor, resolvedArgument)
             if (value != null) {
-                arguments.put(parameterDescriptor, value)
+                arguments.put(parameterDescriptor.name, value)
             }
         }
         return arguments
