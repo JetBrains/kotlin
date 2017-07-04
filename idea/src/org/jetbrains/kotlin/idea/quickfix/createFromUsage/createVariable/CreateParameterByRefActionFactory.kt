@@ -114,7 +114,6 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
         if (paramType.hasTypeParametersToAdd(functionDescriptor, context)) return null
 
         return CreateParameterData(
-                context,
                 KotlinParameterInfo(callableDescriptor = functionDescriptor,
                                     name = element.getReferencedName(),
                                     originalTypeInfo = KotlinTypeInfo(false, paramType),
