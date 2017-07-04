@@ -105,7 +105,7 @@ class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
             else -> "Property"
         }
         val nameElement = (declaration as? PsiNameIdentifierOwner)?.nameIdentifier ?: return
-        holder.registerProblem(nameElement,
+        holder.registerProblem(declaration.visibilityModifier() ?: nameElement,
                                "$member '${declaration.name}' can be private",
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                IntentionWrapper(AddModifierFix(modifierListOwner, KtTokens.PRIVATE_KEYWORD), declaration.containingFile))
