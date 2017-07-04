@@ -16,21 +16,21 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 interface AnnotationDescriptor {
     val type: KotlinType
 
-    val fqName: FqName? get() =
-            (type.constructor.declarationDescriptor as? ClassDescriptor)?.fqNameUnsafe?.takeIf(FqNameUnsafe::isSafe)?.toSafe()
+    val fqName: FqName?
+        get() = annotationClass?.takeUnless(ErrorUtils::isError)?.fqNameUnsafe?.takeIf(FqNameUnsafe::isSafe)?.toSafe()
 
     val allValueArguments: Map<Name, ConstantValue<*>>
 

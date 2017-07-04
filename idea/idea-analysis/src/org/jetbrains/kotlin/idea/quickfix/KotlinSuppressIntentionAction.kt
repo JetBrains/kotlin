@@ -53,7 +53,7 @@ class KotlinSuppressIntentionAction private constructor(
         val id = "\"$suppressKey\""
         when (suppressAt) {
             is KtModifierListOwner ->
-                suppressAt.addAnnotation(KotlinBuiltIns.FQ_NAMES.suppress.toSafe(),
+                suppressAt.addAnnotation(KotlinBuiltIns.FQ_NAMES.suppress,
                                          id,
                                          whiteSpaceText = if (kind.newLineNeeded) "\n" else " ",
                                          addToExistingAnnotation = { entry ->
@@ -151,13 +151,9 @@ class KotlinSuppressIntentionAction private constructor(
     }
 
     private fun findSuppressAnnotation(context: BindingContext, annotationEntries: List<KtAnnotationEntry>): KtAnnotationEntry? {
-        for (entry in annotationEntries) {
-            val annotationDescriptor = context.get(BindingContext.ANNOTATION, entry)
-            if (annotationDescriptor != null && KotlinBuiltIns.isSuppressAnnotation(annotationDescriptor)) {
-                return entry
-            }
+        return annotationEntries.firstOrNull { entry ->
+            context.get(BindingContext.ANNOTATION, entry)?.fqName == KotlinBuiltIns.FQ_NAMES.suppress
         }
-        return null
     }
 }
 

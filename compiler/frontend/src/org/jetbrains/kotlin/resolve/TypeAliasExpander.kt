@@ -142,10 +142,10 @@ class TypeAliasExpander(
     }
 
     private fun checkRepeatedAnnotations(existingAnnotations: Annotations, newAnnotations: Annotations) {
-        val existingAnnotationTypes = existingAnnotations.mapTo(hashSetOf()) { it.type }
+        val existingAnnotationFqNames = existingAnnotations.mapTo(hashSetOf()) { it.fqName }
 
         for (annotation in newAnnotations) {
-            if (annotation.type in existingAnnotationTypes) {
+            if (annotation.fqName in existingAnnotationFqNames) {
                 reportStrategy.repeatedAnnotation(annotation)
             }
         }

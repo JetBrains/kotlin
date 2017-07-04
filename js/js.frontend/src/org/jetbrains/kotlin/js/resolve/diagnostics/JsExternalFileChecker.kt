@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 object JsExternalFileChecker : SimpleDeclarationChecker {
     private val annotationFqNames = setOf(AnnotationsUtils.JS_MODULE_ANNOTATION, AnnotationsUtils.JS_QUALIFIER_ANNOTATION)
@@ -36,10 +35,9 @@ object JsExternalFileChecker : SimpleDeclarationChecker {
     ) {
         if (!AnnotationsUtils.isNativeObject(descriptor) && DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             AnnotationsUtils.getContainingFileAnnotations(bindingContext, descriptor).asSequence()
-                    .map { it.type }
-                    .firstOrNull { it.constructor.declarationDescriptor?.fqNameSafe in annotationFqNames }
+                    .firstOrNull { it.fqName in annotationFqNames }
                     ?.let {
-                        diagnosticHolder.report(ErrorsJs.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE.on(declaration, it))
+                        diagnosticHolder.report(ErrorsJs.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE.on(declaration, it.type))
                     }
         }
     }
