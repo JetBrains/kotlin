@@ -42,6 +42,24 @@ public class BlackBoxCodegenTestForNoArgGenerated extends AbstractBlackBoxCodege
         doTest(fileName);
     }
 
+    @TestMetadata("initializersWithoutInvokeInitializers.kt")
+    public void testInitializersWithoutInvokeInitializers() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/noarg/noarg-cli/testData/box/initializersWithoutInvokeInitializers.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt18667.kt")
+    public void testKt18667() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/noarg/noarg-cli/testData/box/kt18667.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt18668.kt")
+    public void testKt18668() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/noarg/noarg-cli/testData/box/kt18668.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/noarg/noarg-cli/testData/box/simple.kt");

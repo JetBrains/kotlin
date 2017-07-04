@@ -20,6 +20,8 @@ open class NoArgExtension {
     internal val myAnnotations = mutableListOf<String>()
     internal val myPresets = mutableListOf<String>()
 
+    open var invokeInitializers: Boolean = false
+
     open fun annotation(fqName: String) {
         myAnnotations.add(fqName)
     }

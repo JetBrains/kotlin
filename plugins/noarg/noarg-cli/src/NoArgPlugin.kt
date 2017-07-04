@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.noarg
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.Extensions
 import org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg
-import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.ANNOTATION
+import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.INVOKE_INITIALIZERS
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.PRESET
 import org.jetbrains.kotlin.noarg.diagnostic.CliNoArgDeclarationChecker
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -43,6 +43,9 @@ object NoArgConfigurationKeys {
             CompilerConfigurationKey.create("annotation qualified name")
 
     val PRESET: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation preset")
+
+    val INVOKE_INITIALIZERS: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create(
+            "invoke instance initializers in a no-arg constructor")
 }
 
 class NoArgCommandLineProcessor : CommandLineProcessor {
@@ -55,15 +58,20 @@ class NoArgCommandLineProcessor : CommandLineProcessor {
         val PRESET_OPTION = CliOption("preset", "<name>", "Preset name (${SUPPORTED_PRESETS.keys.joinToString()})",
                                       required = false, allowMultipleOccurrences = true)
 
+        val INVOKE_INITIALIZERS_OPTION = CliOption("invokeInitializers", "true/false",
+                                                   "Invoke instance initializers in a no-arg constructor",
+                                                   required = false, allowMultipleOccurrences = false)
+
         val PLUGIN_ID = "org.jetbrains.kotlin.noarg"
     }
 
     override val pluginId = PLUGIN_ID
-    override val pluginOptions = listOf(ANNOTATION_OPTION, PRESET_OPTION)
+    override val pluginOptions = listOf(ANNOTATION_OPTION, PRESET_OPTION, INVOKE_INITIALIZERS_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
         ANNOTATION_OPTION -> configuration.appendList(ANNOTATION, value)
         PRESET_OPTION -> configuration.appendList(PRESET, value)
+        INVOKE_INITIALIZERS_OPTION -> configuration.put(INVOKE_INITIALIZERS, value == "true")
         else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
     }
 }
@@ -79,7 +87,8 @@ class NoArgComponentRegistrar : ComponentRegistrar {
         Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesNoArg())
         StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(annotations))
 
-        ExpressionCodegenExtension.registerExtension(project, NoArgExpressionCodegenExtension())
+        val invokeInitializers = configuration[INVOKE_INITIALIZERS] ?: false
+        ExpressionCodegenExtension.registerExtension(project, NoArgExpressionCodegenExtension(invokeInitializers))
     }
 }
 
