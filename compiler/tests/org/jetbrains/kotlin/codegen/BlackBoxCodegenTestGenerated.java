@@ -6725,6 +6725,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("genericDelegateUncheckedCast1.kt")
+        public void testGenericDelegateUncheckedCast1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/genericDelegateUncheckedCast1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("genericDelegateUncheckedCast2.kt")
+        public void testGenericDelegateUncheckedCast2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/genericDelegateUncheckedCast2.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+
         @TestMetadata("getAsExtensionFun.kt")
         public void testGetAsExtensionFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/getAsExtensionFun.kt");

@@ -6637,6 +6637,18 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DelegatedProperty extends AbstractLightAnalysisModeTest {
+        @TestMetadata("genericDelegateUncheckedCast2.kt")
+        public void ignoreGenericDelegateUncheckedCast2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/genericDelegateUncheckedCast2.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+
         @TestMetadata("accessTopLevelDelegatedPropertyInClinit.kt")
         public void testAccessTopLevelDelegatedPropertyInClinit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/accessTopLevelDelegatedPropertyInClinit.kt");
@@ -6722,6 +6734,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("genericDelegate.kt")
         public void testGenericDelegate() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/genericDelegate.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("genericDelegateUncheckedCast1.kt")
+        public void testGenericDelegateUncheckedCast1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/genericDelegateUncheckedCast1.kt");
             doTest(fileName);
         }
 
