@@ -41,8 +41,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, AnnotatedElementsSearch.Parameters> {
@@ -102,8 +100,8 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
                         val context = elt.analyze(BodyResolveMode.PARTIAL)
                         val annotationDescriptor = context.get(BindingContext.ANNOTATION, elt) ?: return true
 
-                        val descriptor = annotationDescriptor.annotationClass ?: return true
-                        if (DescriptorUtils.getFqName(descriptor).asString() != annotationFQN) return true
+                        val fqName = annotationDescriptor.fqName ?: return true
+                        if (fqName.asString() != annotationFQN) return true
                     }
 
                     if (!consumer(declaration)) return false

@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
@@ -33,8 +31,7 @@ open class DeserializedAnnotations(
 
     override fun isEmpty(): Boolean = annotations.isEmpty()
 
-    override fun findAnnotation(fqName: FqName) =
-            annotations.firstOrNull { annotation -> annotation.annotationClass?.fqNameUnsafe == fqName.toUnsafe() }
+    override fun findAnnotation(fqName: FqName) = annotations.firstOrNull { it.fqName == fqName }
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
@@ -59,9 +56,7 @@ open class DeserializedAnnotationsWithPossibleTargets(
     override fun isEmpty(): Boolean = annotations.isEmpty()
 
     override fun findAnnotation(fqName: FqName): AnnotationDescriptor? =
-            annotations.firstOrNull { (annotation, target) ->
-                target == null && annotation.annotationClass?.fqNameUnsafe == fqName.toUnsafe()
-            }?.annotation
+            annotations.firstOrNull { (annotation, target) -> target == null && annotation.fqName == fqName }?.annotation
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = annotations.filter { it.target != null }
 

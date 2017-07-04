@@ -22,15 +22,13 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 object JsQualifierChecker : AdditionalAnnotationChecker {
     override fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
         val bindingContext = trace.bindingContext
         for (entry in entries) {
             val annotation = bindingContext[BindingContext.ANNOTATION, entry] ?: continue
-            if (annotation.annotationClass?.fqNameSafe != AnnotationsUtils.JS_QUALIFIER_ANNOTATION) continue
+            if (annotation.fqName != AnnotationsUtils.JS_QUALIFIER_ANNOTATION) continue
             val argument = annotation.allValueArguments.values.singleOrNull()?.value as? String ?: continue
             if (!validateQualifier(argument)) {
                 val argumentPsi = entry.valueArgumentList!!.arguments[0]
