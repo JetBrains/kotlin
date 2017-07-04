@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.replaceWith
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -37,12 +38,10 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtConstructorCalleeExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -73,8 +72,7 @@ abstract class DeprecatedSymbolUsageFixBase(
 
     companion object {
         fun fetchReplaceWithPattern(descriptor: DeclarationDescriptor, project: Project): ReplaceWith? {
-            val annotationClass = descriptor.builtIns.deprecatedAnnotation
-            val annotation = descriptor.annotations.findAnnotation(DescriptorUtils.getFqNameSafe(annotationClass)) ?: return null
+            val annotation = descriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: return null
             val replaceWithValue = annotation.argumentValue(kotlin.Deprecated::replaceWith.name) as? AnnotationDescriptor ?: return null
             val pattern = replaceWithValue.argumentValue(kotlin.ReplaceWith::expression.name) as? String ?: return null
             if (pattern.isEmpty()) return null

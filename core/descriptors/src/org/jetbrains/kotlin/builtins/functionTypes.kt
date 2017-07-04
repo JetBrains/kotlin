@@ -20,10 +20,9 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFac
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -164,12 +163,10 @@ fun getFunctionTypeArgumentProjections(
     parameterTypes.mapIndexedTo(arguments) { index, type ->
         val name = parameterNames?.get(index)?.takeUnless { it.isSpecial }
         val typeToUse = if (name != null) {
-            val annotationClass = builtIns.getBuiltInClassByName(KotlinBuiltIns.FQ_NAMES.parameterName.shortName())
-            val nameValue = ConstantValueFactory(builtIns).createStringValue(name.asString())
-            val parameterNameAnnotation = AnnotationDescriptorImpl(
-                    annotationClass.defaultType,
-                    mapOf(Name.identifier("name") to nameValue),
-                    SourceElement.NO_SOURCE
+            val parameterNameAnnotation = BuiltInAnnotationDescriptor(
+                    builtIns,
+                    KotlinBuiltIns.FQ_NAMES.parameterName,
+                    mapOf(Name.identifier("name") to ConstantValueFactory(builtIns).createStringValue(name.asString()))
             )
             type.replaceAnnotations(AnnotationsImpl(type.annotations + parameterNameAnnotation))
         }
@@ -199,18 +196,14 @@ fun createFunctionType(
     val parameterCount = if (receiverType == null) size else size + 1
     val classDescriptor = if (suspendFunction) builtIns.getSuspendFunction(parameterCount) else builtIns.getFunction(parameterCount)
 
+    // TODO: preserve laziness of given annotations
     val typeAnnotations =
             if (receiverType == null || annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null) {
                 annotations
             }
             else {
-                val extensionFunctionAnnotation = AnnotationDescriptorImpl(
-                        builtIns.getBuiltInClassByName(KotlinBuiltIns.FQ_NAMES.extensionFunctionType.shortName()).defaultType,
-                        emptyMap(), SourceElement.NO_SOURCE
-                )
-
-                // TODO: preserve laziness of given annotations
-                AnnotationsImpl(annotations + extensionFunctionAnnotation)
+                AnnotationsImpl(annotations +
+                                BuiltInAnnotationDescriptor(builtIns, KotlinBuiltIns.FQ_NAMES.extensionFunctionType, emptyMap()))
             }
 
     return KotlinTypeFactory.simpleNotNullType(typeAnnotations, classDescriptor, arguments)

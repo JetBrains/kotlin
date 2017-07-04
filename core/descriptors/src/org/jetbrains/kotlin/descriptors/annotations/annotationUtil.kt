@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -36,23 +35,23 @@ fun KotlinBuiltIns.createDeprecatedAnnotation(
         replaceWith: String = "",
         level: String = "WARNING"
 ): AnnotationDescriptor {
-    val replaceWithAnnotation = AnnotationDescriptorImpl(
-            getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.replaceWith).defaultType,
+    val replaceWithAnnotation = BuiltInAnnotationDescriptor(
+            this,
+            KotlinBuiltIns.FQ_NAMES.replaceWith,
             mapOf(
                     REPLACE_WITH_EXPRESSION_NAME to StringValue(replaceWith, this),
                     REPLACE_WITH_IMPORTS_NAME to ArrayValue(emptyList(), getArrayType(Variance.INVARIANT, stringType), this)
-            ),
-            SourceElement.NO_SOURCE
+            )
     )
 
-    return AnnotationDescriptorImpl(
-            deprecatedAnnotation.defaultType,
+    return BuiltInAnnotationDescriptor(
+            this,
+            KotlinBuiltIns.FQ_NAMES.deprecated,
             mapOf(
                     DEPRECATED_MESSAGE_NAME to StringValue(message, this),
                     DEPRECATED_REPLACE_WITH_NAME to AnnotationValue(replaceWithAnnotation),
                     DEPRECATED_LEVEL_NAME to EnumValue(getDeprecationLevelEnumEntry(level) ?: error("Deprecation level $level not found"))
-            ),
-            SourceElement.NO_SOURCE
+            )
     )
 }
 
@@ -61,11 +60,6 @@ private val DEPRECATED_REPLACE_WITH_NAME = Name.identifier("replaceWith")
 private val DEPRECATED_LEVEL_NAME = Name.identifier("level")
 private val REPLACE_WITH_EXPRESSION_NAME = Name.identifier("expression")
 private val REPLACE_WITH_IMPORTS_NAME = Name.identifier("imports")
-
-fun KotlinBuiltIns.createUnsafeVarianceAnnotation(): AnnotationDescriptor {
-    val unsafeVarianceAnnotation = getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.unsafeVariance)
-    return AnnotationDescriptorImpl(unsafeVarianceAnnotation.defaultType, emptyMap(), SourceElement.NO_SOURCE)
-}
 
 private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
 
