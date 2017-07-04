@@ -126,19 +126,18 @@ class LazyAnnotationDescriptor(
         c.scope
     }
 
-    override val valueArgumentsByParameterDescriptor by c.storageManager.createLazyValue {
+    override val allValueArguments by c.storageManager.createLazyValue {
         val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, scope, c.trace)
         AnnotationResolverImpl.checkAnnotationType(annotationEntry, c.trace, resolutionResults)
 
-        if (!resolutionResults.isSingleResult) return@createLazyValue emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
+        if (!resolutionResults.isSingleResult) return@createLazyValue emptyMap<Name, ConstantValue<*>>()
 
-        @Suppress("UNCHECKED_CAST")
-        resolutionResults.resultingCall.valueArguments
-                .mapValues { val (valueParameter, resolvedArgument) = it
-                    if (resolvedArgument == null) null
-                    else c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)
-                }
-                .filterValues { it != null } as Map<ValueParameterDescriptor, ConstantValue<*>>
+        resolutionResults.resultingCall.valueArguments.mapNotNull { (valueParameter, resolvedArgument) ->
+            if (resolvedArgument == null) null
+            else c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)?.let { value ->
+                valueParameter.name to value
+            }
+        }.toMap()
     }
 
     override fun forceResolveAllContents() {

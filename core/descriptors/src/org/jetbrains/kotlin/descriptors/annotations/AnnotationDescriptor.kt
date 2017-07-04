@@ -32,11 +32,7 @@ interface AnnotationDescriptor {
     val fqName: FqName? get() =
             (type.constructor.declarationDescriptor as? ClassDescriptor)?.fqNameUnsafe?.takeIf(FqNameUnsafe::isSafe)?.toSafe()
 
-    @Deprecated("Use allValueArguments instead")
-    val valueArgumentsByParameterDescriptor: Map<ValueParameterDescriptor, ConstantValue<*>>
-
     val allValueArguments: Map<Name, ConstantValue<*>>
-        get() = valueArgumentsByParameterDescriptor.mapKeys { (parameter) -> parameter.name }
 
     val source: SourceElement
 }
