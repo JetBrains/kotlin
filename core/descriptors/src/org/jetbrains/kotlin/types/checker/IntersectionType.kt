@@ -38,6 +38,8 @@ fun intersectTypes(types: List<UnwrappedType>): UnwrappedType {
         when (it) {
             is SimpleType -> it
             is FlexibleType -> {
+                if (it.isDynamic()) return it
+
                 hasFlexibleTypes = true
                 it.lowerBound
             }
