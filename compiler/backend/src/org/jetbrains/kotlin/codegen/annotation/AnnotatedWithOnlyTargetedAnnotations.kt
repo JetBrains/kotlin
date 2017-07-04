@@ -36,8 +36,6 @@ class AnnotatedWithOnlyTargetedAnnotations(original: Annotated) : Annotated {
 
         override fun findAnnotation(fqName: FqName) = null
 
-        override fun findExternalAnnotation(fqName: FqName) = null
-
         override fun getUseSiteTargetedAnnotations() = getAdditionalTargetedAnnotations()
 
         override fun getAllAnnotations() = getAdditionalTargetedAnnotations()

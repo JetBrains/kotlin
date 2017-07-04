@@ -66,8 +66,6 @@ private class AnnotationsWithOnly(val presentAnnotation: FqName): Annotations {
 
     override fun findAnnotation(fqName: FqName): AnnotationDescriptor? = null
 
-    override fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor? = null
-
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
     override fun getAllAnnotations(): List<AnnotationWithTarget> = emptyList()

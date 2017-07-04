@@ -194,8 +194,6 @@ private class EnhancedTypeAnnotations(private val fqNameToMatch: FqName) : Annot
         else -> null
     }
 
-    override fun findExternalAnnotation(fqName: FqName) = null
-
     override fun getAllAnnotations() = this.map { AnnotationWithTarget(it, null) }
 
     override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
