@@ -71,6 +71,7 @@ class NoArgKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
 
         private val ANNOTATION_ARG_NAME = "annotation"
         private val PRESET_ARG_NAME = "preset"
+        private val INVOKE_INITIALIZERS_ARG_NAME = "invokeInitializers"
     }
 
     override fun isApplicable(project: Project, task: AbstractCompile) = NoArgGradleSubplugin.isEnabled(project)
@@ -94,6 +95,10 @@ class NoArgKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
 
         for (preset in noArgExtension.myPresets) {
             options += SubpluginOption(PRESET_ARG_NAME, preset)
+        }
+
+        if (noArgExtension.invokeInitializers) {
+            options += SubpluginOption(INVOKE_INITIALIZERS_ARG_NAME, "true")
         }
 
         return options
