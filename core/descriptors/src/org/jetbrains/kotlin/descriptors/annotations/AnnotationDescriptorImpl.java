@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.descriptors.annotations;
 
+import kotlin.collections.MapsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
@@ -56,16 +58,18 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
         return AnnotationDescriptor.DefaultImpls.getFqName(this);
     }
 
-    @Override
-    @NotNull
-    public Map<ValueParameterDescriptor, ConstantValue<?>> getValueArgumentsByParameterDescriptor() {
-        return valueArguments;
-    }
-
     @NotNull
     @Override
     public Map<Name, ConstantValue<?>> getAllValueArguments() {
-        return AnnotationDescriptor.DefaultImpls.getAllValueArguments(this);
+        return MapsKt.mapKeys(
+                valueArguments,
+                new Function1<Map.Entry<? extends ValueParameterDescriptor, ? extends ConstantValue<?>>, Name>() {
+                    @Override
+                    public Name invoke(Map.Entry<? extends ValueParameterDescriptor, ? extends ConstantValue<?>> entry) {
+                        return entry.getKey().getName();
+                    }
+                }
+        );
     }
 
     @Override

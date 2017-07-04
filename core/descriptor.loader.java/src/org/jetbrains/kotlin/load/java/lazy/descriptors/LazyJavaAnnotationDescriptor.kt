@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findNonGenericClassAcrossDependencies
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
 class LazyJavaAnnotationDescriptor(
         private val c: LazyJavaResolverContext,
@@ -61,20 +59,11 @@ class LazyJavaAnnotationDescriptor(
 
     private val factory = ConstantValueFactory(c.module.builtIns)
 
-    override val valueArgumentsByParameterDescriptor by c.storageManager.createLazyValue {
-        val constructors = annotationClass!!.constructors
-        if (constructors.isEmpty()) return@createLazyValue emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
-
-        val nameToArg = javaAnnotation.arguments.associateBy { it.name }
-
-        constructors.first().valueParameters.keysToMapExceptNulls { valueParameter ->
-            var javaAnnotationArgument = nameToArg[valueParameter.name]
-            if (javaAnnotationArgument == null && valueParameter.name == DEFAULT_ANNOTATION_MEMBER_NAME) {
-                javaAnnotationArgument = nameToArg[null]
-            }
-
-            resolveAnnotationArgument(javaAnnotationArgument)
-        }
+    override val allValueArguments by c.storageManager.createLazyValue {
+        javaAnnotation.arguments.mapNotNull { arg ->
+            val name = arg.name ?: DEFAULT_ANNOTATION_MEMBER_NAME
+            resolveAnnotationArgument(arg)?.let { value -> name to value }
+        }.toMap()
     }
 
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): ConstantValue<*>? {
