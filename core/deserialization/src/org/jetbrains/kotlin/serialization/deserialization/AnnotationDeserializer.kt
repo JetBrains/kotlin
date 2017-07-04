@@ -46,7 +46,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
     fun deserializeAnnotation(proto: Annotation, nameResolver: NameResolver): AnnotationDescriptor {
         val annotationClass = resolveClass(nameResolver.getClassId(proto.id))
 
-        var arguments = emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
+        var arguments = emptyMap<Name, ConstantValue<*>>()
         if (proto.argumentCount != 0 && !ErrorUtils.isError(annotationClass) && DescriptorUtils.isAnnotationClass(annotationClass)) {
             val constructor = annotationClass.constructors.singleOrNull()
             if (constructor != null) {
@@ -62,9 +62,9 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
             proto: Argument,
             parameterByName: Map<Name, ValueParameterDescriptor>,
             nameResolver: NameResolver
-    ): Pair<ValueParameterDescriptor, ConstantValue<*>>? {
+    ): Pair<Name, ConstantValue<*>>? {
         val parameter = parameterByName[nameResolver.getName(proto.nameId)] ?: return null
-        return Pair(parameter, resolveValue(parameter.type, proto.value, nameResolver))
+        return Pair(nameResolver.getName(proto.nameId), resolveValue(parameter.type, proto.value, nameResolver))
     }
 
     fun resolveValue(

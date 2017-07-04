@@ -283,6 +283,7 @@ public abstract class KotlinBuiltIns {
 
         public final FqName deprecated = fqName("Deprecated");
         public final FqName deprecationLevel = fqName("DeprecationLevel");
+        public final FqName replaceWith = fqName("ReplaceWith");
         public final FqName extensionFunctionType = fqName("ExtensionFunctionType");
         public final FqName parameterName = fqName("ParameterName");
         public final FqName annotation = fqName("Annotation");
