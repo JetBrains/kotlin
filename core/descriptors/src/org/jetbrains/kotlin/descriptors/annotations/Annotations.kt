@@ -32,7 +32,7 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 
     fun hasAnnotation(fqName: FqName) = findAnnotation(fqName) != null
 
-    fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor?
+    fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor? = null
 
     fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget>
 
@@ -44,8 +44,6 @@ interface Annotations : Iterable<AnnotationDescriptor> {
             override fun isEmpty() = true
 
             override fun findAnnotation(fqName: FqName) = null
-
-            override fun findExternalAnnotation(fqName: FqName) = null
 
             override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
 

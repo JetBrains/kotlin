@@ -36,8 +36,6 @@ class DeserializedAnnotations(
     override fun findAnnotation(fqName: FqName) =
             annotations.firstOrNull { annotation -> annotation.annotationClass?.fqNameUnsafe == fqName.toUnsafe() }
 
-    override fun findExternalAnnotation(fqName: FqName) = null
-
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
     override fun getAllAnnotations(): List<AnnotationWithTarget> = annotations.map { AnnotationWithTarget(it, null) }
@@ -57,8 +55,6 @@ class DeserializedAnnotationsWithPossibleTargets(
             annotations.firstOrNull { (annotation, target) ->
                 target == null && annotation.annotationClass?.fqNameUnsafe == fqName.toUnsafe()
             }?.annotation
-
-    override fun findExternalAnnotation(fqName: FqName) = null
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = annotations.filter { it.target != null }
 

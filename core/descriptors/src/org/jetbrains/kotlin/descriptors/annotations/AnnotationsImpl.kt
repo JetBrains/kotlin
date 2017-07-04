@@ -53,8 +53,6 @@ class AnnotationsImpl : Annotations {
 
     override fun getAllAnnotations() = targetedAnnotations
 
-    override fun findExternalAnnotation(fqName: FqName) = null
-
     override fun iterator() = annotations.iterator()
 
     override fun toString() = annotations.toString()

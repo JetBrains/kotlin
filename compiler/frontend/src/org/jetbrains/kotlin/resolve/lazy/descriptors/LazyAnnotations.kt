@@ -78,8 +78,6 @@ class LazyAnnotations(
         return null
     }
 
-    override fun findExternalAnnotation(fqName: FqName) = null
-
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
         return annotationEntries
                 .mapNotNull {
