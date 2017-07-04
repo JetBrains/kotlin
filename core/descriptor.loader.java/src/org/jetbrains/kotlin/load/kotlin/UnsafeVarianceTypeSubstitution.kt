@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
-import org.jetbrains.kotlin.descriptors.annotations.createUnsafeVarianceAnnotation
 import org.jetbrains.kotlin.types.*
 
-internal class UnsafeVarianceTypeSubstitution(kotlinBuiltIns: KotlinBuiltIns) : TypeSubstitution() {
-    private val unsafeVarianceAnnotations = AnnotationsImpl(listOf(kotlinBuiltIns.createUnsafeVarianceAnnotation()))
+internal class UnsafeVarianceTypeSubstitution(builtIns: KotlinBuiltIns) : TypeSubstitution() {
+    private val unsafeVarianceAnnotations = AnnotationsImpl(listOf(
+            BuiltInAnnotationDescriptor(builtIns, KotlinBuiltIns.FQ_NAMES.unsafeVariance, emptyMap())
+    ))
 
     override fun get(key: KotlinType) = null
 

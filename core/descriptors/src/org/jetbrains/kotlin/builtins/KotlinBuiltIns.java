@@ -563,11 +563,6 @@ public abstract class KotlinBuiltIns {
         return getBuiltInClassByName("Throwable");
     }
 
-    @NotNull
-    public ClassDescriptor getDeprecatedAnnotation() {
-        return getBuiltInClassByName(FQ_NAMES.deprecated.shortName());
-    }
-
     @Nullable
     private static ClassDescriptor getEnumEntry(@NotNull ClassDescriptor enumDescriptor, @NotNull String entryName) {
         ClassifierDescriptor result = enumDescriptor.getUnsubstitutedInnerClassesScope().getContributedClassifier(
