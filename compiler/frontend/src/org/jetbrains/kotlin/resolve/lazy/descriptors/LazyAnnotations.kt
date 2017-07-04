@@ -126,7 +126,7 @@ class LazyAnnotationDescriptor(
         c.scope
     }
 
-    override val allValueArguments by c.storageManager.createLazyValue {
+    override val valueArgumentsByParameterDescriptor by c.storageManager.createLazyValue {
         val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, scope, c.trace)
         AnnotationResolverImpl.checkAnnotationType(annotationEntry, c.trace, resolutionResults)
 

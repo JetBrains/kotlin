@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -57,8 +58,14 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
 
     @Override
     @NotNull
-    public Map<ValueParameterDescriptor, ConstantValue<?>> getAllValueArguments() {
+    public Map<ValueParameterDescriptor, ConstantValue<?>> getValueArgumentsByParameterDescriptor() {
         return valueArguments;
+    }
+
+    @NotNull
+    @Override
+    public Map<Name, ConstantValue<?>> getAllValueArguments() {
+        return AnnotationDescriptor.DefaultImpls.getAllValueArguments(this);
     }
 
     @Override

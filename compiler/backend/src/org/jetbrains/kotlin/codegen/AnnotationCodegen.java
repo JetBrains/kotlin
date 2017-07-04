@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.annotation.WrappedAnnotated;
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.AnnotationChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -291,32 +293,27 @@ public abstract class AnnotationCodegen {
 
     @Nullable
     private String genAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
-        ClassifierDescriptor classifierDescriptor = getAnnotationClass(annotationDescriptor);
-        assert classifierDescriptor != null : "Annotation descriptor has no class: " + annotationDescriptor;
-        RetentionPolicy rp = getRetentionPolicy(classifierDescriptor);
+        ClassDescriptor classDescriptor = getAnnotationClass(annotationDescriptor);
+        assert classDescriptor != null : "Annotation descriptor has no class: " + annotationDescriptor;
+        RetentionPolicy rp = getRetentionPolicy(classDescriptor);
         if (rp == RetentionPolicy.SOURCE && !typeMapper.getClassBuilderMode().generateSourceRetentionAnnotations) {
             return null;
         }
 
-        String descriptor = typeMapper.mapType(annotationDescriptor.getType()).getDescriptor();
+        innerClassConsumer.addInnerClassInfoFromAnnotation(classDescriptor);
 
-        if (classifierDescriptor instanceof ClassDescriptor) {
-            innerClassConsumer.addInnerClassInfoFromAnnotation(((ClassDescriptor) classifierDescriptor));
-        }
-
-        AnnotationVisitor annotationVisitor = visitAnnotation(descriptor, rp == RetentionPolicy.RUNTIME);
+        String asmTypeDescriptor = typeMapper.mapType(annotationDescriptor.getType()).getDescriptor();
+        AnnotationVisitor annotationVisitor = visitAnnotation(asmTypeDescriptor, rp == RetentionPolicy.RUNTIME);
 
         genAnnotationArguments(annotationDescriptor, annotationVisitor);
         annotationVisitor.visitEnd();
 
-        return descriptor;
+        return asmTypeDescriptor;
     }
 
     private void genAnnotationArguments(AnnotationDescriptor annotationDescriptor, AnnotationVisitor annotationVisitor) {
-        for (Map.Entry<ValueParameterDescriptor, ConstantValue<?>> entry : annotationDescriptor.getAllValueArguments().entrySet()) {
-            ValueParameterDescriptor descriptor = entry.getKey();
-            String name = descriptor.getName().asString();
-            genCompileTimeValue(name, entry.getValue(), annotationVisitor);
+        for (Map.Entry<Name, ConstantValue<?>> entry : annotationDescriptor.getAllValueArguments().entrySet()) {
+            genCompileTimeValue(entry.getKey().asString(), entry.getValue(), annotationVisitor);
         }
     }
 
@@ -475,16 +472,13 @@ public abstract class AnnotationCodegen {
         }
         AnnotationDescriptor retentionAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Retention.class.getName()));
         if (retentionAnnotation != null) {
-            Collection<ConstantValue<?>> valueArguments = retentionAnnotation.getAllValueArguments().values();
-            if (!valueArguments.isEmpty()) {
-                ConstantValue<?> compileTimeConstant = valueArguments.iterator().next();
-                if (compileTimeConstant instanceof EnumValue) {
-                    ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
-                    KotlinType classObjectType = DescriptorUtilsKt.getClassValueType(enumEntry);
-                    if (classObjectType != null) {
-                        if ("java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName())) {
-                            return RetentionPolicy.valueOf(enumEntry.getName().asString());
-                        }
+            ConstantValue<?> compileTimeConstant = CollectionsKt.firstOrNull(retentionAnnotation.getAllValueArguments().values());
+            if (compileTimeConstant instanceof EnumValue) {
+                ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
+                KotlinType classObjectType = DescriptorUtilsKt.getClassValueType(enumEntry);
+                if (classObjectType != null) {
+                    if ("java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName())) {
+                        return RetentionPolicy.valueOf(enumEntry.getName().asString());
                     }
                 }
             }

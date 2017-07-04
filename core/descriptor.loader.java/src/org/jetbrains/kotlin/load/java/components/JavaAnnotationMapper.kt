@@ -109,14 +109,14 @@ open class JavaAnnotationDescriptor(
 
     protected val firstArgument: JavaAnnotationArgument? = annotation?.arguments?.firstOrNull()
 
-    override val allValueArguments: Map<ValueParameterDescriptor, ConstantValue<*>> get() = emptyMap()
+    override val valueArgumentsByParameterDescriptor: Map<ValueParameterDescriptor, ConstantValue<*>> get() = emptyMap()
 }
 
 class JavaDeprecatedAnnotationDescriptor(
         annotation: JavaAnnotation?,
         c: LazyJavaResolverContext
 ): JavaAnnotationDescriptor(c, annotation, c.module.builtIns.deprecatedAnnotation) {
-    override val allValueArguments: Map<ValueParameterDescriptor, ConstantValue<*>> by c.storageManager.createLazyValue {
+    override val valueArgumentsByParameterDescriptor: Map<ValueParameterDescriptor, ConstantValue<*>> by c.storageManager.createLazyValue {
         val parameterDescriptor = valueParameters.firstOrNull {
             it.name == JavaAnnotationMapper.DEPRECATED_ANNOTATION_MESSAGE
         }
@@ -130,7 +130,7 @@ class JavaTargetAnnotationDescriptor(
         annotation: JavaAnnotation,
         c: LazyJavaResolverContext
 ): JavaAnnotationDescriptor(c, annotation, c.module.builtIns.targetAnnotation) {
-    override val allValueArguments by c.storageManager.createLazyValue {
+    override val valueArgumentsByParameterDescriptor by c.storageManager.createLazyValue {
         val targetArgument = when (firstArgument) {
             is JavaArrayAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments(firstArgument.getElements(), c.module.builtIns)
             is JavaEnumValueAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments(listOf(firstArgument), c.module.builtIns)
@@ -144,7 +144,7 @@ class JavaRetentionAnnotationDescriptor(
         annotation: JavaAnnotation,
         c: LazyJavaResolverContext
 ): JavaAnnotationDescriptor(c, annotation, c.module.builtIns.retentionAnnotation) {
-    override val allValueArguments by c.storageManager.createLazyValue {
+    override val valueArgumentsByParameterDescriptor by c.storageManager.createLazyValue {
         val retentionArgument = JavaAnnotationTargetMapper.mapJavaRetentionArgument(firstArgument, c.module.builtIns)
         retentionArgument?.let { mapOf(valueParameters.single() to it) }.orEmpty()
     }
