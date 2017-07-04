@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 interface Annotated {
     val annotations: Annotations
@@ -74,8 +74,7 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 }
 
 fun checkAnnotationName(annotation: AnnotationDescriptor, fqName: FqName): Boolean {
-    val descriptor = annotation.annotationClass
-    return descriptor != null && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
+    return annotation.annotationClass?.fqNameUnsafe == fqName.toUnsafe()
 }
 
 class FilteredAnnotations(
@@ -103,16 +102,14 @@ class FilteredAnnotations(
         return delegate.getAllAnnotations().filter { shouldBeReturned(it.annotation) }
     }
 
-    override fun iterator() = delegate.filter { shouldBeReturned(it) }.iterator()
+    override fun iterator() = delegate.filter(this::shouldBeReturned).iterator()
 
-    private fun shouldBeReturned(annotation: AnnotationDescriptor): Boolean {
-        val descriptor = annotation.annotationClass
-        return descriptor != null && DescriptorUtils.getFqName(descriptor).let { fqName ->
-            fqName.isSafe && fqNameFilter(fqName.toSafe())
-        }
-    }
+    override fun isEmpty() = delegate.any(this::shouldBeReturned)
 
-    override fun isEmpty() = !iterator().hasNext()
+    private fun shouldBeReturned(annotation: AnnotationDescriptor): Boolean =
+            annotation.annotationClass?.fqNameUnsafe.let { fqName ->
+                fqName != null && fqName.isSafe && fqNameFilter(fqName.toSafe())
+            }
 }
 
 class CompositeAnnotations(

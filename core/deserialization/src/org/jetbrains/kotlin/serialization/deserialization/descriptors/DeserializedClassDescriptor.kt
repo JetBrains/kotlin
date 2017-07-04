@@ -80,7 +80,7 @@ class DeserializedClassDescriptor(
             if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
                 Annotations.EMPTY
             }
-            else DeserializedAnnotations(c.storageManager) {
+            else NonEmptyDeserializedAnnotations(c.storageManager) {
                 c.components.annotationAndConstantLoader.loadClassAnnotations(thisAsProtoContainer).toList()
             }
 
