@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.AnnotationResolver
+import org.jetbrains.kotlin.resolve.AnnotationResolverImpl
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
@@ -31,7 +34,6 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.types.isError
 
 abstract class LazyAnnotationsContext(
         val annotationResolver: AnnotationResolver,
@@ -62,22 +64,7 @@ class LazyAnnotations(
         AnnotationWithTarget(descriptor, target)
     }
 
-    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? {
-        // We can not efficiently check short names here:
-        // an annotation class may be renamed on import
-        for (annotationDescriptor in iterator()) {
-            val annotationType = annotationDescriptor.type
-            if (annotationType.isError) continue
-
-            val descriptor = annotationType.constructor.declarationDescriptor ?: continue
-
-            if (DescriptorUtils.getFqNameSafe(descriptor) == fqName) {
-                return annotationDescriptor
-            }
-        }
-
-        return null
-    }
+    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? = firstOrNull { it.fqName == fqName }
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
         return annotationEntries

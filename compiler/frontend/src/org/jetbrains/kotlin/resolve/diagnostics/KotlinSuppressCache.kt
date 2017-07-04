@@ -171,7 +171,7 @@ abstract class KotlinSuppressCache {
             builder.addAll(suppressStringProvider[annotationDescriptor])
         }
 
-        if (!KotlinBuiltIns.isSuppressAnnotation(annotationDescriptor)) return
+        if (annotationDescriptor.fqName != KotlinBuiltIns.FQ_NAMES.suppress) return
 
         // We only add strings and skip other values to facilitate recovery in presence of erroneous code
         for (arrayValue in annotationDescriptor.allValueArguments.values) {

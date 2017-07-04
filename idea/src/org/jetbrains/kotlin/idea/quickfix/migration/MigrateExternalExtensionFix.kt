@@ -204,7 +204,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
         }
 
         if (declaration is KtFunction) {
-            declaration.addAnnotation(KotlinBuiltIns.FQ_NAMES.suppress.toSafe(), "\"NOTHING_TO_INLINE\"")
+            declaration.addAnnotation(KotlinBuiltIns.FQ_NAMES.suppress, "\"NOTHING_TO_INLINE\"")
         }
 
         convertNativeAnnotationToJsName(declaration, annotations)

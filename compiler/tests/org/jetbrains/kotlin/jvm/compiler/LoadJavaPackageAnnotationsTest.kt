@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -75,9 +74,7 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
         val singleAnnotation = packageFragmentDescriptor.annotations.singleOrNull()
         assertNotNull(singleAnnotation)
 
-        val annotationFqName = singleAnnotation!!.type.constructor.declarationDescriptor?.fqNameSafe
-
-        assertEquals(FqName("test.Ann"), annotationFqName)
+        assertEquals(FqName("test.Ann"), singleAnnotation!!.fqName)
     }
 
     fun testAnnotationFromSource() {

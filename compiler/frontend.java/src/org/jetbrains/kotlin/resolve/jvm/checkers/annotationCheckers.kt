@@ -21,28 +21,29 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
 
 object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
     override fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
-        val entryTypesWithAnnotations = hashMapOf<KotlinType, MutableList<AnnotationUseSiteTarget?>>()
+        val entryTypesWithAnnotations = hashMapOf<FqName, MutableList<AnnotationUseSiteTarget?>>()
 
         for (entry in entries) {
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
-            val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
+            val fqName = descriptor.fqName ?: continue
+            val classDescriptor = descriptor.annotationClass ?: continue
 
             val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
-            val existingTargetsForAnnotation = entryTypesWithAnnotations.getOrPut(descriptor.type) { arrayListOf() }
+            val existingTargetsForAnnotation = entryTypesWithAnnotations.getOrPut(fqName) { arrayListOf() }
             val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation
                                       || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
 
@@ -66,7 +67,7 @@ object FileClassAnnotationsChecker: AdditionalAnnotationChecker {
         for (entry in entries) {
             if (entry.useSiteTarget?.getAnnotationUseSiteTarget() != AnnotationUseSiteTarget.FILE) continue
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
-            val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
+            val classDescriptor = descriptor.annotationClass ?: continue
             // This check matters for the applicable annotations only.
             val applicableTargets = AnnotationChecker.applicableTargetSet(classDescriptor)
             if (applicableTargets == null || !applicableTargets.contains(KotlinTarget.FILE)) continue
