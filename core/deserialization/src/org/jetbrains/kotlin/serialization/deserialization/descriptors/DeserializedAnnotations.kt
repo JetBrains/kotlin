@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
-class DeserializedAnnotations(
+open class DeserializedAnnotations(
         storageManager: StorageManager,
         compute: () -> List<AnnotationDescriptor>
 ) : Annotations {
@@ -43,7 +43,14 @@ class DeserializedAnnotations(
     override fun iterator(): Iterator<AnnotationDescriptor> = annotations.iterator()
 }
 
-class DeserializedAnnotationsWithPossibleTargets(
+class NonEmptyDeserializedAnnotations(
+        storageManager: StorageManager,
+        compute: () -> List<AnnotationDescriptor>
+) : DeserializedAnnotations(storageManager, compute) {
+    override fun isEmpty(): Boolean = false
+}
+
+open class DeserializedAnnotationsWithPossibleTargets(
         storageManager: StorageManager,
         compute: () -> List<AnnotationWithTarget>
 ) : Annotations {
@@ -63,4 +70,11 @@ class DeserializedAnnotationsWithPossibleTargets(
     override fun iterator(): Iterator<AnnotationDescriptor> {
         return annotations.asSequence().filter { it.target == null }.map { it.annotation }.iterator()
     }
+}
+
+class NonEmptyDeserializedAnnotationsWithPossibleTargets(
+        storageManager: StorageManager,
+        compute: () -> List<AnnotationWithTarget>
+) : DeserializedAnnotationsWithPossibleTargets(storageManager, compute) {
+    override fun isEmpty(): Boolean = false
 }

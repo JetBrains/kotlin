@@ -222,7 +222,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         if (!Flags.HAS_ANNOTATIONS.get(flags)) {
             return Annotations.EMPTY
         }
-        return DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
+        return NonEmptyDeserializedAnnotationsWithPossibleTargets(c.storageManager) {
             c.containingDeclaration.asProtoContainer()?.let {
                 c.components.annotationAndConstantLoader.loadCallableAnnotations(it, proto, kind).toList()
             }.orEmpty()
@@ -255,7 +255,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         return valueParameters.mapIndexed { i, proto ->
             val flags = if (proto.hasFlags()) proto.flags else 0
             val annotations = if (containerOfCallable != null && Flags.HAS_ANNOTATIONS.get(flags)) {
-                DeserializedAnnotations(c.storageManager) {
+                NonEmptyDeserializedAnnotations(c.storageManager) {
                     c.components.annotationAndConstantLoader
                             .loadValueParameterAnnotations(containerOfCallable, callable, kind, i, proto)
                             .toList()
