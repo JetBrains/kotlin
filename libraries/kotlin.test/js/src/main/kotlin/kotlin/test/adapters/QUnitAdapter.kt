@@ -39,10 +39,14 @@ internal class QUnitAdapter : BareAdapter() {
     }
 
     private fun wrapTest(testFn: () -> Unit): (dynamic) -> Unit = { assert ->
+        var assertionsHappened = false
         assertHook = { testResult ->
           assert.ok(testResult.result, testResult.lazyMessage())
+          assertionsHappened = true
         }
         testFn()
-        assertTrue(true, "A mock assertion to make empty tests pass.")
+        if (!assertionsHappened) {
+            assertTrue(true, "A test with no assertions is considered successful")
+        }
     }
 }

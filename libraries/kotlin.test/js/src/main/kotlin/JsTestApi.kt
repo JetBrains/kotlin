@@ -33,4 +33,4 @@ internal fun setAdapter(adapter: dynamic) = kotlin.test.setAdapter(adapter)
  * Use in order to define which action should be taken by the test framework on the testResult.
  */
 @JsName("setAssertHook")
-internal fun setAssertHook(hook: (TestResult) -> Unit) = kotlin.test.setAssertHook(hook)
+internal fun setAssertHook(hook: (AssertionResult) -> Unit) = kotlin.test.setAssertHook(hook)

@@ -44,4 +44,4 @@ impl fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: Str
  */
 internal impl fun lookupAsserter(): Asserter = defaultAsserter
 
-internal val defaultAsserter = DefaultJsAsserter()
+internal val defaultAsserter = DefaultJsAsserter
