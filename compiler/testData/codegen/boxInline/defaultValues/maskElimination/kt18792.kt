@@ -1,28 +1,22 @@
 // FILE: 1.kt
 //WITH_RUNTIME
+// IGNORE_BACKEND: JS, NATIVE
 
 package test
 
 class SceneContainer2() {
-    inline fun <reified T : CharSequence> pushTo(vararg injects: Any, time: A = 0.seconds, transition: B = b) = pushTo(T::class.java, *injects, time = time, transition = transition)
 
-    fun <T : CharSequence> pushTo(clazz: Class<T>, vararg injects: Any, time: A = 0.seconds, transition: B = b): T {
-        return "OK" as T
+    inline fun pushTo(time: Long = 0.seconds, transition: String = "TR"): String {
+        return "OK"
     }
 }
 
-class B
-
-val b = B()
-
-data class A(val x: Int)
-
-inline val Number.seconds: A get() = A(toInt())
+inline val Number.seconds: Long get() = this.toLong()
 
 // FILE: 2.kt
 
 import test.*
 
 fun box(): String {
-    return SceneContainer2().pushTo<String>(time = 0.2.seconds)
+    return SceneContainer2().pushTo(time = 0.2.seconds)
 }
