@@ -342,8 +342,8 @@ message Property {
 
 message ValueParameter {
   /*
-    declaresDefault
     hasAnnotations
+    declaresDefault
     isCrossinline
     isNoinline
   */

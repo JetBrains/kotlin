@@ -17089,8 +17089,8 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
-     *declaresDefault
      *hasAnnotations
+     *declaresDefault
      *isCrossinline
      *isNoinline
      * </pre>
@@ -17100,8 +17100,8 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
-     *declaresDefault
      *hasAnnotations
+     *declaresDefault
      *isCrossinline
      *isNoinline
      * </pre>
@@ -17290,8 +17290,8 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
-     *declaresDefault
      *hasAnnotations
+     *declaresDefault
      *isCrossinline
      *isNoinline
      * </pre>
@@ -17303,8 +17303,8 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
-     *declaresDefault
      *hasAnnotations
+     *declaresDefault
      *isCrossinline
      *isNoinline
      * </pre>
@@ -17715,8 +17715,8 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
-       *declaresDefault
        *hasAnnotations
+       *declaresDefault
        *isCrossinline
        *isNoinline
        * </pre>
@@ -17728,8 +17728,8 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
-       *declaresDefault
        *hasAnnotations
+       *declaresDefault
        *isCrossinline
        *isNoinline
        * </pre>
@@ -17741,8 +17741,8 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
-       *declaresDefault
        *hasAnnotations
+       *declaresDefault
        *isCrossinline
        *isNoinline
        * </pre>
@@ -17757,8 +17757,8 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
-       *declaresDefault
        *hasAnnotations
+       *declaresDefault
        *isCrossinline
        *isNoinline
        * </pre>
