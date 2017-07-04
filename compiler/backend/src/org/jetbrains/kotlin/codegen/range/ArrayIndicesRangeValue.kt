@@ -17,13 +17,17 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
-import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
+import org.jetbrains.kotlin.codegen.range.forLoop.ForInArrayIndicesRangeLoopGenerator
+import org.jetbrains.kotlin.codegen.range.inExpression.InArrayIndicesGenerator
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-interface RangeValue {
-    fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator
+class ArrayIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
+    override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
+            ForInArrayIndicesRangeLoopGenerator(codegen, forExpression, rangeCall)
 
-    fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator
+    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression) =
+            InArrayIndicesGenerator(codegen, operatorReference, rangeCall)
 }

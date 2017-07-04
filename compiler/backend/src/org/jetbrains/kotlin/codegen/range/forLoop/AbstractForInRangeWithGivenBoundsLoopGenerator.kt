@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.range
+package org.jetbrains.kotlin.codegen.range.forLoop
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
-import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-interface RangeValue {
-    fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator
+abstract class AbstractForInRangeWithGivenBoundsLoopGenerator(
+        codegen: ExpressionCodegen,
+        forExpression: KtForExpression,
+        step: Int = 1
+) : AbstractForInRangeLoopGenerator(codegen, forExpression, step) {
+    protected abstract fun generateFrom(): StackValue
+    protected abstract fun generateTo(): StackValue
 
-    fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator
+    override fun storeRangeStartAndEnd() {
+        loopParameter().store(generateFrom(), v)
+        StackValue.local(endVar, asmElementType).store(generateTo(), v)
+    }
 }

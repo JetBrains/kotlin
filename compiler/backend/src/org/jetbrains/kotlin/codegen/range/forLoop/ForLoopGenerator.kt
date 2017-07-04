@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.range
+package org.jetbrains.kotlin.codegen.range.forLoop
 
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
-import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.org.objectweb.asm.Label
 
-interface RangeValue {
-    fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator
-
-    fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator
+interface ForLoopGenerator {
+    val forExpression: KtForExpression
+    fun beforeLoop()
+    fun checkEmptyLoop(loopExit: Label)
+    fun checkPreCondition(loopExit: Label)
+    fun beforeBody()
+    fun body()
+    fun afterBody(loopExit: Label)
+    fun afterLoop()
 }

@@ -17,13 +17,16 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
+import org.jetbrains.kotlin.codegen.range.forLoop.IteratorForLoopGenerator
+import org.jetbrains.kotlin.codegen.range.inExpression.CallBasedInExpressionGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-interface RangeValue {
-    fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator
+class IterableRangeValue : RangeValue {
+    override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
+            IteratorForLoopGenerator(codegen, forExpression)
 
-    fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator
+    override fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
+            CallBasedInExpressionGenerator(codegen, operatorReference)
 }
