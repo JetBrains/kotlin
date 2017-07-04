@@ -253,13 +253,15 @@ class MemberDeserializer(private val c: DeserializationContext) {
 
         return valueParameters.mapIndexed { i, proto ->
             val flags = if (proto.hasFlags()) proto.flags else 0
+            val annotations = if (containerOfCallable != null && Flags.HAS_ANNOTATIONS.get(flags)) {
+                DeserializedAnnotations(c.storageManager) {
+                    c.components.annotationAndConstantLoader.loadValueParameterAnnotations(containerOfCallable, callable, kind, i, proto)
+                }
+            }
+            else Annotations.EMPTY
             ValueParameterDescriptorImpl(
                     callableDescriptor, null, i,
-                    containerOfCallable?.let { container ->
-                        DeserializedAnnotations(c.storageManager) {
-                            c.components.annotationAndConstantLoader.loadValueParameterAnnotations(container, callable, kind, i, proto)
-                        }
-                    } ?: Annotations.EMPTY,
+                    annotations,
                     c.nameResolver.getName(proto.name),
                     c.typeDeserializer.type(proto.type(c.typeTable)),
                     Flags.DECLARES_DEFAULT_VALUE.get(flags),
