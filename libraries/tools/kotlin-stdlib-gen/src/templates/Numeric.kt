@@ -23,7 +23,7 @@ fun numeric(): List<GenericFunction> {
         bodyForTypes(Iterables, PrimitiveType.Char, PrimitiveType.Int, PrimitiveType.Long) {
             """
             if (this is TProgression) {
-                return (this.first + this.last) * this.count() / 2
+                return (this.first + this.last) * (this.count() / 2)
             }
 
             var sum: SUM = ZERO

@@ -91,13 +91,17 @@ fun aggregates(): List<GenericFunction> {
 
         doc { f -> "Returns the number of ${f.element.pluralize()} in this ${f.collection}." }
         returns("Int")
-        body {
+        body { f ->
+            """
+            ${if (f == Iterables) {
             """
             when (this) {
                 is CharProgression -> return $progressionCount
                 is IntProgression -> return $progressionCount
                 is LongProgression -> return $progressionCount
             }
+            """
+            } else ""}
 
             var count = 0
             for (element in this) count++

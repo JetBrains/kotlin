@@ -2169,7 +2169,7 @@ public fun Iterable<Short>.sum(): Int {
 @kotlin.jvm.JvmName("sumOfInt")
 public fun Iterable<Int>.sum(): Int {
     if (this is IntProgression) {
-        return (this.first + this.last) * this.count() / 2
+        return (this.first + this.last) * (this.count() / 2)
     }
     var sum: Int = 0
     for (element in this) {
@@ -2184,7 +2184,7 @@ public fun Iterable<Int>.sum(): Int {
 @kotlin.jvm.JvmName("sumOfLong")
 public fun Iterable<Long>.sum(): Long {
     if (this is LongProgression) {
-        return (this.first + this.last) * this.count() / 2
+        return (this.first + this.last) * (this.count() / 2)
     }
     var sum: Long = 0L
     for (element in this) {
