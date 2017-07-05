@@ -648,6 +648,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/whenThrowOnly.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("whenWithLambda.kt")
+            public void testWhenWithLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/whenWithLambda.kt");
+                doTest(fileName);
+            }
         }
     }
 
