@@ -2577,9 +2577,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("inAnonymousFunBlockWithExpectedType.kt")
+                public void testInAnonymousFunBlockWithExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/inAnonymousFunBlockWithExpectedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inAnonymousFunExprWithExpectedType.kt")
+                public void testInAnonymousFunExprWithExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/inAnonymousFunExprWithExpectedType.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inLambda.kt")
                 public void testInLambda() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/inLambda.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inLambdaWithExpectedType.kt")
+                public void testInLambdaWithExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/inLambdaWithExpectedType.kt");
                     doTest(fileName);
                 }
 
