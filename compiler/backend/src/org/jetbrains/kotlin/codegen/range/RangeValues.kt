@@ -79,7 +79,7 @@ private fun getResolvedCallForRangeExpression(
     }
 }
 
-private fun createIntrinsifiedRangeValueOrNull(rangeCall: ResolvedCall<out CallableDescriptor>): RangeValue? {
+private fun ExpressionCodegen.createIntrinsifiedRangeValueOrNull(rangeCall: ResolvedCall<out CallableDescriptor>): RangeValue? {
     val rangeCallee = rangeCall.resultingDescriptor
 
     return when {
@@ -96,7 +96,7 @@ private fun createIntrinsifiedRangeValueOrNull(rangeCall: ResolvedCall<out Calla
         isCharSequenceIndices(rangeCallee) ->
             CharSequenceIndicesRangeValue(rangeCall)
         isComparableRangeTo(rangeCallee) ->
-            ComparableRangeLiteralRangeValue(rangeCall)
+            ComparableRangeLiteralRangeValue(this, rangeCall)
         else ->
             null
     }

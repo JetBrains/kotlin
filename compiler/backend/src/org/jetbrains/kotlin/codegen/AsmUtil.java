@@ -798,6 +798,16 @@ public class AsmUtil {
         }
     }
 
+    public static void pop2(@NotNull MethodVisitor v, @NotNull Type type) {
+        if (type.getSize() == 2) {
+            v.visitInsn(Opcodes.POP2);
+            v.visitInsn(Opcodes.POP2);
+        }
+        else {
+            v.visitInsn(Opcodes.POP2);
+        }
+    }
+
     public static void dup(@NotNull InstructionAdapter v, @NotNull Type type) {
         dup(v, type.getSize());
     }
@@ -808,6 +818,22 @@ public class AsmUtil {
         }
         else if (size == 1) {
             v.dup();
+        }
+        else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public static void dupx(@NotNull InstructionAdapter v, @NotNull Type type) {
+        dupx(v, type.getSize());
+    }
+
+    private static void dupx(@NotNull InstructionAdapter v, int size) {
+        if (size == 2) {
+            v.dup2X2();
+        }
+        else if (size == 1) {
+            v.dupX1();
         }
         else {
             throw new UnsupportedOperationException();

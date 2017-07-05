@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.codegen.range.inExpression
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator
+import org.jetbrains.kotlin.codegen.range.comparison.ObjectComparisonGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -42,31 +44,5 @@ class InComparableRangeLiteralGenerator(
 
     override fun genHighBound(): StackValue = codegen.gen(to)
 
-    override val comparisonGenerator: ComparisonGenerator = ComparableComparisonGenerator
-
-    private object ComparableComparisonGenerator : ComparisonGenerator {
-        override fun jumpIfGreaterOrEqual(v: InstructionAdapter, label: Label) {
-            invokeCompare(v)
-            v.ifge(label)
-        }
-
-        override fun jumpIfLessOrEqual(v: InstructionAdapter, label: Label) {
-            invokeCompare(v)
-            v.ifle(label)
-        }
-
-        override fun jumpIfGreater(v: InstructionAdapter, label: Label) {
-            invokeCompare(v)
-            v.ifgt(label)
-        }
-
-        override fun jumpIfLess(v: InstructionAdapter, label: Label) {
-            invokeCompare(v)
-            v.iflt(label)
-        }
-
-        private fun invokeCompare(v: InstructionAdapter) {
-            v.invokeinterface("java/lang/Comparable", "compareTo", "(Ljava/lang/Object;)I")
-        }
-    }
+    override val comparisonGenerator: ComparisonGenerator = ObjectComparisonGenerator
 }
