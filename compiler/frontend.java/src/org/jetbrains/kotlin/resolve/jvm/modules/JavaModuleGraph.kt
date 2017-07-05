@@ -22,8 +22,8 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
     private val module: (String) -> JavaModule? =
             LockBasedStorageManager.NO_LOCKS.createMemoizedFunctionWithNullableValues(finder::findModule)
 
-    fun getAllDependencies(moduleNames: List<String>): List<String> {
-        val visited = moduleNames.toMutableSet()
+    fun getAllDependencies(moduleNames: List<String>): LinkedHashSet<String> {
+        val visited = LinkedHashSet(moduleNames)
 
         // Every module implicitly depends on java.base
         visited += "java.base"
@@ -55,7 +55,7 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
             }
         }
 
-        return visited.toList()
+        return visited
     }
 
     fun reads(moduleName: String, dependencyName: String): Boolean {

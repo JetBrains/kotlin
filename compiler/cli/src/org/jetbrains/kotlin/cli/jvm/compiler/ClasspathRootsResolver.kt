@@ -191,8 +191,7 @@ internal class ClasspathRootsResolver(
             else -> computeDefaultRootModules() + additionalModules
         }
 
-        val allDependencies = javaModuleGraph.getAllDependencies(rootModules).toMutableList()
-
+        val allDependencies = javaModuleGraph.getAllDependencies(rootModules)
         if (allDependencies.any { moduleName -> javaModuleFinder.findModule(moduleName) is JavaModule.Automatic }) {
             // According to java.lang.module javadoc, if at least one automatic module is added to the module graph,
             // all observable automatic modules should be added.
