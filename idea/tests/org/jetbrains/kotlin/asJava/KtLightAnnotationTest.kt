@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiArrayInitializerMemberValue
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
@@ -44,17 +45,32 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         """.trimIndent())
         myFixture.testHighlighting("OuterAnnotation.java", "AnnotatedClass.kt")
 
-        val headerClass = listOf(myFixture.findClass("AnnotatedClass"))
-        assertEquals(1, headerClass.size)
-        val annotations = headerClass.first().annotations
-        assertEquals(1, annotations.size)
-        val annotation = annotations.first()
-
-        val annotationAttributeVal = annotation.findAttributeValue("attribute") as PsiElement
-
-        TestCase.assertEquals("InnerAnnotation()", annotationAttributeVal.text)
-        TestCase.assertEquals(TextRange(45, 62), annotationAttributeVal.textRange)
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("attribute") as PsiElement
+        assertTextAndRange("InnerAnnotation()", annotationAttributeVal)
     }
+
+    fun testAnnotationsInAnnotationsArrayDeclarations() {
+        myFixture.addClass("""
+            public @interface OuterAnnotation {
+                InnerAnnotation[] attributes();
+                @interface InnerAnnotation {
+                }
+            }
+        """.trimIndent())
+
+        myFixture.configureByText("AnnotatedClass.kt", """
+            @OuterAnnotation(attributes = arrayOf(OuterAnnotation.InnerAnnotation()))
+            open class AnnotatedClass
+        """.trimIndent())
+        myFixture.testHighlighting("OuterAnnotation.java", "AnnotatedClass.kt")
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("attributes") as PsiArrayInitializerMemberValue
+        assertTextAndRange("arrayOf(OuterAnnotation.InnerAnnotation())", annotationAttributeVal)
+        assertTextAndRange("InnerAnnotation()", annotationAttributeVal.initializers[0])
+    }
+
 
     fun testAnnotationsInAnnotationsFinalDeclarations() {
         myFixture.addClass("""
@@ -71,16 +87,9 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         """.trimIndent())
         myFixture.testHighlighting("OuterAnnotation.java", "AnnotatedClass.kt")
 
-        val headerClass = listOf(myFixture.findClass("AnnotatedClass"))
-        assertEquals(1, headerClass.size)
-        val annotations = headerClass.first().annotations
-        assertEquals(1, annotations.size)
-        val annotation = annotations.first()
-
-        val annotationAttributeVal = annotation.findAttributeValue("attribute") as PsiElement
-
-        TestCase.assertEquals("InnerAnnotation()", annotationAttributeVal.text)
-        TestCase.assertEquals(TextRange(45, 62), annotationAttributeVal.textRange)
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("attribute") as PsiElement
+        assertTextAndRange("InnerAnnotation()", annotationAttributeVal)
     }
 
     fun testAnnotationsInAnnotationsInAnnotationsDeclarations() {
@@ -101,21 +110,13 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         """.trimIndent())
         myFixture.testHighlighting("OuterAnnotation.java", "AnnotatedClass.kt")
 
-        val headerClass = listOf(myFixture.findClass("AnnotatedClass"))
-        assertEquals(1, headerClass.size)
-        val annotations = headerClass.first().annotations
-        assertEquals(1, annotations.size)
-        val annotation = annotations.first()
-
-        val annotationAttributeVal = annotation.findAttributeValue("attribute") as PsiElement
-
-        TestCase.assertEquals("InnerAnnotation(attribute = OuterAnnotation.InnerAnnotation.InnerInnerAnnotation())", annotationAttributeVal.text)
-        TestCase.assertEquals(TextRange(45, 128), annotationAttributeVal.textRange)
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("attribute") as PsiElement
+        assertTextAndRange("InnerAnnotation(attribute = OuterAnnotation.InnerAnnotation.InnerInnerAnnotation())", annotationAttributeVal)
 
         annotationAttributeVal as PsiAnnotation
         val innerAnnotationAttributeVal = annotationAttributeVal.findAttributeValue("attribute") as PsiElement
-        TestCase.assertEquals("InnerInnerAnnotation()", innerAnnotationAttributeVal.text)
-        TestCase.assertEquals(TextRange(105, 127), innerAnnotationAttributeVal.textRange)
+        assertTextAndRange("InnerInnerAnnotation()", innerAnnotationAttributeVal)
     }
 
     fun testKotlinAnnotations() {
@@ -129,21 +130,144 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         """.trimIndent())
         myFixture.testHighlighting("AnnotatedClass.kt")
 
-        val headerClass = listOf(myFixture.findClass("AnnotatedClass"))
-        assertEquals(1, headerClass.size)
-        val annotations = headerClass.first().annotations
-        assertEquals(1, annotations.size)
-        val annotation = annotations.first()
-
-        val annotationAttributeVal = annotation.findAttributeValue("anno2") as PsiElement
-
-        TestCase.assertEquals("Anno2(Anno3())", annotationAttributeVal.text)
-        TestCase.assertEquals(TextRange(113, 127), annotationAttributeVal.textRange)
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("anno2") as PsiElement
+        assertTextAndRange("Anno2(Anno3())", annotationAttributeVal)
 
         annotationAttributeVal as PsiAnnotation
         val innerAnnotationAttributeVal = annotationAttributeVal.findAttributeValue("anno3") as PsiElement
-        TestCase.assertEquals("Anno3()", innerAnnotationAttributeVal.text)
-        TestCase.assertEquals(TextRange(119, 126), innerAnnotationAttributeVal.textRange)
+        assertTextAndRange("Anno3()", innerAnnotationAttributeVal)
     }
+
+    fun testKotlinAnnotationWithStringArray() {
+        myFixture.configureByText("AnnotatedClass.kt", """
+            annotation class Anno(val params: Array<String>)
+            @Anno(arrayOf("abc", "def"))
+            class AnnotatedClass
+        """.trimIndent())
+        myFixture.testHighlighting("AnnotatedClass.kt")
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("params") as PsiElement
+        assertTextAndRange("arrayOf(\"abc\", \"def\")", annotationAttributeVal)
+
+        annotationAttributeVal as PsiArrayInitializerMemberValue
+        assertTextAndRange("\"abc\"", annotationAttributeVal.initializers[0])
+        assertTextAndRange("\"def\"", annotationAttributeVal.initializers[1])
+    }
+
+    fun testKotlinAnnotationsArray() {
+        myFixture.configureByText("AnnotatedClass.kt", """
+            annotation class Anno1(val anno2: Array<Anno2>)
+            annotation class Anno2(val v:Int)
+
+            @Anno1(anno2 = arrayOf(Anno2(1), Anno2(2)))
+            class AnnotatedClass
+        """.trimIndent())
+        myFixture.testHighlighting("AnnotatedClass.kt")
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("anno2") as PsiElement
+        assertTextAndRange("arrayOf(Anno2(1), Anno2(2))", annotationAttributeVal)
+
+        annotationAttributeVal as PsiArrayInitializerMemberValue
+        val innerAnnotationAttributeVal = annotationAttributeVal.initializers[0]
+        assertTextAndRange("Anno2(1)", innerAnnotationAttributeVal)
+        innerAnnotationAttributeVal as PsiAnnotation
+        val value = innerAnnotationAttributeVal.findAttributeValue("v")!!
+        assertTextAndRange("1", value)
+
+    }
+
+    fun testVarargAnnotation() {
+
+        myFixture.configureByText("Outer.java", """
+            @interface Outer{
+                Inner[] value() default {};
+            }
+
+            @interface Inner{
+            }
+        """)
+        myFixture.configureByText("AnnotatedClass.kt", """
+            @Outer(Inner())
+            class MyAnnotated {}
+        """.trimIndent())
+
+        val annotations = listOf(myFixture.findClass("MyAnnotated")).let {
+            assertEquals(1, it.size)
+            it.first().annotations.apply {
+                assertEquals(1, it.size)
+            }
+        }
+
+        annotations[0].let { annotation ->
+            val annotationAttributeVal = annotation.findAttributeValue("value") as PsiElement
+            assertTextAndRange("@Outer(Inner())", annotationAttributeVal)
+            annotationAttributeVal as PsiArrayInitializerMemberValue
+            annotationAttributeVal.initializers[0].let { innerAnnotationAttributeVal ->
+                assertTextAndRange("Inner()", innerAnnotationAttributeVal)
+            }
+        }
+
+    }
+
+    fun testRepeatableAnnotationsArray() {
+
+        myFixture.configureByText("RAnno.java", """
+            import java.lang.annotation.Repeatable;
+
+            @interface RContainer{
+                RAnno[] value() default {};
+            }
+
+            @Repeatable(RContainer.class)
+            public @interface RAnno {
+                String[] value() default {};
+            }
+        """)
+        myFixture.configureByText("AnnotatedClass.kt", """
+            @RAnno()
+            @RAnno("1")
+            @RAnno("1", "2")
+            class AnnotatedClass
+        """.trimIndent())
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(3)
+        annotations[0].let { annotation ->
+            val annotationAttributeVal = annotation.findAttributeValue("value") as PsiElement
+            assertTextAndRange("{}", annotationAttributeVal)
+            annotationAttributeVal as PsiArrayInitializerMemberValue
+            TestCase.assertTrue(annotationAttributeVal.initializers.isEmpty())
+        }
+        annotations[1].let { annotation ->
+            val annotationAttributeVal = annotation.findAttributeValue("value") as PsiElement
+            assertTextAndRange("@RAnno(\"1\")", annotationAttributeVal)
+            annotationAttributeVal as PsiArrayInitializerMemberValue
+            annotationAttributeVal.initializers[0].let { innerAnnotationAttributeVal ->
+                assertTextAndRange("\"1\"", innerAnnotationAttributeVal)
+            }
+        }
+        annotations[2].let { annotation ->
+            val annotationAttributeVal = annotation.findAttributeValue("value") as PsiElement
+            assertTextAndRange("@RAnno(\"1\", \"2\")", annotationAttributeVal)
+            annotationAttributeVal as PsiArrayInitializerMemberValue
+            annotationAttributeVal.initializers[0].let { innerAnnotationAttributeVal ->
+                assertTextAndRange("\"1\"", innerAnnotationAttributeVal)
+            }
+            annotationAttributeVal.initializers[1].let { innerAnnotationAttributeVal ->
+                assertTextAndRange("\"2\"", innerAnnotationAttributeVal)
+            }
+        }
+
+    }
+
+    private fun assertTextAndRange(expected: String, psiElement: PsiElement) {
+        TestCase.assertEquals(expected, psiElement.text)
+        TestCase.assertEquals(expected, psiElement.textRange.substring(psiElement.containingFile.text))
+    }
+
+    private fun PsiClass.expectAnnotations(number: Int): Array<PsiAnnotation> =
+            this.annotations.apply { TestCase.assertEquals(number, size) }
 
 }

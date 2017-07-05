@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.lang.Language
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
@@ -57,7 +56,7 @@ abstract class KtLightAbstractAnnotation(parent: PsiElement, computeDelegate: ()
 class KtLightAnnotationForSourceEntry(
         private val qualifiedName: String,
         override val kotlinOrigin: KtCallElement,
-        parent: KtLightElement<*, *>,
+        parent: PsiElement,
         computeDelegate: () -> PsiAnnotation
 ) : KtLightAbstractAnnotation(parent, computeDelegate) {
 
@@ -65,9 +64,10 @@ class KtLightAnnotationForSourceEntry(
 
     open inner class LightElementValue<out D : PsiElement>(
             val delegate: D,
-            private val parent: PsiElement
+            private val parent: PsiElement,
+            private val originalExpressionProvider: () -> PsiElement
     ) : PsiAnnotationMemberValue, PsiElement by delegate {
-        val originalExpression: PsiElement? by lazyPub { getMemberValueAsCallArgument(delegate, kotlinOrigin, project) }
+        val originalExpression: PsiElement by lazyPub { originalExpressionProvider() }
 
         fun getConstantValue(): Any? {
             val expression = originalExpression as? KtExpression ?: return null
@@ -77,15 +77,16 @@ class KtLightAnnotationForSourceEntry(
         }
 
         override fun getReference() = references.singleOrNull()
-        override fun getReferences() = originalExpression?.references ?: PsiReference.EMPTY_ARRAY
+        override fun getReferences() = originalExpression.references
         override fun getLanguage(): Language = KotlinLanguage.INSTANCE
         override fun getNavigationElement() = originalExpression
-        override fun getTextRange() = originalExpression?.textRange ?: TextRange.EMPTY_RANGE
+        override fun getTextRange() = originalExpression.textRange ?: TextRange.EMPTY_RANGE
         override fun getParent() = parent
+        override fun getText(): String = originalExpression.text
 
         override fun replace(newElement: PsiElement): PsiElement {
             val value = (newElement as? PsiLiteral)?.value as? String ?: return this
-            val origin = originalExpression ?: return this
+            val origin = originalExpression
 
             val exprToReplace =
                     if (origin is KtCallExpression /*arrayOf*/) {
@@ -100,43 +101,44 @@ class KtLightAnnotationForSourceEntry(
         }
     }
 
-    private fun getMemberValueAsCallArgument(memberValue: PsiElement, annotationEntry: KtCallElement, project: Project): PsiElement? {
+    private fun getMemberValueAsCallArgument(memberValue: PsiElement, callHolder: KtCallElement): PsiElement {
 
-        fun KtElement.getResolvedCall(): ResolvedCall<out CallableDescriptor>? {
-            val context = LightClassGenerationSupport.getInstance(this.project).analyze(this)
-            return this.getResolvedCall(context)
-        }
-
-        val nameAndValue = memberValue.getStrictParentOfType<PsiNameValuePair>() ?: return null
-        val resolvedCall: ResolvedCall<out CallableDescriptor> = annotationEntry.getResolvedCall() ?: return null
+        val nameAndValue = memberValue.getStrictParentOfType<PsiNameValuePair>()
+        val resolvedCall = callHolder.getResolvedCall()!!
         val annotationConstructor = resolvedCall.resultingDescriptor
-        val parameterName = nameAndValue.name ?: "value"
+        val parameterName = nameAndValue?.name ?: "value"
         val parameter = annotationConstructor.valueParameters.singleOrNull { it.name.asString() == parameterName }
-                        ?: return null
-        val resolvedArgument = resolvedCall.valueArguments[parameter] ?: return null
+                        ?: error("single parameter $parameterName was not found in ${annotationConstructor.valueParameters}")
+        val resolvedArgument = resolvedCall.valueArguments[parameter]!!
         return when (resolvedArgument) {
             is DefaultValueArgument -> {
                 val psi = parameter.source.getPsi()
                 when (psi) {
-                    is KtParameter -> psi.defaultValue
-                    is PsiAnnotationMethod -> psi.defaultValue
-                    else -> null
+                    is KtParameter -> psi.defaultValue!!
+                    is PsiAnnotationMethod -> psi.defaultValue!!
+                    else -> throw UnsupportedOperationException("$psi of type ${psi?.javaClass}")
                 }
             }
 
             is ExpressionValueArgument -> {
                 val argExpression = resolvedArgument.valueArgument?.getArgumentExpression()
-                argExpression?.getResolvedCall()?.call?.callElement
+                argExpression?.asKtCall()
+                ?: argExpression
+                ?: error("resolvedArgument ($resolvedArgument) has no arg expression")
             }
 
-            is VarargValueArgument -> unwrapArray(resolvedArgument.arguments)
+            is VarargValueArgument ->
+                memberValue.unwrapArray(resolvedArgument.arguments)
+                ?: resolvedArgument.arguments.first().asElement().parent.parent.let {
+                    it.asKtCall() ?: it
+                }
 
-            else -> null
+            else -> throw IllegalArgumentException("resolvedArgument: {$resolvedArgument} cant be processed")
         }
     }
 
-    private fun unwrapArray(arguments: List<ValueArgument>): PsiElement? {
-        val arrayInitializer = parent as? LightArrayInitializerValue ?: return null
+    private fun PsiElement.unwrapArray(arguments: List<ValueArgument>): PsiElement? {
+        val arrayInitializer = parent as? PsiArrayInitializerMemberValue ?: return null
         val exprIndex = arrayInitializer.initializers.indexOf(this)
         if (exprIndex < 0 || exprIndex >= arguments.size) return null
         return arguments[exprIndex].getArgumentExpression()
@@ -144,47 +146,59 @@ class KtLightAnnotationForSourceEntry(
 
     open inner class LightExpressionValue<out D : PsiExpression>(
             delegate: D,
-            parent: PsiElement
-    ) : LightElementValue<D>(delegate, parent), PsiExpression by delegate
+            parent: PsiElement,
+            originalExpressionProvider: () -> PsiElement
+    ) : LightElementValue<D>(delegate, parent, originalExpressionProvider), PsiExpression {
+        override fun getType(): PsiType? = delegate.type
+    }
 
     inner class LightStringLiteral(
             delegate: PsiLiteralExpression,
-            parent: PsiElement
-    ) : LightExpressionValue<PsiLiteralExpression>(delegate, parent), PsiLiteralExpression {
+            parent: PsiElement,
+            originalExpressionProvider: () -> PsiElement
+    ) : LightExpressionValue<PsiLiteralExpression>(delegate, parent, originalExpressionProvider), PsiLiteralExpression {
         override fun getValue() = delegate.value
     }
 
     inner class LightClassLiteral(
             delegate: PsiClassObjectAccessExpression,
-            parent: PsiElement
-    ) : LightExpressionValue<PsiClassObjectAccessExpression>(delegate, parent), PsiClassObjectAccessExpression {
+            parent: PsiElement,
+            originalExpressionProvider: () -> PsiElement
+    ) : LightExpressionValue<PsiClassObjectAccessExpression>(delegate, parent, originalExpressionProvider), PsiClassObjectAccessExpression {
         override fun getType() = delegate.type
         override fun getOperand(): PsiTypeElement = delegate.operand
     }
 
     inner class LightArrayInitializerValue(
-            private val delegate: PsiArrayInitializerMemberValue,
-            private val parent: PsiElement
-    ) : PsiArrayInitializerMemberValue by delegate {
-        private val _initializers by lazyPub { delegate.initializers.map { wrapAnnotationValue(it, this) }.toTypedArray() }
+            delegate: PsiArrayInitializerMemberValue,
+            parent: PsiElement,
+            originalExpressionProvider: () -> PsiElement
+    ) : LightElementValue<PsiArrayInitializerMemberValue>(delegate, parent, originalExpressionProvider), PsiArrayInitializerMemberValue {
+        private val _initializers by lazyPub {
+            delegate.initializers.mapIndexed { i, it ->
+                wrapAnnotationValue(it, this, {
+                    (originalExpression as KtCallElement).valueArguments[i].getArgumentExpression()!!
+                })
+            }.toTypedArray()
+        }
 
         override fun getInitializers() = _initializers
-        override fun getLanguage() = KotlinLanguage.INSTANCE
-        override fun getParent() = parent
     }
 
-    private fun wrapAnnotationValue(value: PsiAnnotationMemberValue, parent: PsiElement): PsiAnnotationMemberValue {
+    private fun wrapAnnotationValue(value: PsiAnnotationMemberValue, parent: PsiElement, ktOriginForElement: () -> PsiElement): PsiAnnotationMemberValue {
         return when {
-            value is PsiLiteralExpression && value.value is String -> LightStringLiteral(value, parent)
-            value is PsiClassObjectAccessExpression -> LightClassLiteral(value, parent)
-            value is PsiExpression -> LightExpressionValue(value, parent)
-            value is PsiArrayInitializerMemberValue -> LightArrayInitializerValue(value, parent)
+            value is PsiLiteralExpression && value.value is String -> LightStringLiteral(value, parent, ktOriginForElement)
+            value is PsiClassObjectAccessExpression -> LightClassLiteral(value, parent, ktOriginForElement)
+            value is PsiExpression -> LightExpressionValue(value, parent, ktOriginForElement)
+            value is PsiArrayInitializerMemberValue -> LightArrayInitializerValue(value, parent, ktOriginForElement)
             value is PsiAnnotation -> KtLightAnnotationForSourceEntry(
                     value.qualifiedName!!,
-                    getMemberValueAsCallArgument(value, this.kotlinOrigin, value.project)!! as KtCallElement,
-                    this, { value }
+                    ktOriginForElement().let {
+                        it.asKtCall() ?: throw UnsupportedOperationException("cant convert $it to KtCallElement")
+                    },
+                    parent, { value }
             )
-            else -> LightElementValue(value, parent)
+            else -> LightElementValue(value, parent, ktOriginForElement)
         }
     }
 
@@ -192,8 +206,13 @@ class KtLightAnnotationForSourceEntry(
 
     override fun getName() = null
 
-    override fun findAttributeValue(name: String?) = clsDelegate.findAttributeValue(name)?.let { wrapAnnotationValue(it, this) }
-    override fun findDeclaredAttributeValue(name: String?) = clsDelegate.findDeclaredAttributeValue(name)?.let { wrapAnnotationValue(it, this) }
+    private fun wrapAnnotationValue(value: PsiAnnotationMemberValue): PsiAnnotationMemberValue = wrapAnnotationValue(value, this, {
+        getMemberValueAsCallArgument(value, kotlinOrigin)
+    })
+
+    override fun findAttributeValue(name: String?) = clsDelegate.findAttributeValue(name)?.let { wrapAnnotationValue(it) }
+
+    override fun findDeclaredAttributeValue(name: String?) = clsDelegate.findDeclaredAttributeValue(name)?.let { wrapAnnotationValue(it) }
 
     override fun delete() = kotlinOrigin.delete()
 
@@ -265,3 +284,10 @@ class KtLightNullabilityAnnotation(member: KtLightElement<*, PsiModifierListOwne
 internal fun isNullabilityAnnotation(qualifiedName: String?) = qualifiedName in backendNullabilityAnnotations
 
 private val backendNullabilityAnnotations = arrayOf(Nullable::class.java.name, NotNull::class.java.name)
+
+private fun KtElement.getResolvedCall(): ResolvedCall<out CallableDescriptor>? {
+    val context = LightClassGenerationSupport.getInstance(this.project).analyze(this)
+    return this.getResolvedCall(context)
+}
+
+private fun PsiElement.asKtCall(): KtCallElement? = (this as? KtElement)?.getResolvedCall()?.call?.callElement as? KtCallElement
