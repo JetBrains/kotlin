@@ -17,13 +17,35 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 interface RangeValue {
     fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator
 
     fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator
 }
+
+
+interface BoundedValue {
+    val instanceType: Type
+
+    fun putInstance(v: InstructionAdapter)
+
+    fun putHighLow(v: InstructionAdapter, type: Type)
+    val isLowInclusive: Boolean
+    val isHighInclusive: Boolean
+}
+
+fun BoundedValue.asStackValue(): StackValue =
+        object : StackValue(instanceType) {
+            override fun putSelector(type: Type, v: InstructionAdapter) {
+                putInstance(v)
+                StackValue.onStack(instanceType).put(type, v)
+            }
+        }

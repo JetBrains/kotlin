@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.range.inExpression
 
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.org.objectweb.asm.Label
@@ -34,13 +35,6 @@ abstract class AbstractInRangeWithKnownBoundsExpressionGenerator(
 
     protected abstract fun genLowBound(): StackValue
     protected abstract fun genHighBound(): StackValue
-
-    protected interface ComparisonGenerator {
-        fun jumpIfGreaterOrEqual(v: InstructionAdapter, label: Label)
-        fun jumpIfLessOrEqual(v: InstructionAdapter, label: Label)
-        fun jumpIfGreater(v: InstructionAdapter, label: Label)
-        fun jumpIfLess(v: InstructionAdapter, label: Label)
-    }
 
     protected abstract val comparisonGenerator: ComparisonGenerator
 

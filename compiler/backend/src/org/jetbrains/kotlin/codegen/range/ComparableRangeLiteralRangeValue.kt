@@ -17,15 +17,27 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.range.forLoop.IteratorForLoopGenerator
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.isClosedRangeContains
-import org.jetbrains.kotlin.codegen.range.inExpression.InComparableRangeLiteralGenerator
+import org.jetbrains.kotlin.codegen.range.comparison.ObjectComparisonGenerator
+import org.jetbrains.kotlin.codegen.range.forLoop.IteratorForLoopGenerator
+import org.jetbrains.kotlin.codegen.range.inExpression.InContinuousRangeExpressionGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class ComparableRangeLiteralRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): CallIntrinsicRangeValue(rangeCall) {
+class ComparableRangeLiteralRangeValue(
+        private val codegen: ExpressionCodegen,
+        rangeCall: ResolvedCall<out CallableDescriptor>
+) : CallIntrinsicRangeValue(rangeCall), BoundedValue {
+    private val from: ReceiverValue = rangeCall.extensionReceiver!!
+    private val to: KtExpression = ExpressionCodegen.getSingleArgumentExpression(rangeCall)!!
+
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             IteratorForLoopGenerator(codegen, forExpression)
 
@@ -33,5 +45,20 @@ class ComparableRangeLiteralRangeValue(rangeCall: ResolvedCall<out CallableDescr
             isClosedRangeContains(resolvedCallForIn.resultingDescriptor)
 
     override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression)=
-            InComparableRangeLiteralGenerator(codegen, operatorReference, rangeCall)
+            InContinuousRangeExpressionGenerator(operatorReference, this, ObjectComparisonGenerator)
+
+    override val instanceType: Type =
+            codegen.asmType(rangeCall.resultingDescriptor.returnType!!)
+
+    override fun putInstance(v: InstructionAdapter) {
+        codegen.invokeFunction(rangeCall.call, rangeCall, StackValue.none()).put(instanceType, v)
+    }
+
+    override fun putHighLow(v: InstructionAdapter, type: Type) {
+        codegen.gen(to).put(type, v)
+        codegen.generateReceiverValue(from, false).put(type, v)
+    }
+
+    override val isLowInclusive = true
+    override val isHighInclusive = true
 }
