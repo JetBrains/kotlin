@@ -33,8 +33,16 @@ import java.util.*
 class PopBackwardPropagationTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
         if (!OptimizationMethodVisitor.canBeOptimizedUsingSourceInterpreter(methodNode)) return
+        if (methodNode.instructions.toArray().any { it.isUnsafeStackInsn() }) return
         Transformer(methodNode).transform()
     }
+
+    // TODO better stack operations analysis
+    private fun AbstractInsnNode.isUnsafeStackInsn() =
+            opcode == Opcodes.DUP_X1 ||
+            opcode == Opcodes.DUP_X2 ||
+            opcode == Opcodes.DUP2_X1 ||
+            opcode == Opcodes.DUP2_X2
 
     private class Transformer(val methodNode: MethodNode) {
         private interface Transformation {
