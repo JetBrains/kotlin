@@ -97,8 +97,8 @@ open class CreateParameterFromUsageFix<E : KtElement>(
             if (!receiverClass.canRefactor()) return null
             val constructorDescriptor = receiverClassDescriptor.unsubstitutedPrimaryConstructor ?: return null
 
-            val paramType = info.returnTypeInfo.getPossibleTypes(builder).firstOrNull() ?: return null
-            if (paramType.hasTypeParametersToAdd(constructorDescriptor, builder.currentFileContext)) return null
+            val paramType = info.returnTypeInfo.getPossibleTypes(builder).firstOrNull()
+            if (paramType != null && paramType.hasTypeParametersToAdd(constructorDescriptor, builder.currentFileContext)) return null
 
             val paramInfo = KotlinParameterInfo(
                     callableDescriptor = constructorDescriptor,

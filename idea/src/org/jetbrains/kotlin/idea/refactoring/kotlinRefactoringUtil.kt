@@ -194,7 +194,7 @@ fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boole
     fun getEnclosingDeclaration(element: PsiElement, strict: Boolean): PsiElement? {
         return (if (strict) element.parents else element.parentsWithSelf)
                 .filter {
-                    (it is KtDeclarationWithBody && it !is KtFunctionLiteral)
+                    (it is KtDeclarationWithBody && it !is KtFunctionLiteral && !(it is KtNamedFunction && it.name == null))
                     || it is KtAnonymousInitializer
                     || it is KtClassBody
                     || it is KtFile

@@ -17,11 +17,9 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 
 import com.intellij.refactoring.psi.SearchUtils
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.*
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -41,6 +39,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
 internal operator fun KotlinType.contains(inner: KotlinType): Boolean {
@@ -117,8 +116,11 @@ fun KtExpression.guessTypes(
         context: BindingContext,
         module: ModuleDescriptor,
         pseudocode: Pseudocode? = null,
-        coerceUnusedToUnit: Boolean = true
+        coerceUnusedToUnit: Boolean = true,
+        allowErrorTypes: Boolean = false
 ): Array<KotlinType> {
+    fun isAcceptable(type: KotlinType) = allowErrorTypes || !ErrorUtils.containsErrorType(type)
+
     if (coerceUnusedToUnit
         && this !is KtDeclaration
         && isUsedAsStatement(context)
@@ -126,7 +128,7 @@ fun KtExpression.guessTypes(
 
     // if we know the actual type of the expression
     val theType1 = context.getType(this)
-    if (theType1 != null) {
+    if (theType1 != null && isAcceptable(theType1)) {
         val dataFlowInfo = context.getDataFlowInfoAfter(this)
         val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module))
         return if (possibleTypes.isNotEmpty()) possibleTypes.toTypedArray() else arrayOf(theType1)
@@ -134,7 +136,7 @@ fun KtExpression.guessTypes(
 
     // expression has an expected type
     val theType2 = context[BindingContext.EXPECTED_EXPRESSION_TYPE, this]
-    if (theType2 != null) return arrayOf(theType2)
+    if (theType2 != null && isAcceptable(theType2)) return arrayOf(theType2)
 
     val parent = parent
     return when {
@@ -198,6 +200,22 @@ fun KtExpression.guessTypes(
         parent is KtStringTemplateEntryWithExpression && parent.expression == this -> {
             arrayOf(module.builtIns.stringType)
         }
+        parent is KtBlockExpression && parent.statements.lastOrNull() == this && parent.parent is KtFunctionLiteral -> {
+            parent.guessTypes(context, module, pseudocode, coerceUnusedToUnit)
+        }
+        parent is KtFunction -> {
+            val functionDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? FunctionDescriptor ?: return arrayOf()
+            val returnType = functionDescriptor.returnType
+            if (returnType != null && isAcceptable(returnType)) return arrayOf(returnType)
+            val functionalExpression: KtExpression? = when {
+                parent is KtFunctionLiteral -> parent.parent as? KtLambdaExpression
+                parent is KtNamedFunction && parent.name == null -> parent
+                else -> null
+            }
+            if (functionalExpression == null) return arrayOf()
+            val lambdaTypes = functionalExpression.guessTypes(context, module, pseudocode?.parent, coerceUnusedToUnit)
+            lambdaTypes.mapNotNull { it.getFunctionType()?.arguments?.lastOrNull()?.type }.toTypedArray()
+        }
         else -> {
             pseudocode?.getElementValue(this)?.let {
                 getExpectedTypePredicate(it, context, module.builtIns).getRepresentativeTypes().toTypedArray()
@@ -205,6 +223,8 @@ fun KtExpression.guessTypes(
         }
     }
 }
+
+private fun KotlinType.getFunctionType() = if (isFunctionType) this else supertypes().firstOrNull { it.isFunctionType }
 
 private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinType> {
     val expectedTypes = SearchUtils.findAllReferences(this, useScope)!!.mapNotNullTo(HashSet<KotlinType>()) { ref ->
