@@ -42,11 +42,13 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
                         )
                         return
                     }
-                    if (BranchedFoldingUtils.canFoldToAssignment(expression)) {
+                    val assignmentNumber = BranchedFoldingUtils.getFoldableAssignmentNumber(expression)
+                    if (assignmentNumber > 0) {
                         holder.registerProblem(
                                 keyword,
                                 "Assignment can be lifted out of '${keyword.text}'",
-                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                if (assignmentNumber > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                                else ProblemHighlightType.INFORMATION,
                                 LiftAssignmentOutFix(keyword.text)
                         )
                     }

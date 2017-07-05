@@ -1,3 +1,5 @@
+// HIGHLIGHT: GENERIC_ERROR_OR_WARNING
+
 fun test(n: Int): String {
     var res: String
 

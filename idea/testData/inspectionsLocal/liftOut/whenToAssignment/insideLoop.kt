@@ -1,3 +1,5 @@
+// HIGHLIGHT: INFORMATION
+
 fun foo(): Int {
     var res = 0
     loop@ while (true) {

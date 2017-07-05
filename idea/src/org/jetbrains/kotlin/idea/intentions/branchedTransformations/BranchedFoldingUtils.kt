@@ -48,7 +48,7 @@ object BranchedFoldingUtils {
     fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean =
             a1.left?.text == a2.left?.text && a1.operationToken == a2.operationToken
 
-    fun canFoldToAssignment(expression: KtExpression?): Boolean {
+    internal fun getFoldableAssignmentNumber(expression: KtExpression?): Int {
         val assignments = mutableListOf<KtBinaryExpression>()
         fun collectAssignmentsAndCheck(e: KtExpression?): Boolean = when (e) {
             is KtWhenExpression -> {
@@ -76,10 +76,11 @@ object BranchedFoldingUtils {
             is KtThrowExpression, is KtReturnExpression -> true
             else -> false
         }
-        if (!collectAssignmentsAndCheck(expression)) return false
-        if (assignments.isEmpty()) return false
+        if (!collectAssignmentsAndCheck(expression)) return -1
+        if (assignments.isEmpty()) return 0
         val firstAssignment = assignments.first()
-        return assignments.all { BranchedFoldingUtils.checkAssignmentsMatch(it, firstAssignment) }
+        if (assignments.any { !BranchedFoldingUtils.checkAssignmentsMatch(it, firstAssignment) }) return -1
+        return assignments.size
     }
 
     private fun getFoldableReturnNumber(branches: List<KtExpression?>) =
