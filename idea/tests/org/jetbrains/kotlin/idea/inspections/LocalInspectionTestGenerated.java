@@ -636,6 +636,18 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/simpleWhenWithBlocks.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("whenOneReturn.kt")
+            public void testWhenOneReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/whenOneReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenThrowOnly.kt")
+            public void testWhenThrowOnly() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/whenThrowOnly.kt");
+                doTest(fileName);
+            }
         }
     }
 

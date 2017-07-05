@@ -31,15 +31,18 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
             object : KtVisitorVoid() {
                 private fun visitIfOrWhen(expression: KtExpression, keyword: PsiElement) {
-                    if (BranchedFoldingUtils.canFoldToReturn(expression)) {
+                    val returnNumber = BranchedFoldingUtils.getFoldableReturnNumber(expression)
+                    if (returnNumber > 0) {
                         holder.registerProblem(
                                 keyword,
                                 "Return can be lifted out of '${keyword.text}'",
-                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                if (returnNumber > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                                else ProblemHighlightType.INFORMATION,
                                 LiftReturnOutFix(keyword.text)
                         )
+                        return
                     }
-                    else if (BranchedFoldingUtils.canFoldToAssignment(expression)) {
+                    if (BranchedFoldingUtils.canFoldToAssignment(expression)) {
                         holder.registerProblem(
                                 keyword,
                                 "Assignment can be lifted out of '${keyword.text}'",

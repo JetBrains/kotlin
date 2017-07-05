@@ -1,3 +1,5 @@
+// HIGHLIGHT: GENERIC_ERROR_OR_WARNING
+
 fun foo(): Int {
     loop@ while (true) {
         <caret>when (1) {
