@@ -174,8 +174,20 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
 
         val commentSaver = CommentSaver(body)
 
-        declaration.addBefore(KtPsiFactory(declaration).createEQ(), body)
+        val factory = KtPsiFactory(declaration)
+        declaration.addBefore(factory.createEQ(), body)
         val newBody = body.replaced(value)
+
+        val editor = declaration.findExistingEditor()
+        if (editor != null) {
+            val startOffset = newBody.startOffset
+            val document = editor.document
+            val startLine = document.getLineNumber(startOffset)
+            val rightMargin = editor.settings.getRightMargin(editor.project)
+            if (document.getLineEndOffset(startLine) - document.getLineStartOffset(startLine) >= rightMargin) {
+                declaration.addBefore(factory.createNewLine(), newBody)
+            }
+        }
 
         commentSaver.restore(newBody)
 

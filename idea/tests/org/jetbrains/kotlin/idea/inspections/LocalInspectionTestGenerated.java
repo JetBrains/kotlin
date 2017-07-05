@@ -863,6 +863,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("veryVeryLong.kt")
+        public void testVeryVeryLong() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/veryVeryLong.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/useExpressionBody/when.kt");
