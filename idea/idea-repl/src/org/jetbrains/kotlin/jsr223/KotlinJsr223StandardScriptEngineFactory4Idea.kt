@@ -58,7 +58,7 @@ fun classpathFromClassloader(classLoader: ClassLoader): List<File>? =
 private val kotlinCompilerJar: File by lazy {
     // highest prio - explicit property
     System.getProperty("kotlin.compiler.jar")?.let(::File)?.takeIf(File::exists)
-    ?: PathUtil.getKotlinPathsForIdeaPlugin().compilerPath
+    ?: PathUtil.kotlinPathsForIdeaPlugin.compilerPath
     ?: throw FileNotFoundException("Cannot find kotlin compiler jar, set kotlin.compiler.jar property to proper location")
 }
 

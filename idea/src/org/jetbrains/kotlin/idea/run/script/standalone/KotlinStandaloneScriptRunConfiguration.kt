@@ -191,7 +191,7 @@ private class ScriptCommandLineState(
         val scriptVFile = LocalFileSystem.getInstance().findFileByIoFile(File(filePath)) ?:
                           throw CantRunException("Script file was not found in project")
 
-        params.classPath.add(PathUtil.getKotlinPathsForIdeaPlugin().compilerPath)
+        params.classPath.add(PathUtil.kotlinPathsForIdeaPlugin.compilerPath)
 
         val scriptClasspath = ScriptDependenciesManager.getInstance(environment.project).getScriptClasspath(scriptVFile)
         scriptClasspath.forEach {

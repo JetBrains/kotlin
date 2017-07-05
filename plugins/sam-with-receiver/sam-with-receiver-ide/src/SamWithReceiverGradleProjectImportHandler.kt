@@ -25,7 +25,7 @@ class SamWithReceiverGradleProjectImportHandler : AbstractGradleImportHandler() 
     override val pluginName = "sam-with-receiver"
     override val annotationOptionName = SamWithReceiverCommandLineProcessor.ANNOTATION_OPTION.name
     override val dataStorageTaskName = "samWithReceiverDataStorageTask"
-    override val pluginJarFileFromIdea = PathUtil.getKotlinPathsForIdeaPlugin().allOpenPluginJarPath
+    override val pluginJarFileFromIdea = PathUtil.kotlinPathsForIdeaPlugin.allOpenPluginJarPath
 
     override fun getAnnotationsForPreset(presetName: String): List<String> {
         for ((name, annotations) in SamWithReceiverCommandLineProcessor.SUPPORTED_PRESETS.entries) {

@@ -29,7 +29,7 @@ class SamWithReceiverMavenProjectImportHandler : AbstractMavenImportHandler() {
     override val pluginName = "samWithReceiver"
     override val annotationOptionName = SamWithReceiverCommandLineProcessor.ANNOTATION_OPTION.name
     override val mavenPluginArtifactName = "kotlin-maven-sam-with-receiver"
-    override val pluginJarFileFromIdea = PathUtil.getKotlinPathsForIdeaPlugin().allOpenPluginJarPath
+    override val pluginJarFileFromIdea = PathUtil.kotlinPathsForIdeaPlugin.allOpenPluginJarPath
 
     override fun getAnnotations(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<String>? {
         if ("sam-with-receiver" !in enabledCompilerPlugins) {

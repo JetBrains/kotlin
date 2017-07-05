@@ -62,7 +62,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         val paths = if (arguments.kotlinHome != null)
             KotlinPathsFromHomeDir(File(arguments.kotlinHome))
         else
-            PathUtil.getKotlinPathsForCompiler()
+            PathUtil.kotlinPathsForCompiler
 
         messageCollector.report(LOGGING, "Using Kotlin home directory ${paths.homePath}")
         PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf)

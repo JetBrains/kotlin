@@ -398,7 +398,7 @@ private fun classpathFromClassloader(): List<File> =
 
 open class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenciesResolver() {
 
-    private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
+    private val kotlinPaths by lazy { PathUtil.kotlinPathsForCompiler }
 
     @AcceptedAnnotations(DependsOn::class, DependsOnTwo::class)
     override fun resolve(scriptContents: ScriptContents,

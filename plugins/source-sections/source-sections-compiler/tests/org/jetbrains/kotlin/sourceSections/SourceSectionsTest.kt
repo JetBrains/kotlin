@@ -53,7 +53,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
     }
 
     private val kotlinPaths: KotlinPaths by lazy {
-        val paths = PathUtil.getKotlinPathsForDistDirectory()
+        val paths = PathUtil.kotlinPathsForDistDirectory
         TestCase.assertTrue("Lib directory doesn't exist. Run 'ant dist'", paths.libPath.absoluteFile.isDirectory)
         paths
     }

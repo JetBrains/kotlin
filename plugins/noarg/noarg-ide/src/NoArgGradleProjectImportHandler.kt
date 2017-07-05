@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.noarg.ide
 
-import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor
 import org.jetbrains.kotlin.annotation.plugin.ide.AbstractGradleImportHandler
+import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor
 import org.jetbrains.kotlin.utils.PathUtil
 
 class NoArgGradleProjectImportHandler : AbstractGradleImportHandler() {
@@ -25,7 +25,7 @@ class NoArgGradleProjectImportHandler : AbstractGradleImportHandler() {
     override val pluginName = "noarg"
     override val annotationOptionName = NoArgCommandLineProcessor.ANNOTATION_OPTION.name
     override val dataStorageTaskName = "noArgDataStorageTask"
-    override val pluginJarFileFromIdea = PathUtil.getKotlinPathsForIdeaPlugin().noArgPluginJarPath
+    override val pluginJarFileFromIdea = PathUtil.kotlinPathsForIdeaPlugin.noArgPluginJarPath
 
     override fun getAnnotationsForPreset(presetName: String): List<String> {
         for ((name, annotations) in NoArgCommandLineProcessor.SUPPORTED_PRESETS.entries) {

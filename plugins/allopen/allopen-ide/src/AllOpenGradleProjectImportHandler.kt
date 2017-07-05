@@ -25,7 +25,7 @@ class AllOpenGradleProjectImportHandler : AbstractGradleImportHandler() {
     override val pluginName = "allopen"
     override val annotationOptionName = AllOpenCommandLineProcessor.ANNOTATION_OPTION.name
     override val dataStorageTaskName = "allOpenDataStorageTask"
-    override val pluginJarFileFromIdea = PathUtil.getKotlinPathsForIdeaPlugin().allOpenPluginJarPath
+    override val pluginJarFileFromIdea = PathUtil.kotlinPathsForIdeaPlugin.allOpenPluginJarPath
 
     override fun getAnnotationsForPreset(presetName: String): List<String> {
         for ((name, annotations) in AllOpenCommandLineProcessor.SUPPORTED_PRESETS.entries) {
