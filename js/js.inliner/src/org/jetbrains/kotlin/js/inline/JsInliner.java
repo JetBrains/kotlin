@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.js.inline.context.FunctionContext;
 import org.jetbrains.kotlin.js.inline.context.InliningContext;
 import org.jetbrains.kotlin.js.inline.context.NamingContext;
 import org.jetbrains.kotlin.js.inline.util.*;
+import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
 import java.util.*;
@@ -64,6 +65,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     private final LinkedList<JsCallInfo> inlineCallInfos = new LinkedList<>();
     private final Function1<JsNode, Boolean> canBeExtractedByInliner =
             node -> node instanceof JsInvocation && hasToBeInlined((JsInvocation) node);
+    private int inlineFunctionDepth;
 
     public static void process(
             @NotNull JsConfig.Reporter reporter,
@@ -266,6 +268,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     @Override
     public boolean visit(@NotNull JsInvocation call, @NotNull JsContext context) {
+        if (InlineMetadata.decompose(call) != null) {
+            inlineFunctionDepth++;
+        }
+
         if (!hasToBeInlined(call)) return true;
 
         JsFunction containingFunction = getCurrentNamedFunction();
@@ -280,7 +286,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
             reportInlineCycle(call, definition.getFunction());
         }
         else if (!processedFunctions.contains(definition.getFunction())) {
+            inlineFunctionDepth++;
             visit(definition);
+            inlineFunctionDepth--;
+            return false;
         }
 
         return true;
@@ -288,6 +297,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     @Override
     public void endVisit(@NotNull JsInvocation x, @NotNull JsContext ctx) {
+        if (InlineMetadata.decompose(x) != null) {
+            inlineFunctionDepth--;
+        }
+
         if (hasToBeInlined(x)) {
             inline(x, ctx);
         }
@@ -381,7 +394,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
                 String tag = getImportTag(jsVars);
                 if (tag != null) {
                     JsName name = jsVars.getVars().get(0).getName();
-                    JsName existingName = existingImports == null ? MetadataProperties.getLocalAlias(name) : null;
+                    JsName existingName = inlineFunctionDepth == 0 ? MetadataProperties.getLocalAlias(name) : null;
                     if (existingName == null) {
                         existingName = existingImports.computeIfAbsent(tag, t -> {
                             copiedStatements.add(jsVars);
