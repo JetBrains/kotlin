@@ -29,3 +29,11 @@ interface ComparisonGenerator {
     fun jumpIfLess(v: InstructionAdapter, label: Label)
 }
 
+fun getComparisonGeneratorForPrimitiveType(type: Type): ComparisonGenerator =
+        when (type) {
+            Type.INT_TYPE, Type.SHORT_TYPE, Type.BYTE_TYPE, Type.CHAR_TYPE -> IntComparisonGenerator
+            Type.LONG_TYPE -> LongComparisonGenerator
+            Type.FLOAT_TYPE -> FloatComparisonGenerator
+            Type.DOUBLE_TYPE -> DoubleComparisonGenerator
+            else -> throw UnsupportedOperationException("Unexpected primitive type: " + type)
+        }

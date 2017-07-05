@@ -16,18 +16,12 @@
 
 package org.jetbrains.kotlin.codegen.range.inExpression
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.getClosedFloatingPointRangeElementType
-import org.jetbrains.kotlin.codegen.getPrimitiveRangeElementType
+import org.jetbrains.kotlin.codegen.getAsmRangeElementTypeForPrimitiveRange
 import org.jetbrains.kotlin.codegen.range.comparison.*
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 abstract class AbstractInPrimitiveNumberRangeExpressionGenerator(
         codegen: ExpressionCodegen,
@@ -38,30 +32,5 @@ abstract class AbstractInPrimitiveNumberRangeExpressionGenerator(
         codegen, operatorReference, isInclusiveHighBound,
         getAsmRangeElementTypeForPrimitiveRange(rangeCall.resultingDescriptor)
 ) {
-    override val comparisonGenerator: ComparisonGenerator =
-            when (asmElementType) {
-                Type.INT_TYPE, Type.SHORT_TYPE, Type.BYTE_TYPE, Type.CHAR_TYPE -> IntComparisonGenerator
-                Type.LONG_TYPE -> LongComparisonGenerator
-                Type.FLOAT_TYPE -> FloatComparisonGenerator
-                Type.DOUBLE_TYPE -> DoubleComparisonGenerator
-                else -> throw UnsupportedOperationException("Unexpected type: " + asmElementType)
-            }
-}
-
-
-internal fun getAsmRangeElementTypeForPrimitiveRange(rangeCallee: CallableDescriptor): Type {
-    val rangeType = rangeCallee.returnType!!
-
-    getPrimitiveRangeElementType(rangeType)?.let {
-        return AsmTypes.valueTypeForPrimitive(it)
-    }
-
-    val floatingPointElementType = getClosedFloatingPointRangeElementType(rangeType) ?:
-                                   throw AssertionError("Unexpected range type: $rangeType")
-
-    return when {
-        KotlinBuiltIns.isDouble(floatingPointElementType) -> Type.DOUBLE_TYPE
-        KotlinBuiltIns.isFloat(floatingPointElementType) -> Type.FLOAT_TYPE
-        else -> throw AssertionError("Unexpected ClosedFloatingPointRange element type: $floatingPointElementType")
-    }
+    override val comparisonGenerator: ComparisonGenerator = getComparisonGeneratorForPrimitiveType(asmElementType)
 }
