@@ -218,6 +218,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DanglingComments.after.kt")
+        public void testDanglingComments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DanglingComments.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DelegationList.after.kt")
         public void testDelegationList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DelegationList.after.kt");
