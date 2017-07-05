@@ -225,8 +225,8 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
                     )
                 }
 
-                DelegatingPackageFragmentProvider(content, packageOracleFactory.createOracle(module), computeResolverForModule)
-                        .let { descriptor.initialize(it) }
+                descriptor.initialize(
+                        DelegatingPackageFragmentProvider(content, packageOracleFactory.createOracle(module), computeResolverForModule))
 
                 resolverForProject.resolverByModuleDescriptor[descriptor] = computeResolverForModule
             }
