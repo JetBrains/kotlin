@@ -22,8 +22,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -66,7 +65,7 @@ data class ExtractionOptions(
 
 data class ResolveResult(
         val originalRefExpr: KtSimpleNameExpression,
-        val declaration: PsiNameIdentifierOwner,
+        val declaration: PsiElement,
         val descriptor: DeclarationDescriptor,
         val resolvedCall: ResolvedCall<*>?
 )
@@ -128,14 +127,17 @@ data class ExtractionData(
         return function == null || !function.isInsideOf(physicalElements)
     }
 
-    private tailrec fun getDeclaration(descriptor: DeclarationDescriptor, context: BindingContext): PsiNameIdentifierOwner? {
-        (DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNameIdentifierOwner)?.let { return it }
+    private tailrec fun getDeclaration(descriptor: DeclarationDescriptor, context: BindingContext): PsiElement? {
+        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+        if (declaration is PsiNameIdentifierOwner) {
+            return declaration
+        }
 
         return when {
             isExtractableIt(descriptor, context) -> itFakeDeclaration
             isSynthesizedInvoke(descriptor) -> synthesizedInvokeDeclaration
             descriptor is SyntheticJavaPropertyDescriptor -> getDeclaration(descriptor.getMethod, context)
-            else -> null
+            else -> declaration
         }
     }
 

@@ -770,8 +770,9 @@ internal fun KtNamedDeclaration.getGeneratedBody() =
 
 @JvmOverloads
 fun ExtractableCodeDescriptor.validate(target: ExtractionTarget = ExtractionTarget.FUNCTION): ExtractableCodeDescriptorWithConflicts {
-    fun getDeclarationMessage(declaration: PsiNamedElement, messageKey: String, capitalize: Boolean = true): String {
-        val message = KotlinRefactoringBundle.message(messageKey, RefactoringUIUtil.getDescription(declaration, true))
+    fun getDeclarationMessage(declaration: PsiElement, messageKey: String, capitalize: Boolean = true): String {
+        val declarationStr = RefactoringUIUtil.getDescription(declaration, true)
+        val message = KotlinRefactoringBundle.message(messageKey, declarationStr)
         return if (capitalize) message.capitalize() else message
     }
 

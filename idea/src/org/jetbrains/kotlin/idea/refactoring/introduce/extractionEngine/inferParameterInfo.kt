@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
@@ -94,7 +95,7 @@ internal fun ExtractionData.inferParametersInfo(
         }
         else {
             extensionReceiver
-        }) as? ReceiverValue
+        })
 
         val twoReceivers = resolvedCall != null && resolvedCall.hasBothReceivers()
         val dispatchReceiverDescriptor = (resolvedCall?.dispatchReceiver as? ImplicitReceiver)?.declarationDescriptor
@@ -136,7 +137,7 @@ internal fun ExtractionData.inferParametersInfo(
         }
     }
 
-    for (typeToCheck in info.typeParameters.flatMapTo(HashSet<KotlinType>()) { it.collectReferencedTypes(bindingContext) }) {
+    for (typeToCheck in info.typeParameters.flatMapTo(HashSet()) { it.collectReferencedTypes(bindingContext) }) {
         typeToCheck.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options, targetScope)
     }
 
@@ -179,7 +180,7 @@ private fun ExtractionData.extractReceiver(
             is ConstructorDescriptor -> it.containingDeclaration
 
             else -> null
-        } as? ClassifierDescriptor
+        }
     }
 
     if (referencedClassifierDescriptor != null) {
@@ -254,7 +255,10 @@ private fun ExtractionData.extractReceiver(
             }
 
             if (!extractThis) {
-                parameter.currentName = originalDeclaration.nameIdentifier?.text
+                parameter.currentName = when (originalDeclaration) {
+                    is PsiNameIdentifierOwner -> originalDeclaration.nameIdentifier?.text
+                    else -> null
+                }
             }
 
             parameter.refCount++

@@ -94,7 +94,7 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
 
         config.descriptor.parameters.forEach { parameter ->
             param(parameter.name,
-                       parameter.getParameterType(config.descriptor.extractionData.options.allowSpecialClassNames).typeAsString())
+                  parameter.getParameterType(config.descriptor.extractionData.options.allowSpecialClassNames).typeAsString())
         }
 
         with(config.descriptor.returnType) {
