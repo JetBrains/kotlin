@@ -237,7 +237,7 @@ class ExpressionCodegen(
                         callGenerator.genValueAndPut(parameterDescriptor, arg, parameterType, i, this@ExpressionCodegen, data)
                     }
                     parameterDescriptor.hasDefaultValue() -> {
-                        callGenerator.putValueIfNeeded(parameterType, StackValue.createDefaulValue(parameterType), ValueKind.DEFAULT_PARAMETER, i, this@ExpressionCodegen)
+                        callGenerator.putValueIfNeeded(parameterType, StackValue.createDefaultValue(parameterType), ValueKind.DEFAULT_PARAMETER, i, this@ExpressionCodegen)
                         defaultMask.mark(i)
                     }
                     else -> {

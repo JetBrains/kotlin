@@ -178,7 +178,7 @@ public abstract class StackValue {
         }
     }
 
-    public static StackValue createDefaulValue(@NotNull Type type) {
+    public static StackValue createDefaultValue(@NotNull Type type) {
         if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
             return constant(null, type);
         }
