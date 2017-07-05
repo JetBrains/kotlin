@@ -65,10 +65,13 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, groupingCollector);
 
-        setupCommonArgumentsAndServices(configuration, arguments, services);
-        setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
-
         try {
+            setupCommonArgumentsAndServices(configuration, arguments, services);
+            setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
+            if (groupingCollector.hasErrors()) {
+                return ExitCode.COMPILATION_ERROR;
+            }
+
             ExitCode exitCode = OK;
 
             int repeatCount = 1;
