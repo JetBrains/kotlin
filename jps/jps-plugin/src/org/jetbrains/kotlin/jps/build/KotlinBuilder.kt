@@ -68,9 +68,7 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.utils.JsLibraryUtils
-import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.util.*
@@ -82,6 +80,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
         const val JVM_BUILD_META_INFO_FILE_NAME = "jvm-build-meta-info.txt"
         const val SKIP_CACHE_VERSION_CHECK_PROPERTY = "kotlin.jps.skip.cache.version.check"
+        const val JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home"
     }
 
     private val statisticsLogger = TeamcityStatisticsLogger()
@@ -243,11 +242,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val project = projectDescriptor.project
         val lookupTracker = getLookupTracker(project)
         val incrementalCaches = getIncrementalCaches(chunk, context)
-        val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context, messageCollector)
-        if (!environment.success()) {
-            environment.reportErrorsTo(messageCollector)
-            return ABORT
-        }
+        val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context, messageCollector) ?: return ABORT
 
         val commonArguments = compilerArgumentsForChunk(chunk).apply {
             reportOutputFiles = true
@@ -458,7 +453,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             lookupTracker: LookupTracker,
             context: CompileContext,
             messageCollector: MessageCollectorAdapter
-    ): JpsCompilerEnvironment {
+    ): JpsCompilerEnvironment? {
         val compilerServices = with(Services.Builder()) {
             register(IncrementalCompilationComponents::class.java,
                   IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { TargetId(it.key) },
@@ -471,8 +466,15 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             build()
         }
 
+        val paths = computeKotlinPathsForJpsPlugin()
+        if (paths == null || !paths.homePath.exists()) {
+            messageCollector.report(ERROR, "Cannot find kotlinc home. Make sure the plugin is properly installed, " +
+                                           "or specify $JPS_KOTLIN_HOME_PROPERTY system property")
+            return null
+        }
+
         return JpsCompilerEnvironment(
-                PathUtil.kotlinPathsForJpsPluginOrJpsTests,
+                paths,
                 compilerServices,
                 ClassCondition { className ->
                     className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.components.")
@@ -486,6 +488,27 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 messageCollector,
                 OutputItemsCollectorImpl()
         )
+    }
+
+    // When JPS is run on TeamCity, it can not rely on Kotlin plugin layout,
+    // so the path to Kotlin is specified in a system property
+    private fun computeKotlinPathsForJpsPlugin(): KotlinPaths? {
+        if (System.getProperty("kotlin.jps.tests").equals("true", ignoreCase = true)) {
+            return PathUtil.kotlinPathsForDistDirectory
+        }
+
+        val jpsKotlinHome = System.getProperty(JPS_KOTLIN_HOME_PROPERTY)
+        if (jpsKotlinHome != null) {
+            return KotlinPathsFromHomeDir(File(jpsKotlinHome))
+        }
+
+        val jar = PathUtil.pathUtilJar.takeIf(File::exists)
+        if (jar?.name == "kotlin-jps-plugin.jar") {
+            val pluginHome = jar.parentFile.parentFile.parentFile
+            return KotlinPathsFromHomeDir(File(pluginHome, PathUtil.HOME_FOLDER_NAME))
+        }
+
+        return null
     }
 
     private fun getGeneratedFiles(
