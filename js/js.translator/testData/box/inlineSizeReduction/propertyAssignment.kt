@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 496
+// EXPECTED_REACHABLE_NODES: 1385
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: test except=SumHolder_getInstance

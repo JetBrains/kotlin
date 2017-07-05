@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 498
+// EXPECTED_REACHABLE_NODES: 1384
 package foo
 
 fun add(a: Int, b: Int): Int {

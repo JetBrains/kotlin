@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 488
+// EXPECTED_REACHABLE_NODES: 1375
 package foo
 
 operator fun Int.invoke(x: Int) = this + x

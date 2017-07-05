@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 509
+// EXPECTED_REACHABLE_NODES: 1396
 package foo
 
 open class A(val barVal: Int) {

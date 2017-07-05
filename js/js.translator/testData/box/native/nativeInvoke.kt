@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 495
+// EXPECTED_REACHABLE_NODES: 1382
 package foo
 
 external class Function(vararg argsAndCode: String) {

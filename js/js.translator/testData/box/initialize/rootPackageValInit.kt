@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 492
+// EXPECTED_REACHABLE_NODES: 1379
 class A(val a: Int)
 
 val x = 1

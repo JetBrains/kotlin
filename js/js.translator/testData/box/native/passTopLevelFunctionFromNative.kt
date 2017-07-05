@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 490
+// EXPECTED_REACHABLE_NODES: 1376
 package foo
 
 external fun nativeFun(i:Int, s:String): String = definedExternally
