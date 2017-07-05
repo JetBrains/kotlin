@@ -52,24 +52,24 @@ node {
 task testJest(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
     args = ['run', 'test-jest']
 }
-check.dependsOn testJest
 
 task testJasmine(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
     args = ['run', 'test-jasmine']
 }
-check.dependsOn testJasmine
 
 task testMocha(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
     args = ['run', 'test-mocha']
 }
-check.dependsOn testMocha
 
 task testQunit(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
     args = ['run', 'test-qunit']
 }
-check.dependsOn testQunit
 
 task testTape(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
     args = ['run', 'test-tape']
 }
-check.dependsOn testTape
+
+[testJest, testJasmine, testMocha, testQunit, testTape].each {
+    check.dependsOn it
+    it.group = "verification"
+}
