@@ -1423,8 +1423,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public KotlinTypeInfo visitCollectionLiteralExpression(
             @NotNull KtCollectionLiteralExpression expression, ExpressionTypingContext context
     ) {
-        return CollectionLiteralResolver.INSTANCE.resolveCollectionLiteral(
-                expression, context, components.callResolver, components.builtIns, components.languageVersionSettings);
+        return components.collectionLiteralResolver.resolveCollectionLiteral(expression, context);
     }
 
     @Override

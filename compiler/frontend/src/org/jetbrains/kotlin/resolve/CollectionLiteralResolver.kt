@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
-import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED_FEATURE
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -39,43 +39,47 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
-object CollectionLiteralResolver {
-    val PRIMITIVE_TYPE_TO_ARRAY: Map<PrimitiveType, Name> = hashMapOf(
-            PrimitiveType.BOOLEAN to Name.identifier("booleanArrayOf"),
-            PrimitiveType.CHAR to Name.identifier("charArrayOf"),
-            PrimitiveType.INT to Name.identifier("intArrayOf"),
-            PrimitiveType.BYTE to Name.identifier("byteArrayOf"),
-            PrimitiveType.SHORT to Name.identifier("shortArrayOf"),
-            PrimitiveType.FLOAT to Name.identifier("floatArrayOf"),
-            PrimitiveType.LONG to Name.identifier("longArrayOf"),
-            PrimitiveType.DOUBLE to Name.identifier("doubleArrayOf")
-    )
+class CollectionLiteralResolver(val module: ModuleDescriptor, val callResolver: CallResolver, val languageVersionSettings: LanguageVersionSettings) {
+    companion object {
+        val PRIMITIVE_TYPE_TO_ARRAY: Map<PrimitiveType, Name> = hashMapOf(
+                PrimitiveType.BOOLEAN to Name.identifier("booleanArrayOf"),
+                PrimitiveType.CHAR to Name.identifier("charArrayOf"),
+                PrimitiveType.INT to Name.identifier("intArrayOf"),
+                PrimitiveType.BYTE to Name.identifier("byteArrayOf"),
+                PrimitiveType.SHORT to Name.identifier("shortArrayOf"),
+                PrimitiveType.FLOAT to Name.identifier("floatArrayOf"),
+                PrimitiveType.LONG to Name.identifier("longArrayOf"),
+                PrimitiveType.DOUBLE to Name.identifier("doubleArrayOf")
+        )
 
-    val ARRAY_OF_FUNCTION = Name.identifier("arrayOf")
+        val ARRAY_OF_FUNCTION = Name.identifier("arrayOf")
+    }
 
-    fun resolveCollectionLiteral(collectionLiteralExpression: KtCollectionLiteralExpression,
-                                 context: ExpressionTypingContext,
-                                 callResolver: CallResolver,
-                                 builtIns: KotlinBuiltIns,
-                                 languageVersionSettings: LanguageVersionSettings
+    fun resolveCollectionLiteral(
+            collectionLiteralExpression: KtCollectionLiteralExpression,
+            context: ExpressionTypingContext
     ): KotlinTypeInfo {
         if (!isInsideAnnotationEntryOrClass(collectionLiteralExpression)) {
             context.trace.report(UNSUPPORTED.on(collectionLiteralExpression, "Collection literals outside of annotations"))
         }
 
-        checkSupportsArrayLiterals(collectionLiteralExpression, context, languageVersionSettings)
+        checkSupportsArrayLiterals(collectionLiteralExpression, context)
 
-        return resolveCollectionLiteralSpecialMethod(collectionLiteralExpression, context, callResolver, builtIns)
+        return resolveCollectionLiteralSpecialMethod(collectionLiteralExpression, context)
     }
 
     private fun resolveCollectionLiteralSpecialMethod(
             expression: KtCollectionLiteralExpression,
-            context: ExpressionTypingContext,
-            callResolver: CallResolver,
-            builtIns: KotlinBuiltIns
+            context: ExpressionTypingContext
     ): KotlinTypeInfo {
         val call = CallMaker.makeCallForCollectionLiteral(expression)
-        val functionDescriptor = getFunctionDescriptorForCollectionLiteral(expression, context, builtIns)
+        val callName = getArrayFunctionCallName(context.expectedType)
+        val functionDescriptor = getFunctionDescriptorForCollectionLiteral(expression, callName)
+        if (functionDescriptor == null) {
+            context.trace.report(MISSING_STDLIB.on(
+                    expression, "Collection literal call '$callName()' is unresolved"))
+            return noTypeInfo(context)
+        }
 
         val resolutionResults = callResolver.resolveCollectionLiteralCallWithGivenDescriptor(context, expression, call, functionDescriptor)
 
@@ -90,17 +94,13 @@ object CollectionLiteralResolver {
 
     private fun getFunctionDescriptorForCollectionLiteral(
             expression: KtCollectionLiteralExpression,
-            context: ExpressionTypingContext,
-            builtIns: KotlinBuiltIns
-    ): SimpleFunctionDescriptor {
-        val callName = getArrayFunctionCallName(context.expectedType)
-        return builtIns.builtInsPackageScope.getContributedFunctions(callName, KotlinLookupLocation(expression)).single()
+            callName: Name
+    ): SimpleFunctionDescriptor? {
+        val memberScopeOfKotlinPackage = module.getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME).memberScope
+        return memberScopeOfKotlinPackage.getContributedFunctions(callName, KotlinLookupLocation(expression)).singleOrNull()
     }
 
-    private fun checkSupportsArrayLiterals(expression: KtCollectionLiteralExpression,
-                                   context: ExpressionTypingContext,
-                                   languageVersionSettings: LanguageVersionSettings
-    ) {
+    private fun checkSupportsArrayLiterals(expression: KtCollectionLiteralExpression, context: ExpressionTypingContext) {
         if (isInsideAnnotationEntryOrClass(expression) &&
             !languageVersionSettings.supportsFeature(LanguageFeature.ArrayLiteralsInAnnotations)) {
             context.trace.report(UNSUPPORTED_FEATURE.on(expression, LanguageFeature.ArrayLiteralsInAnnotations to languageVersionSettings))
