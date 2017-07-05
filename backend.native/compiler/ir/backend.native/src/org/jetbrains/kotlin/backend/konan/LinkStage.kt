@@ -48,6 +48,8 @@ internal abstract class PlatformFlags(val distribution: Distribution) {
         = propertyTargetList("linkerKonanFlags")
     open val linkerDebugFlags
             = propertyTargetList("linkerDebugFlags")
+    open val llvmDebugOptFlags
+            = propertyTargetList("llvmDebugOptFlags")
 
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 
@@ -198,6 +200,7 @@ internal class LinkStage(val context: Context) {
     }
 
     val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
+    val debug = config.get(KonanConfigKeys.DEBUG) ?: false
     val nomain = config.get(KonanConfigKeys.NOMAIN) ?: false
     val emitted = context.bitcodeFileName
     val libraries = context.config.libraries
@@ -210,10 +213,10 @@ internal class LinkStage(val context: Context) {
         val tool = distribution.llvmLto
         val command = mutableListOf(tool, "-o", combined)
         command.addAll(platform.llvmLtoFlags)
-        if (optimize) {
-            command.addAll(platform.llvmLtoOptFlags)
-        } else {
-            command.addAll(platform.llvmLtoNooptFlags)
+        when {
+            optimize -> command.addAll(platform.llvmLtoOptFlags)
+            debug    -> command.addAll(platform.llvmDebugOptFlags)
+            else     -> command.addAll(platform.llvmLtoNooptFlags)
         }
         command.addAll(files)
         runTool(*command.toTypedArray())
