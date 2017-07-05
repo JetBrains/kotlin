@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.org.objectweb.asm.Type
 
 private val RANGE_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
         supportedRangeTypes().associateBy {
@@ -187,4 +189,21 @@ private fun isTopLevelInPackage(descriptor: DeclarationDescriptor, name: String,
     val containingDeclaration = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
     val packageFqName = containingDeclaration.fqName.asString()
     return packageName == packageFqName
+}
+
+fun getAsmRangeElementTypeForPrimitiveRange(rangeCallee: CallableDescriptor): Type {
+    val rangeType = rangeCallee.returnType!!
+
+    getPrimitiveRangeElementType(rangeType)?.let {
+        return AsmTypes.valueTypeForPrimitive(it)
+    }
+
+    val floatingPointElementType = getClosedFloatingPointRangeElementType(rangeType) ?:
+                                   throw AssertionError("Unexpected range type: $rangeType")
+
+    return when {
+        KotlinBuiltIns.isDouble(floatingPointElementType) -> Type.DOUBLE_TYPE
+        KotlinBuiltIns.isFloat(floatingPointElementType) -> Type.FLOAT_TYPE
+        else -> throw AssertionError("Unexpected ClosedFloatingPointRange element type: $floatingPointElementType")
+    }
 }

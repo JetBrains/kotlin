@@ -84,7 +84,7 @@ private fun ExpressionCodegen.createIntrinsifiedRangeValueOrNull(rangeCall: Reso
 
     return when {
         isPrimitiveNumberRangeTo(rangeCallee) ->
-            PrimitiveNumberRangeLiteralRangeValue(rangeCall)
+            PrimitiveNumberRangeLiteralRangeValue(this, rangeCall)
         isPrimitiveNumberDownTo(rangeCallee) ->
             DownToProgressionRangeValue(rangeCall)
         isPrimitiveNumberUntil(rangeCallee) ->
