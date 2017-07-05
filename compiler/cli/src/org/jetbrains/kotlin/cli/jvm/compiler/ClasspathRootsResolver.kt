@@ -57,7 +57,7 @@ internal class ClasspathRootsResolver(
 
     data class RootsAndModules(val roots: List<JavaRoot>, val modules: List<JavaModule>)
 
-    fun convertClasspathRoots(contentRoots: Iterable<ContentRoot>): RootsAndModules {
+    fun convertClasspathRoots(contentRoots: List<ContentRoot>): RootsAndModules {
         val result = mutableListOf<JavaRoot>()
 
         val modules = ArrayList<JavaModule>()
