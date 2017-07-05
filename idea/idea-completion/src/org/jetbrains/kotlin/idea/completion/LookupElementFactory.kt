@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 interface AbstractLookupElementFactory {
@@ -347,9 +349,26 @@ class LookupElementFactory(
             receiverTypes: Collection<ReceiverType>,
             onReceiverTypeMismatch: CallableWeight?
     ): CallableWeight? {
-        val receiverParameter = extensionReceiverParameter
-                                ?: dispatchReceiverParameter
-                                ?: return null
+
+        val bothReceivers = listOfNotNull(extensionReceiverParameter, dispatchReceiverParameter)
+
+        val receiverTypesForFirstReceiver = receiverTypes.filterNot { it.implicit }.ifEmpty { receiverTypes }
+
+        val weights = bothReceivers.zip(generateSequence(receiverTypesForFirstReceiver) { receiverTypes }.asIterable())
+                .map { (receiverParameter, receiverTypes) ->
+                    callableWeightBasedOnReceiver(receiverTypes, onReceiverTypeMismatch, receiverParameter)
+                }
+
+        if (weights.any { it == onReceiverTypeMismatch }) return onReceiverTypeMismatch
+        return weights.firstOrNull()
+    }
+
+    private fun CallableDescriptor.callableWeightBasedOnReceiver(
+            receiverTypes: Collection<ReceiverType>,
+            onReceiverTypeMismatch: CallableWeight?,
+            receiverParameter: ReceiverParameterDescriptor
+    ): CallableWeight? {
+        if ((receiverParameter.value as? TransientReceiver)?.type?.isFunctionType == true) return null
 
         val matchingReceiverIndices = HashSet<Int>()
         var bestReceiverType: ReceiverType? = null
