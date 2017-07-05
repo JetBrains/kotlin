@@ -12,11 +12,11 @@ internal class A {
     fun /* we return int*/ foo(/*int*/ p: Int/* parameter p */): Int { /* body is empty */
     }
 
-    private /*it's private*/ val field = 0
+    private/*it's private*/ val field = 0
 
     /*it's public*/ fun foo(s: String): Char {}
 
-    protected /*it's protected*/ fun foo(c: Char) {}
+    protected/*it's protected*/ fun foo(c: Char) {}
 
     /**
      * Method description.
