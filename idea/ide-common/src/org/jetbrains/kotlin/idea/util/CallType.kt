@@ -210,7 +210,7 @@ sealed class CallTypeAndReceiver<TReceiver : KtElement?, out TCallType : CallTyp
     }
 }
 
-data class ReceiverType(val type: KotlinType, val receiverIndex: Int)
+data class ReceiverType(val type: KotlinType, val receiverIndex: Int, val implicit: Boolean = false)
 
 fun CallTypeAndReceiver<*, *>.receiverTypes(
         bindingContext: BindingContext,
@@ -227,7 +227,8 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
         contextElement: PsiElement,
         moduleDescriptor: ModuleDescriptor,
         resolutionFacade: ResolutionFacade,
-        stableSmartCastsOnly: Boolean
+        stableSmartCastsOnly: Boolean,
+        withImplicitReceiversWhenExplicitPresent: Boolean = false
 ): Collection<ReceiverType>? {
     val receiverExpression: KtExpression?
     when (this) {
@@ -279,25 +280,35 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
         else -> throw RuntimeException() //TODO: see KT-9394
     }
 
-    val receiverValues = if (receiverExpression != null) {
+    val resolutionScope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
+
+    val expressionReceiver = receiverExpression?.let {
         val receiverType =
                 bindingContext.getType(receiverExpression) ?:
                 (bindingContext.get(BindingContext.QUALIFIER, receiverExpression) as? ClassQualifier)?.descriptor?.classValueType ?:
                 (bindingContext.get(BindingContext.QUALIFIER, receiverExpression) as? TypeAliasQualifier)?.classDescriptor?.classValueType ?:
                 return emptyList()
-        listOf(ExpressionReceiver.create(receiverExpression, receiverType, bindingContext))
+        ExpressionReceiver.create(receiverExpression, receiverType, bindingContext)
     }
-    else {
-        val resolutionScope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-        resolutionScope.getImplicitReceiversWithInstance().map { it.value }
-    }
+
+    val implicitReceiverValues = resolutionScope.getImplicitReceiversWithInstance().map { it.value }
 
     val dataFlowInfo = bindingContext.getDataFlowInfoBefore(contextElement)
 
     val result = ArrayList<ReceiverType>()
-    for ((receiverIndex, receiverValue) in receiverValues.withIndex()) {
+
+    var receiverIndex = 0
+
+    fun addReceiverType(receiverValue: ReceiverValue, implicit: Boolean) {
         val types = receiverValueTypes(receiverValue, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly)
-        types.mapTo(result) { ReceiverType(it, receiverIndex) }
+        types.mapTo(result) { ReceiverType(it, receiverIndex, implicit) }
+        receiverIndex++
+    }
+    if (withImplicitReceiversWhenExplicitPresent || expressionReceiver == null) {
+        implicitReceiverValues.forEach { addReceiverType(it, true) }
+    }
+    if (expressionReceiver != null) {
+        addReceiverType(expressionReceiver, false)
     }
     return result
 }

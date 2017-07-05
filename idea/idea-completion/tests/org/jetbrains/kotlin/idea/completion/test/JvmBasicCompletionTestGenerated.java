@@ -1310,6 +1310,51 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/dslMarker")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DslMarker extends AbstractJvmBasicCompletionTest {
+            @TestMetadata("2dslsInsideOtherChild.kt")
+            public void test2dslsInsideOtherChild() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/2dslsInsideOtherChild.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("2receivers.kt")
+            public void test2receivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/2receivers.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInDslMarker() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/dslMarker"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("child.kt")
+            public void testChild() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/child.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("compositeDsl.kt")
+            public void testCompositeDsl() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/compositeDsl.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("container.kt")
+            public void testContainer() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/container.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("root.kt")
+            public void testRoot() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/root.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
