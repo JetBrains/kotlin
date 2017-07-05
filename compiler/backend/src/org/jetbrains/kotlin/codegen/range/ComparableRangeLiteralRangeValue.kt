@@ -34,9 +34,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 class ComparableRangeLiteralRangeValue(
         private val codegen: ExpressionCodegen,
         rangeCall: ResolvedCall<out CallableDescriptor>
-) : CallIntrinsicRangeValue(rangeCall), BoundedValue {
-    private val from: ReceiverValue = rangeCall.extensionReceiver!!
-    private val to: KtExpression = ExpressionCodegen.getSingleArgumentExpression(rangeCall)!!
+) : CallIntrinsicRangeValue(rangeCall) {
+    private val boundedValue = SimpleBoundedValue(codegen, rangeCall, isLowInclusive = true, isHighInclusive = true)
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             IteratorForLoopGenerator(codegen, forExpression)
@@ -45,20 +44,5 @@ class ComparableRangeLiteralRangeValue(
             isClosedRangeContains(resolvedCallForIn.resultingDescriptor)
 
     override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression)=
-            InContinuousRangeExpressionGenerator(operatorReference, this, ObjectComparisonGenerator)
-
-    override val instanceType: Type =
-            codegen.asmType(rangeCall.resultingDescriptor.returnType!!)
-
-    override fun putInstance(v: InstructionAdapter) {
-        codegen.invokeFunction(rangeCall.call, rangeCall, StackValue.none()).put(instanceType, v)
-    }
-
-    override fun putHighLow(v: InstructionAdapter, type: Type) {
-        codegen.gen(to).put(type, v)
-        codegen.generateReceiverValue(from, false).put(type, v)
-    }
-
-    override val isLowInclusive = true
-    override val isHighInclusive = true
+            InContinuousRangeExpressionGenerator(operatorReference, boundedValue, ObjectComparisonGenerator)
 }

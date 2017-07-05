@@ -35,7 +35,7 @@ interface RangeValue {
 interface BoundedValue {
     val instanceType: Type
 
-    fun putInstance(v: InstructionAdapter)
+    fun putInstance(v: InstructionAdapter, type: Type)
 
     fun putHighLow(v: InstructionAdapter, type: Type)
     val isLowInclusive: Boolean
@@ -45,7 +45,6 @@ interface BoundedValue {
 fun BoundedValue.asStackValue(): StackValue =
         object : StackValue(instanceType) {
             override fun putSelector(type: Type, v: InstructionAdapter) {
-                putInstance(v)
-                StackValue.onStack(instanceType).put(type, v)
+                putInstance(v, type)
             }
         }
