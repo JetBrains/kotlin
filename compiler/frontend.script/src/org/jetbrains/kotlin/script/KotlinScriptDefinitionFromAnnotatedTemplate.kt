@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.diagnostic.Logger
