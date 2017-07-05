@@ -132,7 +132,7 @@
 
     <target name="run-nodejs-tests" description="Run JS backend tests in node.js" depends="download-nodejs-and-npm">
         <npm command="install" dir="js/js.translator/testData" />
-        <npm command="run" dir="js/js.translator/testData">
+        <npm command="run" dir="js/js.translator/testData" failonerror="false">
             <arg value="test"/>
         </npm>
     </target>
