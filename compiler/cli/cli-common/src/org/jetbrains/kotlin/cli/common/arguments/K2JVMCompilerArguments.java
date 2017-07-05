@@ -67,13 +67,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     )
     public String[] scriptTemplates;
 
-    @Argument(
-            value = "-kotlin-home",
-            valueDescription = "<path>",
-            description = "Path to Kotlin compiler home directory, used for runtime libraries discovery"
-    )
-    public String kotlinHome;
-
     @Argument(value = "-module-name", description = "Module name")
     public String moduleName;
 

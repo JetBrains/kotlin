@@ -44,6 +44,13 @@ public abstract class CommonCompilerArguments extends CommonToolArguments {
     )
     public String apiVersion;
 
+    @Argument(
+            value = "-kotlin-home",
+            valueDescription = "<path>",
+            description = "Path to Kotlin compiler home directory, used for runtime libraries discovery"
+    )
+    public String kotlinHome;
+
     @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
     public String[] pluginOptions;
 

@@ -23,11 +23,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 
@@ -101,7 +102,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     @NotNull
     @Override
     protected ExitCode doExecute(
-            @NotNull K2JSCompilerArguments arguments, @NotNull CompilerConfiguration configuration, @NotNull Disposable rootDisposable
+            @NotNull K2JSCompilerArguments arguments,
+            @NotNull CompilerConfiguration configuration,
+            @NotNull Disposable rootDisposable,
+            @Nullable KotlinPaths paths
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
@@ -112,6 +116,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             messageCollector.report(ERROR, "Specify at least one source file or directory", null);
             return COMPILATION_ERROR;
         }
+
+        configuration.put(JSConfigurationKeys.LIBRARIES, configureLibraries(arguments, paths, messageCollector));
 
         ContentRootsKt.addKotlinSourceRoots(configuration, arguments.freeArgs);
         KotlinCoreEnvironment environmentForJS =
@@ -317,18 +323,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             configuration.put(JSConfigurationKeys.META_INFO, true);
         }
 
-        List<String> libraries = new SmartList<>();
-        if (!arguments.noStdlib) {
-            libraries.add(0, PathUtil.getKotlinPathsForCompiler().getJsStdLibJarPath().getAbsolutePath());
-        }
-
-        if (arguments.libraries != null) {
-            ContainerUtil.addAll(libraries, ArraysKt.filterNot(arguments.libraries.split(File.pathSeparator), String::isEmpty));
-        }
-
-        configuration.put(JSConfigurationKeys.LIBRARIES, libraries);
-
-
         if (arguments.typedArrays) {
             configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true);
         }
@@ -365,6 +359,27 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         if (!arguments.sourceMap && sourceMapEmbedContentString != null) {
             messageCollector.report(WARNING, "source-map-embed-sources argument has no effect without source map", null);
         }
+    }
+
+    @NotNull
+    private static List<String> configureLibraries(
+            @NotNull K2JSCompilerArguments arguments,
+            @Nullable KotlinPaths paths,
+            @NotNull MessageCollector messageCollector
+    ) {
+        List<String> libraries = new SmartList<>();
+        if (!arguments.noStdlib) {
+            File stdlibJar = getLibraryFromHome(
+                    paths, KotlinPaths::getJsStdLibJarPath, PathUtil.JS_LIB_JAR_NAME, messageCollector, "'-no-stdlib'");
+            if (stdlibJar != null) {
+                libraries.add(stdlibJar.getAbsolutePath());
+            }
+        }
+
+        if (arguments.libraries != null) {
+            libraries.addAll(ArraysKt.filterNot(arguments.libraries.split(File.pathSeparator), String::isEmpty));
+        }
+        return libraries;
     }
 
     @NotNull
