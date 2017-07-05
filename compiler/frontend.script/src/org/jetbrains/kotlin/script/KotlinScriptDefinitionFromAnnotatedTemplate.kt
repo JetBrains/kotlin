@@ -45,44 +45,42 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     }
 
     override val dependencyResolver: DependenciesResolver by lazy {
-        computeResolver(template, providedResolver)
+        providedResolver ?:
+        resolverFromAnnotation(template) ?:
+        resolverFromLegacyAnnotation(template) ?:
+        DependenciesResolver.NoDependencies
     }
 
-    private fun computeResolver(
-            template: KClass<out Any>,
-            providedResolver: DependenciesResolver?
-    ): @Suppress("DEPRECATION") DependenciesResolver {
-        val defAnn by lazy { takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() } }
-        val legacyDefAnn by lazy { takeUnlessError { template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>() } }
-        return when {
-                   providedResolver != null -> providedResolver
-               // TODO: logScriptDefMessage missing or invalid constructor
-                   defAnn != null ->
-                       try {
-                           defAnn.resolver.primaryConstructor?.call() as? DependenciesResolver ?: null.apply {
-                               log.warn("[kts] No default constructor found for ${defAnn.resolver.qualifiedName}")
-                           }
-                       }
-                       catch (ex: ClassCastException) {
-                           log.warn("[kts] Script def error ${ex.message}")
-                           null
-                       }
-                   legacyDefAnn != null ->
-                       try {
-                           log.warn("[kts] Deprecated annotations on the script template are used, please update the provider")
-                           legacyDefAnn.resolver.primaryConstructor?.call()?.let {
-                               LegacyScriptDependenciesResolverWrapper(it)
-                           }
-                           ?: null.apply {
-                               log.warn("[kts] No default constructor found for ${legacyDefAnn.resolver.qualifiedName}")
-                           }
-                       }
-                       catch (ex: ClassCastException) {
-                           log.warn("[kts] Script def error ${ex.message}")
-                           null
-                       }
-                   else -> null
-               } ?: DependenciesResolver.NoDependencies
+    private fun resolverFromLegacyAnnotation(template: KClass<out Any>): DependenciesResolver? {
+        val legacyDefAnn = takeUnlessError {
+            template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()
+        } ?: return null
+
+        log.warn("[kts] Deprecated annotations on the script template are used, please update the provider")
+
+        return instantiateResolver(legacyDefAnn.resolver)?.let(::LegacyPackageDependencyResolverWrapper)
+    }
+
+    private fun resolverFromAnnotation(template: KClass<out Any>): DependenciesResolver? {
+        val defAnn = takeUnlessError {
+            template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()
+        } ?: return null
+
+        val resolver = instantiateResolver(defAnn.resolver)
+        return if (resolver is DependenciesResolver) resolver else resolver?.let(::ApiChangeDependencyResolverWrapper)
+    }
+
+    private fun <T : Any> instantiateResolver(resolverClass: KClass<T>): T? {
+        // TODO: logScriptDefMessage missing or invalid constructor
+        return try {
+            resolverClass.primaryConstructor?.call().also {
+                if (it == null) log.warn("[kts] No default constructor found for ${resolverClass.qualifiedName}")
+            }
+        }
+        catch (ex: ClassCastException) {
+            log.warn("[kts] Script def error ${ex.message}")
+            null
+        }
     }
 
     val samWithReceiverAnnotations: List<String>? by lazy {
