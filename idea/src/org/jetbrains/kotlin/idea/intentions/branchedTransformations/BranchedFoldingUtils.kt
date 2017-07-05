@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -51,7 +52,8 @@ object BranchedFoldingUtils {
             a1.left?.text == a2.left?.text && a1.operationToken == a2.operationToken
 
     internal fun getFoldableAssignmentNumber(expression: KtExpression?): Int {
-        val assignments = mutableListOf<KtBinaryExpression>()
+        expression ?: return -1
+        val assignments = linkedSetOf<KtBinaryExpression>()
         fun collectAssignmentsAndCheck(e: KtExpression?): Boolean = when (e) {
             is KtWhenExpression -> {
                 val entries = e.entries
@@ -79,9 +81,17 @@ object BranchedFoldingUtils {
             else -> false
         }
         if (!collectAssignmentsAndCheck(expression)) return -1
-        if (assignments.isEmpty()) return 0
-        val firstAssignment = assignments.first()
-        if (assignments.any { !BranchedFoldingUtils.checkAssignmentsMatch(it, firstAssignment) }) return -1
+        val firstAssignment = assignments.firstOrNull()
+        if (firstAssignment != null && assignments.any { !BranchedFoldingUtils.checkAssignmentsMatch(it, firstAssignment) }) {
+            return -1
+        }
+        if (expression.anyDescendantOfType<KtBinaryExpression>(
+                predicate = {
+                    it.operationToken in KtTokens.ALL_ASSIGNMENTS && it !in assignments
+                }
+        )) {
+            return -1
+        }
         return assignments.size
     }
 

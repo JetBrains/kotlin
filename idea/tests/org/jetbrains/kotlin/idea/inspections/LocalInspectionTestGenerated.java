@@ -442,6 +442,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("multipleAssignments.kt")
+            public void testMultipleAssignments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/ifToAssignment/multipleAssignments.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simpleIf.kt")
             public void testSimpleIf() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/ifToAssignment/simpleIf.kt");
