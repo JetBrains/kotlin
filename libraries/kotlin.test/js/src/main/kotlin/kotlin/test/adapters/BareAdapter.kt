@@ -24,7 +24,7 @@ import kotlin.test.FrameworkAdapter
 internal open class BareAdapter : FrameworkAdapter {
 
     internal open fun runTest(testFn: () -> kotlin.Unit,
-                              nameStack: Iterable<String>,
+                              names: Array<String>,
                               ignored: Boolean,
                               focused: Boolean,
                               shouldRun: Boolean) {
@@ -71,30 +71,11 @@ internal open class BareAdapter : FrameworkAdapter {
 
     internal enum class TestState { DEFAULT, IGNORED, FOCUSED }
 
-    private class NameStack(val name: String, val next: NameStack?) : Iterable<String> {
-        override fun iterator(): Iterator<String> {
-            return object : AbstractIterator<String>() {
-                private var head: NameStack? = this@NameStack
-
-                override fun computeNext() {
-                    val next = head?.name
-                    head = head?.next
-                    if (next != null) {
-                        setNext(next)
-                    }
-                    else {
-                        done()
-                    }
-                }
-            }
-        }
-    }
-
     private interface Testable {
         val name: String
         val state: TestState
         val focused: Boolean
-        fun runTest(names: NameStack? = null,
+        fun runTest(names: Array<String> = arrayOf(),
                     ignored: Boolean = false,
                     focused: Boolean = false,
                     shouldRun: Boolean = true)
@@ -105,12 +86,12 @@ internal open class BareAdapter : FrameworkAdapter {
 
         override val focused: Boolean = state == TestState.FOCUSED || focusedSubtests
 
-        override fun runTest(names: NameStack?,
+        override fun runTest(names: Array<String>,
                              ignored: Boolean,
                              focused: Boolean,
                              shouldRun: Boolean) {
             tests.forEach { test ->
-                test.runTest(NameStack(name, names),
+                test.runTest(names + name,
                         ignored || state == TestState.IGNORED,
                         test.focused || focused && !focusedSubtests,
                         shouldRun && !ignored && (test.focused || !focusedSubtests))
@@ -122,12 +103,12 @@ internal open class BareAdapter : FrameworkAdapter {
         override val focused: Boolean
             get() = state == TestState.FOCUSED
 
-        override fun runTest(names: NameStack?,
+        override fun runTest(names: Array<String>,
                              ignored: Boolean,
                              focused: Boolean,
                              shouldRun: Boolean) {
             runTest(testFn,
-                    NameStack(name, names),
+                    names + name,
                     ignored || state == TestState.IGNORED,
                     focused,
                     shouldRun)
