@@ -17,6 +17,11 @@
 import kotlin.test.*
 
 /**
+ * Functions in this file are exposed in the root package to simplify their use from JavaScript.
+ * For example: require('kotlin-test').setAdapter({ /* Your custom [FrameworkAdapter] here */ });
+ */
+
+/**
  * Overrides the framework adapter. Use in order to add support to a custom test framework.
  *
  * Also some string arguments are supported. Use "qunit" to set the adapter to [QUnit](https://qunitjs.com/), "mocha" for
