@@ -25,7 +25,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.memberFunctions
-import kotlin.reflect.full.primaryConstructor
 import kotlin.script.dependencies.DependenciesResolver
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.templates.AcceptedAnnotations
@@ -71,15 +70,17 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     }
 
     private fun <T : Any> instantiateResolver(resolverClass: KClass<T>): T? {
-        // TODO: logScriptDefMessage missing or invalid constructor
-        return try {
-            resolverClass.primaryConstructor?.call().also {
-                if (it == null) log.warn("[kts] No default constructor found for ${resolverClass.qualifiedName}")
+        try {
+            val constructorWithoutParameters = resolverClass.constructors.find { it.parameters.all { it.isOptional } }
+            if (constructorWithoutParameters == null) {
+                log.warn("[kts] ${resolverClass.qualifiedName} must have a constructor without parameters")
+                return null
             }
+            return constructorWithoutParameters.call()
         }
         catch (ex: ClassCastException) {
             log.warn("[kts] Script def error ${ex.message}")
-            null
+            return null
         }
     }
 
