@@ -181,7 +181,8 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         libraryOut9.mkdirs()
         File(libraryOut, "module-info.class").renameTo(File(libraryOut9, "module-info.class"))
 
-        val libraryJar = createMultiReleaseJar(jdk9Home, File(tmpdir, "library.jar"), libraryOut, libraryOut9)
+        // Use the name other from 'library' to prevent it from being loaded as an automatic module if module-info.class is not found
+        val libraryJar = createMultiReleaseJar(jdk9Home, File(tmpdir, "multi-release-library.jar"), libraryOut, libraryOut9)
 
         module("main", listOf(libraryJar))
     }
