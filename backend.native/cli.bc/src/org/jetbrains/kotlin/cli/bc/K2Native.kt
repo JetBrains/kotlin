@@ -72,8 +72,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
 
         if (arguments.freeArgs.isEmpty() && !arguments.isUsefulWithoutFreeArgs) {
-            val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
+            configuration.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
         }
 
         // TODO: catch Errors and IllegalStateException.
