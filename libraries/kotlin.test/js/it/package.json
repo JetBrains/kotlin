@@ -24,10 +24,9 @@
   "jest": {
     "verbose": true,
     "roots": [
-      "<rootDir>/build/classes/kotlin.js",
-      "<rootDir>/build/classes/kotlin-test.js",
-      "<rootDir>/build/classes/main/kotlin-test-js-it_main.js",
-      "<rootDir>/build/classes/test/kotlin-test-js-it_test.js"
+      "<rootDir>/build/classes/",
+      "<rootDir>/build/classes/main/",
+      "<rootDir>/build/classes/test/"
     ],
     "testResultsProcessor": "<rootDir>/js/jest-reporter.js",
     "testRegex": "_test\\.js$",
