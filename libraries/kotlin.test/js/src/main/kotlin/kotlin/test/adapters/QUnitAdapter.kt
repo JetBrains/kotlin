@@ -25,12 +25,12 @@ import kotlin.test.assertTrue
 internal class QUnitAdapter : BareAdapter() {
 
     override fun runTest(testFn: () -> Unit,
-                         names: Sequence<String>,
+                         nameStack: Iterable<String>,
                          ignored: Boolean,
                          focused: Boolean,
                          shouldRun: Boolean) {
         val fn = wrapTest(testFn)
-        val name = names.filter { !it.isBlank() }.joinToString(".")
+        val name = nameStack.reversed().filter { !it.isBlank() }.joinToString(".")
         when {
             focused -> QUnit.only(name, fn)
             ignored -> QUnit.skip(name, fn)
