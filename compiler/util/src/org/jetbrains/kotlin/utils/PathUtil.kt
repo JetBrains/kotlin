@@ -14,163 +14,144 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.utils;
+package org.jetbrains.kotlin.utils
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.model.java.impl.JavaSdkUtil;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.PathManager
+import org.jetbrains.jps.model.java.impl.JavaSdkUtil
 
-import java.io.File;
-import java.util.List;
-import java.util.regex.Pattern;
+import java.io.File
+import java.util.regex.Pattern
 
-public class PathUtil {
+object PathUtil {
+    const val JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home"
 
-    public static final String JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home";
+    const val JS_LIB_JAR_NAME = "kotlin-stdlib-js.jar"
+    const val JS_LIB_10_JAR_NAME = "kotlin-jslib.jar"
+    const val ALLOPEN_PLUGIN_JAR_NAME = "allopen-compiler-plugin.jar"
+    const val NOARG_PLUGIN_JAR_NAME = "noarg-compiler-plugin.jar"
+    const val SAM_WITH_RECEIVER_PLUGIN_JAR_NAME = "sam-with-receiver-compiler-plugin.jar"
+    const val JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar"
+    const val KOTLIN_JAVA_RUNTIME_JAR = "kotlin-runtime.jar"
+    const val KOTLIN_JAVA_RUNTIME_JRE7_JAR = "kotlin-stdlib-jre7.jar"
+    const val KOTLIN_JAVA_RUNTIME_JRE8_JAR = "kotlin-stdlib-jre8.jar"
+    const val KOTLIN_JAVA_RUNTIME_JRE7_SRC_JAR = "kotlin-stdlib-jre7-sources.jar"
+    const val KOTLIN_JAVA_RUNTIME_JRE8_SRC_JAR = "kotlin-stdlib-jre8-sources.jar"
+    const val KOTLIN_JAVA_STDLIB_JAR = "kotlin-stdlib.jar"
+    const val KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar"
+    const val KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar"
+    const val KOTLIN_TEST_JAR = "kotlin-test.jar"
+    const val KOTLIN_TEST_JS_JAR = "kotlin-test-js.jar"
+    const val KOTLIN_JAVA_STDLIB_SRC_JAR = "kotlin-stdlib-sources.jar"
+    const val KOTLIN_JAVA_STDLIB_SRC_JAR_OLD = "kotlin-runtime-sources.jar"
+    const val KOTLIN_REFLECT_SRC_JAR = "kotlin-reflect-sources.jar"
+    const val KOTLIN_TEST_SRC_JAR = "kotlin-test-sources.jar"
+    const val KOTLIN_COMPILER_JAR = "kotlin-compiler.jar"
 
-    public static final String JS_LIB_JAR_NAME = "kotlin-stdlib-js.jar";
-    public static final String JS_LIB_10_JAR_NAME = "kotlin-jslib.jar";
-    public static final String ALLOPEN_PLUGIN_JAR_NAME = "allopen-compiler-plugin.jar";
-    public static final String NOARG_PLUGIN_JAR_NAME = "noarg-compiler-plugin.jar";
-    public static final String SAM_WITH_RECEIVER_PLUGIN_JAR_NAME = "sam-with-receiver-compiler-plugin.jar";
-    public static final String JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar";
-    public static final String KOTLIN_JAVA_RUNTIME_JAR = "kotlin-runtime.jar";
-    public static final String KOTLIN_JAVA_RUNTIME_JRE7_JAR = "kotlin-stdlib-jre7.jar";
-    public static final String KOTLIN_JAVA_RUNTIME_JRE8_JAR = "kotlin-stdlib-jre8.jar";
-    public static final String KOTLIN_JAVA_RUNTIME_JRE7_SRC_JAR = "kotlin-stdlib-jre7-sources.jar";
-    public static final String KOTLIN_JAVA_RUNTIME_JRE8_SRC_JAR = "kotlin-stdlib-jre8-sources.jar";
-    public static final String KOTLIN_JAVA_STDLIB_JAR = "kotlin-stdlib.jar";
-    public static final String KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar";
-    public static final String KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar";
-    public static final String KOTLIN_TEST_JAR = "kotlin-test.jar";
-    public static final String KOTLIN_TEST_JS_JAR = "kotlin-test-js.jar";
-    public static final String KOTLIN_JAVA_STDLIB_SRC_JAR = "kotlin-stdlib-sources.jar";
-    public static final String KOTLIN_JAVA_STDLIB_SRC_JAR_OLD = "kotlin-runtime-sources.jar";
-    public static final String KOTLIN_REFLECT_SRC_JAR = "kotlin-reflect-sources.jar";
-    public static final String KOTLIN_TEST_SRC_JAR = "kotlin-test-sources.jar";
-    public static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
+    @JvmField
+    val KOTLIN_RUNTIME_JAR_PATTERN: Pattern = Pattern.compile("kotlin-(stdlib|runtime)(-\\d[\\d.]+(-.+)?)?\\.jar")
+    val KOTLIN_STDLIB_JS_JAR_PATTERN: Pattern = Pattern.compile("kotlin-stdlib-js.*\\.jar")
+    val KOTLIN_JS_LIBRARY_JAR_PATTERN: Pattern = Pattern.compile("kotlin-js-library.*\\.jar")
 
-    public static final Pattern KOTLIN_RUNTIME_JAR_PATTERN = Pattern.compile("kotlin-(stdlib|runtime)(-\\d[\\d.]+(-.+)?)?\\.jar");
-    public static final Pattern KOTLIN_STDLIB_JS_JAR_PATTERN = Pattern.compile("kotlin-stdlib-js.*\\.jar");
-    public static final Pattern KOTLIN_JS_LIBRARY_JAR_PATTERN = Pattern.compile("kotlin-js-library.*\\.jar");
+    private const val HOME_FOLDER_NAME = "kotlinc"
+    private val NO_PATH = File("<no_path>")
 
-    public static final String HOME_FOLDER_NAME = "kotlinc";
-    private static final File NO_PATH = new File("<no_path>");
+    @JvmStatic
+    val kotlinPathsForIdeaPlugin: KotlinPaths
+        get() = if (ApplicationManager.getApplication().isUnitTestMode)
+            kotlinPathsForDistDirectory
+        else
+            KotlinPathsFromHomeDir(compilerPathForIdeaPlugin)
 
-    private PathUtil() {}
-
-    @NotNull
-    public static KotlinPaths getKotlinPathsForIdeaPlugin() {
-        return ApplicationManager.getApplication().isUnitTestMode()
-            ? getKotlinPathsForDistDirectory()
-            : new KotlinPathsFromHomeDir(getCompilerPathForIdeaPlugin());
-    }
-
-    @NotNull
-    public static KotlinPaths getKotlinPathsForJpsPlugin() {
-        // When JPS is run on TeamCity, it can not rely on Kotlin plugin layout,
-        // so the path to Kotlin is specified in a system property
-        String jpsKotlinHome = System.getProperty(JPS_KOTLIN_HOME_PROPERTY);
-        if (jpsKotlinHome != null) {
-            return new KotlinPathsFromHomeDir(new File(jpsKotlinHome));
+    // When JPS is run on TeamCity, it can not rely on Kotlin plugin layout,
+    // so the path to Kotlin is specified in a system property
+    private val kotlinPathsForJpsPlugin: KotlinPaths
+        get() {
+            val jpsKotlinHome = System.getProperty(JPS_KOTLIN_HOME_PROPERTY)
+            return if (jpsKotlinHome != null) {
+                KotlinPathsFromHomeDir(File(jpsKotlinHome))
+            }
+            else KotlinPathsFromHomeDir(compilerPathForJpsPlugin)
         }
-        return new KotlinPathsFromHomeDir(getCompilerPathForJpsPlugin());
-    }
 
-    @NotNull
-    public static KotlinPaths getKotlinPathsForJpsPluginOrJpsTests() {
-        if ("true".equalsIgnoreCase(System.getProperty("kotlin.jps.tests"))) {
-            return getKotlinPathsForDistDirectory();
+    val kotlinPathsForJpsPluginOrJpsTests: KotlinPaths
+        get() = if ("true".equals(System.getProperty("kotlin.jps.tests"), ignoreCase = true)) {
+            kotlinPathsForDistDirectory
         }
-        return getKotlinPathsForJpsPlugin();
-    }
+        else kotlinPathsForJpsPlugin
 
-    @NotNull
-    public static KotlinPaths getKotlinPathsForCompiler() {
-        if (!getPathUtilJar().isFile()) {
+    @JvmStatic
+    val kotlinPathsForCompiler: KotlinPaths
+        get() = if (!pathUtilJar.isFile) {
             // Not running from a jar, i.e. it is it must be a unit test
-            return getKotlinPathsForDistDirectory();
+            kotlinPathsForDistDirectory
         }
-        return new KotlinPathsFromHomeDir(getCompilerPathForCompilerJar());
-    }
+        else KotlinPathsFromHomeDir(compilerPathForCompilerJar)
 
-    @NotNull
-    public static KotlinPaths getKotlinPathsForDistDirectory() {
-        return new KotlinPathsFromHomeDir(new File("dist", HOME_FOLDER_NAME));
-    }
+    @JvmStatic
+    val kotlinPathsForDistDirectory: KotlinPaths
+        get() = KotlinPathsFromHomeDir(File("dist", HOME_FOLDER_NAME))
 
-    @NotNull
-    private static File getCompilerPathForCompilerJar() {
-        File jar = getPathUtilJar();
+    private val compilerPathForCompilerJar: File
+        get() {
+            val jar = pathUtilJar
+            if (!jar.exists()) return NO_PATH
 
-        if (!jar.exists()) return NO_PATH;
+            if (jar.name == KOTLIN_COMPILER_JAR) {
+                val lib = jar.parentFile
+                return lib.parentFile
+            }
 
-        if (jar.getName().equals(KOTLIN_COMPILER_JAR)) {
-            File lib = jar.getParentFile();
-            return lib.getParentFile();
-        }
-
-        return NO_PATH;
-    }
-
-    @NotNull
-    private static File getCompilerPathForJpsPlugin() {
-        File jar = getPathUtilJar();
-
-        if (!jar.exists()) return NO_PATH;
-
-        if (jar.getName().equals("kotlin-jps-plugin.jar")) {
-            File pluginHome = jar.getParentFile().getParentFile().getParentFile();
-            return new File(pluginHome, HOME_FOLDER_NAME);
+            return NO_PATH
         }
 
-        return NO_PATH;
-    }
+    private val compilerPathForJpsPlugin: File
+        get() {
+            val jar = pathUtilJar
+            if (!jar.exists()) return NO_PATH
 
-    @NotNull
-    private static File getCompilerPathForIdeaPlugin() {
-        File jar = getPathUtilJar();
+            if (jar.name == "kotlin-jps-plugin.jar") {
+                val pluginHome = jar.parentFile.parentFile.parentFile
+                return File(pluginHome, HOME_FOLDER_NAME)
+            }
 
-        if (!jar.exists()) return NO_PATH;
-
-        if (jar.getName().equals("kotlin-plugin.jar")) {
-            File lib = jar.getParentFile();
-            File pluginHome = lib.getParentFile();
-
-            return new File(pluginHome, HOME_FOLDER_NAME);
+            return NO_PATH
         }
 
-        return NO_PATH;
-    }
+    private val compilerPathForIdeaPlugin: File
+        get() {
+            val jar = pathUtilJar
+            if (!jar.exists()) return NO_PATH
 
-    @NotNull
-    public static File getPathUtilJar() {
-        return getResourcePathForClass(PathUtil.class);
-    }
+            if (jar.name == "kotlin-plugin.jar") {
+                val lib = jar.parentFile
+                val pluginHome = lib.parentFile
 
-    @NotNull
-    public static File getResourcePathForClass(@NotNull Class aClass) {
-        String path = "/" + aClass.getName().replace('.', '/') + ".class";
-        String resourceRoot = PathManager.getResourceRoot(aClass, path);
-        if (resourceRoot == null) {
-            throw new IllegalStateException("Resource not found: " + path);
+                return File(pluginHome, HOME_FOLDER_NAME)
+            }
+
+            return NO_PATH
         }
-        return new File(resourceRoot).getAbsoluteFile();
+
+    val pathUtilJar: File
+        get() = getResourcePathForClass(PathUtil::class.java)
+
+    @JvmStatic
+    fun getResourcePathForClass(aClass: Class<*>): File {
+        val path = "/" + aClass.name.replace('.', '/') + ".class"
+        val resourceRoot = PathManager.getResourceRoot(aClass, path) ?: throw IllegalStateException("Resource not found: $path")
+        return File(resourceRoot).absoluteFile
     }
 
-    @NotNull
-    public static List<File> getJdkClassesRootsFromCurrentJre() {
-        return getJdkClassesRootsFromJre(System.getProperty("java.home"));
-    }
+    @JvmStatic
+    fun getJdkClassesRootsFromCurrentJre(): List<File> =
+            getJdkClassesRootsFromJre(System.getProperty("java.home"))
 
-    @NotNull
-    public static List<File> getJdkClassesRootsFromJre(@NotNull String javaHome) {
-        return JavaSdkUtil.getJdkClassesRoots(new File(javaHome), true);
-    }
+    @JvmStatic
+    fun getJdkClassesRootsFromJre(javaHome: String): List<File> =
+            JavaSdkUtil.getJdkClassesRoots(File(javaHome), true)
 
-    @NotNull
-    public static List<File> getJdkClassesRoots(@NotNull File jdkHome) {
-        return JavaSdkUtil.getJdkClassesRoots(jdkHome, false);
-    }
+    @JvmStatic
+    fun getJdkClassesRoots(jdkHome: File): List<File> =
+            JavaSdkUtil.getJdkClassesRoots(jdkHome, false)
 }

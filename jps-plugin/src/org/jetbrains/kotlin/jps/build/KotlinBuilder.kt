@@ -51,8 +51,11 @@ import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
+import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -469,7 +472,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         return JpsCompilerEnvironment(
-                PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),
+                PathUtil.kotlinPathsForJpsPluginOrJpsTests,
                 compilerServices,
                 ClassCondition { className ->
                     className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.components.")

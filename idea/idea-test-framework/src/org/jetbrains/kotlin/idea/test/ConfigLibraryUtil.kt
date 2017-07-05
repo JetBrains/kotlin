@@ -59,15 +59,13 @@ object ConfigLibraryUtil {
     fun configureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
         addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_JS_STDLIB_NAME,
-                                             PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath), module,
+                                             PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath), module,
                    JSLibraryKind)
     }
 
     fun configureKotlinRuntime(module: Module) {
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().stdlibPath),
-                   module)
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().kotlinTestPath),
-                   module)
+        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, PathUtil.kotlinPathsForDistDirectory.stdlibPath), module)
+        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, PathUtil.kotlinPathsForDistDirectory.kotlinTestPath), module)
     }
 
     fun unConfigureKotlinRuntime(module: Module) {

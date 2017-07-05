@@ -60,7 +60,7 @@ class BundledKotlinScriptDependenciesResolver : DependenciesResolver {
         val javaHome = environment.get("sdk") as String?
         val dependencies = ScriptDependencies(
                 javaHome = javaHome?.let(::File),
-                classpath = with(PathUtil.getKotlinPathsForIdeaPlugin()) {
+                classpath = with(PathUtil.kotlinPathsForIdeaPlugin) {
                     listOf(
                             reflectPath,
                             stdlibPath,

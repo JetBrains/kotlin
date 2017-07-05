@@ -190,10 +190,10 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
             }
 
         private val pathToExistentRuntimeJar: String
-            get() = PathUtil.getKotlinPathsForDistDirectory().stdlibPath.parent
+            get() = PathUtil.kotlinPathsForDistDirectory.stdlibPath.parent
 
         private val pathToExistentJsJar: String
-            get() = PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath.parent
+            get() = PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath.parent
 
         protected fun assertNotConfigured(module: Module, configurator: KotlinWithLibraryConfigurator) {
             TestCase.assertFalse(

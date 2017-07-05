@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.noarg.ide
 
-import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor
 import org.jetbrains.kotlin.annotation.plugin.ide.AbstractMavenImportHandler
+import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor
 import org.jetbrains.kotlin.utils.PathUtil
 
 class NoArgMavenProjectImportHandler : AbstractMavenImportHandler() {
@@ -29,7 +29,7 @@ class NoArgMavenProjectImportHandler : AbstractMavenImportHandler() {
     override val pluginName = "noarg"
     override val annotationOptionName = NoArgCommandLineProcessor.ANNOTATION_OPTION.name
     override val mavenPluginArtifactName = "kotlin-maven-noarg"
-    override val pluginJarFileFromIdea = PathUtil.getKotlinPathsForIdeaPlugin().noArgPluginJarPath
+    override val pluginJarFileFromIdea = PathUtil.kotlinPathsForIdeaPlugin.noArgPluginJarPath
 
     override fun getAnnotations(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<String>? {
         if ("no-arg" !in enabledCompilerPlugins && "jpa" !in enabledCompilerPlugins) {
