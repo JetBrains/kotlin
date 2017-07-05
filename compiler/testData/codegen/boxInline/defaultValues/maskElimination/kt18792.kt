@@ -1,6 +1,5 @@
 // FILE: 1.kt
 //WITH_RUNTIME
-// IGNORE_BACKEND: JS, NATIVE
 
 package test
 
