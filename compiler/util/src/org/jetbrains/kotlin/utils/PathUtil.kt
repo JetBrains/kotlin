@@ -24,8 +24,6 @@ import java.io.File
 import java.util.regex.Pattern
 
 object PathUtil {
-    const val JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home"
-
     const val JS_LIB_JAR_NAME = "kotlin-stdlib-js.jar"
     const val JS_LIB_10_JAR_NAME = "kotlin-jslib.jar"
     const val ALLOPEN_PLUGIN_JAR_NAME = "allopen-compiler-plugin.jar"
@@ -53,7 +51,7 @@ object PathUtil {
     val KOTLIN_STDLIB_JS_JAR_PATTERN: Pattern = Pattern.compile("kotlin-stdlib-js.*\\.jar")
     val KOTLIN_JS_LIBRARY_JAR_PATTERN: Pattern = Pattern.compile("kotlin-js-library.*\\.jar")
 
-    private const val HOME_FOLDER_NAME = "kotlinc"
+    const val HOME_FOLDER_NAME = "kotlinc"
     private val NO_PATH = File("<no_path>")
 
     @JvmStatic
@@ -62,23 +60,6 @@ object PathUtil {
             kotlinPathsForDistDirectory
         else
             KotlinPathsFromHomeDir(compilerPathForIdeaPlugin)
-
-    // When JPS is run on TeamCity, it can not rely on Kotlin plugin layout,
-    // so the path to Kotlin is specified in a system property
-    private val kotlinPathsForJpsPlugin: KotlinPaths
-        get() {
-            val jpsKotlinHome = System.getProperty(JPS_KOTLIN_HOME_PROPERTY)
-            return if (jpsKotlinHome != null) {
-                KotlinPathsFromHomeDir(File(jpsKotlinHome))
-            }
-            else KotlinPathsFromHomeDir(compilerPathForJpsPlugin)
-        }
-
-    val kotlinPathsForJpsPluginOrJpsTests: KotlinPaths
-        get() = if ("true".equals(System.getProperty("kotlin.jps.tests"), ignoreCase = true)) {
-            kotlinPathsForDistDirectory
-        }
-        else kotlinPathsForJpsPlugin
 
     @JvmStatic
     val kotlinPathsForCompiler: KotlinPaths
@@ -100,19 +81,6 @@ object PathUtil {
             if (jar.name == KOTLIN_COMPILER_JAR) {
                 val lib = jar.parentFile
                 return lib.parentFile
-            }
-
-            return NO_PATH
-        }
-
-    private val compilerPathForJpsPlugin: File
-        get() {
-            val jar = pathUtilJar
-            if (!jar.exists()) return NO_PATH
-
-            if (jar.name == "kotlin-jps-plugin.jar") {
-                val pluginHome = jar.parentFile.parentFile.parentFile
-                return File(pluginHome, HOME_FOLDER_NAME)
             }
 
             return NO_PATH
