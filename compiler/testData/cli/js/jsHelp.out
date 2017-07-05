@@ -18,6 +18,7 @@ where possible options include:
   -output-postfix <path>     Path to file which will be added to the end of output file
   -language-version <version> Provide source compatibility with specified language version
   -api-version <version>     Allow to use declarations only from the specified version of bundled libraries
+  -kotlin-home <path>        Path to Kotlin compiler home directory, used for runtime libraries discovery
   -P plugin:<pluginId>:<optionName>=<value>
                              Pass an option to a plugin
   -help (-h)                 Print a synopsis of standard options

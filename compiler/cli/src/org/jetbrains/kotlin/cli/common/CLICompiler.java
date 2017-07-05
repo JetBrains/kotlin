@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.common;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import kotlin.collections.ArraysKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
@@ -32,8 +33,12 @@ import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
+import org.jetbrains.kotlin.utils.KotlinPaths;
+import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir;
+import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +73,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         try {
             setupCommonArgumentsAndServices(configuration, arguments, services);
             setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
+            KotlinPaths paths = computeKotlinPaths(groupingCollector, arguments);
             if (groupingCollector.hasErrors()) {
                 return ExitCode.COMPILATION_ERROR;
             }
@@ -93,7 +99,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
                 Disposable rootDisposable = Disposer.newDisposable();
                 try {
                     setIdeaIoUseFallback();
-                    ExitCode code = doExecute(arguments, configuration, rootDisposable);
+                    ExitCode code = doExecute(arguments, configuration, rootDisposable, paths);
                     exitCode = groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
                 }
                 catch (CompilationCanceledException e) {
@@ -201,6 +207,51 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     }
 
     @Nullable
+    private static KotlinPaths computeKotlinPaths(@NotNull MessageCollector messageCollector, @NotNull CommonCompilerArguments arguments) {
+        KotlinPaths paths;
+        if (arguments.kotlinHome != null) {
+            File kotlinHome = new File(arguments.kotlinHome);
+            if (kotlinHome.isDirectory()) {
+                paths = new KotlinPathsFromHomeDir(kotlinHome);
+            }
+            else {
+                messageCollector.report(ERROR, "Kotlin home does not exist or is not a directory: " + kotlinHome, null);
+                paths = null;
+            }
+        }
+        else {
+            paths = PathUtil.getKotlinPathsForCompiler();
+        }
+
+        if (paths != null) {
+            messageCollector.report(LOGGING, "Using Kotlin home directory " + paths.getHomePath(), null);
+        }
+
+        return paths;
+    }
+
+    @Nullable
+    public static File getLibraryFromHome(
+            @Nullable KotlinPaths paths,
+            @NotNull Function1<KotlinPaths, File> getLibrary,
+            @NotNull String libraryName,
+            @NotNull MessageCollector messageCollector,
+            @NotNull String noLibraryArgument
+    ) {
+        if (paths != null) {
+            File stdlibJar = getLibrary.invoke(paths);
+            if (stdlibJar.exists()) {
+                return stdlibJar;
+            }
+        }
+
+        messageCollector.report(STRONG_WARNING, "Unable to find " + libraryName + " in the Kotlin home directory. " +
+                                                "Pass either " + noLibraryArgument + " to prevent adding it to the classpath, " +
+                                                "or the correct '-kotlin-home'", null);
+        return null;
+    }
+
+    @Nullable
     private static LanguageFeature.State chooseCoroutinesApplicabilityLevel(
             @NotNull CompilerConfiguration configuration,
             @NotNull CommonCompilerArguments arguments
@@ -245,6 +296,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     protected abstract ExitCode doExecute(
             @NotNull A arguments,
             @NotNull CompilerConfiguration configuration,
-            @NotNull Disposable rootDisposable
+            @NotNull Disposable rootDisposable,
+            @Nullable KotlinPaths paths
     );
 }

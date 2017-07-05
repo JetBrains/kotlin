@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
 class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
@@ -45,7 +46,10 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     }
 
     override fun doExecute(
-            arguments: K2MetadataCompilerArguments, configuration: CompilerConfiguration, rootDisposable: Disposable
+            arguments: K2MetadataCompilerArguments,
+            configuration: CompilerConfiguration,
+            rootDisposable: Disposable,
+            paths: KotlinPaths?
     ): ExitCode {
         val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
