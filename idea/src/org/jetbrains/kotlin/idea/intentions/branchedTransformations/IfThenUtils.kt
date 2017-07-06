@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
@@ -254,3 +255,12 @@ private fun KtExpression.insertSafeCalls(factory: KtPsiFactory): KtExpression {
     replaced.receiverExpression.let { it.replace(it.insertSafeCalls(factory)) }
     return replaced
 }
+
+// Returns -1 if cannot obtain a document
+internal fun KtExpression.lineCount(): Int {
+    val file = containingFile?.virtualFile ?: return -1
+    val document = FileDocumentManager.getInstance().getDocument(file) ?: return -1
+    return document.getLineNumber(textRange.endOffset) - document.getLineNumber(textRange.startOffset) + 1
+}
+
+internal fun KtExpression.isOneLiner(): Boolean = lineCount() == 1

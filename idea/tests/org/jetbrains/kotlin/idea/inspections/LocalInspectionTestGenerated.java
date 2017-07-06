@@ -529,6 +529,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ifVeryLong.kt")
+            public void testIfVeryLong() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/ifToReturn/ifVeryLong.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("innerIfTransformed.kt")
             public void testInnerIfTransformed() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/ifToReturn/innerIfTransformed.kt");
