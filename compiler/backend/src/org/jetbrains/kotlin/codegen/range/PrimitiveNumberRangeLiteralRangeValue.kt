@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.getAsmRangeElementTypeForPrimitiveRange
 import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForPrimitiveType
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInRangeLiteralLoopGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InContinuousRangeExpressionGenerator
@@ -30,9 +29,8 @@ class PrimitiveNumberRangeLiteralRangeValue(
         codegen: ExpressionCodegen,
         rangeCall: ResolvedCall<out CallableDescriptor>
 ): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
-    private val asmElementType = getAsmRangeElementTypeForPrimitiveRange(rangeCall.resultingDescriptor)
     private val comparisonGenerator = getComparisonGeneratorForPrimitiveType(asmElementType)
-    private val boundedValue = SimpleBoundedValue(codegen, rangeCall, isLowInclusive = true, isHighInclusive = true)
+    private val boundedValue = SimpleBoundedValue(codegen, rangeCall)
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInRangeLiteralLoopGenerator(codegen, forExpression, rangeCall)

@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.generateCallReceiver
+import org.jetbrains.kotlin.codegen.generateCallSingleArgument
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
@@ -34,16 +36,23 @@ class SimpleBoundedValue(
     constructor(
             codegen: ExpressionCodegen,
             rangeCall: ResolvedCall<out CallableDescriptor>,
-            isLowInclusive: Boolean,
-            isHighInclusive: Boolean
+            isLowInclusive: Boolean = true,
+            isHighInclusive: Boolean = true
     ) : this(
             codegen,
             rangeCall,
-            codegen.generateReceiverValue(rangeCall.extensionReceiver ?: rangeCall.dispatchReceiver!!, false),
+            codegen.generateCallReceiver(rangeCall),
             isLowInclusive,
-            codegen.gen(ExpressionCodegen.getSingleArgumentExpression(rangeCall)!!),
+            codegen.generateCallSingleArgument(rangeCall),
             isHighInclusive
     )
+
+    constructor(
+            codegen: ExpressionCodegen,
+            rangeCall: ResolvedCall<out CallableDescriptor>,
+            lowBound: StackValue,
+            highBound: StackValue
+    ) : this(codegen, rangeCall, lowBound, true, highBound, true)
 
     override val instanceType: Type = codegen.asmType(rangeCall.resultingDescriptor.returnType!!)
 
@@ -54,5 +63,9 @@ class SimpleBoundedValue(
     override fun putHighLow(v: InstructionAdapter, type: Type) {
         highBound.put(type, v)
         lowBound.put(type, v)
+    }
+
+    companion object {
+
     }
 }

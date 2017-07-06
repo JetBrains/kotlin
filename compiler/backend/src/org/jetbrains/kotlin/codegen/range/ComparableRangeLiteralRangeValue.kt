@@ -32,10 +32,10 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class ComparableRangeLiteralRangeValue(
-        private val codegen: ExpressionCodegen,
+        codegen: ExpressionCodegen,
         rangeCall: ResolvedCall<out CallableDescriptor>
 ) : CallIntrinsicRangeValue(rangeCall) {
-    private val boundedValue = SimpleBoundedValue(codegen, rangeCall, isLowInclusive = true, isHighInclusive = true)
+    private val boundedValue = SimpleBoundedValue(codegen, rangeCall)
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             IteratorForLoopGenerator(codegen, forExpression)

@@ -191,19 +191,24 @@ private fun isTopLevelInPackage(descriptor: DeclarationDescriptor, name: String,
     return packageName == packageFqName
 }
 
-fun getAsmRangeElementTypeForPrimitiveRange(rangeCallee: CallableDescriptor): Type {
+fun getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCallee: CallableDescriptor): Type {
     val rangeType = rangeCallee.returnType!!
 
     getPrimitiveRangeElementType(rangeType)?.let {
         return AsmTypes.valueTypeForPrimitive(it)
     }
 
-    val floatingPointElementType = getClosedFloatingPointRangeElementType(rangeType) ?:
-                                   throw AssertionError("Unexpected range type: $rangeType")
-
-    return when {
-        KotlinBuiltIns.isDouble(floatingPointElementType) -> Type.DOUBLE_TYPE
-        KotlinBuiltIns.isFloat(floatingPointElementType) -> Type.FLOAT_TYPE
-        else -> throw AssertionError("Unexpected ClosedFloatingPointRange element type: $floatingPointElementType")
+    getPrimitiveProgressionElementType(rangeType)?.let {
+        return AsmTypes.valueTypeForPrimitive(it)
     }
+
+    getClosedFloatingPointRangeElementType(rangeType)?.let {
+        when {
+            KotlinBuiltIns.isDouble(it) -> return Type.DOUBLE_TYPE
+            KotlinBuiltIns.isFloat(it) -> return Type.FLOAT_TYPE
+            else -> {}
+        }
+    }
+
+    throw AssertionError("Unexpected range type: $rangeType")
 }
