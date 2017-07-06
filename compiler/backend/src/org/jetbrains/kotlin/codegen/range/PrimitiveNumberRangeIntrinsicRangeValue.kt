@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.codegen.range
 
-import org.jetbrains.kotlin.codegen.getAsmRangeElementTypeForPrimitiveRangeOrProgression
-import org.jetbrains.kotlin.codegen.isClosedFloatingPointRangeContains
-import org.jetbrains.kotlin.codegen.isIntPrimitiveRangeExtensionForInt
-import org.jetbrains.kotlin.codegen.isPrimitiveRangeContains
+import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator
+import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForRangeContainsCall
+import org.jetbrains.kotlin.codegen.range.inExpression.CallBasedInExpressionGenerator
+import org.jetbrains.kotlin.codegen.range.inExpression.InContinuousRangeExpressionGenerator
+import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 abstract class PrimitiveNumberRangeIntrinsicRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): CallIntrinsicRangeValue(rangeCall) {
@@ -32,4 +35,18 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(rangeCall: ResolvedCall<o
                 isClosedFloatingPointRangeContains(it) ||
                 isIntPrimitiveRangeExtensionForInt(it)
             }
+
+    override fun createIntrinsicInExpressionGenerator(
+            codegen: ExpressionCodegen,
+            operatorReference: KtSimpleNameExpression,
+            resolvedCall: ResolvedCall<out CallableDescriptor>
+    ): InExpressionGenerator {
+        val comparisonGenerator = getComparisonGeneratorForRangeContainsCall(codegen, resolvedCall)
+        return if (comparisonGenerator != null)
+            InContinuousRangeExpressionGenerator(operatorReference, getBoundedValue(codegen), comparisonGenerator)
+        else
+            CallBasedInExpressionGenerator(codegen, operatorReference)
+    }
+
+    protected abstract fun getBoundedValue(codegen: ExpressionCodegen): BoundedValue
 }

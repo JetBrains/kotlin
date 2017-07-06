@@ -19,24 +19,17 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
-import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForPrimitiveType
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInArrayIndicesRangeLoopGenerator
-import org.jetbrains.kotlin.codegen.range.inExpression.InContinuousRangeExpressionGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
-class ArrayIndicesRangeValue(
-        codegen: ExpressionCodegen,
-        rangeCall: ResolvedCall<out CallableDescriptor>
-): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
-    private val comparisonGenerator = getComparisonGeneratorForPrimitiveType(asmElementType)
+class ArrayIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
     private val expectedReceiverType: KotlinType = ExpressionCodegen.getExpectedReceiverType(rangeCall)
 
-    private val boundedValue =
+    override fun getBoundedValue(codegen: ExpressionCodegen) =
             SimpleBoundedValue(
                     codegen, rangeCall,
                     lowBound = StackValue.constant(0, asmElementType),
@@ -49,6 +42,4 @@ class ArrayIndicesRangeValue(
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInArrayIndicesRangeLoopGenerator(codegen, forExpression, rangeCall)
 
-    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression) =
-            InContinuousRangeExpressionGenerator(operatorReference, boundedValue, comparisonGenerator)
 }

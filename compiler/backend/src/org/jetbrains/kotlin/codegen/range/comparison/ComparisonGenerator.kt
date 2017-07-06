@@ -16,6 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.range.comparison
 
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.getRangeOrProgressionElementType
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -30,10 +34,44 @@ interface ComparisonGenerator {
 }
 
 fun getComparisonGeneratorForPrimitiveType(type: Type): ComparisonGenerator =
-        when (type) {
-            Type.INT_TYPE, Type.SHORT_TYPE, Type.BYTE_TYPE, Type.CHAR_TYPE -> IntComparisonGenerator
-            Type.LONG_TYPE -> LongComparisonGenerator
-            Type.FLOAT_TYPE -> FloatComparisonGenerator
-            Type.DOUBLE_TYPE -> DoubleComparisonGenerator
+        when {
+            type.isRepresentedAsPrimitiveInt() -> IntComparisonGenerator
+            type == Type.LONG_TYPE -> LongComparisonGenerator
+            type == Type.FLOAT_TYPE -> FloatComparisonGenerator
+            type == Type.DOUBLE_TYPE -> DoubleComparisonGenerator
             else -> throw UnsupportedOperationException("Unexpected primitive type: " + type)
         }
+
+fun getComparisonGeneratorForRangeContainsCall(codegen: ExpressionCodegen, call: ResolvedCall<out CallableDescriptor>): ComparisonGenerator? {
+    val descriptor = call.resultingDescriptor
+
+    val receiverType = descriptor.extensionReceiverParameter?.type ?: descriptor.dispatchReceiverParameter?.type ?: return null
+
+    val elementType = getRangeOrProgressionElementType(receiverType) ?: return null
+
+    val valueParameterType = descriptor.valueParameters.singleOrNull()?.type ?: return null
+
+    val asmElementType = codegen.asmType(elementType)
+    val asmValueParameterType = codegen.asmType(valueParameterType)
+
+    return when {
+        asmElementType == asmValueParameterType ->
+            getComparisonGeneratorForPrimitiveType(asmElementType)
+
+        asmElementType.isRepresentedAsPrimitiveInt() && asmValueParameterType.isRepresentedAsPrimitiveInt() ->
+            IntComparisonGenerator
+
+        asmElementType.isRepresentedAsPrimitiveInt() && asmValueParameterType == Type.LONG_TYPE ||
+        asmValueParameterType.isRepresentedAsPrimitiveInt() && asmElementType == Type.LONG_TYPE ->
+            LongComparisonGenerator
+
+        asmElementType == Type.FLOAT_TYPE && asmValueParameterType == Type.DOUBLE_TYPE ||
+        asmElementType == Type.DOUBLE_TYPE && asmValueParameterType == Type.FLOAT_TYPE ->
+            DoubleComparisonGenerator
+
+        else -> null
+    }
+}
+
+private fun Type.isRepresentedAsPrimitiveInt() =
+        this == Type.INT_TYPE || this == Type.SHORT_TYPE || this == Type.BYTE_TYPE || this == Type.CHAR_TYPE

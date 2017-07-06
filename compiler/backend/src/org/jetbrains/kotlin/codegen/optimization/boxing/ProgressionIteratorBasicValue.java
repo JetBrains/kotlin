@@ -32,7 +32,7 @@ public class ProgressionIteratorBasicValue extends StrictBasicValue {
     private final static ImmutableMap<String, Type> VALUES_TYPENAME_TO_TYPE;
     static {
         ImmutableMap.Builder<String, Type> builder = ImmutableMap.builder();
-        for (PrimitiveType primitiveType : RangeCodegenUtilKt.supportedRangeTypes()) {
+        for (PrimitiveType primitiveType : RangeCodegenUtilKt.getSupportedRangeTypes()) {
             builder.put(primitiveType.getTypeName().asString(), Type.getType(JvmPrimitiveType.get(primitiveType).getDesc()));
         }
         VALUES_TYPENAME_TO_TYPE = builder.build();
@@ -41,7 +41,7 @@ public class ProgressionIteratorBasicValue extends StrictBasicValue {
     private static final ImmutableMap<PrimitiveType, ProgressionIteratorBasicValue> ITERATOR_VALUE_BY_ELEMENT_PRIMITIVE_TYPE;
     static {
         ImmutableMap.Builder<PrimitiveType, ProgressionIteratorBasicValue> builder = ImmutableMap.builder();
-        for (PrimitiveType elementType : RangeCodegenUtilKt.supportedRangeTypes()) {
+        for (PrimitiveType elementType : RangeCodegenUtilKt.getSupportedRangeTypes()) {
             builder.put(elementType, new ProgressionIteratorBasicValue(elementType.getTypeName().asString()));
         }
         ITERATOR_VALUE_BY_ELEMENT_PRIMITIVE_TYPE = builder.build();
