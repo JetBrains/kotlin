@@ -101,6 +101,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("oneLiner.kt")
+        public void testOneLiner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/cascadeIf/oneLiner.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("shortIf.kt")
         public void testShortIf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/cascadeIf/shortIf.kt");

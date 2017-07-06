@@ -22,7 +22,6 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 import com.intellij.codeInspection.ProblemHighlightType.INFORMATION
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.canOmitDeclaredType
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
 import org.jetbrains.kotlin.idea.intentions.hasResultingIfWithoutElse
 import org.jetbrains.kotlin.idea.intentions.resultingWhens
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -85,12 +85,6 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
                     holder.registerProblem(problemDescriptor)
                 }
             }
-
-    private fun KtExpression.isOneLiner(): Boolean {
-        val file = containingFile?.virtualFile ?: return false
-        val document = FileDocumentManager.getInstance().getDocument(file) ?: return false
-        return document.getLineNumber(textRange.startOffset) == document.getLineNumber(textRange.endOffset)
-    }
 
     private fun KtDeclarationWithBody.findValueStatement(): KtExpression? {
         val body = blockExpression() ?: return null

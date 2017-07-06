@@ -21,6 +21,7 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfToWhenIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isIfBranch
 import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -36,6 +37,8 @@ class CascadeIfInspection : AbstractKotlinInspection() {
 
                     val branches = expression.branches
                     if (branches.size <= 2) return
+                    if (expression.isOneLiner()) return
+
                     if (branches.any {
                         it == null ||
                         it.lastBlockStatementOrThis() is KtIfExpression
