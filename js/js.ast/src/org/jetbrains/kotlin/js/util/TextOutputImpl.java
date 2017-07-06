@@ -126,22 +126,6 @@ public class TextOutputImpl implements TextOutput {
     }
 
     @Override
-    public void printOpt(char[] s) {
-        if (!compact) {
-            maybeIndent();
-            printAndCount(s);
-        }
-    }
-
-    @Override
-    public void printOpt(String s) {
-        if (!compact) {
-            maybeIndent();
-            printAndCount(s);
-        }
-    }
-
-    @Override
     public void maybeIndent() {
         if (justNewlined && !compact) {
             printAndCount(indents[identLevel]);
@@ -159,10 +143,5 @@ public class TextOutputImpl implements TextOutput {
         position += chars.length;
         column += chars.length;
         out.append(chars);
-    }
-
-    @Override
-    public boolean isJustNewlined() {
-        return justNewlined && !compact;
     }
 }
