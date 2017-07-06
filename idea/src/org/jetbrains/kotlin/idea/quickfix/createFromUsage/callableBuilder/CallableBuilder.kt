@@ -31,6 +31,7 @@ import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -68,6 +70,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
@@ -608,6 +611,16 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             return typeRefsToShorten
         }
 
+        private fun postprocessDeclaration(declaration: KtNamedDeclaration) {
+            if (callableInfo is PropertyInfo && callableInfo.isLateinitPreferred) {
+                if (declaration.containingClassOrObject == null) return
+                val propertyDescriptor = declaration.resolveToDescriptor() as? PropertyDescriptor ?: return
+                val returnType = propertyDescriptor.returnType ?: return
+                if (TypeUtils.isNullableType(returnType) || KotlinBuiltIns.isPrimitiveType(returnType)) return
+                declaration.addModifier(KtTokens.LATEINIT_KEYWORD)
+            }
+        }
+
         private fun setupDeclarationBody(func: KtDeclarationWithBody) {
             val oldBody = func.bodyExpression ?: return
             val templateKind = when (func) {
@@ -910,6 +923,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                                                                     false) ?: return
 
                         runWriteAction {
+                            postprocessDeclaration(newDeclaration)
+
                             // file templates
                             if (newDeclaration is KtNamedFunction || newDeclaration is KtSecondaryConstructor) {
                                 setupDeclarationBody(newDeclaration as KtFunction)
