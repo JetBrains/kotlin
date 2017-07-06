@@ -22,52 +22,7 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
-class CompilePerTarget extends CompileCppToBitcode {
-    private List<String> targetList = []
-    private Map<String, List<String>> targetArgs = null
-    private Map<String, List<String>> targetLinkerArgs = null
-
-    void targetList(List<String> list) {
-        targetList.addAll(list)
-    }
-
-    void targetArgs(Map<String, List<String>> map) {
-        targetArgs = map
-    }
-
-    private Map<String, List<String>> getTargetArgs() {
-        return targetArgs
-    }
-
-    void targetLinkerArgs(Map<String, List<String>> map) {
-        targetLinkerArgs = map
-    }
-
-    private Map<String, List<String>> getTargetLinkerArgs() {
-        return targetLinkerArgs
-    }
-
-    @TaskAction
-    void compile() {
-        def targetList = this.targetList
-        def targetArgs = getTargetArgs()
-        def targetLinkerArgs = getTargetLinkerArgs()
-        def commonCompilerArgs = getCompilerArgs().clone()
-        def commonLinkerArgs = getLinkerArgs().clone()
-        targetList.each {
-            this.compilerArgs = [] 
-            this.linkerArgs = []
-            target(it)
-            compilerArgs(commonCompilerArgs)
-            if (targetArgs != null)
-                compilerArgs(targetArgs[it])
-            linkerArgs(commonLinkerArgs)
-            if (targetLinkerArgs != null)
-                linkerArgs(targetLinkerArgs[it])
-            super.compile()
-        }
-    }
-}
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 class CompileCppToBitcode extends DefaultTask {
     private String name = "main"
@@ -123,6 +78,10 @@ class CompileCppToBitcode extends DefaultTask {
         return linkerArgs
     }
 
+    protected  String getTarget() {
+        return target
+    }
+
     void compilerArgs(String... args) {
         compilerArgs.addAll(args)
     }
@@ -137,6 +96,11 @@ class CompileCppToBitcode extends DefaultTask {
 
     void linkerArgs(List<String> args) {
         linkerArgs.addAll(args)
+    }
+
+    List<String> targetArgs(String target) {
+        def result = project.rootProject.targetClangArgs(KonanTarget.valueOf(target.toUpperCase()))
+        return result
     }
 
     @TaskAction
@@ -154,6 +118,7 @@ class CompileCppToBitcode extends DefaultTask {
             executable "clang++"
             args '-std=c++11'
 
+            args targetArgs(this.target)
             args compilerArgs
 
             args "-I$headersDir"

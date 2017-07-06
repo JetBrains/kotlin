@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan.util
+package org.jetbrains.kotlin.konan.properties
 
 import org.jetbrains.kotlin.konan.target.*
 
@@ -29,3 +29,9 @@ fun Properties.targetString(name: String, target: KonanTarget): String?
 
 fun Properties.targetList(name: String, target: KonanTarget): List<String>
     = this.propertyList(name, target.targetSuffix)
+
+fun Properties.hostTargetString(name: String, target: KonanTarget): String?
+    = this.propertyString(name, hostTargetSuffix(TargetManager.host, target))
+
+fun Properties.hostTargetList(name: String, target: KonanTarget): List<String>
+    = this.propertyList(name, hostTargetSuffix(TargetManager.host, target))

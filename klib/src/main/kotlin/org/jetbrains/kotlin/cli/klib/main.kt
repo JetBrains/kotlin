@@ -22,7 +22,7 @@ import java.util.Properties
 import org.jetbrains.kotlin.backend.konan.library.impl.*
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
-import org.jetbrains.kotlin.backend.konan.util.File
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.TargetManager
 
 fun printUsage() {

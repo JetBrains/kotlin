@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
 import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
-import org.jetbrains.kotlin.backend.konan.util.File
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.target.TargetManager.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*

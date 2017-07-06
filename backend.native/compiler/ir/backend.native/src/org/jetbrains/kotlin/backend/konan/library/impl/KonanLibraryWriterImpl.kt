@@ -21,7 +21,8 @@ import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.backend.konan.library.LinkData
-import org.jetbrains.kotlin.backend.konan.util.*
+import org.jetbrains.kotlin.konan.file.*
+import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class FileBasedLibraryWriter (

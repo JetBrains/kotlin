@@ -15,6 +15,10 @@
  */
 
 import static DependencyTaskKind.*
+import org.jetbrains.kotlin.konan.target.*
+import static org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.properties.KonanProperties
+import org.jetbrains.kotlin.konan.properties.*
 
 buildscript {
     repositories {
@@ -29,10 +33,6 @@ buildscript {
 }
 
 apply plugin: 'com.jfrog.bintray'
-
-rootProject.ext.konanPropertiesFile = project(':backend.native').file('konan.properties')
-rootProject.ext.konanProperties = new Properties()
-rootProject.konanProperties.load(new FileInputStream(rootProject.konanPropertiesFile))
 
 configurations {
     kotlin_compiler_jar
@@ -106,20 +106,7 @@ task update_kotlin_compiler(type: DefaultTask) {
 }
 
 abstract class NativeDep extends DefaultTask {
-
-    private String getCurrentHostTarget() {
-        if (project.isMac() && project.isAmd64()) {
-            return 'darwin-macos'
-        } else if (project.isLinux() && project.isAmd64()) {
-            return 'linux-x86-64'
-        } else if (project.isWindows() && project.isAmd64()) {
-            return 'windows-x86-64'
-        } else {
-            throw project.unsupportedPlatformException()
-        }
-    }
-
-    protected final String host = getCurrentHostTarget();
+    protected final String hostSystem = TargetManager.longerSystemName();
     String baseUrl = "https://jetbrains.bintray.com/kotlin-native-dependencies"
 
     @Input
@@ -130,7 +117,7 @@ abstract class NativeDep extends DefaultTask {
     }
 
     protected File getBaseOutDir() {
-        final File res = project.rootProject.file("dist/dependencies")
+        final File res = project.rootProject.ext.dependenciesDir
         res.mkdirs()
         return res
     }
@@ -193,15 +180,6 @@ class HelperNativeDep extends TgzNativeDep {
     }
 }
 
-static String substituteName(String name) {
-    switch (name) {
-        case "macbook": return "osx"
-        case "iphone": return "ios"
-        case "iphoneSim": return "ios_sim"
-    }
-    return name
-}
-
 enum DependencyTaskKind {
     LIBFFI("Libffi"), SYSROOT("Sysroot")
 
@@ -213,22 +191,23 @@ enum DependencyTaskKind {
     String toString() { return name }
 }
 
-void dependencyTask(String target, DependencyTaskKind kind) {
+void dependencyTask(KonanTarget target, DependencyTaskKind kind) {
     String dependencyBaseName
-    def properties = rootProject.konanProperties
+    def properties = rootProject.ext.konanProperties
+    def dirs = new KonanProperties(target, properties, null)
     switch (kind) {
         case LIBFFI:
-            dependencyBaseName = properties.getProperty("libffiDir.${substituteName(target)}")
+            dependencyBaseName = dirs.libffiDir
             break
         case SYSROOT:
-            dependencyBaseName = properties.getProperty("targetSysRoot.${substituteName(target)}")
+            dependencyBaseName = dirs.targetSysRoot
             break
     }
     if (dependencyBaseName == null) {
         throw project.unsupportedPlatformException()
     }
 
-    task "${target}${kind}"(type: HelperNativeDep) {
+    task "${target.userName}${kind}"(type: HelperNativeDep) {
         baseName = dependencyBaseName
     }
 }
@@ -236,37 +215,36 @@ void dependencyTask(String target, DependencyTaskKind kind) {
 if (isLinux()) {
     // The gcc toolchain contains the sysroot for linux platform.
     task gccToolchain(type: HelperNativeDep) {
-        baseName = "target-gcc-toolchain-3-$host"
+        baseName = "target-gcc-toolchain-3-$hostSystem"
     }
 
-    dependencyTask("linux", LIBFFI)
-    dependencyTask("raspberrypi", SYSROOT)
-    dependencyTask("raspberrypi", LIBFFI)
+    dependencyTask(LINUX, LIBFFI)
+    dependencyTask(RASPBERRYPI, SYSROOT)
+    dependencyTask(RASPBERRYPI, LIBFFI)
 } else if (isWindows()) {
     task mingwWithLlvm(type: HelperNativeDep) {
-        baseName = "msys2-mingw-w64-x86_64-gcc-6.3.0-clang-llvm-3.9.1-$host"
+        baseName = "msys2-mingw-w64-x86_64-gcc-6.3.0-clang-llvm-3.9.1-$hostSystem"
     }
 
-    dependencyTask("mingw", LIBFFI)
+    dependencyTask(MINGW, LIBFFI)
 } else {
-    dependencyTask("macbook", SYSROOT)
-    dependencyTask("macbook", LIBFFI)
-    dependencyTask("iphone", SYSROOT)
-    dependencyTask("iphone", LIBFFI)
-
+    dependencyTask(MACBOOK, SYSROOT)
+    dependencyTask(MACBOOK, LIBFFI)
+    dependencyTask(IPHONE, SYSROOT)
+    dependencyTask(IPHONE, LIBFFI)
     // TODO: re-enable when we known how to bring the simulator sysroot to dependencies.
-    // dependencyTask("iphoneSim", SYSROOT)
+    // dependencyTask(IPHONE_SIM, SYSROOT)
 }
 
 if (isLinux() || isMac()) {
     task llvm(type: HelperNativeDep) {
-        baseName = "clang-llvm-$llvmVersion-$host"
+        baseName = "clang-llvm-$llvmVersion-$hostSystem"
     }
 
-    dependencyTask("android_arm32", SYSROOT)
-    dependencyTask("android_arm32", LIBFFI)
-    dependencyTask("android_arm64", SYSROOT)
-    dependencyTask("android_arm64", LIBFFI)
+    dependencyTask(ANDROID_ARM32, SYSROOT)
+    dependencyTask(ANDROID_ARM32, LIBFFI)
+    dependencyTask(ANDROID_ARM64, SYSROOT)
+    dependencyTask(ANDROID_ARM64, LIBFFI)
 }
 
 task update(type: Copy) {

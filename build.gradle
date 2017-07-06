@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 import groovy.io.FileType
-
-//ant.importBuild 'backend.native/kotlin-ir/build.xml'
+import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.properties.*
 
 defaultTasks 'clean', 'dist'
 
 convention.plugins.platformInfo = new PlatformInfo()
+
+ext {
+        konanPropertiesFile = project(':backend.native').file('konan.properties')
+        konanProperties = PropertiesKt.loadProperties(konanPropertiesFile.absolutePath)
+
+        dependenciesDir = rootProject.file("dist/dependencies")
+        clangManager = new ClangManager(konanProperties, dependenciesDir.absolutePath)
+}
 
 allprojects {
     if (path != ":dependencies") {
@@ -33,14 +41,20 @@ allprojects {
         }
     }
 
+    setupHostAndTarget()
     loadCommandLineProperties()
     loadLocalProperties()
-    setupCompilationFlags()
     setupClang(project)
+}
+
+void setupHostAndTarget() {
+    ext.hostName = TargetManager.hostName
+    ext.targetList = TargetManager.enabled*.userName as List
 }
 
 void setupClang(Project project) {
 
+    project.convention.plugins.clangManager = project.rootProject.ext.clangManager
     project.convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 
     project.plugins.withType(NativeComponentPlugin) {
@@ -67,13 +81,13 @@ void setupClang(Project project) {
 
                 toolChains {
                     clang(Clang) {
-                        clangPath.each {
+                        hostClang.hostClangPath.each {
                             path it
                         }
 
                         eachPlatform { // TODO: will not work when cross-compiling
                             [cCompiler, cppCompiler, linker].each {
-                                it.withArguments { it.addAll(hostClangArgs) }
+                                it.withArguments { it.addAll(project.hostClangArgs) }
                             }
 
                         }
@@ -82,98 +96,6 @@ void setupClang(Project project) {
             }
         }
     }
-}
-
-String getTargetArg(String target) {
-    def result = konanProperties.getProperty("quadruple.$target")
-    if (result == null) {
-        throw IllegalArgumentException("konan.properties has no LLVM target args for target: $target")
-    }
-    return result
-}
-
-void setupCompilationFlags() {
-    ext.clangPath = ["$llvmDir/bin"]
-    ext.clangArgs = []
-    ext.targetArgs = [:]
-    final String binDir
-
-    if (isLinux()) {
-    ext.host = "linux"
-    ext.targetArgs <<
-        [(ext.host):
-           ["--sysroot=${gccToolchainDir}/${gnuTriplet}/sysroot",
-            "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64"],
-         "raspberrypi":
-           ["-target", getTargetArg("raspberrypi"),
-            "-mfpu=vfp", "-mfloat-abi=hard",
-            "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32",
-            "--sysroot=$raspberrypiSysrootDir",
-            // TODO: those two are hacks.
-            "-I$raspberrypiSysrootDir/usr/include/c++/4.8.3",
-            "-I$raspberrypiSysrootDir/usr/include/c++/4.8.3/arm-linux-gnueabihf"]
-        ]
-    } else if (isWindows()) {
-        ext.host = "mingw"
-        ext.targetArgs <<
-                [(ext.host):
-                         ["-target", "x86_64-w64-mingw32", "--sysroot=${mingwWithLlvmDir}",
-                          "-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1"]]
-    } else {
-         ext.host = "macbook"
-         ext.targetArgs <<
-            [(ext.host):
-                ["--sysroot=$macbookSysrootDir", "-mmacosx-version-min=10.11"],
-             "iphone":
-                ["-stdlib=libc++", "-arch", "arm64", "-isysroot", "$iphoneSysrootDir",
-                 "-miphoneos-version-min=8.0.0"]
-// TODO: re-enable after simulator sysroot is available in the dependencies
-//             "iphone_sim":
-//                ["-stdlib=libc++", "-isysroot", "$iphoneSimSysrootDir", "-miphoneos-version-min=8.0.0"],
-            ]
-     }
-
-     if (isLinux() || isMac()) {
-         ext.targetArgs << [
-                 "android_arm32":
-                         ["-target", getTargetArg("android_arm32"),
-                          "--sysroot=$android_arm32SysrootDir",
-                          "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32", "-DKONAN_ANDROID",
-                          // HACKS!
-                          "-I$android_arm32SysrootDir/usr/include/c++/4.9.x",
-                          "-I$android_arm32SysrootDir/usr/include/c++/4.9.x/arm-linux-androideabi"],
-                 "android_arm64":
-                        ["-target", getTargetArg("android_arm64"),
-                         "--sysroot=$android_arm64SysrootDir",
-                         "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64", "-DKONAN_ANDROID",
-                         // HACKS!
-                         "-I$android_arm64SysrootDir/usr/include/c++/4.9.x",
-                         "-I$android_arm64SysrootDir/usr/include/c++/4.9.x/aarch64-linux-android"]
-
-         ]
-    }
-
-    ext.targetList = ext.targetArgs.keySet() as List
-
-    if (isLinux()) {
-        binDir = "$gccToolchainDir/$gnuTriplet/bin"
-        ext.clangArgs.addAll([
-            "--gcc-toolchain=$gccToolchainDir"
-        ])
-    } else if (isWindows()) {
-        binDir = "$mingwWithLlvmDir/bin"
-    } else {
-        binDir = "$macbookSysrootDir/usr/bin"
-    }
-    ext.clangArgs << "-B$binDir"
-    ext.hostClangArgs = ext.clangArgs.clone() 
-    ext.hostClangArgs.addAll(ext.targetArgs[host])
-
-    ext.clangPath << binDir
-    ext.jvmArgs = ["-ea"]
-
-    File jdkHome = new File(System.getProperty('java.home')).absoluteFile.parentFile
-    ext.hostCompilerArgsForJni = ["", jniHostPlatformIncludeDir()].collect { "-I$jdkHome/include/$it" } as String[]
 }
 
 void loadLocalProperties() {
@@ -197,50 +119,20 @@ void loadCommandLineProperties() {
 }
 
 class PlatformInfo {
-    private final String osName = System.properties['os.name']
-    private final String osArch = System.properties['os.arch']
-
     boolean isMac() {
-        return osName == 'Mac OS X'
+        return TargetManager.host == KonanTarget.MACBOOK
     }
 
     boolean isWindows() {
-        return osName.startsWith('Windows');
+        return TargetManager.host == KonanTarget.MINGW
     }
 
     boolean isLinux() {
-        return osName == 'Linux'
-    }
-
-    boolean isAmd64() {
-        return osArch in ['x86_64', 'amd64']
-    }
-
-    String getGnuTriplet() {
-        if (isLinux() && isAmd64()) {
-            return "x86_64-unknown-linux-gnu"
-        } else {
-            throw unsupportedPlatformException()
-        }
-    }
-
-    String simpleOsName() {
-        if (isMac()) return 'macos'
-        if (isLinux()) return 'linux'
-        if (isWindows()) return 'windows'
-        throw unsupportedPlatformException()
-    }
-
-    String jniHostPlatformIncludeDir() {
-        if (isMac()) return "darwin"
-        if (isLinux()) return "linux"
-        if (isWindows()) return "win32"
-
-        throw unsupportedPlatformException()
+        return TargetManager.host == KonanTarget.LINUX
     }
 
     Throwable unsupportedPlatformException() {
-        return new Error("unsupported platform: $osName/$osArch")
+        return new TargetSupportException()
     }
 }
 
@@ -323,7 +215,7 @@ task listDist(type: Exec) {
 }
 
 task distRuntime(type: Copy) {
-    dependsOn "${host}CrossDistRuntime"
+    dependsOn "${hostName}CrossDistRuntime"
     dependsOn('commonDistRuntime')
 }
 
@@ -331,7 +223,7 @@ task commonDistRuntime(type: Copy) {
     destinationDir file('dist')
 
     // Target independant common part.
-    from(project(':runtime').file("build/${host}Stdlib")) {
+    from(project(':runtime').file("build/${hostName}Stdlib")) {
         include('**')
         into('klib/stdlib')
     }
@@ -375,7 +267,8 @@ task crossDist {
 
 task bundle(type: (isWindows()) ? Zip : Tar) {
     dependsOn('crossDist')
-    baseName = "kotlin-native-${simpleOsName()}-${project.konanVersion}"
+    def simpleOsName = TargetManager.simpleOsName()
+    baseName = "kotlin-native-$simpleOsName-${project.konanVersion}"
     from("$project.rootDir/dist") {
         include '**'
         exclude 'dependencies'

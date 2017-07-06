@@ -22,12 +22,11 @@ targetList.each { targetName ->
     task ("${targetName}Hash", type: CompileCppToBitcode) {
         name 'hash'
         target targetName
-        compilerArgs targetArgs[targetName]
     }
 }
 
 task build {
-    dependsOn "${host}Hash"
+    dependsOn "${hostName}Hash"
 }
 
 task clean {

@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.backend.konan.library
 
-import org.jetbrains.kotlin.backend.konan.util.File
 import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
+import org.jetbrains.kotlin.konan.file.File
 
 interface SearchPathResolver {
     val searchRoots: List<File>

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.library
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.backend.konan.util.File
+import org.jetbrains.kotlin.konan.file.File
 
 // This scheme describes the Konan Library (klib) layout.
 interface KonanLibraryLayout {

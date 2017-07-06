@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan.util
+package org.jetbrains.kotlin.konan.file
 
 import java.io.BufferedReader
 import java.io.InputStream
@@ -127,6 +127,9 @@ class File constructor(internal val javaPath: Path) {
 
         val userHome
             get() = File(System.getProperty("user.home"))
+
+        val jdkHome
+            get() = File(System.getProperty("java.home"))
 
     }
 }

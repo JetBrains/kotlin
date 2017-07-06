@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.backend.konan.library.impl
 
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
-import org.jetbrains.kotlin.backend.konan.util.File
-import org.jetbrains.kotlin.backend.konan.util.Properties
-import org.jetbrains.kotlin.backend.konan.util.loadProperties
-import org.jetbrains.kotlin.backend.konan.util.propertyList
+import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.konan.target.KonanTarget
 

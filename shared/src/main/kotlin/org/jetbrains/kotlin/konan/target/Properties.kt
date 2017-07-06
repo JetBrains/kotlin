@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan.util
+package org.jetbrains.kotlin.konan.properties
+
+import org.jetbrains.kotlin.konan.file.*
 
 typealias Properties = java.util.Properties
 
@@ -25,6 +27,8 @@ fun File.loadProperties(): Properties {
     }
     return properties
 }
+
+fun loadProperties(path: String): Properties = File(path).loadProperties()
 
 fun File.saveProperties(properties: Properties) {
     this.outputStream().use { 

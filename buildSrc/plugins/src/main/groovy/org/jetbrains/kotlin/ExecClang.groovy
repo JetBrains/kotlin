@@ -53,12 +53,9 @@ class ExecClang {
                         throw new GradleException("unsupported clang executable: $executable")
                     }
 
-                    environment["PATH"] = project.files(project.clangPath).asPath +
+                    environment["PATH"] = project.files(project.hostClang.hostClangPath).asPath +
                             File.pathSeparator + environment["PATH"]
-
-                    args project.clangArgs
                 }
-
             }
         }
         return project.exec(extendedAction)

@@ -106,7 +106,7 @@ kotlinNativeInterop {
      compilerOpts '-fPIC'
      linkerOpts '-fPIC'
      linker 'clang++'
-     linkOutputs ":common:${host}Hash"
+     linkOutputs ":common:${hostName}Hash"
 
      headers fileTree('../common/src/hash/headers') {
        include '**/*.h'
@@ -148,8 +148,8 @@ build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 
 
 // These are just a couple of aliases
-task stdlib(dependsOn: "${host}Stdlib")
-task start(dependsOn: "${host}Start")
+task stdlib(dependsOn: "${hostName}Stdlib")
+task start(dependsOn: "${hostName}Start")
 
 // These files are built before the 'dist' is complete,
 // so we provide custom values for

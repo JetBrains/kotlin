@@ -24,8 +24,12 @@ enum class KonanTarget(val targetSuffix: String, val programSuffix: String, var 
     LINUX("linux", "kexe"),
     MINGW("mingw", "exe"),
     MACBOOK("osx", "kexe"),
-    RASPBERRYPI("raspberrypi", "kexe")
+    RASPBERRYPI("raspberrypi", "kexe");
+    val userName get() = name.toLowerCase()
 }
+
+fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
+    if (target == host) host.targetSuffix else "${host.targetSuffix}-${target.targetSuffix}"
 
 enum class CompilerOutputKind {
     PROGRAM {
@@ -42,37 +46,15 @@ enum class CompilerOutputKind {
 }
 
 class TargetManager(val userRequest: String? = null) {
-    val targets = KonanTarget.values().associate{ it.name.toLowerCase() to it }
+    val targets = KonanTarget.values().associate{ it.userName to it }
     val target = determineCurrent()
     val targetName
         get() = target.name.toLowerCase()
 
-    init {
-        when (host) {
-            KonanTarget.LINUX   -> {
-                KonanTarget.LINUX.enabled = true
-                KonanTarget.RASPBERRYPI.enabled = true
-                KonanTarget.ANDROID_ARM32.enabled = true
-                KonanTarget.ANDROID_ARM64.enabled = true
-            }
-            KonanTarget.MINGW -> {
-                KonanTarget.MINGW.enabled = true
-            }
-            KonanTarget.MACBOOK -> {
-                KonanTarget.MACBOOK.enabled = true
-                KonanTarget.IPHONE.enabled = true
-                KonanTarget.IPHONE_SIM.enabled = true
-                KonanTarget.ANDROID_ARM32.enabled = true
-                KonanTarget.ANDROID_ARM64.enabled = true
-            }
-            else ->
-                error("Unknown host platform: $host")
-        }
-    }
 
     fun known(name: String): String {
         if (targets[name] == null) {
-            error("Unknown target: $name. Use -list_targets to see the list of available targets")
+            throw TargetSupportException("Unknown target: $name. Use -list_targets to see the list of available targets")
         }
         return name
     }
@@ -94,28 +76,44 @@ class TargetManager(val userRequest: String? = null) {
         }
     }
 
-    val hostSuffix get() = host.targetSuffix
-    val hostTargetSuffix get() =
-        if (target == host) host.targetSuffix else "${host.targetSuffix}-${target.targetSuffix}"
+    val hostTargetSuffix get() = hostTargetSuffix(host, target)
     val targetSuffix get() = target.targetSuffix
 
     val programSuffix get() = CompilerOutputKind.PROGRAM.suffix(target)
 
     companion object {
+
         fun host_os(): String {
             val javaOsName = System.getProperty("os.name")
             return when {
                 javaOsName == "Mac OS X" -> "osx"
                 javaOsName == "Linux" -> "linux"
                 javaOsName.startsWith("Windows") -> "windows"
-                else -> error("Unknown operating system: ${javaOsName}")
+                else -> throw TargetSupportException("Unknown operating system: ${javaOsName}")
             }
         }
 
+        @JvmStatic
         fun simpleOsName(): String {
             val hostOs = host_os()
             return if (hostOs == "osx") "macos" else hostOs
         }
+
+        @JvmStatic
+        fun longerSystemName(): String = when (host) {
+            KonanTarget.MACBOOK ->  "darwin-macos"
+            KonanTarget.LINUX ->  "linux-x86-64"
+            KonanTarget.MINGW -> "windows-x86-64"
+            else -> throw TargetSupportException("Unknown host: $host")
+        }
+
+        val jniHostPlatformIncludeDir: String 
+            get() = when(host) {
+                KonanTarget.MACBOOK -> "darwin"
+                KonanTarget.LINUX -> "linux"
+                KonanTarget.MINGW ->"win32"
+                else -> throw TargetSupportException("Unknown host: $host.")
+            }
 
         fun host_arch(): String { 
             val javaArch = System.getProperty("os.arch")
@@ -123,7 +121,7 @@ class TargetManager(val userRequest: String? = null) {
                 "x86_64" -> "x86_64"
                 "amd64"  -> "x86_64"
                 "arm64"  -> "arm64"
-                else -> error("Unknown hardware platform: ${javaArch}")
+                else -> throw TargetSupportException("Unknown hardware platform: ${javaArch}")
             }
         }
 
@@ -131,8 +129,41 @@ class TargetManager(val userRequest: String? = null) {
             "osx"   -> KonanTarget.MACBOOK
             "linux" -> KonanTarget.LINUX
             "windows" -> KonanTarget.MINGW
-            else -> error("Unknown host target: ${host_os()} ${host_arch()}")
+            else -> throw TargetSupportException("Unknown host target: ${host_os()} ${host_arch()}")
         }
+
+        val hostSuffix get() = host.targetSuffix
+        @JvmStatic
+        val hostName get() = host.name.toLowerCase()
+
+        init {
+            when (host) {
+                KonanTarget.LINUX   -> {
+                    KonanTarget.LINUX.enabled = true
+                    KonanTarget.RASPBERRYPI.enabled = true
+                    KonanTarget.ANDROID_ARM32.enabled = true
+                    KonanTarget.ANDROID_ARM64.enabled = true
+                }
+                KonanTarget.MINGW -> {
+                    KonanTarget.MINGW.enabled = true
+                }
+                KonanTarget.MACBOOK -> {
+                    KonanTarget.MACBOOK.enabled = true
+                    KonanTarget.IPHONE.enabled = true
+                    //KonanTarget.IPHONE_SIM.enabled = true
+                    KonanTarget.ANDROID_ARM32.enabled = true
+                    KonanTarget.ANDROID_ARM64.enabled = true
+                }
+                else ->
+                    throw TargetSupportException("Unknown host platform: $host")
+            }
+        }
+
+        @JvmStatic
+        val enabled: List<KonanTarget> 
+            get() = KonanTarget.values().asList().filter { it.enabled }
     }
 }
+
+class TargetSupportException (message: String = "", cause: Throwable? = null) : Exception(message, cause)
 

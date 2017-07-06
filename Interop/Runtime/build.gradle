@@ -35,7 +35,8 @@ model {
                 include '**/*.c'
             }
             binaries.all {
-                def host = rootProject.ext.host
+                def host = rootProject.ext.hostName
+
                 def hostLibffiDir = rootProject.ext.get("${host}LibffiDir")
 
                 cCompiler.args hostCompilerArgsForJni

@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.backend.konan.library.impl
 
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrary
-import org.jetbrains.kotlin.backend.konan.util.*
+import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 open class ZippedKonanLibrary(val klibFile: File, override val target: KonanTarget? = null): KonanLibrary {
