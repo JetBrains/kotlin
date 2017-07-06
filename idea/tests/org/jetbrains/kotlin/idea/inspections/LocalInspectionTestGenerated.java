@@ -496,6 +496,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall/safeCall.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("unstableChain.kt")
+        public void testUnstableChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall/unstableChain.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/nullableBooleanElvis")
