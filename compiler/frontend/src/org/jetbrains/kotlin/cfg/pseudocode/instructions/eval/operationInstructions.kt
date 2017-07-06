@@ -134,7 +134,7 @@ enum class MagicKind(val sideEffectFree: Boolean = false) {
     IS(),
     CAST(),
     UNBOUND_CALLABLE_REFERENCE(true),
-    BOUND_CALLABLE_REFERENCE(),
+    BOUND_CALLABLE_REFERENCE(true),
     // implicit operations
     LOOP_RANGE_ITERATION(),
     IMPLICIT_RECEIVER(),
