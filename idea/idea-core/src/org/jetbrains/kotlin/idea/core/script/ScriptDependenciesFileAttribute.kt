@@ -29,7 +29,6 @@ import java.io.DataOutput
 import java.io.File
 import kotlin.script.dependencies.ScriptDependencies
 
-// TODO_R: write nullable, write version
 object ScriptDependenciesFileAttribute {
     private val VERSION = 1
     private val ID = "kotlin-script-dependencies"
@@ -44,27 +43,46 @@ object ScriptDependenciesFileAttribute {
         if (virtualFile !is VirtualFileWithId) return
         fileAttributeService.write(virtualFile, ID, dependencies) { output, dep ->
             with(dep) {
-                output.writeFileList(classpath)
-                output.writeStringList(imports)
-                // TODO: actually read/write nullable
-                output.writeFile(javaHome ?: File(""))
-                output.writeFileList(scripts)
-                output.writeFileList(sources)
+                output.writeInt(VERSION)
+
+                writeDependencies(this, output)
             }
         }
     }
 
     fun read(virtualFile: VirtualFile): ScriptDependencies? {
         if (virtualFile !is VirtualFileWithId) return null
+
         return fileAttributeService.read(virtualFile, ID) { input ->
-            ScriptDependencies(
-                    classpath = input.readFileList(),
-                    imports = input.readStringList(),
-                    javaHome = input.readFile(),
-                    scripts = input.readFileList(),
-                    sources = input.readFileList()
-            )
+            val version = input.readInt()
+            if (version != VERSION) null
+            else readDependencies(input)
         }?.value
+    }
+
+    private fun writeDependencies(scriptDependencies: ScriptDependencies, output: DataOutput) {
+        with(scriptDependencies) {
+            with(output) {
+                writeFileList(classpath)
+                writeStringList(imports)
+                writeNullable(javaHome, DataOutput::writeFile)
+                writeFileList(scripts)
+                writeFileList(sources)
+
+            }
+        }
+    }
+
+    private fun readDependencies(input: DataInput): ScriptDependencies {
+        with(input) {
+            return ScriptDependencies(
+                    classpath = readFileList(),
+                    imports = readStringList(),
+                    javaHome = readNullable(DataInput::readFile),
+                    scripts = readFileList(),
+                    sources = readFileList()
+            )
+        }
     }
 }
 
@@ -77,3 +95,13 @@ private fun DataOutput.writeFileList(iterable: Iterable<File>) = writeSeq(this, 
 private fun DataOutput.writeFile(it: File) = writeString(it.canonicalPath)
 private fun DataOutput.writeString(string: String) = writeUTF(this, string)
 private fun DataOutput.writeStringList(iterable: Iterable<String>) = writeSeq(this, iterable.toList()) { writeString(it) }
+
+private fun <T : Any> DataOutput.writeNullable(nullable: T?, writeT: DataOutput.(T) -> Unit) {
+    writeBoolean(nullable != null)
+    nullable?.let { writeT(it) }
+}
+
+private fun <T : Any> DataInput.readNullable(readT: DataInput.() -> T): T? {
+    val hasValue = readBoolean()
+    return if (hasValue) readT() else null
+}
