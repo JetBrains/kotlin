@@ -3531,6 +3531,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("inAnnotation.kt")
+                public void testInAnnotation() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/inAnnotation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inSuperTypeEntry.kt")
+                public void testInSuperTypeEntry() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/inSuperTypeEntry.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("qualifiedType.kt")
                 public void testQualifiedType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/qualifiedType.kt");
