@@ -1889,9 +1889,15 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
-        @TestMetadata("inNonMatchingRange.kt")
-        public void testInNonMatchingRange() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/inNonMatchingRange.kt");
+        @TestMetadata("inNonMatchingRangeIntrinsified.kt")
+        public void testInNonMatchingRangeIntrinsified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/inNonMatchingRangeIntrinsified.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inNonMatchingRangeNotIntrinsified.kt")
+        public void testInNonMatchingRangeNotIntrinsified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/inNonMatchingRangeNotIntrinsified.kt");
             doTest(fileName);
         }
 
