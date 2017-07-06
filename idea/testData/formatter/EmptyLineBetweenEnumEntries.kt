@@ -1,4 +1,4 @@
-enum class E1 { F, S, T }
+enum class E1 {F, S, T }
 
 enum class E2 {
     F, S, T
