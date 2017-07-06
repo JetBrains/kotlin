@@ -137,6 +137,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("booleanExpressionIsAlwaysConstant/inspectionData/inspections.test")
+        public void testBooleanExpressionIsAlwaysConstant_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/booleanExpressionIsAlwaysConstant/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("canBeParameter/inspectionData/inspections.test")
         public void testCanBeParameter_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/canBeParameter/inspectionData/inspections.test");
