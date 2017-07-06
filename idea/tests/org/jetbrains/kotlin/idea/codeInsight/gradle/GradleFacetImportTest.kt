@@ -1134,7 +1134,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             object : WriteAction<Unit>() {
                 override fun run(result: Result<Unit>) {
                     val jdkTable = ProjectJdkTable.getInstance()
-                    jdkTable.removeJdk(jdkTable.findJdk("myJDK"))
+                    jdkTable.removeJdk(jdkTable.findJdk("myJDK")!!)
                 }
             }.execute()
         }
