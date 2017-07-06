@@ -185,6 +185,18 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NoShadowedDeclarations.kt")
+        public void testNoShadowedDeclarations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/NoShadowedDeclarations.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoShadowedDeclarations2.kt")
+        public void testNoShadowedDeclarations2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/NoShadowedDeclarations2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoSynthesizedParameterNames.kt")
         public void testNoSynthesizedParameterNames() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/NoSynthesizedParameterNames.kt");

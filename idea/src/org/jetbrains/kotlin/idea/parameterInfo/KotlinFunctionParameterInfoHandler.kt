@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.containsError
@@ -117,9 +119,18 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
         val call = findCall(argumentList, bindingContext) ?: return null
 
-        val candidates = call.resolveCandidates(bindingContext, file.getResolutionFacade())
+        val resolutionFacade = file.getResolutionFacade()
+        val candidates =
+                call.resolveCandidates(bindingContext, resolutionFacade)
+                        .map { it.resultingDescriptor }
+                        .distinctBy { it.original }
 
-        context.itemsToShow = candidates.map { it.resultingDescriptor.original }.distinct().toTypedArray()
+        val shadowedDeclarationsFilter = ShadowedDeclarationsFilter(bindingContext,
+                                                                    resolutionFacade,
+                                                                    call.callElement,
+                                                                    call.explicitReceiver as? ReceiverValue)
+
+        context.itemsToShow = shadowedDeclarationsFilter.filter(candidates).toTypedArray()
         return argumentList
     }
 
