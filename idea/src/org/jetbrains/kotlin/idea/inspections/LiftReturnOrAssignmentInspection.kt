@@ -22,10 +22,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isIfBranch
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtIfExpression
-import org.jetbrains.kotlin.psi.KtVisitorVoid
-import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
@@ -36,12 +34,13 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
                     if (expression.lineCount() > LINES_LIMIT) return
                     if (expression.isIfBranch()) return
 
-                    val returnNumber = BranchedFoldingUtils.getFoldableReturnNumber(expression)
-                    if (returnNumber > 0) {
+                    val foldableReturns = BranchedFoldingUtils.getFoldableReturns(expression)
+                    if (foldableReturns?.isNotEmpty() == true) {
+                        val hasOtherReturns = expression.anyDescendantOfType<KtReturnExpression> { it !in foldableReturns }
                         holder.registerProblem(
                                 keyword,
                                 "Return can be lifted out of '${keyword.text}'",
-                                if (returnNumber > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                                if (!hasOtherReturns && foldableReturns.size > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                 else ProblemHighlightType.INFORMATION,
                                 LiftReturnOutFix(keyword.text)
                         )
