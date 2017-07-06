@@ -204,7 +204,11 @@ abstract internal class AbstractCollectionParcelSerializer(
     protected val collectionType: Type = Type.getObjectType(when (asmType.internalName) {
         "java/util/List" -> "java/util/ArrayList"
         "java/util/Set" -> "java/util/LinkedHashSet"
+        "java/util/SortedSet" -> "java/util/TreeSet"
+        "java/util/NavigableSet" -> "java/util/TreeSet"
         "java/util/Map" -> "java/util/LinkedHashMap"
+        "java/util/SortedMap" -> "java/util/TreeMap"
+        "java/util/NavigableMap" -> "java/util/TreeMap"
         else -> asmType.internalName
     })
 

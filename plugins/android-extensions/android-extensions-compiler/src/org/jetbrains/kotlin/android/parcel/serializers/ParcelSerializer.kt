@@ -82,6 +82,8 @@ interface ParcelSerializer {
                     || className == ArrayList::class.java.canonicalName
                     || className == LinkedList::class.java.canonicalName
                     || className == Set::class.java.canonicalName
+                    || className == SortedSet::class.java.canonicalName
+                    || className == NavigableSet::class.java.canonicalName
                     || className == HashSet::class.java.canonicalName
                     || className == LinkedHashSet::class.java.canonicalName
                     || className == TreeSet::class.java.canonicalName
@@ -93,6 +95,8 @@ interface ParcelSerializer {
                 }
 
                 className == Map::class.java.canonicalName
+                    || className == SortedMap::class.java.canonicalName
+                    || className == NavigableMap::class.java.canonicalName
                     || className == HashMap::class.java.canonicalName
                     || className == LinkedHashMap::class.java.canonicalName
                     || className == TreeMap::class.java.canonicalName
