@@ -17,17 +17,24 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForPrimitiveType
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInUntilRangeLoopGenerator
-import org.jetbrains.kotlin.codegen.range.inExpression.InPrimitiveNumberUntilGenerator
+import org.jetbrains.kotlin.codegen.range.inExpression.InContinuousRangeExpressionGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-class PrimitiveNumberUntilRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
+class PrimitiveNumberUntilRangeValue(
+        codegen: ExpressionCodegen,
+        rangeCall: ResolvedCall<out CallableDescriptor>
+): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
+    private val comparisonGenerator = getComparisonGeneratorForPrimitiveType(asmElementType)
+    private val boundedValue = SimpleBoundedValue(codegen, rangeCall, isLowInclusive = true, isHighInclusive = false)
+
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInUntilRangeLoopGenerator(codegen, forExpression, rangeCall)
 
     override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression) =
-            InPrimitiveNumberUntilGenerator(codegen, operatorReference, rangeCall)
+            InContinuousRangeExpressionGenerator(operatorReference, boundedValue, comparisonGenerator)
 }

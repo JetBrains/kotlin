@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.range
 
+import org.jetbrains.kotlin.codegen.getAsmRangeElementTypeForPrimitiveRangeOrProgression
 import org.jetbrains.kotlin.codegen.isClosedFloatingPointRangeContains
 import org.jetbrains.kotlin.codegen.isIntPrimitiveRangeExtensionForInt
 import org.jetbrains.kotlin.codegen.isPrimitiveRangeContains
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 abstract class PrimitiveNumberRangeIntrinsicRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): CallIntrinsicRangeValue(rangeCall) {
+    protected val asmElementType = getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCall.resultingDescriptor)
+
     override fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>) =
             resolvedCallForIn.resultingDescriptor.let {
                 isPrimitiveRangeContains(it) ||

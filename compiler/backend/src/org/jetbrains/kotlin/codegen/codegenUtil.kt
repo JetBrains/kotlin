@@ -414,3 +414,9 @@ fun extractReificationArgument(type: KotlinType): Pair<TypeParameterDescriptor, 
 
 fun unwrapInitialSignatureDescriptor(function: FunctionDescriptor): FunctionDescriptor =
         function.initialSignatureDescriptor ?: function
+
+fun ExpressionCodegen.generateCallReceiver(rangeCall: ResolvedCall<out CallableDescriptor>): StackValue =
+        generateReceiverValue(rangeCall.extensionReceiver ?: rangeCall.dispatchReceiver!!, false)
+
+fun ExpressionCodegen.generateCallSingleArgument(rangeCall: ResolvedCall<out CallableDescriptor>): StackValue =
+        gen(ExpressionCodegen.getSingleArgumentExpression(rangeCall)!!)
