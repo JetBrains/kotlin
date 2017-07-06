@@ -2613,6 +2613,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("insideIfCondition.kt")
+                public void testInsideIfCondition() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/insideIfCondition.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt10983.kt")
                 public void testKt10983() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/kt10983.kt");
