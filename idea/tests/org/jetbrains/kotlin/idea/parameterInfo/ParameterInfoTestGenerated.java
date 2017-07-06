@@ -335,6 +335,12 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             doTest(fileName);
         }
 
+        @TestMetadata("TypeInference.kt")
+        public void testTypeInference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/TypeInference.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("UpdateOnTyping.kt")
         public void testUpdateOnTyping() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/UpdateOnTyping.kt");
