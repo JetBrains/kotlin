@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -187,11 +188,14 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         ): CallableInfo? {
             val fullCallExpr = expression.getQualifiedExpressionForSelectorOrThis()
             val varExpected = fullCallExpr.getAssignmentByLHS() != null
-            val returnType = TypeInfo(
-                    fullCallExpr.getExpressionForTypeGuess(),
-                    if (varExpected) Variance.INVARIANT else Variance.OUT_VARIANCE
-            )
-            return PropertyInfo(name, receiverType, returnType, varExpected, possibleContainers)
+            val expressionForTypeGuess = fullCallExpr.getExpressionForTypeGuess()
+            val returnTypes = expressionForTypeGuess.guessTypes(analysisResult.bindingContext, analysisResult.moduleDescriptor)
+            val returnTypeInfo = TypeInfo(expressionForTypeGuess, if (varExpected) Variance.INVARIANT else Variance.OUT_VARIANCE)
+            val canBeLateinit =
+                    varExpected
+                    && returnTypes.any { !it.isMarkedNullable && !KotlinBuiltIns.isPrimitiveType(it) }
+                    && fullCallExpr.parents.firstOrNull { it is KtDeclarationWithBody || it is KtClassInitializer } is KtDeclarationWithBody
+            return PropertyInfo(name, receiverType, returnTypeInfo, varExpected, possibleContainers, isLateinitPreferred = canBeLateinit)
         }
 
         object Default : Property() {
