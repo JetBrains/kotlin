@@ -19,7 +19,9 @@ data class Test(
         val f: MutableSet<String>,
         val g: TreeSet<String>,
         val h: HashSet<String>,
-        val i: LinkedHashSet<String>
+        val i: LinkedHashSet<String>,
+        val j: NavigableSet<String>,
+        val k: SortedSet<String>
 ) : Parcelable
 
 fun box() = parcelTest { parcel ->
@@ -32,7 +34,9 @@ fun box() = parcelTest { parcel ->
             f = mutableSetOf("F"),
             g = TreeSet<String>().apply { this += "G" },
             h = HashSet<String>().apply { this += "H" },
-            i = LinkedHashSet<String>().apply { this += "I" }
+            i = LinkedHashSet<String>().apply { this += "I" },
+            j = TreeSet<String>().apply { this += "J" },
+            k = TreeSet<String>().apply { this += "K" }
     )
 
     first.writeToParcel(parcel, 0)
@@ -45,4 +49,6 @@ fun box() = parcelTest { parcel ->
     assert(first == first2)
     assert((first.d as LinkedList<*>).size == 1)
     assert((first2.h as HashSet<*>).size == 1)
+    assert(first2.j is NavigableSet<*>)
+    assert(first2.k is SortedSet<*>)
 }
