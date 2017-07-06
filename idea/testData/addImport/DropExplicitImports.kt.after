@@ -3,7 +3,7 @@ package p
 
 import java.sql.*
 import java.util.*
-import java.util.Date
+import java.util.Date // should not be dropped because of conflicting java.sql.Date class
 import java.util.HashSet as JavaHashSet // alias import should not be dropped
 
 fun foo() {

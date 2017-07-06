@@ -239,18 +239,26 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                     .map { it.name }
 
             val topLevelScope = resolutionFacade.getFileResolutionScope(file)
-            val conflictCandidates: List<ClassifierDescriptor> = classNamesToImport
+            val importedByAllUnderClasses = classNamesToImport
                     .flatMap {
                         importedScopes.mapNotNull { scope -> scope.getContributedClassifier(it, NoLookupLocation.FROM_IDE) }
                     }
+            val conflictCandidates: List<ClassifierDescriptor> = importedByAllUnderClasses
                     .filter { importedClass ->
                         isVisible(importedClass)
                             // check that class is really imported
                             && topLevelScope.findClassifier(importedClass.name, NoLookupLocation.FROM_IDE) == importedClass
                             // and not yet imported explicitly
-                            && imports.all { it.importPath != ImportPath(importedClass.importableFqName!!, false)  }
+                            && imports.all { it.importPath != ImportPath(importedClass.importableFqName!!, false) }
+                    }
+            val dropConflictCandidates = importedByAllUnderClasses
+                    .filter { importedClass ->
+                        isVisible(importedClass)
+                            //check that class is not imported, so new all under would cause conflict
+                            && topLevelScope.findClassifier(importedClass.name, NoLookupLocation.FROM_IDE) != importedClass
                     }
             val conflicts = detectNeededImports(conflictCandidates)
+
 
             val addedImport = addImport(parentFqName, true)
 
@@ -264,7 +272,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                 addImport(DescriptorUtils.getFqNameSafe(conflict), false)
             }
 
-            dropRedundantExplicitImports(parentFqName)
+            dropRedundantExplicitImports(parentFqName, dropConflictCandidates)
 
             return ImportDescriptorResult.IMPORT_ADDED
         }
@@ -298,7 +306,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             return ImportDescriptorResult.IMPORT_ADDED
         }
 
-        private fun dropRedundantExplicitImports(packageFqName: FqName) {
+        private fun dropRedundantExplicitImports(packageFqName: FqName, dropConflictCandidates: List<ClassifierDescriptor>) {
             val dropCandidates = file.importDirectives.filter {
                 !it.isAllUnder && it.aliasName == null && it.importPath?.fqName?.parent() == packageFqName
             }
@@ -308,6 +316,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                 if (import.importedReference == null) continue
                 val targets = import.targetDescriptors()
                 if (targets.any { it is PackageViewDescriptor }) continue // do not drop import of package
+                if (import.importedFqName == null || dropConflictCandidates.any { it.name == import.importedFqName!!.shortName() }) continue
                 val classDescriptor = targets.filterIsInstance<ClassDescriptor>().firstOrNull()
                 importsToCheck.addIfNotNull(classDescriptor?.importableFqName)
                 import.delete()

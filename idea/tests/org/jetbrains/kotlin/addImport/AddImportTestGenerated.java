@@ -156,6 +156,12 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         doTest(fileName);
     }
 
+    @TestMetadata("DoNotDropConflictingOnStar.kt")
+    public void testDoNotDropConflictingOnStar() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/DoNotDropConflictingOnStar.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DropExplicitImports.kt")
     public void testDropExplicitImports() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/DropExplicitImports.kt");
