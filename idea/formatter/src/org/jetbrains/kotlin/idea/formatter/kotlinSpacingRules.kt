@@ -501,6 +501,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             beforeInside(RBRACE, BLOCK).spacing(1, 0, 1,
                                                 commonCodeStyleSettings.KEEP_LINE_BREAKS,
                                                 commonCodeStyleSettings.KEEP_BLANK_LINES_BEFORE_RBRACE)
+            between(LBRACE, ENUM_ENTRY).spacing(1, 0, 0, true, commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
             beforeInside(RBRACE, WHEN).lineBreakInCode()
             between(RPAR, BODY).spaces(1)
 
