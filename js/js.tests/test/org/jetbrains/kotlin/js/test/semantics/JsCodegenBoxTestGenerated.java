@@ -14827,6 +14827,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
 
+            @TestMetadata("inCustomObjectRange.kt")
+            public void testInCustomObjectRange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inCustomObjectRange.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inDoubleRangeLiteralVsComparableRangeLiteral.kt")
             public void testInDoubleRangeLiteralVsComparableRangeLiteral() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inDoubleRangeLiteralVsComparableRangeLiteral.kt");

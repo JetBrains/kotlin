@@ -13213,6 +13213,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("inCustomObjectRange.kt")
+            public void testInCustomObjectRange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inCustomObjectRange.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inDoubleRangeLiteralVsComparableRangeLiteral.kt")
             public void testInDoubleRangeLiteralVsComparableRangeLiteral() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inDoubleRangeLiteralVsComparableRangeLiteral.kt");
