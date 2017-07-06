@@ -2433,6 +2433,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("callWithClassLiteral.kt")
+                public void testCallWithClassLiteral() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/callWithClassLiteral.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("callWithLambdaArg.kt")
                 public void testCallWithLambdaArg() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/callWithLambdaArg.kt");

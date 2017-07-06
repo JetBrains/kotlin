@@ -1,0 +1,14 @@
+import kotlin.reflect.KClass
+
+// "Create function 'checkProperty'" "true"
+internal object model {
+    val layer = ""
+}
+
+fun main(args: Array<String>) {
+    checkProperty(model.layer::class)
+}
+
+fun checkProperty(kClass: KClass<out String>) {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+}
