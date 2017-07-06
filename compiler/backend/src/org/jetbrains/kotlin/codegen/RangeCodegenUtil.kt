@@ -174,26 +174,28 @@ fun isPrimitiveRangeContains(descriptor: CallableDescriptor): Boolean {
     return true
 }
 
-fun isIntPrimitiveRangeExtensionForInt(descriptor: CallableDescriptor): Boolean {
+fun isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(descriptor: CallableDescriptor): Boolean {
     if (descriptor.name.asString() != "contains") return false
 
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return false
-    val extensionReceiverClassDescriptor = extensionReceiverType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
-    if (!isTopLevelInPackage(extensionReceiverClassDescriptor, "ClosedRange", "kotlin.ranges")) return false
 
-    val rangeElementType = extensionReceiverType.arguments.singleOrNull()?.type ?: return false
-    if (!isIntPrimitiveType(rangeElementType)) return false
+    val rangeElementType = getRangeOrProgressionElementType(extensionReceiverType) ?: return false
+    if (!isPrimitiveNumberType(rangeElementType)) return false
 
     val argumentType = descriptor.valueParameters.singleOrNull()?.type ?: return false
-    if (!isIntPrimitiveType(argumentType)) return false
+    if (!isPrimitiveNumberType(argumentType)) return false
 
     return true
 }
 
-private fun isIntPrimitiveType(type: KotlinType) =
+private fun isPrimitiveNumberType(type: KotlinType) =
         KotlinBuiltIns.isByte(type) ||
         KotlinBuiltIns.isShort(type) ||
-        KotlinBuiltIns.isInt(type)
+        KotlinBuiltIns.isInt(type) ||
+        KotlinBuiltIns.isChar(type) ||
+        KotlinBuiltIns.isLong(type) ||
+        KotlinBuiltIns.isFloat(type) ||
+        KotlinBuiltIns.isDouble(type)
 
 fun isClosedFloatingPointRangeContains(descriptor: CallableDescriptor): Boolean {
     if (descriptor.name.asString() != "contains") return false

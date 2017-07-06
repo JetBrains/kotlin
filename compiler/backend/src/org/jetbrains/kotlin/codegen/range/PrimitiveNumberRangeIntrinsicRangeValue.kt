@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator
 import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForRangeContainsCall
 import org.jetbrains.kotlin.codegen.range.inExpression.CallBasedInExpressionGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InContinuousRangeExpressionGenerator
@@ -33,7 +32,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(rangeCall: ResolvedCall<o
             resolvedCallForIn.resultingDescriptor.let {
                 isPrimitiveRangeContains(it) ||
                 isClosedFloatingPointRangeContains(it) ||
-                isIntPrimitiveRangeExtensionForInt(it)
+                isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(it)
             }
 
     override fun createIntrinsicInExpressionGenerator(

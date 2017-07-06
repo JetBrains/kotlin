@@ -16,10 +16,12 @@ fun inDouble(x: Float): Boolean {
     return x in 1.0..2.0
 }
 
-// 2 INVOKESPECIAL
-// 2 NEW
-// 2 INVOKESTATIC kotlin/ranges/RangesKt.rangeTo
-// 1 longRangeContains
-// 1 intRangeContains
-// 1 doubleRangeContains
-// 1 floatRangeContains
+// 3 I2L
+// 3 F2D
+// 0 INVOKESPECIAL
+// 0 NEW
+// 0 rangeTo
+// 0 longRangeContains
+// 0 intRangeContains
+// 0 doubleRangeContains
+// 0 floatRangeContains
