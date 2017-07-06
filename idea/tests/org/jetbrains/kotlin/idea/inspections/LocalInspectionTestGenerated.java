@@ -418,6 +418,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("elseIfOnly.kt")
+            public void testElseIfOnly() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/ifToAssignment/elseIfOnly.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ifElseIf.kt")
             public void testIfElseIf() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/ifToAssignment/ifElseIf.kt");
