@@ -51,6 +51,7 @@ data class CreateTypeParameterData(
 object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFactoryWithDelegate<KtUserType, CreateTypeParameterData>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtUserType? {
         val ktUserType = diagnostic.psiElement.getParentOfTypeAndBranch<KtUserType> { referenceExpression } ?: return null
+        if (ktUserType.getParentOfTypeAndBranch<KtConstructorCalleeExpression> { typeReference } != null) return null
         if (ktUserType.qualifier != null) return null
         if (ktUserType.getParentOfTypeAndBranch<KtUserType>(true) { qualifier } != null) return null
         if (ktUserType.typeArgumentList != null) return null
