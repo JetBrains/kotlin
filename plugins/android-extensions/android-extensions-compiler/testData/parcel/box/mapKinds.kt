@@ -15,7 +15,9 @@ data class Test(
         val b: MutableMap<String, String>,
         val c: HashMap<String, String>,
         val d: LinkedHashMap<String, String>,
-        val e: TreeMap<String, String>
+        val e: TreeMap<String, String>,
+        val f: SortedMap<String, String>,
+        val g: NavigableMap<String, String>
 ) : Parcelable
 
 fun box() = parcelTest { parcel ->
@@ -24,7 +26,9 @@ fun box() = parcelTest { parcel ->
             b = mutableMapOf("A" to "B"),
             c = HashMap<String, String>().apply { put("A", "B") },
             d = LinkedHashMap<String, String>().apply { put("A", "B") },
-            e = TreeMap<String, String>().apply { put("A", "B") }
+            e = TreeMap<String, String>().apply { put("A", "B") },
+            f = TreeMap<String, String>().apply { put("A", "B") },
+            g = TreeMap<String, String>().apply { put("A", "B") }
     )
 
     first.writeToParcel(parcel, 0)
@@ -37,4 +41,6 @@ fun box() = parcelTest { parcel ->
     assert(first == first2)
     assert((first.c as HashMap<*, *>).size == 1)
     assert((first2.e as TreeMap<*, *>).size == 1)
+    assert(first2.f is SortedMap<*, *>)
+    assert(first2.g is NavigableMap<*, *>)
 }
