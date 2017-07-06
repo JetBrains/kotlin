@@ -45,5 +45,7 @@
                         interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinPlatformGradleDetector"/>
         <extensionPoint name="scriptHelper"
                         interface="org.jetbrains.kotlin.script.ScriptHelper"/>
+        <extensionPoint name="completionInformationProvider"
+                        interface="org.jetbrains.kotlin.idea.completion.CompletionInformationProvider" />
     </extensionPoints>
 </idea-plugin>

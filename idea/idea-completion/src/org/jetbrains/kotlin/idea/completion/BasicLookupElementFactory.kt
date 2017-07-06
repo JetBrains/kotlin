@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class BasicLookupElementFactory(
         private val project: Project,
@@ -246,6 +247,16 @@ class BasicLookupElementFactory(
     }
 
     fun appendContainerAndReceiverInformation(descriptor: CallableDescriptor, appendTailText: (String) -> Unit) {
+
+        val information = CompletionInformationProvider.EP_NAME.extensions.firstNotNullResult {
+            it.getContainerAndReceiverInformation(descriptor)
+        }
+
+        if (information != null) {
+            appendTailText(information)
+            return
+        }
+
         val extensionReceiver = descriptor.original.extensionReceiverParameter
         when {
             descriptor is SyntheticJavaPropertyDescriptor -> {

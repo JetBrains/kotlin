@@ -7,4 +7,4 @@ class MyActivity: Activity() {
     val button = this.MyBu<caret>
 }
 
-// EXIST: MyButton
+// EXIST: { lookupString:"MyButton", tailText: " from layout.xml for Activity (Android Extensions)", typeText:"View!" }

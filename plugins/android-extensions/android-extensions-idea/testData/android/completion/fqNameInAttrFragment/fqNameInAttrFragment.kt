@@ -7,4 +7,4 @@ class MyFragment: Fragment() {
     val button = this.MyBu<caret>
 }
 
-// EXIST: MyButton
+// EXIST: { lookupString:"MyButton", tailText: " from layout.xml for Fragment (Android Extensions)", typeText:"View!" }

@@ -8,4 +8,5 @@ class MyActivity: Activity() {
     val button = log<caret>
 }
 
-// EXIST: login, loginButton
+// EXIST: { lookupString:"login", tailText: " from layout.xml for Activity (Android Extensions)", typeText:"Button!" }
+// EXIST: { lookupString:"loginButton", tailText: " from layout1.xml for Activity (Android Extensions)", typeText:"Button!" }
