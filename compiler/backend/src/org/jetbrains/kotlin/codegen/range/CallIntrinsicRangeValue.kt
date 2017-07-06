@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForRangeContainsCall
 import org.jetbrains.kotlin.codegen.range.inExpression.CallBasedInExpressionGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -27,12 +28,12 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 abstract class CallIntrinsicRangeValue(protected val rangeCall: ResolvedCall<out CallableDescriptor>): RangeValue {
     protected abstract fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>): Boolean
 
-    protected abstract fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator
+    protected abstract fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression, resolvedCall: ResolvedCall<out CallableDescriptor>): InExpressionGenerator
 
     override fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator {
         val resolvedCall = operatorReference.getResolvedCallWithAssert(codegen.bindingContext)
         return if (isIntrinsicInCall(resolvedCall))
-            createIntrinsicInExpressionGenerator(codegen, operatorReference)
+            createIntrinsicInExpressionGenerator(codegen, operatorReference, resolvedCall)
         else
             CallBasedInExpressionGenerator(codegen, operatorReference)
     }

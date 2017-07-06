@@ -24,22 +24,22 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
+val supportedRangeTypes = listOf(PrimitiveType.CHAR, PrimitiveType.INT, PrimitiveType.LONG)
+
 private val RANGE_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
-        supportedRangeTypes().associateBy {
+        supportedRangeTypes.associateBy {
             RANGES_PACKAGE_FQ_NAME.child(Name.identifier(it.typeName.toString() + "Range"))
         }
 
 private val PROGRESSION_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
-        supportedRangeTypes().associateBy {
+        supportedRangeTypes.associateBy {
             RANGES_PACKAGE_FQ_NAME.child(Name.identifier(it.typeName.toString() + "Progression"))
         }
-
-fun supportedRangeTypes() =
-        listOf(PrimitiveType.CHAR, PrimitiveType.INT, PrimitiveType.LONG)
 
 fun isPrimitiveRange(rangeType: KotlinType) =
         !rangeType.isMarkedNullable && getPrimitiveRangeElementType(rangeType) != null
@@ -47,7 +47,7 @@ fun isPrimitiveRange(rangeType: KotlinType) =
 fun isPrimitiveProgression(rangeType: KotlinType) =
         !rangeType.isMarkedNullable && getPrimitiveProgressionElementType(rangeType) != null
 
-fun getPrimitiveRangeElementType(rangeType: KotlinType) =
+fun getPrimitiveRangeElementType(rangeType: KotlinType): PrimitiveType? =
         getPrimitiveRangeOrProgressionElementType(rangeType, RANGE_TO_ELEMENT_TYPE)
 
 private fun getPrimitiveProgressionElementType(rangeType: KotlinType) =
@@ -60,6 +60,32 @@ private fun getPrimitiveRangeOrProgressionElementType(
     val declarationDescriptor = rangeOrProgression.constructor.declarationDescriptor ?: return null
     val fqName = DescriptorUtils.getFqName(declarationDescriptor).takeIf { it.isSafe } ?: return null
     return map[fqName.toSafe()]
+}
+
+fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
+    val rangeTypeDescriptor = rangeType.constructor.declarationDescriptor ?: return null
+    val builtIns = rangeTypeDescriptor.builtIns
+
+    return when {
+        isTopLevelInPackage(rangeTypeDescriptor, "CharRange", "kotlin.ranges") -> builtIns.charType
+        isTopLevelInPackage(rangeTypeDescriptor, "IntRange", "kotlin.ranges") -> builtIns.intType
+        isTopLevelInPackage(rangeTypeDescriptor, "LongRange", "kotlin.ranges") -> builtIns.longType
+
+        isTopLevelInPackage(rangeTypeDescriptor, "CharProgression", "kotlin.ranges") -> builtIns.charType
+        isTopLevelInPackage(rangeTypeDescriptor, "IntProgression", "kotlin.ranges") -> builtIns.intType
+        isTopLevelInPackage(rangeTypeDescriptor, "LongProgression", "kotlin.ranges") -> builtIns.longType
+
+        isTopLevelInPackage(rangeTypeDescriptor, "ClosedFloatRange", "kotlin.ranges") -> builtIns.floatType
+        isTopLevelInPackage(rangeTypeDescriptor, "ClosedDoubleRange", "kotlin.ranges") -> builtIns.doubleType
+
+        isTopLevelInPackage(rangeTypeDescriptor, "ClosedRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
+
+        isTopLevelInPackage(rangeTypeDescriptor, "ClosedFloatingPointRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
+
+        isTopLevelInPackage(rangeTypeDescriptor, "ComparableRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
+
+        else -> null
+    }
 }
 
 fun getPrimitiveRangeOrProgressionElementType(rangeOrProgressionName: FqName): PrimitiveType? =

@@ -84,17 +84,17 @@ private fun ExpressionCodegen.createIntrinsifiedRangeValueOrNull(rangeCall: Reso
 
     return when {
         isPrimitiveNumberRangeTo(rangeCallee) ->
-            PrimitiveNumberRangeLiteralRangeValue(this, rangeCall)
+            PrimitiveNumberRangeLiteralRangeValue(rangeCall)
         isPrimitiveNumberDownTo(rangeCallee) ->
-            DownToProgressionRangeValue(this, rangeCall)
+            DownToProgressionRangeValue(rangeCall)
         isPrimitiveNumberUntil(rangeCallee) ->
-            PrimitiveNumberUntilRangeValue(this, rangeCall)
+            PrimitiveNumberUntilRangeValue(rangeCall)
         isArrayOrPrimitiveArrayIndices(rangeCallee) ->
-            ArrayIndicesRangeValue(this, rangeCall)
+            ArrayIndicesRangeValue(rangeCall)
         isCollectionIndices(rangeCallee) ->
-            CollectionIndicesRangeValue(this, rangeCall)
+            CollectionIndicesRangeValue(rangeCall)
         isCharSequenceIndices(rangeCallee) ->
-            CharSequenceIndicesRangeValue(this, rangeCall)
+            CharSequenceIndicesRangeValue(rangeCall)
         isComparableRangeTo(rangeCallee) ->
             ComparableRangeLiteralRangeValue(this, rangeCall)
         else ->
