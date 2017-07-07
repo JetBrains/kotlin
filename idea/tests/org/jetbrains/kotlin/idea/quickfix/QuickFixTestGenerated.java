@@ -2279,6 +2279,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/traitNotQualifierNoTypeArgs.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("typeArgumentWithBound.kt")
+                public void testTypeArgumentWithBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/typeArgumentWithBound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeArgumentWithMultipleBounds.kt")
+                public void testTypeArgumentWithMultipleBounds() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/typeArgumentWithMultipleBounds.kt");
+                    doTest(fileName);
+                }
             }
         }
 

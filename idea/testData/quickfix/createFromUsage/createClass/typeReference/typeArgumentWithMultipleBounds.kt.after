@@ -1,0 +1,13 @@
+// "Create class 'Foo'" "true"
+open class A
+interface I
+
+fun <T : I> foo() where T : A {}
+
+fun x() {
+    foo<Foo>()
+}
+
+class Foo : I, A() {
+
+}

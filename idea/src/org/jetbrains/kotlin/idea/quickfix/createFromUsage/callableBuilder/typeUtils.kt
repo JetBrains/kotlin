@@ -50,7 +50,15 @@ internal operator fun KotlinType.contains(descriptor: ClassifierDescriptor): Boo
     return constructor.declarationDescriptor == descriptor || arguments.any { descriptor in it.type }
 }
 
-private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
+internal fun KotlinType.decomposeIntersection(): List<KotlinType> {
+    (constructor as? IntersectionTypeConstructor)?.let {
+        return it.supertypes.flatMap { it.decomposeIntersection() }
+    }
+
+    return listOf(this)
+}
+
+private fun KotlinType.renderSingle(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
     val substitution = typeParameterNameMap
             .mapValues {
                 val name = Name.identifier(it.value)
@@ -75,6 +83,10 @@ private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor,
     val typeToRender = TypeSubstitutor.create(substitution).substitute(this, Variance.INVARIANT)!!
     val renderer = if (fq) IdeDescriptorRenderers.SOURCE_CODE else IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES
     return renderer.renderType(typeToRender)
+}
+
+private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): List<String> {
+    return decomposeIntersection().map { it.renderSingle(typeParameterNameMap, fq) }
 }
 
 internal fun KotlinType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
