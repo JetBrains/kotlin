@@ -28,6 +28,31 @@ fun <V : Value> Frame<V>.top(): V? =
 fun <V : Value> Frame<V>.peek(offset: Int): V? =
         if (stackSize > offset) getStack(stackSize - offset - 1) else null
 
+private fun <V : Value> Frame<V>.peekWordsTo(dest: MutableList<V>, size: Int, offset0: Int = 0): Int {
+    var offset = offset0
+    var totalSize = 0
+    while (totalSize < size) {
+        val value = peek(offset++) ?: return -1
+        dest.add(value)
+        totalSize += value.size
+    }
+    if (totalSize > size) return -1
+    return offset
+}
+
+fun <V : Value> Frame<V>.peekWords(size: Int): List<V>? {
+    val result = ArrayList<V>(size)
+    return if (peekWordsTo(result, size) < 0) null else result
+}
+
+fun <V : Value> Frame<V>.peekWords(size1: Int, size2: Int): List<V>? {
+    val result = ArrayList<V>(size1 + size2)
+    val offset = peekWordsTo(result, size1)
+    if (offset < 0) return null
+    if (peekWordsTo(result, size2, offset) < 0) return null
+    return result
+}
+
 class SavedStackDescriptor(
         val savedValues: List<BasicValue>,
         val firstLocalVarIndex: Int
