@@ -225,7 +225,6 @@ interface ParcelSerializer {
         private fun KotlinType.isException() = matchesFqNameWithSupertypes("java.lang.Exception")
         private fun KotlinType.isIBinder() = matchesFqNameWithSupertypes("android.os.IBinder")
         private fun KotlinType.isIInterface() = matchesFqNameWithSupertypes("android.os.IInterface")
-        private fun KotlinType.isParcelable() = matchesFqNameWithSupertypes("android.os.Parcelable")
         private fun KotlinType.isCharSequence() = matchesFqName("kotlin.CharSequence") || matchesFqName("java.lang.CharSequence")
 
         private fun KotlinType.isNamedObject(): Boolean {
@@ -253,17 +252,19 @@ interface ParcelSerializer {
             "Ljava/lang/Double;" -> true
             else -> false
         }
-
-        private fun KotlinType.matchesFqNameWithSupertypes(fqName: String): Boolean {
-            if (this.matchesFqName(fqName)) {
-                return true
-            }
-
-            return TypeUtils.getAllSupertypes(this).any { it.matchesFqName(fqName) }
-        }
-
-        private fun KotlinType.matchesFqName(fqName: String): Boolean {
-            return this.constructor.declarationDescriptor?.fqNameSafe?.asString() == fqName
-        }
     }
+}
+
+internal fun KotlinType.isParcelable() = matchesFqNameWithSupertypes("android.os.Parcelable")
+
+private fun KotlinType.matchesFqName(fqName: String): Boolean {
+    return this.constructor.declarationDescriptor?.fqNameSafe?.asString() == fqName
+}
+
+private fun KotlinType.matchesFqNameWithSupertypes(fqName: String): Boolean {
+    if (this.matchesFqName(fqName)) {
+        return true
+    }
+
+    return TypeUtils.getAllSupertypes(this).any { it.matchesFqName(fqName) }
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.android.parcel
 
 import org.jetbrains.kotlin.android.parcel.serializers.ParcelSerializer
+import org.jetbrains.kotlin.android.parcel.serializers.isParcelable
 import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
@@ -65,7 +66,7 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
                 val containingClass = descriptor.containingDeclaration as? ClassDescriptor
                 val ktProperty = declaration as? KtProperty
                 if (containingClass != null && ktProperty != null) {
-                    checkParcelableClassProperty(descriptor, containingClass, ktProperty, diagnosticHolder)
+                    checkParcelableClassProperty(descriptor, containingClass, ktProperty, diagnosticHolder, bindingContext)
                 }
             }
         }
@@ -79,9 +80,9 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
     ) {
         if (!containingClass.isMagicParcelable) return
 
-        if (method.isWriteToParcel()) {
+        if (method.isWriteToParcel() && declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
             val reportElement = declaration.modifierList?.getModifier(KtTokens.OVERRIDE_KEYWORD) ?: declaration.nameIdentifier ?: declaration
-            diagnosticHolder.report(ErrorsAndroid.OVERRIDING_WRITE_TO_PARCEL_IS_FORBIDDEN.on(reportElement))
+            diagnosticHolder.report(ErrorsAndroid.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED.on(reportElement))
         }
     }
 
@@ -89,22 +90,21 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             property: PropertyDescriptor,
             containingClass: ClassDescriptor,
             declaration: KtProperty,
-            diagnosticHolder: DiagnosticSink
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext
     ) {
-        if (containingClass.isMagicParcelable) {
-            // Do not report on calculated properties
-            if (declaration.getter?.hasBody() == true) return
-
-            if (!property.annotations.hasAnnotation(TRANSIENT_FQNAME)) {
-                diagnosticHolder.report(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED.on(declaration.nameIdentifier ?: declaration))
-            }
+        if (containingClass.isMagicParcelable
+                && (declaration.hasDelegate() || bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property] == true)
+                && !property.annotations.hasAnnotation(TRANSIENT_FQNAME)
+        ) {
+            diagnosticHolder.report(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED.on(declaration.nameIdentifier ?: declaration))
         }
 
         // @JvmName is not applicable to property so we can check just the descriptor name
         if (property.name.asString() == "CREATOR" && property.findJvmFieldAnnotation() != null && containingClass.isCompanionObject) {
             val outerClass = containingClass.containingDeclaration as? ClassDescriptor
             if (outerClass != null && outerClass.isMagicParcelable) {
-                diagnosticHolder.report(ErrorsAndroid.CREATOR_DEFINITION_IS_FORBIDDEN.on(declaration.nameIdentifier ?: declaration))
+                diagnosticHolder.report(ErrorsAndroid.CREATOR_DEFINITION_IS_NOT_ALLOWED.on(declaration.nameIdentifier ?: declaration))
             }
         }
     }
@@ -117,8 +117,14 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
     ) {
         if (!descriptor.isMagicParcelable) return
 
-        if (declaration !is KtClass || (declaration.isAnnotation() || declaration.isInterface() || declaration.isEnum())) {
+        if (declaration !is KtClass || (declaration.isAnnotation() || declaration.isInterface())) {
             val reportElement = (declaration as? KtClassOrObject)?.nameIdentifier ?: declaration
+            diagnosticHolder.report(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement))
+            return
+        }
+
+        if (declaration.isEnum()) {
+            val reportElement = (declaration as? KtClass)?.nameIdentifier ?: declaration
             diagnosticHolder.report(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement))
             return
         }
@@ -142,9 +148,21 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             diagnosticHolder.report(ErrorsAndroid.NO_PARCELABLE_SUPERTYPE.on(declaration.nameIdentifier ?: declaration))
         }
 
+        for (supertypeEntry in declaration.superTypeListEntries) {
+            supertypeEntry as? KtDelegatedSuperTypeEntry ?: continue
+            val delegateExpression = supertypeEntry.delegateExpression ?: continue
+            val type = bindingContext[BindingContext.TYPE, supertypeEntry.typeReference] ?: continue
+            if (type.isParcelable()) {
+                val reportElement = supertypeEntry.byKeywordNode?.psi ?: delegateExpression
+                diagnosticHolder.report(ErrorsAndroid.PARCELABLE_DELEGATE_IS_NOT_ALLOWED.on(reportElement))
+            }
+        }
+
         val primaryConstructor = declaration.primaryConstructor
         if (primaryConstructor == null && declaration.secondaryConstructors.isNotEmpty()) {
             diagnosticHolder.report(ErrorsAndroid.PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR.on(declaration.nameIdentifier ?: declaration))
+        } else if (primaryConstructor != null && primaryConstructor.valueParameters.isEmpty()) {
+            diagnosticHolder.report(ErrorsAndroid.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY.on(declaration.nameIdentifier ?: declaration))
         }
 
         val typeMapper = KotlinTypeMapper(

@@ -32,15 +32,18 @@ public interface ErrorsAndroid {
     DiagnosticFactory0<KtExpression> UNSAFE_CALL_ON_PARTIALLY_DEFINED_RESOURCE = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> PARCELABLE_SHOULD_BE_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PARCELABLE_DELEGATE_IS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PARCELABLE_SHOULD_BE_INSTANTIABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PARCELABLE_CANT_BE_INNER_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PARCELABLE_CANT_BE_LOCAL_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> NO_PARCELABLE_SUPERTYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PROPERTY_WONT_BE_SERIALIZED = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<PsiElement> OVERRIDING_WRITE_TO_PARCEL_IS_FORBIDDEN = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> CREATOR_DEFINITION_IS_FORBIDDEN = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> CREATOR_DEFINITION_IS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PARCELABLE_TYPE_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
