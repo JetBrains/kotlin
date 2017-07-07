@@ -1,6 +1,6 @@
 // "Add 'private' modifier" "true"
 class A {
-    public val <caret>a = ""
+    <caret>public val a = ""
 
     fun foo() {
         a

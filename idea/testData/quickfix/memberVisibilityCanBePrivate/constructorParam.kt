@@ -1,5 +1,5 @@
 // "Add 'private' modifier" "true"
-class A(internal val <caret>a: String = "") {
+class A(<caret>internal val a: String = "") {
     fun foo() {
         a
     }
