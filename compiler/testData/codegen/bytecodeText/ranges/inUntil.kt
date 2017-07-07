@@ -8,5 +8,5 @@ fun testInt(a: Int, x: Int, y: Int) = a in x until y
 
 fun testLong(a: Long, x: Long, y: Long) = a in x until y
 
-// 0 INVOKESTATIC kotlin/ranges/RangesKt.until
+// 0 until
 // 0 INVOKEVIRTUAL

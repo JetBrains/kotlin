@@ -18,7 +18,7 @@ fun inCharWithNullableParameter(x: Char?, left: Char, right: Char) = x!! in left
 
 // 0 INVOKESPECIAL
 // 0 NEW
-// 1 INVOKEVIRTUAL java/lang/Character.charValue
+// 1 charValue
 // 1 INVOKEVIRTUAL
 // 0 CHECKCAST
 // 0 INVOKEINTERFACE

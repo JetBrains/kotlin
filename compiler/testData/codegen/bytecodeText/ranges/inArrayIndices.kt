@@ -8,7 +8,7 @@ fun testLongWithPrimitiveArray(i: Long, ints: IntArray) = i in ints.indices
 
 fun testLongWithObjectArray(i: Long, xs: Array<Any>) = i in xs.indices
 
-// 0 INVOKESTATIC kotlin/collections/ArraysKt.getIndices
-// 0 INVOKEVIRTUAL kotlin/ranges/IntRange.contains
+// 0 getIndices
+// 0 contains
 // 4 I2L
 // 4 ARRAYLENGTH
