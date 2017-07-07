@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isInheritable
-import org.jetbrains.kotlin.psi.psiUtil.isOverridable
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
 
@@ -91,8 +88,18 @@ class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
                 false
             }
             else {
-                inClassUsageFound = true
-                true
+                val function = usage.getParentOfType<KtCallableDeclaration>(false)
+                val insideInlineFun = function?.modifierList?.let {
+                    it.hasModifier(KtTokens.INLINE_KEYWORD) && !function.isPrivate()
+                } ?: false
+                if (insideInlineFun) {
+                    otherUsageFound = true
+                    false
+                }
+                else {
+                    inClassUsageFound = true
+                    true
+                }
             }
         })
         return inClassUsageFound && !otherUsageFound

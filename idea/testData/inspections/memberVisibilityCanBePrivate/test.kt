@@ -127,3 +127,11 @@ val x = object {
         f4()
     }
 }
+
+class F(val bar: Int) {
+    inline fun baz() = bar
+}
+
+class G(val bar: Int) {
+    private inline fun baz() = bar
+}
