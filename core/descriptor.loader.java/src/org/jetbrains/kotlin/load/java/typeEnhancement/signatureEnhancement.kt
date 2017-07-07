@@ -48,16 +48,18 @@ import java.util.*
 class SignatureEnhancement(private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver) {
 
     fun extractNullability(annotationDescriptor: AnnotationDescriptor): NullabilityQualifier? {
-        when (annotationDescriptor.annotationClass?.fqNameSafe) {
+        val annotationFqName = annotationDescriptor.annotationClass?.fqNameSafe ?: return null
+        when (annotationFqName) {
             in NULLABLE_ANNOTATIONS -> return NullabilityQualifier.NULLABLE
             in NOT_NULL_ANNOTATIONS -> return NullabilityQualifier.NOT_NULL
         }
 
         val typeQualifier =
-                annotationTypeQualifierResolver
-                        .resolveTypeQualifierAnnotation(annotationDescriptor)
-                        ?.takeIf { it.annotationClass?.fqNameSafe == JAVAX_NONNULL_ANNOTATION }
-                ?: return null
+                when {
+                    annotationFqName == JAVAX_NONNULL_ANNOTATION -> annotationDescriptor
+                    else -> annotationTypeQualifierResolver.resolveTypeQualifierAnnotation(annotationDescriptor)
+                            ?.takeIf { it.annotationClass?.fqNameSafe == JAVAX_NONNULL_ANNOTATION }
+                } ?: return null
 
         val enumEntryDescriptor =
                 typeQualifier.allValueArguments.values.singleOrNull()?.value

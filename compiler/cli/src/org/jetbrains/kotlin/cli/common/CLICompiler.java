@@ -122,8 +122,8 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         }
     }
 
-    private static void setupCommonArgumentsAndServices(
-            @NotNull CompilerConfiguration configuration, @NotNull CommonCompilerArguments arguments, @NotNull Services services
+    private void setupCommonArgumentsAndServices(
+            @NotNull CompilerConfiguration configuration, @NotNull A arguments, @NotNull Services services
     ) {
         if (arguments.noInline) {
             configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
@@ -143,9 +143,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         setupLanguageVersionSettings(configuration, arguments);
     }
 
-    private static void setupLanguageVersionSettings(
-            @NotNull CompilerConfiguration configuration, @NotNull CommonCompilerArguments arguments
-    ) {
+    private void setupLanguageVersionSettings(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
         LanguageVersion languageVersion = parseVersion(configuration, arguments.languageVersion, "language");
         LanguageVersion apiVersion = parseVersion(configuration, arguments.apiVersion, "API");
 
@@ -195,7 +193,11 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
                 new LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures);
         settings.switchFlag(AnalysisFlags.getSkipMetadataVersionCheck(), arguments.skipMetadataVersionCheck);
         settings.switchFlag(AnalysisFlags.getMultiPlatformDoNotCheckImpl(), arguments.noCheckImpl);
+        configureAnalysisFlags(settings, arguments);
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, settings);
+    }
+
+    protected void configureAnalysisFlags(@NotNull LanguageVersionSettingsImpl settings, @NotNull A arguments) {
     }
 
     @Nullable

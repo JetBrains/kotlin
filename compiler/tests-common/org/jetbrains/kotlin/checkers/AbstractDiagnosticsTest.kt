@@ -203,7 +203,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         // To be overridden by diagnostic-like tests.
     }
 
-    private fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings {
+    protected open fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings {
         var result: LanguageVersionSettings? = null
         for (file in module) {
             val current = file.customLanguageVersionSettings

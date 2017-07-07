@@ -29,7 +29,7 @@ class AnalysisFlag internal constructor(private val name: String) {
     companion object
 }
 
-private operator fun AnalysisFlag.Companion.provideDelegate(instance: Any?, property: KProperty<*>) =
+private operator fun @Suppress("unused") AnalysisFlag.Companion.provideDelegate(instance: Any?, property: KProperty<*>) =
         object : ReadOnlyProperty<Any?, AnalysisFlag> {
             private val flag = AnalysisFlag(property.name)
 
@@ -42,4 +42,7 @@ object AnalysisFlags {
 
     @JvmStatic
     val multiPlatformDoNotCheckImpl by AnalysisFlag
+
+    @JvmStatic
+    val loadJsr305Annotations by AnalysisFlag
 }

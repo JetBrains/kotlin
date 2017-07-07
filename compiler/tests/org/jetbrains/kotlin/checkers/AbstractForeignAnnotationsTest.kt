@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import java.io.File
 
@@ -27,4 +28,10 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsWithFullJdkTe
 
     open protected val annotationsPath: String
         get() = FOREIGN_ANNOTATIONS_SOURCES_PATH
+
+    override fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings {
+        return LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE).apply {
+            switchFlag(AnalysisFlags.loadJsr305Annotations, true)
+        }
+    }
 }

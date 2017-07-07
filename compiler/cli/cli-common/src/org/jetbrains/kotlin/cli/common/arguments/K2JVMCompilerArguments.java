@@ -157,6 +157,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
             description = "Java compiler arguments")
     public String[] javacArguments;
 
+    @Argument(value = "-Xload-jsr305-annotations", description = "Load JSR-305 nullability annotations")
+    public boolean loadJsr305annotations;
+
     // Paths to output directories for friend modules.
     public String[] friendPaths;
 }

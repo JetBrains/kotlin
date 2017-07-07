@@ -310,6 +310,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
     }
 
+    override fun configureAnalysisFlags(settings: LanguageVersionSettingsImpl, arguments: K2JVMCompilerArguments) {
+        settings.switchFlag(AnalysisFlags.loadJsr305Annotations, arguments.loadJsr305annotations)
+    }
+
     override fun createArguments(): K2JVMCompilerArguments = K2JVMCompilerArguments().apply {
         if (System.getenv("KOTLIN_REPORT_PERF") != null) {
             reportPerf = true

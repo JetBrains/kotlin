@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
@@ -41,26 +40,28 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
     }
 
     private fun doTest(useJavac: Boolean, configurator: (CompilerConfiguration) -> Unit) {
+        val configuration = KotlinTestUtils.newConfiguration(
+                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KotlinTestUtils.getAnnotationsJar()
+        ).apply {
+            if (useJavac) {
+                put(JVMConfigurationKeys.USE_JAVAC, true)
+            }
+            languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE).apply {
+                switchFlag(AnalysisFlags.loadJsr305Annotations, true)
+            }
+            configurator(this)
+        }
         val environment =
                 KotlinCoreEnvironment.createForTests(
                         myTestRootDisposable,
-                        KotlinTestUtils.newConfiguration(
-                                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KotlinTestUtils.getAnnotationsJar()
-                        ).also {
-                            if (useJavac) {
-                                it.put(JVMConfigurationKeys.USE_JAVAC, true)
-                            }
-                            configurator(it)
-                        },
+                        configuration,
                         EnvironmentConfigFiles.JVM_CONFIG_FILES
                 ).apply {
                     if (useJavac) {
                         registerJavac()
                     }
                 }
-        val moduleDescriptor = JvmResolveUtil.analyze(
-                environment
-        ).moduleDescriptor
+        val moduleDescriptor = JvmResolveUtil.analyze(environment).moduleDescriptor
 
         val packageFragmentDescriptor =
                 moduleDescriptor.getPackage(FqName("test")).fragments

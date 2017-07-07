@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jvm.compiler
 import org.jetbrains.kotlin.checkers.FOREIGN_ANNOTATIONS_SOURCES_PATH
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -82,33 +83,27 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
     }
 
     private fun buildTypeQualifierResolverAndFindClass(className: String): Pair<AnnotationTypeQualifierResolver, ClassDescriptor> {
-        val environment =
-                KotlinCoreEnvironment.createForTests(
-                    myTestRootDisposable,
-                    KotlinTestUtils.newConfiguration(
-                            ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
-                            listOf(
-                                    KotlinTestUtils.getAnnotationsJar(),
-                                    MockLibraryUtil.compileJavaFilesLibraryToJar(
-                                        FOREIGN_ANNOTATIONS_SOURCES_PATH,
-                                        "foreign-annotations"
-                                    )
-                            ),
-                            listOf(File(TEST_DATA_PATH))
+        val configuration = KotlinTestUtils.newConfiguration(
+                ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
+                listOf(
+                        KotlinTestUtils.getAnnotationsJar(),
+                        MockLibraryUtil.compileJavaFilesLibraryToJar(
+                                FOREIGN_ANNOTATIONS_SOURCES_PATH,
+                                "foreign-annotations"
+                        )
+                ),
+                listOf(File(TEST_DATA_PATH))
+        ).apply {
+            languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE).apply {
+                switchFlag(AnalysisFlags.loadJsr305Annotations, true)
+            }
+        }
 
-                    ),
-                    EnvironmentConfigFiles.JVM_CONFIG_FILES
-                )
-
+        val environment = KotlinCoreEnvironment.createForTests(myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         val container = JvmResolveUtil.createContainer(environment)
-
         val typeQualifierResolver = container.get<JavaResolverComponents>().annotationTypeQualifierResolver
 
-        val aClass =
-                container
-                        .get<ModuleDescriptor>()
-                        .resolveClassByFqName(FqName(className), NoLookupLocation.FROM_TEST)!!
-
+        val aClass = container.get<ModuleDescriptor>().resolveClassByFqName(FqName(className), NoLookupLocation.FROM_TEST)!!
 
         return typeQualifierResolver to aClass
     }
