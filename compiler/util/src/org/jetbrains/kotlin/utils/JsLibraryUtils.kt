@@ -30,16 +30,16 @@ object JsLibraryUtils {
 
     private val META_INF_RESOURCES = "${LibraryUtils.META_INF}resources/"
 
-    @JvmStatic fun copyJsFilesFromLibraries(libraries: List<String>, outputLibraryJsPath: String) {
+    @JvmStatic fun copyJsFilesFromLibraries(libraries: List<String>, outputLibraryJsPath: String, copySourceMap: Boolean = false) {
         for (library in libraries) {
             val file = File(library)
             assert(file.exists()) { "Library $library not found" }
 
             if (file.isDirectory) {
-                copyJsFilesFromDirectory(file, outputLibraryJsPath)
+                copyJsFilesFromDirectory(file, outputLibraryJsPath, copySourceMap)
             }
             else {
-                copyJsFilesFromZip(file, outputLibraryJsPath)
+                copyJsFilesFromZip(file, outputLibraryJsPath, copySourceMap)
             }
         }
     }
@@ -68,10 +68,8 @@ object JsLibraryUtils {
         }
     }
 
-    private fun copyJsFilesFromDirectory(dir: File, outputLibraryJsPath: String) {
-        traverseDirectory(dir) { (content, path) ->
-            FileUtil.writeToFile(File(outputLibraryJsPath, path), content)
-        }
+    private fun copyJsFilesFromDirectory(dir: File, outputLibraryJsPath: String, copySourceMap: Boolean) {
+        traverseDirectory(dir) { copyLibrary(outputLibraryJsPath, it, copySourceMap) }
     }
 
     private fun File.contentIfExists(): String? = if (exists()) readText() else null
@@ -99,9 +97,16 @@ object JsLibraryUtils {
         }
     }
 
-    private fun copyJsFilesFromZip(file: File, outputLibraryJsPath: String) {
-        traverseArchive(file) { library ->
-            FileUtil.writeToFile(File(outputLibraryJsPath, library.path), library.content)
+    private fun copyJsFilesFromZip(file: File, outputLibraryJsPath: String, copySourceMap: Boolean) {
+        traverseArchive(file) { copyLibrary(outputLibraryJsPath, it, copySourceMap) }
+    }
+
+    private fun copyLibrary(outputPath: String, library: JsLibrary, copySourceMap: Boolean) {
+        val targetFile = File(outputPath, library.path)
+        targetFile.parentFile.mkdirs()
+        targetFile.writeText(library.content)
+        if (copySourceMap) {
+            library.sourceMapContent?.let { File(targetFile.parent, targetFile.name + ".map").writeText(it) }
         }
     }
 
