@@ -23,7 +23,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
-import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 class CliJavaModuleResolver(
