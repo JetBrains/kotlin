@@ -13524,6 +13524,57 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/replaceAddWithPlusAssign")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceAddWithPlusAssign extends AbstractIntentionTest {
+        @TestMetadata("add.kt")
+        public void testAdd() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceAddWithPlusAssign/add.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addAll.kt")
+        public void testAddAll() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceAddWithPlusAssign/addAll.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addAllAtIndex.kt")
+        public void testAddAllAtIndex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceAddWithPlusAssign/addAllAtIndex.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addAllToVar.kt")
+        public void testAddAllToVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceAddWithPlusAssign/addAllToVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addAtIndex.kt")
+        public void testAddAtIndex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceAddWithPlusAssign/addAtIndex.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addToVar.kt")
+        public void testAddToVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceAddWithPlusAssign/addToVar.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInReplaceAddWithPlusAssign() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceAddWithPlusAssign"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("nonCollection.kt")
+        public void testNonCollection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceAddWithPlusAssign/nonCollection.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/replaceArrayEqualityOpWithArraysEquals")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
