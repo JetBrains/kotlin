@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor
+import org.jetbrains.kotlin.codegen.optimization.common.debugText
 import org.jetbrains.kotlin.codegen.optimization.common.isLoadOperation
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.fixStack.peekWords
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
@@ -33,16 +35,8 @@ import java.util.*
 class PopBackwardPropagationTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
         if (!OptimizationMethodVisitor.canBeOptimizedUsingSourceInterpreter(methodNode)) return
-        if (methodNode.instructions.toArray().any { it.isUnsafeStackInsn() }) return
         Transformer(methodNode).transform()
     }
-
-    // TODO better stack operations analysis
-    private fun AbstractInsnNode.isUnsafeStackInsn() =
-            opcode == Opcodes.DUP_X1 ||
-            opcode == Opcodes.DUP_X2 ||
-            opcode == Opcodes.DUP2_X1 ||
-            opcode == Opcodes.DUP2_X2
 
     private class Transformer(val methodNode: MethodNode) {
         private interface Transformation {
@@ -82,46 +76,84 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
             postprocessNops()
         }
 
-        private fun analyzeMethodBody(): Array<out Frame<SourceValue>?> =
-                Analyzer<SourceValue>(object : SourceInterpreter() {
-                    override fun naryOperation(insn: AbstractInsnNode, values: MutableList<out SourceValue>): SourceValue {
-                        for (value in values) {
-                            value.insns.markAsDontTouch()
-                        }
-                        return super.naryOperation(insn, values)
-                    }
+        private fun analyzeMethodBody(): Array<out Frame<SourceValue>?> {
+            val frames = Analyzer<SourceValue>(HazardsTrackingInterpreter()).analyze("fake", methodNode)
 
-                    override fun copyOperation(insn: AbstractInsnNode, value: SourceValue): SourceValue {
-                        value.insns.markAsDontTouch()
-                        return super.copyOperation(insn, value)
-                    }
+            postprocessDupNxM(frames)
 
-                    override fun unaryOperation(insn: AbstractInsnNode, value: SourceValue): SourceValue {
-                        if (insn.opcode != Opcodes.CHECKCAST && !insn.isPrimitiveTypeConversion()) {
-                            value.insns.markAsDontTouch()
-                        }
-                        return super.unaryOperation(insn, value)
-                    }
+            return frames
+        }
 
-                    override fun binaryOperation(insn: AbstractInsnNode, value1: SourceValue, value2: SourceValue): SourceValue {
-                        value1.insns.markAsDontTouch()
-                        value2.insns.markAsDontTouch()
-                        return super.binaryOperation(insn, value1, value2)
-                    }
+        private fun postprocessDupNxM(frames: Array<out Frame<SourceValue>?>) {
+            val insns = methodNode.instructions.toArray()
+            for (i in frames.indices) {
+                val frame = frames[i] ?: continue
+                val insn = insns[i]
 
-                    override fun ternaryOperation(insn: AbstractInsnNode, value1: SourceValue, value2: SourceValue, value3: SourceValue): SourceValue {
-                        value1.insns.markAsDontTouch()
-                        value2.insns.markAsDontTouch()
-                        value3.insns.markAsDontTouch()
-                        return super.ternaryOperation(insn, value1, value2, value3)
+                when (insn.opcode) {
+                    Opcodes.DUP_X1 -> {
+                        val top2 = frame.peekWords(1, 1) ?: throwIncorrectBytecode(insn, frame)
+                        top2.forEach { it.insns.markAsDontTouch() }
                     }
+                    Opcodes.DUP2_X1 -> {
+                        val top3 = frame.peekWords(2, 1) ?: throwIncorrectBytecode(insn, frame)
+                        top3.forEach { it.insns.markAsDontTouch() }
+                    }
+                    Opcodes.DUP_X2 -> {
+                        val top3 = frame.peekWords(1, 2) ?: throwIncorrectBytecode(insn, frame)
+                        top3.forEach { it.insns.markAsDontTouch() }
+                    }
+                    Opcodes.DUP2_X2 -> {
+                        val top4 = frame.peekWords(2, 2) ?: throwIncorrectBytecode(insn, frame)
+                        top4.forEach { it.insns.markAsDontTouch() }
+                    }
+                }
+            }
+        }
 
-                    private fun Collection<AbstractInsnNode>.markAsDontTouch() {
-                        forEach {
-                            dontTouchInsnIndices[insnList.indexOf(it)] = true
-                        }
-                    }
-                }).analyze("fake", methodNode)
+        private fun throwIncorrectBytecode(insn: AbstractInsnNode?, frame: Frame<SourceValue>): Nothing {
+            throw AssertionError("Incorrect bytecode at ${methodNode.instructions.indexOf(insn)}: ${insn.debugText} $frame")
+        }
+
+        private inner class HazardsTrackingInterpreter : SourceInterpreter() {
+            override fun naryOperation(insn: AbstractInsnNode, values: MutableList<out SourceValue>): SourceValue {
+                for (value in values) {
+                    value.insns.markAsDontTouch()
+                }
+                return super.naryOperation(insn, values)
+            }
+
+            override fun copyOperation(insn: AbstractInsnNode, value: SourceValue): SourceValue {
+                value.insns.markAsDontTouch()
+                return super.copyOperation(insn, value)
+            }
+
+            override fun unaryOperation(insn: AbstractInsnNode, value: SourceValue): SourceValue {
+                if (insn.opcode != Opcodes.CHECKCAST && !insn.isPrimitiveTypeConversion()) {
+                    value.insns.markAsDontTouch()
+                }
+                return super.unaryOperation(insn, value)
+            }
+
+            override fun binaryOperation(insn: AbstractInsnNode, value1: SourceValue, value2: SourceValue): SourceValue {
+                value1.insns.markAsDontTouch()
+                value2.insns.markAsDontTouch()
+                return super.binaryOperation(insn, value1, value2)
+            }
+
+            override fun ternaryOperation(insn: AbstractInsnNode, value1: SourceValue, value2: SourceValue, value3: SourceValue): SourceValue {
+                value1.insns.markAsDontTouch()
+                value2.insns.markAsDontTouch()
+                value3.insns.markAsDontTouch()
+                return super.ternaryOperation(insn, value1, value2, value3)
+            }
+        }
+
+        private fun Collection<AbstractInsnNode>.markAsDontTouch() {
+            forEach {
+                dontTouchInsnIndices[insnList.indexOf(it)] = true
+            }
+        }
 
 
         private fun computeTransformations() {
