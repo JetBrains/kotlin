@@ -60,11 +60,11 @@ interface OverrideMemberChooserObject : ClassMember {
                    preferConstructorParameter: Boolean = false
         ): OverrideMemberChooserObject {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
-            if (declaration != null) {
-                return WithDeclaration(descriptor, declaration, immediateSuper, bodyType, preferConstructorParameter)
+            return if (declaration != null) {
+                WithDeclaration(descriptor, declaration, immediateSuper, bodyType, preferConstructorParameter)
             }
             else {
-                return WithoutDeclaration(descriptor, immediateSuper, bodyType, preferConstructorParameter)
+                WithoutDeclaration(descriptor, immediateSuper, bodyType, preferConstructorParameter)
             }
         }
 

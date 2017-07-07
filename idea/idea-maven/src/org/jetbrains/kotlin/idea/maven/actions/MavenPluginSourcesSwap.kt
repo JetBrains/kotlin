@@ -146,11 +146,11 @@ class MavenPluginSourcesMoveToBuild : PsiElementBaseIntentionAction() {
             }
         }
 
-        if (couldMove == 1) {
+        return if (couldMove == 1) {
             block(pom, sourceDirsToMove.single(), execution, build)
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 

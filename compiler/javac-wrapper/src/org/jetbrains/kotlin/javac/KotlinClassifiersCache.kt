@@ -205,12 +205,12 @@ private fun tryToResolveInner(name: String,
 private fun KtFile.tryToResolvePackageClass(name: String,
                                      javac: JavacWrapper,
                                      nameParts: List<String> = emptyList()): JavaClass? {
-    if (nameParts.size > 1) {
-        return find(FqName("${packageFqName.asString()}.${nameParts.first()}"), javac, nameParts)
+    return if (nameParts.size > 1) {
+        find(FqName("${packageFqName.asString()}.${nameParts.first()}"), javac, nameParts)
     }
     else {
-        return javac.findClass(FqName("${packageFqName.asString()}.$name"))
-               ?: javac.getKotlinClassifier(FqName("${packageFqName.asString()}.$name"))
+        javac.findClass(FqName("${packageFqName.asString()}.$name"))
+        ?: javac.getKotlinClassifier(FqName("${packageFqName.asString()}.$name"))
     }
 }
 

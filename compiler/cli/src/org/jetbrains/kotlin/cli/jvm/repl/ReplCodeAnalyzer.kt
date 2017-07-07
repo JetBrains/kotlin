@@ -113,14 +113,14 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
 
         val diagnostics = trace.bindingContext.diagnostics
         val hasErrors = diagnostics.any { it.severity == Severity.ERROR }
-        if (hasErrors) {
+        return if (hasErrors) {
             replState.lineFailure(linePsi, codeLine)
-            return ReplLineAnalysisResult.WithErrors(diagnostics)
+            ReplLineAnalysisResult.WithErrors(diagnostics)
         }
         else {
             val scriptDescriptor = context.scripts[linePsi.script]!!
             replState.lineSuccess(linePsi, codeLine, scriptDescriptor)
-            return ReplLineAnalysisResult.Successful(scriptDescriptor, diagnostics)
+            ReplLineAnalysisResult.Successful(scriptDescriptor, diagnostics)
         }
 
     }

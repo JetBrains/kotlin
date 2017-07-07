@@ -58,14 +58,14 @@ private fun deduceBlockSelectionWidth(startOffsets: IntArray, endOffsets: IntArr
     val fragmentCount = startOffsets.size
     assert(fragmentCount > 0)
     var totalLength = fragmentCount - 1 // number of line breaks inserted between fragments
-    for (i in 0..fragmentCount - 1) {
+    for (i in 0 until fragmentCount) {
         totalLength += endOffsets[i] - startOffsets[i]
     }
-    if (totalLength < text.length && (text.length + 1) % fragmentCount == 0) {
-        return (text.length + 1) / fragmentCount - 1
+    return if (totalLength < text.length && (text.length + 1) % fragmentCount == 0) {
+        (text.length + 1) / fragmentCount - 1
     }
     else {
-        return -1
+        -1
     }
 }
 

@@ -44,11 +44,11 @@ class KotlinStepOverInlinedLinesHint(
             val frameProxy = context.frameProxy
             if (frameProxy != null) {
                 if (isTheSameFrame(context)) {
-                    if (filter.locationMatches(context, frameProxy.location())) {
-                        return STOP
+                    return if (filter.locationMatches(context, frameProxy.location())) {
+                        STOP
                     }
                     else {
-                        return StepRequest.STEP_OVER
+                        StepRequest.STEP_OVER
                     }
                 }
 

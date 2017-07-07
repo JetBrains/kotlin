@@ -228,15 +228,14 @@ private fun prevWalker(element: PsiElement, scope: PsiElement): Iterator<PsiElem
 
             if (current == null || current === scope) return null
             val prev = current.prevSibling
-            if (prev != null) {
-                e = getDeepestLast(prev)
-                return e
+            e = if (prev != null) {
+                getDeepestLast(prev)
             }
             else {
                 val parent = current.parent
-                e = if (parent === scope || parent is PsiFile) null else parent
-                return e
+                if (parent === scope || parent is PsiFile) null else parent
             }
+            return e
         }
     }
 }

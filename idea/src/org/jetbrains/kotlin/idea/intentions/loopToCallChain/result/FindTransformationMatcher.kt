@@ -235,13 +235,13 @@ object FindTransformationMatcher : TransformationMatcher {
             if (valueIfFound.isVariableReference(indexVariable) && valueIfNotFound.text == "-1") {
                 val filterExpression = filterCondition!!.asExpression()
                 val containsArgument = filterExpression.isFilterForContainsOperation(inputVariable, loop)
-                if (containsArgument != null) {
+                return if (containsArgument != null) {
                     val functionName = if (findFirst) "indexOf" else "lastIndexOf"
-                    return SimpleGenerator(functionName, inputVariable, null, containsArgument)
+                    SimpleGenerator(functionName, inputVariable, null, containsArgument)
                 }
                 else {
                     val functionName = if (findFirst) "indexOfFirst" else "indexOfLast"
-                    return SimpleGenerator(functionName, inputVariable, filterExpression)
+                    SimpleGenerator(functionName, inputVariable, filterExpression)
                 }
             }
 
@@ -337,15 +337,14 @@ object FindTransformationMatcher : TransformationMatcher {
         val containsArgument = filterExpression.isFilterForContainsOperation(inputVariable, loop)
         if (containsArgument != null) {
             val generator = SimpleGenerator("contains", inputVariable, null, containsArgument)
-            if (negated) {
-                return object : FindOperationGenerator(generator) {
-                    override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-                        return generator.generate(chainedCallGenerator).negate()
-                    }
+            return if (negated) {
+                object : FindOperationGenerator(generator) {
+                    override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression =
+                            generator.generate(chainedCallGenerator).negate()
                 }
             }
             else {
-                return generator
+                generator
             }
         }
 

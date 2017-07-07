@@ -61,14 +61,14 @@ internal class ResolutionFacadeImpl(
             = projectFacade.getAnalysisResultsForElements(elements)
 
     override fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode): DeclarationDescriptor {
-        if (KtPsiUtil.isLocal(declaration)) {
+        return if (KtPsiUtil.isLocal(declaration)) {
             val bindingContext = analyze(declaration, bodyResolveMode)
-            return bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
-                   ?: getFrontendService(moduleInfo, AbsentDescriptorHandler::class.java).diagnoseDescriptorNotFound(declaration)
+            bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
+            ?: getFrontendService(moduleInfo, AbsentDescriptorHandler::class.java).diagnoseDescriptorNotFound(declaration)
         }
         else {
             val resolveSession = projectFacade.resolverForModuleInfo(declaration.getModuleInfo()).componentProvider.get<ResolveSession>()
-            return resolveSession.resolveToDescriptor(declaration)
+            resolveSession.resolveToDescriptor(declaration)
         }
     }
 

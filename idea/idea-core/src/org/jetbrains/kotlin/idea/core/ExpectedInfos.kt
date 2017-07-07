@@ -500,9 +500,9 @@ class ExpectedInfos(
         if (expressionWithType != block.statements.last()) return null
 
         val functionLiteral = block.parent as? KtFunctionLiteral
-        if (functionLiteral != null) {
+        return if (functionLiteral != null) {
             val literalExpression = functionLiteral.parent as KtLambdaExpression
-            return calculate(literalExpression)
+            calculate(literalExpression)
                     .mapNotNull { it.fuzzyType }
                     .filter { it.type.isFunctionType }
                     .map {
@@ -511,7 +511,7 @@ class ExpectedInfos(
                     }
         }
         else {
-            return calculate(block).map { ExpectedInfo(it.filter, it.expectedName, null) }
+            calculate(block).map { ExpectedInfo(it.filter, it.expectedName, null) }
         }
     }
 

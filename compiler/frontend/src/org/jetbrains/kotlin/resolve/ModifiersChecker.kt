@@ -199,11 +199,11 @@ object ModifierCheckerCore {
     private fun deprecationRegister(vararg list: KtModifierKeywordToken) = compatibilityRegister(Compatibility.DEPRECATED, *list)
 
     private fun compatibility(first: KtModifierKeywordToken, second: KtModifierKeywordToken): Compatibility {
-        if (first == second) {
-            return Compatibility.REPEATED
+        return if (first == second) {
+            Compatibility.REPEATED
         }
         else {
-            return mutualCompatibility[Pair(first, second)] ?: Compatibility.COMPATIBLE
+            mutualCompatibility[Pair(first, second)] ?: Compatibility.COMPATIBLE
         }
     }
 

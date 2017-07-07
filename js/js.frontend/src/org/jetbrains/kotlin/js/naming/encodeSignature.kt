@@ -106,8 +106,8 @@ private fun StringBuilder.encodeForSignature(
         parameter: TypeParameterDescriptor,
         typeParameterNamer: (TypeParameterDescriptor) -> String
 ): StringBuilder {
-    if (projection.isStarProjection) {
-        return append("*")
+    return if (projection.isStarProjection) {
+        append("*")
     }
     else {
         when (getEffectiveVariance(parameter.variance, projection.projectionKind)) {
@@ -115,7 +115,7 @@ private fun StringBuilder.encodeForSignature(
             Variance.OUT_VARIANCE -> append("+")
             Variance.INVARIANT -> {}
         }
-        return encodeForSignature(projection.type, typeParameterNamer)
+        encodeForSignature(projection.type, typeParameterNamer)
     }
 }
 

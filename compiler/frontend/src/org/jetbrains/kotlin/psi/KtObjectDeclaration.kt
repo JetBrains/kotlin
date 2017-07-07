@@ -43,15 +43,15 @@ class KtObjectDeclaration : KtClassOrObject {
     }
 
     override fun setName(@NonNls name: String): PsiElement {
-        if (nameIdentifier == null) {
+        return if (nameIdentifier == null) {
             val psiFactory = KtPsiFactory(project)
             val result = addAfter(psiFactory.createIdentifier(name), getObjectKeyword()!!)
             addAfter(psiFactory.createWhiteSpace(), getObjectKeyword()!!)
 
-            return result
+            result
         }
         else {
-            return super.setName(name)
+            super.setName(name)
         }
     }
 

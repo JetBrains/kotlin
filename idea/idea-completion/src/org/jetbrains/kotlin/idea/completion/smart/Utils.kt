@@ -315,11 +315,11 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
             return emptyList()
         }
 
-        if (this is VariableDescriptor) { //TODO: generic properties!
-            return smartCastCalculator.types(this).map { it.toFuzzyType(emptyList()) }
+        return if (this is VariableDescriptor) { //TODO: generic properties!
+            smartCastCalculator.types(this).map { it.toFuzzyType(emptyList()) }
         }
         else {
-            return listOf(returnType)
+            listOf(returnType)
         }
     }
     else if (this is ClassDescriptor && kind.isSingleton) {

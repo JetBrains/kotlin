@@ -39,11 +39,11 @@ class DestructuringDeclarationReferenceSearcher(
 ) : OperatorReferenceSearcher<KtDestructuringDeclaration>(targetDeclaration, searchScope, consumer, optimizer, options, wordsToSearch = listOf("(")) {
 
     override fun resolveTargetToDescriptor(): FunctionDescriptor? {
-        if (targetDeclaration is KtParameter) {
-            return targetDeclaration.dataClassComponentFunction()
+        return if (targetDeclaration is KtParameter) {
+            targetDeclaration.dataClassComponentFunction()
         }
         else {
-            return super.resolveTargetToDescriptor()
+            super.resolveTargetToDescriptor()
         }
     }
 

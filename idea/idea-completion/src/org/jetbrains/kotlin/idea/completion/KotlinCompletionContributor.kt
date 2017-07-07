@@ -386,22 +386,22 @@ class KotlinCompletionContributor : CompletionContributor() {
         val nameRef = nameToken.parent as? KtNameReferenceExpression ?: return null
         val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
         val targets = nameRef.getReferenceTargets(bindingContext)
-        if (targets.isNotEmpty() && targets.all { it is FunctionDescriptor || it is ClassDescriptor && it.kind == ClassKind.CLASS }) {
-            return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ">".repeat(balance) + "$"
+        return if (targets.isNotEmpty() && targets.all { it is FunctionDescriptor || it is ClassDescriptor && it.kind == ClassKind.CLASS }) {
+            CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ">".repeat(balance) + "$"
         }
         else {
-            return null
+            null
         }
     }
 
     private fun unclosedTypeArgListNameAndBalance(tokenBefore: PsiElement): Pair<PsiElement, Int>? {
         val nameToken = findCallNameTokenIfInTypeArgs(tokenBefore) ?: return null
         val pair = unclosedTypeArgListNameAndBalance(nameToken)
-        if (pair == null) {
-            return Pair(nameToken, 1)
+        return if (pair == null) {
+            Pair(nameToken, 1)
         }
         else {
-            return Pair(pair.first, pair.second + 1)
+            Pair(pair.first, pair.second + 1)
         }
     }
 

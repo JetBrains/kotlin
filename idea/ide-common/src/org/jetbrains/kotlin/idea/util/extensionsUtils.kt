@@ -42,11 +42,11 @@ fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         containingDeclarationOrModule: DeclarationDescriptor
 ): Collection<TCallable> {
     val sequence = receivers.asSequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo, containingDeclarationOrModule).asSequence() }
-    if (typeParameters.isEmpty()) { // optimization for non-generic callables
-        return sequence.firstOrNull()?.let { listOf(it) } ?: listOf()
+    return if (typeParameters.isEmpty()) { // optimization for non-generic callables
+        sequence.firstOrNull()?.let { listOf(it) } ?: listOf()
     }
     else {
-        return sequence.toList()
+        sequence.toList()
     }
 }
 
@@ -91,11 +91,11 @@ fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
                 }
                 substitutor
             }
-    if (typeParameters.isEmpty()) { // optimization for non-generic callables
-        return if (substitutors.any()) listOf(this) else listOf()
+    return if (typeParameters.isEmpty()) { // optimization for non-generic callables
+        if (substitutors.any()) listOf(this) else listOf()
     }
     else {
-        return substitutors
+        substitutors
                 .mapNotNull { @Suppress("UNCHECKED_CAST") (substitute(it) as TCallable?) }
                 .toList()
     }

@@ -58,10 +58,10 @@ abstract class DeclarationLookupObjectImpl(
         if (this === other) return true
         if (other == null || this::class.java != other::class.java) return false
         val lookupObject = other as DeclarationLookupObjectImpl
-        if (descriptor != null)
-            return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor)
+        return if (descriptor != null)
+            descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor)
         else
-            return lookupObject.descriptor == null && psiElement == lookupObject.psiElement
+            lookupObject.descriptor == null && psiElement == lookupObject.psiElement
     }
 
     override val isDeprecated: Boolean

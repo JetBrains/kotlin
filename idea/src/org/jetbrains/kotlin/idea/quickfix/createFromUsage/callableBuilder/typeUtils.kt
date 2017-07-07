@@ -220,12 +220,12 @@ private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinT
         return arrayOf()
     }
     val theType = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, expectedTypes)
-    if (theType != null) {
-        return arrayOf(theType)
+    return if (theType != null) {
+        arrayOf(theType)
     }
     else {
         // intersection doesn't exist; let user make an imperfect choice
-        return expectedTypes.toTypedArray()
+        expectedTypes.toTypedArray()
     }
 }
 
@@ -238,19 +238,19 @@ internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, varianc
     val nullable = isMarkedNullable
     val currentType = makeNotNullable()
 
-    if (when (variance) {
+    return if (when (variance) {
         Variance.INVARIANT      -> KotlinTypeChecker.DEFAULT.equalTypes(currentType, substitution.forType)
         Variance.IN_VARIANCE    -> KotlinTypeChecker.DEFAULT.isSubtypeOf(currentType, substitution.forType)
         Variance.OUT_VARIANCE   -> KotlinTypeChecker.DEFAULT.isSubtypeOf(substitution.forType, currentType)
     }) {
-        return TypeUtils.makeNullableAsSpecified(substitution.byType, nullable)
+        TypeUtils.makeNullableAsSpecified(substitution.byType, nullable)
     }
     else {
         val newArguments = arguments.zip(constructor.parameters).map { pair ->
             val (projection, typeParameter) = pair
             TypeProjectionImpl(Variance.INVARIANT, projection.type.substitute(substitution, typeParameter.variance))
         }
-        return KotlinTypeFactory.simpleType(annotations, constructor, newArguments, isMarkedNullable, memberScope)
+        KotlinTypeFactory.simpleType(annotations, constructor, newArguments, isMarkedNullable, memberScope)
     }
 }
 

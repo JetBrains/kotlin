@@ -70,16 +70,16 @@ private fun Converter.convertImport(fqName: FqName, ref: PsiJavaCodeReferenceEle
 
     //TODO: how to detect compiled Kotlin here?
     val target = ref.resolve()
-    if (isImportStatic) {
+    return if (isImportStatic) {
         if (isOnDemand) {
-            return convertStaticImportOnDemand(fqName, target)
+            convertStaticImportOnDemand(fqName, target)
         }
         else {
-            return convertStaticExplicitImport(fqName, target)
+            convertStaticExplicitImport(fqName, target)
         }
     }
     else {
-        return convertNonStaticImport(fqName, isOnDemand, target)
+        convertNonStaticImport(fqName, isOnDemand, target)
     }
 }
 

@@ -36,11 +36,11 @@ abstract class SumTransformationBase(
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val call = generateCall(chainedCallGenerator)
 
-        if (initialization.initializer.isZeroConstant()) {
-            return call
+        return if (initialization.initializer.isZeroConstant()) {
+            call
         }
         else {
-            return KtPsiFactory(call).createExpressionByPattern("$0 + $1", initialization.initializer, call)
+            KtPsiFactory(call).createExpressionByPattern("$0 + $1", initialization.initializer, call)
         }
     }
 

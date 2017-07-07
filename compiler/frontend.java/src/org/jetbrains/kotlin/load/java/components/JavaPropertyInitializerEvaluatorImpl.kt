@@ -27,14 +27,14 @@ class JavaPropertyInitializerEvaluatorImpl : JavaPropertyInitializerEvaluator {
         val evaluated = field.initializerValue ?: return null
 
         val factory = ConstantValueFactory(descriptor.builtIns)
-        when (evaluated) {
-            //Note: evaluated expression may be of class that does not match field type in some cases
-            // tested for Int, left other checks just in case
+        return when (evaluated) {
+        //Note: evaluated expression may be of class that does not match field type in some cases
+        // tested for Int, left other checks just in case
             is Byte, is Short, is Int, is Long -> {
-                return factory.createIntegerConstantValue((evaluated as Number).toLong(), descriptor.type)
+                factory.createIntegerConstantValue((evaluated as Number).toLong(), descriptor.type)
             }
             else -> {
-                return factory.createConstantValue(evaluated)
+                factory.createConstantValue(evaluated)
             }
         }
     }

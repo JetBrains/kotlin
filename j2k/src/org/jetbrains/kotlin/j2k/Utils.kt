@@ -111,16 +111,16 @@ fun PsiExpressionList.lPar(): PsiElement? = node.findChildByType(JavaTokenType.L
 fun PsiExpressionList.rPar(): PsiElement? = node.findChildByType(JavaTokenType.RPARENTH)?.psi
 
 fun PsiMember.isImported(file: PsiJavaFile): Boolean {
-    if (this is PsiClass) {
+    return if (this is PsiClass) {
         val fqName = qualifiedName
         val index = fqName?.lastIndexOf('.') ?: -1
         val parentName = if (index >= 0) fqName!!.substring(0, index) else null
-        return file.importList?.allImportStatements?.any {
+        file.importList?.allImportStatements?.any {
             it.importReference?.qualifiedName == (if (it.isOnDemand) parentName else fqName)
         } ?: false
     }
     else {
-        return containingClass != null && file.importList?.importStaticStatements?.any {
+        containingClass != null && file.importList?.importStaticStatements?.any {
             it.resolveTargetClass() == containingClass && (it.isOnDemand || it.referenceName == name)
         } ?: false
     }

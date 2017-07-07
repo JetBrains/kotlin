@@ -102,11 +102,9 @@ fun KtQualifiedExpression.toResolvedCall(bodyResolveMode: BodyResolveMode): Reso
     return callExpression.getResolvedCall(callExpression.analyze(bodyResolveMode)) ?: return null
 }
 
-fun KtExpression.isExitStatement(): Boolean {
-    when (this) {
-        is KtContinueExpression, is KtBreakExpression, is KtThrowExpression, is KtReturnExpression -> return true
-        else -> return false
-    }
+fun KtExpression.isExitStatement(): Boolean = when (this) {
+    is KtContinueExpression, is KtBreakExpression, is KtThrowExpression, is KtReturnExpression -> true
+    else -> false
 }
 
 // returns false for call of super, static method or method from package

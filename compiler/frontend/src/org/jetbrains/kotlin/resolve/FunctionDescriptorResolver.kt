@@ -347,7 +347,7 @@ class FunctionDescriptorResolver(
                 }
             }
             else {
-                if (isFunctionLiteral(functionDescriptor) || isFunctionExpression(functionDescriptor)) {
+                type = if (isFunctionLiteral(functionDescriptor) || isFunctionExpression(functionDescriptor)) {
                     val containsUninferredParameter = TypeUtils.contains(expectedType) {
                         TypeUtils.isDontCarePlaceholder(it) || ErrorUtils.isUninferredParameter(it)
                     }
@@ -355,11 +355,11 @@ class FunctionDescriptorResolver(
                         trace.report(CANNOT_INFER_PARAMETER_TYPE.on(valueParameter))
                     }
 
-                    type = expectedType ?: TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
+                    expectedType ?: TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
                 }
                 else {
                     trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter))
-                    type = ErrorUtils.createErrorType("Type annotation was missing for parameter ${valueParameter.nameAsSafeName}")
+                    ErrorUtils.createErrorType("Type annotation was missing for parameter ${valueParameter.nameAsSafeName}")
                 }
             }
 

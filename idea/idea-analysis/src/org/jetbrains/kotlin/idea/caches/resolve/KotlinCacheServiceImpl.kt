@@ -197,16 +197,15 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val syntheticFileModule = files.map(KtFile::getModuleInfo).toSet().single()
         val sdk = syntheticFileModule.sdk
         val settings = PlatformAnalysisSettings(targetPlatform, sdk, syntheticFileModule.supportsAdditionalBuiltInsMembers())
-        val filesModificationTracker: ModificationTracker
         // File copies are created during completion and receive correct modification events through POM.
         // Dummy files created e.g. by J2K do not receive events.
-        if (files.all { it.originalFile != it }) {
-            filesModificationTracker = ModificationTracker {
+        val filesModificationTracker = if (files.all { it.originalFile != it }) {
+            ModificationTracker {
                 files.sumByLong { it.outOfBlockModificationCount }
             }
         }
         else {
-            filesModificationTracker = ModificationTracker {
+            ModificationTracker {
                 files.sumByLong { it.outOfBlockModificationCount + it.modificationStamp }
             }
         }
@@ -322,11 +321,11 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
                 val annotatedDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
 
-                if (annotatedDescriptor != null) {
-                    return annotatedDescriptor.annotations.toList()
+                return if (annotatedDescriptor != null) {
+                    annotatedDescriptor.annotations.toList()
                 }
                 else {
-                    return annotated.annotationEntries.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
+                    annotated.annotationEntries.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
                 }
             }
         }, LibraryModificationTracker.getInstance(project), PsiModificationTracker.MODIFICATION_COUNT)
@@ -357,13 +356,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val file = files.first()
         val moduleInfo = file.getModuleInfo()
         val notInSourceFiles = files.filterNotInProjectSource(moduleInfo)
-        if (notInSourceFiles.isNotEmpty()) {
+        return if (notInSourceFiles.isNotEmpty()) {
             val projectFacade = getFacadeForSyntheticFiles(notInSourceFiles)
-            return ResolutionFacadeImpl(projectFacade, moduleInfo)
+            ResolutionFacadeImpl(projectFacade, moduleInfo)
         }
         else {
             val platform = TargetPlatformDetector.getPlatform(file)
-            return getResolutionFacadeByModuleInfo(moduleInfo, platform)
+            getResolutionFacadeByModuleInfo(moduleInfo, platform)
         }
     }
 

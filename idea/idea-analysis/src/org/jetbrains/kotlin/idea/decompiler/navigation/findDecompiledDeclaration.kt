@@ -85,11 +85,11 @@ private fun findInScope(referencedDescriptor: DeclarationDescriptor, scope: Glob
 }
 
 private fun isLocal(descriptor: DeclarationDescriptor): Boolean {
-    if (descriptor is ParameterDescriptor) {
-        return isLocal(descriptor.containingDeclaration)
+    return if (descriptor is ParameterDescriptor) {
+        isLocal(descriptor.containingDeclaration)
     }
     else {
-        return DescriptorUtils.isLocal(descriptor)
+        DescriptorUtils.isLocal(descriptor)
     }
 }
 

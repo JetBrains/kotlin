@@ -101,11 +101,11 @@ class InlineCallableUsagesSearcher(val myDebugProcess: DebugProcess, val scopes:
 
     private fun getScopeForInlineDeclarationUsages(inlineDeclaration: KtDeclaration): GlobalSearchScope {
         val virtualFile = runReadAction { inlineDeclaration.containingFile.virtualFile }
-        if (virtualFile != null && ProjectRootsUtil.isLibraryFile(myDebugProcess.project, virtualFile)) {
-            return GlobalSearchScope.union(scopes.toTypedArray())
+        return if (virtualFile != null && ProjectRootsUtil.isLibraryFile(myDebugProcess.project, virtualFile)) {
+            GlobalSearchScope.union(scopes.toTypedArray())
         }
         else {
-            return myDebugProcess.searchScope
+            myDebugProcess.searchScope
         }
     }
 }

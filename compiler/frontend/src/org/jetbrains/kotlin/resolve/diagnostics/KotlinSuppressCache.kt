@@ -262,11 +262,11 @@ class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressC
     override fun getSuppressionAnnotations(annotated: KtAnnotated): List<AnnotationDescriptor> {
         val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
 
-        if (descriptor != null) {
-            return descriptor.annotations.toList()
+        return if (descriptor != null) {
+            descriptor.annotations.toList()
         }
         else {
-            return annotated.annotationEntries.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
+            annotated.annotationEntries.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
         }
     }
 }

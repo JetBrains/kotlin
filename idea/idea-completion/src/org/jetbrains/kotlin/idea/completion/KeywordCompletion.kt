@@ -254,11 +254,11 @@ object KeywordCompletion {
                     val scope = parent.parent
                     when (scope) {
                         is KtClassOrObject -> {
-                            if (parent is KtPrimaryConstructor) {
-                                return buildFilterWithReducedContext("class X ", parent, position)
+                            return if (parent is KtPrimaryConstructor) {
+                                buildFilterWithReducedContext("class X ", parent, position)
                             }
                             else {
-                                return buildFilterWithReducedContext("class X { ", parent, position)
+                                buildFilterWithReducedContext("class X { ", parent, position)
                             }
                         }
 

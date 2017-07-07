@@ -317,11 +317,11 @@ private class AnnotationPresentationInfo(
         var message = IdeErrorMessages.render(diagnostic)
         if (KotlinInternalMode.enabled || ApplicationManager.getApplication().isUnitTestMode) {
             val factoryName = diagnostic.factory.name
-            if (message.startsWith("<html>")) {
-                message = "<html>[$factoryName] ${message.substring("<html>".length)}"
+            message = if (message.startsWith("<html>")) {
+                "<html>[$factoryName] ${message.substring("<html>".length)}"
             }
             else {
-                message = "[$factoryName] $message"
+                "[$factoryName] $message"
             }
         }
         if (!message.startsWith("<html>")) {

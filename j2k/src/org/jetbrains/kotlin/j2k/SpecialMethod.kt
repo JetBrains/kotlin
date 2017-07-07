@@ -307,11 +307,11 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = super.matches(method, superMethodsSearcher) && method.parameterList.let { it.parametersCount == 2 && it.parameters.last().isVarArgs }
 
         override fun ConvertCallData.convertCall(): Expression? {
-            if (arguments.size == 2 && arguments.last().isAssignableToCharSequenceArray()) {
-                return STRING_JOIN.convertCall(this)
+            return if (arguments.size == 2 && arguments.last().isAssignableToCharSequenceArray()) {
+                STRING_JOIN.convertCall(this)
             }
             else {
-                return MethodCallExpression.buildNonNull(
+                MethodCallExpression.buildNonNull(
                         MethodCallExpression.buildNonNull(null, "arrayOf", ArgumentList.withNoPrototype(codeConverter.convertExpressionsInList(arguments.drop(1)))).assignNoPrototype(),
                         "joinToString",
                         ArgumentList.withNoPrototype(codeConverter.convertExpressionsInList(arguments.take(1)))

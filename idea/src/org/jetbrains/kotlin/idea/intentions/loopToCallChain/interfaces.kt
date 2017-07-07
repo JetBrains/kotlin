@@ -175,12 +175,12 @@ class CommentSavingRangeHolder(range: PsiChildRange) {
 
         val rangeParent = range.first!!.parent
         val elementToAdd = element.parentsWithSelf.takeWhile { it != rangeParent }.last()
-        when (elementToAdd) {
+        range = when (elementToAdd) {
             in range -> return
 
-            in range.first!!.siblingsBefore() -> range = PsiChildRange(elementToAdd, range.last)
+            in range.first!!.siblingsBefore() -> PsiChildRange(elementToAdd, range.last)
 
-            else -> range = PsiChildRange(range.first, elementToAdd)
+            else -> PsiChildRange(range.first, elementToAdd)
         }
     }
 
@@ -196,11 +196,11 @@ class CommentSavingRangeHolder(range: PsiChildRange) {
                         .siblings(forward = true, withItself = false)
                         .takeWhile { it != range.last!!.nextSibling }
                         .firstOrNull { it !is PsiWhiteSpace }
-                if (newFirst != null) {
-                    range = PsiChildRange(newFirst, range.last)
+                range = if (newFirst != null) {
+                    PsiChildRange(newFirst, range.last)
                 }
                 else {
-                    range = PsiChildRange.EMPTY
+                    PsiChildRange.EMPTY
                 }
             }
 
@@ -209,11 +209,11 @@ class CommentSavingRangeHolder(range: PsiChildRange) {
                         .siblings(forward = false, withItself = false)
                         .takeWhile { it != range.first!!.prevSibling }
                         .firstOrNull { it !is PsiWhiteSpace }
-                if (newLast != null) {
-                    range = PsiChildRange(range.first, newLast)
+                range = if (newLast != null) {
+                    PsiChildRange(range.first, newLast)
                 }
                 else {
-                    range = PsiChildRange.EMPTY
+                    PsiChildRange.EMPTY
                 }
             }
         }

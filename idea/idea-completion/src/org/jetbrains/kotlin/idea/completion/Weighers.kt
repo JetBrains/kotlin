@@ -214,7 +214,7 @@ object PreferGetSetMethodsToPropertyWeigher : LookupElementWeigher("kotlin.prefe
         val prefixMatcher = context.itemMatcher(element)
         if (prefixMatcher.prefixMatches(property.name.asString())) return 0
         val matchedLookupStrings = element.allLookupStrings.filter { prefixMatcher.prefixMatches(it) }
-        if (matchedLookupStrings.all { it.startsWith("get") || it.startsWith("set") }) return 1 else return 0
+        return if (matchedLookupStrings.all { it.startsWith("get") || it.startsWith("set") }) 1 else 0
     }
 }
 

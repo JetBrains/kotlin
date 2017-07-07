@@ -85,11 +85,11 @@ abstract class WrappedType : KotlinType() {
     }
 
     override fun toString(): String {
-        if (isComputed()) {
-            return delegate.toString()
+        return if (isComputed()) {
+            delegate.toString()
         }
         else {
-            return "<Not computed yet>"
+            "<Not computed yet>"
         }
     }
 }

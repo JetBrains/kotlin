@@ -327,13 +327,13 @@ class JDIEval(
         }
 
         val obj = instance.jdiObj.checkNull()
-        if (invokespecial) {
+        return if (invokespecial) {
             val method = findMethod(methodDesc)
-            return doInvokeMethod(obj, method, invokePolicy or ObjectReference.INVOKE_NONVIRTUAL)
+            doInvokeMethod(obj, method, invokePolicy or ObjectReference.INVOKE_NONVIRTUAL)
         }
         else {
             val method = findMethod(methodDesc, obj.referenceType() ?: methodDesc.ownerType.asReferenceType())
-            return doInvokeMethod(obj, method, invokePolicy)
+            doInvokeMethod(obj, method, invokePolicy)
         }
     }
 

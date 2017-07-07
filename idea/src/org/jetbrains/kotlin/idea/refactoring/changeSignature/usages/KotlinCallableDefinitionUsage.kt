@@ -197,11 +197,11 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         if (newParameterList == null) return
 
         if (parameterList != null) {
-            if (canReplaceEntireList) {
-                newParameterList = parameterList.replace(newParameterList) as KtParameterList
+            newParameterList = if (canReplaceEntireList) {
+                parameterList.replace(newParameterList) as KtParameterList
             }
             else {
-                newParameterList = replaceListPsiAndKeepDelimiters(parameterList, newParameterList) { parameters }
+                replaceListPsiAndKeepDelimiters(parameterList, newParameterList) { parameters }
             }
         }
         else {

@@ -77,13 +77,13 @@ abstract class TypesWithOperatorDetector(
     }
 
     fun findOperator(type: FuzzyType): Pair<FunctionDescriptor, TypeSubstitutor>? {
-        if (cache.containsKey(type)) {
-            return cache[type]
+        return if (cache.containsKey(type)) {
+            cache[type]
         }
         else {
             val result = findOperatorNoCache(type)
             cache[type] = result
-            return result
+            result
         }
     }
 

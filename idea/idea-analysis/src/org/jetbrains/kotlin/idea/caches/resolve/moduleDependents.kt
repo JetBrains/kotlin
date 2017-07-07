@@ -32,11 +32,11 @@ import java.util.HashSet
 //NOTE: this is an approximation that may contain more module infos then the exact solution
 fun ModuleSourceInfo.getDependentModules(): Set<ModuleSourceInfo> {
     val dependents = getDependents(module)
-    if (isTests()) {
-        return dependents.mapTo(HashSet<ModuleSourceInfo>(), Module::testSourceInfo)
+    return if (isTests()) {
+        dependents.mapTo(HashSet<ModuleSourceInfo>(), Module::testSourceInfo)
     }
     else {
-        return dependents.flatMapTo(HashSet<ModuleSourceInfo>()) { listOf(it.productionSourceInfo(), it.testSourceInfo()) }
+        dependents.flatMapTo(HashSet<ModuleSourceInfo>()) { listOf(it.productionSourceInfo(), it.testSourceInfo()) }
     }
 }
 

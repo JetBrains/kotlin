@@ -196,12 +196,10 @@ object SourceNavigationHelper {
 
     private fun getIndexForTopLevelPropertyOrFunction(
             decompiledDeclaration: KtNamedDeclaration
-    ): StringStubIndexExtension<out KtNamedDeclaration> {
-        when (decompiledDeclaration) {
-            is KtNamedFunction -> return KotlinTopLevelFunctionFqnNameIndex.getInstance()
-            is KtProperty -> return KotlinTopLevelPropertyFqnNameIndex.getInstance()
-            else -> throw IllegalArgumentException("Neither function nor declaration: " + decompiledDeclaration::class.java.name)
-        }
+    ): StringStubIndexExtension<out KtNamedDeclaration> = when (decompiledDeclaration) {
+        is KtNamedFunction -> KotlinTopLevelFunctionFqnNameIndex.getInstance()
+        is KtProperty -> KotlinTopLevelPropertyFqnNameIndex.getInstance()
+        else -> throw IllegalArgumentException("Neither function nor declaration: " + decompiledDeclaration::class.java.name)
     }
 
     private fun getInitialMemberCandidates(

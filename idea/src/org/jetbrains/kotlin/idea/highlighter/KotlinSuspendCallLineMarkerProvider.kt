@@ -82,11 +82,11 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
             if (!calleeDescriptor.isSuspend) continue
 
             markedLineNumbers += lineNumber
-            if (element is KtForExpression) {
-                result += SuspendCallMarkerInfo(element.loopRange!!, "Suspending iteration")
+            result += if (element is KtForExpression) {
+                SuspendCallMarkerInfo(element.loopRange!!, "Suspending iteration")
 
             } else {
-                result += SuspendCallMarkerInfo(element, "Suspend function call")
+                SuspendCallMarkerInfo(element, "Suspend function call")
             }
         }
     }

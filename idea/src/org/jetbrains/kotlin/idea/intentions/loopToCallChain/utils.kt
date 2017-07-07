@@ -376,15 +376,15 @@ fun KtExpression.countEmbeddedBreaksAndContinues(): Int {
 private fun isEmbeddedBreakOrContinue(expression: KtExpressionWithLabel): Boolean {
     if (expression !is KtBreakExpression && expression !is KtContinueExpression) return false
     val parent = expression.parent
-    when (parent) {
-        is KtBlockExpression -> return false
+    return when (parent) {
+        is KtBlockExpression -> false
 
         is KtContainerNode -> {
             val containerExpression = parent.parent as KtExpression
-            return containerExpression.isUsedAsExpression(containerExpression.analyze(BodyResolveMode.PARTIAL))
+            containerExpression.isUsedAsExpression(containerExpression.analyze(BodyResolveMode.PARTIAL))
         }
 
-        else -> return true
+        else -> true
     }
 }
 

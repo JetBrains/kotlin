@@ -49,11 +49,11 @@ fun resolveUnqualifiedSuperFromExpressionContext(
                 val calleeExpression = selectorExpression.calleeExpression
                 if (calleeExpression is KtSimpleNameExpression) {
                     val calleeName = calleeExpression.getReferencedNameAsName()
-                    if (isCallingMethodOfAny(selectorExpression, calleeName)) {
-                        return resolveSupertypesForMethodOfAny(supertypes, calleeName, anyType)
+                    return if (isCallingMethodOfAny(selectorExpression, calleeName)) {
+                        resolveSupertypesForMethodOfAny(supertypes, calleeName, anyType)
                     }
                     else {
-                        return resolveSupertypesByCalleeName(supertypes, calleeName)
+                        resolveSupertypesByCalleeName(supertypes, calleeName)
                     }
                 }
             }

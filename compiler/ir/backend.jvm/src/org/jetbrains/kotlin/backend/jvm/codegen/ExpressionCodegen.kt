@@ -903,11 +903,11 @@ class ExpressionCodegen(
         }
         if (descriptor is CallableMemberDescriptor && JvmCodegenUtil.getDirectMember(descriptor) is SyntheticJavaPropertyDescriptor) {
             val propertyDescriptor = JvmCodegenUtil.getDirectMember(descriptor) as SyntheticJavaPropertyDescriptor
-            if (descriptor is PropertyGetterDescriptor) {
-                descriptor = propertyDescriptor.getMethod
+            descriptor = if (descriptor is PropertyGetterDescriptor) {
+                propertyDescriptor.getMethod
             }
             else {
-                descriptor = propertyDescriptor.setMethod!!
+                propertyDescriptor.setMethod!!
             }
         }
         return typeMapper.mapToCallableMethod(descriptor as FunctionDescriptor, isSuper)
@@ -935,11 +935,11 @@ class ExpressionCodegen(
         if (!isInline) return IrCallGenerator.DefaultCallGenerator
 
         val original = unwrapInitialSignatureDescriptor(DescriptorUtils.unwrapFakeOverride(descriptor.original as FunctionDescriptor))
-        if (isDefaultCompilation) {
-            return TODO()
+        return if (isDefaultCompilation) {
+            TODO()
         }
         else {
-            return IrInlineCodegen(this, state, original, typeParameterMappings!!, IrSourceCompilerForInline(state, element))
+            IrInlineCodegen(this, state, original, typeParameterMappings!!, IrSourceCompilerForInline(state, element))
         }
     }
 

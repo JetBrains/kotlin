@@ -70,7 +70,7 @@ abstract class ImplementAbstractMemberIntentionBase :
         val substitutor = getTypeSubstitutor(superClass.defaultType, subClass.defaultType) ?: TypeSubstitutor.EMPTY
         val signatureInSubClass = superMember.substitute(substitutor) as? CallableMemberDescriptor ?: return null
         val subMember = subClass.findCallableMemberBySignature(signatureInSubClass)
-        if (subMember?.kind?.isReal ?: false) return subMember else return null
+        return if (subMember?.kind?.isReal == true) subMember else null
     }
 
     protected abstract fun acceptSubClass(subClassDescriptor: ClassDescriptor, memberDescriptor: CallableMemberDescriptor): Boolean

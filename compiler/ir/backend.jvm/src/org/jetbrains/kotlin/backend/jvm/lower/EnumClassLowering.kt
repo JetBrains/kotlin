@@ -412,11 +412,11 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 val loweredParameter = loweredEnumConstructorParameters[expression.descriptor]
-                if (loweredParameter != null) {
-                    return IrGetValueImpl(expression.startOffset, expression.endOffset, loweredParameter, expression.origin)
+                return if (loweredParameter != null) {
+                    IrGetValueImpl(expression.startOffset, expression.endOffset, loweredParameter, expression.origin)
                 }
                 else {
-                    return expression
+                    expression
                 }
             }
 

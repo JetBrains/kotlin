@@ -147,19 +147,19 @@ class KDocNameCompletionSession(
     fun collectDescriptorsForLinkCompletion(declarationDescriptor: DeclarationDescriptor, kDocLink: KDocLink): Sequence<DeclarationDescriptor> {
         val qualifiedLink = kDocLink.getLinkText().split('.').dropLast(1)
         val nameFilter = descriptorNameFilter.toNameFilter()
-        if (qualifiedLink.isNotEmpty()) {
+        return if (qualifiedLink.isNotEmpty()) {
             val parentDescriptors = resolveKDocLink(bindingContext, resolutionFacade, declarationDescriptor, kDocLink.getTagIfSubject(), qualifiedLink)
             val childDescriptorsOfPartialLink = parentDescriptors.asSequence().flatMap {
                 val scope = getKDocLinkResolutionScope(resolutionFacade, it)
                 collectDescriptorsFromScope(scope, nameFilter, false)
             }
 
-            return (collectPackageViewDescriptors(qualifiedLink, nameFilter) + childDescriptorsOfPartialLink)
+            (collectPackageViewDescriptors(qualifiedLink, nameFilter) + childDescriptorsOfPartialLink)
         }
         else {
             val scope = getKDocLinkResolutionScope(resolutionFacade, declarationDescriptor)
-            return (collectDescriptorsFromScope(scope, nameFilter, true)
-                    + collectPackageViewDescriptors(qualifiedLink, nameFilter))
+            (collectDescriptorsFromScope(scope, nameFilter, true)
+             + collectPackageViewDescriptors(qualifiedLink, nameFilter))
         }
     }
 

@@ -433,21 +433,19 @@ class ExpressionsOfTypeProcessor(
     /**
      * Process reference to declaration whose type is our class (or our class used anywhere inside that type)
      */
-    private fun processReferenceToCallableOfOurType(reference: PsiReference): Boolean {
-        when (reference.element.language) {
-            KotlinLanguage.INSTANCE -> {
-                if (reference is KtDestructuringDeclarationReference) {
-                    // declaration usage in form of destructuring declaration entry
-                    addCallableDeclarationOfOurType(reference.element)
-                }
-                else {
-                    (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
-                }
-                return true
+    private fun processReferenceToCallableOfOurType(reference: PsiReference) = when (reference.element.language) {
+        KotlinLanguage.INSTANCE -> {
+            if (reference is KtDestructuringDeclarationReference) {
+                // declaration usage in form of destructuring declaration entry
+                addCallableDeclarationOfOurType(reference.element)
             }
-
-            else -> return false // reference in unknown language - we don't know how to handle it
+            else {
+                (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
+            }
+            true
         }
+
+        else -> false // reference in unknown language - we don't know how to handle it
     }
 
     private fun addSamInterfaceToProcess(psiClass: PsiClass) {

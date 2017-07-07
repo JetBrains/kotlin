@@ -168,9 +168,9 @@ open class KotlinUSimpleReferenceExpression(
 
         val assignment = expression.getAssignmentByLHS()
         if (assignment != null) {
-            when (assignment.operationToken) {
-                KtTokens.EQ -> return ReferenceAccess.WRITE
-                else -> return ReferenceAccess.READ_WRITE
+            return when (assignment.operationToken) {
+                KtTokens.EQ -> ReferenceAccess.WRITE
+                else -> ReferenceAccess.READ_WRITE
             }
         }
 

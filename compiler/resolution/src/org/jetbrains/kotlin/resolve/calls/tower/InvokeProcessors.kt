@@ -167,22 +167,22 @@ fun <C : Candidate> createCallTowerProcessorForExplicitInvoke(
 ): ScopeTowerProcessor<C> {
     val invokeExtensionDescriptor = scopeTower.getExtensionInvokeCandidateDescriptor(expressionForInvoke)
     if (explicitReceiver != null) {
-        if (invokeExtensionDescriptor == null) {
+        return if (invokeExtensionDescriptor == null) {
             // case 1.(foo())(), where foo() isn't extension function
-            return KnownResultProcessor(emptyList())
+            KnownResultProcessor(emptyList())
         }
         else {
-            return InvokeExtensionScopeTowerProcessor(functionContext, invokeExtensionDescriptor, explicitReceiver = explicitReceiver)
+            InvokeExtensionScopeTowerProcessor(functionContext, invokeExtensionDescriptor, explicitReceiver = explicitReceiver)
         }
     }
     else {
         val usualInvoke = ExplicitReceiverScopeTowerProcessor(scopeTower, functionContext, expressionForInvoke) { getFunctions(OperatorNameConventions.INVOKE, it) } // todo operator
 
-        if (invokeExtensionDescriptor == null) {
-            return usualInvoke
+        return if (invokeExtensionDescriptor == null) {
+            usualInvoke
         }
         else {
-            return CompositeScopeTowerProcessor(
+            CompositeScopeTowerProcessor(
                     usualInvoke,
                     InvokeExtensionScopeTowerProcessor(functionContext, invokeExtensionDescriptor, explicitReceiver = null)
             )
