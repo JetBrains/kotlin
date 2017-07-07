@@ -52,8 +52,14 @@ class SimpleBoundedValue(
     ) : this(codegen, rangeCall, lowBound, true, highBound, true)
 
     override fun putHighLow(v: InstructionAdapter, type: Type) {
-        lowBound.put(type, v)
-        highBound.put(type, v)
-        AsmUtil.swap(v, type, type)
+        if (!lowBound.canHaveSideEffects() || !highBound.canHaveSideEffects()) {
+            highBound.put(type, v)
+            lowBound.put(type, v)
+        }
+        else {
+            lowBound.put(type, v)
+            highBound.put(type, v)
+            AsmUtil.swap(v, type, type)
+        }
     }
 }
