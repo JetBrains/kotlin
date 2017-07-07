@@ -679,11 +679,13 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val representativeTarget = chunk.representativeTarget()
         val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeTarget.module)
+        val k2jsCompilerSettings = JpsKotlinCompilerSettings.getK2JsCompilerArguments(representativeTarget.module)
         if (compilerSettings.copyJsLibraryFiles) {
             val outputLibraryRuntimeDirectory = File(outputDir, compilerSettings.outputDirectoryForJsLibraryFiles).absolutePath
             val libraryFilesToCopy = arrayListOf<String>()
             JpsJsModuleUtils.getLibraryFiles(representativeTarget, libraryFilesToCopy)
-            JsLibraryUtils.copyJsFilesFromLibraries(libraryFilesToCopy, outputLibraryRuntimeDirectory)
+            JsLibraryUtils.copyJsFilesFromLibraries(libraryFilesToCopy, outputLibraryRuntimeDirectory,
+                                                    copySourceMap = k2jsCompilerSettings.sourceMap)
         }
     }
 
