@@ -78,6 +78,10 @@ abstract class CompletionSession(
         protected val toFromOriginalFileMapper: ToFromOriginalFileMapper,
         resultSet: CompletionResultSet
 ) {
+    init {
+        CompletionBenchmarkSink.instance.onCompletionStarted(this)
+    }
+
     protected val position = parameters.position
     protected val file = position.containingFile as KtFile
     protected val resolutionFacade = file.getResolutionFacade()
@@ -140,7 +144,7 @@ abstract class CompletionSession(
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
     protected val collector: LookupElementsCollector by lazy(LazyThreadSafetyMode.NONE) {
-        LookupElementsCollector(prefixMatcher, parameters, resultSet, createSorter(), (file as? KtCodeFragment)?.extraCompletionFilter)
+        LookupElementsCollector(this, prefixMatcher, parameters, resultSet, createSorter(), (file as? KtCodeFragment)?.extraCompletionFilter)
     }
 
     protected val searchScope: GlobalSearchScope = getResolveScope(parameters.originalFile as KtFile)
@@ -199,6 +203,14 @@ abstract class CompletionSession(
     }
 
     fun complete(): Boolean {
+        return try {
+            _complete()
+        } finally {
+            CompletionBenchmarkSink.instance.onCompletionEnded(this)
+        }
+    }
+
+    private fun _complete(): Boolean {
         // we restart completion when prefix becomes "get" or "set" to ensure that properties get lower priority comparing to get/set functions (see KT-12299)
         val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("get or set prefix") {
             override fun accepts(prefix: String, context: ProcessingContext?) = prefix == "get" || prefix == "set"
