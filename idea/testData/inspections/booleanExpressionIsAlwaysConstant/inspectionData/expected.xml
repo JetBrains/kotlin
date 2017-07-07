@@ -1,0 +1,117 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>7</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always false</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>8</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always false</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>17</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always false</description>
+    </problem>
+
+
+    <problem>
+        <file>test.kt</file>
+        <line>25</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always false</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>33</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always true</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>41</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always false</description>
+    </problem>
+
+
+    <problem>
+        <file>test.kt</file>
+        <line>48</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always true</description>
+    </problem>
+
+
+
+    <problem>
+        <file>test.kt</file>
+        <line>57</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always true</description>
+    </problem>
+
+
+
+    <problem>
+        <file>test.kt</file>
+        <line>66</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always false</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>72</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always true</description>
+    </problem>
+
+
+    <problem>
+        <file>test.kt</file>
+        <line>82</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always true</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>91</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Boolean expression is always constant</problem_class>
+        <description>the boolean expression is always false</description>
+    </problem>
+
+</problems>
