@@ -68,9 +68,7 @@ class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
 
         return when (diagnostic) {
             is ModuleDoesNotReadUnnamedModule ->
-                // TODO: report this error as soon as module path is used instead of class path for modular compilation
-                // JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE.on(reportOn)
-                null
+                JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE.on(reportOn)
             is ModuleDoesNotReadModule ->
                 JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE.on(reportOn, diagnostic.dependencyModuleName)
             is ModuleDoesNotExportPackage ->

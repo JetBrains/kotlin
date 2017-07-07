@@ -52,7 +52,7 @@ internal class ClasspathRootsResolver(
         private val additionalModules: List<String>,
         private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?
 ) {
-    private val javaModuleFinder = CliJavaModuleFinder(VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL))
+    val javaModuleFinder = CliJavaModuleFinder(VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL))
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
     data class RootsAndModules(val roots: List<JavaRoot>, val modules: List<JavaModule>)
