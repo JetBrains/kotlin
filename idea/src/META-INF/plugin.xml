@@ -1977,6 +1977,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RedundantUnitReturnTypeInspection"
+                     displayName="Redundant 'Unit' return type"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantIfInspection"
                      displayName="Redundant 'if' statement"
                      groupPath="Kotlin"
