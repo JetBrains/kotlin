@@ -1,9 +1,9 @@
 // WITH_RUNTIME
 
-val order = StringBuilder()
+var order = StringBuilder()
 
 inline fun expectOrder(at: String, expected: String, body: () -> Unit) {
-    order.setLength(0)
+    order = StringBuilder() // have to do that in order to run this test in JS
     body()
     if (order.toString() != expected) throw AssertionError("$at: expected: $expected, actual: $order")
 }
