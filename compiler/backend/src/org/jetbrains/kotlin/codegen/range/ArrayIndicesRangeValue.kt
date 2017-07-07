@@ -25,19 +25,21 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class ArrayIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
     private val expectedReceiverType: KotlinType = ExpressionCodegen.getExpectedReceiverType(rangeCall)
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
-            SimpleBoundedValue(
-                    codegen, rangeCall,
-                    lowBound = StackValue.constant(0, asmElementType),
-                    highBound = StackValue.operation(Type.INT_TYPE) { v ->
-                        codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), v)
-                        v.arraylength()
-                    }
-            )
+            object : AbstractBoundedValue(codegen, rangeCall) {
+                override fun putHighLow(v: InstructionAdapter, type: Type) {
+                    codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), v)
+                    v.arraylength()
+                    StackValue.coerce(Type.INT_TYPE, type, v)
+
+                    StackValue.constant(0, asmElementType).put(type, v)
+                }
+            }
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInArrayIndicesRangeLoopGenerator(codegen, forExpression, rangeCall)
