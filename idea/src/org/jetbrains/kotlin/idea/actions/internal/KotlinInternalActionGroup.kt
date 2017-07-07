@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,13 @@
 
 package org.jetbrains.kotlin.idea.actions.internal
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.ToggleAction
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 
-class KotlinInternalModeToggleAction: ToggleAction("Kotlin Internal Mode", "Show debug highlighting", null) {
-    override fun isSelected(e: AnActionEvent?): Boolean {
-        return KotlinInternalMode.enabled
-    }
+class KotlinInternalActionGroup : DefaultActionGroup() {
 
-    override fun setSelected(e: AnActionEvent?, state: Boolean) {
-        KotlinInternalMode.enabled = state
-
-        DaemonCodeAnalyzer.getInstance(e!!.project)!!.settingsChanged()
+    override fun update(e: AnActionEvent) {
+        super.update(e)
+        e.presentation.isEnabledAndVisible = KotlinInternalMode.enabled
     }
 }
