@@ -224,6 +224,25 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @Test
+    fun testKt18799() {
+        val project = Project("kt18799", GRADLE_VERSION, directoryPrefix = "kapt2")
+
+        project.build("kaptKotlin") {
+            assertSuccessful()
+        }
+
+        project.projectDir.getFileByName("com.b.A.kt").modify {
+            val line = "@Factory(factoryClass = CLASS_NAME, something = arrayOf(Test()))"
+            assert(line in it)
+            it.replace(line, "@Factory(factoryClass = CLASS_NAME)")
+        }
+
+        project.build("kaptKotlin") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
     fun testKaptClassesDirSync() {
         val project = Project("autoService", GRADLE_VERSION, directoryPrefix = "kapt2")
 
