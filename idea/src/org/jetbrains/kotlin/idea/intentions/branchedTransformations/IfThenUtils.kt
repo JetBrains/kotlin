@@ -262,10 +262,4 @@ internal fun KtExpression.lineCount(): Int {
 
 internal fun KtExpression.isOneLiner(): Boolean = lineCount() == 1
 
-internal fun KtExpression.isIfBranch(): Boolean {
-    if (parent is KtContainerNodeForControlStructureBody) {
-        val grandParent = parent.parent
-        if (grandParent is KtIfExpression && grandParent.`else` == this) return true
-    }
-    return false
-}
+internal fun KtExpression.isElseIf() = parent.node.elementType == KtNodeTypes.ELSE

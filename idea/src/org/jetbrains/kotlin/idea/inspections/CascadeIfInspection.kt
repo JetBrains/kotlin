@@ -22,7 +22,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfToWhenIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isIfBranch
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -44,7 +44,7 @@ class CascadeIfInspection : AbstractKotlinInspection() {
                         it.lastBlockStatementOrThis() is KtIfExpression
                     }) return
 
-                    if (expression.isIfBranch()) return
+                    if (expression.isElseIf()) return
 
                     if (expression.anyDescendantOfType<KtExpressionWithLabel> {
                         it is KtBreakExpression || it is KtContinueExpression

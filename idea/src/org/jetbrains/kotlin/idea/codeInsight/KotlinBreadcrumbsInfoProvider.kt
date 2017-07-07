@@ -25,6 +25,7 @@ import com.intellij.usageView.UsageViewShortNameLocation
 import com.intellij.xml.breadcrumbs.BreadcrumbsInfoProvider
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.unwrapIfLabeled
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
@@ -468,8 +469,6 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
         }
 
         val ellipsis = "${Typography.ellipsis}"
-
-        fun KtIfExpression.isElseIf() = parent.node.elementType == KtNodeTypes.ELSE
 
         fun KtContainerNode.bodyOwner(): KtExpression? {
             return if (node.elementType == KtNodeTypes.BODY) parent as KtExpression else null

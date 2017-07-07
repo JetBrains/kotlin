@@ -20,7 +20,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isIfBranch
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -32,7 +32,7 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
             object : KtVisitorVoid() {
                 private fun visitIfOrWhen(expression: KtExpression, keyword: PsiElement) {
                     if (expression.lineCount() > LINES_LIMIT) return
-                    if (expression.isIfBranch()) return
+                    if (expression.isElseIf()) return
 
                     val foldableReturns = BranchedFoldingUtils.getFoldableReturns(expression)
                     if (foldableReturns?.isNotEmpty() == true) {
