@@ -10,7 +10,6 @@ class Foo {
             arguments = map(arg)
         }
 
-        private fun map(arg: String) =
-                mapOf(Foo::arguments.name to arg)
+        private fun map(arg: String) = mapOf(Foo::arguments.name to arg)
     }
 }

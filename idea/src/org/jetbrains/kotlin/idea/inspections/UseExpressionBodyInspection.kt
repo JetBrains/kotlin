@@ -172,6 +172,14 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
         declaration.addBefore(factory.createEQ(), body)
         val newBody = body.replaced(value)
 
+        commentSaver.restore(newBody)
+
+        if (deleteTypeHandler != null && declaration is KtCallableDeclaration) {
+            if (declaration.hasDeclaredReturnType() && declaration.canOmitDeclaredType(newBody, canChangeTypeToSubtype = true)) {
+                deleteTypeHandler(declaration)
+            }
+        }
+
         val editor = declaration.findExistingEditor()
         if (editor != null) {
             val startOffset = newBody.startOffset
@@ -180,14 +188,6 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
             val rightMargin = editor.settings.getRightMargin(editor.project)
             if (document.getLineEndOffset(startLine) - document.getLineStartOffset(startLine) >= rightMargin) {
                 declaration.addBefore(factory.createNewLine(), newBody)
-            }
-        }
-
-        commentSaver.restore(newBody)
-
-        if (deleteTypeHandler != null && declaration is KtCallableDeclaration) {
-            if (declaration.hasDeclaredReturnType() && declaration.canOmitDeclaredType(newBody, canChangeTypeToSubtype = true)) {
-                deleteTypeHandler(declaration)
             }
         }
     }
