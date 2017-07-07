@@ -20,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -187,14 +188,26 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         for (module in chunk) {
-            for (javaRootPath in module.getJavaSourceRoots()) {
-                configuration.addJavaSourceRoot(File(javaRootPath.path), javaRootPath.packagePrefix)
+            for ((path, packagePrefix) in module.getJavaSourceRoots()) {
+                configuration.addJavaSourceRoot(File(path), packagePrefix)
+            }
+        }
+
+        val isJava9Module = chunk.any { module ->
+            module.getJavaSourceRoots().any { (path, packagePrefix) ->
+                val file = File(path)
+                packagePrefix == null &&
+                (file.name == PsiJavaModule.MODULE_INFO_FILE ||
+                 (file.isDirectory && file.listFiles().any { it.name == PsiJavaModule.MODULE_INFO_FILE }))
             }
         }
 
         for (module in chunk) {
             for (classpathRoot in module.getClasspathRoots()) {
-                configuration.addJvmClasspathRoot(File(classpathRoot))
+                configuration.add(
+                        JVMConfigurationKeys.CONTENT_ROOTS,
+                        if (isJava9Module) JvmModulePathRoot(File(classpathRoot)) else JvmClasspathRoot(File(classpathRoot))
+                )
             }
         }
 
