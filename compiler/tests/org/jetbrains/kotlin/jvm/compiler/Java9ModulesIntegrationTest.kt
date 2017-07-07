@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.jar.Manifest
@@ -33,7 +34,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     ): File {
         val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return File("<test-skipped>")
 
-        val paths = modulePath.joinToString(separator = File.pathSeparator) { it.path }
+        val paths = (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(separator = File.pathSeparator) { it.path }
 
         val kotlinOptions = mutableListOf(
                 "-jdk-home", jdk9Home.path,
@@ -244,5 +245,11 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val d1 = module("dependency1")
         val d2 = module("dependency2")
         module("main", listOf(d1, d2))
+    }
+
+    fun testDependencyOnStdlib() {
+        module("unnamed")
+        module("namedWithExplicitDependency")
+        module("namedWithoutExplicitDependency")
     }
 }

@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
-import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
@@ -106,11 +103,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
-        val classpath = getClasspath(paths, arguments)
-        configuration.addJvmClasspathRoots(classpath)
-        for (modularRoot in arguments.javaModulePath?.split(File.pathSeparatorChar).orEmpty()) {
-            configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(modularRoot)))
-        }
+        configureContentRoots(paths, arguments, configuration)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
@@ -383,21 +376,35 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             arguments.declarationsOutputPath?.let { configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
         }
 
-        private fun getClasspath(paths: KotlinPaths, arguments: K2JVMCompilerArguments): List<File> {
-            val classpath = arrayListOf<File>()
-            if (arguments.classpath != null) {
-                classpath.addAll(arguments.classpath.split(File.pathSeparatorChar).map(::File))
+        private fun configureContentRoots(paths: KotlinPaths, arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration) {
+            for (path in arguments.classpath?.split(File.pathSeparatorChar).orEmpty()) {
+                configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(path)))
             }
+
+            for (modularRoot in arguments.javaModulePath?.split(File.pathSeparatorChar).orEmpty()) {
+                configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(modularRoot)))
+            }
+
+            val isModularJava = configuration.get(JVMConfigurationKeys.JDK_HOME).let { it != null && CoreJrtFileSystem.isModularJdk(it) }
+            fun addRoot(moduleName: String, file: File) {
+                if (isModularJava) {
+                    configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
+                    configuration.add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, moduleName)
+                }
+                else {
+                    configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
+                }
+            }
+
             if (!arguments.noStdlib) {
-                classpath.add(paths.runtimePath)
-                classpath.add(paths.scriptRuntimePath)
+                addRoot("kotlin.stdlib", paths.stdlibPath)
+                addRoot("kotlin.script.runtime", paths.scriptRuntimePath)
             }
             // "-no-stdlib" implies "-no-reflect": otherwise we would be able to transitively read stdlib classes through kotlin-reflect,
             // which is likely not what user wants since s/he manually provided "-no-stdlib"
             if (!arguments.noReflect && !arguments.noStdlib) {
-                classpath.add(paths.reflectPath)
+                addRoot("kotlin.reflect", paths.reflectPath)
             }
-            return classpath
         }
 
         private fun setupJdkClasspathRoots(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration, messageCollector: MessageCollector): ExitCode {

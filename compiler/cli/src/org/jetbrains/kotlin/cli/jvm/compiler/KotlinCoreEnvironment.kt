@@ -229,7 +229,8 @@ class KotlinCoreEnvironment private constructor(
 
         project.registerService(
                 JavaModuleResolver::class.java,
-                CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules)
+                CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules,
+                                      classpathRootsResolver.javaModuleFinder.systemModules.toList())
         )
 
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
