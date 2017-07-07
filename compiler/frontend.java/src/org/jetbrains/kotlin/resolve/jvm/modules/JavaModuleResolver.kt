@@ -19,12 +19,16 @@ package org.jetbrains.kotlin.resolve.jvm.modules
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.name.FqName
 
 interface JavaModuleResolver {
-    val moduleGraph: JavaModuleGraph
+    fun checkAccessibility(fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?): AccessError?
 
-    // For any .java, .kt or .class file in the project, returns the corresponding module or null if there's none
-    fun findJavaModule(file: VirtualFile): JavaModule?
+    sealed class AccessError {
+        object ModuleDoesNotReadUnnamedModule : AccessError()
+        data class ModuleDoesNotReadModule(val dependencyModuleName: String) : AccessError()
+        data class ModuleDoesNotExportPackage(val dependencyModuleName: String) : AccessError()
+    }
 
     companion object SERVICE {
         fun getInstance(project: Project): JavaModuleResolver =
