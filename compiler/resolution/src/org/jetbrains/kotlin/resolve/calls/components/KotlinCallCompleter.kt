@@ -120,7 +120,7 @@ class KotlinCallCompleter(
             descriptorWithFreshTypes is PropertyDescriptor && descriptorWithFreshTypes.typeParameters.isNotEmpty() ->
                 // this code is very suspicious. Now it is very useful for BE, because they cannot do nothing with captured types,
                 // but it seems like temporary solution.
-                descriptorWithFreshTypes.substituteAndApproximateCapturedTypes(substitutor)!!
+                descriptorWithFreshTypes.substituteAndApproximateCapturedTypes(substitutor)
             else ->
                 descriptorWithFreshTypes
         }

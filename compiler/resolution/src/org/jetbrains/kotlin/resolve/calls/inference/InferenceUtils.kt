@@ -36,7 +36,7 @@ val CallableDescriptor.returnTypeOrNothing: UnwrappedType
 
 fun TypeSubstitutor.substitute(type: UnwrappedType): UnwrappedType = safeSubstitute(type, Variance.INVARIANT).unwrap()
 
-fun CallableDescriptor.substitute(substitutor: NewTypeSubstitutor): CallableDescriptor? {
+fun CallableDescriptor.substitute(substitutor: NewTypeSubstitutor): CallableDescriptor {
     val wrappedSubstitution = object : TypeSubstitution() {
         override fun get(key: KotlinType): TypeProjection? = null
         override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) = substitutor.safeSubstitute(topLevelType.unwrap())
@@ -44,7 +44,7 @@ fun CallableDescriptor.substitute(substitutor: NewTypeSubstitutor): CallableDesc
     return substitute(TypeSubstitutor.create(wrappedSubstitution))
 }
 
-fun CallableDescriptor.substituteAndApproximateCapturedTypes(substitutor: NewTypeSubstitutor): CallableDescriptor? {
+fun CallableDescriptor.substituteAndApproximateCapturedTypes(substitutor: NewTypeSubstitutor): CallableDescriptor {
     val wrappedSubstitution = object : TypeSubstitution() {
         override fun get(key: KotlinType): TypeProjection? = null
 
@@ -58,4 +58,4 @@ fun CallableDescriptor.substituteAndApproximateCapturedTypes(substitutor: NewTyp
     return substitute(TypeSubstitutor.create(wrappedSubstitution))
 }
 
-fun <E> MutableList<E>.trimToSize(newSize: Int) = subList(newSize, size).clear()
+internal fun <E> MutableList<E>.trimToSize(newSize: Int) = subList(newSize, size).clear()
