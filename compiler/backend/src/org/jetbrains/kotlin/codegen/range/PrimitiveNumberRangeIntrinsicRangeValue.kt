@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForRangeContainsCall
 import org.jetbrains.kotlin.codegen.range.inExpression.CallBasedInExpressionGenerator
-import org.jetbrains.kotlin.codegen.range.inExpression.InContinuousRangeExpressionGenerator
+import org.jetbrains.kotlin.codegen.range.inExpression.InPrimitiveContinuousRangeExpressionGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -42,7 +42,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(rangeCall: ResolvedCall<o
     ): InExpressionGenerator {
         val comparisonGenerator = getComparisonGeneratorForRangeContainsCall(codegen, resolvedCall)
         return if (comparisonGenerator != null)
-            InContinuousRangeExpressionGenerator(operatorReference, getBoundedValue(codegen), comparisonGenerator)
+            InPrimitiveContinuousRangeExpressionGenerator(operatorReference, getBoundedValue(codegen), comparisonGenerator)
         else
             CallBasedInExpressionGenerator(codegen, operatorReference)
     }
