@@ -92,7 +92,12 @@ private fun KotlinType.hasAnnotationMaybeExternal(fqName: FqName) = with (annota
     findAnnotation(fqName) ?: findExternalAnnotation(fqName)
 } != null
 
-fun KotlinType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Boolean): Boolean {
+fun KotlinType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Boolean, allowIntersections: Boolean = false): Boolean {
+    if (constructor is IntersectionTypeConstructor) {
+        if (!allowIntersections) return false
+        return constructor.supertypes.all { it.isResolvableInScope(scope, checkTypeParameters, allowIntersections) }
+    }
+
     if (canBeReferencedViaImport()) return true
 
     val descriptor = constructor.declarationDescriptor
@@ -116,10 +121,14 @@ fun KotlinType.anonymousObjectSuperTypeOrNull(): KotlinType? {
     return null
 }
 
-fun KotlinType.getResolvableApproximations(scope: LexicalScope?, checkTypeParameters: Boolean): Sequence<KotlinType> {
+fun KotlinType.getResolvableApproximations(
+        scope: LexicalScope?,
+        checkTypeParameters: Boolean,
+        allowIntersections: Boolean = false
+): Sequence<KotlinType> {
     return (listOf(this) + TypeUtils.getAllSupertypes(this))
             .asSequence()
-            .filter { it.isResolvableInScope(scope, checkTypeParameters) }
+            .filter { it.isResolvableInScope(scope, checkTypeParameters, allowIntersections) }
             .mapNotNull mapArgs@ {
                 val resolvableArgs = it.arguments.filterTo(SmartSet.create()) { it.type.isResolvableInScope(scope, checkTypeParameters) }
                 if (resolvableArgs.containsAll(it.arguments)) return@mapArgs it

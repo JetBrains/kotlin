@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeIn
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
@@ -58,6 +61,17 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
         }
     }
 
+    private fun getExpectedUpperBound(element: KtUserType, context: BindingContext): KotlinType? {
+        val projection = (element.parent as? KtTypeReference)?.parent as? KtTypeProjection ?: return null
+        val argumentList = projection.parent as? KtTypeArgumentList ?: return null
+        val index = argumentList.arguments.indexOf(projection)
+        val callElement = argumentList.parent as? KtCallElement ?: return null
+        val resolvedCall = callElement.getResolvedCall(context) ?: return null
+        val typeParameterDescriptor = resolvedCall.candidateDescriptor.typeParameters.getOrNull(index) ?: return null
+        if (typeParameterDescriptor.upperBounds.isEmpty()) return null
+        return TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor)
+    }
+
     override fun extractFixData(element: KtUserType, diagnostic: Diagnostic): ClassInfo? {
         val name = element.referenceExpression?.getReferencedName() ?: return null
         if (element.parent.parent is KtConstructorCalleeExpression) return null
@@ -69,13 +83,14 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
         val qualifierDescriptor = qualifier?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
         val targetParent = getTargetParentByQualifier(file, qualifier != null, qualifierDescriptor) ?: return null
+        val expectedUpperBound = getExpectedUpperBound(element, context)
 
         val anyType = module.builtIns.anyType
 
         return ClassInfo(
                 name = name,
                 targetParent = targetParent,
-                expectedTypeInfo = TypeInfo.Empty,
+                expectedTypeInfo = expectedUpperBound?.let { TypeInfo.ByType(it, Variance.INVARIANT) } ?: TypeInfo.Empty,
                 typeArguments = element.typeArgumentsAsTypes.map {
                     if (it != null) TypeInfo(it, Variance.INVARIANT) else TypeInfo(anyType, Variance.INVARIANT)
                 }
