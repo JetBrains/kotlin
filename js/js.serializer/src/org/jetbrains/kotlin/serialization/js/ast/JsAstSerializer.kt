@@ -547,11 +547,15 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         KotlinInlineStrategy.NOT_INLINE -> InlineStrategy.NOT_INLINE
     }
 
-    private fun serialize(name: JsName) = nameMap.getOrPut(name) {
-        val result = nameTableBuilder.entryCount
+    private fun serialize(name: JsName): Int = nameMap.getOrPut(name) {
         val builder = Name.newBuilder()
         builder.identifier = serialize(name.ident)
         builder.temporary = name.isTemporary
+        name.localAlias?.let {
+            builder.localNameId = serialize(it)
+        }
+
+        val result = nameTableBuilder.entryCount
         nameTableBuilder.addEntry(builder)
         result
     }

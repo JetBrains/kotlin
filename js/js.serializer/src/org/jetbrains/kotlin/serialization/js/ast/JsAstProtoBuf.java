@@ -34676,6 +34676,15 @@ public final class JsAstProtoBuf {
      * <code>optional int32 identifier = 2;</code>
      */
     int getIdentifier();
+
+    /**
+     * <code>optional int32 local_name_id = 3;</code>
+     */
+    boolean hasLocalNameId();
+    /**
+     * <code>optional int32 local_name_id = 3;</code>
+     */
+    int getLocalNameId();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Name}
@@ -34735,6 +34744,11 @@ public final class JsAstProtoBuf {
             case 16: {
               bitField0_ |= 0x00000002;
               identifier_ = input.readInt32();
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              localNameId_ = input.readInt32();
               break;
             }
           }
@@ -34801,9 +34815,25 @@ public final class JsAstProtoBuf {
       return identifier_;
     }
 
+    public static final int LOCAL_NAME_ID_FIELD_NUMBER = 3;
+    private int localNameId_;
+    /**
+     * <code>optional int32 local_name_id = 3;</code>
+     */
+    public boolean hasLocalNameId() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional int32 local_name_id = 3;</code>
+     */
+    public int getLocalNameId() {
+      return localNameId_;
+    }
+
     private void initFields() {
       temporary_ = false;
       identifier_ = 0;
+      localNameId_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -34828,6 +34858,9 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt32(2, identifier_);
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeInt32(3, localNameId_);
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -34844,6 +34877,10 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(2, identifier_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(3, localNameId_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -34943,6 +34980,8 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         identifier_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
+        localNameId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -34974,6 +35013,10 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.identifier_ = identifier_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.localNameId_ = localNameId_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -34985,6 +35028,9 @@ public final class JsAstProtoBuf {
         }
         if (other.hasIdentifier()) {
           setIdentifier(other.getIdentifier());
+        }
+        if (other.hasLocalNameId()) {
+          setLocalNameId(other.getLocalNameId());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -35078,6 +35124,38 @@ public final class JsAstProtoBuf {
       public Builder clearIdentifier() {
         bitField0_ = (bitField0_ & ~0x00000002);
         identifier_ = 0;
+        
+        return this;
+      }
+
+      private int localNameId_ ;
+      /**
+       * <code>optional int32 local_name_id = 3;</code>
+       */
+      public boolean hasLocalNameId() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional int32 local_name_id = 3;</code>
+       */
+      public int getLocalNameId() {
+        return localNameId_;
+      }
+      /**
+       * <code>optional int32 local_name_id = 3;</code>
+       */
+      public Builder setLocalNameId(int value) {
+        bitField0_ |= 0x00000004;
+        localNameId_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 local_name_id = 3;</code>
+       */
+      public Builder clearLocalNameId() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        localNameId_ = 0;
         
         return this;
       }

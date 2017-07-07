@@ -46984,6 +46984,15 @@ public final class DebugJsAstProtoBuf {
      * <code>optional int32 identifier = 2;</code>
      */
     int getIdentifier();
+
+    /**
+     * <code>optional int32 local_name_id = 3;</code>
+     */
+    boolean hasLocalNameId();
+    /**
+     * <code>optional int32 local_name_id = 3;</code>
+     */
+    int getLocalNameId();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Name}
@@ -47045,6 +47054,11 @@ public final class DebugJsAstProtoBuf {
             case 16: {
               bitField0_ |= 0x00000002;
               identifier_ = input.readInt32();
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              localNameId_ = input.readInt32();
               break;
             }
           }
@@ -47117,9 +47131,25 @@ public final class DebugJsAstProtoBuf {
       return identifier_;
     }
 
+    public static final int LOCAL_NAME_ID_FIELD_NUMBER = 3;
+    private int localNameId_;
+    /**
+     * <code>optional int32 local_name_id = 3;</code>
+     */
+    public boolean hasLocalNameId() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional int32 local_name_id = 3;</code>
+     */
+    public int getLocalNameId() {
+      return localNameId_;
+    }
+
     private void initFields() {
       temporary_ = false;
       identifier_ = 0;
+      localNameId_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -47144,6 +47174,9 @@ public final class DebugJsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt32(2, identifier_);
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeInt32(3, localNameId_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -47160,6 +47193,10 @@ public final class DebugJsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(2, identifier_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(3, localNameId_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -47282,6 +47319,8 @@ public final class DebugJsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         identifier_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
+        localNameId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -47318,6 +47357,10 @@ public final class DebugJsAstProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.identifier_ = identifier_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.localNameId_ = localNameId_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -47339,6 +47382,9 @@ public final class DebugJsAstProtoBuf {
         }
         if (other.hasIdentifier()) {
           setIdentifier(other.getIdentifier());
+        }
+        if (other.hasLocalNameId()) {
+          setLocalNameId(other.getLocalNameId());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -47431,6 +47477,38 @@ public final class DebugJsAstProtoBuf {
       public Builder clearIdentifier() {
         bitField0_ = (bitField0_ & ~0x00000002);
         identifier_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int localNameId_ ;
+      /**
+       * <code>optional int32 local_name_id = 3;</code>
+       */
+      public boolean hasLocalNameId() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional int32 local_name_id = 3;</code>
+       */
+      public int getLocalNameId() {
+        return localNameId_;
+      }
+      /**
+       * <code>optional int32 local_name_id = 3;</code>
+       */
+      public Builder setLocalNameId(int value) {
+        bitField0_ |= 0x00000004;
+        localNameId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 local_name_id = 3;</code>
+       */
+      public Builder clearLocalNameId() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        localNameId_ = 0;
         onChanged();
         return this;
       }
@@ -48926,18 +49004,18 @@ public final class DebugJsAstProtoBuf {
       " \002(\005\022\025\n\rexpression_id\030\002 \002(\005\"\034\n\013StringTab" +
       "le\022\r\n\005entry\030\001 \003(\t\"K\n\tNameTable\022>\n\005entry\030" +
       "\001 \003(\0132/.org.jetbrains.kotlin.serializati",
-      "on.js.ast.Name\"-\n\004Name\022\021\n\ttemporary\030\001 \002(" +
-      "\010\022\022\n\nidentifier\030\002 \001(\005\"\346\001\n\005Chunk\022L\n\014strin" +
-      "g_table\030\001 \002(\01326.org.jetbrains.kotlin.ser" +
-      "ialization.js.ast.StringTable\022H\n\nname_ta" +
-      "ble\030\002 \002(\01324.org.jetbrains.kotlin.seriali" +
-      "zation.js.ast.NameTable\022E\n\010fragment\030\003 \002(" +
-      "\01323.org.jetbrains.kotlin.serialization.j" +
-      "s.ast.Fragment*@\n\013SideEffects\022\021\n\rAFFECTS" +
-      "_STATE\020\001\022\024\n\020DEPENDS_ON_STATE\020\002\022\010\n\004PURE\020\003" +
-      "*?\n\016InlineStrategy\022\017\n\013AS_FUNCTION\020\000\022\014\n\010I",
-      "N_PLACE\020\001\022\016\n\nNOT_INLINE\020\002B\024B\022DebugJsAstP" +
-      "rotoBuf"
+      "on.js.ast.Name\"D\n\004Name\022\021\n\ttemporary\030\001 \002(" +
+      "\010\022\022\n\nidentifier\030\002 \001(\005\022\025\n\rlocal_name_id\030\003" +
+      " \001(\005\"\346\001\n\005Chunk\022L\n\014string_table\030\001 \002(\01326.o" +
+      "rg.jetbrains.kotlin.serialization.js.ast" +
+      ".StringTable\022H\n\nname_table\030\002 \002(\01324.org.j" +
+      "etbrains.kotlin.serialization.js.ast.Nam" +
+      "eTable\022E\n\010fragment\030\003 \002(\01323.org.jetbrains" +
+      ".kotlin.serialization.js.ast.Fragment*@\n" +
+      "\013SideEffects\022\021\n\rAFFECTS_STATE\020\001\022\024\n\020DEPEN" +
+      "DS_ON_STATE\020\002\022\010\n\004PURE\020\003*?\n\016InlineStrateg",
+      "y\022\017\n\013AS_FUNCTION\020\000\022\014\n\010IN_PLACE\020\001\022\016\n\nNOT_" +
+      "INLINE\020\002B\024B\022DebugJsAstProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -49274,7 +49352,7 @@ public final class DebugJsAstProtoBuf {
     internal_static_org_jetbrains_kotlin_serialization_js_ast_Name_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_js_ast_Name_descriptor,
-        new java.lang.String[] { "Temporary", "Identifier", });
+        new java.lang.String[] { "Temporary", "Identifier", "LocalNameId", });
     internal_static_org_jetbrains_kotlin_serialization_js_ast_Chunk_descriptor =
       getDescriptor().getMessageTypes().get(54);
     internal_static_org_jetbrains_kotlin_serialization_js_ast_Chunk_fieldAccessorTable = new

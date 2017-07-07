@@ -432,6 +432,9 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             else {
                 JsDynamicScope.declareName(identifier)
             }
+            if (nameProto.hasLocalNameId()) {
+                name.localAlias = deserializeName(nameProto.localNameId)
+            }
             nameCache[id] = name
             name
         }
