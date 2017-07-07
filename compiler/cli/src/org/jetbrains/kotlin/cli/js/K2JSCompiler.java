@@ -162,7 +162,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        AnalyzerWithCompilerReport analyzerWithCompilerReport = analyzeAndReportErrors(messageCollector, sourcesFiles, config);
+        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
+        analyzerWithCompilerReport.analyzeAndReport(sourcesFiles, () -> TopDownAnalyzerFacadeForJS.analyzeFiles(sourcesFiles, config));
         if (analyzerWithCompilerReport.hasErrors()) {
             return COMPILATION_ERROR;
         }
@@ -278,24 +279,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return file.getName() + " (no virtual file)";
         });
         messageCollector.report(LOGGING, "Compiling source files: " + StringsKt.join(fileNames, ", "), null);
-    }
-
-    private static AnalyzerWithCompilerReport analyzeAndReportErrors(
-            @NotNull MessageCollector messageCollector, @NotNull List<KtFile> sources, @NotNull JsConfig config
-    ) {
-        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
-        analyzerWithCompilerReport.analyzeAndReport(sources, new AnalyzerWithCompilerReport.Analyzer() {
-            @NotNull
-            @Override
-            public AnalysisResult analyze() {
-                return TopDownAnalyzerFacadeForJS.analyzeFiles(sources, config);
-            }
-
-            @Override
-            public void reportEnvironmentErrors() {
-            }
-        });
-        return analyzerWithCompilerReport;
     }
 
     @Override
