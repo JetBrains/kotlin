@@ -87,7 +87,6 @@ public class ValueArgumentsToParametersMapper {
         private final Map<Name,ValueParameterDescriptor> parameterByName;
         private Map<Name,ValueParameterDescriptor> parameterByNameInOverriddenMethods;
 
-        private final Set<ValueArgument> unmappedArguments = Sets.newHashSet();
         private final Map<ValueParameterDescriptor, VarargValueArgument> varargs = Maps.newHashMap();
         private final Set<ValueParameterDescriptor> usedParameters = Sets.newHashSet();
         private Status status = OK;
@@ -164,7 +163,6 @@ public class ValueArgumentsToParametersMapper {
                 }
                 else {
                     report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidateCall.getCandidateDescriptor()));
-                    unmappedArguments.add(argument);
                     setStatus(WEAK_ERROR);
                 }
             }
@@ -218,7 +216,6 @@ public class ValueArgumentsToParametersMapper {
                     if (nameReference != null) {
                         report(NAMED_PARAMETER_NOT_FOUND.on(nameReference, nameReference));
                     }
-                    unmappedArguments.add(argument);
                     setStatus(WEAK_ERROR);
                 }
                 else {
@@ -229,7 +226,6 @@ public class ValueArgumentsToParametersMapper {
                         if (nameReference != null) {
                             report(ARGUMENT_PASSED_TWICE.on(nameReference));
                         }
-                        unmappedArguments.add(argument);
                         setStatus(WEAK_ERROR);
                     }
                     else {
@@ -244,7 +240,6 @@ public class ValueArgumentsToParametersMapper {
             public ProcessorState processPositionedArgument(@NotNull ValueArgument argument) {
                 report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(argument.asElement()));
                 setStatus(WEAK_ERROR);
-                unmappedArguments.add(argument);
 
                 return positionedThenNamed;
             }

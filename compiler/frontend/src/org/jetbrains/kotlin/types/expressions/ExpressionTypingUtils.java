@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,18 +108,31 @@ public class ExpressionTypingUtils {
             @NotNull VariableDescriptor variableDescriptor
     ) {
         VariableDescriptor oldDescriptor = ScopeUtilsKt.findLocalVariable(scope, variableDescriptor.getName());
+        if (oldDescriptor == null) return;
 
-        if (oldDescriptor != null && isLocal(variableDescriptor.getContainingDeclaration(), oldDescriptor)) {
-            PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
-            if (declaration != null) {
-                if (declaration instanceof KtDestructuringDeclarationEntry && declaration.getParent().getParent() instanceof KtParameter) {
-                    // foo { a, (a, b) -> } -- do not report NAME_SHADOWING on the second 'a', because REDECLARATION must be reported here
-                    PsiElement oldElement = DescriptorToSourceUtils.descriptorToDeclaration(oldDescriptor);
+        DeclarationDescriptor variableContainingDeclaration = variableDescriptor.getContainingDeclaration();
+        if (!isLocal(variableContainingDeclaration, oldDescriptor)) return;
 
-                    if (oldElement != null && oldElement.getParent().equals(declaration.getParent().getParent().getParent())) return;
-                }
-                trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
+        if (variableDescriptor instanceof ParameterDescriptor) {
+            if (!isFunctionLiteral(variableContainingDeclaration)) {
+                return;
             }
+
+            // parameter of lambda
+            if (variableContainingDeclaration.getContainingDeclaration() != oldDescriptor.getContainingDeclaration()) {
+                return;
+            }
+        }
+
+        PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
+        if (declaration != null) {
+            if (declaration instanceof KtDestructuringDeclarationEntry && declaration.getParent().getParent() instanceof KtParameter) {
+                // foo { a, (a, b) -> } -- do not report NAME_SHADOWING on the second 'a', because REDECLARATION must be reported here
+                PsiElement oldElement = DescriptorToSourceUtils.descriptorToDeclaration(oldDescriptor);
+
+                if (oldElement != null && oldElement.getParent().equals(declaration.getParent().getParent().getParent())) return;
+            }
+            trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
         }
     }
 

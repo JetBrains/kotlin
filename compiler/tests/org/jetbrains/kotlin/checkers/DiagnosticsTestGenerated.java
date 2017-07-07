@@ -17607,6 +17607,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("functionExpectedWhenSeveralInvokesExist.kt")
+                public void testFunctionExpectedWhenSeveralInvokesExist() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/functionExpectedWhenSeveralInvokesExist.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("implicitInvoke.kt")
                 public void testImplicitInvoke() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/implicitInvoke.kt");
@@ -17694,6 +17700,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("kt9805.kt")
                 public void testKt9805() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/kt9805.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("reportFunctionExpectedWhenOneInvokeExist.kt")
+                public void testReportFunctionExpectedWhenOneInvokeExist() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/reportFunctionExpectedWhenOneInvokeExist.kt");
                     doTest(fileName);
                 }
 
@@ -19400,6 +19412,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
         public static class Shadowing extends AbstractDiagnosticsTest {
             public void testAllFilesPresentInShadowing() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/shadowing"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("noNameShadowingForSimpleParameters.kt")
+            public void testNoNameShadowingForSimpleParameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/shadowing/noNameShadowingForSimpleParameters.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("ShadowLambdaParameter.kt")

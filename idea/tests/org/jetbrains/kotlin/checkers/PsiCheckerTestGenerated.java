@@ -992,6 +992,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("instantiationOfInnerClassInQualifiedForm.kt")
+        public void testInstantiationOfInnerClassInQualifiedForm() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/instantiationOfInnerClassInQualifiedForm.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noSubstitutedTypeParameter.kt")
         public void testNoSubstitutedTypeParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/noSubstitutedTypeParameter.kt");
