@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.JarUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -34,7 +33,8 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
@@ -59,14 +59,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
-import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
-import java.util.jar.Attributes
 
 object KotlinToJVMBytecodeCompiler {
 
@@ -365,30 +362,24 @@ object KotlinToJVMBytecodeCompiler {
 
         val analysisStart = PerformanceCounter.currentTime()
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
-        analyzerWithCompilerReport.analyzeAndReport(sourceFiles, object : AnalyzerWithCompilerReport.Analyzer {
-            override fun analyze(): AnalysisResult {
-                val project = environment.project
-                val moduleOutputs = environment.configuration.get(JVMConfigurationKeys.MODULES)?.mapNotNull { module ->
-                    environment.findLocalFile(module.getOutputDirectory())
-                }.orEmpty()
-                val sourcesOnly = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, sourceFiles)
-                // To support partial and incremental compilation, we add the scope which contains binaries from output directories
-                // of the compiled modules (.class) to the list of scopes of the source module
-                val scope = if (moduleOutputs.isEmpty()) sourcesOnly else sourcesOnly.uniteWith(DirectoriesScope(project, moduleOutputs))
-                return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                        project,
-                        sourceFiles,
-                        CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                        environment.configuration,
-                        environment::createPackagePartProvider,
-                        sourceModuleSearchScope = scope
-                )
-            }
-
-            override fun reportEnvironmentErrors() {
-                reportRuntimeConflicts(collector, environment.configuration.jvmClasspathRoots)
-            }
-        })
+        analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
+            val project = environment.project
+            val moduleOutputs = environment.configuration.get(JVMConfigurationKeys.MODULES)?.mapNotNull { module ->
+                environment.findLocalFile(module.getOutputDirectory())
+            }.orEmpty()
+            val sourcesOnly = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, sourceFiles)
+            // To support partial and incremental compilation, we add the scope which contains binaries from output directories
+            // of the compiled modules (.class) to the list of scopes of the source module
+            val scope = if (moduleOutputs.isEmpty()) sourcesOnly else sourcesOnly.uniteWith(DirectoriesScope(project, moduleOutputs))
+            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                    project,
+                    sourceFiles,
+                    CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
+                    environment.configuration,
+                    environment::createPackagePartProvider,
+                    sourceModuleSearchScope = scope
+            )
+        }
 
         val analysisNanos = PerformanceCounter.currentTime() - analysisStart
 
@@ -476,28 +467,4 @@ object KotlinToJVMBytecodeCompiler {
 
     private val KotlinCoreEnvironment.messageCollector: MessageCollector
         get() = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-    private fun reportRuntimeConflicts(messageCollector: MessageCollector, jvmClasspathRoots: List<File>) {
-        fun String.removeIdeaVersionSuffix(): String {
-            val versionIndex = indexOfAny(arrayListOf("-IJ", "-Idea"))
-            return if (versionIndex >= 0) substring(0, versionIndex) else this
-        }
-
-        val runtimes = jvmClasspathRoots.map {
-            try {
-                it.canonicalFile
-            }
-            catch (e: IOException) {
-                it
-            }
-        }.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
-
-        val runtimeVersions = runtimes.map {
-            JarUtil.getJarAttribute(it, Attributes.Name.IMPLEMENTATION_VERSION).orEmpty().removeIdeaVersionSuffix()
-        }
-
-        if (runtimeVersions.toSet().size > 1) {
-            messageCollector.report(ERROR, "Conflicting versions of Kotlin runtime on classpath: " + runtimes.joinToString { it.path })
-        }
-    }
 }

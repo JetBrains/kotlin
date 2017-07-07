@@ -92,19 +92,9 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
         return messageCollector.hasErrors()
     }
 
-    interface Analyzer {
-        fun analyze(): AnalysisResult
-
-        fun reportEnvironmentErrors() {
-        }
-    }
-
-    fun analyzeAndReport(files: Collection<KtFile>, analyzer: Analyzer) {
-        analysisResult = analyzer.analyze()
+    fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
+        analysisResult = analyze()
         reportSyntaxErrors(files)
-        if (analysisResult.bindingContext.diagnostics.any { it.isValid && it.severity == Severity.ERROR }) {
-            analyzer.reportEnvironmentErrors()
-        }
         reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector)
         reportIncompleteHierarchies()
         reportAlternativeSignatureErrors()
