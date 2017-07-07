@@ -109,7 +109,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             if (LOCAL_CACHE_DIR.exists()) {
                 if (isLocalCacheOutdated()) {
                     System.out.println("-- Local caches outdated --");
-                    Assert.assertTrue("Failed to delete local cache!", FilesKt.deleteRecursively(LOCAL_CACHE_DIR));
+                    deleteLocalCacheDirectory(true);
                     localCacheRebuild = true;
                 }
             }
@@ -127,6 +127,14 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(true);
         }
         super.setUp();
+    }
+
+    private static void deleteLocalCacheDirectory(boolean assertDeleteSuccess) {
+        System.out.println("-- Remove local cache directory --");
+        boolean deleteResult = FilesKt.deleteRecursively(LOCAL_CACHE_DIR);
+        if (assertDeleteSuccess) {
+            Assert.assertTrue("Failed to delete local cache!", deleteResult);
+        }
     }
 
     private static long cachedDataTimeStamp() {
@@ -226,35 +234,30 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         File outDir = new File(outputDirPath);
 
         if (!IS_TINY_APP_COMPILED) {
-            String modulePath = getTestAppPath();
-
-            File jarDir;
             try {
+                String modulePath = getTestAppPath();
+
                 //noinspection ConstantConditions
-                jarDir = LOCAL_CACHE_REUSE ? LOCAL_CACHE_DIR : KotlinTestUtils.tmpDir("debuggerCustomLibrary");
-            }
-            catch (IOException e) {
-                throw ExceptionUtilsKt.rethrow(e);
-            }
+                File jarDir = LOCAL_CACHE_REUSE ? LOCAL_CACHE_DIR : KotlinTestUtils.tmpDir("debuggerCustomLibrary");
 
-            CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), jarDir, "debuggerCustomLibrary");
+                CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), jarDir, "debuggerCustomLibrary");
 
-            String sourcesDir = modulePath + File.separator + "src";
+                String sourcesDir = modulePath + File.separator + "src";
 
-            MockLibraryUtil.compileKotlin(sourcesDir, outDir, CUSTOM_LIBRARY_JAR.getPath());
+                MockLibraryUtil.compileKotlin(sourcesDir, outDir, CUSTOM_LIBRARY_JAR.getPath());
 
-            List<String> options =
-                    Arrays.asList("-d", outputDirPath, "-classpath", ForTestCompileRuntime.runtimeJarForTests().getPath(), "-g");
-            try {
+                List<String> options =
+                        Arrays.asList("-d", outputDirPath, "-classpath", ForTestCompileRuntime.runtimeJarForTests().getPath(), "-g");
                 KotlinTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
+
+                DexLikeBytecodePatchKt.patchDexTests(outDir);
+
+                IS_TINY_APP_COMPILED = true;
             }
-            catch (IOException e) {
+            catch (Throwable e) {
+                deleteLocalCacheDirectory(false);
                 throw new RuntimeException(e);
             }
-
-            DexLikeBytecodePatchKt.patchDexTests(outDir);
-
-            IS_TINY_APP_COMPILED = true;
         }
 
         CompilerUtil.refreshOutputRoots(Lists.newArrayList(outputDirPath));
@@ -265,6 +268,11 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             configureLibrary(model, KOTLIN_LIBRARY_NAME, ForTestCompileRuntime.runtimeJarForTests(), new File("libraries/stdlib/src"));
             model.commit();
         });
+
+        if (!outDir.exists()) {
+            deleteLocalCacheDirectory(false);
+            Assert.fail("Output directory for module wasn't created: " + outDir.getAbsolutePath());
+        }
     }
 
     private static List<File> findJavaFiles(@NotNull File directory) {
