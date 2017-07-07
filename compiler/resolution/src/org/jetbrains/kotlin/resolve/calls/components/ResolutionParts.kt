@@ -137,7 +137,7 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
 
         // optimization
         if (typeArgumentMappingByOriginal == NoExplicitArguments) {
-            descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables)!!
+            descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables)
             csBuilder.simplify().let { assert(it.isEmpty) { "Substitutor should be empty: $it, call: $kotlinCall" } }
             return emptyList()
         }
@@ -166,7 +166,7 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
          */
         val toFixedTypeParameters = csBuilder.simplify()
         // todo optimize -- composite substitutions before run safeSubstitute
-        descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables)!!.substitute(toFixedTypeParameters)!!
+        descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables).substitute(toFixedTypeParameters)
 
         return emptyList()
     }
