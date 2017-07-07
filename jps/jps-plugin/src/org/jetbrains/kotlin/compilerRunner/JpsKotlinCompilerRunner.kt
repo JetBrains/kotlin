@@ -224,12 +224,10 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         }
     }
 
-    private fun getReturnCodeFromObject(rc: Any?): String {
-        when {
-            rc == null -> return INTERNAL_ERROR
-            ExitCode::class.java.name == rc::class.java.name -> return rc.toString()
-            else -> throw IllegalStateException("Unexpected return: " + rc)
-        }
+    private fun getReturnCodeFromObject(rc: Any?): String = when {
+        rc == null -> INTERNAL_ERROR
+        ExitCode::class.java.name == rc::class.java.name -> rc.toString()
+        else -> throw IllegalStateException("Unexpected return: " + rc)
     }
 
     override fun getDaemonConnection(environment: JpsCompilerEnvironment): CompileServiceSession? =
