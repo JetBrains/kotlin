@@ -1979,7 +1979,8 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RedundantUnitReturnTypeInspection"
                      displayName="Redundant 'Unit' return type"
-                     groupName="Kotlin"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"
