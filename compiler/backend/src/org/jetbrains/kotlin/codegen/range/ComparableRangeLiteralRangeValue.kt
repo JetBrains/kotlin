@@ -18,9 +18,8 @@ package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.isClosedRangeContains
-import org.jetbrains.kotlin.codegen.range.comparison.ObjectComparisonGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.IteratorForLoopGenerator
-import org.jetbrains.kotlin.codegen.range.inExpression.InContinuousRangeExpressionGenerator
+import org.jetbrains.kotlin.codegen.range.inExpression.InContinuousRangeOfComparableExpressionGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -38,6 +37,9 @@ class ComparableRangeLiteralRangeValue(
     override fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>) =
             isClosedRangeContains(resolvedCallForIn.resultingDescriptor)
 
-    override fun createIntrinsicInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression, resolvedCall: ResolvedCall<out CallableDescriptor>)=
-            InContinuousRangeExpressionGenerator(operatorReference, boundedValue, ObjectComparisonGenerator)
+    override fun createIntrinsicInExpressionGenerator(
+            codegen: ExpressionCodegen,
+            operatorReference: KtSimpleNameExpression,
+            resolvedCall: ResolvedCall<out CallableDescriptor>
+    ) = InContinuousRangeOfComparableExpressionGenerator(operatorReference, boundedValue)
 }

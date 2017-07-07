@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class InContinuousRangeExpressionGenerator(
+class InPrimitiveContinuousRangeExpressionGenerator(
         operatorReference: KtSimpleNameExpression,
         private val boundedValue: BoundedValue,
         private val comparisonGenerator: ComparisonGenerator

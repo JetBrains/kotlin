@@ -22,14 +22,26 @@ fun z(i: Int): Z {
     return Z(i)
 }
 
-fun box(): String {
-    expectOrder("z0 in z1 .. z3", "z:1 z:3 z:0 c:1,0 ") { z(0) in z(1) .. z(3) }
-    expectOrder("z2 in z1 .. z3", "z:1 z:3 z:2 c:1,2 c:3,2 ") { z(2) in z(1) .. z(3) }
-    expectOrder("z4 in z1 .. z3", "z:1 z:4 z:2 c:1,2 c:4,2 ") { z(2) in z(1) .. z(4) }
+fun zr(i: Int, j: Int) = z(i) .. z(j)
 
-    expectOrder("z0 !in z1 .. z3", "z:1 z:3 z:0 c:1,0 ") { z(0) !in z(1) .. z(3) }
-    expectOrder("z2 !in z1 .. z3", "z:1 z:3 z:2 c:1,2 c:3,2 ") { z(2) !in z(1) .. z(3) }
-    expectOrder("z4 !in z1 .. z3", "z:1 z:4 z:2 c:1,2 c:4,2 ") { z(2) !in z(1) .. z(4) }
+fun box(): String {
+    expectOrder("#1",  "z:1 z:3 z:0 c:0,1 ") { z(0) in z(1) .. z(3) }
+    expectOrder("#1a", "z:1 z:3 z:0 c:0,1 ") { z(0) in zr(1, 3) }
+
+    expectOrder("#2",  "z:1 z:3 z:2 c:2,1 c:2,3 ") { z(2) in z(1) .. z(3) }
+    expectOrder("#2a", "z:1 z:3 z:2 c:2,1 c:2,3 ") { z(2) in zr(1, 3) }
+
+    expectOrder("#3",  "z:1 z:3 z:4 c:4,1 c:4,3 ") { z(4) in z(1) .. z(3) }
+    expectOrder("#3a", "z:1 z:3 z:4 c:4,1 c:4,3 ") { z(4) in zr(1, 3) }
+
+    expectOrder("#4",  "z:1 z:3 z:0 c:0,1 ") { z(0) !in z(1) .. z(3) }
+    expectOrder("#4a", "z:1 z:3 z:0 c:0,1 ") { z(0) !in zr(1, 3) }
+
+    expectOrder("#5",  "z:1 z:3 z:2 c:2,1 c:2,3 ") { z(2) !in z(1) .. z(3) }
+    expectOrder("#5a", "z:1 z:3 z:2 c:2,1 c:2,3 ") { z(2) !in zr(1, 3) }
+
+    expectOrder("#6",  "z:1 z:3 z:4 c:4,1 c:4,3 ") { z(4) !in z(1) .. z(3) }
+    expectOrder("#6a", "z:1 z:3 z:4 c:4,1 c:4,3 ") { z(4) !in zr(1, 3) }
 
     return "OK"
 }
