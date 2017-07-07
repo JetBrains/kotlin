@@ -44,11 +44,11 @@ data class ImportPath @JvmOverloads constructor(val fqName: FqName, val isAllUnd
 
     companion object {
         @JvmStatic fun fromString(pathStr: String): ImportPath {
-            if (pathStr.endsWith(".*")) {
-                return ImportPath(FqName(pathStr.substring(0, pathStr.length - 2)), isAllUnder = true)
+            return if (pathStr.endsWith(".*")) {
+                ImportPath(FqName(pathStr.substring(0, pathStr.length - 2)), isAllUnder = true)
             }
             else {
-                return ImportPath(FqName(pathStr), isAllUnder = false)
+                ImportPath(FqName(pathStr), isAllUnder = false)
 
             }
         }

@@ -49,10 +49,7 @@ fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Se
                 override fun hasNext(): Boolean = next != null
                 override fun next(): PsiElement {
                     val result = next ?: throw NoSuchElementException()
-                    if (forward)
-                        next = result.nextSibling
-                    else
-                        next = result.prevSibling
+                    next = if (forward) result.nextSibling else result.prevSibling
                     return result
                 }
             }

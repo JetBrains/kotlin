@@ -53,13 +53,13 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     override fun visitAssertStatement(statement: PsiAssertStatement) {
         val descriptionExpr = statement.assertDescription
         val condition = codeConverter.convertExpression(statement.assertCondition)
-        if (descriptionExpr == null) {
-            result = MethodCallExpression.buildNonNull(null, "assert", ArgumentList.withNoPrototype(condition))
+        result = if (descriptionExpr == null) {
+            MethodCallExpression.buildNonNull(null, "assert", ArgumentList.withNoPrototype(condition))
         }
         else {
             val description = codeConverter.convertExpression(descriptionExpr)
             val lambda = LambdaExpression(null, Block.of(description).assignNoPrototype())
-            result = MethodCallExpression.buildNonNull(null, "assert", ArgumentList.withNoPrototype(condition, lambda))
+            MethodCallExpression.buildNonNull(null, "assert", ArgumentList.withNoPrototype(condition, lambda))
         }
     }
 
@@ -69,20 +69,20 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     override fun visitBreakStatement(statement: PsiBreakStatement) {
-        if (statement.labelIdentifier == null) {
-            result = BreakStatement(Identifier.Empty)
+        result = if (statement.labelIdentifier == null) {
+            BreakStatement(Identifier.Empty)
         }
         else {
-            result = BreakStatement(converter.convertIdentifier(statement.labelIdentifier))
+            BreakStatement(converter.convertIdentifier(statement.labelIdentifier))
         }
     }
 
     override fun visitContinueStatement(statement: PsiContinueStatement) {
-        if (statement.labelIdentifier == null) {
-            result = ContinueStatement(Identifier.Empty)
+        result = if (statement.labelIdentifier == null) {
+            ContinueStatement(Identifier.Empty)
         }
         else {
-            result = ContinueStatement(converter.convertIdentifier(statement.labelIdentifier))
+            ContinueStatement(converter.convertIdentifier(statement.labelIdentifier))
         }
     }
 
@@ -139,12 +139,13 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     override fun visitLabeledStatement(statement: PsiLabeledStatement) {
         val statementConverted = codeConverter.convertStatement(statement.statement)
         val identifier = converter.convertIdentifier(statement.labelIdentifier)
-        if (statementConverted is ForConverter.WhileWithInitializationPseudoStatement) { // special case - if our loop gets converted to while with initialization we should move the label to the loop
+        result = if (statementConverted is ForConverter.WhileWithInitializationPseudoStatement) {
+            // special case - if our loop gets converted to while with initialization we should move the label to the loop
             val labeledLoop = LabeledStatement(identifier, statementConverted.loop).assignPrototype(statement)
-            result = ForConverter.WhileWithInitializationPseudoStatement(statementConverted.initialization, labeledLoop, statementConverted.kind)
+            ForConverter.WhileWithInitializationPseudoStatement(statementConverted.initialization, labeledLoop, statementConverted.kind)
         }
         else {
-            result = LabeledStatement(identifier, statementConverted)
+            LabeledStatement(identifier, statementConverted)
         }
     }
 

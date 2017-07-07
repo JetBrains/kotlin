@@ -98,11 +98,11 @@ object DescriptorEquivalenceForOverrides {
 
         // This check is needed when we call areTypeParametersEquivalent() from areCallableMemberDescriptorsEquivalent:
         // if the type parameter owners are, e.g.,  functions, we'll go into infinite recursion here
-        if (aOwner is CallableMemberDescriptor || bOwner is CallableMemberDescriptor) {
-            return equivalentCallables(aOwner, bOwner)
+        return if (aOwner is CallableMemberDescriptor || bOwner is CallableMemberDescriptor) {
+            equivalentCallables(aOwner, bOwner)
         }
         else {
-            return areEquivalent(aOwner, bOwner)
+            areEquivalent(aOwner, bOwner)
         }
     }
 

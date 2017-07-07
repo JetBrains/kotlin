@@ -60,16 +60,16 @@ class ForConverter(
 
                     val continueConverted = this@ForConverter.codeConverter.convertStatement(statement)
                     val statements = listOf(updateConverted, continueConverted)
-                    if (statement.parent is PsiCodeBlock) {
+                    return if (statement.parent is PsiCodeBlock) {
                         // generate fictive statement which will generate multiple statements
-                        return object : Statement() {
+                        object : Statement() {
                             override fun generateCode(builder: CodeBuilder) {
                                 builder.append(statements, "\n")
                             }
                         }
                     }
                     else {
-                        return Block.of(statements)
+                        Block.of(statements)
                     }
                 }
             })

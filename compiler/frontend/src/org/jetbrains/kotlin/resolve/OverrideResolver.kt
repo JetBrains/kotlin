@@ -799,11 +799,11 @@ class OverrideResolver(
 
             val substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.type, Variance.OUT_VARIANCE)!!
 
-            if (superDescriptor.isVar) {
-                return KotlinTypeChecker.DEFAULT.equalTypes(subDescriptor.type, substitutedSuperReturnType)
+            return if (superDescriptor.isVar) {
+                KotlinTypeChecker.DEFAULT.equalTypes(subDescriptor.type, substitutedSuperReturnType)
             }
             else {
-                return KotlinTypeChecker.DEFAULT.isSubtypeOf(subDescriptor.type, substitutedSuperReturnType)
+                KotlinTypeChecker.DEFAULT.isSubtypeOf(subDescriptor.type, substitutedSuperReturnType)
             }
         }
 

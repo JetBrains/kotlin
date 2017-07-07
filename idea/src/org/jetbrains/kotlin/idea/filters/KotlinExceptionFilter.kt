@@ -83,11 +83,11 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
                 }
 
                 if (filesByName.isNotEmpty()) {
-                    if (filesByName.size > 1) {
-                        return HyperlinkInfoFactoryImpl.getInstance().createMultipleFilesHyperlinkInfo(filesByName.toList(), lineNumber, project)
+                    return if (filesByName.size > 1) {
+                        HyperlinkInfoFactoryImpl.getInstance().createMultipleFilesHyperlinkInfo(filesByName.toList(), lineNumber, project)
                     }
                     else {
-                        return OpenFileHyperlinkInfo(project, filesByName.first(), lineNumber)
+                        OpenFileHyperlinkInfo(project, filesByName.first(), lineNumber)
                     }
                 }
             }

@@ -154,11 +154,11 @@ class OverridesCompletion(
 
             is KtValVarKeywordOwner -> {
                 if (descriptorToOverride !is PropertyDescriptor) return false
-                if (declaration.valOrVarKeyword?.node?.elementType == KtTokens.VAL_KEYWORD) {
-                    return !descriptorToOverride.isVar
+                return if (declaration.valOrVarKeyword?.node?.elementType == KtTokens.VAL_KEYWORD) {
+                    !descriptorToOverride.isVar
                 }
                 else {
-                    return true // var can override either var or val
+                    true // var can override either var or val
                 }
             }
 

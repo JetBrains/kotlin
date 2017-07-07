@@ -176,11 +176,11 @@ class TypeInstantiationItems(
             val typeArgsToUse = typeArgs.map { TypeProjectionImpl(Variance.INVARIANT, it.type) }
 
             val allTypeArgsKnown = fuzzyType.freeParameters.isEmpty() || typeArgs.none { it.type.areTypeParametersUsedInside(fuzzyType.freeParameters) }
-            if (allTypeArgsKnown) {
-                itemText += IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgsToUse)
+            itemText += if (allTypeArgsKnown) {
+                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgsToUse)
             }
             else {
-                itemText += "<...>"
+                "<...>"
             }
 
             val constructorParenthesis = if (classifier.kind != ClassKind.INTERFACE) "()" else ""

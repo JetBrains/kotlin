@@ -660,13 +660,13 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
             assert(name != CONSTRUCTOR_NAME || target == Target.CONSTRUCTOR)
 
             sb.append(name)
-            when (target) {
+            state = when (target) {
                 Target.FUNCTION, Target.CONSTRUCTOR -> {
                     sb.append("(")
-                    state = State.FIRST_PARAM
+                    State.FIRST_PARAM
                 }
                 else ->
-                    state = State.TYPE_CONSTRAINTS
+                    State.TYPE_CONSTRAINTS
             }
 
             return this

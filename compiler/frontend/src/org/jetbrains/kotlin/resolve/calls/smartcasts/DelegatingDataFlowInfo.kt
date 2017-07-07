@@ -211,12 +211,7 @@ internal class DelegatingDataFlowInfo private constructor(
         while (current != null) {
             if (current is DelegatingDataFlowInfo) {
                 types.addAll(current.typeInfo.get(value))
-                if (value == current.valueWithGivenTypeInfo) {
-                    current = null
-                }
-                else {
-                    current = current.parent
-                }
+                current = if (value == current.valueWithGivenTypeInfo) null else current.parent
             }
             else {
                 types.addAll(current.getCollectedTypes(value))

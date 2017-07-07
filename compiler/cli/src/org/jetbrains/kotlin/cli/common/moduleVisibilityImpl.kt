@@ -68,11 +68,11 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
 
     private fun findModule(descriptor: DeclarationDescriptor, modules: Collection<Module>): Module? {
         val sourceElement = getSourceElement(descriptor)
-        if (sourceElement is KotlinSourceElement) {
-            return modules.singleOrNull() ?: modules.firstOrNull { sourceElement.psi.containingKtFile.virtualFile.path in it.getSourceFiles() }
+        return if (sourceElement is KotlinSourceElement) {
+            modules.singleOrNull() ?: modules.firstOrNull { sourceElement.psi.containingKtFile.virtualFile.path in it.getSourceFiles() }
         }
         else {
-            return modules.firstOrNull { module ->
+            modules.firstOrNull { module ->
                 isContainedByCompiledPartOfOurModule(descriptor, File(module.getOutputDirectory())) ||
                 module.getFriendPaths().any { isContainedByCompiledPartOfOurModule(descriptor, File(it)) }
             }

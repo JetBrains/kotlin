@@ -101,12 +101,12 @@ abstract class FilterTransformationBase : SequenceTransformation {
             assert(transformations.isNotEmpty())
 
             val findTransformationMatch = FindTransformationMatcher.matchWithFilterBefore(currentState, transformations.last())
-            if (findTransformationMatch != null) {
-                return TransformationMatch.Result(findTransformationMatch.resultTransformation,
-                                                  transformations.dropLast(1) + findTransformationMatch.sequenceTransformations)
+            return if (findTransformationMatch != null) {
+                TransformationMatch.Result(findTransformationMatch.resultTransformation,
+                                           transformations.dropLast(1) + findTransformationMatch.sequenceTransformations)
             }
             else {
-                return TransformationMatch.Sequence(transformations, currentState)
+                TransformationMatch.Sequence(transformations, currentState)
             }
         }
 

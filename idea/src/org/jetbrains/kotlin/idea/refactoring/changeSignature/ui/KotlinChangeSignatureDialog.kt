@@ -87,16 +87,15 @@ class KotlinChangeSignatureDialog(
     override fun getRowPresentation(item: ParameterTableModelItemBase<KotlinParameterInfo>, selected: Boolean, focused: Boolean): JComponent? {
         val panel = JPanel(BorderLayout())
 
-        val valOrVar: String
-        if (myMethod.kind === Kind.PRIMARY_CONSTRUCTOR) {
-            valOrVar = when (item.parameter.valOrVar) {
+        val valOrVar = if (myMethod.kind === Kind.PRIMARY_CONSTRUCTOR) {
+            when (item.parameter.valOrVar) {
                 KotlinValVar.None -> "    "
                 KotlinValVar.Val -> "val "
                 KotlinValVar.Var -> "var "
             }
         }
         else {
-            valOrVar = ""
+            ""
         }
 
         val parameterName = getPresentationName(item)

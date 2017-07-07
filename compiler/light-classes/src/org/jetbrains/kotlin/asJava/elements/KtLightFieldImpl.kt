@@ -112,13 +112,9 @@ sealed class KtLightFieldImpl<D : PsiField>(
             KtLightFieldImpl<PsiField>(origin, computeDelegate, containingClass, dummyDelegate)
 
     companion object Factory {
-        fun create(origin: LightMemberOrigin?, delegate: PsiField, containingClass: KtLightClass): KtLightField {
-            when (delegate) {
-                is PsiEnumConstant -> {
-                    return KtLightEnumConstant(origin, { delegate }, containingClass, null)
-                }
-                else -> return KtLightFieldForDeclaration(origin, { delegate }, containingClass, null)
-            }
+        fun create(origin: LightMemberOrigin?, delegate: PsiField, containingClass: KtLightClass): KtLightField = when (delegate) {
+            is PsiEnumConstant -> KtLightEnumConstant(origin, { delegate }, containingClass, null)
+            else -> KtLightFieldForDeclaration(origin, { delegate }, containingClass, null)
         }
 
         fun lazy(

@@ -70,14 +70,14 @@ fun SearchScope.restrictToKotlinSources(): SearchScope {
 fun SearchScope.excludeKotlinSources(): SearchScope = excludeFileTypes(KotlinFileType.INSTANCE)
 
 fun SearchScope.excludeFileTypes(vararg fileTypes: FileType): SearchScope {
-    if (this is GlobalSearchScope) {
+    return if (this is GlobalSearchScope) {
         val includedFileTypes = FileTypeRegistry.getInstance().registeredFileTypes.filter { it !in fileTypes }.toTypedArray()
-        return GlobalSearchScope.getScopeRestrictedByFileTypes(this, *includedFileTypes)
+        GlobalSearchScope.getScopeRestrictedByFileTypes(this, *includedFileTypes)
     }
     else {
         this as LocalSearchScope
         val filteredElements = scope.filter { it.containingFile.fileType !in fileTypes }
-        return if (filteredElements.isNotEmpty())
+        if (filteredElements.isNotEmpty())
             LocalSearchScope(filteredElements.toTypedArray())
         else
             GlobalSearchScope.EMPTY_SCOPE

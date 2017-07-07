@@ -287,12 +287,12 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                         val tryImport = result.descriptors.isNotEmpty()
                                         && result.descriptors.none { it in failedToImportDescriptors }
                                         && result.descriptors.all { mayImport(it, file) }
-                        if (tryImport) {
+                        toBeShortened = if (tryImport) {
                             descriptorsToImport.addAll(result.descriptors)
-                            toBeShortened = true
+                            true
                         }
                         else {
-                            toBeShortened = false
+                            false
                         }
                     }
 
@@ -548,11 +548,11 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
         private fun targetsMatch(targets1: Collection<DeclarationDescriptor>, targets2: Collection<DeclarationDescriptor>): Boolean {
             if (targets1.size != targets2.size) return false
-            if (targets1.size == 1) {
-                return targets1.single().asString() == targets2.single().asString()
+            return if (targets1.size == 1) {
+                targets1.single().asString() == targets2.single().asString()
             }
             else {
-                return targets1.map { it.asString() }.toSet() == targets2.map { it.asString() }.toSet()
+                targets1.map { it.asString() }.toSet() == targets2.map { it.asString() }.toSet()
             }
         }
 

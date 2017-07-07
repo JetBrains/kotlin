@@ -105,18 +105,14 @@ internal sealed class JvmPropertySignature {
             val nameResolver: NameResolver,
             val typeTable: TypeTable
     ) : JvmPropertySignature() {
-        private val string: String
-
-        init {
-            if (signature.hasGetter()) {
-                string = nameResolver.getString(signature.getter.name) + nameResolver.getString(signature.getter.desc)
-            }
-            else {
-                val (name, desc) =
-                        JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable) ?:
-                        throw KotlinReflectionInternalError("No field signature for property: $descriptor")
-                string = JvmAbi.getterName(name) + getManglingSuffix() + "()" + desc
-            }
+        private val string: String = if (signature.hasGetter()) {
+            nameResolver.getString(signature.getter.name) + nameResolver.getString(signature.getter.desc)
+        }
+        else {
+            val (name, desc) =
+                    JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable) ?:
+                    throw KotlinReflectionInternalError("No field signature for property: $descriptor")
+            JvmAbi.getterName(name) + getManglingSuffix() + "()" + desc
         }
 
         private fun getManglingSuffix(): String {
@@ -194,11 +190,11 @@ internal object RuntimeTypeMapper {
             }
             is JavaClassConstructorDescriptor -> {
                 val element = (function.source as? JavaSourceElement)?.javaElement
-                when {
+                return when {
                     element is ReflectJavaConstructor ->
-                        return JvmFunctionSignature.JavaConstructor(element.member)
+                        JvmFunctionSignature.JavaConstructor(element.member)
                     element is ReflectJavaClass && element.isAnnotationType ->
-                        return JvmFunctionSignature.FakeJavaAnnotationConstructor(element.element)
+                        JvmFunctionSignature.FakeJavaAnnotationConstructor(element.element)
                     else -> throw KotlinReflectionInternalError("Incorrect resolution sequence for Java constructor $function ($element)")
                 }
             }

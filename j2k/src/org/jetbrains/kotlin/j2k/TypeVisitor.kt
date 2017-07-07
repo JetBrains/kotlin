@@ -83,11 +83,11 @@ class TypeVisitor(
     }
 
     private fun convertTypeArgs(classType: PsiClassType): List<Type> {
-        if (classType.parameterCount == 0) {
-            return createTypeArgsForRawTypeUsage(classType, Mutability.Default)
+        return if (classType.parameterCount == 0) {
+            createTypeArgsForRawTypeUsage(classType, Mutability.Default)
         }
         else {
-            return typeConverter.convertTypes(classType.parameters)
+            typeConverter.convertTypes(classType.parameters)
         }
     }
 

@@ -188,13 +188,12 @@ class DebuggerClassNameProvider(
 
                 val classNamesOfContainingDeclaration = getOuterClassNamesForElement(element.relevantParentInReadAction)
 
-                val nonInlineClasses: ComputedClassNames
-                if (runReadAction { element.name == null || element.isLocal }) {
-                    nonInlineClasses = classNamesOfContainingDeclaration + ComputedClassNames.Cached(
+                val nonInlineClasses: ComputedClassNames = if (runReadAction { element.name == null || element.isLocal }) {
+                    classNamesOfContainingDeclaration + ComputedClassNames.Cached(
                             asmTypeForAnonymousClass(typeMapper.bindingContext, element).internalName.toJdiName())
                 }
                 else {
-                    nonInlineClasses = classNamesOfContainingDeclaration
+                    classNamesOfContainingDeclaration
                 }
 
                 if (!findInlineUseSites || !element.isInlineInReadAction) {

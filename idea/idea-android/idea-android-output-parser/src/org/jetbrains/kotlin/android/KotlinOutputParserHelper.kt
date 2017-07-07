@@ -246,11 +246,11 @@ object KotlinOutputParserHelper {
         try {
             val severityConst: Any = severityObjectMap[severity] ?: return null
 
-            if (isNewAndroidPlugin) {
-                return createNewMessage(severityConst, text.trim(), file, lineNumber, columnIndex, offset)
+            return if (isNewAndroidPlugin) {
+                createNewMessage(severityConst, text.trim(), file, lineNumber, columnIndex, offset)
             }
             else {
-                return createOldMessage(severityConst, text.trim(), file, lineNumber, columnIndex)
+                createOldMessage(severityConst, text.trim(), file, lineNumber, columnIndex)
             }
         }
         catch(e: Throwable) {
@@ -294,11 +294,11 @@ object KotlinOutputParserHelper {
             lineNumber: Int?,
             columnIndex: Int?
     ): Any? {
-        if (file == null || lineNumber == null || columnIndex == null) {
-            return simpleMessageConstructor.newInstance(severityConst, text)
+        return if (file == null || lineNumber == null || columnIndex == null) {
+            simpleMessageConstructor.newInstance(severityConst, text)
         }
         else {
-            return complexMessageConstructor.newInstance(
+            complexMessageConstructor.newInstance(
                     severityConst,
                     text, file,
                     lineNumber, columnIndex)

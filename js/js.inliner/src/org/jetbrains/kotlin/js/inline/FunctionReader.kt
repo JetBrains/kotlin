@@ -224,12 +224,10 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
 
     val visitor = object: JsVisitorWithContextImpl() {
         override fun endVisit(x: JsInvocation, ctx: JsContext<*>) {
-            val qualifier: JsExpression?
-
-            if (isCallInvocation(x)) {
-                qualifier = (x.qualifier as? JsNameRef)?.qualifier
+            val qualifier: JsExpression? = if (isCallInvocation(x)) {
+                (x.qualifier as? JsNameRef)?.qualifier
             } else {
-                qualifier = x.qualifier
+                x.qualifier
             }
 
             (qualifier as? JsNameRef)?.name?.let { name ->

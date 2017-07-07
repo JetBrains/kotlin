@@ -277,13 +277,12 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
 
-        val qualifiedName: String?
-        if (baseClass is KtLightClassForSourceDeclaration) {
+        val qualifiedName: String? = if (baseClass is KtLightClassForSourceDeclaration) {
             val baseDescriptor = baseClass.getDescriptor()
-            qualifiedName = if (baseDescriptor != null) DescriptorUtils.getFqName(baseDescriptor).asString() else null
+            if (baseDescriptor != null) DescriptorUtils.getFqName(baseDescriptor).asString() else null
         }
         else {
-            qualifiedName = baseClass.qualifiedName
+            baseClass.qualifiedName
         }
 
         val thisDescriptor = getDescriptor()

@@ -31,11 +31,11 @@ protected constructor(
     fun get(): R {
         val cached = cached.get() ?: return update()
         val (app, extensions) = cached
-        if (app == ApplicationManager.getApplication()) {
-            return extensions
+        return if (app == ApplicationManager.getApplication()) {
+            extensions
         }
         else {
-            return update()
+            update()
         }
     }
 

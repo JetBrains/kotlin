@@ -96,11 +96,11 @@ class ReplFromTerminal(
         }
 
         val lineResult = eval(line)
-        if (lineResult is ReplEvalResult.Incomplete) {
-            return WhatNextAfterOneLine.INCOMPLETE
+        return if (lineResult is ReplEvalResult.Incomplete) {
+            WhatNextAfterOneLine.INCOMPLETE
         }
         else {
-            return WhatNextAfterOneLine.READ_LINE
+            WhatNextAfterOneLine.READ_LINE
         }
     }
 

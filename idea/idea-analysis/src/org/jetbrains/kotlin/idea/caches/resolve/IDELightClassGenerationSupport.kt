@@ -186,13 +186,13 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             facadeFiles: List<KtFile>,
             moduleInfo: IdeaModuleInfo
     ): List<PsiClass> {
-        if (moduleInfo is ModuleSourceInfo) {
+        return if (moduleInfo is ModuleSourceInfo) {
             val lightClassForFacade = KtLightClassForFacade.createForFacade(
                     psiManager, facadeFqName, moduleInfo.contentScope(), facadeFiles)
-            return withFakeLightClasses(lightClassForFacade, facadeFiles)
+            withFakeLightClasses(lightClassForFacade, facadeFiles)
         }
         else {
-            return facadeFiles.filterIsInstance<KtClsFile>().mapNotNull { createLightClassForDecompiledKotlinFile(it) }
+            facadeFiles.filterIsInstance<KtClsFile>().mapNotNull { createLightClassForDecompiledKotlinFile(it) }
         }
     }
 

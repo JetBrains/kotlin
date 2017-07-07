@@ -142,20 +142,20 @@ internal class FixStackAnalyzer(
             }
 
             override fun pop(): BasicValue {
-                if (extraStack.isNotEmpty()) {
-                    return extraStack.pop()
+                return if (extraStack.isNotEmpty()) {
+                    extraStack.pop()
                 }
                 else {
-                    return super.pop()
+                    super.pop()
                 }
             }
 
             override fun getStack(i: Int): BasicValue {
-                if (i < super.getMaxStackSize()) {
-                    return super.getStack(i)
+                return if (i < super.getMaxStackSize()) {
+                    super.getStack(i)
                 }
                 else {
-                    return extraStack[i - maxStackSize]
+                    extraStack[i - maxStackSize]
                 }
             }
         }

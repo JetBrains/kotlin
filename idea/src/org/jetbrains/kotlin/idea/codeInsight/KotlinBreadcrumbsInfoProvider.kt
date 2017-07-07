@@ -365,12 +365,12 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
                     val condition = conditions.firstOrNull() ?: return "->"
                     val firstConditionText = condition.buildText(kind)
 
-                    if (conditions.size == 1) {
-                        return firstConditionText + " ->"
+                    return if (conditions.size == 1) {
+                        firstConditionText + " ->"
                     }
                     else {
                         //TODO: show all conditions for tooltip
-                        return (if (firstConditionText.endsWith(ellipsis)) firstConditionText else firstConditionText + ",$ellipsis") + " ->"
+                        (if (firstConditionText.endsWith(ellipsis)) firstConditionText else firstConditionText + ",$ellipsis") + " ->"
                     }
                 }
             }
@@ -434,12 +434,12 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
 
     override fun getParent(e: PsiElement): PsiElement? {
         val node = e.node ?: return null
-        when (node.elementType) {
+        return when (node.elementType) {
             KtNodeTypes.PROPERTY_ACCESSOR ->
-                return e.parent.parent
+                e.parent.parent
 
             else ->
-                return e.parent
+                e.parent
         }
     }
 

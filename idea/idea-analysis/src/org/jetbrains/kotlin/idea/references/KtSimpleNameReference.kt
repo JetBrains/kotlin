@@ -233,12 +233,12 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
                             tokenType, element.parent is KtUnaryExpression, element.parent is KtBinaryExpression
                     ) ?: return emptyList()
                     val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[tokenType]
-                    if (counterpart != null) {
+                    return if (counterpart != null) {
                         val counterpartName = OperatorConventions.getNameForOperationSymbol(counterpart, false, true)!!
-                        return listOf(name, counterpartName)
+                        listOf(name, counterpartName)
                     }
                     else {
-                        return listOf(name)
+                        listOf(name)
                     }
                 }
             }

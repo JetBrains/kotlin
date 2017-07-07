@@ -151,15 +151,13 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
     val variableUseStatusData: Map<Instruction, Edges<UseControlFlowInfo>>
         get() = pseudocodeVariableDataCollector.collectData(TraversalOrder.BACKWARD, UseControlFlowInfo()) {
             instruction: Instruction, incomingEdgesData: Collection<UseControlFlowInfo> ->
-            val enterResult: UseControlFlowInfo
 
-            if (incomingEdgesData.size == 1) {
-                enterResult = incomingEdgesData.single()
+            val enterResult: UseControlFlowInfo = if (incomingEdgesData.size == 1) {
+                incomingEdgesData.single()
             }
             else {
-                enterResult = incomingEdgesData.fold(UseControlFlowInfo()) { result, edgeData ->
-                    edgeData.iterator().fold(result) {
-                        subResult, (variableDescriptor, variableUseState) ->
+                incomingEdgesData.fold(UseControlFlowInfo()) { result, edgeData ->
+                    edgeData.iterator().fold(result) { subResult, (variableDescriptor, variableUseState) ->
                         subResult.put(variableDescriptor, variableUseState.merge(subResult.getOrNull(variableDescriptor)))
                     }
                 }

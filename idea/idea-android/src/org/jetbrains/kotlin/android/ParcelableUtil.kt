@@ -375,12 +375,12 @@ private fun KtClass.createSecondaryConstructor(factory: KtPsiFactory): KtConstru
 
     val constructor =  factory.createSecondaryConstructor(constructorText)
     val lastProperty = declarations.findLast { it is KtProperty }
-    if (lastProperty != null) {
-        return addDeclarationAfter(constructor, lastProperty).apply { addNewLineBeforeDeclaration() }
+    return if (lastProperty != null) {
+        addDeclarationAfter(constructor, lastProperty).apply { addNewLineBeforeDeclaration() }
     }
     else {
         val firstFunction = declarations.find { it is KtFunction }
-        return addDeclarationBefore(constructor, firstFunction).apply { addNewLineBeforeDeclaration() }
+        addDeclarationBefore(constructor, firstFunction).apply { addNewLineBeforeDeclaration() }
     }
 }
 

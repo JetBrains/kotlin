@@ -31,15 +31,15 @@ class IdePackageOracleFactory(val project: Project) : PackageOracleFactory {
     override fun createOracle(moduleInfo: ModuleInfo): PackageOracle {
         if (moduleInfo !is IdeaModuleInfo) return PackageOracle.Optimistic
 
-        when {
-            moduleInfo.platform == JvmPlatform -> when (moduleInfo.moduleOrigin) {
-                ModuleOrigin.LIBRARY -> return JavaPackagesOracle(moduleInfo, project)
-                ModuleOrigin.MODULE -> return JvmSourceOracle(moduleInfo as ModuleSourceInfo, project)
-                ModuleOrigin.OTHER -> return PackageOracle.Optimistic
+        return when (moduleInfo.platform) {
+            JvmPlatform -> when (moduleInfo.moduleOrigin) {
+                ModuleOrigin.LIBRARY -> JavaPackagesOracle(moduleInfo, project)
+                ModuleOrigin.MODULE -> JvmSourceOracle(moduleInfo as ModuleSourceInfo, project)
+                ModuleOrigin.OTHER -> PackageOracle.Optimistic
             }
             else -> when (moduleInfo.moduleOrigin) {
-                ModuleOrigin.MODULE -> return KotlinSourceFilesOracle(moduleInfo as ModuleSourceInfo)
-                else -> return PackageOracle.Optimistic // binaries for non-jvm platform need some oracles based on their structure
+                ModuleOrigin.MODULE -> KotlinSourceFilesOracle(moduleInfo as ModuleSourceInfo)
+                else -> PackageOracle.Optimistic // binaries for non-jvm platform need some oracles based on their structure
             }
         }
     }

@@ -344,11 +344,11 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 val typeReference = condition.typeReference
                 if (typeReference != null) {
                     val result = checkTypeForIs(context, condition, condition.isNegated, subjectType, typeReference, subjectDataFlowValue)
-                    if (condition.isNegated) {
-                        newDataFlowInfo = ConditionalDataFlowInfo(result.elseInfo, result.thenInfo)
+                    newDataFlowInfo = if (condition.isNegated) {
+                        ConditionalDataFlowInfo(result.elseInfo, result.thenInfo)
                     }
                     else {
-                        newDataFlowInfo = result
+                        result
                     }
                     val rhsType = context.trace[BindingContext.TYPE, typeReference]
                     if (subjectExpression != null) {

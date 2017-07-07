@@ -32,15 +32,15 @@ class MemberIntoObjectProcessing(private val member: PsiMember, private val obje
             val refExpr = reference.element as? PsiReferenceExpression ?: return null
             val qualifier = refExpr.qualifierExpression
             val factory = PsiElementFactory.SERVICE.getInstance(member.project)
-            if (qualifier != null) {
+            return if (qualifier != null) {
                 val newQualifier = factory.createExpressionFromText(qualifier.text + "." + objectName, null)
                 qualifier.replace(newQualifier)
-                return arrayOf(reference)
+                arrayOf(reference)
             }
             else {
                 var qualifiedExpr = factory.createExpressionFromText(objectName + "." + refExpr.text, null) as PsiReferenceExpression
                 qualifiedExpr = refExpr.replace(qualifiedExpr) as PsiReferenceExpression
-                return arrayOf(qualifiedExpr)
+                arrayOf(qualifiedExpr)
             }
         }
     }

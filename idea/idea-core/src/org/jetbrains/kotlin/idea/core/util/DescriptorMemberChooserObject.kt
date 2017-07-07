@@ -84,14 +84,14 @@ open class DescriptorMemberChooserObject(
             if (declaration != null && declaration.isValid) {
                 val isClass = declaration is PsiClass || declaration is KtClass
                 val flags = if (isClass) 0 else Iconable.ICON_FLAG_VISIBILITY
-                if (declaration is KtDeclaration) {
+                return if (declaration is KtDeclaration) {
                     // kotlin declaration
                     // visibility and abstraction better detect by a descriptor
-                    return KotlinDescriptorIconProvider.getIcon(descriptor, declaration, flags)
+                    KotlinDescriptorIconProvider.getIcon(descriptor, declaration, flags)
                 }
                 else {
                     // it is better to show java icons for java code
-                    return declaration.getIcon(flags)
+                    declaration.getIcon(flags)
                 }
             }
             else {

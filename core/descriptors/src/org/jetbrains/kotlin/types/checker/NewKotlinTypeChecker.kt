@@ -287,12 +287,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         if (supertypes.size < 2) return supertypes
 
         val allPureSupertypes = supertypes.filter { it.arguments.all { !it.type.isFlexible() } }
-        if (allPureSupertypes.isNotEmpty()) {
-            return allPureSupertypes
-        }
-        else {
-            return supertypes
-        }
+        return if (allPureSupertypes.isNotEmpty()) allPureSupertypes else supertypes
     }
 
     private fun effectiveVariance(declared: Variance, useSite: Variance): Variance? {

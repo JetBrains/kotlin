@@ -81,11 +81,11 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
     protected fun processReferenceElement(element: TReferenceElement): Boolean {
         val reference = extractReference(element) ?: return true
         testLog { "Resolved ${logPresentation(element)}" }
-        if (reference.isReferenceTo(targetDeclaration)) {
-            return consumer.process(reference)
+        return if (reference.isReferenceTo(targetDeclaration)) {
+            consumer.process(reference)
         }
         else {
-            return true
+            true
         }
     }
 

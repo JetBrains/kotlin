@@ -118,11 +118,11 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     val isBinary = virtualFile.isKotlinBinary()
     val scriptConfigurationManager = KotlinScriptConfigurationManager.getInstance(project)
     if (isBinary && virtualFile in scriptConfigurationManager.getAllScriptsClasspathScope()) {
-        if (treatAsLibrarySource) {
-            return ScriptDependenciesSourceModuleInfo(project)
+        return if (treatAsLibrarySource) {
+            ScriptDependenciesSourceModuleInfo(project)
         }
         else {
-            return ScriptDependenciesModuleInfo(project, null)
+            ScriptDependenciesModuleInfo(project, null)
         }
     }
     if (!isBinary && virtualFile in scriptConfigurationManager.getAllLibrarySourcesScope()) {

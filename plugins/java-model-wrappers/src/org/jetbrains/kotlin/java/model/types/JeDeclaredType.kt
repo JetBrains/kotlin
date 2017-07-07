@@ -78,10 +78,10 @@ class JeDeclaredType(
                 val args = mutableListOf<TypeMirror>()
                 for (typeParameter in psiClass.typeParameters) {
                     val substitutedParameter = substitutor.substitute(typeParameter)
-                    if (substitutedParameter != null)
-                        args += substitutedParameter.toJeType(psiManager)
+                    args += if (substitutedParameter != null)
+                        substitutedParameter.toJeType(psiManager)
                     else
-                        args += JeTypeVariableType(typeParameter.getTypeWithTypeParameters(), typeParameter)
+                        JeTypeVariableType(typeParameter.getTypeWithTypeParameters(), typeParameter)
                 }
 
                 args

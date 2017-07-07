@@ -98,8 +98,8 @@ open class NestedSourceMapper(
     override fun mapLineNumber(lineNumber: Int): Int {
         val mappedLineNumber = visitedLines.get(lineNumber)
 
-        if (mappedLineNumber > 0) {
-            return mappedLineNumber
+        return if (mappedLineNumber > 0) {
+            mappedLineNumber
         }
         else {
             val rangeForMapping =
@@ -111,7 +111,7 @@ open class NestedSourceMapper(
                 visitedLines.put(lineNumber, newLineNumber)
             }
             lastVisitedRange = rangeForMapping
-            return newLineNumber
+            newLineNumber
         }
     }
 

@@ -68,10 +68,10 @@ class ReplaceInfixOrOperatorCallFix(
                 replacement = element.replace(newExpression)
             }
             is KtBinaryExpression -> {
-                if (element.operationToken == KtTokens.IDENTIFIER) {
+                replacement = if (element.operationToken == KtTokens.IDENTIFIER) {
                     val newExpression = psiFactory.createExpressionByPattern(
                             "$0?.$1($2)$elvis", element.left ?: return, element.operationReference, element.right ?: return)
-                    replacement = element.replace(newExpression)
+                    element.replace(newExpression)
                 }
                 else {
                     val nameExpression = OperatorToFunctionIntention.convert(element).second
@@ -79,7 +79,7 @@ class ReplaceInfixOrOperatorCallFix(
                     val qualifiedExpression = callExpression.parent as KtDotQualifiedExpression
                     val safeExpression = psiFactory.createExpressionByPattern(
                             "$0?.$1$elvis", qualifiedExpression.receiverExpression, callExpression)
-                    replacement = qualifiedExpression.replace(safeExpression)
+                    qualifiedExpression.replace(safeExpression)
                 }
             }
         }

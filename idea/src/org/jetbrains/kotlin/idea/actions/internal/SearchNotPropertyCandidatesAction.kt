@@ -107,10 +107,7 @@ class SearchNotPropertyCandidatesAction : AnAction() {
             val t = this.text
             val s = t.indexOf('{')
             val e = t.lastIndexOf('}')
-            if (s != e && s != -1) {
-                return t.substring(s, e).lines().size <= 3
-            }
-            else return true
+            return if (s != e && s != -1) t.substring(s, e).lines().size <= 3 else true
         }
 
 

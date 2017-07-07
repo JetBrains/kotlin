@@ -78,11 +78,11 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
 
     override fun importDescriptor(file: KtFile, descriptor: DeclarationDescriptor, forceAllUnderImport: Boolean): ImportDescriptorResult {
         val importer = Importer(file)
-        if (forceAllUnderImport) {
-            return importer.importDescriptorWithStarImport(descriptor)
+        return if (forceAllUnderImport) {
+            importer.importDescriptorWithStarImport(descriptor)
         }
         else {
-            return importer.importDescriptor(descriptor)
+            importer.importDescriptor(descriptor)
         }
     }
 
@@ -378,9 +378,9 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             if (importList != null) {
                 val newDirective = psiFactory.createImportDirective(importPath)
                 val imports = importList.imports
-                if (imports.isEmpty()) { //TODO: strange hack
+                return if (imports.isEmpty()) { //TODO: strange hack
                     importList.add(psiFactory.createNewLine())
-                    return importList.add(newDirective) as KtImportDirective
+                    importList.add(newDirective) as KtImportDirective
                 }
                 else {
                     val insertAfter = imports
@@ -388,7 +388,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                                 val directivePath = it.importPath
                                 directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
                             }
-                    return importList.addAfter(newDirective, insertAfter) as KtImportDirective
+                    importList.addAfter(newDirective, insertAfter) as KtImportDirective
                 }
             }
             else {

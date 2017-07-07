@@ -247,11 +247,11 @@ private class KtLightMethodWrapper(
 
     private fun substituteType(psiType: PsiType): PsiType {
         val substituted = containingClass.substitutor.substitute(psiType)
-        if (TypeUtils.isJavaLangObject(substituted) && substituteObjectWith != null) {
-            return substituteObjectWith
+        return if (TypeUtils.isJavaLangObject(substituted) && substituteObjectWith != null) {
+            substituteObjectWith
         }
         else {
-            return substituted
+            substituted
         }
     }
 

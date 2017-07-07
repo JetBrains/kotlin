@@ -54,10 +54,11 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
         val selectorExpression = element.selectorExpression ?: return null
         val selectorExpressionText = selectorExpression.text
         val qualifiedName = targetClassMap[selectorExpressionText] ?: return null
-        if(element.receiverExpression.isApplicableReceiverExpression(qualifiedName)) {
-            return selectorExpression.textRange
-        } else {
-            return null
+        return if(element.receiverExpression.isApplicableReceiverExpression(qualifiedName)) {
+            selectorExpression.textRange
+        }
+        else {
+            null
         }
     }
 

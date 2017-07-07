@@ -94,12 +94,12 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
 
     private fun qualifiedNameToInsert(item: LookupElement): String {
         val lookupObject = item.`object` as DeclarationLookupObject
-        if (lookupObject.descriptor != null) {
-            return IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(lookupObject.descriptor as ClassifierDescriptor)
+        return if (lookupObject.descriptor != null) {
+            IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(lookupObject.descriptor as ClassifierDescriptor)
         }
         else {
             val qualifiedName = (lookupObject.psiElement as PsiClass).qualifiedName!!
-            return if (FqNameUnsafe.isValid(qualifiedName)) FqNameUnsafe(qualifiedName).render() else qualifiedName
+            if (FqNameUnsafe.isValid(qualifiedName)) FqNameUnsafe(qualifiedName).render() else qualifiedName
         }
     }
 }
