@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.jvm.modules
+package org.jetbrains.kotlin.cli.jvm.modules
 
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class JavaModuleGraph(finder: JavaModuleFinder) {
