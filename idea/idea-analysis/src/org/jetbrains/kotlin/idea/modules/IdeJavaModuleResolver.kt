@@ -19,38 +19,62 @@ package org.jetbrains.kotlin.idea.modules
 import com.intellij.codeInsight.daemon.impl.analysis.JavaModuleGraphUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.impl.light.LightJavaModule
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.resolve.jvm.modules.*
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 class IdeJavaModuleResolver(project: Project) : JavaModuleResolver {
     private val psiManager = PsiManager.getInstance(project)
-    private val fileManager = JavaFileManager.SERVICE.getInstance(project)
-    private val allScope = GlobalSearchScope.allScope(project)
 
-    override val moduleGraph: JavaModuleGraph = JavaModuleGraph(
-            object : JavaModuleFinder {
-                override fun findModule(name: String): JavaModule? {
-                    return fileManager.findModules(name, allScope).singleOrNull()?.toJavaModule()
-                }
-            }
-    )
-
-    override fun findJavaModule(file: VirtualFile): JavaModule? {
-        val psiFile = psiManager.findFile(file) ?: return null
-        return JavaModuleGraphUtil.findDescriptorByElement(psiFile)?.toJavaModule()
+    private fun findJavaModule(file: VirtualFile): PsiJavaModule? {
+        return psiManager.findFile(file)?.let(JavaModuleGraphUtil::findDescriptorByElement)
     }
 
-    private fun PsiJavaModule.toJavaModule(): JavaModule {
-        if (this is LightJavaModule) {
-            return JavaModule.Automatic(name, rootVirtualFile)
+    override fun checkAccessibility(
+            fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
+    ): JavaModuleResolver.AccessError? {
+        val ourModule = fileFromOurModule?.let(this::findJavaModule)
+        val theirModule = this.findJavaModule(referencedFile)
+
+        // If we're both in the unnamed module, it's OK, no error should be reported
+        if (ourModule == null && theirModule == null) return null
+
+        if (theirModule == null) {
+            // We should probably prohibit this usage according to JPMS (named module cannot use types from unnamed module),
+            // but we cannot be sure that a module without module-info.java is going to be actually used as an unnamed module.
+            // It could also be an automatic module, in which case it would be read by every module.
+            return null
         }
 
-        val virtualFile = containingFile?.virtualFile ?: error("No VirtualFile found for module $this ($javaClass)")
-        return JavaModule.Explicit(JavaModuleInfo.create(this), virtualFile.parent, virtualFile, this is PsiCompiledElement)
+        if (ourModule?.name == theirModule.name) return null
+
+        if (ourModule != null && !JavaModuleGraphUtil.reads(ourModule, theirModule)) {
+            return JavaModuleResolver.AccessError.ModuleDoesNotReadModule(theirModule.name)
+        }
+
+        val fqName = referencedPackage?.asString() ?: return null
+        if (!exports(theirModule, fqName, ourModule)) {
+            return JavaModuleResolver.AccessError.ModuleDoesNotExportPackage(theirModule.name)
+        }
+
+        return null
+    }
+
+    // Returns whether or not [source] exports [packageName] to [target]
+    private fun exports(source: PsiJavaModule, packageName: String, target: PsiJavaModule?): Boolean {
+        if (source is LightJavaModule) {
+            return true
+        }
+
+        // TODO: simply call JavaModuleGraphUtil.exports as soon as its 'target' parameter is nullable
+        if (target != null) {
+            return JavaModuleGraphUtil.exports(source, packageName, target)
+        }
+        return source.exports.any { statement ->
+            statement.moduleNames.isEmpty() && statement.packageName == packageName
+        }
     }
 }

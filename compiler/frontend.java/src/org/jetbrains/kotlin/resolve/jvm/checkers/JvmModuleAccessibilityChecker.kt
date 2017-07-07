@@ -34,8 +34,9 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageChecker
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver.AccessError.*
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
@@ -61,33 +62,21 @@ class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
     ): Diagnostic? {
         val referencedFile = findVirtualFile(targetClassOrPackage, originalDescriptor) ?: return null
 
-        // TODO: do not resolve our JavaModule every time, invent a way to obtain it from ModuleDescriptor and do it once in constructor
-        val ourModule = fileFromOurModule?.let(moduleResolver::findJavaModule)
-        val theirModule = moduleResolver.findJavaModule(referencedFile)
+        val referencedPackageFqName =
+                DescriptorUtils.getParentOfType(targetClassOrPackage, PackageFragmentDescriptor::class.java, false)?.fqName
+        val diagnostic = moduleResolver.checkAccessibility(fileFromOurModule, referencedFile, referencedPackageFqName)
 
-        // If we're both in the unnamed module, it's OK, no error should be reported
-        if (ourModule == null && theirModule == null) return null
-
-        if (theirModule == null) {
-            // We should probably prohibit this usage according to JPMS (named module cannot use types from unnamed module),
-            // but we cannot be sure that a module without module-info.java is going to be actually used as an unnamed module.
-            // It could also be an automatic module, in which case it would be read by every module.
-            return null
+        return when (diagnostic) {
+            is ModuleDoesNotReadUnnamedModule ->
+                // TODO: report this error as soon as module path is used instead of class path for modular compilation
+                // JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE.on(reportOn)
+                null
+            is ModuleDoesNotReadModule ->
+                JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE.on(reportOn, diagnostic.dependencyModuleName)
+            is ModuleDoesNotExportPackage ->
+                JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.on(reportOn, diagnostic.dependencyModuleName, referencedPackageFqName!!.asString())
+            else -> null
         }
-
-        if (ourModule?.name == theirModule.name) return null
-
-        if (ourModule != null && !moduleResolver.moduleGraph.reads(ourModule.name, theirModule.name)) {
-            return ErrorsJvm.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE.on(reportOn, theirModule.name)
-        }
-
-        val containingPackage = DescriptorUtils.getParentOfType(targetClassOrPackage, PackageFragmentDescriptor::class.java, false)
-        val fqName = containingPackage?.fqName ?: return null
-        if (!theirModule.exports(fqName) && (ourModule == null || !theirModule.exportsTo(fqName, ourModule.name))) {
-            return ErrorsJvm.JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.on(reportOn, theirModule.name, fqName.asString())
-        }
-
-        return null
     }
 
     private fun findVirtualFile(
