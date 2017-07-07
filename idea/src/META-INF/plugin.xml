@@ -142,8 +142,19 @@
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
+
     <action id="KotlinInternalMode" class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalModeToggleAction">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+    </action>
+
+    <group id="KotlinInternalGroup" popup="true" text="Internal" icon="/general/balloonWarning.png"
+           class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalActionGroup">
+      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+    </group>
+
+    <action id="BenchmarkCompletionAction" class="org.jetbrains.kotlin.idea.actions.internal.BenchmarkCompletionAction"
+            text="Benchmark completion">
+      <add-to-group group-id="KotlinInternalGroup" anchor="last"/>
     </action>
 
     <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"

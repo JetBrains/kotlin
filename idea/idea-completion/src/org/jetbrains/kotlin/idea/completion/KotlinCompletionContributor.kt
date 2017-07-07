@@ -261,6 +261,7 @@ class KotlinCompletionContributor : CompletionContributor() {
             result: CompletionResultSet,
             lookupElementPostProcessor: ((LookupElement) -> LookupElement)? = null
     ) {
+        println("doComplete")
         val position = parameters.position
         if (position.getNonStrictParentOfType<PsiComment>() != null) {
             // don't stop here, allow other contributors to run
