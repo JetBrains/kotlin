@@ -712,6 +712,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localReturns.kt")
+            public void testLocalReturns() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/localReturns.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("otherReturns.kt")
             public void testOtherReturns() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/otherReturns.kt");

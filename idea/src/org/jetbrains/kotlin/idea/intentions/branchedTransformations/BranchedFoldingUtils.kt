@@ -45,7 +45,9 @@ object BranchedFoldingUtils {
 
     fun getFoldableBranchedReturn(branch: KtExpression?): KtReturnExpression? =
             (branch?.lastBlockStatementOrThis() as? KtReturnExpression)?.takeIf {
-                it.returnedExpression != null && it.returnedExpression !is KtLambdaExpression
+                it.returnedExpression != null &&
+                it.returnedExpression !is KtLambdaExpression &&
+                it.getTargetLabel() == null
             }
 
     fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean =
