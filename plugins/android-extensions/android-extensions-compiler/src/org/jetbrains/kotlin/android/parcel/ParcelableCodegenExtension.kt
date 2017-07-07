@@ -188,7 +188,7 @@ class ParcelableCodegenExtension : ExpressionCodegenExtension {
                     val asmType = codegen.typeMapper.mapType(type)
                     asmConstructorParameters.append(asmType.descriptor)
 
-                    val serializer = ParcelSerializer.get(type, asmType, codegen.typeMapper, forceBoxed = false, strict = false)
+                    val serializer = ParcelSerializer.get(type, asmType, codegen.typeMapper)
                     v.load(1, parcelAsmType)
                     serializer.readValue(v)
                 }
@@ -276,12 +276,12 @@ class ParcelableCodegenExtension : ExpressionCodegenExtension {
             if (parcelerObject != null) {
                 val newArrayMethod = parcelerObject.unsubstitutedMemberScope
                         .getContributedFunctions(Name.identifier("newArray"), NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
-                        .filter {
+                        .firstOrNull {
                             it.typeParameters.isEmpty()
                                 && it.kind == CallableMemberDescriptor.Kind.DECLARATION
                                 && (it.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.valueParameters[0].type))
                                 && !((it.containingDeclaration as? ClassDescriptor)?.defaultType?.isParceler() ?: true)
-                        }.firstOrNull()
+                        }
 
                 if (newArrayMethod != null) {
                     val containerAsmType = codegen.typeMapper.mapType(parcelableClass.defaultType)
