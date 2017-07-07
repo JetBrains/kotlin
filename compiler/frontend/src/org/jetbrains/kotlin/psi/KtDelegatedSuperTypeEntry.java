@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -39,5 +40,9 @@ public class KtDelegatedSuperTypeEntry extends KtSuperTypeListEntry {
     @Nullable @IfNotParsed
     public KtExpression getDelegateExpression() {
         return findChildByClass(KtExpression.class);
+    }
+
+    public ASTNode getByKeywordNode() {
+        return getNode().findChildByType(KtTokens.BY_KEYWORD);
     }
 }

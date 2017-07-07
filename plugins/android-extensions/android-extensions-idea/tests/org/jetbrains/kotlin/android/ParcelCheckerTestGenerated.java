@@ -54,6 +54,18 @@ public class ParcelCheckerTestGenerated extends AbstractParcelCheckerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("delegate.kt")
+    public void testDelegate() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/delegate.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("emptyPrimaryConstructor.kt")
+    public void testEmptyPrimaryConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/emptyPrimaryConstructor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("modality.kt")
     public void testModality() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/modality.kt");
@@ -75,6 +87,12 @@ public class ParcelCheckerTestGenerated extends AbstractParcelCheckerTest {
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/simple.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("unsupportedType.kt")
+    public void testUnsupportedType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/unsupportedType.kt");
         doTest(fileName);
     }
 
