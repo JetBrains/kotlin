@@ -2,7 +2,7 @@
 
 class A(val z: Int) : Comparable<A> {
     override fun compareTo(other: A): Int {
-        return Integer.compare(z, other.z)
+        return z.compareTo(other.z)
     }
 }
 
