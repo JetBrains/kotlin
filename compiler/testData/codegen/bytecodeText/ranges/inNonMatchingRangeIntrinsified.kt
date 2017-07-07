@@ -16,7 +16,7 @@ fun inDouble(x: Float): Boolean {
     return x in 1.0..2.0
 }
 
-// 3 I2L
+// 2 I2L
 // 3 F2D
 // 0 INVOKESPECIAL
 // 0 NEW

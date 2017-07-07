@@ -65,6 +65,19 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                     }
                 }
 
+                Opcodes.I2L -> {
+                    when (prevNonNop.opcode) {
+                        Opcodes.ICONST_0 -> actions.add {
+                            it.remove(insn)
+                            it.set(prevNonNop, InsnNode(Opcodes.LCONST_0))
+                        }
+                        Opcodes.ICONST_1 -> actions.add {
+                            it.remove(insn)
+                            it.set(prevNonNop, InsnNode(Opcodes.LCONST_1))
+                        }
+                    }
+                }
+
                 Opcodes.POP2 -> {
                     if (prevNonNop.isEliminatedByPop2()) {
                         actions.add {

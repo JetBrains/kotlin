@@ -7,5 +7,5 @@ fun testLongWithCharSequence(i: Long, cs: CharSequence) = i in cs.indices
 // 0 getIndices
 // 0 contains
 // 2 length
-// 2 I2L
+// 1 I2L
 
