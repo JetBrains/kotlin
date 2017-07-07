@@ -7,4 +7,4 @@ fun testLongWithCollection(i: Long, xs: List<Any>) = i in xs.indices
 // 0 getIndices
 // 0 contains
 // 2 size
-// 2 I2L
+// 1 I2L

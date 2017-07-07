@@ -10,5 +10,7 @@ fun testLongWithObjectArray(i: Long, xs: Array<Any>) = i in xs.indices
 
 // 0 getIndices
 // 0 contains
-// 4 I2L
+// 2 I2L
 // 4 ARRAYLENGTH
+// 2 LCONST_0
+// 6 ICONST_0
