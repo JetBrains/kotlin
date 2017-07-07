@@ -74,7 +74,8 @@ class JavaModuleInfo(
                         }
 
                         override fun visitExport(packageFqName: String, access: Int, modules: Array<String>?) {
-                            exports.add(Exports(FqName(packageFqName), modules?.toList().orEmpty()))
+                            // For some reason, '/' is the delimiter in packageFqName here
+                            exports.add(Exports(FqName(packageFqName.replace('/', '.')), modules?.toList().orEmpty()))
                         }
                     }
                 }
