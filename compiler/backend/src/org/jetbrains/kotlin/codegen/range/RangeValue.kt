@@ -37,7 +37,10 @@ interface BoundedValue {
 
     fun putInstance(v: InstructionAdapter, type: Type)
 
+    // It is necessary to maintain the proper evaluation order as of Kotlin 1.0 and 1.1
+    // to evaluate range bounds left to right and put them on stack as 'high; low'.
     fun putHighLow(v: InstructionAdapter, type: Type)
+
     val isLowInclusive: Boolean
     val isHighInclusive: Boolean
 }
