@@ -423,6 +423,9 @@ class PSICallResolver(
         val astExternalArgument = externalArgument?.let { resolveValueArgument(context, dataFlowInfoAfterArgumentsInParenthesis, it) }
         val resultDataFlowInfo = astExternalArgument?.dataFlowInfoAfterThisArgument ?: dataFlowInfoAfterArgumentsInParenthesis
 
+        resolvedArgumentsInParenthesis.forEach { it.setResultDataFlowInfoIfRelevant(resultDataFlowInfo) }
+        astExternalArgument?.setResultDataFlowInfoIfRelevant(resultDataFlowInfo)
+
         return PSIKotlinCallImpl(kotlinCallKind, oldCall, tracingStrategy, resolvedExplicitReceiver, name, resolvedTypeArguments, resolvedArgumentsInParenthesis,
                                  astExternalArgument, context.dataFlowInfo, resultDataFlowInfo, context.dataFlowInfoForArguments)
     }
@@ -501,14 +504,14 @@ class PSICallResolver(
 
         val lambdaArgument: PSIKotlinCallArgument? = when (ktExpression) {
             is KtLambdaExpression ->
-                LambdaKotlinCallArgumentImpl(outerCallContext, valueArgument, startDataFlowInfo, ktExpression, argumentName,
+                LambdaKotlinCallArgumentImpl(outerCallContext, valueArgument, startDataFlowInfo, argumentName, ktExpression,
                                              resolveParametersTypes(outerCallContext, ktExpression.functionLiteral))
             is KtNamedFunction -> {
                 val receiverType = resolveType(outerCallContext, ktExpression.receiverTypeReference)
                 val parametersTypes = resolveParametersTypes(outerCallContext, ktExpression) ?: emptyArray()
                 val returnType = resolveType(outerCallContext, ktExpression.typeReference) ?:
                                  if (ktExpression.hasBlockBody()) builtIns.unitType else null
-                FunctionExpressionImpl(outerCallContext, valueArgument, startDataFlowInfo, ktExpression, argumentName, receiverType, parametersTypes, returnType)
+                FunctionExpressionImpl(outerCallContext, valueArgument, startDataFlowInfo, argumentName, ktExpression, receiverType, parametersTypes, returnType)
             }
             else -> null
         }
