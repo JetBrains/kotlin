@@ -30,7 +30,7 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
             object : KtVisitorVoid() {
-                private fun visitIfOrWhen(expression: KtExpression, keyword: PsiElement) {
+                private fun visitIfOrWhenOrTry(expression: KtExpression, keyword: PsiElement) {
                     if (expression.lineCount() > LINES_LIMIT) return
                     if (expression.isElseIf()) return
 
@@ -60,12 +60,19 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
 
                 override fun visitIfExpression(expression: KtIfExpression) {
                     super.visitIfExpression(expression)
-                    visitIfOrWhen(expression, expression.ifKeyword)
+                    visitIfOrWhenOrTry(expression, expression.ifKeyword)
                 }
 
                 override fun visitWhenExpression(expression: KtWhenExpression) {
                     super.visitWhenExpression(expression)
-                    visitIfOrWhen(expression, expression.whenKeyword)
+                    visitIfOrWhenOrTry(expression, expression.whenKeyword)
+                }
+
+                override fun visitTryExpression(expression: KtTryExpression) {
+                    super.visitTryExpression(expression)
+                    expression.tryKeyword?.let {
+                        visitIfOrWhenOrTry(expression, it)
+                    }
                 }
             }
 
