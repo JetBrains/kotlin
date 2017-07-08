@@ -46,7 +46,7 @@ interface NewTypeSubstitutor {
                     }
                     else {
                         // todo discuss lowerIfFlexible and upperIfFlexible
-                        FlexibleTypeImpl(lowerBound?.lowerIfFlexible() ?: type.lowerBound, upperBound?.upperIfFlexible() ?: type.upperBound)
+                        KotlinTypeFactory.flexibleType(lowerBound?.lowerIfFlexible() ?: type.lowerBound, upperBound?.upperIfFlexible() ?: type.upperBound)
                     }
                 }
             }

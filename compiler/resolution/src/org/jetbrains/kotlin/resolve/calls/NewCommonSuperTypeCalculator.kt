@@ -53,7 +53,7 @@ object NewCommonSuperTypeCalculator {
         if (!thereIsFlexibleTypes) return lowerSuperType
 
         val upperSuperType = commonSuperTypeForSimpleTypes(types.map { it.upperIfFlexible() }, depth)
-        return FlexibleTypeImpl(lowerSuperType, upperSuperType)
+        return KotlinTypeFactory.flexibleType(lowerSuperType, upperSuperType)
     }
 
     private fun commonSuperTypeForSimpleTypes(types: List<SimpleType>, depth: Int): SimpleType {
