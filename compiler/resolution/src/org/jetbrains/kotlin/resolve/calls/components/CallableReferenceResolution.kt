@@ -156,7 +156,6 @@ class CallableReferencesCandidateFactory(
         val compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit,
         val expectedType: UnwrappedType?
 ) : CandidateFactory<CallableReferenceCandidate> {
-    private val position = ArgumentConstraintPosition(argument)
 
     fun createCallableProcessor(explicitReceiver: DetailedReceiver?) =
             createCallableReferenceProcessor(outerCallContext.scopeTower, argument.rhsName, this, explicitReceiver)

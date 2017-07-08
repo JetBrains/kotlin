@@ -30,7 +30,6 @@ sealed class PostponedKotlinCallArgument {
 }
 
 class PostponedLambdaArgument(
-        val outerCall: KotlinCall,
         override val argument: LambdaKotlinCallArgument,
         val isSuspend: Boolean,
         val receiver: UnwrappedType?,

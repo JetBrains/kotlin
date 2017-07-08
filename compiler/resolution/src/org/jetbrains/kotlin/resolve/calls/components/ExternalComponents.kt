@@ -34,7 +34,6 @@ interface KotlinResolutionExternalPredicates {
 // This components hold state (trace). Work with this carefully.
 interface KotlinResolutionCallbacks {
     fun analyzeAndGetLambdaResultArguments(
-            outerCall: KotlinCall,
             lambdaArgument: LambdaKotlinCallArgument,
             isSuspend: Boolean,
             receiverType: UnwrappedType?,

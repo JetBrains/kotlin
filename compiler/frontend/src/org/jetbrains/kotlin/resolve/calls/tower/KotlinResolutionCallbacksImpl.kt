@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
@@ -69,31 +68,23 @@ class KotlinResolutionCallbacksImpl(
     }
 
     override fun analyzeAndGetLambdaResultArguments(
-            outerCall: KotlinCall,
             lambdaArgument: LambdaKotlinCallArgument,
             isSuspend: Boolean,
             receiverType: UnwrappedType?,
             parameters: List<UnwrappedType>,
             expectedReturnType: UnwrappedType?
     ): List<SimpleKotlinCallArgument> {
-        val psiCallArgument = lambdaArgument.psiCallArgument
-        val outerCallContext = (psiCallArgument as? LambdaKotlinCallArgumentImpl)?.outerCallContext ?:
-                               (psiCallArgument as FunctionExpressionImpl).outerCallContext
+        val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
+        val outerCallContext = psiCallArgument.outerCallContext
 
         fun createCallArgument(ktExpression: KtExpression, typeInfo: KotlinTypeInfo) =
                 createSimplePSICallArgument(trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
                                             CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo)
 
-        val expression: KtExpression = (psiCallArgument as? LambdaKotlinCallArgumentImpl)?.ktLambdaExpression ?:
-                               (psiCallArgument as FunctionExpressionImpl).ktFunction
-
-        val ktFunction: KtFunction = (psiCallArgument as? LambdaKotlinCallArgumentImpl)?.ktLambdaExpression?.functionLiteral ?:
-                         (psiCallArgument as FunctionExpressionImpl).ktFunction
-
         val lambdaInfo = LambdaInfo(expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE,
                                     if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT)
 
-        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, ktFunction, lambdaInfo)
+        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, lambdaInfo)
 
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
         val expectedType = createFunctionType(builtIns, Annotations.EMPTY, receiverType, parameters, null,
@@ -105,10 +96,10 @@ class KotlinResolutionCallbacksImpl(
                 .replaceBindingTrace(trace)
                 .replaceContextDependency(lambdaInfo.contextDependency)
                 .replaceExpectedType(approximatesExpectedType)
-                .replaceDataFlowInfo(outerCall.psiKotlinCall.resultDataFlowInfo)
+                .replaceDataFlowInfo(psiCallArgument.lambdaInitialDataFlowInfo)
 
-        val functionTypeInfo = expressionTypingServices.getTypeInfo(expression, actualContext)
-        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, ktFunction, LambdaInfo.STUB_EMPTY)
+        val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
+        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
 
         var hasReturnWithoutExpression = false
         val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { (expression, typeInfo) ->
