@@ -1,0 +1,16 @@
+// WITH_RUNTIME
+fun test(): String {
+    <caret>return try {
+        try {
+            "success"
+        } catch (e: Exception) {
+            TODO()
+        }
+    } catch (e: Exception) {
+        try {
+            TODO()
+        } catch (e: Exception) {
+            "failure"
+        }
+    }
+}
