@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -75,6 +76,12 @@ object BranchedFoldingUtils {
                     assignment != null || collectAssignmentsAndCheck(branch?.lastBlockStatementOrThis())
                 }
             }
+            is KtTryExpression -> {
+                e.tryBlockAndCatchBodies().all {
+                    val assignment = getFoldableBranchedAssignment(it)?.run { assignments.add(this) }
+                    assignment != null || collectAssignmentsAndCheck(it?.lastBlockStatementOrThis())
+                }
+            }
             is KtCallExpression -> {
                 e.analyze().getType(e)?.isNothing() ?: false
             }
@@ -83,13 +90,19 @@ object BranchedFoldingUtils {
             else -> false
         }
         if (!collectAssignmentsAndCheck(expression)) return -1
-        val firstAssignment = assignments.firstOrNull()
-        if (firstAssignment != null && assignments.any { !BranchedFoldingUtils.checkAssignmentsMatch(it, firstAssignment) }) {
+        val firstAssignment = assignments.firstOrNull() ?: return 0
+        if (assignments.any { !BranchedFoldingUtils.checkAssignmentsMatch(it, firstAssignment) }) {
             return -1
         }
         if (expression.anyDescendantOfType<KtBinaryExpression>(
                 predicate = {
-                    it.operationToken in KtTokens.ALL_ASSIGNMENTS && it !in assignments
+                    if (it.operationToken in KtTokens.ALL_ASSIGNMENTS)
+                        if (it.getNonStrictParentOfType<KtFinallySection>() != null)
+                            BranchedFoldingUtils.checkAssignmentsMatch(it, firstAssignment)
+                        else
+                            it !in assignments
+                    else
+                        false
                 }
         )) {
             return -1
@@ -128,6 +141,12 @@ object BranchedFoldingUtils {
                 else -> getFoldableReturns(branches)
             }
         }
+        is KtTryExpression -> {
+            if (expression.finallyBlock?.finalExpression?.let { getFoldableReturns(listOf(it)) }?.isNotEmpty() == true)
+                null
+            else
+                getFoldableReturns(expression.tryBlockAndCatchBodies())
+        }
         is KtCallExpression -> {
             if (expression.analyze().getType(expression)?.isNothing() == true) emptyList() else null
         }
@@ -157,6 +176,9 @@ object BranchedFoldingUtils {
                 is KtIfExpression -> e.branches.forEach { branch ->
                     getFoldableBranchedAssignment(branch)?.replaceWithRHS() ?: lift(branch?.lastBlockStatementOrThis())
                 }
+                is KtTryExpression -> e.tryBlockAndCatchBodies().forEach {
+                    getFoldableBranchedAssignment(it)?.replaceWithRHS() ?: lift(it?.lastBlockStatementOrThis())
+                }
             }
         }
         lift(expression)
@@ -177,9 +199,16 @@ object BranchedFoldingUtils {
                     getFoldableBranchedReturn(branch)?.replaceWithReturned() ?:
                     lift(branch?.lastBlockStatementOrThis())
                 }
+                is KtTryExpression -> e.tryBlockAndCatchBodies().forEach {
+                    getFoldableBranchedReturn(it)?.replaceWithReturned() ?:
+                    lift(it?.lastBlockStatementOrThis())
+                }
             }
         }
         lift(expression)
         expression.replace(KtPsiFactory(expression).createExpressionByPattern("return $0", expression))
     }
+
+    private fun KtTryExpression.tryBlockAndCatchBodies(): List<KtExpression?> = listOf(tryBlock) + catchClauses.map { it.catchBody }
+
 }
