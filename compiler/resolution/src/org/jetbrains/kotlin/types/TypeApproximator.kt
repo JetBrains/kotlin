@@ -152,7 +152,7 @@ class TypeApproximator {
                      *
                      * If U_1 <: U_2.lower .. U_2.upper, then we know only that U_1 <: U_2.upper.
                      */
-                    return FlexibleTypeImpl(lowerResult?.lowerIfFlexible() ?: type.lowerBound,
+                    return KotlinTypeFactory.flexibleType(lowerResult?.lowerIfFlexible() ?: type.lowerBound,
                                             upperResult?.upperIfFlexible() ?: type.upperBound)
                 }
                 else {
