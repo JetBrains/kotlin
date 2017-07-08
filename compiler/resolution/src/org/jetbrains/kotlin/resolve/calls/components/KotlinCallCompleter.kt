@@ -212,7 +212,7 @@ class KotlinCallCompleter(
         val parameters = lambda.parameters.map(::substitute)
         val expectedType = lambda.returnType.takeIf { c.canBeProper(it) }?.let(::substitute)
         lambda.analyzed = true
-        lambda.resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(lambda.outerCall, lambda.argument, lambda.isSuspend, receiver, parameters, expectedType)
+        lambda.resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(lambda.argument, lambda.isSuspend, receiver, parameters, expectedType)
 
         for (resultLambdaArgument in lambda.resultArguments) {
             checkSimpleArgument(c.getBuilder(), resultLambdaArgument, lambda.returnType.let(::substitute))

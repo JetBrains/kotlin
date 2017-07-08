@@ -237,11 +237,12 @@ internal object CheckArguments : ResolutionPart {
             val parameterName = parameterDescriptor.name
             for (argument in resolvedCallArgument.arguments) {
 
+                val expectedType = argument.getExpectedType(parameterDescriptor)
                 val diagnostic = when (argument) {
                     is SimpleKotlinCallArgument ->
-                        checkSimpleArgument(csBuilder, argument, argument.getExpectedType(parameterDescriptor), parameterName = parameterName)
+                        checkSimpleArgument(csBuilder, argument, expectedType, , parameterName = parameterName)
                     is PostponableKotlinCallArgument ->
-                        createPostponedArgumentAndPerformInitialChecks(kotlinCall, csBuilder, argument, parameterDescriptor)
+                        createPostponedArgumentAndPerformInitialChecks(csBuilder, argument, expectedType)
                     else -> unexpectedArgument(argument)
                 }
                 diagnostics.addIfNotNull(diagnostic)

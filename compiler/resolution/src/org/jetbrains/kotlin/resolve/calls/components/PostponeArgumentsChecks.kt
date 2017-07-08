@@ -27,14 +27,12 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 fun createPostponedArgumentAndPerformInitialChecks(
-        kotlinCall: KotlinCall,
         csBuilder: ConstraintSystemBuilder,
         argument: PostponableKotlinCallArgument,
-        parameterDescriptor: ValueParameterDescriptor
+        expectedType: UnwrappedType
 ): KotlinCallDiagnostic? {
-    val expectedType = argument.getExpectedType(parameterDescriptor)
     val (postponedArgument, diagnostic) =  when (argument) {
-        is LambdaKotlinCallArgument -> preprocessLambdaArgument(kotlinCall, csBuilder, argument, expectedType, parameterDescriptor.name)
+        is LambdaKotlinCallArgument -> preprocessLambdaArgument(csBuilder, argument, expectedType, parameterDescriptor.name)
         is CallableReferenceKotlinCallArgument -> preprocessCallableReference(csBuilder, argument, expectedType)
         is CollectionLiteralKotlinCallArgument -> preprocessCollectionLiteralArgument(csBuilder, argument, expectedType)
         else -> unexpectedArgument(argument)
@@ -46,7 +44,6 @@ fun createPostponedArgumentAndPerformInitialChecks(
 
 // if expected type isn't function type, then may be it is Function<R>, Any or just `T`
 private fun preprocessLambdaArgument(
-        kotlinCall: KotlinCall,
         csBuilder: ConstraintSystemBuilder,
         argument: LambdaKotlinCallArgument,
         expectedType: UnwrappedType,
@@ -86,7 +83,7 @@ private fun preprocessLambdaArgument(
         // what about case where expected type is type variable? In old TY such cases was not supported. => do nothing for now. todo design
     }
 
-    val resolvedArgument = PostponedLambdaArgument(kotlinCall, argument, isSuspend, receiverType, parameters, returnType)
+    val resolvedArgument = PostponedLambdaArgument(argument, isSuspend, receiverType, parameters, returnType)
 
     csBuilder.addSubtypeConstraint(resolvedArgument.type, expectedType, ArgumentConstraintPosition(argument, parameterName))
 
