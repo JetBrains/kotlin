@@ -506,9 +506,6 @@ public class KotlinTestUtils {
                 configuration.put(JVMConfigurationKeys.JDK_HOME, home);
             }
         }
-        else if (SystemInfo.IS_AT_LEAST_JAVA9) {
-            configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
-        }
         else {
             JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromCurrentJre());
         }
