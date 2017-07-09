@@ -70,20 +70,16 @@ class FunctionReader(
             val fileContent: String,
             val moduleVariable: String,
             val kotlinVariable: String,
-            val offsetToSourceMapping: OffsetToSourceMapping,
+            offsetToSourceMappingProvider: () -> OffsetToSourceMapping,
             val sourceMap: SourceMap?
-    )
+    ) {
+        val offsetToSourceMapping by lazy(offsetToSourceMappingProvider)
+    }
 
-    private val moduleNameToInfo = HashMultimap.create<String, ModuleInfo>()
+    private val moduleNameToInfo by lazy {
+        val result = HashMultimap.create<String, ModuleInfo>()
 
-    private val moduleNameMap: Map<String, JsExpression>
-
-    init {
-        val libs = config.libraries.map(::File)
-
-        moduleNameMap = buildModuleNameMap(fragments)
-
-        JsLibraryUtils.traverseJsLibraries(libs) { (content, path, sourceMapContent) ->
+        JsLibraryUtils.traverseJsLibraries(config.libraries.map(::File)) { (content, path, sourceMapContent) ->
             var current = 0
 
             while (true) {
@@ -100,11 +96,11 @@ class FunctionReader(
                 val kotlinVariable = preciseMatcher.group(1)
 
                 val sourceMap = sourceMapContent?.let {
-                    val result = SourceMapParser.parse(StringReader(it))
-                    when (result) {
-                        is SourceMapSuccess -> result.value
+                    val sourceMapResult = SourceMapParser.parse(StringReader(it))
+                    when (sourceMapResult) {
+                        is SourceMapSuccess -> sourceMapResult.value
                         is SourceMapError -> {
-                            reporter.warning("Error parsing source map file for $path: ${result.message}")
+                            reporter.warning("Error parsing source map file for $path: ${sourceMapResult.message}")
                             null
                         }
                     }
@@ -115,13 +111,21 @@ class FunctionReader(
                         fileContent = content,
                         moduleVariable = moduleVariable,
                         kotlinVariable = kotlinVariable,
-                        offsetToSourceMapping = OffsetToSourceMapping(content),
+                        offsetToSourceMappingProvider = { OffsetToSourceMapping(content) },
                         sourceMap = sourceMap
                 )
 
-                moduleNameToInfo.put(moduleName, moduleInfo)
+                result.put(moduleName, moduleInfo)
             }
         }
+
+        result
+    }
+
+    private val moduleNameMap: Map<String, JsExpression>
+
+    init {
+        moduleNameMap = buildModuleNameMap(fragments)
     }
 
     // Since we compile each source file in its own context (and we may loose these context when performing incremental compilation)

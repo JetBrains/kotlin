@@ -22,16 +22,31 @@ class OffsetToSourceMapping(text: String) {
     private val data: IntArray
 
     init {
-        val lineSeparators = LINE_SEPARATOR.findAll(text).map { it.range.endInclusive + 1 }
-        data = (sequenceOf(0) + lineSeparators).toList().toIntArray()
+        var i = 0
+        val lineSeparators = mutableListOf<Int>()
+        lineSeparators += 0
+        while (i < text.length) {
+            val c = text[i++]
+            val isNewLine = when (c) {
+                '\r' -> {
+                    if (i < text.length && text[i] == '\n') {
+                        ++i
+                    }
+                    true
+                }
+                '\n' -> true
+                else -> false
+            }
+            if (isNewLine) {
+                lineSeparators += i
+            }
+        }
+
+        data = lineSeparators.toIntArray()
     }
 
     operator fun get(offset: Int): CodePosition {
         val lineNumber = data.binarySearch(offset).let { if (it >= 0) it else -it - 2 }
         return CodePosition(lineNumber, offset - data[lineNumber])
-    }
-
-    private companion object {
-        private val LINE_SEPARATOR = Regex("\\r\\n|\\r|\\n")
     }
 }
