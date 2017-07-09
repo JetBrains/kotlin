@@ -86,6 +86,7 @@ import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.SlicedMap;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.PathUtil;
 import org.junit.Assert;
 
 import javax.tools.*;
@@ -539,8 +540,8 @@ public class KotlinTestUtils {
                 configuration.put(JVMConfigurationKeys.JDK_HOME, home);
             }
         }
-        else if (SystemInfo.IS_AT_LEAST_JAVA9) {
-            configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
+        else {
+            JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromCurrentJre());
         }
 
         if (configurationKind.getWithRuntime()) {
