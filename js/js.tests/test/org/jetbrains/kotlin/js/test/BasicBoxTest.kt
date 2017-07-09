@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -58,6 +59,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.*
 import java.nio.charset.Charset
 import java.util.regex.Pattern
@@ -97,8 +99,8 @@ abstract class BasicBoxTest(
             val orderedModules = DFS.topologicalOrder(modules.values) { module -> module.dependencies.mapNotNull { modules[it] } }
 
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
-                val dependencies = module.dependencies.mapNotNull { modules[it]?.outputFileName(outputDir) + ".meta.js" }
-                val friends = module.friends.mapNotNull { modules[it]?.outputFileName(outputDir) + ".meta.js" }
+                val dependencies = module.dependencies.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
+                val friends = module.friends.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
                 generateJavaScriptFile(file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
@@ -510,7 +512,7 @@ abstract class BasicBoxTest(
             configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true)
         }
 
-        return JsConfig(project, configuration)
+        return JsConfig(project, configuration, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet())
     }
 
     private fun minifyAndRun(
@@ -636,6 +638,14 @@ abstract class BasicBoxTest(
     }
 
     companion object {
+        val METADATA_CACHE = (JsConfig.JS_STDLIB.asSequence() + JsConfig.JS_KOTLIN_TEST)
+                .flatMap {
+                    KotlinJavascriptMetadataUtils
+                            .loadMetadata(it).asSequence()
+                            .map { KotlinJavascriptSerializationUtil.readModuleAsProto(it.body, it.moduleName) }
+                }
+                .toList()
+
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
         const val DIST_DIR_JS_PATH = "dist/js/"
 
