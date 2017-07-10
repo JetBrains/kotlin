@@ -2048,32 +2048,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return genClosure((KtNamedFunction) expression, samType);
         }
 
-        Type asmType =
-                state.getSamWrapperClasses().getSamWrapperClass(samType, expression.getContainingKtFile(), this);
+        Type asmType = state.getSamWrapperClasses().getSamWrapperClass(samType, expression.getContainingKtFile(), this);
 
         return StackValue.operation(asmType, v -> {
-            v.anew(asmType);
-            v.dup();
+            Label afterAll = new Label();
 
             Type functionType = typeMapper.mapType(samType.getKotlinFunctionType());
             expression.accept(visitor, StackValue.none()).put(functionType, v);
 
-            Label ifNonNull = new Label();
-            Label afterAll = new Label();
-
             v.dup();
-            v.ifnonnull(ifNonNull);
+            v.ifnull(afterAll);
 
-            // if null: pop function value and wrapper objects, put null
-            v.pop();
-            v.pop2();
-            v.aconst(null);
-            v.goTo(afterAll);
-
-            v.mark(ifNonNull);
+            int tmp = myFrameMap.enterTemp(functionType);
+            v.store(tmp, functionType);
+            v.anew(asmType);
+            v.dup();
+            v.load(tmp, functionType);
             v.invokespecial(asmType.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType), false);
+            myFrameMap.leaveTemp(functionType);
 
             v.mark(afterAll);
+
             return null;
         });
     }
