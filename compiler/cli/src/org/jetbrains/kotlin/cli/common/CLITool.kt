@@ -142,6 +142,9 @@ abstract class CLITool<A : CommonToolArguments> {
             if (System.getProperty("java.awt.headless") == null) {
                 System.setProperty("java.awt.headless", "true")
             }
+            if (System.getProperty(PlainTextMessageRenderer.KOTLIN_COLORS_ENABLED_PROPERTY) == null) {
+                System.setProperty(PlainTextMessageRenderer.KOTLIN_COLORS_ENABLED_PROPERTY, "true")
+            }
             val exitCode = doMainNoExit(compiler, args)
             if (exitCode != ExitCode.OK) {
                 System.exit(exitCode.code)
