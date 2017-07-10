@@ -314,6 +314,18 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("typealiasWithAnnotatedDynamic.kt")
+        public void testTypealiasWithAnnotatedDynamic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/typealiasWithAnnotatedDynamic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typealiasWithDynamic.kt")
+        public void testTypealiasWithDynamic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/typealiasWithDynamic.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("varargs.kt")
         public void testVarargs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/varargs.kt");

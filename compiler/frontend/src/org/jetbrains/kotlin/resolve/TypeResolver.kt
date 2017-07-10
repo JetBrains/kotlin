@@ -301,7 +301,7 @@ class TypeResolver(
             }
 
             override fun visitDynamicType(type: KtDynamicType) {
-                result = type(dynamicCallableDescriptors.dynamicType)
+                result = type(dynamicCallableDescriptors.dynamicType.replaceAnnotations(annotations))
                 if (!dynamicTypesSettings.dynamicTypesAllowed) {
                     c.trace.report(UNSUPPORTED.on(type, "Dynamic types are not supported in this context"))
                 }

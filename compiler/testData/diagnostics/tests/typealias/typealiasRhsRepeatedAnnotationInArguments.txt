@@ -1,0 +1,10 @@
+package
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class A : kotlin.Annotation {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias Gen</*0*/ T>  = kotlin.collections.List<@A T>
+public typealias Test1 = Gen<@A kotlin.Int>

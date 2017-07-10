@@ -44,7 +44,7 @@ class DynamicType(builtIns: KotlinBuiltIns, override val annotations: Annotation
 
     override val isMarkedNullable: Boolean get() = false
 
-    override fun replaceAnnotations(newAnnotations: Annotations): DynamicType = DynamicType(delegate.builtIns, annotations)
+    override fun replaceAnnotations(newAnnotations: Annotations): DynamicType = DynamicType(delegate.builtIns, newAnnotations)
 
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String = "dynamic"
 }
