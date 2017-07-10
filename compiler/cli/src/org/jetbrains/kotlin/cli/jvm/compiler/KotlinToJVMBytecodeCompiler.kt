@@ -59,7 +59,6 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.util.PerformanceCounter
-import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
 import java.lang.reflect.InvocationTargetException
@@ -259,12 +258,8 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    fun compileAndExecuteScript(
-            environment: KotlinCoreEnvironment,
-            paths: KotlinPaths,
-            scriptArgs: List<String>): ExitCode
-    {
-        val scriptClass = compileScript(environment, paths) ?: return ExitCode.COMPILATION_ERROR
+    internal fun compileAndExecuteScript(environment: KotlinCoreEnvironment, scriptArgs: List<String>): ExitCode {
+        val scriptClass = compileScript(environment) ?: return ExitCode.COMPILATION_ERROR
 
         try {
             try {
@@ -327,29 +322,18 @@ object KotlinToJVMBytecodeCompiler {
         }
         stream.println(cause)
         val fullTrace = cause.stackTrace
-        val relevantEntries = fullTrace.size - exception.stackTrace.size
-        for (i in 0..relevantEntries - 1) {
+        for (i in 0 until fullTrace.size - exception.stackTrace.size) {
             stream.println("\tat " + fullTrace[i])
         }
     }
 
-    fun compileScript(environment: KotlinCoreEnvironment, paths: KotlinPaths): Class<*>? =
-            compileScript(environment,
-                          {
-                              val classPaths = arrayListOf(paths.runtimePath.toURI().toURL())
-                              environment.configuration.jvmClasspathRoots.mapTo(classPaths) { it.toURI().toURL() }
-                              URLClassLoader(classPaths.toTypedArray())
-                          })
-
-    fun compileScript(environment: KotlinCoreEnvironment, parentClassLoader: ClassLoader): Class<*>? = compileScript(environment, { parentClassLoader })
-
-    private inline fun compileScript(
-            environment: KotlinCoreEnvironment,
-            makeParentClassLoader: () -> ClassLoader): Class<*>? {
+    fun compileScript(environment: KotlinCoreEnvironment, parentClassLoader: ClassLoader? = null): Class<*>? {
         val state = analyzeAndGenerate(environment) ?: return null
 
         try {
-            val classLoader = GeneratedClassLoader(state.factory, makeParentClassLoader())
+            val classLoader = GeneratedClassLoader(state.factory, parentClassLoader ?: URLClassLoader(
+                    environment.configuration.jvmClasspathRoots.map { it.toURI().toURL() }.toTypedArray(), null
+            ))
 
             val script = environment.getSourceFiles()[0].script ?: error("Script must be parsed")
             return classLoader.loadClass(script.fqName.asString())

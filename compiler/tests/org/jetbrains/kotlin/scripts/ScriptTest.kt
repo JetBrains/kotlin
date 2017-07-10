@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.scripts
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
@@ -28,18 +27,16 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
-import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
-import org.junit.Test
 import java.io.File
 import java.net.URLClassLoader
 
 class ScriptTest : KtUsefulTestCase() {
-    @Test
     fun testStandardScriptWithParams() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
         Assert.assertNotNull(aClass)
@@ -50,7 +47,6 @@ class ScriptTest : KtUsefulTestCase() {
         assertEqualsTrimmed(NUM_4_LINE + " (comment)" + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
-    @Test
     fun testStandardScriptWithoutParams() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
         Assert.assertNotNull(aClass)
@@ -61,7 +57,6 @@ class ScriptTest : KtUsefulTestCase() {
         assertEqualsTrimmed(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
-    @Test
     fun testStandardScriptWithSaving() {
         val tmpdir = File(KotlinTestUtils.tmpDirForTest(this), "withSaving")
         tmpdir.mkdirs()
@@ -82,22 +77,20 @@ class ScriptTest : KtUsefulTestCase() {
         assertEqualsTrimmed(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out2)
     }
 
+    fun testUseCompilerInternals() {
+        val scriptClass = compileScript("use_compiler_internals.kts", StandardScriptDefinition)!!
+        assertEquals("OK", captureOut {
+            tryConstructClassFromStringArgs(scriptClass, emptyList())!!
+        })
+    }
+
     private fun compileScript(
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
             runIsolated: Boolean = true,
             suppressOutput: Boolean = false,
-            saveClassesDir: File? = null): Class<*>? =
-    compileScriptImpl("compiler/testData/script/" + scriptPath, scriptDefinition, runIsolated, suppressOutput, saveClassesDir)
-
-    private fun compileScriptImpl(
-            scriptPath: String,
-            scriptDefinition: KotlinScriptDefinition,
-            runIsolated: Boolean,
-            suppressOutput: Boolean,
-            saveClassesDir: File? = null): Class<*>?
-    {
-        val paths = PathUtil.getKotlinPathsForDistDirectory()
+            saveClassesDir: File? = null
+    ): Class<*>? {
         val messageCollector =
                 if (suppressOutput) MessageCollector.NONE
                 else PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
@@ -106,7 +99,7 @@ class ScriptTest : KtUsefulTestCase() {
         try {
             val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
-            configuration.addKotlinSourceRoot(scriptPath)
+            configuration.addKotlinSourceRoot("compiler/testData/script/$scriptPath")
             configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
             configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
             if (saveClassesDir != null) {
@@ -116,8 +109,7 @@ class ScriptTest : KtUsefulTestCase() {
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             try {
-                return if (runIsolated) KotlinToJVMBytecodeCompiler.compileScript(environment, paths)
-                else KotlinToJVMBytecodeCompiler.compileScript(environment, this::class.java.classLoader)
+                return KotlinToJVMBytecodeCompiler.compileScript(environment, this::class.java.classLoader.takeUnless { runIsolated })
             }
             catch (e: CompilationException) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
@@ -134,5 +126,3 @@ class ScriptTest : KtUsefulTestCase() {
         }
     }
 }
-
-class TestParamClass(@Suppress("unused") val memberNum: Int)
