@@ -45,8 +45,6 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
-import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
-import org.jetbrains.kotlin.idea.framework.isDetected
 import org.jetbrains.kotlin.idea.framework.isExternalLibrary
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -98,7 +96,7 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
     // TODO use module SDK
 
     for (library in libraries) {
-        val libraryJarDescriptors = if (isDetected(JavaRuntimePresentationProvider.getInstance(), library))
+        val libraryJarDescriptors = if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(library) != null)
             kJvmConfigurator.getLibraryJarDescriptors(sdk)
         else
             kJsConfigurator.getLibraryJarDescriptors(sdk)

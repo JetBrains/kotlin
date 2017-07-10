@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.configuration;
 
-import com.intellij.framework.library.LibraryVersionProperties;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.libraries.Library;
@@ -26,8 +25,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.facet.FacetUtilsKt;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
-import org.jetbrains.kotlin.idea.framework.KotlinLibraryUtilKt;
+import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil;
 import org.jetbrains.kotlin.idea.project.PlatformKt;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
 
@@ -145,14 +143,14 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
 
     public void testJsLibraryVersion11() {
         Library jsRuntime = KotlinRuntimeLibraryUtilKt.findAllUsedLibraries(myProject).keySet().iterator().next();
-        LibraryVersionProperties properties = KotlinLibraryUtilKt.getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), jsRuntime);
-        assertEquals("1.1.0", properties.getVersionString());
+        String version = JsLibraryStdDetectionUtil.INSTANCE.getJsLibraryStdVersion(jsRuntime);
+        assertEquals("1.1.0", version);
     }
 
     public void testJsLibraryVersion106() {
         Library jsRuntime = KotlinRuntimeLibraryUtilKt.findAllUsedLibraries(myProject).keySet().iterator().next();
-        LibraryVersionProperties properties = KotlinLibraryUtilKt.getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), jsRuntime);
-        assertEquals("1.0.6", properties.getVersionString());
+        String version = JsLibraryStdDetectionUtil.INSTANCE.getJsLibraryStdVersion(jsRuntime);
+        assertEquals("1.0.6", version);
     }
 
     @SuppressWarnings("ConstantConditions")

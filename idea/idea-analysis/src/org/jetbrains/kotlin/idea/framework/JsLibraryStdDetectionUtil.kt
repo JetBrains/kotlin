@@ -42,6 +42,8 @@ object JsLibraryStdDetectionUtil {
         return getJsLibraryStdVersion(classes) != null
     }
 
+    fun getJsLibraryStdVersion(library: Library): String? = getJsLibraryStdVersion(library.getFiles(OrderRootType.CLASSES).toList())
+
     fun getJsLibraryStdVersion(classesRoots: List<VirtualFile>): String? {
         if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) {
             // Prevent clashing with java runtime, in case when library collects all roots.

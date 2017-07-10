@@ -24,15 +24,6 @@ import com.intellij.openapi.roots.libraries.LibraryPresentationProvider
 import com.intellij.openapi.roots.libraries.LibraryProperties
 import java.util.*
 
-fun <LP : LibraryProperties<out Any>> isDetected(provider: LibraryPresentationProvider<LP>, library: Library): Boolean {
-    return getLibraryProperties(provider, library) != null
-}
-
-fun <LP : LibraryProperties<out Any>> getLibraryProperties(provider: LibraryPresentationProvider<LP>, library: Library): LP? {
-    if (isExternalLibrary(library)) return null
-    return provider.detect(Arrays.asList(*library.getFiles(OrderRootType.CLASSES)))
-}
-
 private val MAVEN_SYSTEM_ID = ProjectSystemId("MAVEN")
 val GRADLE_SYSTEM_ID = ProjectSystemId("GRADLE")
 
