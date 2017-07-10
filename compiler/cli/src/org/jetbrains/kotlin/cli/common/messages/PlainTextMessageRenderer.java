@@ -30,12 +30,13 @@ import java.util.Set;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
 public abstract class PlainTextMessageRenderer implements MessageRenderer {
+    public static final String KOTLIN_COLORS_ENABLED_PROPERTY = "kotlin.colors.enabled";
     public static final boolean COLOR_ENABLED;
 
     static {
         boolean colorEnabled = false;
         // TODO: investigate why ANSI escape codes on Windows only work in REPL for some reason
-        if (!SystemInfo.isWindows && !"false".equals(System.getProperty("kotlin.colors.enabled"))) {
+        if (!SystemInfo.isWindows && "true".equals(System.getProperty(KOTLIN_COLORS_ENABLED_PROPERTY))) {
             try {
                 // AnsiConsole doesn't check isatty() for stderr (see https://github.com/fusesource/jansi/pull/35).
                 colorEnabled = CLibrary.isatty(CLibrary.STDERR_FILENO) != 0;
