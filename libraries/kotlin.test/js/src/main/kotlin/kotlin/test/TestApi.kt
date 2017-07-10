@@ -43,7 +43,7 @@ internal fun setAdapter(adapter: dynamic) {
 /**
  * Use in order to define which action should be taken by the test framework on the [AssertionResult].
  */
-internal fun setAssertHook(hook: (AssertionResult) -> Nothing) {
+internal fun setAssertHook(hook: (AssertionResult) -> Unit) {
     assertHook = hook
 }
 
@@ -90,5 +90,6 @@ internal fun detectAdapter() = when {
 internal val NAME_TO_ADAPTER: Map<String, () -> FrameworkAdapter> = mapOf(
         "qunit" to ::QUnitAdapter,
         "jasmine" to ::JasmineAdapter,
-        "jest" to ::JasmineAdapter, // Jest support both Mocha- and Jasmine-style test declarations.
+        "mocha" to ::JasmineAdapter,
+        "jest" to ::JasmineAdapter,
         "auto" to ::detectAdapter)
