@@ -62,7 +62,6 @@ class CallableReferenceResolver(
 ) {
 
     fun processCallableReferenceArgument(
-            scopeTower: ImplicitScopeTower,
             csBuilder: ConstraintSystemBuilder,
             postponedArgument: PostponedCallableReferenceArgument
     ): KotlinCallDiagnostic? {
@@ -73,6 +72,8 @@ class CallableReferenceResolver(
         if (subLHSCall != null) {
             csBuilder.addInnerCall(subLHSCall.resolvedCall)
         }
+
+        val scopeTower = callComponents.statelessCallbacks.getScopeTowerForCallableReferenceArgument(argument)
         val candidates = runRHSResolution(scopeTower, argument, expectedType) { checkCallableReference ->
             csBuilder.runTransaction { checkCallableReference(this); false }
         }

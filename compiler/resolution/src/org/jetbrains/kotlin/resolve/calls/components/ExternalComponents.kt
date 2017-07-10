@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.types.UnwrappedType
 
 // stateless component
@@ -29,6 +30,7 @@ interface KotlinResolutionStatelessCallbacks {
     fun isSuperOrDelegatingConstructorCall(kotlinCall: KotlinCall): Boolean
     fun isHiddenInResolution(descriptor: DeclarationDescriptor, kotlinCall: KotlinCall): Boolean
     fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean
+    fun getScopeTowerForCallableReferenceArgument(argument: CallableReferenceKotlinCallArgument): ImplicitScopeTower
 }
 
 // This components hold state (trace). Work with this carefully.
