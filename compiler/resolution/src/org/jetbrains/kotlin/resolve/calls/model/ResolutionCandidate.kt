@@ -105,7 +105,7 @@ sealed class AbstractSimpleKotlinResolutionCandidate(
 }
 
 open class SimpleKotlinResolutionCandidate(
-        val callContext: KotlinCallContext,
+        val callComponents: KotlinCallComponents,
         val scopeTower: ImplicitScopeTower,
         override val kotlinCall: KotlinCall,
         val explicitReceiverKind: ExplicitReceiverKind,
@@ -114,7 +114,7 @@ open class SimpleKotlinResolutionCandidate(
         val candidateDescriptor: CallableDescriptor,
         val knownTypeParametersResultingSubstitutor: TypeSubstitutor?,
         initialDiagnostics: Collection<KotlinCallDiagnostic>
-) : AbstractSimpleKotlinResolutionCandidate(NewConstraintSystemImpl(callContext.constraintInjector, callContext.resultTypeResolver), initialDiagnostics) {
+) : AbstractSimpleKotlinResolutionCandidate(NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.resultTypeResolver), initialDiagnostics) {
     val csBuilder: ConstraintSystemBuilder get() = constraintSystem.getBuilder()
 
     lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
@@ -134,14 +134,14 @@ open class SimpleKotlinResolutionCandidate(
 }
 
 class ErrorKotlinResolutionCandidate(
-        callContext: KotlinCallContext,
+        callComponents: KotlinCallComponents,
         scopeTower: ImplicitScopeTower,
         kotlinCall: KotlinCall,
         explicitReceiverKind: ExplicitReceiverKind,
         dispatchReceiverArgument: SimpleKotlinCallArgument?,
         extensionReceiver: SimpleKotlinCallArgument?,
         candidateDescriptor: CallableDescriptor
-) : SimpleKotlinResolutionCandidate(callContext, scopeTower, kotlinCall, explicitReceiverKind, dispatchReceiverArgument,
+) : SimpleKotlinResolutionCandidate(callComponents, scopeTower, kotlinCall, explicitReceiverKind, dispatchReceiverArgument,
                                     extensionReceiver, candidateDescriptor, null, listOf()) {
     override val resolutionSequence: List<ResolutionPart> get() = emptyList()
 

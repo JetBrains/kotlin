@@ -53,53 +53,53 @@ class CallableReferenceOverloadConflictResolver(
     }
 }
 
-fun processCallableReferenceArgument(
-        callContext: KotlinCallContext,
-        scopeTower: ImplicitScopeTower,
-        csBuilder: ConstraintSystemBuilder,
-        postponedArgument: PostponedCallableReferenceArgument
-): KotlinCallDiagnostic? {
-    val argument = postponedArgument.argument
-    val expectedType = postponedArgument.expectedType
-
-    val subLHSCall = ((argument.lhsResult as? LHSResult.Expression)?.lshCallArgument as? SubKotlinCallArgument)
-    if (subLHSCall != null) {
-        csBuilder.addInnerCall(subLHSCall.resolvedCall)
-    }
-    val candidates = callContext.callableReferenceResolver.runRLSResolution(callContext, scopeTower, argument, expectedType) { checkCallableReference ->
-        csBuilder.runTransaction { checkCallableReference(this); false }
-    }
-    val chosenCandidate = when (candidates.size) {
-        0 -> return NoneCallableReferenceCandidates(argument)
-        1 -> candidates.single()
-        else -> return CallableReferenceCandidatesAmbiguity(argument, candidates)
-    }
-    val (toFreshSubstitutor, diagnostic) = with(chosenCandidate) {
-        csBuilder.checkCallableReference(argument, dispatchReceiver, extensionReceiver, candidate,
-                                         reflectionCandidateType, expectedType, scopeTower.lexicalScope.ownerDescriptor)
-    }
-
-    postponedArgument.analyzedAndThereIsResult = true
-    postponedArgument.myTypeVariables = toFreshSubstitutor.freshVariables
-    postponedArgument.callableResolutionCandidate = chosenCandidate
-
-    return diagnostic
-}
-
 
 class CallableReferenceResolver(
-        val towerResolver: TowerResolver,
-        val callableReferenceOverloadConflictResolver: CallableReferenceOverloadConflictResolver
+        private val towerResolver: TowerResolver,
+        private val callableReferenceOverloadConflictResolver: CallableReferenceOverloadConflictResolver,
+        private val callComponents: KotlinCallComponents
 ) {
 
-    fun runRLSResolution(
-            outerCallContext: KotlinCallContext,
+    fun processCallableReferenceArgument(
+            scopeTower: ImplicitScopeTower,
+            csBuilder: ConstraintSystemBuilder,
+            postponedArgument: PostponedCallableReferenceArgument
+    ): KotlinCallDiagnostic? {
+        val argument = postponedArgument.argument
+        val expectedType = postponedArgument.expectedType
+
+        val subLHSCall = ((argument.lhsResult as? LHSResult.Expression)?.lshCallArgument as? SubKotlinCallArgument)
+        if (subLHSCall != null) {
+            csBuilder.addInnerCall(subLHSCall.resolvedCall)
+        }
+        val candidates = runRLSResolution(scopeTower, argument, expectedType) { checkCallableReference ->
+            csBuilder.runTransaction { checkCallableReference(this); false }
+        }
+        val chosenCandidate = when (candidates.size) {
+            0 -> return NoneCallableReferenceCandidates(argument)
+            1 -> candidates.single()
+            else -> return CallableReferenceCandidatesAmbiguity(argument, candidates)
+        }
+        val (toFreshSubstitutor, diagnostic) = with(chosenCandidate) {
+            csBuilder.checkCallableReference(argument, dispatchReceiver, extensionReceiver, candidate,
+                                             reflectionCandidateType, expectedType, scopeTower.lexicalScope.ownerDescriptor)
+        }
+
+        postponedArgument.analyzedAndThereIsResult = true
+        postponedArgument.myTypeVariables = toFreshSubstitutor.freshVariables
+        postponedArgument.callableResolutionCandidate = chosenCandidate
+
+        return diagnostic
+    }
+
+
+    private fun runRLSResolution(
             scopeTower: ImplicitScopeTower,
             callableReference: CallableReferenceKotlinCallArgument,
             expectedType: UnwrappedType?, // this type can have not fixed type variable inside
             compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit // you can run anything throw this operation and all this operation will be roll backed
     ): Set<CallableReferenceCandidate> {
-        val factory = CallableReferencesCandidateFactory(callableReference, outerCallContext, scopeTower, compatibilityChecker, expectedType)
+        val factory = CallableReferencesCandidateFactory(callableReference, callComponents, scopeTower, compatibilityChecker, expectedType)
         val processor = createCallableReferenceProcessor(factory)
         val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = true)
         return callableReferenceOverloadConflictResolver.chooseMaximallySpecificCandidates(candidates, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,

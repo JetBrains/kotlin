@@ -152,7 +152,7 @@ private fun ConstraintSystemOperation.addReceiverConstraint(
 
 class CallableReferencesCandidateFactory(
         val argument: CallableReferenceKotlinCallArgument,
-        val outerCallContext: KotlinCallContext,
+        val callComponents: KotlinCallComponents,
         val scopeTower: ImplicitScopeTower,
         val compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit,
         val expectedType: UnwrappedType?
@@ -224,7 +224,7 @@ class CallableReferencesCandidateFactory(
         if (expectedArgumentCount < 0) return null
 
         val fakeArguments = (0..(expectedArgumentCount - 1)).map { FakeKotlinCallArgumentForCallableReference(it) }
-        val argumentMapping = outerCallContext.argumentsToParametersMapper.mapArguments(fakeArguments, externalArgument = null, descriptor = descriptor)
+        val argumentMapping = callComponents.argumentsToParametersMapper.mapArguments(fakeArguments, externalArgument = null, descriptor = descriptor)
         if (argumentMapping.diagnostics.any { !it.candidateApplicability.isSuccess }) return null
 
         /**
@@ -277,7 +277,7 @@ class CallableReferencesCandidateFactory(
                                                              scopeTower.lexicalScope.ownerDescriptor)
                 }
 
-                return outerCallContext.reflectionTypes.getKPropertyType(Annotations.EMPTY, argumentsAndReceivers, descriptorReturnType, mutable) to 0
+                return callComponents.reflectionTypes.getKPropertyType(Annotations.EMPTY, argumentsAndReceivers, descriptorReturnType, mutable) to 0
             }
             is FunctionDescriptor -> {
                 val returnType: KotlinType
@@ -298,8 +298,8 @@ class CallableReferencesCandidateFactory(
                     returnType = if (coercion == CoercionStrategy.COERCION_TO_UNIT) descriptor.builtIns.unitType else descriptorReturnType
                 }
 
-                return outerCallContext.reflectionTypes.getKFunctionType(Annotations.EMPTY, null, argumentsAndReceivers, null,
-                                                                         returnType, descriptor.builtIns) to defaults
+                return callComponents.reflectionTypes.getKFunctionType(Annotations.EMPTY, null, argumentsAndReceivers, null,
+                                                                       returnType, descriptor.builtIns) to defaults
             }
             else -> error("Unsupported descriptor type: $descriptor")
         }
