@@ -115,15 +115,16 @@ done
             scriptFileName: String,
             scriptTemplate: KClass<out Any>,
             environment: Map<String, Any?>? = null,
-            suppressOutput: Boolean = false): Class<*>? =
-            compileScriptImpl("src/test/resources/scripts/" + scriptFileName, KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, null, null, environment), suppressOutput)
+            suppressOutput: Boolean = false
+    ): Class<*>? =
+            compileScriptImpl("src/test/resources/scripts/" + scriptFileName,
+                              KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, null, null, environment), suppressOutput)
 
     private fun compileScriptImpl(
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
-            suppressOutput: Boolean): Class<*>?
-    {
-        val paths = PathUtil.getKotlinPathsForDistDirectory()
+            suppressOutput: Boolean
+    ): Class<*>? {
         val messageCollector =
                 if (suppressOutput) MessageCollector.NONE
                 else PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
@@ -158,7 +159,7 @@ done
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             try {
-                return KotlinToJVMBytecodeCompiler.compileScript(environment, paths)
+                return KotlinToJVMBytecodeCompiler.compileScript(environment)
             }
             catch (e: CompilationException) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),

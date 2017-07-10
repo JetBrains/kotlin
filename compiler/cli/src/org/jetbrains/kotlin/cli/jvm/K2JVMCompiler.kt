@@ -190,7 +190,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
 
-                return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, paths, scriptArgs)
+                return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, scriptArgs)
             }
             else {
                 if (destination != null) {
