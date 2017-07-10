@@ -1,5 +1,5 @@
 // "Create type parameter in class 'X'" "false"
-// ERROR: No type arguments expected for class X defined in root package in file notOnTypeArgumentList.kt
+// ERROR: No type arguments expected for class X
 
 class X
 
