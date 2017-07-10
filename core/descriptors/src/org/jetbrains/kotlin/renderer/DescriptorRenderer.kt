@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,6 +104,12 @@ abstract class DescriptorRenderer {
         @JvmField val COMPACT: DescriptorRenderer = withOptions {
             withDefinedIn = false
             modifiers = emptySet()
+        }
+
+        @JvmField val COMPACT_WITHOUT_SUPERTYPES: DescriptorRenderer = withOptions {
+            withDefinedIn = false
+            modifiers = emptySet()
+            withoutSuperTypes = true
         }
 
         @JvmField val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {

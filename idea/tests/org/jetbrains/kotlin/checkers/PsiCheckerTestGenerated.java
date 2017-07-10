@@ -998,6 +998,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nArgumentsExpectedMessage.kt")
+        public void testNArgumentsExpectedMessage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/nArgumentsExpectedMessage.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noSubstitutedTypeParameter.kt")
         public void testNoSubstitutedTypeParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/noSubstitutedTypeParameter.kt");
