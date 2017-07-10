@@ -153,12 +153,13 @@ private fun ConstraintSystemOperation.addReceiverConstraint(
 class CallableReferencesCandidateFactory(
         val argument: CallableReferenceKotlinCallArgument,
         val outerCallContext: KotlinCallContext,
+        val scopeTower: ImplicitScopeTower,
         val compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit,
         val expectedType: UnwrappedType?
 ) : CandidateFactory<CallableReferenceCandidate> {
 
     fun createCallableProcessor(explicitReceiver: DetailedReceiver?) =
-            createCallableReferenceProcessor(outerCallContext.scopeTower, argument.rhsName, this, explicitReceiver)
+            createCallableReferenceProcessor(scopeTower, argument.rhsName, this, explicitReceiver)
 
     override fun createCandidate(
             towerCandidate: CandidateWithBoundDispatchReceiver,
@@ -189,7 +190,7 @@ class CallableReferencesCandidateFactory(
             if (it.hasContradiction) return@compatibilityChecker
 
             val (_, visibilityError) = it.checkCallableReference(argument, dispatchCallableReceiver, extensionCallableReceiver, candidateDescriptor,
-                                      reflectionCandidateType, expectedType, outerCallContext.scopeTower.lexicalScope.ownerDescriptor)
+                                      reflectionCandidateType, expectedType, scopeTower.lexicalScope.ownerDescriptor)
 
             diagnostics.addIfNotNull(visibilityError)
 
@@ -273,7 +274,7 @@ class CallableReferencesCandidateFactory(
                 val mutable = descriptor.isVar && run {
                     val setter = descriptor.setter
                     setter == null || Visibilities.isVisible(dispatchReceiver?.asReceiverValueForVisibilityChecks, setter,
-                                                             outerCallContext.scopeTower.lexicalScope.ownerDescriptor)
+                                                             scopeTower.lexicalScope.ownerDescriptor)
                 }
 
                 return outerCallContext.reflectionTypes.getKPropertyType(Annotations.EMPTY, argumentsAndReceivers, descriptorReturnType, mutable) to 0

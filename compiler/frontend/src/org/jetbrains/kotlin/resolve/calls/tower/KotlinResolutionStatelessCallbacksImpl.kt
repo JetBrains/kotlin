@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isSuperOrDelegatingConstructorCall
-import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionExternalPredicates
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 
-class KotlinResolutionExternalPredicatesImpl(
+class KotlinResolutionStatelessCallbacksImpl(
         private val languageVersionSettings: LanguageVersionSettings
-) : KotlinResolutionExternalPredicates {
+) : KotlinResolutionStatelessCallbacks {
     override fun isDescriptorFromSource(descriptor: CallableDescriptor) =
             DescriptorToSourceUtils.descriptorToDeclaration(descriptor) != null
 

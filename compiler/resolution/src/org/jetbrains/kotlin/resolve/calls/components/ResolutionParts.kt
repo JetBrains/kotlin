@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (candidateDescriptor is ConstructorDescriptor && !callContext.externalPredicates.isSuperOrDelegatingConstructorCall(kotlinCall)) {
+        if (candidateDescriptor is ConstructorDescriptor && !callContext.statelessCallbacks.isSuperOrDelegatingConstructorCall(kotlinCall)) {
             if (candidateDescriptor.constructedClass.modality == Modality.ABSTRACT) {
                 return listOf(InstantiationOfAbstractClass)
             }
@@ -62,7 +62,7 @@ internal object CheckVisibility : ResolutionPart {
         return listOf(VisibilityError(invisibleMember))
     }
 
-    private val SimpleKotlinResolutionCandidate.containingDescriptor: DeclarationDescriptor get() = callContext.scopeTower.lexicalScope.ownerDescriptor
+    private val SimpleKotlinResolutionCandidate.containingDescriptor: DeclarationDescriptor get() = scopeTower.lexicalScope.ownerDescriptor
 }
 
 internal object MapTypeArguments : ResolutionPart {
@@ -253,7 +253,7 @@ internal object CheckArguments : ResolutionPart {
 
 internal object CheckInfixResolutionPart : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (callContext.externalPredicates.isInfixCall(kotlinCall) &&
+        if (callContext.statelessCallbacks.isInfixCall(kotlinCall) &&
             (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isInfix)) {
             return listOf(InfixCallNoInfixModifier)
         }
@@ -264,7 +264,7 @@ internal object CheckInfixResolutionPart : ResolutionPart {
 
 internal object CheckOperatorResolutionPart : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (callContext.externalPredicates.isOperatorCall(kotlinCall) &&
+        if (callContext.statelessCallbacks.isOperatorCall(kotlinCall) &&
             (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isOperator)) {
             return listOf(InvokeConventionCallNoOperatorModifier)
         }

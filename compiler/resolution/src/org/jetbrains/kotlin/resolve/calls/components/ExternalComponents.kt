@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
 
 // stateless component
-interface KotlinResolutionExternalPredicates {
+interface KotlinResolutionStatelessCallbacks {
     fun isDescriptorFromSource(descriptor: CallableDescriptor): Boolean
     fun isInfixCall(kotlinCall: KotlinCall): Boolean
     fun isOperatorCall(kotlinCall: KotlinCall): Boolean

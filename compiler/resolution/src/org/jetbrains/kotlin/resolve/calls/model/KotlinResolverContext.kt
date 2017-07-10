@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.isDynamic
 class KotlinCallContext(
         val scopeTower: ImplicitScopeTower,
         val resolutionCallbacks: KotlinResolutionCallbacks,
-        val externalPredicates: KotlinResolutionExternalPredicates,
+        val statelessCallbacks: KotlinResolutionStatelessCallbacks,
         val argumentsToParametersMapper: ArgumentsToParametersMapper,
         val typeArgumentsToParametersMapper: TypeArgumentsToParametersMapper,
         val resultTypeResolver: ResultTypeResolver,
@@ -42,7 +42,11 @@ class KotlinCallContext(
         val reflectionTypes: ReflectionTypes
 )
 
-class SimpleCandidateFactory(val callContext: KotlinCallContext, val kotlinCall: KotlinCall): CandidateFactory<SimpleKotlinResolutionCandidate> {
+class SimpleCandidateFactory(
+        val callContext: KotlinCallContext,
+        val scopeTower: ImplicitScopeTower,
+        val kotlinCall: KotlinCall
+): CandidateFactory<SimpleKotlinResolutionCandidate> {
 
     // todo: try something else, because current method is ugly and unstable
     private fun createReceiverArgument(
@@ -73,11 +77,11 @@ class SimpleCandidateFactory(val callContext: KotlinCallContext, val kotlinCall:
         val extensionArgumentReceiver = createReceiverArgument(kotlinCall.getExplicitExtensionReceiver(explicitReceiverKind), extensionReceiver)
 
         if (ErrorUtils.isError(towerCandidate.descriptor)) {
-            return ErrorKotlinResolutionCandidate(callContext, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver, towerCandidate.descriptor)
+            return ErrorKotlinResolutionCandidate(callContext, scopeTower, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver, towerCandidate.descriptor)
         }
 
         val candidateDiagnostics = towerCandidate.diagnostics.toMutableList()
-        if (callContext.externalPredicates.isHiddenInResolution(towerCandidate.descriptor, kotlinCall)) {
+        if (callContext.statelessCallbacks.isHiddenInResolution(towerCandidate.descriptor, kotlinCall)) {
             candidateDiagnostics.add(HiddenDescriptor)
         }
 
@@ -91,7 +95,7 @@ class SimpleCandidateFactory(val callContext: KotlinCallContext, val kotlinCall:
             }
         }
 
-        return SimpleKotlinResolutionCandidate(callContext, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver,
+        return SimpleKotlinResolutionCandidate(callContext, scopeTower, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver,
                                                towerCandidate.descriptor, null, candidateDiagnostics)
     }
 }
@@ -126,6 +130,7 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
 }
 
 class GivenCandidate(
+        val scopeTower: ImplicitScopeTower,
         val descriptor: FunctionDescriptor,
         val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
         val knownTypeParametersResultingSubstitutor: TypeSubstitutor?

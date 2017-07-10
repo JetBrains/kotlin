@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.Candidate
+import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -105,6 +106,7 @@ sealed class AbstractSimpleKotlinResolutionCandidate(
 
 open class SimpleKotlinResolutionCandidate(
         val callContext: KotlinCallContext,
+        val scopeTower: ImplicitScopeTower,
         override val kotlinCall: KotlinCall,
         val explicitReceiverKind: ExplicitReceiverKind,
         val dispatchReceiverArgument: SimpleKotlinCallArgument?,
@@ -133,12 +135,14 @@ open class SimpleKotlinResolutionCandidate(
 
 class ErrorKotlinResolutionCandidate(
         callContext: KotlinCallContext,
+        scopeTower: ImplicitScopeTower,
         kotlinCall: KotlinCall,
         explicitReceiverKind: ExplicitReceiverKind,
         dispatchReceiverArgument: SimpleKotlinCallArgument?,
         extensionReceiver: SimpleKotlinCallArgument?,
         candidateDescriptor: CallableDescriptor
-) : SimpleKotlinResolutionCandidate(callContext, kotlinCall, explicitReceiverKind, dispatchReceiverArgument, extensionReceiver, candidateDescriptor, null, listOf()) {
+) : SimpleKotlinResolutionCandidate(callContext, scopeTower, kotlinCall, explicitReceiverKind, dispatchReceiverArgument,
+                                    extensionReceiver, candidateDescriptor, null, listOf()) {
     override val resolutionSequence: List<ResolutionPart> get() = emptyList()
 
     init {
