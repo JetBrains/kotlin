@@ -20,26 +20,26 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
-import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
-import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
+import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
+import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
 class KotlinVersionInfoProviderByModuleDependencies : KotlinVersionInfoProvider {
     override fun getCompilerVersion(module: Module) = bundledRuntimeVersion()
 
     override fun getLibraryVersions(module: Module, targetPlatform: TargetPlatformKind<*>, rootModel: ModuleRootModel?): Collection<String> {
-        val presentationProvider = when (targetPlatform) {
-            is TargetPlatformKind.JavaScript -> JSLibraryStdPresentationProvider.getInstance()
-            is TargetPlatformKind.Jvm -> JavaRuntimePresentationProvider.getInstance()
+        val versionProvider: (Library) -> String? = when (targetPlatform) {
+            is TargetPlatformKind.JavaScript -> JsLibraryStdDetectionUtil::getJsLibraryStdVersion
+            is TargetPlatformKind.Jvm -> JavaRuntimeDetectionUtil::getJavaRuntimeVersion
             is TargetPlatformKind.Common -> return emptyList()
         }
         return (rootModel ?: ModuleRootManager.getInstance(module))
                 .orderEntries
                 .asSequence()
                 .filterIsInstance<LibraryOrderEntry>()
-                .mapNotNull { it.library?.let { presentationProvider.detect(it.getFiles(OrderRootType.CLASSES).toList())?.versionString } }
+                .mapNotNull { it.library?.let { versionProvider(it) } }
                 .toList()
     }
 }
