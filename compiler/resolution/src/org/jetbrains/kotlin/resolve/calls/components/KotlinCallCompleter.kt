@@ -85,7 +85,7 @@ class KotlinCallCompleter(
         if (topLevelCall.prepareForCompletion(expectedType)) {
             val c = candidate.lastCall.constraintSystem.asCallCompleterContext()
 
-            resolveCallableReferenceArguments(c, candidate.lastCall)
+            resolveCallableReferenceArguments(c)
 
             topLevelCall.competeCall(c, resolutionCallbacks)
             return toCompletedBaseResolvedCall(c, candidate, resolutionCallbacks)
@@ -94,11 +94,10 @@ class KotlinCallCompleter(
         return ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
     }
 
-    // todo do not use topLevelCall
-    private fun resolveCallableReferenceArguments(c: Context, topLevelCall: SimpleKotlinResolutionCandidate) {
+    private fun resolveCallableReferenceArguments(c: Context) {
         for (callableReferenceArgument in c.postponedArguments) {
             if (callableReferenceArgument !is PostponedCallableReferenceArgument) continue
-            callableReferenceResolver.processCallableReferenceArgument(topLevelCall.scopeTower, c.getBuilder(), callableReferenceArgument)
+            callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), callableReferenceArgument)
         }
     }
 
