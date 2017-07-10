@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,26 +19,25 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.util.containers.HashMap
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.incremental.testingUtils.*
-import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
+import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
+import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
-import java.util.*
 
 @RunWith(Parameterized::class)
-class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
+abstract class IncrementalCompilerRunnerTestBase<Args : CommonCompilerArguments> : TestWithWorkingDir() {
     @Parameterized.Parameter
     lateinit var testDir: File
 
     @Suppress("unused")
     @Parameterized.Parameter(value = 1)
     lateinit var readableName: String
+
+    protected abstract fun createCompilerArguments(destinationDir: File, testDir: File): Args
 
     @Test
     fun testFromJps() {
@@ -51,10 +50,7 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
 
         val mapWorkingToOriginalFile = HashMap(copyTestSources(testDir, srcDir, filePrefix = ""))
         val sourceRoots = listOf(srcDir)
-        val args = K2JVMCompilerArguments()
-        args.destination = outDir.path
-        args.moduleName = testDir.name
-        args.classpath = compileClasspath()
+        val args = createCompilerArguments(outDir, testDir)
         // initial build
         make(cacheDir, sourceRoots, args)
 
@@ -62,9 +58,9 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
         val buildLogFile = buildLogFinder.findBuildLog(testDir) ?: throw IllegalStateException("build log file not found in $workingDir")
         val buildLogSteps = parseTestBuildLog(buildLogFile)
         val modifications = getModificationsToPerform(testDir,
-                moduleNames = null,
-                allowNoFilesWithSuffixInTestData = false,
-                touchPolicy = TouchPolicy.CHECKSUM)
+                                                      moduleNames = null,
+                                                      allowNoFilesWithSuffixInTestData = false,
+                                                      touchPolicy = TouchPolicy.CHECKSUM)
 
         assert(modifications.size == buildLogSteps.size) {
             "Modifications count (${modifications.size}) != expected build log steps count (${buildLogSteps.size})"
@@ -91,19 +87,18 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
         }
 
         if (expectedSBWithoutErrors.toString() != actualSBWithoutErrors.toString()) {
-            assertEquals(expectedSB.toString(), actualSB.toString())
+            Assert.assertEquals(expectedSB.toString(), actualSB.toString())
         }
 
         // todo: also compare caches
         run rebuildAndCompareOutput@ {
             val rebuildOutDir = File(workingDir, "rebuild-out").apply { mkdirs() }
             val rebuildCacheDir = File(workingDir, "rebuild-cache").apply { mkdirs() }
-            args.destination = rebuildOutDir.path
-            val rebuildResult = make(rebuildCacheDir, sourceRoots, args)
+            val rebuildResult = make(rebuildCacheDir, sourceRoots, createCompilerArguments(rebuildOutDir, testDir))
 
             val rebuildExpectedToSucceed = buildLogSteps.last().compileSucceeded
             val rebuildSucceeded = rebuildResult.exitCode == ExitCode.OK
-            assertEquals("Rebuild exit code differs from incremental exit code", rebuildExpectedToSucceed, rebuildSucceeded)
+            Assert.assertEquals("Rebuild exit code differs from incremental exit code", rebuildExpectedToSucceed, rebuildSucceeded)
 
             if (rebuildSucceeded) {
                 assertEqualDirectories(outDir, rebuildOutDir, forgiveExtraFiles = rebuildSucceeded)
@@ -111,33 +106,7 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
         }
     }
 
-    private fun compileClasspath(): String {
-        val currentClasspath = System.getProperty("java.class.path").split(File.pathSeparator)
-        val stdlib = currentClasspath.find { it.contains("kotlin-stdlib") }
-        val runtime = currentClasspath.find { it.contains("kotlin-runtime") }
-        return listOf(stdlib, runtime).joinToString(File.pathSeparator)
-    }
-
-    data class CompilationResult(val exitCode: ExitCode, val compiledSources: Iterable<File>, val compileErrors: Collection<String>)
-
-    private fun make(cacheDir: File, sourceRoots: Iterable<File>, args: K2JVMCompilerArguments): CompilationResult {
-        val compiledSources = arrayListOf<File>()
-        var resultExitCode = ExitCode.OK
-
-        val reporter = object : ICReporter {
-            override fun report(message: ()->String) {
-            }
-
-            override fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {
-                compiledSources.addAll(sourceFiles)
-                resultExitCode = exitCode
-            }
-        }
-
-        val messageCollector = TestMessageCollector()
-        makeIncrementally(cacheDir, sourceRoots, args, reporter = reporter, messageCollector = messageCollector)
-        return CompilationResult(resultExitCode, compiledSources, messageCollector.errors)
-    }
+    protected abstract fun make(cacheDir: File, sourceRoots: Iterable<File>, args: Args): TestCompilationResult
 
     private fun stepLogAsString(step: Int, ktSources: Iterable<String>, errors: Collection<String>, includeErrors: Boolean = true): String {
         val sb = StringBuilder()
@@ -167,6 +136,9 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
     }
 
     companion object {
+        @JvmStatic
+        protected val bootstrapKotlincLib: File = File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib")
+
         private val jpsResourcesPath = File("jps-plugin/testData/incremental")
         private val ignoredDirs = setOf(File(jpsResourcesPath, "cacheVersionChanged"),
                                         File(jpsResourcesPath, "changeIncrementalOption"),
