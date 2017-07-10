@@ -30,20 +30,17 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.isDynamic
 
 
-class KotlinCallContext(
-        val scopeTower: ImplicitScopeTower,
-        val resolutionCallbacks: KotlinResolutionCallbacks,
+class KotlinCallComponents(
         val statelessCallbacks: KotlinResolutionStatelessCallbacks,
         val argumentsToParametersMapper: ArgumentsToParametersMapper,
         val typeArgumentsToParametersMapper: TypeArgumentsToParametersMapper,
         val resultTypeResolver: ResultTypeResolver,
-        val callableReferenceResolver: CallableReferenceResolver,
         val constraintInjector: ConstraintInjector,
         val reflectionTypes: ReflectionTypes
 )
 
 class SimpleCandidateFactory(
-        val callContext: KotlinCallContext,
+        val callComponents: KotlinCallComponents,
         val scopeTower: ImplicitScopeTower,
         val kotlinCall: KotlinCall
 ): CandidateFactory<SimpleKotlinResolutionCandidate> {
@@ -77,11 +74,11 @@ class SimpleCandidateFactory(
         val extensionArgumentReceiver = createReceiverArgument(kotlinCall.getExplicitExtensionReceiver(explicitReceiverKind), extensionReceiver)
 
         if (ErrorUtils.isError(towerCandidate.descriptor)) {
-            return ErrorKotlinResolutionCandidate(callContext, scopeTower, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver, towerCandidate.descriptor)
+            return ErrorKotlinResolutionCandidate(callComponents, scopeTower, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver, towerCandidate.descriptor)
         }
 
         val candidateDiagnostics = towerCandidate.diagnostics.toMutableList()
-        if (callContext.statelessCallbacks.isHiddenInResolution(towerCandidate.descriptor, kotlinCall)) {
+        if (callComponents.statelessCallbacks.isHiddenInResolution(towerCandidate.descriptor, kotlinCall)) {
             candidateDiagnostics.add(HiddenDescriptor)
         }
 
@@ -95,7 +92,7 @@ class SimpleCandidateFactory(
             }
         }
 
-        return SimpleKotlinResolutionCandidate(callContext, scopeTower, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver,
+        return SimpleKotlinResolutionCandidate(callComponents, scopeTower, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver,
                                                towerCandidate.descriptor, null, candidateDiagnostics)
     }
 }
