@@ -331,9 +331,15 @@ object KotlinToJVMBytecodeCompiler {
         val state = analyzeAndGenerate(environment) ?: return null
 
         try {
-            val classLoader = GeneratedClassLoader(state.factory, parentClassLoader ?: URLClassLoader(
-                    environment.configuration.jvmClasspathRoots.map { it.toURI().toURL() }.toTypedArray(), null
-            ))
+            val urls = environment.configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
+                when (root) {
+                    is JvmModulePathRoot -> root.file // TODO: only add required modules
+                    is JvmClasspathRoot -> root.file
+                    else -> null
+                }
+            }.map { it.toURI().toURL() }
+
+            val classLoader = GeneratedClassLoader(state.factory, parentClassLoader ?: URLClassLoader(urls.toTypedArray(), null))
 
             val script = environment.getSourceFiles()[0].script ?: error("Script must be parsed")
             return classLoader.loadClass(script.fqName.asString())
