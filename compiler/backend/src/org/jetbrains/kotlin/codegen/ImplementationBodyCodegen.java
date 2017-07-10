@@ -348,9 +348,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @Override
-    protected void generateSyntheticParts() {
+    protected void generateSyntheticPartsBeforeBody() {
         generatePropertyMetadataArrayFieldIfNeeded(classAsmType);
+    }
 
+    @Override
+    protected void generateSyntheticPartsAfterBody() {
         generateFieldForSingleton();
 
         generateCompanionObjectBackingFieldCopies();
