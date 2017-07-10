@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -43,7 +44,7 @@ class KotlinCallResolver(
 
         kotlinCall.checkCallInvariants()
 
-        val candidateFactory = SimpleCandidateFactory(callContext, kotlinCall)
+        val candidateFactory = SimpleCandidateFactory(callContext, scopeTower, kotlinCall)
         val processor = when(kotlinCall.callKind) {
             KotlinCallKind.VARIABLE -> {
                 createVariableAndObjectProcessor(scopeTower, kotlinCall.name, candidateFactory, kotlinCall.explicitReceiver?.receiver)
@@ -61,7 +62,7 @@ class KotlinCallResolver(
             towerResolver.runResolve(scopeTower, processor, useOrder = kotlinCall.callKind != KotlinCallKind.UNSUPPORTED)
         }
 
-        return choseMostSpecific(callContext, expectedType, candidates, collectAllCandidates)
+        return choseMostSpecific(callContext.resolutionCallbacks, expectedType, candidates, collectAllCandidates)
     }
 
     fun resolveGivenCandidates(
@@ -77,6 +78,7 @@ class KotlinCallResolver(
 
         val resolutionCandidates = givenCandidates.map {
             SimpleKotlinResolutionCandidate(callContext,
+                                            it.scopeTower,
                                             kotlinCall,
                                             if (it.dispatchReceiver == null) ExplicitReceiverKind.NO_EXPLICIT_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER,
                                             it.dispatchReceiver?.let { ReceiverExpressionKotlinCallArgument(it, isSafeCall) },
@@ -98,35 +100,34 @@ class KotlinCallResolver(
                                                 useOrder = true)
         }
 
-        return choseMostSpecific(callContext, expectedType, candidates, collectAllCandidates)
+        return choseMostSpecific(callContext.resolutionCallbacks, expectedType, candidates, collectAllCandidates)
     }
 
     private fun choseMostSpecific(
-            callContext: KotlinCallContext,
+            resolutionCallbacks: KotlinResolutionCallbacks,
             expectedType: UnwrappedType?,
             candidates: Collection<KotlinResolutionCandidate>,
             collectAllCandidates: Boolean
     ): Collection<ResolvedKotlinCall> {
-        val maximallySpecificCandidates = if (collectAllCandidates) {
+
+val isDebuggerContext = (candidates.firstOrNull() ?: return emptyList()).lastCall.scopeTower.isDebuggerContext        val maximallySpecificCandidates = if (collectAllCandidates) {
             candidates
         }
-        else {
-            overloadingConflictResolver.chooseMaximallySpecificCandidates(
-                    candidates,
-                    CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                    discriminateGenerics = true, // todo
-                    isDebuggerContext = callContext.scopeTower.isDebuggerContext)
-        }
+        else {overloadingConflictResolver.chooseMaximallySpecificCandidates(
+                candidates,
+                CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                discriminateGenerics = true, // todo
+                isDebuggerContext = isDebuggerContext)}
 
         val singleResult = maximallySpecificCandidates.singleOrNull()?.let {
-            kotlinCallCompleter.completeCallIfNecessary(it, expectedType, callContext.resolutionCallbacks)
+            kotlinCallCompleter.completeCallIfNecessary(it, expectedType, resolutionCallbacks)
         }
         if (singleResult != null) {
             return listOf(singleResult)
         }
 
         return maximallySpecificCandidates.map {
-            kotlinCallCompleter.transformWhenAmbiguity(it, callContext.resolutionCallbacks)
+            kotlinCallCompleter.transformWhenAmbiguity(it, resolutionCallbacks)
         }
     }
 }
