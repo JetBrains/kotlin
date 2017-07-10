@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (candidateDescriptor is ConstructorDescriptor && !callContext.statelessCallbacks.isSuperOrDelegatingConstructorCall(kotlinCall)) {
+        if (candidateDescriptor is ConstructorDescriptor && !callComponents.statelessCallbacks.isSuperOrDelegatingConstructorCall(kotlinCall)) {
             if (candidateDescriptor.constructedClass.modality == Modality.ABSTRACT) {
                 return listOf(InstantiationOfAbstractClass)
             }
@@ -69,7 +69,7 @@ internal object CheckVisibility : ResolutionPart {
 
 internal object MapTypeArguments : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        typeArgumentMappingByOriginal = callContext.typeArgumentsToParametersMapper.mapTypeArguments(kotlinCall, candidateDescriptor.original)
+        typeArgumentMappingByOriginal = callComponents.typeArgumentsToParametersMapper.mapTypeArguments(kotlinCall, candidateDescriptor.original)
         return typeArgumentMappingByOriginal.diagnostics
     }
 }
@@ -86,7 +86,7 @@ internal object NoTypeArguments : ResolutionPart {
 
 internal object MapArguments : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        val mapping = callContext.argumentsToParametersMapper.mapArguments(kotlinCall, candidateDescriptor)
+        val mapping = callComponents.argumentsToParametersMapper.mapArguments(kotlinCall, candidateDescriptor)
         argumentMappingByOriginal = mapping.parameterToCallArgumentMap
         return mapping.diagnostics
     }
@@ -256,7 +256,7 @@ internal object CheckArguments : ResolutionPart {
 
 internal object CheckInfixResolutionPart : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (callContext.statelessCallbacks.isInfixCall(kotlinCall) &&
+        if (callComponents.statelessCallbacks.isInfixCall(kotlinCall) &&
             (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isInfix)) {
             return listOf(InfixCallNoInfixModifier)
         }
@@ -267,7 +267,7 @@ internal object CheckInfixResolutionPart : ResolutionPart {
 
 internal object CheckOperatorResolutionPart : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (callContext.statelessCallbacks.isOperatorCall(kotlinCall) &&
+        if (callComponents.statelessCallbacks.isOperatorCall(kotlinCall) &&
             (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isOperator)) {
             return listOf(InvokeConventionCallNoOperatorModifier)
         }
@@ -278,7 +278,7 @@ internal object CheckOperatorResolutionPart : ResolutionPart {
 
 internal object CheckAbstractSuperCallPart : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (callContext.externalPredicates.isSuperExpression(dispatchReceiverArgument)) {
+        if (callComponents.statelessCallbacks.isSuperExpression(dispatchReceiverArgument)) {
             if (candidateDescriptor is MemberDescriptor && candidateDescriptor.modality == Modality.ABSTRACT) {
                 return listOf(AbstractSuperCall)
             }

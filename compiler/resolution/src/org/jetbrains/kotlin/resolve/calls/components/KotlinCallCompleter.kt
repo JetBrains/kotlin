@@ -40,7 +40,8 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 class KotlinCallCompleter(
         private val fixationOrderCalculator: FixationOrderCalculator,
         private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
-        private val inferenceStepResolver: InferenceStepResolver
+        private val inferenceStepResolver: InferenceStepResolver,
+        private val callableReferenceResolver: CallableReferenceResolver
 ) {
     interface Context {
         val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall>
@@ -97,7 +98,7 @@ class KotlinCallCompleter(
     private fun resolveCallableReferenceArguments(c: Context, topLevelCall: SimpleKotlinResolutionCandidate) {
         for (callableReferenceArgument in c.postponedArguments) {
             if (callableReferenceArgument !is PostponedCallableReferenceArgument) continue
-            processCallableReferenceArgument(topLevelCall.callContext, topLevelCall.scopeTower, c.getBuilder(), callableReferenceArgument)
+            callableReferenceResolver.processCallableReferenceArgument(topLevelCall.scopeTower, c.getBuilder(), callableReferenceArgument)
         }
     }
 

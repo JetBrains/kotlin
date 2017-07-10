@@ -30,21 +30,21 @@ import java.lang.UnsupportedOperationException
 class KotlinCallResolver(
         private val towerResolver: TowerResolver,
         private val kotlinCallCompleter: KotlinCallCompleter,
-        private val overloadingConflictResolver: NewOverloadingConflictResolver
+        private val overloadingConflictResolver: NewOverloadingConflictResolver,
+        private val callComponents: KotlinCallComponents
 ) {
 
     fun resolveCall(
-            callContext: KotlinCallContext,
+            scopeTower: ImplicitScopeTower,
+            resolutionCallbacks: KotlinResolutionCallbacks,
             kotlinCall: KotlinCall,
             expectedType: UnwrappedType?,
             factoryProviderForInvoke: CandidateFactoryProviderForInvoke<KotlinResolutionCandidate>,
             collectAllCandidates: Boolean
     ): Collection<ResolvedKotlinCall> {
-        val scopeTower = callContext.scopeTower
-
         kotlinCall.checkCallInvariants()
 
-        val candidateFactory = SimpleCandidateFactory(callContext, scopeTower, kotlinCall)
+        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall)
         val processor = when(kotlinCall.callKind) {
             KotlinCallKind.VARIABLE -> {
                 createVariableAndObjectProcessor(scopeTower, kotlinCall.name, candidateFactory, kotlinCall.explicitReceiver?.receiver)
@@ -62,11 +62,11 @@ class KotlinCallResolver(
             towerResolver.runResolve(scopeTower, processor, useOrder = kotlinCall.callKind != KotlinCallKind.UNSUPPORTED)
         }
 
-        return choseMostSpecific(callContext.resolutionCallbacks, expectedType, candidates, collectAllCandidates)
+        return choseMostSpecific(resolutionCallbacks, expectedType, candidates, collectAllCandidates)
     }
 
     fun resolveGivenCandidates(
-            callContext: KotlinCallContext,
+            resolutionCallbacks: KotlinResolutionCallbacks,
             kotlinCall: KotlinCall,
             expectedType: UnwrappedType?,
             givenCandidates: Collection<GivenCandidate>,
@@ -77,7 +77,7 @@ class KotlinCallResolver(
         val isSafeCall = (kotlinCall.explicitReceiver as? SimpleKotlinCallArgument)?.isSafeCall ?: false
 
         val resolutionCandidates = givenCandidates.map {
-            SimpleKotlinResolutionCandidate(callContext,
+            SimpleKotlinResolutionCandidate(callComponents,
                                             it.scopeTower,
                                             kotlinCall,
                                             if (it.dispatchReceiver == null) ExplicitReceiverKind.NO_EXPLICIT_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER,
@@ -100,7 +100,7 @@ class KotlinCallResolver(
                                                 useOrder = true)
         }
 
-        return choseMostSpecific(callContext.resolutionCallbacks, expectedType, candidates, collectAllCandidates)
+        return choseMostSpecific(resolutionCallbacks, expectedType, candidates, collectAllCandidates)
     }
 
     private fun choseMostSpecific(
