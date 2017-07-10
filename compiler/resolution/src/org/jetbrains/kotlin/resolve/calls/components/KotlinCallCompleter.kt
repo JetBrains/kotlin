@@ -93,7 +93,7 @@ class KotlinCallCompleter(
     private fun resolveCallableReferenceArguments(c: Context, topLevelCall: SimpleKotlinResolutionCandidate) {
         for (callableReferenceArgument in c.postponedArguments) {
             if (callableReferenceArgument !is PostponedCallableReferenceArgument) continue
-            processCallableReferenceArgument(topLevelCall.callContext, c.getBuilder(), callableReferenceArgument)
+            processCallableReferenceArgument(topLevelCall.callContext, topLevelCall.scopeTower, c.getBuilder(), callableReferenceArgument)
         }
     }
 

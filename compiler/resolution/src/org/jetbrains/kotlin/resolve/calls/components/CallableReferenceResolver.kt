@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.TowerResolver
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 class CallableReferenceOverloadConflictResolver(
         builtIns: KotlinBuiltIns,
         specificityComparator: TypeSpecificityComparator,
-        externalPredicates: KotlinResolutionExternalPredicates,
+        statelessCallbacks: KotlinResolutionStatelessCallbacks,
         constraintInjector: ConstraintInjector,
         typeResolver: ResultTypeResolver
 ) : OverloadingConflictResolver<CallableReferenceCandidate>(
@@ -44,7 +45,7 @@ class CallableReferenceOverloadConflictResolver(
         { SimpleConstraintSystemImpl(constraintInjector, typeResolver) },
         Companion::createFlatSignature,
         { null },
-        { externalPredicates.isDescriptorFromSource(it) }
+        { statelessCallbacks.isDescriptorFromSource(it) }
         ) {
     companion object {
         private fun createFlatSignature(candidate: CallableReferenceCandidate) =
@@ -54,6 +55,7 @@ class CallableReferenceOverloadConflictResolver(
 
 fun processCallableReferenceArgument(
         callContext: KotlinCallContext,
+        scopeTower: ImplicitScopeTower,
         csBuilder: ConstraintSystemBuilder,
         postponedArgument: PostponedCallableReferenceArgument
 ): KotlinCallDiagnostic? {
@@ -64,7 +66,7 @@ fun processCallableReferenceArgument(
     if (subLHSCall != null) {
         csBuilder.addInnerCall(subLHSCall.resolvedCall)
     }
-    val candidates = callContext.callableReferenceResolver.runRLSResolution(callContext, argument, expectedType) { checkCallableReference ->
+    val candidates = callContext.callableReferenceResolver.runRLSResolution(callContext, scopeTower, argument, expectedType) { checkCallableReference ->
         csBuilder.runTransaction { checkCallableReference(this); false }
     }
     val chosenCandidate = when (candidates.size) {
@@ -74,7 +76,7 @@ fun processCallableReferenceArgument(
     }
     val (toFreshSubstitutor, diagnostic) = with(chosenCandidate) {
         csBuilder.checkCallableReference(argument, dispatchReceiver, extensionReceiver, candidate,
-                                         reflectionCandidateType, expectedType, callContext.scopeTower.lexicalScope.ownerDescriptor)
+                                         reflectionCandidateType, expectedType, scopeTower.lexicalScope.ownerDescriptor)
     }
 
     postponedArgument.analyzedAndThereIsResult = true
@@ -92,16 +94,17 @@ class CallableReferenceResolver(
 
     fun runRLSResolution(
             outerCallContext: KotlinCallContext,
+            scopeTower: ImplicitScopeTower,
             callableReference: CallableReferenceKotlinCallArgument,
             expectedType: UnwrappedType?, // this type can have not fixed type variable inside
             compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit // you can run anything throw this operation and all this operation will be roll backed
     ): Set<CallableReferenceCandidate> {
-        val factory = CallableReferencesCandidateFactory(callableReference, outerCallContext, compatibilityChecker, expectedType)
+        val factory = CallableReferencesCandidateFactory(callableReference, outerCallContext, scopeTower, compatibilityChecker, expectedType)
         val processor = createCallableReferenceProcessor(factory)
-        val candidates = towerResolver.runResolve(outerCallContext.scopeTower, processor, useOrder = true)
+        val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = true)
         return callableReferenceOverloadConflictResolver.chooseMaximallySpecificCandidates(candidates, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                                    discriminateGenerics = false,
-                                                                   isDebuggerContext = outerCallContext.scopeTower.isDebuggerContext)
+                                                                   isDebuggerContext = scopeTower.isDebuggerContext)
     }
 }
 
