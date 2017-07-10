@@ -1,0 +1,5 @@
+package
+
+public fun test(/*0*/ f: java.lang.Runnable.(kotlin.Int) -> kotlin.Unit, /*1*/ runnable: java.lang.Runnable): kotlin.Unit
+public fun java.lang.Runnable.test(/*0*/ f: java.lang.Runnable.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun kotlin.Int.test(/*0*/ f: kotlin.String.(kotlin.Int) -> kotlin.Unit): kotlin.Unit

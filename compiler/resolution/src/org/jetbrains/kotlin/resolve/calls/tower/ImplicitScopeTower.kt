@@ -71,7 +71,8 @@ enum class ResolutionCandidateApplicability {
     MAY_THROW_RUNTIME_ERROR, // unsafe call or unstable smart cast
     RUNTIME_ERROR, // problems with visibility
     IMPOSSIBLE_TO_GENERATE, // access to outer class from nested
-    INAPPLICABLE, // arguments not matched
+    INAPPLICABLE, // arguments have wrong types
+    INAPPLICABLE_ARGUMENTS_MAPPING_ERROR, // arguments not mapped to parameters (i.e. different size of arguments and parameters)
     INAPPLICABLE_WRONG_RECEIVER, // receiver not matched
     HIDDEN, // removed from resolve
 }
