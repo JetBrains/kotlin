@@ -121,6 +121,7 @@ class FunctionExpressionImpl(
 }
 
 class CallableReferenceKotlinCallArgumentImpl(
+        val scopeTowerForResolution: ImplicitScopeTower,
         override val valueArgument: ValueArgument,
         override val dataFlowInfoBeforeThisArgument: DataFlowInfo,
         override val dataFlowInfoAfterThisArgument: DataFlowInfo,

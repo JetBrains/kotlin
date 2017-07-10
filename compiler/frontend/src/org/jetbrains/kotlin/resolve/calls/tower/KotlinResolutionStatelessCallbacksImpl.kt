@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isSuperOrDelegatingConstructorCall
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks
+import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
@@ -50,4 +51,7 @@ class KotlinResolutionStatelessCallbacksImpl(
 
     override fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean =
             receiver?.psiExpression is KtSuperExpression
+
+    override fun getScopeTowerForCallableReferenceArgument(argument: CallableReferenceKotlinCallArgument): ImplicitScopeTower =
+            (argument as CallableReferenceKotlinCallArgumentImpl).scopeTowerForResolution
 }
