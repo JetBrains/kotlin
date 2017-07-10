@@ -146,9 +146,9 @@ internal class DelegatingDataFlowInfo private constructor(
      * @param value
      */
     override fun clearValueInfo(value: DataFlowValue, languageVersionSettings: LanguageVersionSettings): DataFlowInfo {
-        val builder = hashMapOf<DataFlowValue, Nullability>()
-        putNullability(builder, value, value.immanentNullability, languageVersionSettings)
-        return create(this, builder.toMap(), EMPTY_TYPE_INFO, value)
+        val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
+        putNullability(resultNullabilityInfo, value, value.immanentNullability, languageVersionSettings)
+        return create(this, resultNullabilityInfo, EMPTY_TYPE_INFO, value)
     }
 
     override fun assign(a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings): DataFlowInfo {
@@ -167,18 +167,18 @@ internal class DelegatingDataFlowInfo private constructor(
         }
         newTypeInfo.putAll(a, typesForB)
 
-        return create(this, nullability.toMap(), if (newTypeInfo.isEmpty) EMPTY_TYPE_INFO else newTypeInfo, a)
+        return create(this, nullability, if (newTypeInfo.isEmpty) EMPTY_TYPE_INFO else newTypeInfo, a)
     }
 
     override fun equate(
             a: DataFlowValue, b: DataFlowValue, identityEquals: Boolean, languageVersionSettings: LanguageVersionSettings
     ): DataFlowInfo {
-        val builder = hashMapOf<DataFlowValue, Nullability>()
+        val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
         val nullabilityOfA = getStableNullability(a)
         val nullabilityOfB = getStableNullability(b)
 
-        var changed = putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB), languageVersionSettings) or
-                      putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA), languageVersionSettings)
+        var changed = putNullability(resultNullabilityInfo, a, nullabilityOfA.refine(nullabilityOfB), languageVersionSettings) or
+                      putNullability(resultNullabilityInfo, b, nullabilityOfB.refine(nullabilityOfA), languageVersionSettings)
 
         // NB: == has no guarantees of type equality, see KT-11280 for the example
         val newTypeInfo = newTypeInfo()
@@ -201,7 +201,7 @@ internal class DelegatingDataFlowInfo private constructor(
             this
         }
         else {
-            create(this, builder.toMap(), if (newTypeInfo.isEmpty) EMPTY_TYPE_INFO else newTypeInfo)
+            create(this, resultNullabilityInfo, if (newTypeInfo.isEmpty) EMPTY_TYPE_INFO else newTypeInfo)
         }
     }
 
@@ -226,13 +226,13 @@ internal class DelegatingDataFlowInfo private constructor(
     override fun disequate(
             a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings
     ): DataFlowInfo {
-        val builder = hashMapOf<DataFlowValue, Nullability>()
+        val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
         val nullabilityOfA = getStableNullability(a)
         val nullabilityOfB = getStableNullability(b)
 
-        val changed = putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB.invert()), languageVersionSettings) or
-                      putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA.invert()), languageVersionSettings)
-        return if (changed) create(this, builder.toMap(), EMPTY_TYPE_INFO) else this
+        val changed = putNullability(resultNullabilityInfo, a, nullabilityOfA.refine(nullabilityOfB.invert()), languageVersionSettings) or
+                      putNullability(resultNullabilityInfo, b, nullabilityOfB.refine(nullabilityOfA.invert()), languageVersionSettings)
+        return if (changed) create(this, resultNullabilityInfo, EMPTY_TYPE_INFO) else this
     }
 
     override fun establishSubtyping(
@@ -243,12 +243,11 @@ internal class DelegatingDataFlowInfo private constructor(
         if (!value.type.isFlexible() && value.type.isSubtypeOf(type)) return this
         val newTypeInfo = newTypeInfo()
         newTypeInfo.put(value, type)
-        val builder = hashMapOf<DataFlowValue, Nullability>()
+        val nullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
         if (!type.isMarkedNullable) {
-            putNullability(builder, value, NOT_NULL, languageVersionSettings)
+            putNullability(nullabilityInfo, value, NOT_NULL, languageVersionSettings)
         }
-        val newNullabilityInfo = if (type.isMarkedNullable) emptyMap() else builder.toMap()
-        return create(this, newNullabilityInfo, newTypeInfo)
+        return create(this, if (type.isMarkedNullable) emptyMap() else nullabilityInfo, newTypeInfo)
     }
 
     override fun and(other: DataFlowInfo): DataFlowInfo {
@@ -258,22 +257,22 @@ internal class DelegatingDataFlowInfo private constructor(
 
         assert(other is DelegatingDataFlowInfo) { "Unknown DataFlowInfo type: " + other }
 
-        val nullabilityMapBuilder = hashMapOf<DataFlowValue, Nullability>()
+        val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
         for ((key, otherFlags) in other.completeNullabilityInfo) {
             val thisFlags = getCollectedNullability(key)
             val flags = thisFlags.and(otherFlags)
             if (flags != thisFlags) {
-                nullabilityMapBuilder.put(key, flags)
+                resultNullabilityInfo.put(key, flags)
             }
         }
 
         val myTypeInfo = completeTypeInfo
         val otherTypeInfo = other.completeTypeInfo
-        if (nullabilityMapBuilder.isEmpty() && containsAll(myTypeInfo, otherTypeInfo)) {
+        if (resultNullabilityInfo.isEmpty() && containsAll(myTypeInfo, otherTypeInfo)) {
             return this
         }
 
-        return create(this, nullabilityMapBuilder.toMap(), otherTypeInfo)
+        return create(this, resultNullabilityInfo, otherTypeInfo)
     }
 
     private fun Set<KotlinType>.containsNothing() = any { KotlinBuiltIns.isNothing(it) }
@@ -292,10 +291,10 @@ internal class DelegatingDataFlowInfo private constructor(
 
         assert(other is DelegatingDataFlowInfo) { "Unknown DataFlowInfo type: " + other }
 
-        val nullabilityMapBuilder = hashMapOf<DataFlowValue, Nullability>()
+        val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
         for ((key, otherFlags) in other.completeNullabilityInfo) {
             val thisFlags = getCollectedNullability(key)
-            nullabilityMapBuilder.put(key, thisFlags.or(otherFlags))
+            resultNullabilityInfo.put(key, thisFlags.or(otherFlags))
         }
 
         val myTypeInfo = completeTypeInfo
@@ -307,7 +306,7 @@ internal class DelegatingDataFlowInfo private constructor(
                 newTypeInfo.putAll(key, myTypeInfo[key].intersectConsideringNothing(otherTypeInfo[key]))
             }
         }
-        return create(null, nullabilityMapBuilder.toMap(), newTypeInfo)
+        return create(null, resultNullabilityInfo, newTypeInfo)
     }
 
     override fun toString() = if (typeInfo.isEmpty && nullabilityInfo.isEmpty()) "EMPTY" else "Non-trivial DataFlowInfo"
