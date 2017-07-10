@@ -14,4 +14,4 @@ inline fun bar(f: (Int) -> Unit) {
     f(1)
 }
 
-// STEP_OVER: 1
+// STEP_OVER: 2

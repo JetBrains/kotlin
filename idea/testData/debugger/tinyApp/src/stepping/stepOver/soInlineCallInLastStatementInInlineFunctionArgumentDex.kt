@@ -4,7 +4,7 @@ fun main(args: Array<String>) {
     bar {
         nop()
         //Breakpoint!
-        foo()
+        foo()                     // <-- Should not stop here twice
     }
 }
 

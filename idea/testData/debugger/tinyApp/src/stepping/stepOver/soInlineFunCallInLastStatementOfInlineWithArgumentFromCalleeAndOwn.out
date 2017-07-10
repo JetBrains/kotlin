@@ -2,6 +2,7 @@ LineBreakpoint created at soInlineFunCallInLastStatementOfInlineWithArgumentFrom
 Run Java
 Connected to the target VM
 soInlineFunCallInLastStatementOfInlineWithArgumentFromCalleeAndOwn.kt:11
+soInlineFunCallInLastStatementOfInlineWithArgumentFromCalleeAndOwn.kt:13
 soInlineFunCallInLastStatementOfInlineWithArgumentFromCalleeAndOwn.kt:7
 Disconnected from the target VM
 
