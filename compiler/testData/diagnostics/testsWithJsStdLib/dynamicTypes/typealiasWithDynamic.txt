@@ -1,0 +1,11 @@
+package
+
+public fun testUseGen1(/*0*/ x: kotlin.collections.List<dynamic>): TestGen1 /* = kotlin.collections.List<dynamic> */
+public fun testUseGen2(/*0*/ x: kotlin.collections.List<kotlin.collections.List<dynamic>>): TestGen2 /* = kotlin.collections.List<kotlin.collections.List<dynamic>> */
+public fun useGen1(/*0*/ x: TestGen1 /* = kotlin.collections.List<dynamic> */): TestGen1 /* = kotlin.collections.List<dynamic> */
+public fun useGen2(/*0*/ x: TestGen2 /* = kotlin.collections.List<kotlin.collections.List<dynamic>> */): TestGen2 /* = kotlin.collections.List<kotlin.collections.List<dynamic>> */
+public typealias GenList</*0*/ T>  = kotlin.collections.List<T>
+public typealias Test1 = kotlin.collections.List<dynamic>
+public typealias Test2 = (dynamic) -> dynamic
+public typealias TestGen1 = GenList<dynamic>
+public typealias TestGen2 = GenList<GenList<dynamic>>
