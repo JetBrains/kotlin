@@ -14,87 +14,49 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration;
+package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.libraries.Library;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
-import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor;
-import org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeCheckerKt;
-import org.jetbrains.kotlin.js.JavaScript;
-import org.jetbrains.kotlin.js.resolve.JsPlatform;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.libraries.Library
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
+import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
+import org.jetbrains.kotlin.idea.versions.isKotlinJsRuntime
+import org.jetbrains.kotlin.js.JavaScript
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
 
-import java.util.Arrays;
-import java.util.List;
+open class KotlinJsModuleConfigurator : KotlinWithLibraryConfigurator() {
+    override val name: String
+        get() = NAME
 
-public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
-    public static final String NAME = JavaScript.LOWER_NAME;
+    override val targetPlatform: TargetPlatform
+        get() = JsPlatform
 
-    @NotNull
-    @Override
-    public String getName() {
-        return NAME;
-    }
+    override val presentableText: String
+        get() = JavaScript.FULL_NAME
 
-    @NotNull
-    @Override
-    public TargetPlatform getTargetPlatform() {
-        return JsPlatform.INSTANCE;
-    }
+    override fun isConfigured(module: Module) = hasKotlinJsRuntimeInScope(module)
 
-    @NotNull
-    @Override
-    public String getPresentableText() {
-        return JavaScript.FULL_NAME;
-    }
+    override val libraryName: String
+        get() = JSLibraryStdDescription.LIBRARY_NAME
 
-    @Override
-    public boolean isConfigured(@NotNull Module module) {
-        return ConfigureKotlinInProjectUtilsKt.hasKotlinJsRuntimeInScope(module);
-    }
+    override val dialogTitle: String
+        get() = JSLibraryStdDescription.DIALOG_TITLE
 
-    @NotNull
-    @Override
-    protected String getLibraryName() {
-        return JSLibraryStdDescription.LIBRARY_NAME;
-    }
+    override val libraryCaption: String
+        get() = JSLibraryStdDescription.LIBRARY_CAPTION
 
-    @NotNull
-    @Override
-    protected String getDialogTitle() {
-        return JSLibraryStdDescription.DIALOG_TITLE;
-    }
+    override val messageForOverrideDialog: String
+        get() = JSLibraryStdDescription.JAVA_SCRIPT_LIBRARY_CREATION
 
-    @NotNull
-    @Override
-    protected String getLibraryCaption() {
-        return JSLibraryStdDescription.LIBRARY_CAPTION;
-    }
+    override fun getLibraryJarDescriptors(sdk: Sdk?): List<LibraryJarDescriptor> =
+            listOf(LibraryJarDescriptor.JS_STDLIB_JAR,
+                  LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
 
-    @NotNull
-    @Override
-    protected String getMessageForOverrideDialog() {
-        return JSLibraryStdDescription.JAVA_SCRIPT_LIBRARY_CREATION;
-    }
+    override val libraryMatcher: (Library) -> Boolean = ::isKotlinJsRuntime
 
-    @NotNull
-    @Override
-    public List<LibraryJarDescriptor> getLibraryJarDescriptors(@Nullable Sdk sdk) {
-        return Arrays.asList(LibraryJarDescriptor.JS_STDLIB_JAR,
-                             LibraryJarDescriptor.JS_STDLIB_SRC_JAR);
-    }
-
-    @NotNull
-    @Override
-    protected Function1<Library, Boolean> getLibraryMatcher() {
-        return OutdatedKotlinRuntimeCheckerKt::isKotlinJsRuntime;
-    }
-
-    KotlinJsModuleConfigurator() {
+    companion object {
+        const val NAME = JavaScript.LOWER_NAME
     }
 }
