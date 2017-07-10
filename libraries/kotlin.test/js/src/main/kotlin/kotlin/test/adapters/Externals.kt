@@ -26,7 +26,7 @@ internal external object QUnit {
 }
 
 /**
- * Jasmine/Mocha API
+ * Jasmine/Mocha/Jest API
  */
 internal external fun describe(name: String, fn: () -> Unit)
 internal external fun xdescribe(name: String, fn: () -> Unit)

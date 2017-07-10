@@ -22,7 +22,7 @@ import kotlin.test.FrameworkAdapter
  * [Jasmine](https://github.com/jasmine/jasmine) adapter.
  * Also used for [Mocha](https://mochajs.org/) and [Jest](https://facebook.github.io/jest/).
  */
-internal class JasmineAdapter : FrameworkAdapter {
+internal class JasmineLikeAdapter : FrameworkAdapter {
     override fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
         if (ignored) {
             xdescribe(name, suiteFn)

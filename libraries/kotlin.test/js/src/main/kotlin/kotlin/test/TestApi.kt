@@ -51,14 +51,12 @@ internal fun setAssertHook(hook: (AssertionResult) -> Unit) {
 /**
  * The functions below are used by the compiler to describe the tests structure, e.g.
  *
- * suite('a suite', function() {
- *   suite('a subsuite', function() {
- *     test('a test', function() {...});
- *     xtest('an ignored/pending test', function() {...});
- *     ftest('a focused test', function() {...});
+ * suite('a suite', false, function() {
+ *   suite('a subsuite', false, function() {
+ *     test('a test', false, function() {...});
+ *     test('an ignored/pending test', true, function() {...});
  *   });
- *   xsuite('an ignored/pending test', function() {...});
- *   fsuite('a focused suite', function() {...});
+ *   suite('an ignored/pending test', true, function() {...});
  * });
  */
 
@@ -83,13 +81,13 @@ internal fun adapter(): FrameworkAdapter {
 
 internal fun detectAdapter() = when {
     isQUnit() -> QUnitAdapter()
-    isJasmine() -> JasmineAdapter()
+    isJasmine() -> JasmineLikeAdapter()
     else -> BareAdapter()
 }
 
 internal val NAME_TO_ADAPTER: Map<String, () -> FrameworkAdapter> = mapOf(
         "qunit" to ::QUnitAdapter,
-        "jasmine" to ::JasmineAdapter,
-        "mocha" to ::JasmineAdapter,
-        "jest" to ::JasmineAdapter,
+        "jasmine" to ::JasmineLikeAdapter,
+        "mocha" to ::JasmineLikeAdapter,
+        "jest" to ::JasmineLikeAdapter,
         "auto" to ::detectAdapter)
