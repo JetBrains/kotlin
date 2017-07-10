@@ -32,7 +32,7 @@ public class JSLibraryStdPresentationProvider extends LibraryPresentationProvide
     }
 
     protected JSLibraryStdPresentationProvider() {
-        super(JSLibraryStdDescription.KOTLIN_JAVASCRIPT_KIND);
+        super(JSLibraryStdDescription.Companion.getKOTLIN_JAVASCRIPT_KIND());
     }
 
     @Nullable

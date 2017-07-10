@@ -14,42 +14,39 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.framework;
+package org.jetbrains.kotlin.idea.framework
 
-import com.google.common.collect.Sets;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.LibraryKind;
-import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator;
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.libraries.LibraryKind
+import com.intellij.openapi.roots.libraries.NewLibraryConfiguration
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator
 
-import java.util.Set;
-
-import static org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt.getConfiguratorByName;
-import static org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator.NAME;
-
-public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDeferredConfig {
-    public static final LibraryKind KOTLIN_JAVASCRIPT_KIND = LibraryKind.create("kotlin-js-stdlib");
-    public static final String LIBRARY_NAME = "KotlinJavaScript";
-
-    public static final String JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation";
-    public static final String DIALOG_TITLE = "Create Kotlin JavaScript Library";
-    public static final String LIBRARY_CAPTION = "Kotlin JavaScript Library";
-    public static final Set<LibraryKind> SUITABLE_LIBRARY_KINDS = Sets.newHashSet(KOTLIN_JAVASCRIPT_KIND);
-
-    /**
-     * @param project null when project doesn't exist yet (called from project wizard)
-     */
-    public JSLibraryStdDescription(@Nullable Project project) {
-        super(project, KotlinJsModuleConfigurator.NAME, LIBRARY_NAME, DIALOG_TITLE, LIBRARY_CAPTION, KOTLIN_JAVASCRIPT_KIND, SUITABLE_LIBRARY_KINDS);
-    }
+/**
+ * @param project null when project doesn't exist yet (called from project wizard)
+ */
+class JSLibraryStdDescription(project: Project?) :
+        CustomLibraryDescriptorWithDeferredConfig(
+                project,
+                KotlinJsModuleConfigurator.NAME,
+                LIBRARY_NAME,
+                DIALOG_TITLE,
+                LIBRARY_CAPTION,
+                KOTLIN_JAVASCRIPT_KIND,
+                SUITABLE_LIBRARY_KINDS) {
 
     @TestOnly
-    public NewLibraryConfiguration createNewLibraryForTests() {
-        KotlinJsModuleConfigurator configurator = (KotlinJsModuleConfigurator) getConfiguratorByName(NAME);
-        assert configurator != null : "Cannot find configurator with name " + NAME;
+    fun createNewLibraryForTests(): NewLibraryConfiguration {
+        return createConfigurationFromPluginPaths()
+    }
 
-        return createConfigurationFromPluginPaths();
+    companion object {
+        val KOTLIN_JAVASCRIPT_KIND = LibraryKind.create("kotlin-js-stdlib")
+        val LIBRARY_NAME = "KotlinJavaScript"
+
+        val JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation"
+        val DIALOG_TITLE = "Create Kotlin JavaScript Library"
+        val LIBRARY_CAPTION = "Kotlin JavaScript Library"
+        val SUITABLE_LIBRARY_KINDS = setOf(KOTLIN_JAVASCRIPT_KIND)
     }
 }
