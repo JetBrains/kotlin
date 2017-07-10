@@ -3,6 +3,8 @@ Run Java
 Connected to the target VM
 functionInLibrary.kt:4
 functionInLibrary.kt:8
+functionInLibrary.kt:9
+functionInLibrary.kt:5
 stepIntoStdlibInlineFun2step.kt:5
 Disconnected from the target VM
 
