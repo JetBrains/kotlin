@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.scripts
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
@@ -27,7 +26,10 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.daemon.toFile
-import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.script.InvalidScriptResolverAnnotation
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -272,17 +274,19 @@ class ScriptTemplateTest {
             environment: Map<String, Any?>? = null,
             runIsolated: Boolean = true,
             suppressOutput: Boolean = false,
-            includeKotlinRuntime: Boolean = true): Class<*>? =
-            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, null, null, environment), runIsolated, suppressOutput, includeKotlinRuntime)
+            includeKotlinRuntime: Boolean = true
+    ): Class<*>? =
+            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromAnnotatedTemplate(
+                    scriptTemplate, null, null, environment
+            ), runIsolated, suppressOutput, includeKotlinRuntime)
 
     private fun compileScriptImpl(
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
             runIsolated: Boolean,
             suppressOutput: Boolean,
-            includeKotlinRuntime: Boolean): Class<*>?
-    {
-        val paths = PathUtil.getKotlinPathsForDistDirectory()
+            includeKotlinRuntime: Boolean
+    ): Class<*>? {
         val messageCollector =
                 if (suppressOutput) MessageCollector.NONE
                 else PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
@@ -298,8 +302,7 @@ class ScriptTemplateTest {
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             try {
-                return if (runIsolated) KotlinToJVMBytecodeCompiler.compileScript(environment, paths)
-                else KotlinToJVMBytecodeCompiler.compileScript(environment, this::class.java.classLoader)
+                return KotlinToJVMBytecodeCompiler.compileScript(environment, this::class.java.classLoader.takeUnless { runIsolated })
             }
             catch (e: CompilationException) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
@@ -310,7 +313,6 @@ class ScriptTemplateTest {
                 MessageCollectorUtil.reportException(messageCollector, t)
                 throw t
             }
-
         }
         finally {
             Disposer.dispose(rootDisposable)
@@ -371,6 +373,8 @@ class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenciesRe
         }.asFuture()
     }
 }
+
+class TestParamClass(@Suppress("unused") val memberNum: Int)
 
 @ScriptTemplateDefinition(
         scriptFilePattern =".*\\.kts",
