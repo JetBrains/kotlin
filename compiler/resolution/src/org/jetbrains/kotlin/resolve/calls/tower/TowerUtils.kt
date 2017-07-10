@@ -20,6 +20,11 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 
+private val INAPPLICABLE_STATUSES = setOf(
+        ResolutionCandidateApplicability.INAPPLICABLE,
+        ResolutionCandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR,
+        ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
+
 val ResolutionCandidateApplicability.isSuccess: Boolean
     get() = this <= ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY
 
@@ -30,7 +35,7 @@ val CandidateWithBoundDispatchReceiver.requiresExtensionReceiver: Boolean
     get() = descriptor.extensionReceiverParameter != null
 
 val ResolutionCandidateApplicability.isInapplicable: Boolean
-    get() = this == ResolutionCandidateApplicability.INAPPLICABLE || this == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+    get() = this in INAPPLICABLE_STATUSES
 
 internal class CandidateWithBoundDispatchReceiverImpl(
         override val dispatchReceiver: ReceiverValueWithSmartCastInfo?,

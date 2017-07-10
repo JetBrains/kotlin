@@ -469,6 +469,7 @@ internal fun createPreviousResolveError(status: ResolutionStatus): PreviousResol
     val level = when (status) {
         ResolutionStatus.SUCCESS, ResolutionStatus.INCOMPLETE_TYPE_INFERENCE -> return null
         ResolutionStatus.UNSAFE_CALL_ERROR -> ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR
+        ResolutionStatus.ARGUMENTS_MAPPING_ERROR -> ResolutionCandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR
         ResolutionStatus.RECEIVER_TYPE_ERROR -> ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
         else -> ResolutionCandidateApplicability.INAPPLICABLE
     }

@@ -10931,6 +10931,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements/wrongArgumentExtensionFunction.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("wrongArgumentPassedToLocalExtensionFunction.kt")
+                public void testWrongArgumentPassedToLocalExtensionFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements/wrongArgumentPassedToLocalExtensionFunction.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inference/substitutions")

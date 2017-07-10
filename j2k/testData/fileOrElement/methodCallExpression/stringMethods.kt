@@ -1,9 +1,5 @@
-// ERROR: Too many arguments for public constructor String() defined in kotlin.String
-// ERROR: Too many arguments for public constructor String() defined in kotlin.String
-// ERROR: Too many arguments for public constructor String() defined in kotlin.String
-// ERROR: Too many arguments for public constructor String() defined in kotlin.String
-// ERROR: Too many arguments for public constructor String() defined in kotlin.String
-// ERROR: Too many arguments for public constructor String() defined in kotlin.String
+// ERROR: Type mismatch: inferred type is String but Charset was expected
+// ERROR: Type mismatch: inferred type is String but Charset was expected
 import java.nio.charset.Charset
 import java.util.*
 
