@@ -72,8 +72,8 @@ enum class ResolutionCandidateApplicability {
     RUNTIME_ERROR, // problems with visibility
     IMPOSSIBLE_TO_GENERATE, // access to outer class from nested
     INAPPLICABLE, // arguments not matched
+    INAPPLICABLE_WRONG_RECEIVER, // receiver not matched
     HIDDEN, // removed from resolve
-    // todo wrong receiver
 }
 
 abstract class ResolutionDiagnostic(val candidateLevel: ResolutionCandidateApplicability)

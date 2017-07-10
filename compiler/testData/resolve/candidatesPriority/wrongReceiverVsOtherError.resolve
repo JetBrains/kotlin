@@ -8,9 +8,8 @@ open class B {}
 fun test(a: A, b: B) {
     with (a) {
         with (b) {
-            // candidates with errors for receiver b going before candidates with errors for receiver a
-            // resolved to Int.foo with error: UNRESOLVED_REFERENCE_WRONG_RECEIVER
-            `!`foo(1.0)
+            // resolved to A.foo with error: CONSTANT_EXPECTED_TYPE_MISMATCH
+            foo(1.0)
         }
     }
 }
