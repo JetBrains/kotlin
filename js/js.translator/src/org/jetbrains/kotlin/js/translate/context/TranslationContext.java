@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
-import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.config.JsConfig;
-import org.jetbrains.kotlin.js.naming.NameSuggestionKt;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator;
@@ -73,8 +71,6 @@ public class TranslationContext {
     private final ClassDescriptor classDescriptor;
     @Nullable
     private final VariableDescriptor continuationParameterDescriptor;
-
-    private final Set<String> modulesImportedForInline = new HashSet<>();
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext) {
@@ -284,9 +280,11 @@ public class TranslationContext {
             }
             else {
                 ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
-                ModuleDescriptor currentModule = staticContext.getCurrentModule();
-                if (module != currentModule && !isInlineFunction(descriptor)) {
-                    result = exportModuleForInline(currentModule, module, result);
+                if (module != staticContext.getCurrentModule() && !isInlineFunction(descriptor)) {
+                    JsExpression replacement = staticContext.exportModuleForInline(module);
+                    if (replacement != null) {
+                        result = replaceModuleReference(result, getInnerNameForDescriptor(module), replacement);
+                    }
                 }
             }
         }
@@ -296,50 +294,6 @@ public class TranslationContext {
     private boolean isInlineFunction(@NotNull DeclarationDescriptor descriptor) {
         if (!(descriptor instanceof CallableDescriptor)) return false;
         return CallExpressionTranslator.shouldBeInlined((CallableDescriptor) descriptor, this);
-    }
-
-    @NotNull
-    private JsExpression exportModuleForInline(
-            @NotNull ModuleDescriptor currentModule, @NotNull ModuleDescriptor module,
-            @NotNull JsExpression fqn
-    ) {
-        if (currentModule.getBuiltIns().getBuiltInsModule() == module) return fqn;
-
-        String moduleName = StaticContext.suggestModuleName(module);
-        if (moduleName.equals(Namer.KOTLIN_LOWER_NAME)) return fqn;
-
-        return exportModuleForInline(currentModule, moduleName, staticContext.getInnerNameForDescriptor(module), fqn);
-    }
-
-    private JsExpression exportModuleForInline(
-            @NotNull ModuleDescriptor currentModule,
-            @NotNull String moduleId, @NotNull JsName moduleName,
-            @NotNull JsExpression fqn) {
-        JsExpression currentModuleRef = pureFqn(staticContext.getInnerNameForDescriptor(currentModule), null);
-        JsExpression importsRef = pureFqn(Namer.IMPORTS_FOR_INLINE_PROPERTY, currentModuleRef);
-        JsExpression currentImports = pureFqn(staticContext.getNameForImportsForInline(), null);
-
-        JsExpression moduleRef;
-        JsExpression lhsModuleRef;
-        if (NameSuggestionKt.isValidES5Identifier(moduleId)) {
-            moduleRef = pureFqn(moduleId, importsRef);
-            lhsModuleRef = pureFqn(moduleId, currentImports);
-        }
-        else {
-            moduleRef = new JsArrayAccess(importsRef, new JsStringLiteral(moduleId));
-            MetadataProperties.setSideEffects(moduleRef, SideEffectKind.PURE);
-            lhsModuleRef = new JsArrayAccess(currentImports, new JsStringLiteral(moduleId));
-        }
-
-        fqn = replaceModuleReference(fqn, moduleName, moduleRef);
-
-        if (modulesImportedForInline.add(moduleId)) {
-            JsExpressionStatement importStmt = new JsExpressionStatement(JsAstUtils.assignment(lhsModuleRef, moduleName.makeRef()));
-            MetadataProperties.setExportedTag(importStmt, "imports:" + moduleId);
-            staticContext.getFragment().getExportBlock().getStatements().add(importStmt);
-        }
-
-        return fqn;
     }
 
     private static JsExpression replaceModuleReference(
@@ -378,14 +332,15 @@ public class TranslationContext {
         if (suggested != null && getConfig().getModuleKind() != ModuleKind.PLAIN && isPublicInlineFunction()) {
             String moduleId = AnnotationsUtils.getModuleName(suggested.getDescriptor());
             if (moduleId != null) {
-                result = exportModuleForInline(getCurrentModule(), moduleId, name, result);
+                JsExpression replacement = staticContext.exportModuleForInline(moduleId, name);
+                result = replaceModuleReference(result, name, replacement);
             }
             else if (isNativeObject(suggested.getDescriptor()) && DescriptorUtils.isTopLevelDeclaration(suggested.getDescriptor())) {
                 String fileModuleId = AnnotationsUtils.getFileModuleName(bindingContext(), suggested.getDescriptor());
                 if (fileModuleId != null) {
                     JsName fileModuleName = staticContext.getImportedModule(fileModuleId, null).getInternalName();
-                    result = exportModuleForInline(getCurrentModule(), fileModuleId, fileModuleName,
-                                                   staticContext.getQualifiedReference(descriptor));
+                    JsExpression replacement = staticContext.exportModuleForInline(fileModuleId, fileModuleName);
+                    result = replaceModuleReference(staticContext.getQualifiedReference(descriptor), fileModuleName, replacement);
                 }
             }
         }
