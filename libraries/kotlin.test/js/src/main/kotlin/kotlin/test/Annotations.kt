@@ -25,8 +25,3 @@ public annotation class Test
  * Marks a test or a suite as ignored/pending.
  */
 public annotation class Ignore
-
-/**
- * Narrows down the set of tests to a particular test of a suite similarly to [focused specs](https://jasmine.github.io/2.1/focused_specs.html)
- */
-public annotation class Only

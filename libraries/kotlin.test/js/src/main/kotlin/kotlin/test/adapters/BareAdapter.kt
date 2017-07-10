@@ -23,95 +23,15 @@ import kotlin.test.FrameworkAdapter
  */
 internal open class BareAdapter : FrameworkAdapter {
 
-    internal open fun runTest(testFn: () -> kotlin.Unit,
-                              names: Array<String>,
-                              ignored: Boolean,
-                              focused: Boolean,
-                              shouldRun: Boolean) {
-        if (shouldRun) {
+    override fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
+        if (!ignored) {
+            suiteFn()
+        }
+    }
+
+    override fun test(name: String, ignored: Boolean, testFn: () -> Unit) {
+        if (!ignored) {
             testFn()
-        }
-    }
-
-    override fun suite(name: String, suiteFn: () -> Unit) = visitSuite(name, suiteFn, TestState.DEFAULT)
-
-    override fun xsuite(name: String, suiteFn: () -> Unit) = visitSuite(name, suiteFn, TestState.IGNORED)
-
-    override fun fsuite(name: String, suiteFn: () -> Unit) = visitSuite(name, suiteFn, TestState.FOCUSED)
-
-    override fun test(name: String, testFn: () -> Unit) = visitTest(name, testFn, TestState.DEFAULT)
-
-    override fun xtest(name: String, testFn: () -> Unit) = visitTest(name, testFn, TestState.IGNORED)
-
-    override fun ftest(name: String, testFn: () -> Unit) = visitTest(name, testFn, TestState.FOCUSED)
-
-    private fun visitSuite(name: String, suiteFn: () -> Unit, state: TestState) {
-        val prevList = testList
-        val nextList = mutableListOf<Testable>()
-        testList = nextList
-
-        suiteFn()
-
-        val suite = Suite(name, state, nextList)
-
-        if (prevList == null) {
-            suite.runTest()
-        } else {
-            prevList.add(suite)
-            testList = prevList
-        }
-    }
-
-    private fun visitTest(name: String, testFn: () -> Unit, state: TestState) {
-        val test = Test(name, state, testFn)
-        testList?.add(test) ?: test.runTest()
-    }
-
-    private var testList: MutableList<Testable>? = null
-
-    internal enum class TestState { DEFAULT, IGNORED, FOCUSED }
-
-    private interface Testable {
-        val name: String
-        val state: TestState
-        val focused: Boolean
-        fun runTest(names: Array<String> = arrayOf(),
-                    ignored: Boolean = false,
-                    focused: Boolean = false,
-                    shouldRun: Boolean = true)
-    }
-
-    private inner class Suite(override val name: String, override val state: TestState, val tests: List<Testable>) : Testable {
-        private val focusedSubtests = tests.any { it.focused }
-
-        override val focused: Boolean = state == TestState.FOCUSED || focusedSubtests
-
-        override fun runTest(names: Array<String>,
-                             ignored: Boolean,
-                             focused: Boolean,
-                             shouldRun: Boolean) {
-            tests.forEach { test ->
-                test.runTest(names + name,
-                        ignored || state == TestState.IGNORED,
-                        test.focused || focused && !focusedSubtests,
-                        shouldRun && !ignored && (test.focused || !focusedSubtests))
-            }
-        }
-    }
-
-    private inner class Test(override val name: String, override val state: TestState, val testFn: () -> Unit) : Testable {
-        override val focused: Boolean
-            get() = state == TestState.FOCUSED
-
-        override fun runTest(names: Array<String>,
-                             ignored: Boolean,
-                             focused: Boolean,
-                             shouldRun: Boolean) {
-            runTest(testFn,
-                    names + name,
-                    ignored || state == TestState.IGNORED,
-                    focused,
-                    shouldRun)
         }
     }
 }

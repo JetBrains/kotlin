@@ -16,33 +16,37 @@
 
 package kotlin.test.adapters
 
+import kotlin.test.FrameworkAdapter
 import kotlin.test.assertHook
 import kotlin.test.assertTrue
 
 /**
  * [QUnit](http://qunitjs.com/) adapter
  */
-internal class QUnitAdapter : BareAdapter() {
+internal class QUnitAdapter : FrameworkAdapter {
+    var ignoredSuite = false;
 
-    override fun runTest(testFn: () -> Unit,
-                         names: Array<String>,
-                         ignored: Boolean,
-                         focused: Boolean,
-                         shouldRun: Boolean) {
-        val fn = wrapTest(testFn)
-        val name = names.filter { !it.isBlank() }.joinToString(".")
-        when {
-            focused -> QUnit.only(name, fn)
-            ignored -> QUnit.skip(name, fn)
-            else -> QUnit.test(name, fn)
+    override fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
+        val prevIgnore = ignoredSuite
+        ignoredSuite = ignoredSuite or ignored
+        QUnit.module(name, suiteFn)
+        ignoredSuite = prevIgnore
+    }
+
+    override fun test(name: String, ignored: Boolean, testFn: () -> Unit) {
+        if (ignored or ignoredSuite) {
+            QUnit.skip(name, wrapTest(testFn))
+        }
+        else {
+            QUnit.test(name, wrapTest(testFn))
         }
     }
 
     private fun wrapTest(testFn: () -> Unit): (dynamic) -> Unit = { assert ->
         var assertionsHappened = false
         assertHook = { testResult ->
-          assert.ok(testResult.result, testResult.lazyMessage())
-          assertionsHappened = true
+            assertionsHappened = true
+            assert.ok(testResult.result, testResult.lazyMessage())
         }
         testFn()
         if (!assertionsHappened) {

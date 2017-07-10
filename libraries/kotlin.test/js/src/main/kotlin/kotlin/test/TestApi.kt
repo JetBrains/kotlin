@@ -29,8 +29,7 @@ import kotlin.test.adapters.*
  * If this function is not called, the test framework will be detected automatically (as if "auto" was passed).
  *
  */
-@JsName("setAdapter")
-public fun setAdapter(adapter: dynamic) {
+internal fun setAdapter(adapter: dynamic) {
     if (js("typeof adapter === 'string'")) {
         NAME_TO_ADAPTER[adapter]?.let {
             setAdapter(it.invoke())
@@ -44,8 +43,7 @@ public fun setAdapter(adapter: dynamic) {
 /**
  * Use in order to define which action should be taken by the test framework on the [AssertionResult].
  */
-@JsName("setAssertHook")
-public fun setAssertHook(hook: (AssertionResult) -> Unit) {
+internal fun setAssertHook(hook: (AssertionResult) -> Nothing) {
     assertHook = hook
 }
 
@@ -65,33 +63,13 @@ public fun setAssertHook(hook: (AssertionResult) -> Unit) {
  */
 
 @JsName("suite")
-internal fun suite(name: String, suiteFn: () -> Unit) {
-    adapter().suite(name, suiteFn)
-}
-
-@JsName("xsuite")
-internal fun xsuite(name: String, suiteFn: () -> Unit) {
-    adapter().xsuite(name, suiteFn)
-}
-
-@JsName("fsuite")
-internal fun fsuite(name: String, suiteFn: () -> Unit) {
-    adapter().fsuite(name, suiteFn)
+internal fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
+    adapter().suite(name, ignored, suiteFn)
 }
 
 @JsName("test")
-internal fun test(name: String, testFn: () -> Unit) {
-    adapter().test(name, testFn)
-}
-
-@JsName("xtest")
-internal fun xtest(name: String, testFn: () -> Unit) {
-    adapter().xtest(name, testFn)
-}
-
-@JsName("ftest")
-internal fun ftest(name: String, testFn: () -> Unit) {
-    adapter().ftest(name, testFn)
+internal fun test(name: String, ignored: Boolean, testFn: () -> Unit) {
+    adapter().test(name, ignored, testFn)
 }
 
 internal var currentAdapter: FrameworkAdapter? = null
@@ -106,7 +84,6 @@ internal fun adapter(): FrameworkAdapter {
 internal fun detectAdapter() = when {
     isQUnit() -> QUnitAdapter()
     isJasmine() -> JasmineAdapter()
-    isMocha() -> MochaAdapter()
     else -> BareAdapter()
 }
 
@@ -114,5 +91,4 @@ internal val NAME_TO_ADAPTER: Map<String, () -> FrameworkAdapter> = mapOf(
         "qunit" to ::QUnitAdapter,
         "jasmine" to ::JasmineAdapter,
         "jest" to ::JasmineAdapter, // Jest support both Mocha- and Jasmine-style test declarations.
-        "mocha" to ::MochaAdapter,
         "auto" to ::detectAdapter)

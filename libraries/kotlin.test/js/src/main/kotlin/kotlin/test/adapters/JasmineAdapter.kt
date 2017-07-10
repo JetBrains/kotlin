@@ -22,27 +22,21 @@ import kotlin.test.FrameworkAdapter
  * [Jasmine](https://github.com/jasmine/jasmine) adapter
  */
 internal class JasmineAdapter : FrameworkAdapter {
-    override fun suite(name: String, suiteFn: () -> Unit) {
-        describe(name, suiteFn)
+    override fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
+        if (ignored) {
+            xdescribe(name, suiteFn)
+        }
+        else {
+            describe(name, suiteFn)
+        }
     }
 
-    override fun xsuite(name: String, suiteFn: () -> Unit) {
-        xdescribe(name, suiteFn)
-    }
-
-    override fun fsuite(name: String, suiteFn: () -> Unit) {
-        fdescribe(name, suiteFn)
-    }
-
-    override fun test(name: String, testFn: () -> Unit) {
-        it(name, testFn)
-    }
-
-    override fun xtest(name: String, testFn: () -> Unit) {
-        xit(name, testFn)
-    }
-
-    override fun ftest(name: String, testFn: () -> Unit) {
-        fit(name, testFn)
+    override fun test(name: String, ignored: Boolean, testFn: () -> Unit) {
+        if (ignored) {
+            xit(name, testFn)
+        }
+        else {
+            it(name, testFn)
+        }
     }
 }

@@ -21,21 +21,9 @@ package kotlin.test
  */
 public external interface FrameworkAdapter {
 
-    // A regular test suite.
-    fun suite(name: String, suiteFn: () -> Unit)
+    // A test suite.
+    fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
 
-    // An ignored test suite. Corresponds to a class marked with the `@Ignore` anotation.
-    fun xsuite(name: String, suiteFn: () -> Unit)
-
-    // A focused test suite. Corresponds to a class marked with the `@Only` annotation.
-    fun fsuite(name: String, suiteFn: () -> Unit)
-
-    // A regular test.
-    fun test(name: String, testFn: () -> Unit)
-
-    // An ignored test. Corresponds to a function marked with the `@Ignore` annotation.
-    fun xtest(name: String, testFn: () -> Unit)
-
-    // A focused test. Corresponds to a function marked with the `@Only` annotation.
-    fun ftest(name: String, testFn: () -> Unit)
+    // A test.
+    fun test(name: String, ignored: Boolean, testFn: () -> Unit)
 }

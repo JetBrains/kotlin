@@ -2,7 +2,7 @@ var Tester = require('./test-result-checker');
 var tester = new Tester(require('./expected-outcomes'));
 
 QUnit.testDone(function (details) {
-    var testName = details.name.split('.').join(' ');
+    var testName = details.module + ' ' + details.name;
     if (details.skipped) {
         tester.pending(testName);
     }

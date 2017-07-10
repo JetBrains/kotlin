@@ -25,45 +25,33 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-//TODO: use method object instead of static functions
 class JSTestGenerator(val context: TranslationContext) {
 
     fun generateTestCalls(moduleDescriptor: ModuleDescriptor) {
-        val rootFunction = JsFunction(context.scope(), JsBlock(), "root suite function")
-
-        generateTestCalls(moduleDescriptor, FqName.ROOT, rootFunction)
-
-        if (!rootFunction.body.isEmpty) {
-            context.addTopLevelStatement(JsInvocation(suiteRef, JsStringLiteral(""), rootFunction).makeStmt())
-        }
+        generateTestCalls(moduleDescriptor, FqName.ROOT)
     }
 
-    private fun generateTestCalls(moduleDescriptor: ModuleDescriptor, packageName: FqName, parentFun: JsFunction) {
+    private fun generateTestCalls(moduleDescriptor: ModuleDescriptor, packageName: FqName) {
         for (packageDescriptor in moduleDescriptor.getPackage(packageName).fragments) {
             if (DescriptorUtils.getContainingModule(packageDescriptor) !== moduleDescriptor) continue
 
             packageDescriptor.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER).forEach {
                 if (it is ClassDescriptor) {
-                    generateTestFunctions(it, parentFun)
+                    generateTestFunctions(it)
                 }
             }
         }
 
         for (subpackageName in moduleDescriptor.getSubPackagesOf(packageName, MemberScope.ALL_NAME_FILTER)) {
-            val subPackageFunction = JsFunction(context.scope(), JsBlock(), "${subpackageName.asString()} package suite function")
-
-            generateTestCalls(moduleDescriptor, subpackageName, subPackageFunction)
-
-            if (!subPackageFunction.body.isEmpty) {
-                parentFun.body.statements += JsInvocation(suiteRef, JsStringLiteral(subpackageName.shortName().asString()), subPackageFunction).makeStmt()
-            }
+            generateTestCalls(moduleDescriptor, subpackageName)
         }
     }
 
-    private fun generateTestFunctions(classDescriptor: ClassDescriptor, parentFun: JsFunction) {
+    private fun generateTestFunctions(classDescriptor: ClassDescriptor) {
         if (classDescriptor.modality === Modality.ABSTRACT) return
 
         val suiteFunction = JsFunction(context.scope(), JsBlock(), "suite function")
@@ -75,9 +63,9 @@ class JSTestGenerator(val context: TranslationContext) {
         }
 
         if (!suiteFunction.body.isEmpty) {
-            val suiteName = JsStringLiteral(classDescriptor.name.toString())
+            val suiteName = JsStringLiteral(classDescriptor.fqNameSafe.asString())
 
-            parentFun.body.statements += JsInvocation(classDescriptor.ref, suiteName, suiteFunction).makeStmt()
+            context.addTopLevelStatement(JsInvocation(suiteRef, suiteName, JsBooleanLiteral(classDescriptor.isIgnored), suiteFunction).makeStmt())
         }
     }
 
@@ -85,7 +73,7 @@ class JSTestGenerator(val context: TranslationContext) {
         val functionToTest = generateTestFunction(functionDescriptor, classDescriptor, parentFun.scope)
 
         val testName = JsStringLiteral(functionDescriptor.name.toString())
-        parentFun.body.statements += JsInvocation(functionDescriptor.ref, testName, functionToTest).makeStmt()
+        parentFun.body.statements += JsInvocation(testRef, testName, JsBooleanLiteral(functionDescriptor.isIgnored), functionToTest).makeStmt()
     }
 
     private fun generateTestFunction(functionDescriptor: FunctionDescriptor, classDescriptor: ClassDescriptor, scope: JsScope): JsFunction {
@@ -99,11 +87,7 @@ class JSTestGenerator(val context: TranslationContext) {
     }
 
     private val suiteRef: JsExpression by lazy { findFunction("suite") }
-    private val fsuiteRef: JsExpression by lazy { findFunction("fsuite") }
-    private val xsuiteRef: JsExpression by lazy { findFunction("xsuite") }
     private val testRef: JsExpression by lazy { findFunction("test") }
-    private val ignoreRef: JsExpression by lazy { findFunction("xtest") }
-    private val onlyRef: JsExpression by lazy { findFunction("ftest") }
 
     private fun findFunction(name: String): JsExpression {
         val descriptor = DescriptorUtils.getFunctionByNameOrNull(
@@ -112,35 +96,11 @@ class JSTestGenerator(val context: TranslationContext) {
         return ReferenceTranslator.translateAsValueReference(descriptor, context)
     }
 
-    private val ClassDescriptor.ref: JsExpression
-        get() = when {
-            isIgnored -> xsuiteRef
-            isFocused -> fsuiteRef
-            else -> suiteRef
-        }
-
-    private val FunctionDescriptor.ref: JsExpression
-        get() = when {
-            isIgnored -> ignoreRef
-            isFocused -> onlyRef
-            else -> testRef
-        }
-
-    /**
-     * JUnit3 style:
-     * if (function.getName().startsWith("test")) {
-     *   List<JetParameter> parameters = function.getValueParameters();
-     *   return parameters.size() == 0;
-     * }
-     */
     private val FunctionDescriptor.isTest
-        get() = annotationFinder("Test", "kotlin.test", "org.junit") // Support both ways for now.
+        get() = annotationFinder("Test", "kotlin.test", "org.junit") // Support both annotations for now.
 
     private val DeclarationDescriptor.isIgnored
         get() = annotationFinder("Ignore", "kotlin.test")
-
-    private val DeclarationDescriptor.isFocused
-        get() = annotationFinder("Only", "kotlin.test")
 
     private fun DeclarationDescriptor.annotationFinder(shortName: String, vararg packages: String) = packages.any { packageName ->
         annotations.hasAnnotation(FqName("$packageName.$shortName"))
