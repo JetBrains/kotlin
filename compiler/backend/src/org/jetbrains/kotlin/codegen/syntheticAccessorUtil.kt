@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 enum class FieldAccessorKind(val suffix: String) {
     NORMAL("p"),
@@ -26,15 +27,18 @@ enum class FieldAccessorKind(val suffix: String) {
     override fun toString() = suffix
 }
 
+private fun CallableMemberDescriptor.getJvmName() =
+        DescriptorUtils.getJvmName(this) ?: name.asString()
+
 fun getAccessorNameSuffix(descriptor: CallableMemberDescriptor, superCallDescriptor: ClassDescriptor?,
                           accessorKind: FieldAccessorKind): String {
     val suffix = when (descriptor) {
         is ConstructorDescriptor ->
             return "will be ignored"
         is SimpleFunctionDescriptor ->
-            descriptor.name.asString()
+            descriptor.getJvmName()
         is PropertyDescriptor ->
-            descriptor.name.asString() + "$" + accessorKind
+            descriptor.getJvmName() + "$" + accessorKind
         else ->
             throw UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor)
     }
