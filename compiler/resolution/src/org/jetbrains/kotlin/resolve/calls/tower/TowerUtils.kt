@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,9 @@ val CallableDescriptor.isSynthesized: Boolean
 
 val CandidateWithBoundDispatchReceiver.requiresExtensionReceiver: Boolean
     get() = descriptor.extensionReceiverParameter != null
+
+val ResolutionCandidateApplicability.isInapplicable: Boolean
+    get() = this == ResolutionCandidateApplicability.INAPPLICABLE || this == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
 
 internal class CandidateWithBoundDispatchReceiverImpl(
         override val dispatchReceiver: ReceiverValueWithSmartCastInfo?,

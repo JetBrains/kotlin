@@ -173,9 +173,7 @@ class NewResolutionOldInference(
 
         // Temporary hack to resolve 'rem' as 'mod' if the first is do not present
         val emptyOrInapplicableCandidates = candidates.isEmpty() ||
-                                            candidates.all {
-                                                it.candidateStatus.resultingApplicability == ResolutionCandidateApplicability.INAPPLICABLE
-                                            }
+                                            candidates.all { it.candidateStatus.resultingApplicability.isInapplicable }
         if (isBinaryRemOperator && shouldUseOperatorRem && emptyOrInapplicableCandidates) {
             val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]
             val processorForDeprecatedName = kind.createTowerProcessor(this, deprecatedName!!, tracing, scopeTower, detailedReceiver, context)
@@ -471,6 +469,7 @@ internal fun createPreviousResolveError(status: ResolutionStatus): PreviousResol
     val level = when (status) {
         ResolutionStatus.SUCCESS, ResolutionStatus.INCOMPLETE_TYPE_INFERENCE -> return null
         ResolutionStatus.UNSAFE_CALL_ERROR -> ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR
+        ResolutionStatus.RECEIVER_TYPE_ERROR -> ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
         else -> ResolutionCandidateApplicability.INAPPLICABLE
     }
     return PreviousResolutionError(level)
