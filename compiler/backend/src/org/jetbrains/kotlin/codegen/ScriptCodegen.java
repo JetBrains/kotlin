@@ -105,8 +105,12 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
     }
 
     @Override
-    protected void generateSyntheticParts() {
+    protected void generateSyntheticPartsBeforeBody() {
         generatePropertyMetadataArrayFieldIfNeeded(classAsmType);
+    }
+
+    @Override
+    protected void generateSyntheticPartsAfterBody() {
     }
 
     @Override

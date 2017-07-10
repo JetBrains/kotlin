@@ -186,7 +186,7 @@ class MultifileClassPartCodegen(
         }
     }
 
-    override fun generateSyntheticParts() {
+    override fun generateSyntheticPartsAfterBody() {
         generateSyntheticAccessors()
     }
 

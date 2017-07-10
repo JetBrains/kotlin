@@ -70,7 +70,7 @@ class InterfaceImplBodyCodegen(
         return classDescriptorImpl
     }
 
-    override fun generateSyntheticParts() {
+    override fun generateSyntheticPartsAfterBody() {
         for (memberDescriptor in descriptor.defaultType.memberScope.getContributedDescriptors()) {
             if (memberDescriptor !is CallableMemberDescriptor) continue
 

@@ -130,7 +130,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
     }
 
     @Override
-    protected void generateSyntheticParts() {
+    protected void generateSyntheticPartsAfterBody() {
         generateSyntheticAccessors();
     }
 }
