@@ -18,8 +18,11 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.libraries.DummyLibraryProperties
 import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.roots.libraries.LibraryType
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
+import org.jetbrains.kotlin.idea.framework.JSLibraryType
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.isKotlinJsRuntime
 import org.jetbrains.kotlin.js.JavaScript
@@ -55,6 +58,9 @@ open class KotlinJsModuleConfigurator : KotlinWithLibraryConfigurator() {
                   LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
 
     override val libraryMatcher: (Library) -> Boolean = ::isKotlinJsRuntime
+
+    override val libraryType: LibraryType<DummyLibraryProperties>?
+        get() = JSLibraryType.getInstance()
 
     companion object {
         const val NAME = JavaScript.LOWER_NAME
