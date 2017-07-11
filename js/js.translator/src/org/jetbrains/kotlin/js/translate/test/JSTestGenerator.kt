@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
@@ -36,14 +35,21 @@ class JSTestGenerator(val context: TranslationContext) {
     }
 
     private fun generateTestCalls(moduleDescriptor: ModuleDescriptor, packageName: FqName) {
+        val packageFunction = JsFunction(context.scope(), JsBlock(), "${packageName.asString()} package suite function")
+
         for (packageDescriptor in moduleDescriptor.getPackage(packageName).fragments) {
             if (DescriptorUtils.getContainingModule(packageDescriptor) !== moduleDescriptor) continue
 
             packageDescriptor.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER).forEach {
                 if (it is ClassDescriptor) {
-                    generateTestFunctions(it)
+                    generateTestFunctions(it, packageFunction)
                 }
             }
+        }
+
+        if (!packageFunction.body.isEmpty) {
+            val suiteName = JsStringLiteral(packageName.asString())
+            context.addTopLevelStatement(JsInvocation(suiteRef, suiteName, JsBooleanLiteral(false), packageFunction).makeStmt())
         }
 
         for (subpackageName in moduleDescriptor.getSubPackagesOf(packageName, MemberScope.ALL_NAME_FILTER)) {
@@ -51,7 +57,7 @@ class JSTestGenerator(val context: TranslationContext) {
         }
     }
 
-    private fun generateTestFunctions(classDescriptor: ClassDescriptor) {
+    private fun generateTestFunctions(classDescriptor: ClassDescriptor, parentFun: JsFunction) {
         if (classDescriptor.modality === Modality.ABSTRACT) return
 
         val suiteFunction = JsFunction(context.scope(), JsBlock(), "suite function")
@@ -63,9 +69,9 @@ class JSTestGenerator(val context: TranslationContext) {
         }
 
         if (!suiteFunction.body.isEmpty) {
-            val suiteName = JsStringLiteral(classDescriptor.fqNameSafe.asString())
+            val suiteName = JsStringLiteral(classDescriptor.name.toString())
 
-            context.addTopLevelStatement(JsInvocation(suiteRef, suiteName, JsBooleanLiteral(classDescriptor.isIgnored), suiteFunction).makeStmt())
+            parentFun.body.statements += JsInvocation(suiteRef, suiteName, JsBooleanLiteral(classDescriptor.isIgnored), suiteFunction).makeStmt()
         }
     }
 

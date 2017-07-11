@@ -13,13 +13,15 @@ var setAssertHook = function(t) {
 };
 
 
-var suiteContext;
+var suiteContext = {
+    test: tape
+};
 var hasTests = false;
 var hasAsserts = false;
 
 kotlin_test.setAdapter({
     suite: function (name, ignored, fn) {
-        tape(name, { skip: ignored }, function(t) {
+        suiteContext.test(name, { skip: ignored }, function(t) {
             var prevContext = suiteContext;
             suiteContext = t;
             hasTests = false;

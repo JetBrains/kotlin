@@ -5,22 +5,27 @@ var Tester = function(testMap) {
 
     this._passed = 0;
     this._total = Object.keys(testMap).length;
+
+    this._errors = []
 };
 
 Tester.prototype._check = function(name, result) {
     var count = this._testCount[name] | 0;
     this._testCount = count + 1;
     if (count === 1) {
-        throw new Error('Duplicate test: "' + name + '"');
+        this._errors.push('Duplicate test: "' + name + '"');
+        return;
     }
 
     var expected = this._testMap[name];
     if (!expected) {
-        throw new Error('Unexpected test: "' + name + '"');
+        this._errors.push('Unexpected test: "' + name + '"');
+        return;
     }
 
     if (result !== expected) {
-        throw new Error('For test "' + name + '": expected ' + expected + ' actual ' + result);
+        this._errors.push('Unexpected test: "' + name + '"');
+        return;
     }
 
     this._passed++;
@@ -38,9 +43,20 @@ Tester.prototype.pending = function(name) {
     this._check(name, 'pending');
 };
 
+Tester.prototype.printResult = function() {
+    console.log("Passed " + this._passed + " out of " + this._total);
+    for (var i = 0; i < this._errors.length; ++i) {
+        console.log(this._errors[i]);
+    }
+};
+
+Tester.prototype.exitCode = function() {
+    return this._errors.length;
+};
+
 Tester.prototype.end = function() {
-    console.log('Passage rate ' + this._passed + ' / ' + this._total);
-    process.exitCode = this._total - this._passed;
+    this.printResult();
+    process.exitCode = this.exitCode();
     process.exit();
 };
 

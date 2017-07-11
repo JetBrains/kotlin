@@ -2,7 +2,7 @@ var Tester = require('./test-result-checker');
 var tester = new Tester(require('./expected-outcomes'));
 
 QUnit.testDone(function (details) {
-    var testName = details.module + ' ' + details.name;
+    var testName = (details.module.replace('> ', '') + ' ' + details.name).trim();
     if (details.skipped) {
         tester.pending(testName);
     }
@@ -15,6 +15,7 @@ QUnit.testDone(function (details) {
 });
 
 QUnit.done(function (details) {
-    details.failed = tester._total - tester._passed;
+    tester.printResult();
+    details.failed = tester.exitCode();
 });
 
