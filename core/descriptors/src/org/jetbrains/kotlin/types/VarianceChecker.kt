@@ -55,7 +55,7 @@ fun <D : TypeHolder<D>> D.checkTypePosition(
 
     var noError = true
     for (argument in arguments) {
-        if (argument == null || argument.typeParameter == null || argument.projection.isStarProjection) continue
+        if (argument?.typeParameter == null || argument.projection.isStarProjection) continue
 
         val projectionKind = TypeCheckingProcedure.getEffectiveProjectionKind(argument.typeParameter!!, argument.projection)!!
         val newPosition = when (projectionKind) {

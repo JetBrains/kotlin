@@ -71,7 +71,7 @@ class KotlinCompletionCharFilter() : CharFilter() {
             }
 
             '{' -> {
-                if (currentItem != null && currentItem.getUserData(ACCEPT_OPENING_BRACE) != null)
+                if (currentItem?.getUserData(ACCEPT_OPENING_BRACE) != null)
                     Result.SELECT_ITEM_AND_FINISH_LOOKUP
                 else
                     Result.HIDE_LOOKUP

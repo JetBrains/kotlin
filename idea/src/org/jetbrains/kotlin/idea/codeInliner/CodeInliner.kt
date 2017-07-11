@@ -373,7 +373,7 @@ class CodeInliner<TCallElement : KtElement>(
             is VarargValueArgument -> {
                 val arguments = resolvedArgument.arguments
                 val single = arguments.singleOrNull()
-                if (single != null && single.getSpreadElement() != null) {
+                if (single?.getSpreadElement() != null) {
                     val expression = single.getArgumentExpression()!!.marked(USER_CODE_KEY)
                     return Argument(expression, bindingContext.getType(expression), isNamed = single.isNamed())
                 }

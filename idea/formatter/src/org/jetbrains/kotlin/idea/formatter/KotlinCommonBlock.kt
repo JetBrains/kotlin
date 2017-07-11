@@ -116,7 +116,7 @@ abstract class KotlinCommonBlock(
         val childParent = child.treeParent
         val childType = child.elementType
 
-        if (childParent != null && childParent.treeParent != null) {
+        if (childParent?.treeParent != null) {
             if (childParent.elementType === KtNodeTypes.BLOCK && childParent.treeParent.elementType === KtNodeTypes.SCRIPT) {
                 return Indent.getNoneIndent()
             }

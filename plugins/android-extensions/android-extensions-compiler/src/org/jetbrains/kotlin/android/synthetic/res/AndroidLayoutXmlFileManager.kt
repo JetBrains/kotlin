@@ -73,7 +73,7 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
         val allLayoutFiles = allChildren.filter { it.parent.name.startsWith("layout") && it.name.toLowerCase().endsWith(".xml") }
         val allLayoutPsiFiles = allLayoutFiles.fold(ArrayList<PsiFile>(allLayoutFiles.size)) { list, file ->
             val psiFile = psiManager.findFile(file)
-            if (psiFile != null && psiFile.parent != null) {
+            if (psiFile?.parent != null) {
                 list += psiFile
             }
             list

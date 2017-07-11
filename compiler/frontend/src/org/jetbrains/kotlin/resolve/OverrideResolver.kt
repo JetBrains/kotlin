@@ -809,7 +809,7 @@ class OverrideResolver(
 
         private fun findDataModifierForDataClass(dataClass: DeclarationDescriptor): PsiElement {
             val classDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(dataClass) as KtClassOrObject?
-            if (classDeclaration != null && classDeclaration.modifierList != null) {
+            if (classDeclaration?.modifierList != null) {
                 val modifier = classDeclaration.modifierList!!.getModifier(KtTokens.DATA_KEYWORD)
                 if (modifier != null) {
                     return modifier

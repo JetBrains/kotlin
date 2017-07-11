@@ -53,7 +53,7 @@ abstract class DeprecatedSymbolUsageFixBase(
         val element = element ?: return false
         if (!super.isAvailable(project, editor, file)) return false
         val strategy = buildUsageReplacementStrategy(element, replaceWith, recheckAnnotation = true)
-        return strategy != null && strategy.createReplacer(element) != null
+        return strategy?.createReplacer(element) != null
     }
 
     final override fun invoke(project: Project, editor: Editor?, file: KtFile) {
