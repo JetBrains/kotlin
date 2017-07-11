@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmen
 object CommonLibraryDetectionUtil {
     @JvmStatic
     fun getLibraryPlatform(library: Library): TargetPlatform {
-        if (library is LibraryEx && library.isDisposed) return JvmPlatform
+        library as? LibraryEx ?: return JvmPlatform
+        if (library.isDisposed) return JvmPlatform
+        if (library.kind is JSLibraryKind) return JsPlatform
 
         for (root in library.getFiles(OrderRootType.CLASSES)) {
             ProgressManager.checkCanceled()
@@ -42,17 +44,12 @@ object CommonLibraryDetectionUtil {
             if (hasCommonMetadata == true) {
                 return TargetPlatform.Default
             }
-            val hasJSMetadata = JarUserDataManager.hasFileWithProperty(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar, root)
-            if (hasJSMetadata == true) {
-                return JsPlatform
-            }
 
             var platform: TargetPlatform? = null
             VfsUtilCore.processFilesRecursively(root) { file ->
                 when {
                     file.fileType == JavaClassFileType.INSTANCE -> platform = JvmPlatform
                     isKotlinMetadataFile(file) -> platform = TargetPlatform.Default
-                    KotlinJavaScriptLibraryDetectionUtil.isJsFileWithMetadata(file) -> platform = JsPlatform
                 }
 
                 platform == null

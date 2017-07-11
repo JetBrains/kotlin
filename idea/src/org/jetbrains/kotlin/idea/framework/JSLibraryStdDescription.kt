@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.framework
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.libraries.LibraryKind
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator
@@ -32,7 +31,7 @@ class JSLibraryStdDescription(project: Project?) :
                 LIBRARY_NAME,
                 DIALOG_TITLE,
                 LIBRARY_CAPTION,
-                KOTLIN_JAVASCRIPT_KIND,
+                JSLibraryKind,
                 SUITABLE_LIBRARY_KINDS) {
 
     @TestOnly
@@ -41,12 +40,11 @@ class JSLibraryStdDescription(project: Project?) :
     }
 
     companion object {
-        val KOTLIN_JAVASCRIPT_KIND = LibraryKind.create("kotlin-js-stdlib")
         val LIBRARY_NAME = "KotlinJavaScript"
 
         val JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation"
         val DIALOG_TITLE = "Create Kotlin JavaScript Library"
         val LIBRARY_CAPTION = "Kotlin JavaScript Library"
-        val SUITABLE_LIBRARY_KINDS = setOf(KOTLIN_JAVASCRIPT_KIND)
+        val SUITABLE_LIBRARY_KINDS = setOf(JSLibraryKind)
     }
 }
