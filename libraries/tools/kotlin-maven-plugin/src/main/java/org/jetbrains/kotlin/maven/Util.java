@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,14 @@
 
 package org.jetbrains.kotlin.maven;
 
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
-
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Util {
     static List<String> filterClassPath(final File basedir, List<String> classpath) {
-        return CollectionsKt.filter(classpath, new Function1<String, Boolean>() {
-            @Override
-            public Boolean invoke(String s) {
-                return new File(s).exists() || new File(basedir, s).exists();
-            }
-        });
+        return classpath.stream().filter(s ->
+                new File(s).exists() || new File(basedir, s).exists()
+        ).collect(Collectors.toList());
     }
 }

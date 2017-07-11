@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 
 import java.io.File;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
+
 /**
  * Converts Kotlin to JavaScript code
- *
- * @noinspection UnusedDeclaration
  */
 @Mojo(name = "test-js",
         defaultPhase = LifecyclePhase.TEST_COMPILE,
@@ -74,7 +73,7 @@ public class KotlinTestJSCompilerMojo extends K2JSCompilerMojo {
     private String outputFile;
 
     /**
-     * Flag enables or disables metafile generation
+     * Flag enables or disables .meta.js file generation
      */
     @Parameter(defaultValue = "true")
     private boolean metaInfo;

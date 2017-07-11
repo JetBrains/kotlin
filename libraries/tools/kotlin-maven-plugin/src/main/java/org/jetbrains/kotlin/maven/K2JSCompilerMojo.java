@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         arguments.moduleKind = moduleKind;
         arguments.main = main;
 
-        List<String> libraries = null;
+        List<String> libraries;
         try {
             libraries = getKotlinJavascriptLibraryFiles();
         } catch (DependencyResolutionRequiredException e) {
@@ -118,7 +118,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         if (outputFile != null) {
             ConcurrentMap<String, List<String>> collector = getOutputDirectoriesCollector();
             String key = project.getArtifactId();
-            List<String> paths = collector.computeIfAbsent(key, k -> Collections.synchronizedList(new ArrayList<String>()));
+            List<String> paths = collector.computeIfAbsent(key, k -> Collections.synchronizedList(new ArrayList<>()));
             paths.add(new File(outputFile).getParent());
         }
 
@@ -145,7 +145,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
      */
     @NotNull
     private List<String> getKotlinJavascriptLibraryFiles() throws DependencyResolutionRequiredException {
-        List<String> libraries = new ArrayList<String>();
+        List<String> libraries = new ArrayList<>();
 
         for (String path : getClassPathElements()) {
             File file = new File(path);
@@ -197,7 +197,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         try {
             ConcurrentMap<String, List<String>> collector = (ConcurrentMap<String, List<String>>) getPluginContext().get(OUTPUT_DIRECTORIES_COLLECTOR_PROPERTY_NAME);
             if (collector == null) {
-                collector = new ConcurrentSkipListMap<String, List<String>>();
+                collector = new ConcurrentSkipListMap<>();
                 getPluginContext().put(OUTPUT_DIRECTORIES_COLLECTOR_PROPERTY_NAME, collector);
             }
 

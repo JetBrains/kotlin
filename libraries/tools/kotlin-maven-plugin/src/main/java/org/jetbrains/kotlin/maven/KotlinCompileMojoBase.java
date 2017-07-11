@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,16 @@ import com.google.common.base.Joiner;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Processor;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
-import org.apache.maven.plugin.*;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -80,18 +82,15 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @Parameter
     private boolean multiPlatform = false;
 
-    private List<String> getAppliedCompilerPlugins() {
-        return (compilerPlugins == null) ? Collections.<String>emptyList() : compilerPlugins;
-    }
-
     protected List<String> getSourceFilePaths() {
         if (sourceDirs != null && !sourceDirs.isEmpty()) return sourceDirs;
         return project.getCompileSourceRoots();
     }
 
+    @NotNull
     private List<File> getSourceDirs() {
         List<String> sources = getSourceFilePaths();
-        List<File> result = new ArrayList<File>(sources.size());
+        List<File> result = new ArrayList<>(sources.size());
 
         for (String source : sources) {
             addSourceRoots(result, source);
@@ -168,17 +167,17 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     public String testModule;
 
 
-    @Parameter(property = "kotlin.compiler.languageVersion", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.languageVersion")
     protected String languageVersion;
 
 
-    @Parameter(property = "kotlin.compiler.apiVersion", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.apiVersion")
     protected String apiVersion;
 
     /**
      * possible values are: enable, error, warn
      */
-    @Parameter(property = "kotlin.compiler.experimental.coroutines", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.experimental.coroutines")
     @Nullable
     protected String experimentalCoroutines;
 
@@ -237,17 +236,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     }
 
     private boolean hasKotlinFilesInSources() throws MojoExecutionException {
-        List<File> sources = getSourceDirs();
-        if (sources == null || sources.isEmpty()) return false;
-
-        for (File root : sources) {
+        for (File root : getSourceDirs()) {
             if (root.exists()) {
-                boolean sourcesExists = !FileUtil.processFilesRecursively(root, new Processor<File>() {
-                    @Override
-                    public boolean process(File file) {
-                        return !file.getName().endsWith(".kt");
-                    }
-                });
+                boolean sourcesExists = !FileUtil.processFilesRecursively(root, file -> !file.getName().endsWith(".kt"));
                 if (sourcesExists) return true;
             }
         }
@@ -293,9 +284,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException;
 
     private List<String> getCompilerPluginClassPaths() {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
 
-        List<File> files = new ArrayList<File>();
+        List<File> files = new ArrayList<>();
 
         for (Dependency dependency : mojoExecution.getPlugin().getDependencies()) {
             Artifact artifact = system.createDependencyArtifact(dependency);
@@ -319,14 +310,15 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     @NotNull
     private Map<String, KotlinMavenPluginExtension> loadCompilerPlugins() throws PluginNotFoundException {
-        Map<String, KotlinMavenPluginExtension> loadedPlugins = new HashMap<String, KotlinMavenPluginExtension>();
-        for (String pluginName : getAppliedCompilerPlugins()) {
+        if (compilerPlugins == null) return Collections.emptyMap();
+
+        Map<String, KotlinMavenPluginExtension> loadedPlugins = new HashMap<>();
+        for (String pluginName : compilerPlugins) {
             getLog().debug("Looking for plugin " + pluginName);
             try {
                 KotlinMavenPluginExtension extension = container.lookup(KotlinMavenPluginExtension.class, pluginName);
                 loadedPlugins.put(pluginName, extension);
                 getLog().debug("Got plugin instance" + pluginName + " of type " + extension.getClass().getName());
-
             } catch (ComponentLookupException e) {
                 getLog().debug("Unable to get plugin instance" + pluginName);
                 throw new PluginNotFoundException(pluginName, e);
@@ -337,7 +329,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     @NotNull
     private List<String> renderCompilerPluginOptions(@NotNull List<PluginOption> options) {
-        List<String> renderedOptions = new ArrayList<String>(options.size());
+        List<String> renderedOptions = new ArrayList<>(options.size());
         for (PluginOption option : options) {
             renderedOptions.add(option.toString());
         }
@@ -350,7 +342,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             throw new IllegalStateException("No mojoExecution injected");
         }
 
-        List<PluginOption> pluginOptions = new ArrayList<PluginOption>();
+        List<PluginOption> pluginOptions = new ArrayList<>();
 
         Map<String, KotlinMavenPluginExtension> plugins = loadCompilerPlugins();
 
@@ -374,15 +366,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             pluginOptions.addAll(parseUserProvidedPluginOptions(this.pluginOptions, plugins));
         }
 
-        Map<String, List<PluginOption>> optionsByPluginName = new LinkedHashMap<String, List<PluginOption>>();
+        Map<String, List<PluginOption>> optionsByPluginName = new LinkedHashMap<>();
         for (PluginOption option : pluginOptions) {
-            List<PluginOption> optionsForPlugin = optionsByPluginName.get(option.pluginName);
-            if (optionsForPlugin == null) {
-                optionsForPlugin = new ArrayList<PluginOption>();
-                optionsByPluginName.put(option.pluginName, optionsForPlugin);
-            }
-
-            optionsForPlugin.add(option);
+            optionsByPluginName.computeIfAbsent(option.pluginName, key -> new ArrayList<>()).add(option);
         }
 
         for (Map.Entry<String, List<PluginOption>> entry : optionsByPluginName.entrySet()) {
@@ -410,7 +396,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             @NotNull List<String> rawOptions,
             @NotNull Map<String, KotlinMavenPluginExtension> plugins
     ) throws PluginOptionIllegalFormatException, PluginNotFoundException {
-        List<PluginOption> pluginOptions = new ArrayList<PluginOption>(rawOptions.size());
+        List<PluginOption> pluginOptions = new ArrayList<>(rawOptions.size());
 
         for (String rawOption : rawOptions) {
             Matcher matcher = OPTION_PATTERN.matcher(rawOption);
@@ -434,7 +420,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     @NotNull
     private List<File> getSourceRoots() throws MojoExecutionException {
-        List<File> sourceRoots = new ArrayList<File>();
+        List<File> sourceRoots = new ArrayList<>();
         for (File sourceDir : getSourceDirs()) {
             if (sourceDir.exists()) {
                 sourceRoots.add(sourceDir);
@@ -489,9 +475,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         List<String> pluginArguments;
         try {
             pluginArguments = renderCompilerPluginOptions(getCompilerPluginOptions());
-        } catch (PluginNotFoundException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        } catch (PluginOptionIllegalFormatException e) {
+        } catch (PluginNotFoundException | PluginOptionIllegalFormatException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
 
