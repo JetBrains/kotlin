@@ -98,7 +98,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
 
     override fun visitDoWhileStatement(statement: PsiDoWhileStatement) {
         val condition = statement.condition
-        val expression = if (condition != null && condition.type != null)
+        val expression = if (condition?.type != null)
             codeConverter.convertExpression(condition, condition.type)
         else
             codeConverter.convertExpression(condition)

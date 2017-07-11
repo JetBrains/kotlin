@@ -211,8 +211,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
                         val typeToInsert = valueArgumentType.approximateWithResolvableType(scope, true)
                         actions.add(ChangeParameterTypeFix(correspondingParameter, typeToInsert))
                     }
-                    if (correspondingParameterDescriptor != null
-                        && correspondingParameterDescriptor.varargElementType != null
+                    if (correspondingParameterDescriptor?.varargElementType != null
                         && KotlinBuiltIns.isArray(valueArgumentType)
                         && expressionType.arguments.isNotEmpty()
                         && expressionType.arguments[0].type.constructor == expectedType.constructor) {
