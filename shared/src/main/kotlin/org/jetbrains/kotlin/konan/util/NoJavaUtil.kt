@@ -113,7 +113,12 @@ class File constructor(internal val javaPath: Path) {
     }
     fun readBytes() = Files.readAllBytes(javaPath)
     fun writeBytes(bytes: ByteArray) = Files.write(javaPath, bytes)
-    fun forEachLine(action: (String) -> Unit) { Files.lines(javaPath).forEach { action(it) } }
+
+    fun forEachLine(action: (String) -> Unit) {
+        Files.lines(javaPath).use { lines ->
+            lines.forEach { action(it) }
+        }
+    }
 
     override fun toString() = path
 
@@ -189,3 +194,21 @@ fun Path.recursiveCopyTo(destPath: Path) {
 
 fun bufferedReader(errorStream: InputStream?) = BufferedReader(InputStreamReader(errorStream))
 
+// stdlib `use` function adapted for AutoCloseable.
+private inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
+    var closed = false
+    try {
+        return block(this)
+    } catch (e: Exception) {
+        closed = true
+        try {
+            this?.close()
+        } catch (closeException: Exception) {
+        }
+        throw e
+    } finally {
+        if (!closed) {
+            this?.close()
+        }
+    }
+}
