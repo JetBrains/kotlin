@@ -69,6 +69,8 @@ abstract class IncrementalCompilerRunner<
             destionationDir(args).deleteRecursively()
 
             caches = createCacheManager(args)
+            // todo more optimal fix
+            caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allKotlinSources)
             return compileIncrementally(args, caches, allKotlinSources, CompilationMode.Rebuild(), messageCollector)
         }
 
