@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.maven;
 
+import com.intellij.psi.PsiJavaModule;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -38,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
@@ -152,8 +154,14 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);
-            getLog().debug("Classpath: " + classPathString);
-            arguments.classpath = classPathString;
+            if (isJava9Module(sourceRoots)) {
+                getLog().debug("Module path: " + classPathString);
+                arguments.javaModulePath = classPathString;
+            }
+            else {
+                getLog().debug("Classpath: " + classPathString);
+                arguments.classpath = classPathString;
+            }
         }
 
         getLog().debug("Classes directory is " + output);
@@ -178,6 +186,16 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         if (scriptTemplates != null && !scriptTemplates.isEmpty()) {
             arguments.scriptTemplates = scriptTemplates.toArray(new String[0]);
         }
+    }
+
+    private boolean isJava9Module(@NotNull List<File> sourceRoots) {
+        //noinspection ConstantConditions
+        return sourceRoots.stream().anyMatch(file ->
+                file.getName().equals(PsiJavaModule.MODULE_INFO_FILE) ||
+                file.isDirectory() && Arrays.stream(file.listFiles()).anyMatch(child ->
+                        child.getName().equals(PsiJavaModule.MODULE_INFO_FILE)
+                )
+        );
     }
 
     @Override
