@@ -45,25 +45,9 @@ allprojects {
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 evaluationDependsOn(':tools:helpers')
-
-sourceSets {
-    integrationTest {
-        groovy.srcDir file('src/integrationTest/groovy')
-
-        compileClasspath += sourceSets.main.output
-        compileClasspath += configurations.integrationTestCompile
-        compileClasspath += configurations.testCompile
-        runtimeClasspath += output + compileClasspath
-    }
-}
-
-gradlePlugin {
-    testSourceSets sourceSets.integrationTest
-}
 
 dependencies {
     compile project(':shared')
@@ -71,26 +55,19 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile gradleApi()
 
-    integrationTestCompile gradleTestKit()
-    integrationTestCompile 'junit:junit:4.12'
-    integrationTestCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
+    testCompile gradleTestKit()
+    testCompile 'junit:junit:4.12'
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'
     }
-
-  //  integrationTestCompile 'com.netflix.nebula:nebula-test:6.0.1'
-  //  testCompile 'com.netflix.nebula:nebula-test:6.0.1'
 }
 
-task integrationTest(type: Test) {
-    dependsOn(test)
-    testLogging.showStandardStreams = true
-    testClassesDir = sourceSets.integrationTest.output.classesDir
-    classpath = sourceSets.integrationTest.runtimeClasspath
+test {
+    dependsOn ':dist'
+    //testLogging.showStandardStreams = true
     systemProperty("konan.home", rootProject.file('dist'))
     systemProperty("konan.root", rootProject.projectDir)
 }
-
-check.dependsOn integrationTest
 
 jar {
     dependsOn(':tools:helpers:jar')
