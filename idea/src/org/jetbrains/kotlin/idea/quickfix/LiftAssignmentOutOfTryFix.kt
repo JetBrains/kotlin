@@ -30,19 +30,7 @@ class LiftAssignmentOutOfTryFix(element: KtTryExpression): KotlinQuickFixAction<
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val tryAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.tryBlock) ?: return
-
-        val op = tryAssignment.operationReference.text
-        val leftText = tryAssignment.left?.text ?: return
-
-        tryAssignment.replace(tryAssignment.right ?: return)
-
-        for (catchClause in element.catchClauses) {
-            val catchAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(catchClause.catchBody)
-            catchAssignment?.replace(catchAssignment.right!!)
-        }
-
-        element.replace(KtPsiFactory(element).createExpressionByPattern("$0 $1 $2", leftText, op, element))
+        BranchedFoldingUtils.foldToAssignment(element)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
@@ -51,11 +39,8 @@ class LiftAssignmentOutOfTryFix(element: KtTryExpression): KotlinQuickFixAction<
             val expression = diagnostic.psiElement as? KtExpression ?: return null
             val originalCatch = expression.parent.parent?.parent as? KtCatchClause ?: return null
             val tryExpression = originalCatch.parent as? KtTryExpression ?: return null
-            val tryAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(tryExpression.tryBlock) ?: return null
-            for (catchClause in tryExpression.catchClauses) {
-                val catchAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(catchClause.catchBody) ?: return null
-                if (!BranchedFoldingUtils.checkAssignmentsMatch(tryAssignment, catchAssignment)) return null
-            }
+
+            if (BranchedFoldingUtils.getFoldableAssignmentNumber(tryExpression) < 1) return null
             return LiftAssignmentOutOfTryFix(tryExpression)
         }
     }
