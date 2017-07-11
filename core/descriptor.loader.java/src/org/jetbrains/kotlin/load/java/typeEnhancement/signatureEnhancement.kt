@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -333,14 +333,13 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             typeContainer: Annotated?,
             isCovariant: Boolean,
             defaultTopLevelQualifiers: JavaTypeQualifiers?,
-            collector: (D) -> KotlinType
+            collector: (CallableMemberDescriptor) -> KotlinType
     ): SignatureParts {
         return SignatureParts(
                 typeContainer,
                 collector(this),
                 this.overriddenDescriptors.map {
-                    @Suppress("UNCHECKED_CAST")
-                    collector(it as D)
+                    collector(it)
                 },
                 isCovariant,
                 defaultTopLevelQualifiers
