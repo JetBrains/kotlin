@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1382
+// EXPECTED_REACHABLE_NODES: 998
 class C() {
     companion object {
         fun create() = C()

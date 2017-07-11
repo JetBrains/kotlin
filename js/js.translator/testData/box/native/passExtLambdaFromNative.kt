@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1379
+// EXPECTED_REACHABLE_NODES: 995
 package foo
 
 internal external class A(v: String) {

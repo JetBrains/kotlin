@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1376
+// EXPECTED_REACHABLE_NODES: 992
 package test
 
 external fun foo(ignore: dynamic): String

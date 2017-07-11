@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1378
+// EXPECTED_REACHABLE_NODES: 994
 class Point(val x: Int, val y: Int)
 
 fun box(): String {

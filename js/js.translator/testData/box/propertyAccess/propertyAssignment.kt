@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1384
+// EXPECTED_REACHABLE_NODES: 1000
 // See https://youtrack.jetbrains.com/issue/KT-10785
 package foo
 

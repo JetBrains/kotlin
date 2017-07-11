@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1377
+// EXPECTED_REACHABLE_NODES: 993
 var log = ""
 
 fun printlnLog(message: Any) {

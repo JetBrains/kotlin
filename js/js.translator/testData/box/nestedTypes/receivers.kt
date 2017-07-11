@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1409
+// EXPECTED_REACHABLE_NODES: 1025
 package foo
 
 open class D {

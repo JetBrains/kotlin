@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1376
+// EXPECTED_REACHABLE_NODES: 992
 // FILE: a.kt
 package foo.bar
 

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1382
+// EXPECTED_REACHABLE_NODES: 998
 package foo
 
 // For now, check is Byte(is Short, is Int is Float, is Double) translates to typeof ... == "number"

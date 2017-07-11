@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1376
+// EXPECTED_REACHABLE_NODES: 992
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/defaultValues/defaultMethod.1.kt

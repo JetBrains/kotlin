@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1376
+// EXPECTED_REACHABLE_NODES: 992
 package foo
 
 fun apply(i: Int, f: Int.(Int) -> Int) = i.f(1);

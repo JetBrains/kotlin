@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1400
+// EXPECTED_REACHABLE_NODES: 1016
 package foo
 
 fun foo(i: Int): String = "foo" + i

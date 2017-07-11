@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1376
+// EXPECTED_REACHABLE_NODES: 992
 fun box(): String {
     return if (apply(5) { arg: Int -> arg + 13 } == 18) "OK" else "fail"
 }
