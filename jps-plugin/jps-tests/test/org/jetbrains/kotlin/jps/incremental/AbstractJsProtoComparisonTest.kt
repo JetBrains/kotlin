@@ -68,8 +68,8 @@ abstract class AbstractJsProtoComparisonTest : AbstractProtoComparisonTest<Proto
 
         val classes = hashMapOf<ClassId, ProtoData>()
 
-        for ((sourceFile, protoBytes, _) in incrementalResults.packageParts) {
-            classes.putAll(getProtoData(sourceFile, protoBytes))
+        for ((sourceFile, translationResult) in incrementalResults.packageParts) {
+            classes.putAll(getProtoData(sourceFile, translationResult.metadata))
         }
 
         return classes

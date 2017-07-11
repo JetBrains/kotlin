@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.cli.js;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ExceptionUtil;
@@ -47,6 +49,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
+import org.jetbrains.kotlin.incremental.js.TranslationResultValue;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
@@ -71,6 +74,7 @@ import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -115,12 +119,33 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         K2JSTranslator translator = new K2JSTranslator(config);
         IncrementalDataProvider incrementalDataProvider = config.getConfiguration().get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER);
         if (incrementalDataProvider != null) {
-            List<TranslationUnit> translationUnits = new ArrayList<>();
+            Map<File, KtFile> nonCompiledSources = new HashMap<File, KtFile>(allKotlinFiles.size());
             for (KtFile ktFile : allKotlinFiles) {
-                translationUnits.add(new TranslationUnit.SourceFile(ktFile));
+                nonCompiledSources.put(VfsUtilCore.virtualToIoFile(ktFile.getVirtualFile()), ktFile);
             }
-            for (byte[] binaryTree : incrementalDataProvider.getBinaryTrees()) {
-                translationUnits.add(new TranslationUnit.BinaryAst(binaryTree));
+
+            Map<File, TranslationResultValue> compiledParts = incrementalDataProvider.getCompiledPackageParts();
+
+            File[] allSources = new File[compiledParts.size() + allKotlinFiles.size()];
+            int i = 0;
+            for (File file : compiledParts.keySet()) {
+                allSources[i++] = file;
+            }
+            for (File file : nonCompiledSources.keySet()) {
+                allSources[i++] = file;
+            }
+            Arrays.sort(allSources);
+
+            List<TranslationUnit> translationUnits = new ArrayList<>();
+            for (i = 0; i < allSources.length; i++) {
+                KtFile nonCompiled = nonCompiledSources.get(allSources[i]);
+                if (nonCompiled != null) {
+                    translationUnits.add(new TranslationUnit.SourceFile(nonCompiled));
+                }
+                else {
+                    TranslationResultValue translatedValue = compiledParts.get(allSources[i]);
+                    translationUnits.add(new TranslationUnit.BinaryAst(translatedValue.getBinaryAst()));
+                }
             }
             return translator.translateUnits(reporter, translationUnits, mainCallParameters, jsAnalysisResult);
         }

@@ -29,8 +29,8 @@ class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
     lateinit var headerMetadata: ByteArray
         private set
 
-    private val _packageParts = arrayListOf<PackagePartData>()
-    val packageParts: List<PackagePartData>
+    private val _packageParts = hashMapOf<File, TranslationResultValue>()
+    val packageParts: Map<File, TranslationResultValue>
         get() = _packageParts
 
     override fun processHeader(headerMetadata: ByteArray) {
@@ -38,9 +38,7 @@ class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
     }
 
     override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray) {
-        _packageParts.add(PackagePartData(sourceFile, packagePartMetadata, binaryAst))
+        _packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata, binaryAst))
     }
-
-    data class PackagePartData(val sourceFile: File, val proto: ByteArray, val binaryAst: ByteArray)
 }
 
