@@ -33,9 +33,8 @@ open class BasicCompilerServicesWithResultsFacadeServer(
 ) : CompilerServicesFacadeBase,
     UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
 {
-    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?): Void? {
+    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         messageCollector.reportFromDaemon(outputsCollector, category, severity, message, attachment)
-        return null
     }
 }
 

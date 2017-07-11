@@ -22,8 +22,8 @@ import java.rmi.RemoteException
 interface RemoteOperationsTracer : Remote {
 
     @Throws(RemoteException::class)
-    fun before(id: String): Void?
+    fun before(id: String)
 
     @Throws(RemoteException::class)
-    fun after(id: String): Void?
+    fun after(id: String)
 }
