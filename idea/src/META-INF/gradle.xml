@@ -48,7 +48,9 @@
         <platformGradleDetector implementation="org.jetbrains.kotlin.idea.inspections.gradle.DefaultPlatformGradleDetector"/>
 
         <scriptTemplatesProvider
-            id="GradleScriptTemplatesProvider"
-            implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptTemplatesProvider"/>
+            implementation="org.jetbrains.kotlin.idea.core.script.GradleKotlinDSLTemplateProvider"/>
+
+        <scriptTemplatesProvider
+            implementation="org.jetbrains.kotlin.idea.core.script.LegacyGradleScriptKotlinTemplateProvider"/>
     </extensions>
 </idea-plugin>
