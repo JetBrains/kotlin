@@ -1398,6 +1398,57 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/constantConditionIf")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConstantConditionIf extends AbstractQuickFixTest {
+        public void testAllFilesPresentInConstantConditionIf() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/constantConditionIf"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("delete.kt")
+        public void testDelete() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/constantConditionIf/delete.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expression.kt")
+        public void testExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/constantConditionIf/expression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noStatements.kt")
+        public void testNoStatements() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/constantConditionIf/noStatements.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleBlock.kt")
+        public void testSimpleBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/constantConditionIf/simpleBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleFalse.kt")
+        public void testSimpleFalse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/constantConditionIf/simpleFalse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleTrue.kt")
+        public void testSimpleTrue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/constantConditionIf/simpleTrue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("statement.kt")
+        public void testStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/constantConditionIf/statement.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/createFromUsage")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
