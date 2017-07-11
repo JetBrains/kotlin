@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.lang.resolve.android.test
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ArrayUtil
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
+import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
 
@@ -54,6 +56,10 @@ abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
             createFakeAndroidEnvironment(path)
             doMultiFileTest(path, getFakeFiles(path))
         }
+    }
+
+    override fun getClassPathURLs(): Array<URL> {
+        return myEnvironment.configuration.jvmClasspathRoots.map { it.toURI().toURL() }.toTypedArray()
     }
 
     private fun getFakeFiles(path: String): Collection<String> {

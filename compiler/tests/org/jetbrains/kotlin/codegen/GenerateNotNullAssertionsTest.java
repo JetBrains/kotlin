@@ -47,7 +47,8 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         return "notNullAssertions";
     }
 
-    private void setUpEnvironment(boolean disableCallAssertions, boolean disableParamAssertions, File... extraClassPath) {
+    private void setUpEnvironment(boolean disableCallAssertions, boolean disableParamAssertions) {
+        File[] extraClassPath = javaClassesOutputDirectory != null ? new File[] {javaClassesOutputDirectory} : new File[0];
         CompilerConfiguration configuration =
                 KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, extraClassPath);
 
@@ -62,9 +63,8 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         loadFileByFullPath(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + fileName);
     }
 
-    @NotNull
-    private File compileJava0(@NotNull String fileName) {
-        return CodegenTestUtil.compileJava(
+    private void compileJava(@NotNull String fileName) {
+        javaClassesOutputDirectory = CodegenTestUtil.compileJava(
                 Collections.singletonList(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + fileName),
                 Collections.emptyList(),
                 Collections.emptyList()
@@ -72,8 +72,8 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     }
 
     private void doTestCallAssertions(boolean disableCallAssertions) throws Exception {
-        File javaOut = compileJava0("A.java");
-        setUpEnvironment(disableCallAssertions, true, javaOut);
+        compileJava("A.java");
+        setUpEnvironment(disableCallAssertions, true);
 
         loadSource("AssertionChecker.kt");
         generateFunction("checkAssertions").invoke(null, !disableCallAssertions);
@@ -99,18 +99,18 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         setUpEnvironment(false, true);
         loadSource("noAssertionsForKotlin.kt");
         OutputFileCollection outputFiles = generateClassesInFile();
-        File compiledDirectory = new File(FileUtil.getTempDirectory(), "kotlin-classes");
-        OutputUtilsKt.writeAllTo(outputFiles, compiledDirectory);
+        javaClassesOutputDirectory = new File(FileUtil.getTempDirectory(), "kotlin-classes");
+        OutputUtilsKt.writeAllTo(outputFiles, javaClassesOutputDirectory);
 
-        setUpEnvironment(false, true, compiledDirectory);
+        setUpEnvironment(false, true);
         loadSource("noAssertionsForKotlinMain.kt");
 
         assertNoIntrinsicsMethodIsCalledInMyClasses(false);
     }
 
     public void testGenerateParamAssertions() throws Exception {
-        File javaOut = compileJava0("doGenerateParamAssertions.java");
-        setUpEnvironment(true, false, javaOut);
+        compileJava("doGenerateParamAssertions.java");
+        setUpEnvironment(true, false);
 
         loadSource("doGenerateParamAssertions.kt");
         generateFunction().invoke(null);
@@ -143,8 +143,8 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     }
 
     public void testJavaMultipleSubstitutions() {
-        File javaOut = compileJava0("javaMultipleSubstitutions.java");
-        setUpEnvironment(false, false, javaOut);
+        compileJava("javaMultipleSubstitutions.java");
+        setUpEnvironment(false, false);
 
         loadSource("javaMultipleSubstitutions.kt");
         String text = generateToText();
