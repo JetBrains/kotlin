@@ -54,9 +54,6 @@ interface ScriptTemplatesProvider {
 
     val environment: Map<String, Any?>?
 
-    // for caching already loaded definitions, when needed
-    val scriptDefinitions: List<KotlinScriptDefinition>? get() = null
-
     companion object {
         val EP_NAME: ExtensionPointName<ScriptTemplatesProvider> =
                 ExtensionPointName.create<ScriptTemplatesProvider>("org.jetbrains.kotlin.scriptTemplatesProvider")
@@ -75,11 +72,9 @@ fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProv
     try {
         val classpath = provider.dependenciesClasspath + provider.additionalResolverClasspath
         LOG.info("[kts] loading script definitions ${provider.templateClassNames} using cp: ${classpath.joinToString(File.pathSeparator)}")
-        provider.scriptDefinitions ?: run {
-            val loader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), ScriptTemplatesProvider::class.java.classLoader)
-            provider.templateClassNames.map {
-                KotlinScriptDefinitionFromAnnotatedTemplate(loader.loadClass(it).kotlin, provider.resolver, provider.filePattern, provider.environment)
-            }
+        val loader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), ScriptTemplatesProvider::class.java.classLoader)
+        provider.templateClassNames.map {
+            KotlinScriptDefinitionFromAnnotatedTemplate(loader.loadClass(it).kotlin, provider.resolver, provider.filePattern, provider.environment)
         }
     }
     catch (ex: Throwable) {
