@@ -22,7 +22,7 @@ import java.rmi.RemoteException
 interface RemoteInputStream : Remote {
 
     @Throws(RemoteException::class)
-    fun close(): Void?
+    fun close()
 
     @Throws(RemoteException::class)
     fun read(length: Int): ByteArray

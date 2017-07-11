@@ -27,9 +27,8 @@ class RemoteInputStreamServer(val `in`: InputStream, port: Int = SOCKET_ANY_FREE
 : RemoteInputStream,
   UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
 {
-    override fun close(): Void? {
+    override fun close() {
         `in`.close()
-        return null
     }
 
     override fun read(length: Int): ByteArray {
