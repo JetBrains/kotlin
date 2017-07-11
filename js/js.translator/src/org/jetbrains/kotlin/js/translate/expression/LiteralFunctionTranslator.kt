@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunc
 import org.jetbrains.kotlin.js.translate.utils.addFunctionButNotExport
 import org.jetbrains.kotlin.js.translate.utils.fillCoroutineMetadata
 import org.jetbrains.kotlin.js.translate.utils.finalElement
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -77,7 +78,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             name.staticRef = lambdaCreator
             lambdaCreator.fillCoroutineMetadata(invokingContext, descriptor)
             lambdaCreator.source = declaration
-            return lambdaCreator.withCapturedParameters(functionContext, name, invokingContext)
+            return lambdaCreator.withCapturedParameters(functionContext, name, invokingContext, declaration)
         }
 
         if (descriptor in tracker.capturedDescriptors) {
@@ -89,7 +90,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         lambda.isLocal = true
 
-        invokingContext.addFunctionDeclaration(name, lambda)
+        invokingContext.addFunctionDeclaration(name, lambda, declaration)
         lambda.fillCoroutineMetadata(invokingContext, descriptor)
         name.staticRef = lambda
         return JsAstUtils.pureFqn(name, null)
@@ -111,9 +112,9 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
     }
 }
 
-private fun TranslationContext.addFunctionDeclaration(name: JsName, function: JsFunction) {
+private fun TranslationContext.addFunctionDeclaration(name: JsName, function: JsFunction, source: Any?) {
     addFunctionButNotExport(name, if (isPublicInlineFunction) {
-        InlineMetadata.wrapFunction(FunctionWithWrapper(function, null))
+        InlineMetadata.wrapFunction(FunctionWithWrapper(function, null), source)
     }
     else {
         function
@@ -123,9 +124,10 @@ private fun TranslationContext.addFunctionDeclaration(name: JsName, function: Js
 fun JsFunction.withCapturedParameters(
         context: TranslationContext,
         functionName: JsName,
-        invokingContext: TranslationContext
+        invokingContext: TranslationContext,
+        source: KtDeclaration
 ): JsExpression {
-    context.addFunctionDeclaration(functionName, this)
+    context.addFunctionDeclaration(functionName, this, source)
     val ref = JsAstUtils.pureFqn(functionName, null)
     val invocation = JsInvocation(ref).apply { sideEffects = SideEffectKind.PURE }
 

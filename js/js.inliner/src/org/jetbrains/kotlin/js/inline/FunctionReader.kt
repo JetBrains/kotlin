@@ -210,21 +210,22 @@ class FunctionReader(
             FunctionWithWrapper(functionExpr, null)
         }
         val moduleReference = moduleNameMap[tag]?.deepCopy() ?: currentModuleName.makeRef()
+        val wrapperStatements = wrapper?.statements?.filter { it !is JsReturn }
 
         val sourceMap = info.sourceMap
         if (sourceMap != null) {
             val remapper = SourceMapLocationRemapper(sourceMap)
             remapper.remap(function)
-            wrapper?.let { remapper.remap(it) }
+            wrapperStatements?.forEach { remapper.remap(it) }
         }
 
         val replacements = hashMapOf(info.moduleVariable to moduleReference,
                                      info.kotlinVariable to Namer.kotlinObject())
         replaceExternalNames(function, replacements)
-        wrapper?.let { replaceExternalNames(it, replacements) }
+        wrapperStatements?.forEach { replaceExternalNames(it, replacements) }
         function.markInlineArguments(descriptor)
 
-        val namesWithoutSizeEffects = wrapper?.statements.orEmpty().asSequence()
+        val namesWithoutSizeEffects = wrapperStatements.orEmpty().asSequence()
                 .flatMap { collectDefinedNames(it).asSequence() }
                 .toSet()
         function.accept(object : RecursiveJsVisitor() {

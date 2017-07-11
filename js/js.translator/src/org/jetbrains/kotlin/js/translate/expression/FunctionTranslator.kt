@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 
 fun TranslationContext.translateAndAliasParameters(
@@ -101,9 +102,10 @@ fun TranslationContext.translateFunction(declaration: KtDeclarationWithBody, fun
 }
 
 fun TranslationContext.wrapWithInlineMetadata(function: JsFunction, descriptor: FunctionDescriptor): JsExpression {
+    val sourceInfo = descriptor.source.getPsi()
     return if (descriptor.isInline && descriptor.isEffectivelyPublicApi) {
         val metadata = InlineMetadata.compose(function, descriptor, this)
-        val functionWithMetadata = metadata.functionWithMetadata
+        val functionWithMetadata = metadata.functionWithMetadata(sourceInfo)
 
         config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]?.apply {
             val psiFile = (descriptor.source.containingFile as? PsiSourceFile)?.psiFile ?: return@apply
@@ -134,6 +136,6 @@ fun TranslationContext.wrapWithInlineMetadata(function: JsFunction, descriptor: 
         else {
             null
         }
-        if (block != null) InlineMetadata.wrapFunction(FunctionWithWrapper(function, block)) else function
+        if (block != null) InlineMetadata.wrapFunction(FunctionWithWrapper(function, block), sourceInfo) else function
     }
 }

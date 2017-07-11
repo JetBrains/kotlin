@@ -78,15 +78,22 @@ class InlineMetadata(val tag: JsStringLiteral, val function: FunctionWithWrapper
         }
 
         @JvmStatic
-        fun wrapFunction(function: FunctionWithWrapper): JsExpression {
+        fun wrapFunction(function: FunctionWithWrapper, sourceInfo: Any?): JsExpression {
             val wrapperBody = function.wrapperBody ?: JsBlock(JsReturn(function.function))
             val wrapper = JsFunction(function.function.scope, wrapperBody, "")
-            return JsInvocation(Namer.wrapFunction(), wrapper)
+            function.wrapperBody?.statements?.forEach {
+                if (it is JsExpressionStatement) {
+                    it.expression.source = sourceInfo
+                }
+                else {
+                    it.source = sourceInfo
+                }
+            }
+
+            return JsInvocation(Namer.wrapFunction(), wrapper).source(sourceInfo)
         }
     }
 
-    val functionWithMetadata: JsExpression
-        get() {
-            return JsInvocation(Namer.createInlineFunction(), tag, wrapFunction(function))
-        }
+    fun functionWithMetadata(sourceInfo: Any?): JsExpression =
+            JsInvocation(Namer.createInlineFunction(), tag, wrapFunction(function, sourceInfo))
 }

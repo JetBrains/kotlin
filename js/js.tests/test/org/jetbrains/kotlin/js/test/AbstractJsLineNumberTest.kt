@@ -40,8 +40,6 @@ import org.jetbrains.kotlin.js.test.utils.LineCollector
 import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
@@ -91,17 +89,13 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
                     writeText(generatedCode)
                 }
 
-                File(baseOutputPath + ".js").writeText(translationResult.program.globalBlock.toString())
-
-                val moduleDescription = JsModuleDescriptor(
-                        name = module.name,
-                        data = translationResult.moduleDescriptor,
-                        kind = ModuleKind.PLAIN,
-                        imported = emptyList()
-                )
-                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(
-                        translationResult.bindingContext, moduleDescription)
-                File(baseOutputPath + ".meta.js").writeText(metaFileContent)
+                val baseDir = File(baseOutputPath).parentFile
+                for (outputFile in translationResult.getOutputFiles(File(baseOutputPath + ".js"), null, null).asList()) {
+                    with (File(baseDir, outputFile.relativePath)) {
+                        parentFile.mkdirs()
+                        writeBytes(outputFile.asByteArray())
+                    }
+                }
 
                 val linesMatcher = module.files
                         .mapNotNull { LINES_PATTERN.find(File(it.fileName).readText()) }
@@ -118,15 +112,12 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
         }
     }
 
-    private fun TestModule.outputFileName(file: File): String {
-        return outputPath(file) + "-" + name
-    }
+    private fun TestModule.outputFileName(file: File): String = outputPath(file) + "-" + name
 
     private fun outputPath(file: File) = File(OUT_PATH, file.relativeTo(File(BASE_PATH)).path.removeSuffix(".kt")).path
 
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
-    }
+    override fun createEnvironment(): KotlinCoreEnvironment =
+            KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
     private fun createConfig(module: TestModule, inputFile: File, modules: Map<String, TestModule>): JsConfig {
         val dependencies = module.dependencies
@@ -135,13 +126,14 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
 
         val configuration = environment.configuration.copy()
 
-        configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies )
+        configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name)
         configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
 
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
+        configuration.put(JSConfigurationKeys.META_INFO, true)
 
         return JsConfig(project, configuration)
     }
@@ -154,8 +146,8 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
     }
 
     private inner class TestFileFactoryImpl : KotlinTestUtils.TestFileFactory<TestModule, TestFile>, Closeable {
-        val tmpDir = KotlinTestUtils.tmpDir("js-tests")
-        val defaultModule = TestModule(BasicBoxTest.TEST_MODULE, emptyList())
+        private val tmpDir = KotlinTestUtils.tmpDir("js-tests")
+        private val defaultModule = TestModule(BasicBoxTest.TEST_MODULE, emptyList())
 
         override fun createFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile? {
             val currentModule = module ?: defaultModule
@@ -168,9 +160,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
             return TestFile(temporaryFile.absolutePath, currentModule)
         }
 
-        override fun createModule(name: String, dependencies: List<String>, friends: List<String>): TestModule? {
-            return TestModule(name, dependencies)
-        }
+        override fun createModule(name: String, dependencies: List<String>, friends: List<String>) = TestModule(name, dependencies)
 
         override fun close() {
             FileUtil.delete(tmpDir)
