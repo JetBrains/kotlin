@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +37,8 @@ import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
 import static org.jetbrains.kotlin.maven.Util.filterClassPath;
@@ -64,22 +68,22 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     @Parameter(defaultValue = "${project.artifactId}-test", required = true, readonly = true)
     protected String testModuleName;
 
-    @Parameter(property = "kotlin.compiler.jvmTarget", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.jvmTarget")
     protected String jvmTarget;
 
-    @Parameter(property = "kotlin.compiler.jdkHome", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.jdkHome")
     protected String jdkHome;
 
-    @Parameter(property = "kotlin.compiler.scriptTemplates", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.scriptTemplates")
     protected List<String> scriptTemplates;
 
-    @Parameter(property = "kotlin.compiler.incremental", defaultValue = "false", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.incremental", defaultValue = "false")
     private boolean myIncremental;
 
-    @Parameter(property = "kotlin.compiler.incremental.cache.root", defaultValue = "${project.build.directory}/kotlin-ic", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.incremental.cache.root", defaultValue = "${project.build.directory}/kotlin-ic")
     public String incrementalCachesRoot;
 
-    @Parameter(property = "kotlin.compiler.javaParameters", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.javaParameters")
     protected boolean javaParameters;
 
     @NotNull
@@ -119,7 +123,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
         File sourcesDir = AnnotationProcessingManager.getGeneratedSourcesDirectory(project, getSourceSetName());
         if (sourcesDir.isDirectory()) {
-            paths = new ArrayList<String>(paths);
+            paths = new ArrayList<>(paths);
             paths.add(sourcesDir.getAbsolutePath());
         }
 
@@ -184,13 +188,14 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                 if (toolsJar != null) {
                     project.getClassRealm().addURL(toolsJar);
                 }
-            } catch (IOException ex) {}
+            } catch (IOException ignored) {}
         }
 
         super.execute();
     }
 
     @Override
+    @NotNull
     protected ExitCode execCompiler(
             CLICompiler<K2JVMCompilerArguments> compiler,
             MessageCollector messageCollector,

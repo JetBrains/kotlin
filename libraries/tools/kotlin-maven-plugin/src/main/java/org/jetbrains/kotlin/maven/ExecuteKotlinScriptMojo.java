@@ -23,7 +23,6 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -58,6 +57,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Allows to execute kotlin script files during the build process.
@@ -106,13 +106,13 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
     @Parameter(defaultValue = "${localRepository}", required = true, readonly = true)
     private ArtifactRepository localRepository;
 
-    @Parameter(property = "kotlin.compiler.scriptTemplates", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.scriptTemplates")
     protected List<String> scriptTemplates;
 
-    @Parameter(property = "kotlin.compiler.scriptArguments", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.scriptArguments")
     protected List<String> scriptArguments;
 
-    @Parameter(property = "kotlin.compiler.scriptClasspath", required = false, readonly = false)
+    @Parameter(property = "kotlin.compiler.scriptClasspath")
     protected List<String> scriptClasspath;
 
     @Component
@@ -167,7 +167,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
 
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
-            List<File> deps = new ArrayList<File>();
+            List<File> deps = new ArrayList<>();
 
             deps.addAll(PathUtil.getJdkClassesRootsFromCurrentJre());
             deps.addAll(getDependenciesForScript());
@@ -184,7 +184,10 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, new KotlinSourceRoot(scriptFile.getAbsolutePath()));
             configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME);
 
-            K2JVMCompiler.Companion.configureScriptDefinitions(scriptTemplates.toArray(new String[scriptTemplates.size()]), configuration, messageCollector, new HashMap<String, Object>());
+            K2JVMCompiler.Companion.configureScriptDefinitions(
+                    scriptTemplates.toArray(new String[scriptTemplates.size()]),
+                    configuration, messageCollector, new HashMap<>()
+            );
 
             KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
@@ -214,7 +217,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
     }
 
     private List<File> getDependenciesForScript() throws MojoExecutionException {
-        List<File> deps = new ArrayList<File>();
+        List<File> deps = new ArrayList<>();
 
         deps.addAll(getKotlinRuntimeDependencies());
         deps.add(getThisPluginAsDependency());
@@ -234,25 +237,13 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
         return getArtifactFile(artifact);
     }
 
-    private File getDependencyFile(Dependency dep) {
-        ArtifactHandler artifactHandler = artifactHandlerManager.getArtifactHandler(dep.getType());
-        Artifact artifact = new DefaultArtifact(dep.getGroupId(), dep.getArtifactId(), dep.getVersion(), null, dep.getType(), null, artifactHandler);
-        return getArtifactFile(artifact);
-    }
-
     private File getArtifactFile(Artifact artifact) {
         localRepository.find(artifact);
         return artifact.getFile();
     }
 
     private List<File> getThisPluginDependencies() {
-        List<File> files = new ArrayList<File>();
-
-        for (ComponentDependency dep: plugin.getDependencies()) {
-            files.add(getDependencyFile(dep));
-        }
-
-        return files;
+        return plugin.getDependencies().stream().map(this::getDependencyFile).collect(Collectors.toList());
     }
 
     private File getThisPluginAsDependency() {
@@ -269,7 +260,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
         Artifact stdlibDep = null;
         Artifact runtimeDep = null;
 
-        ArrayList<File> files = new ArrayList<File>(2);
+        ArrayList<File> files = new ArrayList<>(2);
 
         for (Artifact dep: project.getArtifacts()) {
             if (dep.getArtifactId().equals("kotlin-stdlib")) {
