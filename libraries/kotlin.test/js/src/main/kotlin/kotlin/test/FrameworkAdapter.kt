@@ -21,9 +21,21 @@ package kotlin.test
  */
 public external interface FrameworkAdapter {
 
-    // A test suite.
+    /**
+     * A test suite. [kotlin.test.suite] delegates to this function.
+     *
+     * @param name the name of the test suite, e.g. a class name
+     * @param ignored whether the test suite is ignored, e.g. marked with [Ignore] annotation
+     * @param suiteFn defines tests and nested suites
+     */
     fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
 
-    // A test.
+    /**
+     * A test. [kotlin.test.test] delegates to this function.
+     *
+     * @param name the test name.
+     * @param ignored whether the test is ignored
+     * @param testFn contains test body invocation
+     */
     fun test(name: String, ignored: Boolean, testFn: () -> Unit)
 }
