@@ -21,7 +21,6 @@ import com.intellij.util.containers.HashMap
 import com.intellij.util.containers.StringInterner
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.build.JvmSourceRoot
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -33,14 +32,12 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.incremental.isKotlinFile
+import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.makeModuleFile
 import org.jetbrains.kotlin.incremental.testingUtils.TouchPolicy
 import org.jetbrains.kotlin.incremental.testingUtils.copyTestSources
 import org.jetbrains.kotlin.incremental.testingUtils.getModificationsToPerform
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.jps.incremental.runJSCompiler
 import org.jetbrains.kotlin.jps.incremental.createTestingCompilerEnvironment
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -48,6 +45,34 @@ import java.io.*
 import java.util.*
 
 abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
+
+    private val sourceToOutputMapping = hashMapOf<File, MutableSet<File>>()
+
+    override fun setUp() {
+        super.setUp()
+        sourceToOutputMapping.clear()
+    }
+
+    override fun markDirty(removedAndModifiedSources: Iterable<File>) {
+        for (sourceFile in removedAndModifiedSources) {
+            val outputs = sourceToOutputMapping.remove(sourceFile) ?: continue
+            for (output in outputs) {
+                output.delete()
+            }
+        }
+    }
+
+    override fun processCompilationResults(outputItemsCollector: OutputItemsCollectorImpl, services: Services) {
+        for ((sourceFiles, outputFile) in outputItemsCollector.outputs) {
+            if (outputFile.extension == "kotlin_module") continue
+
+            for (sourceFile in sourceFiles) {
+                val outputsForSource = sourceToOutputMapping.getOrPut(sourceFile) { hashSetOf() }
+                outputsForSource.add(outputFile)
+            }
+        }
+    }
+
     override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
         val moduleFile = makeModuleFile(
                 name = "test",
@@ -81,32 +106,31 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
 }
 
 abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
-    private lateinit var incrementalDataDir: File
-    private lateinit var binaryTreesDir: File
-    private lateinit var packagesMetadataDir: File
-    private lateinit var headerMetadataFile: File
+    private var header: ByteArray? = null
+    private val packageParts: MutableMap<File, TranslationResultValue> = hashMapOf()
 
     override fun setUp() {
         super.setUp()
-        incrementalDataDir = File(workingDir, "incremental-data")
-        binaryTreesDir = File(incrementalDataDir, "binary-trees")
-        packagesMetadataDir = File(incrementalDataDir, "packages-metadata")
-        headerMetadataFile = File(incrementalDataDir, "header.metadata")
+        header = null
+        packageParts.clear()
     }
 
     override fun Services.Builder.registerAdditionalServices() {
-        if (incrementalDataDir.exists()) {
-            register(IncrementalDataProvider::class.java, object : IncrementalDataProvider {
-                override val headerMetadata: ByteArray
-                    get() = headerMetadataFile.readBytes()
-                override val packagePartsMetadata: List<ByteArray>
-                    get() = packagesMetadataDir.walk().filter { it.isFile }.map { it.readBytes() }.toList()
-                override val binaryTrees: List<ByteArray>
-                    get() = binaryTreesDir.walk().filter { it.isFile }.map { it.readBytes() }.toList()
-            })
+        if (header != null) {
+            register(IncrementalDataProvider::class.java, IncrementalDataProviderImpl(header!!, packageParts!!))
         }
 
         register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
+    }
+
+    override fun markDirty(removedAndModifiedSources: Iterable<File>) {
+        removedAndModifiedSources.forEach { packageParts.remove(it) }
+    }
+
+    override fun processCompilationResults(outputItemsCollector: OutputItemsCollectorImpl, services: Services) {
+        val incrementalResults = services.get(IncrementalResultsConsumer::class.java) as IncrementalResultsConsumerImpl
+        header = incrementalResults.headerMetadata
+        packageParts.putAll(incrementalResults.packageParts)
     }
 
     override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
@@ -115,32 +139,7 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
             reportOutputFiles = true
             freeArgs.addAll(filesToCompile.map { it.canonicalPath })
         }
-        val exitCode = runJSCompiler(args, env)
-
-        if (exitCode != ExitCode.OK) return exitCode
-
-        val incrementalResults = env.services.get(IncrementalResultsConsumer::class.java) as IncrementalResultsConsumerImpl
-        incrementalResults.apply {
-            packageParts.forEach {
-                val relativePath = it.sourceFile.toRelativeString(srcDir)
-                val treeFile = File(binaryTreesDir, relativePath + ".ast").apply { parentFile.mkdirs() }
-                treeFile.writeBytes(it.binaryAst)
-
-                val partProtoFile = File(packagesMetadataDir, relativePath + ".proto").apply { parentFile.mkdirs() }
-                partProtoFile.writeBytes(it.proto)
-
-                env.outputItemsCollector.outputs.apply {
-                    val sources = listOf(it.sourceFile)
-                    add(SimpleOutputItem(sources, treeFile))
-                    add(SimpleOutputItem(sources, partProtoFile))
-                }
-            }
-
-            headerMetadataFile.parentFile.mkdirs()
-            headerMetadataFile.writeBytes(headerMetadata)
-        }
-
-        return exitCode
+        return runJSCompiler(args, env)
     }
 }
 
@@ -167,6 +166,8 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         super.tearDown()
     }
 
+    protected abstract fun markDirty(removedAndModifiedSources: Iterable<File>)
+    protected abstract fun processCompilationResults(outputItemsCollector: OutputItemsCollectorImpl, services: Services)
     protected abstract fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any?
 
     fun doTest(path: String) {
@@ -198,7 +199,6 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         val testDir = File(path)
         val workToOriginalFileMap = HashMap(copyTestSources(testDir, srcDir, filePrefix = ""))
         var dirtyFiles = srcDir.walk().filterTo(HashSet()) { it.isKotlinFile() }
-        val incrementalData = IncrementalData()
         val steps = getModificationsToPerform(testDir, moduleNames = null, allowNoFilesWithSuffixInTestData = true, touchPolicy = TouchPolicy.CHECKSUM)
                 .filter { it.isNotEmpty() }
 
@@ -206,14 +206,14 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         fun CompilerOutput.originalFilesToLookups() =
                 compiledFiles.associateBy({ workToOriginalFileMap[it]!! }, { lookups[it] ?: emptyList() })
 
-        make(dirtyFiles, incrementalData).apply {
+        make(dirtyFiles).apply {
             logOutput("INITIAL BUILD")
             filesToLookups.add(originalFilesToLookups())
 
         }
         for ((i, modifications) in steps.withIndex()) {
             dirtyFiles = modifications.mapNotNullTo(HashSet()) { it.perform(workingDir, workToOriginalFileMap) }
-            make(dirtyFiles, incrementalData).apply {
+            make(dirtyFiles).apply {
                 logOutput("STEP ${i + 1}")
                 filesToLookups.add(originalFilesToLookups())
             }
@@ -237,22 +237,13 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         val compiledFiles: Iterable<File>,
         val lookups: Map<File, List<LookupInfo>>
     )
-    private class IncrementalData(val sourceToOutput: MutableMap<File, MutableSet<File>> = hashMapOf())
 
-    private fun make(
-            filesToCompile: Iterable<File>,
-            incrementalData: IncrementalData
-    ): CompilerOutput {
+    private fun make(filesToCompile: Iterable<File>): CompilerOutput {
         filesToCompile.forEach {
             it.writeText(it.readText().replace(COMMENT_WITH_LOOKUP_INFO, ""))
         }
 
-        for (dirtyFile in filesToCompile) {
-            incrementalData.sourceToOutput.remove(dirtyFile)?.forEach {
-                it.delete()
-            }
-        }
-
+        markDirty(filesToCompile)
         val lookupTracker = TestLookupTracker()
         val messageCollector = TestMessageCollector()
         val outputItemsCollector = OutputItemsCollectorImpl()
@@ -263,16 +254,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         }
         val environment = createTestingCompilerEnvironment(messageCollector, outputItemsCollector, services)
         val exitCode = runCompiler(filesToCompile, environment)
-
-        for (output in outputItemsCollector.outputs) {
-            val outputFile = output.outputFile
-            if (outputFile.extension == "kotlin_module") continue
-
-            for (sourceFile in output.sourceFiles) {
-                val outputsForSource = incrementalData.sourceToOutput.getOrPut(sourceFile) { hashSetOf() }
-                outputsForSource.add(outputFile)
-            }
-        }
+        processCompilationResults(outputItemsCollector, environment.services)
 
         val lookups = lookupTracker.lookups.groupBy { File(it.filePath) }
         val lookupsFromCompiledFiles = filesToCompile.associate { it to (lookups[it] ?: emptyList()) }
