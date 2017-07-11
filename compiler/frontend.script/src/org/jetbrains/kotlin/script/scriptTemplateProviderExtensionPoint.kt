@@ -56,13 +56,13 @@ interface ScriptTemplatesProvider {
 }
 
 fun makeScriptDefsFromTemplatesProviderExtensions(project: Project,
-                                                  errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { _, ex -> throw ex }
+                                                  errorsHandler: ((ScriptTemplatesProvider, Throwable) -> Unit) = { _, ex -> throw ex }
 ): List<KotlinScriptDefinition> =
         makeScriptDefsFromTemplatesProviders(Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.asIterable(),
                                              errorsHandler)
 
 fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProvider>,
-                                         errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { _, ex -> throw ex }
+                                         errorsHandler: ((ScriptTemplatesProvider, Throwable) -> Unit) = { _, ex -> throw ex }
 ): List<KotlinScriptDefinition> = providers.flatMap { provider ->
     try {
         LOG.info("[kts] loading script definitions ${provider.templateClassNames} using cp: ${provider.dependenciesClasspath.joinToString(File.pathSeparator)}")
@@ -73,7 +73,7 @@ fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProv
             }
         }
     }
-    catch (ex: Exception) {
+    catch (ex: Throwable) {
         LOG.info("Templates provider ${provider.id} is invalid: ${ex.message}")
         errorsHandler(provider, ex)
         emptyList<KotlinScriptDefinition>()
