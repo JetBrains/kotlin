@@ -62,7 +62,7 @@ class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
 
     private sealed class TemplateDataOrError {
         class Data(val templateClassNames: Iterable<String>,
-                   val dependenciesClasspath: Iterable<File>,
+                   val dependenciesClasspath: List<File>,
                    val scriptDefinitions: List<KotlinScriptDefinition>) : TemplateDataOrError()
         class Error(val message: String) : TemplateDataOrError()
     }
@@ -83,7 +83,7 @@ class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
             try {
                 val cl = loader.loadClass(template)
                 val def = KotlinScriptDefinitionFromAnnotatedTemplate(cl.kotlin, resolver, filePattern, environment)
-                return@lazy TemplateDataOrError.Data(listOf(template), cp.asIterable(), listOf(def))
+                return@lazy TemplateDataOrError.Data(listOf(template), cp.asList(), listOf(def))
             }
             catch (e: ClassNotFoundException) {}
             catch (e: NoClassDefFoundError) {}
@@ -97,8 +97,8 @@ class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
         is GradleScriptTemplatesProvider.TemplateDataOrError.Error -> throw IllegalStateException((templatesData as TemplateDataOrError.Error).message)
     }
 
-    override val dependenciesClasspath: Iterable<String> get() = when(templatesData) {
-        is GradleScriptTemplatesProvider.TemplateDataOrError.Data -> (templatesData as TemplateDataOrError.Data).dependenciesClasspath.map { it.canonicalPath }
+    override val dependenciesClasspath: List<File> get() = when(templatesData) {
+        is GradleScriptTemplatesProvider.TemplateDataOrError.Data -> (templatesData as TemplateDataOrError.Data).dependenciesClasspath
         is GradleScriptTemplatesProvider.TemplateDataOrError.Error -> throw IllegalStateException((templatesData as TemplateDataOrError.Error).message)
     }
 
