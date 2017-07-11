@@ -32,10 +32,9 @@ internal class JpsCompilerServicesFacadeImpl(
                                          port),
         JpsCompilerServicesFacade {
 
-    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?): Void? {
+    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         env.messageCollector.reportFromDaemon(
                 { outFile, srcFiles -> env.outputItemsCollector.add(srcFiles, outFile) },
                 category, severity, message, attachment)
-        return null
     }
 }
