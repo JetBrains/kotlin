@@ -103,7 +103,7 @@ class JSTestGenerator(val context: TranslationContext) {
     }
 
     private val FunctionDescriptor.isTest
-        get() = annotationFinder("Test", "kotlin.test", "org.junit") // Support both annotations for now.
+        get() = annotationFinder("Test", "kotlin.test")
 
     private val DeclarationDescriptor.isIgnored
         get() = annotationFinder("Ignore", "kotlin.test")
