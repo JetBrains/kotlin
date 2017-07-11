@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager;
 import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
 import org.jetbrains.kotlin.idea.framework.CommonLibraryDetectionUtil;
-import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTodoSearcher;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -62,7 +61,6 @@ public class PluginStartupComponent implements ApplicationComponent {
             ThreadTrackerPatcherForTeamCityTesting.INSTANCE.patchThreadTracker();
         }
 
-        JarUserDataManager.INSTANCE.register(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar.INSTANCE);
         JarUserDataManager.INSTANCE.register(CommonLibraryDetectionUtil.HasCommonKotlinMetadataInJar.INSTANCE);
 
         DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();

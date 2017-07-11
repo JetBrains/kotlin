@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.idea.framework
 
-import com.intellij.framework.library.LibraryVersionProperties
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.DummyLibraryProperties
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryKind
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration
@@ -212,7 +212,7 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
     }
 
     protected fun createConfiguration(libraryFiles: List<File>, librarySourceFiles: List<File>): NewLibraryConfiguration {
-        return object : NewLibraryConfiguration(libraryName, null, LibraryVersionProperties()) {
+        return object : NewLibraryConfiguration(libraryName, configurator.libraryType, DummyLibraryProperties.INSTANCE) {
             override fun addRoots(editor: LibraryEditor) {
                 for (libraryFile in libraryFiles) {
                     editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES)

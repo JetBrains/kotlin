@@ -34,12 +34,11 @@ object JsLibraryStdDetectionUtil {
     private val IS_JS_LIBRARY_STD_LIB = Key.create<Boolean>("IS_JS_LIBRARY_STD_LIB")
 
     fun hasJsStdlibJar(library: Library): Boolean {
-        if (library is LibraryEx && library.isDisposed) return false
-
-        if (!KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(library)) return false
+        if (library !is LibraryEx || library.isDisposed) return false
+        if (library.kind !is JSLibraryKind) return false
 
         val classes = Arrays.asList(*library.getFiles(OrderRootType.CLASSES))
-        return getJsLibraryStdVersion(classes) != null
+        return getJsStdLibJar(classes) != null
     }
 
     fun getJsLibraryStdVersion(library: Library): String? = getJsLibraryStdVersion(library.getFiles(OrderRootType.CLASSES).toList())
