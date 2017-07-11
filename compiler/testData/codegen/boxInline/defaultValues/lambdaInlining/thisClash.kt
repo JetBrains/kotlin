@@ -12,8 +12,8 @@ inline fun String.inlineFun(crossinline lambda: () -> String = { { this }() }): 
 }
 
 // FILE: 2.kt
-// CHECK_CALLED_IN_SCOPE: function=inlineFun$f scope=box
-// CHECK_CALLED_IN_SCOPE: function=inlineFun$f_0 scope=box
+// CHECK_CALLED_IN_SCOPE: function=inlineFun$lambda scope=box
+// CHECK_CALLED_IN_SCOPE: function=inlineFun$lambda_0 scope=box
 
 import test.*
 
