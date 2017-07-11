@@ -33,7 +33,7 @@ class StandardKotlinScriptTemplateProvider(val project: Project) : ScriptTemplat
     override val isValid: Boolean = true
 
     override val templateClassNames: Iterable<String> get() = listOf(ScriptTemplateWithArgs::class.qualifiedName!!)
-    override val dependenciesClasspath: Iterable<String> get() = emptyList()
+    override val dependenciesClasspath get() = emptyList<File>()
 
     override val environment: Map<String, Any?>? get() {
         return mapOf(
