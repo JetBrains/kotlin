@@ -26,7 +26,7 @@ public external interface FrameworkAdapter {
      *
      * @param name the name of the test suite, e.g. a class name
      * @param ignored whether the test suite is ignored, e.g. marked with [Ignore] annotation
-     * @param suiteFn defines tests and nested suites
+     * @param suiteFn defines nested suites by calling [kotlin.test.suite] and tests by calling [kotlin.test.test]
      */
     fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
 
