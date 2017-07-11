@@ -8306,12 +8306,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
-        @TestMetadata("classpath.kt")
-        public void testClasspath() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/fullJdk/classpath.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("ifInWhile.kt")
         public void testIfInWhile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/fullJdk/ifInWhile.kt");
