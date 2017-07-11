@@ -2379,8 +2379,9 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NullChecksToSafeCallInspection"
-                     displayName="Replace chained null-checks with safe-calls"
-                     groupName="Kotlin"
+                     displayName="Null-checks replaceable with safe-calls"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
