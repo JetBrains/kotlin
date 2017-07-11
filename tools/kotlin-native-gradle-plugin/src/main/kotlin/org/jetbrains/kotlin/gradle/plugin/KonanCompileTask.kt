@@ -160,11 +160,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         addKey("-opt", enableOptimization)
         addKey("-ea", enableAssertions)
 
-        (if (inputFiles.isEmpty()) {
-            project.fileTree("${project.projectDir.canonicalPath}/src/main/kotlin")
-        } else {
-            inputFiles.flatMap { it.files }
-        }).filter { it.name.endsWith(".kt") }.mapTo(this) { it.canonicalPath }
+        inputFiles.flatMap { it.files }.filter { it.name.endsWith(".kt") }.mapTo(this) { it.canonicalPath }
     }
 
     @TaskAction

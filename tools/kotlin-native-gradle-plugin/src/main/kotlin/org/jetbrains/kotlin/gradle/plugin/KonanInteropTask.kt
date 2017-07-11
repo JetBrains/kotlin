@@ -58,8 +58,6 @@ open class KonanInteropTask: KonanTargetableTask() {
         get() = listOf("-Dkonan.home=${project.konanHome}", "-Djava.library.path=${project.konanHome}/konan/nativelib")
     internal val INTEROP_CLASSPATH: String
         get() = "${project.konanHome}/konan/lib/"
-    internal val C_INTEROP_DIR_PATH: String
-        get() = "${project.projectDir}/src/main/c_interop"
 
     // Output directories -----------------------------------------------------
 
@@ -124,9 +122,7 @@ open class KonanInteropTask: KonanTargetableTask() {
         manifest ?.let {addArg("-manifest", it)}
 
         addArgIfNotNull("-target", target)
-        val defFilePath = defFile?.canonicalPath ?:
-                project.file("$C_INTEROP_DIR_PATH/$libName.def").takeIf { it.exists() }?.canonicalPath
-        addArgIfNotNull("-def", defFilePath)
+        addArgIfNotNull("-def", defFile?.canonicalPath)
         addArg("-pkg", pkg ?: libName)
         addArgIfNotNull("-linker", linker)
 
@@ -159,8 +155,8 @@ open class KonanInteropConfig(
     // Task to process the library and generate stubs
     val generateStubsTask: KonanInteropTask = project.tasks.create(
             "gen${name.capitalize()}InteropStubs",
-            KonanInteropTask::class.java
-    ) { it.init(name) 
+            KonanInteropTask::class.java) {
+        it.init(name)
         it.manifest = "${it.stubsDir.path}/manifest.properties"
     }
     // Config and task to compile *.kt stubs into a library

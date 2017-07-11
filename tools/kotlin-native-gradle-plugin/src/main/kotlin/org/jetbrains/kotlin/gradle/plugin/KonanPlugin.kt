@@ -48,6 +48,10 @@ internal val Project.konanInteropStubsOutputDir   get() = "${konanBuildRoot}/int
 internal val Project.konanInteropCompiledStubsDir get() = "${konanBuildRoot}/interopCompiledStubs"
 internal val Project.konanInteropLibsOutputDir    get() = "${konanBuildRoot}/nativelibs"
 
+internal val Project.konanDefaultSrcDir           get() = file("${projectDir.canonicalPath}/src/main/kotlin")
+internal fun Project.konanDefaultDefFile(interopName: String)
+        = file("${projectDir.canonicalPath}/src/main/c_interop/$interopName.def")
+
 internal val Project.konanArtifactsContainer: KonanArtifactsContainer
     get() = extensions.getByName(KonanPlugin.COMPILER_EXTENSION_NAME) as KonanArtifactsContainer
 internal val Project.konanInteropContainer: KonanInteropContainer
@@ -90,7 +94,11 @@ class KonanArtifactsContainer(val project: ProjectInternal): AbstractNamedDomain
         project.gradle.services.get(Instantiator::class.java)) {
 
     override fun doCreate(name: String): KonanCompileConfig =
-            KonanCompileConfig(name, project)
+            KonanCompileConfig(name, project).apply {
+                project.konanDefaultSrcDir?.takeIf { it.exists() }?.let {
+                    inputDir(it.canonicalPath)
+                }
+            }
 }
 
 class KonanInteropContainer(val project: ProjectInternal): AbstractNamedDomainObjectContainer<KonanInteropConfig>(
@@ -98,7 +106,11 @@ class KonanInteropContainer(val project: ProjectInternal): AbstractNamedDomainOb
         project.gradle.services.get(Instantiator::class.java)) {
 
     override fun doCreate(name: String): KonanInteropConfig =
-            KonanInteropConfig(name, project)
+            KonanInteropConfig(name, project).apply {
+                project.konanDefaultDefFile(name).takeIf { it.exists() }?.let {
+                    defFile(it.canonicalFile)
+                }
+            }
 }
 
 // Useful extensions and functions ---------------------------------------
