@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.PrintWriter
 import java.net.URLClassLoader
@@ -38,10 +40,15 @@ class ReplInterpreter(
     private val lineNumber = AtomicInteger()
 
     private val previousIncompleteLines = arrayListOf<String>()
-    private val classLoader: ReplClassLoader = run {
-        val classpath = configuration.jvmClasspathRoots.map { it.toURI().toURL() }
-        ReplClassLoader(URLClassLoader(classpath.toTypedArray(), null))
+
+    private val classpathRoots = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
+        when (root) {
+            is JvmModulePathRoot -> root.file // TODO: only add required modules
+            is JvmClasspathRoot -> root.file
+            else -> null
+        }
     }
+    private val classLoader = ReplClassLoader(URLClassLoader(classpathRoots.map { it.toURI().toURL() }.toTypedArray(), null))
 
     private val messageCollector = object : MessageCollector {
         private var hasErrors = false
@@ -69,8 +76,12 @@ class ReplInterpreter(
     }
 
     // TODO: add script definition with project-based resolving for IDEA repl
-    private val scriptCompiler: ReplCompiler by lazy { GenericReplCompiler(disposable, REPL_LINE_AS_SCRIPT_DEFINITION, configuration, messageCollector) }
-    private val scriptEvaluator: ReplFullEvaluator by lazy { GenericReplCompilingEvaluator(scriptCompiler, configuration.jvmClasspathRoots, classLoader, null, ReplRepeatingMode.REPEAT_ANY_PREVIOUS) }
+    private val scriptCompiler: ReplCompiler by lazy {
+        GenericReplCompiler(disposable, REPL_LINE_AS_SCRIPT_DEFINITION, configuration, messageCollector)
+    }
+    private val scriptEvaluator: ReplFullEvaluator by lazy {
+        GenericReplCompilingEvaluator(scriptCompiler, classpathRoots, classLoader, null, ReplRepeatingMode.REPEAT_ANY_PREVIOUS)
+    }
 
     private val evalState by lazy { scriptEvaluator.createState() }
 
