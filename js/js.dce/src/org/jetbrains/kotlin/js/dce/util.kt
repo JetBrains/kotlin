@@ -27,6 +27,8 @@ fun Context.isDefineModule(function: JsExpression): Boolean = isKotlinFunction(f
 
 fun Context.isDefineInlineFunction(function: JsExpression): Boolean = isKotlinFunction(function, "defineInlineFunction")
 
+fun Context.isWrapFunction(function: JsExpression): Boolean = isKotlinFunction(function, "wrapFunction")
+
 fun Context.isObjectFunction(function: JsExpression, functionName: String): Boolean {
     if (function !is JsNameRef) return false
     if (function.ident != functionName) return false

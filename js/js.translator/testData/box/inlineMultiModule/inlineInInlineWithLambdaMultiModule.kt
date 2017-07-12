@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 996
 // MODULE: lib
 // FILE: lib.kt
 fun baz(x: String) = "($x)"

@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 992
 // MODULE: lib
 // FILE: lib.kt
 fun foo() = "OK"

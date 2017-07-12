@@ -135,15 +135,18 @@ class ReachabilityTracker(
             }
         }
 
-        for (expr in node.functions) {
-            reportAndNest("traverse: function", expr) {
-                expr.collectLocalVariables().let {
-                    context.addNodesForLocalVars(it)
-                    context.namesOfLocalVars += it
+        if (node !in analysisResult.functionsToSkip) {
+            for (expr in node.functions) {
+                reportAndNest("traverse: function", expr) {
+                    expr.collectLocalVariables().let {
+                        context.addNodesForLocalVars(it)
+                        context.namesOfLocalVars += it
+                    }
+                    withErasedThis { expr.body.accept(this) }
                 }
-                withErasedThis { expr.body.accept(this) }
             }
         }
+
         for (expr in node.expressions) {
             reportAndNest("traverse: value", expr) {
                 expr.accept(this)
