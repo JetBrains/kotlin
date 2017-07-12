@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.editor
 
 import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.codeInsight.editorActions.enter.EnterAfterUnmatchedBraceHandler
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter
 import com.intellij.openapi.actionSystem.DataContext
@@ -31,6 +32,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.completion.handlers.isTextAt
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -120,5 +122,49 @@ class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
             }
         }
         return false
+    }
+}
+
+class KotlinConvertToBodyEnterHandler : EnterHandlerDelegateAdapter() {
+    override fun preprocessEnter(file: PsiFile, editor: Editor,
+                                 caretOffset: Ref<Int>, caretAdvance: Ref<Int>, dataContext: DataContext,
+                                 originalHandler: EditorActionHandler?): EnterHandlerDelegate.Result {
+        if (file !is KtFile) return EnterHandlerDelegate.Result.Continue
+        if (!KotlinEditorOptions.getInstance().isEnableSmartConvertToBody) return EnterHandlerDelegate.Result.Continue
+        if (!EnterAfterUnmatchedBraceHandler.isAfterUnmatchedLBrace(editor, caretOffset.get(),
+                                                                    file.fileType)) return EnterHandlerDelegate.Result.Continue
+
+        val document = editor.document
+
+        //Let's check if it's special convert to body case.
+        val prevOffset = caretOffset.get() - 1
+        if (document.isTextAt(prevOffset, "{")) {
+            document.commit(file.project)
+            val element = file.findElementAt(prevOffset)
+            if (element != null && element.matchParents(
+                    KtFunctionLiteral::class.java,
+                    KtLambdaExpression::class.java,
+                    KtDeclarationWithBody::class.java
+            )) {
+                val declaration = element.parent.parent.parent as KtDeclarationWithBody
+                if (!declaration.hasDeclaredReturnType()) return EnterHandlerDelegate.Result.Continue
+                val equals = declaration.equalsToken
+                if (equals != null) {
+                    val startOffset =
+                            if (equals.prevSibling is PsiWhiteSpace) equals.prevSibling.startOffset
+                            else equals.startOffset
+                    val endOffset =
+                            if (equals.nextSibling is PsiWhiteSpace) equals.nextSibling.endOffset
+                            else equals.endOffset
+                    document.replaceString(startOffset, endOffset, " ")
+                    val newOffset = caretOffset.get() + 1 + startOffset - endOffset
+                    caretOffset.set(newOffset)
+                    editor.caretModel.moveToOffset(newOffset)
+                    document.commit(file.project)
+                }
+            }
+        }
+
+        return EnterHandlerDelegate.Result.Continue
     }
 }

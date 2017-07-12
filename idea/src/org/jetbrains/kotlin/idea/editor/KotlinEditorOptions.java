@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public class KotlinEditorOptions implements PersistentStateComponent<KotlinEditorOptions> {
     private boolean donTShowConversionDialog = false;
     private boolean enableJavaToKotlinConversion = true;
+    private boolean enableSmartConvertToBody = true;
 
     public boolean isDonTShowConversionDialog() {
         return donTShowConversionDialog;
@@ -49,6 +50,15 @@ public class KotlinEditorOptions implements PersistentStateComponent<KotlinEdito
     @SuppressWarnings("UnusedDeclaration")
     public void setEnableJavaToKotlinConversion(boolean enableJavaToKotlinConversion) {
         this.enableJavaToKotlinConversion = enableJavaToKotlinConversion;
+    }
+
+    public boolean isEnableSmartConvertToBody() {
+        return enableSmartConvertToBody;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public void setEnableSmartConvertToBody(boolean enableSmartConvertToBody) {
+        this.enableSmartConvertToBody = enableSmartConvertToBody;
     }
 
     @Override
