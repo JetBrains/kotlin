@@ -36,11 +36,16 @@ class PseudocodeLabel internal constructor(
 
     override fun resolveToInstruction(): Instruction {
         val index = targetInstructionIndex
-        if (index < 0 || index >= instructionList.size) {
-            error("resolveToInstruction: incorrect index $index for label $name " +
-                  "in subroutine ${correspondingElement.text} with instructions $instructionList")
+        when {
+            index < 0 ->
+                error("resolveToInstruction: unbound label $name " +
+                      "in subroutine ${correspondingElement.text} with instructions $instructionList")
+            index >= instructionList.size ->
+                error("resolveToInstruction: incorrect index $index for label $name " +
+                      "in subroutine ${correspondingElement.text} with instructions $instructionList")
+            else ->
+                return instructionList[index]
         }
-        return instructionList[index]
     }
 
     fun copy(newPseudocode: PseudocodeImpl, newLabelIndex: Int): PseudocodeLabel {
