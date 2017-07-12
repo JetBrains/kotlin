@@ -31,9 +31,8 @@ import com.intellij.xdebugger.XSourcePosition
 import com.intellij.xdebugger.impl.XSourcePositionImpl
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
+import org.jetbrains.kotlin.idea.debugger.findElementAtLine
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
-import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -124,23 +123,10 @@ fun getLambdasAtLineIfAny(sourcePosition: SourcePosition): List<KtFunction> {
 }
 
 fun getLambdasAtLineIfAny(file: KtFile, line: Int): List<KtFunction> {
-    var lineStartOffset = file.getLineStartOffset(line) ?: return emptyList()
-    var lineEndOffset = file.getLineEndOffset(line) ?: return emptyList()
+    val lineElement = findElementAtLine(file, line) as? KtElement ?: return emptyList()
 
-    var topMostElement: PsiElement? = null
-    var elementAt: PsiElement?
-    while (topMostElement !is KtElement && lineStartOffset < lineEndOffset) {
-        elementAt = file.findElementAt(lineStartOffset)
-        if (elementAt != null) {
-            topMostElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, lineStartOffset)
-        }
-        lineStartOffset++
-    }
-
-    if (topMostElement !is KtElement) return emptyList()
-
-    val start = topMostElement.startOffset
-    val end = topMostElement.endOffset
+    val start = lineElement.startOffset
+    val end = lineElement.endOffset
 
     val allLiterals = CodeInsightUtils.
             findElementsOfClassInRange(file, start, end, KtFunction::class.java)
@@ -154,5 +140,4 @@ fun getLambdasAtLineIfAny(file: KtFile, line: Int): List<KtFunction> {
         statement.getLineNumber() == line && statement.getLineNumber(false) == line
     }
 }
-
 
