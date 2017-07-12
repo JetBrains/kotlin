@@ -20,16 +20,20 @@ import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.junit.Assert
 import java.io.File
 
 class KotlinMavenImporterTest : MavenImportingTestCase() {
-    private val kotlinVersion = "1.0.0-beta-2423"
+    private val kotlinVersion = "1.1.3"
 
     override fun setUp() {
         super.setUp()
@@ -529,7 +533,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         <dependencies>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-stdlib</artifactId>
+                <artifactId>kotlin-stdlib-js</artifactId>
                 <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
@@ -587,6 +591,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("-output test.js -meta-info -Xmulti-platform",
                                 compilerSettings!!.additionalArguments)
         }
+
+        val rootManager = ModuleRootManager.getInstance(getModule("project"))
+        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
+        GradleImportingTestCase.assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
     }
 
     fun testFacetSplitConfiguration() {

@@ -24,6 +24,7 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.AsyncResult
 import org.jdom.Element
@@ -38,9 +39,13 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.*
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import java.io.File
 import java.util.*
@@ -83,25 +88,40 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         super.postProcess(module, mavenProject, changes, modifiableModelsProvider)
 
         if (changes.dependencies) {
-            // TODO: here we have to process all kotlin libraries but for now we only handle standard libraries
-            val artifacts = mavenProject.dependencyArtifactIndex.data[KOTLIN_PLUGIN_GROUP_ID]?.values?.flatMap { it.filter { it.isResolved } } ?: emptyList()
+            scheduleDownloadStdlibSources(mavenProject, module)
 
-            val librariesWithNoSources = ArrayList<Library>()
-            OrderEnumerator.orderEntries(module).forEachLibrary { library ->
-                if (library.modifiableModel.getFiles(OrderRootType.SOURCES).isEmpty()) {
-                    librariesWithNoSources.add(library)
+            val platform = detectPlatformByExecutions(mavenProject)
+            if (platform == TargetPlatformKind.JavaScript) {
+                modifiableModelsProvider.getModifiableRootModel(module).orderEntries().forEachLibrary { library ->
+                    if ((library as LibraryEx).kind == null) {
+                        val model = modifiableModelsProvider.getModifiableLibraryModel(library) as LibraryEx.ModifiableModelEx
+                        model.kind = JSLibraryKind
+                    }
+                    true
                 }
-                true
-            }
-            val libraryNames = librariesWithNoSources.mapTo(HashSet()) { it.name }
-            val toBeDownloaded = artifacts.filter { it.libraryName in libraryNames }
-
-            if (toBeDownloaded.isNotEmpty()) {
-                MavenProjectsManager.getInstance(module.project).scheduleArtifactsDownloading(listOf(mavenProject), toBeDownloaded, true, false, AsyncResult())
             }
         }
 
         configureFacet(mavenProject, modifiableModelsProvider, module)
+    }
+
+    private fun scheduleDownloadStdlibSources(mavenProject: MavenProject, module: Module) {
+        // TODO: here we have to process all kotlin libraries but for now we only handle standard libraries
+        val artifacts = mavenProject.dependencyArtifactIndex.data[KOTLIN_PLUGIN_GROUP_ID]?.values?.flatMap { it.filter { it.isResolved } } ?: emptyList()
+
+        val librariesWithNoSources = ArrayList<Library>()
+        OrderEnumerator.orderEntries(module).forEachLibrary { library ->
+            if (library.modifiableModel.getFiles(OrderRootType.SOURCES).isEmpty()) {
+                librariesWithNoSources.add(library)
+            }
+            true
+        }
+        val libraryNames = librariesWithNoSources.mapTo(HashSet()) { it.name }
+        val toBeDownloaded = artifacts.filter { it.libraryName in libraryNames }
+
+        if (toBeDownloaded.isNotEmpty()) {
+            MavenProjectsManager.getInstance(module.project).scheduleArtifactsDownloading(listOf(mavenProject), toBeDownloaded, true, false, AsyncResult())
+        }
     }
 
     private fun getCompilerArgumentsByConfigurationElement(mavenProject: MavenProject,
