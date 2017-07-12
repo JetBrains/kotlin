@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -355,12 +355,8 @@ class KotlinToResolvedCallTransformer(
             reported = false
             diagnostic.report(diagnosticReporter)
             if (!reported && REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC) {
-                if (diagnostic.candidateApplicability.isSuccess) {
-                    trace.report(Errors.NEW_INFERENCE_DIAGNOSTIC.on(diagnosticReporter.psiKotlinCall.psiCall.callElement, "Missing diagnostic: $diagnostic"))
-                }
-                else {
-                    trace.report(Errors.NEW_INFERENCE_ERROR.on(diagnosticReporter.psiKotlinCall.psiCall.callElement, "Missing diagnostic: $diagnostic"))
-                }
+                val factory = if (diagnostic.candidateApplicability.isSuccess) Errors.NEW_INFERENCE_DIAGNOSTIC else Errors.NEW_INFERENCE_ERROR
+                trace.report(factory.on(diagnosticReporter.psiKotlinCall.psiCall.callElement, "Missing diagnostic: $diagnostic"))
             }
         }
     }
