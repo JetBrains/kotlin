@@ -29,6 +29,10 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.org.objectweb.asm.Type
 
 fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpression): RangeValue {
+    // NB when you implement a new intrinsic RangeValue,
+    // also look into org.jetbrains.kotlin.generators.tests and update related testData generators
+    // (e.g., GenerateInRangeExpressionTestData).
+
     getResolvedCallForRangeExpression(bindingContext, rangeExpression)?.let {
         createIntrinsifiedRangeValueOrNull(it)?.let {
             return it
