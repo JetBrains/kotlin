@@ -41,20 +41,14 @@ object JsLibraryStdDetectionUtil {
         return getJsStdLibJar(classes) != null
     }
 
-    fun getJsLibraryStdVersion(library: Library): String? = getJsLibraryStdVersion(library.getFiles(OrderRootType.CLASSES).toList())
-
-    fun getJsLibraryStdVersion(classesRoots: List<VirtualFile>): String? {
-        if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) {
-            // Prevent clashing with java runtime, in case when library collects all roots.
-            return null
-        }
-
-        val jar = getJsStdLibJar(classesRoots) ?: return null
+    fun getJsLibraryStdVersion(library: Library): String? {
+        if ((library as LibraryEx).kind !is JSLibraryKind) return null
+        val jar = getJsStdLibJar(library.getFiles(OrderRootType.CLASSES).toList()) ?: return null
 
         return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(jar), Attributes.Name.IMPLEMENTATION_VERSION)
     }
 
-    fun getJsStdLibJar(classesRoots: List<VirtualFile>): VirtualFile? {
+    private fun getJsStdLibJar(classesRoots: List<VirtualFile>): VirtualFile? {
         for (root in classesRoots) {
             if (root.fileSystem.protocol !== StandardFileSystems.JAR_PROTOCOL) continue
 
