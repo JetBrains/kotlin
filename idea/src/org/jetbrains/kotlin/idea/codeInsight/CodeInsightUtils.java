@@ -339,6 +339,27 @@ public class CodeInsightUtils {
         return element;
     }
 
+    @NotNull
+    public static PsiElement getTopParentWithEndOffset(@NotNull PsiElement element, @NotNull Class<?> stopAt) {
+        int endOffset = element.getTextOffset() + element.getTextLength();
+
+        do {
+            PsiElement parent = element.getParent();
+            if (parent == null || (parent.getTextOffset() + parent.getTextLength()) != endOffset) {
+                break;
+            }
+            element = parent;
+
+            if (stopAt.isInstance(element)) {
+                break;
+            }
+        }
+        while(true);
+
+        return element;
+    }
+
+
     @Nullable
     public static <T> T getTopmostElementAtOffset(@NotNull PsiElement element, int offset, @NotNull Class<T> klass) {
         T lastElementOfType = null;

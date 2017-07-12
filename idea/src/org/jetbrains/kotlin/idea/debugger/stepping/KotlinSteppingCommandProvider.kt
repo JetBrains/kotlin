@@ -235,7 +235,18 @@ private fun findCallsOnPosition(sourcePosition: SourcePosition, filter: (KtCallE
     val file = sourcePosition.file as? KtFile ?: return emptyList()
     val lineNumber = sourcePosition.line
 
-    val lineElement = findElementAtLine(file, lineNumber) as? KtElement ?: return emptyList()
+    val lineElement = findElementAtLine(file, lineNumber)
+
+    if (lineElement !is KtElement) {
+        if (lineElement != null) {
+            val call = findCallByEndToken(lineElement)
+            if (call != null && filter(call)) {
+                return listOf(call)
+            }
+        }
+
+        return emptyList()
+    }
 
     val start = lineElement.startOffset
     val end = lineElement.endOffset

@@ -32,10 +32,9 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.util.*
@@ -217,4 +216,22 @@ fun findElementAtLine(file: KtFile, line: Int): PsiElement? {
     }
 
     return topMostElement
+}
+
+fun findCallByEndToken(element: PsiElement): KtCallExpression? {
+    if (element is KtElement) return null
+
+    return when (element.node.elementType) {
+        KtTokens.RPAR -> (element.parent as? KtValueArgumentList)?.parent as? KtCallExpression
+        KtTokens.RBRACE -> {
+            val braceParent = CodeInsightUtils.getTopParentWithEndOffset(element, KtCallExpression::class.java)
+            when (braceParent) {
+                is KtCallExpression -> braceParent
+                is KtLambdaArgument -> braceParent.parent as? KtCallExpression
+                is KtValueArgument -> (braceParent.parent as? KtValueArgumentList)?.parent as? KtCallExpression
+                else -> null
+            }
+        }
+        else -> null
+    }
 }
