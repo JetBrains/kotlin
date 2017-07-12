@@ -404,7 +404,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
                 internalSinkInstruction = copy
             }
         }
-        if (finishIndex < mutableInstructionList.size) {
+        if (finishIndex < originalPseudocode.mutableInstructionList.size) {
             repeatLabelsBindingForInstruction(originalPseudocode.mutableInstructionList[finishIndex],
                                               originalToCopy,
                                               originalLabelsForInstruction)

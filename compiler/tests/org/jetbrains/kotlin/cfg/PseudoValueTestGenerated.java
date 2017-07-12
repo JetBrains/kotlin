@@ -235,6 +235,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("incorrectIndex.kt")
+            public void testIncorrectIndex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/incorrectIndex.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("InfiniteLoops.kt")
             public void testInfiniteLoops() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/InfiniteLoops.kt");
