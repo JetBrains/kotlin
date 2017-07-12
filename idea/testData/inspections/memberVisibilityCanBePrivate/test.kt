@@ -135,3 +135,17 @@ class F(val bar: Int) {
 class G(val bar: Int) {
     private inline fun baz() = bar
 }
+
+private class H(val a: String = "",
+        var b: String = "",
+        internal val c: String = "",
+        protected val d: String = "",
+        private val e: String = "") {
+    fun foo() {
+        println(a)
+        println(b)
+        println(c)
+        println(d)
+        println(e)
+    }
+}
