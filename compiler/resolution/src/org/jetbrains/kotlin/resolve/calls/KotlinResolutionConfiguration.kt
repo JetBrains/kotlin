@@ -19,3 +19,9 @@ package org.jetbrains.kotlin.resolve.calls
 val USE_NEW_INFERENCE = false
 
 val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC = false
+
+val USE_CS_COMPLETER_TYPE = CSCompleterType.INITIAL
+
+enum class CSCompleterType {
+    INITIAL
+}

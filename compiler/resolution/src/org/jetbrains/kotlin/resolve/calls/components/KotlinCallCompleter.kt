@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.components.*
+import org.jetbrains.kotlin.resolve.calls.CSCompleterType
+import org.jetbrains.kotlin.resolve.calls.USE_CS_COMPLETER_TYPE
+import org.jetbrains.kotlin.resolve.calls.components.ConstraintSystemCompleter.CompletionType
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -32,33 +32,22 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.NewCapturedType
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.contains
 
 class KotlinCallCompleter(
-        private val fixationOrderCalculator: FixationOrderCalculator,
         private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
-        private val inferenceStepResolver: InferenceStepResolver,
-        private val callableReferenceResolver: CallableReferenceResolver
+        private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
+        initialConstraintSystemCompleter: InitialConstraintSystemCompleterImpl
 ) {
+    private val constraintSystemCompleter: ConstraintSystemCompleter = when(USE_CS_COMPLETER_TYPE) {
+        CSCompleterType.INITIAL -> initialConstraintSystemCompleter
+    }
+
     interface Context {
         val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall>
-        val hasContradiction: Boolean
-        fun buildCurrentSubstitutor(): NewTypeSubstitutor
         fun buildResultingSubstitutor(): NewTypeSubstitutor
         val postponedArguments: List<PostponedKotlinCallArgument>
         val lambdaArguments: List<PostponedLambdaArgument>
-
-        // type can be proper if it not contains not fixed type variables
-        fun canBeProper(type: UnwrappedType): Boolean
-        fun asFixationOrderCalculatorContext(): FixationOrderCalculator.Context
-        fun asResultTypeResolverContext(): ResultTypeResolver.Context
-
-        // mutable operations
-        fun asConstraintInjectorContext(): ConstraintInjector.Context
-        fun addError(error: KotlinCallDiagnostic)
-        fun fixVariable(variable: NewTypeVariable, resultType: UnwrappedType)
-        fun getBuilder(): ConstraintSystemBuilder
     }
 
     fun transformWhenAmbiguity(candidate: KotlinResolutionCandidate, resolutionCallbacks: KotlinResolutionCallbacks): ResolvedKotlinCall =
@@ -77,22 +66,18 @@ class KotlinCallCompleter(
                     else -> candidate as SimpleKotlinResolutionCandidate
                 }
 
-        if (topLevelCall.prepareForCompletion(expectedType)) {
-            val c = candidate.lastCall.constraintSystem.asCallCompleterContext()
+        val completionType = topLevelCall.prepareForCompletion(expectedType)
+        val constraintSystem = candidate.lastCall.constraintSystem
 
-            resolveCallableReferenceArguments(c)
-
-            topLevelCall.competeCall(c, resolutionCallbacks)
-            return toCompletedBaseResolvedCall(c, candidate, resolutionCallbacks)
+        constraintSystemCompleter.runCompletion(
+                constraintSystem.asConstraintSystemCompleterContext(), completionType, candidate.lastCall.descriptorWithFreshTypes.returnTypeOrNothing
+        ) {
+            postponedArgumentsAnalyzer.analyze(constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it)
         }
 
-        return ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
-    }
-
-    private fun resolveCallableReferenceArguments(c: Context) {
-        for (callableReferenceArgument in c.postponedArguments) {
-            if (callableReferenceArgument !is PostponedCallableReferenceArgument) continue
-            callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), callableReferenceArgument)
+        return when (completionType) {
+            CompletionType.FULL -> toCompletedBaseResolvedCall(constraintSystem.asCallCompleterContext(), candidate, resolutionCallbacks)
+            CompletionType.PARTIAL -> ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
         }
     }
 
@@ -169,62 +154,17 @@ class KotlinCallCompleter(
     }
 
     // true if we should complete this call
-    private fun SimpleKotlinResolutionCandidate.prepareForCompletion(expectedType: UnwrappedType?): Boolean {
-        val returnType = descriptorWithFreshTypes.returnType?.unwrap() ?: return false
+    private fun SimpleKotlinResolutionCandidate.prepareForCompletion(expectedType: UnwrappedType?): CompletionType {
+        val returnType = descriptorWithFreshTypes.returnType?.unwrap() ?: return CompletionType.PARTIAL
         if (expectedType != null && !TypeUtils.noExpectedType(expectedType)) {
             csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(kotlinCall))
         }
 
-        return expectedType != null || csBuilder.isProperType(returnType)
-    }
-
-    private fun SimpleKotlinResolutionCandidate.competeCall(c: Context, resolutionCallbacks: KotlinResolutionCallbacks) {
-        while (!oneStepToEndOrLambda(c, resolutionCallbacks)) {
-            // do nothing -- be happy
+        return if (expectedType != null || csBuilder.isProperType(returnType)) {
+            CompletionType.FULL
         }
-    }
-
-    // true if it is the end (happy or not)
-    // every step we fix type variable or analyzeLambda
-    private fun SimpleKotlinResolutionCandidate.oneStepToEndOrLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks): Boolean {
-        val lambda = c.lambdaArguments.find { canWeAnalyzeIt(c, it) }
-        if (lambda != null) {
-            analyzeLambda(c, resolutionCallbacks, lambda)
-            return false
+        else {
+            CompletionType.PARTIAL
         }
-
-        val completionOrder = fixationOrderCalculator.computeCompletionOrder(c.asFixationOrderCalculatorContext(), descriptorWithFreshTypes.returnTypeOrNothing)
-        return inferenceStepResolver.resolveVariables(c, completionOrder)
-    }
-
-    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: PostponedLambdaArgument) {
-        val currentSubstitutor = c.buildCurrentSubstitutor()
-        fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type)
-
-        val receiver = lambda.receiver?.let(::substitute)
-        val parameters = lambda.parameters.map(::substitute)
-        val expectedType = lambda.returnType.takeIf { c.canBeProper(it) }?.let(::substitute)
-        lambda.analyzed = true
-        lambda.resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(lambda.argument, lambda.isSuspend, receiver, parameters, expectedType)
-
-        for (resultLambdaArgument in lambda.resultArguments) {
-            checkSimpleArgument(c.getBuilder(), resultLambdaArgument, lambda.returnType.let(::substitute))
-        }
-
-        if (lambda.resultArguments.isEmpty()) {
-            val unitType = lambda.returnType.builtIns.unitType
-            c.getBuilder().addSubtypeConstraint(lambda.returnType.let(::substitute), unitType, LambdaArgumentConstraintPosition(lambda))
-        }
-    }
-
-    private fun canWeAnalyzeIt(c: Context, lambda: PostponedLambdaArgument): Boolean {
-        if (lambda.analyzed) return false
-
-        if (c.hasContradiction) return true // to record info about lambda and avoid exceptions
-
-        lambda.receiver?.let {
-            if (!c.canBeProper(it)) return false
-        }
-        return lambda.parameters.all { c.canBeProper(it) }
     }
 }

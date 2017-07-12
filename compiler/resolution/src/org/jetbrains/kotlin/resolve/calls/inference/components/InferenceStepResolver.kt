@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
+import org.jetbrains.kotlin.resolve.calls.components.ConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
@@ -32,7 +32,7 @@ class InferenceStepResolver(
      * Resolves one or more of the `variables`.
      * Returns `true` if type variable resolution should stop.
      */
-    fun resolveVariables(c: KotlinCallCompleter.Context, variables: List<VariableResolutionNode>): Boolean {
+    fun resolveVariables(c: ConstraintSystemCompleter.Context, variables: List<VariableResolutionNode>): Boolean {
         if (variables.isEmpty()) return true
         if (c.hasContradiction) return true
 
@@ -50,7 +50,7 @@ class InferenceStepResolver(
         return false
     }
 
-    private fun VariableWithConstraints.hasProperConstraint(c: KotlinCallCompleter.Context) =
+    private fun VariableWithConstraints.hasProperConstraint(c: ConstraintSystemCompleter.Context) =
             constraints.any { !it.isTrivial() && c.canBeProper(it.type) }
 
     private fun Constraint.isTrivial() =
