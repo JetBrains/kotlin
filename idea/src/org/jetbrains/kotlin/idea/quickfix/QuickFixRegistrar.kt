@@ -100,6 +100,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         USELESS_CAST.registerFactory(RemoveUselessCastFix)
 
+        USELESS_IS_CHECK.registerFactory(RemoveUselessIsCheckFix)
+
         WRONG_SETTER_PARAMETER_TYPE.registerFactory(ChangeAccessorTypeFix)
         WRONG_GETTER_RETURN_TYPE.registerFactory(ChangeAccessorTypeFix)
 
