@@ -434,6 +434,13 @@ public class JsInliner extends JsVisitorWithContextImpl {
         }
 
         RewriteUtilsKt.replaceNames(function, replacements);
+
+        copiedStatements.add(new JsExpressionStatement(function));
+        for (Map.Entry<JsName, JsFunction> entry : CollectUtilsKt.collectNamedFunctions(new JsBlock(copiedStatements)).entrySet()) {
+            if (MetadataProperties.getStaticRef(entry.getKey()) instanceof JsFunction) {
+                MetadataProperties.setStaticRef(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     private static boolean isSuspendWithCurrentContinuation(@Nullable DeclarationDescriptor descriptor) {
