@@ -46,7 +46,7 @@ interface AddValVarToConstructorParameterAction {
     fun invoke(element: KtParameter, editor: Editor?) {
         val project = element.project
 
-        element.addAfter(KtPsiFactory(project).createValKeyword(), null)
+        element.addBefore(KtPsiFactory(project).createValKeyword(), element.nameIdentifier)
 
         if (editor == null) return
 
