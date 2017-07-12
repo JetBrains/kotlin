@@ -325,7 +325,7 @@ public class CodeInsightUtils {
         return CharArrayUtil.shiftBackward(document.getCharsSequence(), lineStartOffset, " \t");
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement getTopmostElementAtOffset(@NotNull PsiElement element, int offset) {
         do {
             PsiElement parent = element.getParent();

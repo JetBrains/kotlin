@@ -206,7 +206,7 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElem
 
         val elementAtOffset = tmpFile.findElementAt(lineStart) ?: return null
 
-        return CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
+        return CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart)
     }
 
     fun shouldStop(el: PsiElement?, p: PsiElement?) = p is KtBlockExpression || el is KtDeclaration || el is KtFile
