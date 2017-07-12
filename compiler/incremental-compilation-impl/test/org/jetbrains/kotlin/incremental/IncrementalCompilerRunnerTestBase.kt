@@ -52,7 +52,10 @@ abstract class IncrementalCompilerRunnerTestBase<Args : CommonCompilerArguments>
         val sourceRoots = listOf(srcDir)
         val args = createCompilerArguments(outDir, testDir)
         // initial build
-        make(cacheDir, sourceRoots, args)
+        val (_, _, errors) = make(cacheDir, sourceRoots, args)
+        if (errors.isNotEmpty()) {
+            throw IllegalStateException("Initial build failed: \n${errors.joinToString("\n")}")
+        }
 
         // modifications
         val buildLogFile = buildLogFinder.findBuildLog(testDir) ?: throw IllegalStateException("build log file not found in $workingDir")
