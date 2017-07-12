@@ -13723,6 +13723,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("indexOfLast.kt")
+            public void testIndexOfLast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/indexOfLast.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt12983_forInGenericArrayIndices.kt")
             public void testKt12983_forInGenericArrayIndices() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt12983_forInGenericArrayIndices.kt");
