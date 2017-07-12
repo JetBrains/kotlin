@@ -27,6 +27,7 @@ import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.util.UnfairTextRange
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
@@ -718,7 +719,11 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     typeParameterMap,
                     callableInfo.kind != CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR
             )
-            builder.replaceElement(typeParameterList, expression, false)
+            val leftSpace = typeParameterList.prevSibling as? PsiWhiteSpace
+            val rangeStart = if (leftSpace != null) leftSpace.startOffset else typeParameterList.startOffset
+            val offset = typeParameterList.startOffset
+            val range = UnfairTextRange(rangeStart - offset, typeParameterList.endOffset - offset)
+            builder.replaceElement(typeParameterList, range, "TYPE_PARAMETER_LIST", expression, false)
             return expression
         }
 
