@@ -185,7 +185,6 @@ abstract class IncrementalCompilerRunner<
         }
 
         val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
-        BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
         val buildDirtyFqNames = HashSet<FqName>()
         val allSourcesToCompile = HashSet<File>()
@@ -251,6 +250,9 @@ abstract class IncrementalCompilerRunner<
             buildDirtyFqNames.addAll(dirtyClassFqNames)
         }
 
+        if (exitCode == ExitCode.OK) {
+            BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
+        }
         if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
             buildDirtyLookupSymbols.addAll(additionalDirtyLookupSymbols())
         }
