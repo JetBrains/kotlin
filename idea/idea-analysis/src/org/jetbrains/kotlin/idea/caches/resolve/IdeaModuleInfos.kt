@@ -32,7 +32,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.framework.CommonLibraryDetectionUtil
+import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
@@ -211,7 +211,7 @@ class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo, 
     }
 
     override val platform: TargetPlatform
-        get() = CommonLibraryDetectionUtil.getLibraryPlatform(library)
+        get() = getLibraryPlatform(library)
 
     override val sourcesModuleInfo: SourceForBinaryModuleInfo
         get() = LibrarySourceInfo(project, library)

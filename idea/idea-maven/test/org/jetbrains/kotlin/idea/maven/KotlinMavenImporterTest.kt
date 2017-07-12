@@ -26,8 +26,8 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.junit.Assert
 import java.io.File
@@ -594,7 +594,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         val rootManager = ModuleRootManager.getInstance(getModule("project"))
         val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
-        GradleImportingTestCase.assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
+        assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
     }
 
     fun testFacetSplitConfiguration() {
@@ -1099,7 +1099,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
 
         importProject("""
-        <groupId>test</groupId>
+        <groupId>test</groupId>0
         <artifactId>project</artifactId>
         <version>1.0.0</version>
 
@@ -1135,6 +1135,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         assertImporterStatePresent()
 
         Assert.assertEquals(TargetPlatformKind.Common, facetSettings.targetPlatformKind)
+
+        val rootManager = ModuleRootManager.getInstance(getModule("project"))
+        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
+        assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
     }
 
     fun testJvmDetectionByConflictingGoalsAndJvmStdlib() {

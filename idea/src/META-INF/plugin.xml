@@ -823,6 +823,7 @@
     <usageContextPanelProvider implementation="org.jetbrains.kotlin.idea.slicer.KotlinUsageContextDataOutflowPanel$Provider"/>
 
     <library.type implementation="org.jetbrains.kotlin.idea.framework.JSLibraryType"/>
+    <library.type implementation="org.jetbrains.kotlin.idea.framework.CommonLibraryType"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>

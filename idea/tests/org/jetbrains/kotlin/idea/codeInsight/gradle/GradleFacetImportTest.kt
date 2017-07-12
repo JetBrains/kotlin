@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.junit.Assert
 import org.junit.Test
@@ -624,6 +625,11 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             }
 
             apply plugin: 'kotlin-platform-common'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
+            }
+
         """)
         importProject()
 
@@ -632,6 +638,10 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Common, targetPlatformKind)
         }
+
+        val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
+        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
+        assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
     }
 
     @Test
