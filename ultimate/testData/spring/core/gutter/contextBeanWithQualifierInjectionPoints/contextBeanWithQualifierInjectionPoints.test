@@ -1,6 +1,6 @@
 {
     withRuntime: "true",
-    springConfig: [],
+    springConfig: ["ContextBeanWithQualifierInjectionPoints.kt"],
     file: "ContextBeanWithQualifierInjectionPoints.kt",
     icon: "ShowAutowiredDependencies",
     tooltip: "Navigate to the autowired dependencies",
