@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValueFactory
-import org.jetbrains.kotlin.cfg.pseudocode.TypePredicate
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
@@ -48,9 +47,8 @@ abstract class OperationInstruction protected constructor(
         return this
     }
 
-    protected fun setResult(factory: PseudoValueFactory?, valueElement: KtElement? = element): OperationInstruction {
-        return setResult(factory?.newValue(valueElement, this))
-    }
+    protected fun setResult(factory: PseudoValueFactory?, valueElement: KtElement? = element): OperationInstruction =
+            setResult(factory?.newValue(valueElement, this))
 }
 
 class CallInstruction private constructor(
@@ -76,9 +74,7 @@ class CallInstruction private constructor(
         visitor.visitCallInstruction(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitCallInstruction(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitCallInstruction(this)
 
     override fun createCopy() =
             CallInstruction(element, blockScope, resolvedCall, receiverValues, arguments).setResult(resultValue)

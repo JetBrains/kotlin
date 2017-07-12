@@ -123,9 +123,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         get() = mutableInstructionList
 
     //for tests only
-    fun getLabels(): List<PseudocodeLabel> {
-        return labels
-    }
+    fun getLabels(): List<PseudocodeLabel> = labels
 
     fun addExitInstruction(exitInstruction: SubroutineExitInstruction) {
         addInstruction(exitInstruction)
@@ -215,7 +213,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         if (usage is MergeInstruction) return
         valueUsages.getOrPut(
                 value
-        ) { arrayListOf<Instruction>() }.add(usage)
+        ) { arrayListOf() }.add(usage)
     }
 
     fun postProcess() {
@@ -333,9 +331,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         }
     }
 
-    private fun getJumpTarget(targetLabel: Label): Instruction {
-        return targetLabel.resolveToInstruction()
-    }
+    private fun getJumpTarget(targetLabel: Label): Instruction = targetLabel.resolveToInstruction()
 
     private fun getNextPosition(currentPosition: Int): Instruction {
         val targetPosition = currentPosition + 1
@@ -349,18 +345,15 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         return result
     }
 
-    override fun instructionForElement(element: KtElement): KtElementInstruction? {
-        return representativeInstructions[element]
-    }
+    override fun instructionForElement(element: KtElement): KtElementInstruction? = representativeInstructions[element]
 
     private fun repeatWhole(originalPseudocode: PseudocodeImpl) {
         repeatInternal(originalPseudocode, null, null, 0)
         parent = originalPseudocode.parent
     }
 
-    fun repeatPart(startLabel: Label, finishLabel: Label, labelCount: Int): Int {
-        return repeatInternal(startLabel.pseudocode as PseudocodeImpl, startLabel, finishLabel, labelCount)
-    }
+    fun repeatPart(startLabel: Label, finishLabel: Label, labelCount: Int): Int =
+            repeatInternal(startLabel.pseudocode as PseudocodeImpl, startLabel, finishLabel, labelCount)
 
     private fun repeatInternal(
             originalPseudocode: PseudocodeImpl,
@@ -387,7 +380,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         for (label in originalToCopy.values) {
             labels.add(label)
         }
-        for (index in startIndex..finishIndex - 1) {
+        for (index in startIndex until finishIndex) {
             val originalInstruction = originalPseudocode.mutableInstructionList[index]
             repeatLabelsBindingForInstruction(originalInstruction, originalToCopy, originalLabelsForInstruction)
             val copy = copyInstruction(originalInstruction, originalToCopy)

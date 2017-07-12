@@ -49,9 +49,7 @@ class LocalFunctionDeclarationInstruction(
         visitor.visitLocalFunctionDeclarationInstruction(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitLocalFunctionDeclarationInstruction(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitLocalFunctionDeclarationInstruction(this)
 
     override fun toString(): String = "d(${render(element)})"
 

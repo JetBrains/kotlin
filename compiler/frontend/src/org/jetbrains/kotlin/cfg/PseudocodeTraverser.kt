@@ -48,7 +48,7 @@ fun <D> Pseudocode.traverse(
         if (instruction is LocalFunctionDeclarationInstruction) {
             instruction.body.traverse(traversalOrder, edgesMap, analyzeInstruction)
         }
-        val edges = edgesMap.get(instruction)
+        val edges = edgesMap[instruction]
         if (edges != null) {
             analyzeInstruction(instruction, edges.incoming, edges.outgoing)
         }

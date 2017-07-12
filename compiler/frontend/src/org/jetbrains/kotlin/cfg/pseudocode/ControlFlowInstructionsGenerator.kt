@@ -90,9 +90,9 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
 
     private inner class ControlFlowInstructionsGeneratorWorker(scopingElement: KtElement, override val returnSubroutine: KtElement) : ControlFlowBuilder {
 
-        val pseudocode: PseudocodeImpl
-        private val error: Label
-        private val sink: Label
+        val pseudocode: PseudocodeImpl = PseudocodeImpl(scopingElement)
+        private val error: Label = pseudocode.createLabel("error", null)
+        private val sink: Label = pseudocode.createLabel("sink", null)
 
         private val valueFactory = object : PseudoValueFactoryImpl() {
             override fun newValue(element: KtElement?, instruction: InstructionWithValue?): PseudoValue {
@@ -104,23 +104,13 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             }
         }
 
-        init {
-            this.pseudocode = PseudocodeImpl(scopingElement)
-            this.error = pseudocode.createLabel("error", null)
-            this.sink = pseudocode.createLabel("sink", null)
-        }
-
         private fun add(instruction: Instruction) {
             pseudocode.addInstruction(instruction)
         }
 
-        override fun createUnboundLabel(): Label {
-            return pseudocode.createLabel("L" + labelCount++, null)
-        }
+        override fun createUnboundLabel(): Label = pseudocode.createLabel("L" + labelCount++, null)
 
-        override fun createUnboundLabel(name: String): Label {
-            return pseudocode.createLabel("L" + labelCount++, name)
-        }
+        override fun createUnboundLabel(name: String): Label = pseudocode.createLabel("L" + labelCount++, name)
 
         override fun enterLoop(expression: KtLoopExpression): LoopInfo {
             val info = LoopInfo(
@@ -166,19 +156,13 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override val currentSubroutine: KtElement
             get() = pseudocode.correspondingElement
 
-        override fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label? {
-            return elementToLoopInfo[loop]?.conditionEntryPoint
-        }
+        override fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label? = elementToLoopInfo[loop]?.conditionEntryPoint
 
-        override fun getLoopExitPoint(loop: KtLoopExpression): Label? {
-            // It's quite possible to have null here, see testBreakInsideLocal
-            return elementToLoopInfo[loop]?.exitPoint
-        }
+        override fun getLoopExitPoint(loop: KtLoopExpression): Label? =// It's quite possible to have null here, see testBreakInsideLocal
+                elementToLoopInfo[loop]?.exitPoint
 
-        override fun getSubroutineExitPoint(labelElement: KtElement): Label? {
-            // It's quite possible to have null here, e.g. for non-local returns (see KT-10823)
-            return elementToSubroutineInfo[labelElement]?.exitPoint
-        }
+        override fun getSubroutineExitPoint(labelElement: KtElement): Label? =// It's quite possible to have null here, e.g. for non-local returns (see KT-10823)
+                elementToSubroutineInfo[labelElement]?.exitPoint
 
         private val currentScope: BlockScope
             get() = blockScopes.peek()
@@ -233,17 +217,13 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             add(MarkInstruction(element, currentScope))
         }
 
-        override fun getBoundValue(element: KtElement?): PseudoValue? {
-            return pseudocode.getElementValue(element)
-        }
+        override fun getBoundValue(element: KtElement?): PseudoValue? = pseudocode.getElementValue(element)
 
         override fun bindValue(value: PseudoValue, element: KtElement) {
             pseudocode.bindElementToValue(element, value)
         }
 
-        override fun newValue(element: KtElement?): PseudoValue {
-            return valueFactory.newValue(element, null)
-        }
+        override fun newValue(element: KtElement?): PseudoValue = valueFactory.newValue(element, null)
 
         override fun returnValue(returnExpression: KtExpression, returnValue: PseudoValue, subroutine: KtElement) {
             val exitPoint = getSubroutineExitPoint(subroutine) ?: return
@@ -396,9 +376,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override fun predefinedOperation(
                 expression: KtExpression,
                 operation: ControlFlowBuilder.PredefinedOperation,
-                inputValues: List<PseudoValue>): OperationInstruction {
-            return magic(expression, expression, inputValues, getMagicKind(operation))
-        }
+                inputValues: List<PseudoValue>): OperationInstruction = magic(expression, expression, inputValues, getMagicKind(operation))
 
         private fun getMagicKind(operation: ControlFlowBuilder.PredefinedOperation) = when (operation) {
             ControlFlowBuilder.PredefinedOperation.AND -> MagicKind.AND
@@ -417,7 +395,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         private fun read(
                 expression: KtExpression,
                 resolvedCall: ResolvedCall<*>? = null,
-                receiverValues: Map<PseudoValue, ReceiverValue> = emptyMap<PseudoValue, ReceiverValue>()
+                receiverValues: Map<PseudoValue, ReceiverValue> = emptyMap()
         ) = read(expression, if (resolvedCall != null) AccessTarget.Call(resolvedCall) else AccessTarget.BlackBox, receiverValues)
     }
 

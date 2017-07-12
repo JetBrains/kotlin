@@ -30,7 +30,7 @@ class ConditionalJumpInstruction(
         val onTrue: Boolean,
         blockScope: BlockScope,
         targetLabel: Label,
-        val conditionValue: PseudoValue?) : AbstractJumpInstruction(element, targetLabel, blockScope) {
+        private val conditionValue: PseudoValue?) : AbstractJumpInstruction(element, targetLabel, blockScope) {
     private var _nextOnTrue: Instruction? = null
     private var _nextOnFalse: Instruction? = null
 

@@ -30,9 +30,7 @@ class PseudocodeLabel internal constructor(
 
     override var targetInstructionIndex = -1
 
-    override fun toString(): String {
-        return if (comment == null) name else "$name [$comment]"
-    }
+    override fun toString(): String = if (comment == null) name else "$name [$comment]"
 
     override fun resolveToInstruction(): Instruction {
         val index = targetInstructionIndex
@@ -43,7 +41,6 @@ class PseudocodeLabel internal constructor(
         return instructionList[index]
     }
 
-    fun copy(newPseudocode: PseudocodeImpl, newLabelIndex: Int): PseudocodeLabel {
-        return PseudocodeLabel(newPseudocode, "L" + newLabelIndex, "copy of $name, $comment")
-    }
+    fun copy(newPseudocode: PseudocodeImpl, newLabelIndex: Int): PseudocodeLabel =
+            PseudocodeLabel(newPseudocode, "L" + newLabelIndex, "copy of $name, $comment")
 }
