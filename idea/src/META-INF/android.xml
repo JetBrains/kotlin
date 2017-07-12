@@ -63,6 +63,7 @@
 
         <referencesSearch implementation="org.jetbrains.kotlin.AndroidExtensionsReferenceSearchExecutor"/>
 
+        <externalProjectDataService implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidGradleLibraryDataService"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

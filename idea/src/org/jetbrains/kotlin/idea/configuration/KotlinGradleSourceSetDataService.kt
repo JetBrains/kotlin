@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
+import com.intellij.openapi.externalSystem.model.project.LibraryData
+import com.intellij.openapi.externalSystem.model.project.LibraryDependencyData
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
@@ -25,6 +27,7 @@ import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjec
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
@@ -33,6 +36,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.*
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.inspections.gradle.getResolvedKotlinStdlibVersionByModuleData
@@ -92,7 +96,44 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<ModuleData, Vo
     }
 }
 
-private fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): TargetPlatformKind<*>? {
+class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, Void>() {
+    override fun getTargetDataKey() = ProjectKeys.LIBRARY
+
+    override fun postProcess(
+            toImport: MutableCollection<DataNode<LibraryData>>,
+            projectData: ProjectData?,
+            project: Project,
+            modelsProvider: IdeModifiableModelsProvider
+    ) {
+        for (libraryDataNode in toImport) {
+            val ideLibrary = modelsProvider.findIdeLibrary(libraryDataNode.data) ?: continue
+
+            val projectDataNode = libraryDataNode.parent!! as DataNode<ProjectData>
+            val ownerModule = findOwnerModule(libraryDataNode.data, projectDataNode) ?: continue
+            val targetPlatform = detectPlatformByPlugin(ownerModule)
+            if (targetPlatform == TargetPlatformKind.JavaScript) {
+                val modifiableModel = modelsProvider.getModifiableLibraryModel(ideLibrary) as LibraryEx.ModifiableModelEx
+                modifiableModel.kind = JSLibraryKind
+            }
+        }
+    }
+}
+
+private fun findOwnerModule(libraryData: LibraryData,
+                            projectDataNode: DataNode<ProjectData>): DataNode<ModuleData>? {
+    return projectDataNode.children.firstOrNull { dataNode ->
+        if (dataNode.data !is ModuleData) return@firstOrNull false
+        val sourceSetDataNodes = dataNode.children.filter { it.data is GradleSourceSetData }
+        sourceSetDataNodes.any { it.hasDependency(libraryData) }
+    } as DataNode<ModuleData>?
+}
+
+private fun DataNode<*>.hasDependency(libraryData: LibraryData): Boolean =
+        children.any {
+            (it.data as? LibraryDependencyData)?.target == libraryData
+        }
+
+fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): TargetPlatformKind<*>? {
     return when (moduleNode.platformPluginId) {
         "kotlin-platform-jvm" -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
         "kotlin-platform-js" -> TargetPlatformKind.JavaScript

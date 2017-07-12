@@ -20,12 +20,15 @@ import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -428,6 +431,10 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("-main callTest",
                                 compilerSettings!!.additionalArguments)
         }
+
+        val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
+        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
+        assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
     }
 
     @Test
@@ -885,6 +892,10 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         with (facetSettings("js-module")) {
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
         }
+
+        val rootManager = ModuleRootManager.getInstance(getModule("js-module"))
+        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
+        assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
     }
 
     @Test
