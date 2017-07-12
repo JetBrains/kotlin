@@ -38,6 +38,7 @@ import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.CharsetToolkit
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.text.VersionComparatorUtil
@@ -87,8 +88,9 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
     @Volatile private var checkQueued = false
     @Volatile private var lastUpdateStatus: PluginUpdateStatus? = null
 
-    fun kotlinFileEdited() {
-        if (ApplicationManager.getApplication().isUnitTestMode) return
+    fun kotlinFileEdited(file: VirtualFile) {
+        if (!file.isInLocalFileSystem) return
+        if (ApplicationManager.getApplication().isUnitTestMode || ApplicationManager.getApplication().isHeadlessEnvironment) return
         if (!UpdateSettings.getInstance().isCheckNeeded) return
 
         val lastUpdateTime = java.lang.Long.parseLong(propertiesComponent.getValue(PROPERTY_NAME, "0"))
