@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.spring.tests.generate;
 
+import com.intellij.idea.Bombed;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -49,6 +50,9 @@ public class GenerateSpringDependencyActionTestGenerated extends AbstractGenerat
     }
 
     @TestMetadata("autowiredDependencies/multiplePropertiesAnnotationConfig.kt")
+    @Bombed(day = 1, month = 10, year = 2017,
+            description = "suffer from IDEA bug",
+            user = "nicolay.mitropolsky")
     public void testAutowiredDependencies_MultiplePropertiesAnnotationConfig() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/generate/autowiredDependencies/multiplePropertiesAnnotationConfig.kt");
         doTest(fileName);

@@ -37,13 +37,19 @@ abstract class AbstractGenerateSpringDependencyActionTest : AbstractCodeInsightA
     }
 
     override fun configureExtra(mainFilePath: String, mainFileText: String) {
+        val packagePath = mainFileText.lines().let { it.find { it.trim().startsWith("package") } }
+                                  ?.removePrefix("package")
+                                  ?.trim()?.replace(".", "/") ?: ""
+        val mainFilePathInProject = packagePath + "/" + File(mainFilePath).name
+        myFixture.addFileToProject(mainFilePathInProject, mainFileText)
+
         configFilePath = InTextDirectivesUtils.findStringWithPrefixes(mainFileText, "// CONFIG_FILE: ")?.let {
             "${PathUtil.getParentPath(mainFilePath)}/$it"
-        } ?: mainFilePath
+        } ?: mainFilePathInProject
         val springFileSet = TestFixtureExtension
                 .getFixture<SpringTestFixtureExtension>()!!
                 .configureFileSet(myFixture, listOf(configFilePath!!))
-        if (configFilePath != mainFilePath && PathUtil.getFileName(configFilePath!!) != "spring-config.xml") {
+        if (configFilePath != mainFilePathInProject && PathUtil.getFileName(configFilePath!!) != "spring-config.xml") {
             configFile = springFileSet.files.single().file!!
         }
 
