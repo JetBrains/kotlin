@@ -3,6 +3,22 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.1.3-2
+
+#### Fixes
+
+-   Noarg compiler plugin reverted to 1.1.2 behavior: by default, it will not run any initialization code
+    from the generated default constructor. If you want to run initializers, you need to enable
+    the corresponding option as described in the documentation.
+    Note that if a @noarg class has initializers that depend on constructor parameters, you will get incorrect
+    compiler behavior, so you shouldn't enable this option if you have such classes in your project.
+    This resolves [`KT-18667`](https://youtrack.jetbrains.com/issue/KT-18667) and [`KT-18668`](https://youtrack.jetbrains.com/issue/KT-18668).
+- [`KT-18689`](https://youtrack.jetbrains.com/issue/KT-18689) Incorrect bytecode generated when passing a bound member reference to an inline function with default argument values
+- [`KT-18377`](https://youtrack.jetbrains.com/issue/KT-18377) Syntax error while generating kapt stubs
+- [`KT-18411`](https://youtrack.jetbrains.com/issue/KT-18411) Slow debugger step-in into inlined function
+- [`KT-18687`](https://youtrack.jetbrains.com/issue/KT-18687) Deadlock in resolve with Kotlin 1.1.3
+- [`KT-18726`](https://youtrack.jetbrains.com/issue/KT-18726) Frequent UI hangs in 2017.2 EAPs
+
 ## 1.1.3
 
 ### Android
