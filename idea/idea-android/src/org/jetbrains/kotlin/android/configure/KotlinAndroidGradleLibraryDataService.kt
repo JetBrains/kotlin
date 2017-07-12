@@ -25,9 +25,8 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.configuration.detectPlatformByPlugin
-import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.framework.libraryKind
 
 class KotlinAndroidGradleLibraryDataService : AbstractProjectDataService<JavaProject, Void>() {
     override fun getTargetDataKey() = AndroidProjectKeys.JAVA_PROJECT
@@ -39,12 +38,12 @@ class KotlinAndroidGradleLibraryDataService : AbstractProjectDataService<JavaPro
             modelsProvider: IdeModifiableModelsProvider
     ) {
         for (dataNode in toImport) {
-            val platform = detectPlatformByPlugin(dataNode.parent as DataNode<ModuleData>)
-            if (platform == TargetPlatformKind.JavaScript) {
+            val targetLibraryKind = detectPlatformByPlugin(dataNode.parent as DataNode<ModuleData>)?.libraryKind
+            if (targetLibraryKind != null) {
                 for (dep in dataNode.data.jarLibraryDependencies) {
                     val library = modelsProvider.getLibraryByName(dep.name) as LibraryEx? ?: continue
                     if (library.kind == null) {
-                        (modelsProvider.getModifiableLibraryModel(library) as LibraryEx.ModifiableModelEx).kind = JSLibraryKind
+                        (modelsProvider.getModifiableLibraryModel(library) as LibraryEx.ModifiableModelEx).kind = targetLibraryKind
                     }
                 }
             }

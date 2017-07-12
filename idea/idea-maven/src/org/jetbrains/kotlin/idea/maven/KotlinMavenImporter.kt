@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.*
-import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.framework.libraryKind
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import java.io.File
 import java.util.*
@@ -90,12 +90,12 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         if (changes.dependencies) {
             scheduleDownloadStdlibSources(mavenProject, module)
 
-            val platform = detectPlatformByExecutions(mavenProject)
-            if (platform == TargetPlatformKind.JavaScript) {
+            val targetLibraryKind = detectPlatformByExecutions(mavenProject)?.libraryKind
+            if (targetLibraryKind != null) {
                 modifiableModelsProvider.getModifiableRootModel(module).orderEntries().forEachLibrary { library ->
                     if ((library as LibraryEx).kind == null) {
                         val model = modifiableModelsProvider.getModifiableLibraryModel(library) as LibraryEx.ModifiableModelEx
-                        model.kind = JSLibraryKind
+                        model.kind = targetLibraryKind
                     }
                     true
                 }

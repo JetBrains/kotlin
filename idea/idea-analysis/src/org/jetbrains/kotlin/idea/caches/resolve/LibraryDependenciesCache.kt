@@ -30,7 +30,7 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.core.util.CachedValue
 import org.jetbrains.kotlin.idea.core.util.getValue
-import org.jetbrains.kotlin.idea.framework.CommonLibraryDetectionUtil
+import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -72,7 +72,7 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
         val libraries = LinkedHashSet<Library>()
         val sdks = LinkedHashSet<Sdk>()
 
-        val platform = CommonLibraryDetectionUtil.getLibraryPlatform(library)
+        val platform = getLibraryPlatform(library)
 
         for (module in getLibraryUsageIndex().modulesLibraryIsUsedIn[library]) {
             if (!processedModules.add(module)) continue
@@ -84,7 +84,7 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
 
                 override fun visitLibraryOrderEntry(libraryOrderEntry: LibraryOrderEntry, value: Unit) {
                     val otherLibrary = libraryOrderEntry.library
-                    if (otherLibrary != null && compatiblePlatforms(platform, CommonLibraryDetectionUtil.getLibraryPlatform(otherLibrary))) {
+                    if (otherLibrary != null && compatiblePlatforms(platform, getLibraryPlatform(otherLibrary))) {
                         libraries.add(otherLibrary)
                     }
                 }
