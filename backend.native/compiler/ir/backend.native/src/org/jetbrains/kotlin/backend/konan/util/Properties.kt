@@ -37,8 +37,13 @@ fun Properties.saveToFile(file: File) = file.saveProperties(this)
 fun Properties.propertyString(key: String, suffix: String? = null): String?
     = this.getProperty(key.suffix(suffix))
 
+/**
+ * TODO: this method working with suffixes should be replaced with
+ * functionality borrowed from def file parser and unified for interop tool
+ * and kotlin compiler.
+ */
 fun Properties.propertyList(key: String, suffix: String? = null): List<String> {
-    val value = this.getProperty(key.suffix(suffix))
+    val value = this.getProperty(key.suffix(suffix)) ?: this.getProperty(key)
     return value?.split(' ') ?: emptyList()
 }
 
@@ -47,6 +52,6 @@ fun Properties.hasProperty(key: String, suffix: String? = null): Boolean
 
 fun String.suffix(suf: String?): String =
     if (suf == null) this
-    else "${this}.${suf}"
+    else "${this}.$suf"
 
 
