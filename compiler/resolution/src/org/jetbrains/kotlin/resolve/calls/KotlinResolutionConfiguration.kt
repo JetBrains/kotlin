@@ -21,3 +21,9 @@ val USE_NEW_INFERENCE
 
 val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
     get() = true
+
+val USE_CS_COMPLETER_TYPE = CSCompleterType.INITIAL
+
+enum class CSCompleterType {
+    INITIAL
+}
