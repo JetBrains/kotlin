@@ -31,7 +31,7 @@ class CollectionIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
     private val expectedReceiverType: KotlinType = ExpressionCodegen.getExpectedReceiverType(rangeCall)
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
-            object : AbstractBoundedValue(codegen, rangeCall) {
+            object : AbstractBoundedValue(codegen, rangeCall, isHighInclusive = false) {
                 override fun putHighLow(v: InstructionAdapter, type: Type) {
                     codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), v)
                     v.invokeinterface("java/util/Collection", "size", "()I")
