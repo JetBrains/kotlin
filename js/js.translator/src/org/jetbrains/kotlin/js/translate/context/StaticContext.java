@@ -850,6 +850,7 @@ public final class StaticContext {
                 MetadataProperties.setSideEffects(moduleRef, SideEffectKind.PURE);
                 lhsModuleRef = new JsArrayAccess(currentImports, new JsStringLiteral(moduleId));
             }
+            MetadataProperties.setLocalAlias(moduleRef, moduleName);
 
             JsExpressionStatement importStmt = new JsExpressionStatement(JsAstUtils.assignment(lhsModuleRef, moduleName.makeRef()));
             MetadataProperties.setExportedTag(importStmt, "imports:" + moduleId);

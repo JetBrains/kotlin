@@ -389,6 +389,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
             if (statement instanceof JsReturn) continue;
 
             statement = statement.deepCopy();
+            if (inlineFunctionDepth == 0) {
+                replaceExpressionsWithLocalAliases(statement);
+            }
+
             if (statement instanceof JsVars) {
                 JsVars jsVars = (JsVars) statement;
                 String tag = getImportTag(jsVars);
@@ -441,6 +445,28 @@ public class JsInliner extends JsVisitorWithContextImpl {
                 MetadataProperties.setStaticRef(entry.getKey(), entry.getValue());
             }
         }
+    }
+
+    private static void replaceExpressionsWithLocalAliases(@NotNull JsStatement statement) {
+        new JsVisitorWithContextImpl() {
+            @Override
+            public void endVisit(@NotNull JsNameRef x, @NotNull JsContext ctx) {
+                replaceIfNecessary(x, ctx);
+            }
+
+            @Override
+            public void endVisit(@NotNull JsArrayAccess x, @NotNull JsContext ctx) {
+                replaceIfNecessary(x, ctx);
+            }
+
+            private void replaceIfNecessary(@NotNull JsExpression expression, @NotNull JsContext context) {
+                JsName alias = MetadataProperties.getLocalAlias(expression);
+                if (alias != null) {
+                    context.replaceMe(alias.makeRef());
+                }
+            }
+
+        }.accept(statement);
     }
 
     private static boolean isSuspendWithCurrentContinuation(@Nullable DeclarationDescriptor descriptor) {
@@ -497,9 +523,11 @@ public class JsInliner extends JsVisitorWithContextImpl {
                 return false;
             }
             sb.append(".");
-            if (!extractImportTagImpl(arrayAccess.getIndexExpression(), sb)) {
+            if (!(arrayAccess.getIndexExpression() instanceof JsStringLiteral)) {
                 return false;
             }
+            JsStringLiteral stringLiteral = (JsStringLiteral) arrayAccess.getIndexExpression();
+            sb.append(JsToStringGenerationVisitor.javaScriptString(stringLiteral.getValue()));
             return true;
         }
         else {

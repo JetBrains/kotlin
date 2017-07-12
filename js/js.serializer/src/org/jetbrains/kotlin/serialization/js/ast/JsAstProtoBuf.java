@@ -625,6 +625,15 @@ public final class JsAstProtoBuf {
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SideEffects getSideEffects();
 
     /**
+     * <code>optional int32 local_alias = 5;</code>
+     */
+    boolean hasLocalAlias();
+    /**
+     * <code>optional int32 local_alias = 5;</code>
+     */
+    int getLocalAlias();
+
+    /**
      * <code>optional int32 simple_name_reference = 22;</code>
      */
     boolean hasSimpleNameReference();
@@ -896,6 +905,11 @@ public final class JsAstProtoBuf {
                 bitField0_ |= 0x00000008;
                 sideEffects_ = value;
               }
+              break;
+            }
+            case 40: {
+              bitField0_ |= 0x00000010;
+              localAlias_ = input.readInt32();
               break;
             }
             case 176: {
@@ -1302,6 +1316,21 @@ public final class JsAstProtoBuf {
       return sideEffects_;
     }
 
+    public static final int LOCAL_ALIAS_FIELD_NUMBER = 5;
+    private int localAlias_;
+    /**
+     * <code>optional int32 local_alias = 5;</code>
+     */
+    public boolean hasLocalAlias() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional int32 local_alias = 5;</code>
+     */
+    public int getLocalAlias() {
+      return localAlias_;
+    }
+
     public static final int SIMPLE_NAME_REFERENCE_FIELD_NUMBER = 22;
     /**
      * <code>optional int32 simple_name_reference = 22;</code>
@@ -1664,6 +1693,7 @@ public final class JsAstProtoBuf {
       location_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Location.getDefaultInstance();
       synthetic_ = false;
       sideEffects_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SideEffects.AFFECTS_STATE;
+      localAlias_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1774,6 +1804,9 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeEnum(4, sideEffects_.getNumber());
       }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeInt32(5, localAlias_);
+      }
       if (expressionCase_ == 22) {
         output.writeInt32(
             22, (int)((java.lang.Integer) expression_));
@@ -1865,6 +1898,10 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeEnumSize(4, sideEffects_.getNumber());
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(5, localAlias_);
       }
       if (expressionCase_ == 22) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -2056,6 +2093,8 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000004);
         sideEffects_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SideEffects.AFFECTS_STATE;
         bitField0_ = (bitField0_ & ~0x00000008);
+        localAlias_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000010);
         expressionCase_ = 0;
         expression_ = null;
         return this;
@@ -2097,6 +2136,10 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000008;
         }
         result.sideEffects_ = sideEffects_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.localAlias_ = localAlias_;
         if (expressionCase_ == 22) {
           result.expression_ = expression_;
         }
@@ -2178,6 +2221,9 @@ public final class JsAstProtoBuf {
         }
         if (other.hasSideEffects()) {
           setSideEffects(other.getSideEffects());
+        }
+        if (other.hasLocalAlias()) {
+          setLocalAlias(other.getLocalAlias());
         }
         switch (other.getExpressionCase()) {
           case SIMPLE_NAME_REFERENCE: {
@@ -2549,6 +2595,38 @@ public final class JsAstProtoBuf {
       public Builder clearSideEffects() {
         bitField0_ = (bitField0_ & ~0x00000008);
         sideEffects_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SideEffects.AFFECTS_STATE;
+        
+        return this;
+      }
+
+      private int localAlias_ ;
+      /**
+       * <code>optional int32 local_alias = 5;</code>
+       */
+      public boolean hasLocalAlias() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional int32 local_alias = 5;</code>
+       */
+      public int getLocalAlias() {
+        return localAlias_;
+      }
+      /**
+       * <code>optional int32 local_alias = 5;</code>
+       */
+      public Builder setLocalAlias(int value) {
+        bitField0_ |= 0x00000010;
+        localAlias_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 local_alias = 5;</code>
+       */
+      public Builder clearLocalAlias() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        localAlias_ = 0;
         
         return this;
       }

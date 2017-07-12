@@ -262,6 +262,9 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         )
         expression.synthetic = proto.synthetic
         expression.sideEffects = map(proto.sideEffects)
+        if (proto.hasLocalAlias()) {
+            expression.localAlias = deserializeName(proto.localAlias)
+        }
         return expression
     }
 

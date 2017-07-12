@@ -40,6 +40,7 @@ message Expression {
     optional Location location = 2;
     optional bool synthetic = 3 [default = false];
     optional SideEffects side_effects = 4 [default = AFFECTS_STATE];
+    optional int32 local_alias = 5;
 
     oneof expression {
         int32 simple_name_reference = 22;

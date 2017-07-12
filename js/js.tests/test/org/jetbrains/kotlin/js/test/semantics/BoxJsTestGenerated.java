@@ -4748,6 +4748,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineableAliasForExternalDeclaration.kt")
+        public void testInlineableAliasForExternalDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/inlineableAliasForExternalDeclaration.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("internalNameClash.kt")
         public void testInternalNameClash() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/internalNameClash.kt");

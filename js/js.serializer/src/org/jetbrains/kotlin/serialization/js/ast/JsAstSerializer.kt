@@ -435,6 +435,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         with (visitor.builder) {
             synthetic = expression.synthetic
             sideEffects = map(expression.sideEffects)
+            expression.localAlias?.let { localAlias = serialize(it) }
         }
 
         return visitor.builder.build()
