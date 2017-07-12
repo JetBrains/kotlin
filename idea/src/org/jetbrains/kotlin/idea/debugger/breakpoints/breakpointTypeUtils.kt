@@ -103,7 +103,7 @@ fun computeVariants(
     if (mainMethod != null) {
         result.add(kotlinBreakpointType.KotlinLineBreakpointVariant(
                 XSourcePositionImpl.createByElement(mainMethod),
-                CodeInsightUtils.getTopmostElementAtOffset(elementAt, pos.offset) ?: mainMethod))
+                CodeInsightUtils.getTopmostElementAtOffset(elementAt, pos.offset)))
     }
 
     lambdas.forEachIndexed { ordinal, lambda ->
