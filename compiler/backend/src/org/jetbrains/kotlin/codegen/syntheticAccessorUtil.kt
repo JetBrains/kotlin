@@ -23,6 +23,7 @@ enum class FieldAccessorKind(val suffix: String) {
     NORMAL("p"),
     IN_CLASS_COMPANION("cp"),
     FIELD_FROM_LOCAL("lp"),
+    LATEINIT_INTRINSIC("li"),
 }
 
 private fun CallableMemberDescriptor.getJvmName() =

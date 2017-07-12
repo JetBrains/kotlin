@@ -1356,6 +1356,21 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/lateinit")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Lateinit extends AbstractDiagnosticsTestWithStdLibUsingJavac {
+        public void testAllFilesPresentInLateinit() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/lateinit"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("isInitialized.kt")
+        public void testIsInitialized() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/lateinit/isInitialized.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/native")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -522,7 +522,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
 
         StackValue.Property propValue = codegen.intermediateValueForProperty(
-                propertyDescriptor, true, false, null, true, StackValue.LOCAL_0, null);
+                propertyDescriptor, true, false, null, true, StackValue.LOCAL_0, null, false
+        );
 
         ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall = bindingContext.get(PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor);
         if (provideDelegateResolvedCall == null) {
@@ -743,9 +744,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                    boolean syntheticBackingField =
-                            accessor instanceof AccessorForPropertyBackingField &&
-                            ((AccessorForPropertyBackingField) accessor).getFieldAccessorKind() == FieldAccessorKind.FIELD_FROM_LOCAL;
+                    FieldAccessorKind fieldAccessorKind = accessor instanceof AccessorForPropertyBackingField
+                                                          ? ((AccessorForPropertyBackingField) accessor).getFieldAccessorKind() : null;
+                    boolean syntheticBackingField = fieldAccessorKind == FieldAccessorKind.FIELD_FROM_LOCAL;
                     boolean forceFieldForCompanionProperty = JvmAbi.isPropertyWithBackingFieldInOuterClass(original) &&
                                                              !isCompanionObject(accessor.getContainingDeclaration());
                     boolean forceField = forceFieldForCompanionProperty ||
@@ -753,7 +754,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                                          original.getVisibility() == JavaVisibilities.PROTECTED_STATIC_VISIBILITY;
                     StackValue property = codegen.intermediateValueForProperty(
                             original, forceField, syntheticBackingField, accessor.getSuperCallTarget(),
-                            forceFieldForCompanionProperty, StackValue.none(), null
+                            forceFieldForCompanionProperty, StackValue.none(), null,
+                            fieldAccessorKind == FieldAccessorKind.LATEINIT_INTRINSIC
                     );
 
                     InstructionAdapter iv = codegen.v;

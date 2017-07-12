@@ -1,0 +1,78 @@
+package
+
+public fun onNonAccessible(): kotlin.Unit
+public fun onNonLateinit(): kotlin.Unit
+
+public interface Base {
+    public abstract var x: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Foo : Base {
+    public constructor Foo()
+    public final var nonLateInit: kotlin.Int
+    public open override /*1*/ lateinit var x: kotlin.String
+    private final lateinit var y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final inline fun inlineFun(): kotlin.Unit
+    public final fun ok(): kotlin.Unit
+    public final fun onLiteral(): kotlin.Unit
+    public final fun onNonLateinit(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class InnerSubclass : Foo {
+        public constructor InnerSubclass()
+        public final override /*1*/ /*fake_override*/ var nonLateInit: kotlin.Int
+        public open override /*1*/ lateinit /*fake_override*/ var x: kotlin.String
+        invisible_fake final override /*1*/ lateinit /*fake_override*/ var y: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final inline override /*1*/ /*fake_override*/ fun inlineFun(): kotlin.Unit
+        public final fun innerOk(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ fun ok(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ fun onLiteral(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ fun onNonLateinit(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class FooImpl : Foo {
+    public constructor FooImpl()
+    public final override /*1*/ /*fake_override*/ var nonLateInit: kotlin.Int
+    public open override /*1*/ lateinit /*fake_override*/ var x: kotlin.String
+    invisible_fake final override /*1*/ lateinit /*fake_override*/ var y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final inline override /*1*/ /*fake_override*/ fun inlineFun(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun ok(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun onLiteral(): kotlin.Unit
+    public final fun onNonAccessible(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun onNonLateinit(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OtherFooImpl : Foo {
+    public constructor OtherFooImpl()
+    public final override /*1*/ /*fake_override*/ var nonLateInit: kotlin.Int
+    public open override /*1*/ lateinit /*fake_override*/ var x: kotlin.String
+    invisible_fake final override /*1*/ lateinit /*fake_override*/ var y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final inline override /*1*/ /*fake_override*/ fun inlineFun(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun ok(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun onLiteral(): kotlin.Unit
+    public final fun onNonAccessible(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun onNonLateinit(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Unrelated {
+    private constructor Unrelated()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun onNonAccessible(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -484,6 +484,10 @@ public interface Errors {
     DiagnosticFactory0<KtProperty> BACKING_FIELD_IN_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory1<PsiElement, String> INAPPLICABLE_LATEINIT_MODIFIER = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, PropertyDescriptor> LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory2<KtModifierListOwner, String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = DiagnosticFactory2.create(ERROR, ABSTRACT_MODIFIER);
 

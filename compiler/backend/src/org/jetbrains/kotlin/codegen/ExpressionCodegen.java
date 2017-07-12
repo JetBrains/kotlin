@@ -1722,7 +1722,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 receiver = StackValue.receiverWithoutReceiverArgument(receiver);
             }
 
-            return intermediateValueForProperty(propertyDescriptor, directToField, directToField, superCallTarget, false, receiver, resolvedCall);
+            return intermediateValueForProperty(propertyDescriptor, directToField, directToField, superCallTarget, false, receiver,
+                                                resolvedCall, false);
         }
 
         if (descriptor instanceof TypeAliasDescriptor) {
@@ -1874,7 +1875,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @Nullable ClassDescriptor superCallTarget,
             @NotNull StackValue receiver
     ) {
-        return intermediateValueForProperty(propertyDescriptor, forceField, false, superCallTarget, false, receiver, null);
+        return intermediateValueForProperty(propertyDescriptor, forceField, false, superCallTarget, false, receiver, null, false);
     }
 
     private CodegenContext getBackingFieldContext(
@@ -1892,9 +1893,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 return context.getParentContext();
             // For companion object property, backing field lives in object containing class
             // Otherwise, it lives in its containing declaration
-            case IN_CLASS_COMPANION: return context.findParentContextWithDescriptor(containingDeclaration.getContainingDeclaration());
-            case FIELD_FROM_LOCAL: return context.findParentContextWithDescriptor(containingDeclaration);
-            default: throw new IllegalStateException();
+            case IN_CLASS_COMPANION:
+                return context.findParentContextWithDescriptor(containingDeclaration.getContainingDeclaration());
+            case FIELD_FROM_LOCAL:
+                return context.findParentContextWithDescriptor(containingDeclaration);
+            case LATEINIT_INTRINSIC:
+                return context.findParentContextWithDescriptor(containingDeclaration);
+            default:
+                throw new IllegalStateException("Unknown field accessor kind: " + accessorKind);
         }
     }
 
@@ -1905,7 +1911,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @Nullable ClassDescriptor superCallTarget,
             boolean skipAccessorsForPrivateFieldInOuterClass,
             @NotNull StackValue receiver,
-            @Nullable ResolvedCall resolvedCall
+            @Nullable ResolvedCall resolvedCall,
+            boolean skipLateinitAssertion
     ) {
         if (propertyDescriptor instanceof SyntheticJavaPropertyDescriptor) {
             return intermediateValueForSyntheticExtensionProperty((SyntheticJavaPropertyDescriptor) propertyDescriptor, receiver);
@@ -1917,13 +1924,21 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
 
-        FieldAccessorKind fieldAccessorKind = FieldAccessorKind.NORMAL;
         boolean isBackingFieldInClassCompanion = JvmAbi.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
-        if (isBackingFieldInClassCompanion && (forceField || propertyDescriptor.isConst() && Visibilities.isPrivate(propertyDescriptor.getVisibility()))) {
+        FieldAccessorKind fieldAccessorKind;
+        if (skipLateinitAssertion) {
+            fieldAccessorKind = FieldAccessorKind.LATEINIT_INTRINSIC;
+        }
+        else if (isBackingFieldInClassCompanion &&
+            (forceField || propertyDescriptor.isConst() && Visibilities.isPrivate(propertyDescriptor.getVisibility()))) {
             fieldAccessorKind = FieldAccessorKind.IN_CLASS_COMPANION;
         }
-        else if (syntheticBackingField && context.getFirstCrossInlineOrNonInlineContext().getParentContext().getContextDescriptor() != containingDeclaration) {
+        else if ((syntheticBackingField &&
+                  context.getFirstCrossInlineOrNonInlineContext().getParentContext().getContextDescriptor() != containingDeclaration)) {
             fieldAccessorKind = FieldAccessorKind.FIELD_FROM_LOCAL;
+        }
+        else {
+            fieldAccessorKind = FieldAccessorKind.NORMAL;
         }
         boolean isStaticBackingField = DescriptorUtils.isStaticDeclaration(propertyDescriptor) ||
                                        AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor);
@@ -1937,15 +1952,24 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         CallableMethod callableSetter = null;
 
         CodegenContext backingFieldContext = getBackingFieldContext(fieldAccessorKind, containingDeclaration);
-        DeclarationDescriptor ownerDescriptor = containingDeclaration;
+        boolean isPrivateProperty = (AsmUtil.getVisibilityForBackingField(propertyDescriptor, isDelegatedProperty) & ACC_PRIVATE) != 0;
+        DeclarationDescriptor ownerDescriptor;
         boolean skipPropertyAccessors;
 
         PropertyDescriptor originalPropertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
 
-        if (fieldAccessorKind != FieldAccessorKind.NORMAL) {
-            int flags = AsmUtil.getVisibilityForBackingField(propertyDescriptor, isDelegatedProperty);
+        if (fieldAccessorKind == FieldAccessorKind.LATEINIT_INTRINSIC) {
+            skipPropertyAccessors = !isPrivateProperty || context.getClassOrPackageParentContext() == backingFieldContext;
+
+            if (!skipPropertyAccessors) {
+                propertyDescriptor = (AccessorForPropertyBackingField)
+                        backingFieldContext.getAccessor(propertyDescriptor, fieldAccessorKind, delegateType, superCallTarget);
+            }
+            ownerDescriptor = propertyDescriptor;
+        }
+        else if (fieldAccessorKind == FieldAccessorKind.IN_CLASS_COMPANION || fieldAccessorKind == FieldAccessorKind.FIELD_FROM_LOCAL) {
             boolean isInlinedConst = propertyDescriptor.isConst() && state.getShouldInlineConstVals();
-            skipPropertyAccessors = isInlinedConst || (flags & ACC_PRIVATE) == 0 || skipAccessorsForPrivateFieldInOuterClass;
+            skipPropertyAccessors = isInlinedConst || !isPrivateProperty || skipAccessorsForPrivateFieldInOuterClass;
 
             if (!skipPropertyAccessors) {
                 //noinspection ConstantConditions
@@ -1956,12 +1980,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                         "Unexpected accessor descriptor: " + propertyDescriptor;
                 ownerDescriptor = propertyDescriptor;
             }
+            else {
+                ownerDescriptor = containingDeclaration;
+            }
         }
         else {
-            if (!isBackingFieldInClassCompanion) {
-                ownerDescriptor = propertyDescriptor;
-            }
             skipPropertyAccessors = forceField;
+            ownerDescriptor = isBackingFieldInClassCompanion ? containingDeclaration : propertyDescriptor;
         }
 
         if (!skipPropertyAccessors) {
@@ -2005,10 +2030,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             fieldName = KotlinTypeMapper.mapDefaultFieldName(propertyDescriptor, isDelegatedProperty);
         }
 
-        return StackValue.property(propertyDescriptor, backingFieldOwner,
-                                   typeMapper.mapType(
-                                           isDelegatedProperty && forceField ? delegateType : propertyDescriptor.getOriginal().getType()),
-                                   isStaticBackingField, fieldName, callableGetter, callableSetter, receiver, this, resolvedCall);
+        return StackValue.property(
+                propertyDescriptor, backingFieldOwner,
+                typeMapper.mapType(isDelegatedProperty && forceField ? delegateType : propertyDescriptor.getOriginal().getType()),
+                isStaticBackingField, fieldName, callableGetter, callableSetter, receiver, this, resolvedCall, skipLateinitAssertion
+        );
     }
 
     @NotNull
@@ -2022,7 +2048,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         FunctionDescriptor setMethod = propertyDescriptor.getSetMethod();
         CallableMethod callableSetter =
                 setMethod != null ? typeMapper.mapToCallableMethod(context.accessibleDescriptor(setMethod, null), false) : null;
-        return StackValue.property(propertyDescriptor, null, type, false, null, callableGetter, callableSetter, receiver, this, null);
+        return StackValue.property(propertyDescriptor, null, type, false, null, callableGetter, callableSetter, receiver, this,
+                                   null, false);
     }
 
     @Override
@@ -2226,7 +2253,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     ) {
         boolean isSuspendCall = CoroutineCodegenUtilKt.isSuspendNoInlineCall(resolvedCall);
         boolean isConstructor = resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
-        putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspendCall, isConstructor);
+        if (!(callableMethod instanceof IntrinsicWithSpecialReceiver)) {
+            putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspendCall, isConstructor);
+        }
 
         callGenerator.processAndPutHiddenParameters(false);
 
@@ -2356,12 +2385,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     ) {
         if (callElement == null) return defaultCallGenerator;
 
+        boolean isIntrinsic = descriptor instanceof CallableMemberDescriptor &&
+                              state.getIntrinsics().getIntrinsic((CallableMemberDescriptor) descriptor) != null;
+
+        boolean isInline = (InlineUtil.isInline(descriptor) && !isIntrinsic) || InlineUtil.isArrayConstructorWithLambda(descriptor);
+
         // We should inline callable containing reified type parameters even if inline is disabled
         // because they may contain something to reify and straight call will probably fail at runtime
-        boolean isInline = (!state.isInlineDisabled() || InlineUtil.containsReifiedTypeParameters(descriptor)) &&
-                           (InlineUtil.isInline(descriptor) || InlineUtil.isArrayConstructorWithLambda(descriptor));
-
-        if (!isInline) return defaultCallGenerator;
+        boolean shouldInline = isInline && (!state.isInlineDisabled() || InlineUtil.containsReifiedTypeParameters(descriptor));
+        if (!shouldInline) return defaultCallGenerator;
 
         FunctionDescriptor original =
                 CoroutineCodegenUtilKt.getOriginalSuspendFunctionView(
@@ -3606,13 +3638,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             if (asProperty && variableDescriptor instanceof PropertyDescriptor) {
                 StackValue.Property propertyValue = intermediateValueForProperty(
-                        (PropertyDescriptor) variableDescriptor,
-                        true,
-                        false,
-                        null,
-                        true,
-                        StackValue.LOCAL_0,
-                        null);
+                        (PropertyDescriptor) variableDescriptor, true, false, null, true, StackValue.LOCAL_0, null, false
+                );
 
                 propertyValue.store(invokeFunction(call, resolvedCall, receiverStackValue), v);
             }
