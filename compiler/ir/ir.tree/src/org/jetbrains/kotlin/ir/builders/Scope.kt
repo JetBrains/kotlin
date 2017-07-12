@@ -50,9 +50,14 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         return if (nameHint != null) "tmp${index}_$nameHint" else "tmp$index"
     }
 
-    fun createTemporaryVariable(irExpression: IrExpression, nameHint: String? = null, isMutable: Boolean = false): IrVariable =
+    fun createTemporaryVariable(
+            irExpression: IrExpression,
+            nameHint: String? = null,
+            isMutable: Boolean = false,
+            origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+    ): IrVariable =
             IrVariableImpl(
-                    irExpression.startOffset, irExpression.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                    irExpression.startOffset, irExpression.endOffset, origin,
                     createDescriptorForTemporaryVariable(irExpression.type, nameHint, isMutable),
                     irExpression
             )

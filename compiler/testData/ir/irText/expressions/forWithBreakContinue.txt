@@ -3,14 +3,14 @@ FILE /forWithBreakContinue.kt
     VALUE_PARAMETER value-parameter ss: kotlin.collections.List<kotlin.String>
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
-        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+        VAR FOR_LOOP_ITERATOR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
           CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
             $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
           condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
             $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
-            VAR val s: kotlin.String
+            VAR FOR_LOOP_VARIABLE val s: kotlin.String
               CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
             BLOCK type=kotlin.Nothing origin=null
@@ -19,26 +19,26 @@ FILE /forWithBreakContinue.kt
     VALUE_PARAMETER value-parameter ss: kotlin.collections.List<kotlin.String>
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
-        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+        VAR FOR_LOOP_ITERATOR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
           CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
             $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> origin=null
         WHILE label=OUTER origin=FOR_LOOP_INNER_WHILE
           condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
             $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
-            VAR val s1: kotlin.String
+            VAR FOR_LOOP_VARIABLE val s1: kotlin.String
               CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
             BLOCK type=kotlin.Nothing origin=null
               BLOCK type=kotlin.Unit origin=FOR_LOOP
-                VAR IR_TEMPORARY_VARIABLE val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
+                VAR FOR_LOOP_ITERATOR val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
                   CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
                     $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> origin=null
                 WHILE label=INNER origin=FOR_LOOP_INNER_WHILE
                   condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
                     $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
                   body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
-                    VAR val s2: kotlin.String
+                    VAR FOR_LOOP_VARIABLE val s2: kotlin.String
                       CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
                         $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
                     BLOCK type=kotlin.Nothing origin=null
@@ -50,14 +50,14 @@ FILE /forWithBreakContinue.kt
     VALUE_PARAMETER value-parameter ss: kotlin.collections.List<kotlin.String>
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
-        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+        VAR FOR_LOOP_ITERATOR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
           CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
             $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
           condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
             $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
-            VAR val s: kotlin.String
+            VAR FOR_LOOP_VARIABLE val s: kotlin.String
               CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
             BLOCK type=kotlin.Nothing origin=null
@@ -66,26 +66,26 @@ FILE /forWithBreakContinue.kt
     VALUE_PARAMETER value-parameter ss: kotlin.collections.List<kotlin.String>
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
-        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+        VAR FOR_LOOP_ITERATOR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
           CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
             $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> origin=null
         WHILE label=OUTER origin=FOR_LOOP_INNER_WHILE
           condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
             $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
-            VAR val s1: kotlin.String
+            VAR FOR_LOOP_VARIABLE val s1: kotlin.String
               CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
             BLOCK type=kotlin.Nothing origin=null
               BLOCK type=kotlin.Unit origin=FOR_LOOP
-                VAR IR_TEMPORARY_VARIABLE val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
+                VAR FOR_LOOP_ITERATOR val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
                   CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
                     $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> origin=null
                 WHILE label=INNER origin=FOR_LOOP_INNER_WHILE
                   condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
                     $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
                   body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
-                    VAR val s2: kotlin.String
+                    VAR FOR_LOOP_VARIABLE val s2: kotlin.String
                       CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
                         $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
                     BLOCK type=kotlin.Nothing origin=null
