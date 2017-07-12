@@ -210,20 +210,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             val parentFqName = targetFqName.parent()
 
             val moduleDescriptor = resolutionFacade.moduleDescriptor
-            val imports = file.importDirectives
             val scopeToImport = getMemberScope(parentFqName, moduleDescriptor) ?: return ImportDescriptorResult.FAIL
-            val importedScopes = imports
-                    .filter { it.isAllUnder }
-                    .mapNotNull {
-                        val importPath = it.importPath
-                        if (importPath != null) {
-                            val fqName = importPath.fqName
-                            getMemberScope(fqName, moduleDescriptor)
-                        }
-                        else {
-                            null
-                        }
-                    }
 
             val filePackage = moduleDescriptor.getPackage(file.packageFqName)
 
@@ -233,38 +220,57 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                 return !visibility.mustCheckInImports() || Visibilities.isVisibleIgnoringReceiver(descriptor, filePackage)
             }
 
-            val classNamesToImport = scopeToImport
-                    .getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS, { true })
-                    .filter(::isVisible)
-                    .map { it.name }
+            val kindFilter = DescriptorKindFilter.ALL.withoutKinds(DescriptorKindFilter.PACKAGES_MASK)
+            val allNamesToImport = scopeToImport.getDescriptorsFiltered(kindFilter, { true }).filter(::isVisible).map { it.name }.toSet()
 
-            val topLevelScope = resolutionFacade.getFileResolutionScope(file)
-            val conflictCandidates: List<ClassifierDescriptor> = classNamesToImport
-                    .flatMap {
-                        importedScopes.mapNotNull { scope -> scope.getContributedClassifier(it, NoLookupLocation.FROM_IDE) }
+            fun targetFqNameAndType(ref: KtReferenceExpression): Pair<FqName, Class<out Any>>? {
+                val descriptors = ref.resolveTargets()
+                val fqName: FqName? = descriptors.filter(::isVisible). map { it.importableFqName }.toSet().singleOrNull()
+                if (fqName != null) {
+                    return Pair(fqName, descriptors.elementAt(0).javaClass)
+                } else return null
+            }
+
+            val futureCheckMap = HashMap<KtSimpleNameExpression, Pair<FqName, Class<out Any>>>()
+            file.accept(object : KtVisitorVoid() {
+                override fun visitElement(element: PsiElement): Unit = element.acceptChildren(this)
+                override fun visitImportList(importList: KtImportList) {}
+                override fun visitPackageDirective(directive: KtPackageDirective) {}
+                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+                    val refName = expression.getReferencedNameAsName()
+                    if (allNamesToImport.contains(refName)) {
+                        val tgt = targetFqNameAndType(expression)
+                        if (tgt != null) {
+                            futureCheckMap += Pair(expression, tgt)
+                        }
                     }
-                    .filter { importedClass ->
-                        isVisible(importedClass)
-                            // check that class is really imported
-                            && topLevelScope.findClassifier(importedClass.name, NoLookupLocation.FROM_IDE) == importedClass
-                            // and not yet imported explicitly
-                            && imports.all { it.importPath != ImportPath(importedClass.importableFqName!!, false)  }
-                    }
-            val conflicts = detectNeededImports(conflictCandidates)
+                }
+            })
+
 
             val addedImport = addImport(parentFqName, true)
 
-            val newTopLevelScope = resolutionFacade.getFileResolutionScope(file)
-            if (!isAlreadyImported(target, newTopLevelScope, targetFqName)) {
+            if (!isAlreadyImported(target, resolutionFacade.getFileResolutionScope(file), targetFqName)) {
                 addedImport.delete()
                 return ImportDescriptorResult.FAIL
             }
 
-            for (conflict in conflicts) {
-                addImport(DescriptorUtils.getFqNameSafe(conflict), false)
+            dropRedundantExplicitImports(parentFqName)
+
+            val conflicts = futureCheckMap.mapNotNull { (expr, fqNameAndType) ->
+                if (targetFqNameAndType(expr) != fqNameAndType) fqNameAndType else null
+            }.map { it.first }.toSet()
+
+            fun isNotImported(fqName: FqName): Boolean {
+                return file.importDirectives.none { directive ->
+                    !directive.isAllUnder && directive.alias == null
+                    directive.importedFqName == fqName
+                }
             }
 
-            dropRedundantExplicitImports(parentFqName)
+            for (conflict in conflicts.filter(::isNotImported)) {
+                addImport(conflict, false)
+            }
 
             return ImportDescriptorResult.IMPORT_ADDED
         }

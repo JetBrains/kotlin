@@ -2,6 +2,7 @@
 package p
 
 import dependency.*
+import dependency.Date
 import java.util.*
 
-val d = Date("") //import dependency.Date is not necessary
+val d = Date()
