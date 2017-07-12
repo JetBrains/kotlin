@@ -32,8 +32,6 @@ ext.configureJvmProject = { Project project ->
             kotlinOptions.jdkHome = JDK_16
             doFirst {
                 System.setProperty("kotlin.colors.enabled", "false")
-                // TODO: fix daemon compatibility (if possible) and remove in-process compilation here
-                System.setProperty("kotlin.compiler.execution.strategy", "in-process")
             }
         }
 
