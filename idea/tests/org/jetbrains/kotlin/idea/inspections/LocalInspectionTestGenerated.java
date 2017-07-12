@@ -1458,6 +1458,63 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/unnecessaryVariable")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnnecessaryVariable extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInUnnecessaryVariable() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/unnecessaryVariable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("copyOfVal.kt")
+        public void testCopyOfVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("copyOfValWithExplicitType.kt")
+        public void testCopyOfValWithExplicitType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfValWithExplicitType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("copyOfVar.kt")
+        public void testCopyOfVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("paramCopy.kt")
+        public void testParamCopy() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/paramCopy.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyCopy.kt")
+        public void testPropertyCopy() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/propertyCopy.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleReturn.kt")
+        public void testSimpleReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/simpleReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelCopy.kt")
+        public void testTopLevelCopy() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/topLevelCopy.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varCopy.kt")
+        public void testVarCopy() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/varCopy.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/useExpressionBody")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
