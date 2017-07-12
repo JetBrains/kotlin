@@ -21,14 +21,20 @@ import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
+import com.intellij.psi.PsiElement
 import com.sun.jdi.*
 import com.sun.tools.jdi.LocalVariableImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_ASM_TYPE
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
+import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
+import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -192,4 +198,23 @@ fun isOneLineMethod(location: Location): Boolean {
     val lastLine = allLineLocations.lastOrNull()?.lineNumber()
 
     return firstLine != null && firstLine == lastLine
+}
+
+fun findElementAtLine(file: KtFile, line: Int): PsiElement? {
+    val lineStartOffset = file.getLineStartOffset(line) ?: return null
+    val lineEndOffset = file.getLineEndOffset(line) ?: return null
+
+    var topMostElement: PsiElement? = null
+    var elementAt: PsiElement?
+    for (offset in lineStartOffset until lineEndOffset) {
+        elementAt = file.findElementAt(offset)
+        if (elementAt != null) {
+            topMostElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, offset)
+            if (topMostElement is KtElement) {
+                break
+            }
+        }
+    }
+
+    return topMostElement
 }

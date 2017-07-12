@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_OBJECT
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_VOID
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_WIDE
-import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -235,24 +234,11 @@ private fun getInlineFunctionCallsIfAny(sourcePosition: SourcePosition): List<Kt
 private fun findCallsOnPosition(sourcePosition: SourcePosition, filter: (KtCallExpression) -> Boolean): List<KtCallExpression> {
     val file = sourcePosition.file as? KtFile ?: return emptyList()
     val lineNumber = sourcePosition.line
-    var elementAt = sourcePosition.elementAt
 
-    var startOffset = file.getLineStartOffset(lineNumber) ?: elementAt.startOffset
-    val endOffset = file.getLineEndOffset(lineNumber) ?: elementAt.endOffset
+    val lineElement = findElementAtLine(file, lineNumber) as? KtElement ?: return emptyList()
 
-    var topMostElement: PsiElement? = null
-    while (topMostElement !is KtElement && startOffset < endOffset) {
-        elementAt = file.findElementAt(startOffset)
-        if (elementAt != null) {
-            topMostElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, startOffset)
-        }
-        startOffset++
-    }
-
-    if (topMostElement !is KtElement) return emptyList()
-
-    val start = topMostElement.startOffset
-    val end = topMostElement.endOffset
+    val start = lineElement.startOffset
+    val end = lineElement.endOffset
 
     val allFilteredCalls = CodeInsightUtils.
             findElementsOfClassInRange(file, start, end, KtExpression::class.java)
