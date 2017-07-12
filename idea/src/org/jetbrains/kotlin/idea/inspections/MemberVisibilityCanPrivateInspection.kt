@@ -52,8 +52,9 @@ class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
 
             override fun visitParameter(parameter: KtParameter) {
                 super.visitParameter(parameter)
-                if (parameter.isConstructorDeclaredProperty() && canBePrivate(parameter)) {
-                    registerProblem(holder, parameter)
+                if (parameter.isConstructorDeclaredProperty()) {
+                    if ((parameter.ownerFunction?.parent as? KtClass)?.isPrivate() == true) return
+                    if (canBePrivate(parameter)) registerProblem(holder, parameter)
                 }
             }
         }
