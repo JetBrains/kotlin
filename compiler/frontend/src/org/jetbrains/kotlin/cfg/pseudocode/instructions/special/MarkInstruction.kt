@@ -31,9 +31,7 @@ class MarkInstruction(
         visitor.visitMarkInstruction(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitMarkInstruction(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitMarkInstruction(this)
 
     override fun createCopy() = MarkInstruction(element, blockScope)
 

@@ -35,13 +35,9 @@ abstract class AbstractJumpInstruction(
 
     protected abstract fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction
 
-    fun copy(newLabel: Label): Instruction {
-        return updateCopyInfo(createCopy(newLabel, blockScope))
-    }
+    fun copy(newLabel: Label): Instruction = updateCopyInfo(createCopy(newLabel, blockScope))
 
-    override fun createCopy(): InstructionImpl {
-        return createCopy(targetLabel, blockScope)
-    }
+    override fun createCopy(): InstructionImpl = createCopy(targetLabel, blockScope)
 
     override val nextInstructions: Collection<Instruction>
         get() = listOfNotNull(resolvedTarget)

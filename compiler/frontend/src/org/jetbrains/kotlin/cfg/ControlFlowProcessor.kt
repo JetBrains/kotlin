@@ -117,9 +117,8 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
         private val conditionVisitor = object : KtVisitorVoid() {
 
-            private fun getSubjectExpression(condition: KtWhenCondition): KtExpression? {
-                return condition.getStrictParentOfType<KtWhenExpression>()?.subjectExpression
-            }
+            private fun getSubjectExpression(condition: KtWhenCondition): KtExpression? =
+                    condition.getStrictParentOfType<KtWhenExpression>()?.subjectExpression
 
             override fun visitWhenConditionInRange(condition: KtWhenConditionInRange) {
                 if (!generateCall(condition.operationReference)) {
@@ -181,17 +180,14 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
         }
 
-        private fun createSyntheticValue(instructionElement: KtElement, kind: MagicKind, vararg from: KtElement): PseudoValue {
-            return builder.magic(instructionElement, null, elementsToValues(from.asList()), kind).outputValue
-        }
+        private fun createSyntheticValue(instructionElement: KtElement, kind: MagicKind, vararg from: KtElement): PseudoValue =
+                builder.magic(instructionElement, null, elementsToValues(from.asList()), kind).outputValue
 
-        private fun createNonSyntheticValue(to: KtElement, from: List<KtElement?>, kind: MagicKind): PseudoValue {
-            return builder.magic(to, to, elementsToValues(from), kind).outputValue
-        }
+        private fun createNonSyntheticValue(to: KtElement, from: List<KtElement?>, kind: MagicKind): PseudoValue =
+                builder.magic(to, to, elementsToValues(from), kind).outputValue
 
-        private fun createNonSyntheticValue(to: KtElement, kind: MagicKind, vararg from: KtElement?): PseudoValue {
-            return createNonSyntheticValue(to, from.asList(), kind)
-        }
+        private fun createNonSyntheticValue(to: KtElement, kind: MagicKind, vararg from: KtElement?): PseudoValue =
+                createNonSyntheticValue(to, from.asList(), kind)
 
         private fun mergeValues(from: List<KtExpression>, to: KtExpression) {
             builder.merge(to, elementsToValues(from))
@@ -208,18 +204,16 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             return if (value != null || element is KtDeclaration) value else builder.newValue(element)
         }
 
-        private fun elementsToValues(from: List<KtElement?>): List<PseudoValue> {
-            return from.mapNotNull { element -> getBoundOrUnreachableValue(element) }
-        }
+        private fun elementsToValues(from: List<KtElement?>): List<PseudoValue> =
+                from.mapNotNull { element -> getBoundOrUnreachableValue(element) }
 
         private fun generateInitializer(declaration: KtDeclaration, initValue: PseudoValue) {
             builder.write(declaration, declaration, initValue, getDeclarationAccessTarget(declaration), emptyMap())
         }
 
-        private fun getResolvedCallAccessTarget(element: KtElement?): AccessTarget {
-            return element.getResolvedCall(trace.bindingContext)?.let { AccessTarget.Call(it) }
-                   ?: AccessTarget.BlackBox
-        }
+        private fun getResolvedCallAccessTarget(element: KtElement?): AccessTarget =
+                element.getResolvedCall(trace.bindingContext)?.let { AccessTarget.Call(it) }
+                    ?: AccessTarget.BlackBox
 
         private fun getDeclarationAccessTarget(element: KtElement): AccessTarget {
             val descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
@@ -533,9 +527,8 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
         }
 
-        private fun isIncrementOrDecrement(operationType: IElementType): Boolean {
-            return operationType === KtTokens.PLUSPLUS || operationType === KtTokens.MINUSMINUS
-        }
+        private fun isIncrementOrDecrement(operationType: IElementType): Boolean =
+                operationType === KtTokens.PLUSPLUS || operationType === KtTokens.MINUSMINUS
 
         override fun visitIfExpression(expression: KtIfExpression) {
             mark(expression)
@@ -668,7 +661,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                 builder.bindLabel(onException)
                 val catchLabels = LinkedList<Label>()
                 val catchClausesSize = catchClauses.size
-                for (i in 0..catchClausesSize - 1 - 1) {
+                for (i in 0 until catchClausesSize - 1) {
                     catchLabels.add(builder.createUnboundLabel("catch " + i))
                 }
                 if (!catchLabels.isEmpty()) {
@@ -1148,7 +1141,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                             entry,
                             resolvedCall,
                             getReceiverValues(resolvedCall),
-                            emptyMap<PseudoValue, ValueParameterDescriptor>()).outputValue
+                            emptyMap()).outputValue
                 }
                 else {
                     initializer?.let { createSyntheticValue(entry, MagicKind.UNRESOLVED_CALL, it) }
@@ -1273,7 +1266,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                     // For the last entry of exhaustive when,
                     // attempt to jump further should lead to error, not to "done"
                     if (!iterator.hasNext() && WhenChecker.isWhenExhaustive(expression, trace)) {
-                        builder.magic(expression, null, emptyList<PseudoValue>(), MagicKind.EXHAUSTIVE_WHEN_ELSE)
+                        builder.magic(expression, null, emptyList(), MagicKind.EXHAUSTIVE_WHEN_ELSE)
                     }
                 }
             }

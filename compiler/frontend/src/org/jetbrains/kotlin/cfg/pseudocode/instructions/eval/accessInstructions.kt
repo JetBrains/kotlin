@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValueFactory
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -82,9 +81,7 @@ class ReadValueInstruction private constructor(
         visitor.visitReadValue(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitReadValue(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitReadValue(this)
 
     override fun toString(): String {
         val inVal = if (receiverValues.isEmpty()) "" else "|${receiverValues.keys.joinToString()}"
@@ -109,7 +106,7 @@ class WriteValueInstruction(
         target: AccessTarget,
         receiverValues: Map<PseudoValue, ReceiverValue>,
         val lValue: KtElement,
-        val rValue: PseudoValue
+        private val rValue: PseudoValue
 ) : AccessValueInstruction(assignment, blockScope, target, receiverValues) {
     override val inputValues: List<PseudoValue>
         get() = (receiverValues.keys as Collection<PseudoValue>) + rValue
@@ -118,9 +115,7 @@ class WriteValueInstruction(
         visitor.visitWriteValue(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitWriteValue(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitWriteValue(this)
 
     override fun toString(): String {
         val lhs = (lValue as? KtNamedDeclaration)?.name ?: render(lValue)

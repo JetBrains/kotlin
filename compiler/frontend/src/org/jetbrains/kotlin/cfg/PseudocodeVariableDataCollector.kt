@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
-import java.util.*
 
 class PseudocodeVariableDataCollector(
         private val bindingContext: BindingContext,
@@ -68,7 +67,7 @@ class PseudocodeVariableDataCollector(
         } as I
     }
 
-    fun computeBlockScopeVariableInfo(pseudocode: Pseudocode): BlockScopeVariableInfo {
+    private fun computeBlockScopeVariableInfo(pseudocode: Pseudocode): BlockScopeVariableInfo {
         val blockScopeVariableInfo = BlockScopeVariableInfoImpl()
         pseudocode.traverse(TraversalOrder.FORWARD, { instruction ->
             if (instruction is VariableDeclarationInstruction) {
@@ -96,7 +95,7 @@ class BlockScopeVariableInfoImpl : BlockScopeVariableInfo {
 
     fun registerVariableDeclaredInScope(variable: VariableDescriptor, blockScope: BlockScope) {
         declaredIn[variable] = blockScope
-        val variablesInScope = scopeVariables.getOrPut(blockScope, { ArrayList<VariableDescriptor>() })
+        val variablesInScope = scopeVariables.getOrPut(blockScope, { arrayListOf() })
         variablesInScope.add(variable)
     }
 }

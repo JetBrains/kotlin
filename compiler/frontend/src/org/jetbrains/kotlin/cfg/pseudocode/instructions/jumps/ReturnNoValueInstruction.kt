@@ -32,9 +32,7 @@ class ReturnNoValueInstruction(
         visitor.visitReturnNoValue(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitReturnNoValue(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitReturnNoValue(this)
 
     override fun toString(): String = "ret $targetLabel"
 

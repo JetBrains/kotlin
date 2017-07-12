@@ -102,13 +102,9 @@ enum class InitState(private val s: String) {
 
 class VariableControlFlowState private constructor(val initState: InitState, val isDeclared: Boolean) {
 
-    fun definitelyInitialized(): Boolean {
-        return initState == InitState.INITIALIZED
-    }
+    fun definitelyInitialized(): Boolean = initState == InitState.INITIALIZED
 
-    fun mayBeInitialized(): Boolean {
-        return initState != InitState.NOT_INITIALIZED
-    }
+    fun mayBeInitialized(): Boolean = initState != InitState.NOT_INITIALIZED
 
     override fun toString(): String {
         if (initState == InitState.NOT_INITIALIZED && !isDeclared) return "-"
@@ -134,17 +130,14 @@ class VariableControlFlowState private constructor(val initState: InitState, val
                 InitState.NOT_INITIALIZED -> if (isDeclared) VS_NT else VS_NF
             }
 
-        fun createInitializedExhaustively(isDeclared: Boolean): VariableControlFlowState {
-            return create(InitState.INITIALIZED_EXHAUSTIVELY, isDeclared)
-        }
+        fun createInitializedExhaustively(isDeclared: Boolean): VariableControlFlowState =
+                create(InitState.INITIALIZED_EXHAUSTIVELY, isDeclared)
 
-        fun create(isInitialized: Boolean, isDeclared: Boolean = false): VariableControlFlowState {
-            return create(if (isInitialized) InitState.INITIALIZED else InitState.NOT_INITIALIZED, isDeclared)
-        }
+        fun create(isInitialized: Boolean, isDeclared: Boolean = false): VariableControlFlowState =
+                create(if (isInitialized) InitState.INITIALIZED else InitState.NOT_INITIALIZED, isDeclared)
 
-        fun create(isDeclaredHere: Boolean, mergedEdgesData: VariableControlFlowState?): VariableControlFlowState {
-            return create(true, isDeclaredHere || mergedEdgesData != null && mergedEdgesData.isDeclared)
-        }
+        fun create(isDeclaredHere: Boolean, mergedEdgesData: VariableControlFlowState?): VariableControlFlowState =
+                create(true, isDeclaredHere || mergedEdgesData != null && mergedEdgesData.isDeclared)
     }
 }
 
@@ -162,9 +155,7 @@ enum class VariableUseState(private val priority: Int) {
     companion object {
 
         @JvmStatic
-        fun isUsed(variableUseState: VariableUseState?): Boolean {
-            return variableUseState != null && variableUseState != UNUSED
-        }
+        fun isUsed(variableUseState: VariableUseState?): Boolean = variableUseState != null && variableUseState != UNUSED
     }
 }
 

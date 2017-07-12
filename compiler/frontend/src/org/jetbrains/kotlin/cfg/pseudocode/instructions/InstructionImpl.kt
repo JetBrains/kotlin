@@ -26,7 +26,7 @@ abstract class InstructionImpl(override val blockScope: BlockScope): Instruction
 
     override var owner: Pseudocode
         get() = _owner!!
-        set(value: Pseudocode) {
+        set(value) {
             assert(_owner == null || _owner == value)
             _owner = value
         }

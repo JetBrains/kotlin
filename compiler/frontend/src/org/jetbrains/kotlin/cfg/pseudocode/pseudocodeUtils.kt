@@ -123,11 +123,10 @@ fun getExpectedTypePredicate(
             val i = inputValueIndex - argValueOffset
             if (i < 0 || i >= callArguments.size) continue
 
-            val mapping = candidateCall.getArgumentMapping(callArguments.get(i))
-            if (mapping !is ArgumentMatch) continue
+            val mapping = candidateCall.getArgumentMapping(callArguments[i]) as? ArgumentMatch ?: continue
 
             val candidateParameter = mapping.valueParameter
-            val resolvedArgument = candidateArgumentMap.get(candidateParameter)
+            val resolvedArgument = candidateArgumentMap[candidateParameter]
             val expectedType = if (resolvedArgument is VarargValueArgument)
                 candidateParameter.varargElementType
             else
@@ -206,19 +205,15 @@ fun getExpectedTypePredicate(
 
                     VALUE_CONSUMER -> {
                         val element = it.element
-                        when {
-                            element.getStrictParentOfType<KtWhileExpression>()?.condition == element ->
-                                addSubtypesOf(builtIns.booleanType)
-
-                            element is KtProperty -> {
+                        when (element) {
+                            element.getStrictParentOfType<KtWhileExpression>()?.condition -> addSubtypesOf(builtIns.booleanType)
+                            is KtProperty -> {
                                 val propertyDescriptor = bindingContext[DECLARATION_TO_DESCRIPTOR, element] as? PropertyDescriptor
                                 propertyDescriptor?.accessors?.map {
                                     addByExplicitReceiver(bindingContext[DELEGATED_PROPERTY_RESOLVED_CALL, it])
                                 }
                             }
-
-                            element is KtDelegatedSuperTypeEntry ->
-                                addSubtypesOf(bindingContext[TYPE, element.typeReference])
+                            is KtDelegatedSuperTypeEntry -> addSubtypesOf(bindingContext[TYPE, element.typeReference])
                         }
                     }
 
@@ -247,7 +242,7 @@ val Instruction.sideEffectFree: Boolean
 
 fun Instruction.calcSideEffectFree(): Boolean {
     if (this !is InstructionWithValue) return false
-    if (!inputValues.all { it.createdAt?.sideEffectFree ?: false }) return false
+    if (!inputValues.all { it.createdAt?.sideEffectFree == true }) return false
 
     return when (this) {
         is ReadValueInstruction -> target.let {

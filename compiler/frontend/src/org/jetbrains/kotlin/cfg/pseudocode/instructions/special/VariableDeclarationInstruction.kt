@@ -40,9 +40,7 @@ class VariableDeclarationInstruction(
         visitor.visitVariableDeclarationInstruction(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitVariableDeclarationInstruction(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitVariableDeclarationInstruction(this)
 
     override fun toString(): String = "v(${render(element)})"
 

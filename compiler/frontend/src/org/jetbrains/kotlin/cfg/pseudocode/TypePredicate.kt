@@ -71,12 +71,10 @@ fun or(predicates: Collection<TypePredicate>): TypePredicate? =
             else -> ForSomeType(predicates.toList())
         }
 
-fun KotlinType.getSubtypesPredicate(): TypePredicate {
-    return when {
-        KotlinBuiltIns.isAnyOrNullableAny(this) && isMarkedNullable -> AllTypes
-        TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, this) -> AllSubtypes(this)
-        else -> SingleType(this)
-    }
+fun KotlinType.getSubtypesPredicate(): TypePredicate = when {
+    KotlinBuiltIns.isAnyOrNullableAny(this) && isMarkedNullable -> AllTypes
+    TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, this) -> AllSubtypes(this)
+    else -> SingleType(this)
 }
 
 

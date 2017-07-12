@@ -36,15 +36,10 @@ class ThrowExceptionInstruction(
         visitor.visitThrowExceptionInstruction(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitThrowExceptionInstruction(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitThrowExceptionInstruction(this)
 
-    override fun toString(): String {
-        return "throw (${element.text}|$thrownValue)"
-    }
+    override fun toString(): String = "throw (${element.text}|$thrownValue)"
 
-    override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction {
-        return ThrowExceptionInstruction((element as KtThrowExpression), blockScope, newLabel, thrownValue)
-    }
+    override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction =
+            ThrowExceptionInstruction((element as KtThrowExpression), blockScope, newLabel, thrownValue)
 }

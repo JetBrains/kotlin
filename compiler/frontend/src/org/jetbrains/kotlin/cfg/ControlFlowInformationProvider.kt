@@ -59,7 +59,6 @@ import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import java.util.*
 
 class ControlFlowInformationProvider private constructor(
         private val subroutine: KtElement,
@@ -311,7 +310,7 @@ class ControlFlowInformationProvider private constructor(
     }
 
     private fun PropertyDescriptor.isDefinitelyInitialized(): Boolean {
-        if (trace.get(BACKING_FIELD_REQUIRED, this) ?: false) return false
+        if (trace.get(BACKING_FIELD_REQUIRED, this) == true) return false
         val property = DescriptorToSourceUtils.descriptorToDeclaration(this)
         if (property is KtProperty && property.hasDelegate()) return false
         return true
@@ -432,14 +431,14 @@ class ControlFlowInformationProvider private constructor(
             if (operationReference != null) {
                 val descriptor = trace.get(BindingContext.REFERENCE_TARGET, operationReference)
                 if (descriptor is FunctionDescriptor) {
-                    if (descriptor.returnType?.let { KotlinBuiltIns.isUnit(it) } ?: false) {
+                    if (descriptor.returnType?.let { KotlinBuiltIns.isUnit(it) } == true) {
                         hasReassignMethodReturningUnit = true
                     }
                 }
                 if (descriptor == null) {
                     val descriptors = trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, operationReference) ?: emptyList()
                     for (referenceDescriptor in descriptors) {
-                        if ((referenceDescriptor as? FunctionDescriptor)?.returnType?.let { KotlinBuiltIns.isUnit(it) } ?: false) {
+                        if ((referenceDescriptor as? FunctionDescriptor)?.returnType?.let { KotlinBuiltIns.isUnit(it) } == true) {
                             hasReassignMethodReturningUnit = true
                         }
                     }
@@ -476,10 +475,10 @@ class ControlFlowInformationProvider private constructor(
     }
 
     private fun checkAssignmentBeforeDeclaration(ctxt: VariableInitContext, expression: KtExpression) =
-            if (ctxt.enterInitState?.isDeclared ?: false
-                || ctxt.exitInitState?.isDeclared ?: false
-                || ctxt.enterInitState?.mayBeInitialized() ?: false
-                || !(ctxt.exitInitState?.mayBeInitialized() ?: false)) {
+            if (ctxt.enterInitState?.isDeclared == true
+                || ctxt.exitInitState?.isDeclared == true
+                || ctxt.enterInitState?.mayBeInitialized() == true
+                || ctxt.exitInitState?.mayBeInitialized() != true) {
                 false
             }
             else {
@@ -492,10 +491,10 @@ class ControlFlowInformationProvider private constructor(
     private fun checkInitializationForCustomSetter(ctxt: VariableInitContext, expression: KtExpression): Boolean {
         val variableDescriptor = ctxt.variableDescriptor
         if (variableDescriptor !is PropertyDescriptor
-            || ctxt.enterInitState?.mayBeInitialized() ?: false
-            || !(ctxt.exitInitState?.mayBeInitialized() ?: false)
+            || ctxt.enterInitState?.mayBeInitialized() == true
+            || ctxt.exitInitState?.mayBeInitialized() != true
             || !variableDescriptor.isVar
-            || !(trace.get(BindingContext.BACKING_FIELD_REQUIRED, variableDescriptor) ?: false)) {
+            || trace.get(BindingContext.BACKING_FIELD_REQUIRED, variableDescriptor) != true) {
             return false
         }
 
@@ -528,7 +527,7 @@ class ControlFlowInformationProvider private constructor(
         val declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, false)
         for (variable in declaredVariables) {
             if (variable is PropertyDescriptor) {
-                if (initializers.incoming.getOrNull(variable)?.definitelyInitialized() ?: false) continue
+                if (initializers.incoming.getOrNull(variable)?.definitelyInitialized() == true) continue
                 trace.record(BindingContext.IS_UNINITIALIZED, variable)
             }
         }
@@ -947,7 +946,7 @@ class ControlFlowInformationProvider private constructor(
         val tailInstructionDetector = TailInstructionDetector(subroutine)
         return traverseFollowingInstructions(
                 this,
-                HashSet<Instruction>(),
+                hashSetOf(),
                 TraversalOrder.FORWARD
         ) {
             if (it == this@isTailCall || it.accept(tailInstructionDetector))

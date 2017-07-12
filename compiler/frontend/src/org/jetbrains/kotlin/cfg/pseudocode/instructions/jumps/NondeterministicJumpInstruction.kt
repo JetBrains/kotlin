@@ -30,7 +30,7 @@ class NondeterministicJumpInstruction(
         element: KtElement,
         targetLabels: List<Label>,
         blockScope: BlockScope,
-        val inputValue: PseudoValue?
+        private val inputValue: PseudoValue?
 ) : KtElementInstructionImpl(element, blockScope), JumpInstruction {
     private var _next: Instruction? = null
     private val _resolvedTargets: MutableMap<Label, Instruction> = linkedMapOf()
@@ -63,9 +63,7 @@ class NondeterministicJumpInstruction(
         visitor.visitNondeterministicJump(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitNondeterministicJump(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitNondeterministicJump(this)
 
     override fun toString(): String {
         val inVal = if (inputValue != null) "|$inputValue" else ""
@@ -73,15 +71,10 @@ class NondeterministicJumpInstruction(
         return "jmp?($labels$inVal)"
     }
 
-    override fun createCopy(): InstructionImpl {
-        return createCopy(targetLabels)
-    }
+    override fun createCopy(): InstructionImpl = createCopy(targetLabels)
 
-    fun copy(newTargetLabels: MutableList<Label>): Instruction {
-        return updateCopyInfo(createCopy(newTargetLabels))
-    }
+    fun copy(newTargetLabels: MutableList<Label>): Instruction = updateCopyInfo(createCopy(newTargetLabels))
 
-    private fun createCopy(newTargetLabels: List<Label>): InstructionImpl {
-        return NondeterministicJumpInstruction(element, newTargetLabels, blockScope, inputValue)
-    }
+    private fun createCopy(newTargetLabels: List<Label>): InstructionImpl =
+            NondeterministicJumpInstruction(element, newTargetLabels, blockScope, inputValue)
 }

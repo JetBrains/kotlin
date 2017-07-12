@@ -38,7 +38,7 @@ class UnreachableCodeImpl(
 ) : UnreachableCode {
 
     // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
-    override val elements = KtPsiUtil.findRootExpressions(unreachableElements)
+    override val elements: Set<KtElement> = KtPsiUtil.findRootExpressions(unreachableElements)
 
     override fun getUnreachableTextRanges(element: KtElement): List<TextRange> {
         return if (element.hasChildrenInSet(reachableElements)) {
@@ -54,9 +54,8 @@ class UnreachableCodeImpl(
         }
     }
 
-    private fun KtElement.hasChildrenInSet(set: Set<KtElement>): Boolean {
-        return PsiTreeUtil.collectElements(this) { it != this }.any { it in set }
-    }
+    private fun KtElement.hasChildrenInSet(set: Set<KtElement>): Boolean =
+            PsiTreeUtil.collectElements(this) { it != this }.any { it in set }
 
     private fun KtElement.getLeavesOrReachableChildren(): List<PsiElement> {
         val children = ArrayList<PsiElement>()
@@ -74,7 +73,7 @@ class UnreachableCodeImpl(
         return children
     }
 
-    fun List<PsiElement>.removeReachableElementsWithMeaninglessSiblings(): List<PsiElement> {
+    private fun List<PsiElement>.removeReachableElementsWithMeaninglessSiblings(): List<PsiElement> {
         fun PsiElement.isMeaningless() = this is PsiWhiteSpace
                 || this.node?.elementType == KtTokens.COMMA
                 || this is PsiComment

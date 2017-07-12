@@ -31,9 +31,7 @@ class SubroutineEnterInstruction(
         visitor.visitSubroutineEnter(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitSubroutineEnter(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitSubroutineEnter(this)
 
     override fun toString(): String = "<START>"
 
