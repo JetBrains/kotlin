@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.ir.declarations
 interface IrDeclarationOrigin {
     object DEFINED : IrDeclarationOriginImpl("DEFINED")
     object FAKE_OVERRIDE : IrDeclarationOriginImpl("FAKE_OVERRIDE")
+    object FOR_LOOP_ITERATOR : IrDeclarationOriginImpl("FOR_LOOP_ITERATOR")
+    object FOR_LOOP_VARIABLE : IrDeclarationOriginImpl("FOR_LOOP_VARIABLE")
+    object FOR_LOOP_IMPLICIT_VARIABLE : IrDeclarationOriginImpl("FOR_LOOP_IMPLICIT_VARIABLE")
     object PROPERTY_BACKING_FIELD : IrDeclarationOriginImpl("PROPERTY_BACKING_FIELD")
     object DEFAULT_PROPERTY_ACCESSOR : IrDeclarationOriginImpl("DEFAULT_PROPERTY_ACCESSOR")
     object DELEGATE : IrDeclarationOriginImpl("DELEGATE")
