@@ -20,4 +20,6 @@ var spawn = require('child_process').spawn;
 var execPath = __dirname + '/kotlinc-js';
 var args = process.argv.slice(2);
 
-spawn('"' + execPath + '"', args, { stdio: "inherit", shell: true });
+spawn('"' + execPath + '"', args, { stdio: "inherit", shell: true }).on('exit', function(exitCode) {
+    process.exit(exitCode);
+});
