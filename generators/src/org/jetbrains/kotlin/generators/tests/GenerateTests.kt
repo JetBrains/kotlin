@@ -1249,12 +1249,14 @@ fun main(args: Array<String>) {
     testGroup("compiler/incremental-compilation-impl/test", "jps-plugin/testData") {
         testClass<AbstractIncrementalJvmCompilerRunnerTest> {
             model("incremental/pureKotlin", extension = null, recursive = false)
+            model("incremental/classHierarchyAffected", extension = null, recursive = false)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
         }
 
         testClass<AbstractIncrementalJsCompilerRunnerTest> {
             model("incremental/pureKotlin", extension = null, recursive = false)
+            model("incremental/classHierarchyAffected", extension = null, recursive = false)
         }
     }
 
