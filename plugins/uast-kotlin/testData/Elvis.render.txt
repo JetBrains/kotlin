@@ -1,5 +1,5 @@
 public final class ElvisKt {
-    public static final fun foo(bar: java.lang.String) : java.lang.String = null
+    public static final fun foo(@org.jetbrains.annotations.NotNull bar: java.lang.String) : java.lang.String = null
     public static final fun bar() : int = 42
     public static final fun baz() : java.lang.String {
         return elvis {
