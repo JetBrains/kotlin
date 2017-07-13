@@ -342,23 +342,30 @@ class KotlinToResolvedCallTransformer(
             trace: BindingTrace,
             completedCall: CompletedKotlinCall.Simple
     ) {
-        var reported: Boolean
-        val reportTrackedTrace = object : BindingTrace by trace {
-            override fun report(diagnostic: Diagnostic) {
-                trace.report(diagnostic)
-                reported = true
-            }
-        }
-        val diagnosticReporter = DiagnosticReporterByTrackingStrategy(constantExpressionEvaluator, context, reportTrackedTrace, completedCall.kotlinCall.psiKotlinCall)
+        val trackingTrace = TrackingBindingTrace(trace)
+        val diagnosticReporter = DiagnosticReporterByTrackingStrategy(constantExpressionEvaluator, context, trackingTrace, completedCall.kotlinCall.psiKotlinCall)
 
         for (diagnostic in completedCall.resolutionStatus.diagnostics) {
-            reported = false
+            trackingTrace.reported = false
             diagnostic.report(diagnosticReporter)
-            if (!reported && REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC) {
+            if (!trackingTrace.reported && REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC) {
                 val factory = if (diagnostic.candidateApplicability.isSuccess) Errors.NEW_INFERENCE_DIAGNOSTIC else Errors.NEW_INFERENCE_ERROR
                 trace.report(factory.on(diagnosticReporter.psiKotlinCall.psiCall.callElement, "Missing diagnostic: $diagnostic"))
             }
         }
+    }
+}
+
+class TrackingBindingTrace(val trace: BindingTrace) : BindingTrace by trace {
+    var reported: Boolean = false
+
+    override fun report(diagnostic: Diagnostic) {
+        trace.report(diagnostic)
+        reported = true
+    }
+
+    fun markAsReported() {
+        reported = true
     }
 }
 

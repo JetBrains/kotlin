@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.resolve.calls
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
+import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
+import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.NON_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 class DiagnosticReporterByTrackingStrategy(
         val constantExpressionEvaluator: ConstantExpressionEvaluator,
         val context: BasicCallResolutionContext,
-        val trace: BindingTrace,
+        val trace: TrackingBindingTrace,
         val psiKotlinCall: PSIKotlinCall
 ): DiagnosticReporter {
     private val tracingStrategy: TracingStrategy get() = psiKotlinCall.tracingStrategy
@@ -104,8 +104,10 @@ class DiagnosticReporterByTrackingStrategy(
         val nameReference = callArgument.psiCallArgument.valueArgument.getArgumentName()?.referenceExpression ?:
                            error("Argument name should be not null for argument: $callArgument")
         when (diagnostic.javaClass) {
-            NamedArgumentReference::class.java ->
+            NamedArgumentReference::class.java -> {
                 trace.record(BindingContext.REFERENCE_TARGET, nameReference, (diagnostic as NamedArgumentReference).parameterDescriptor)
+                trace.markAsReported()
+            }
             NameForAmbiguousParameter::class.java -> trace.report(NAME_FOR_AMBIGUOUS_PARAMETER.on(nameReference))
             NameNotFound::class.java -> trace.report(NAMED_PARAMETER_NOT_FOUND.on(nameReference, nameReference))
 
@@ -130,6 +132,7 @@ class DiagnosticReporterByTrackingStrategy(
             SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
                     recordExpressionType = true)
+            trace.markAsReported()
         }
         else if(expressionArgument is ReceiverExpressionKotlinCallArgument) {
             val receiverValue = expressionArgument.receiver.receiverValue
@@ -137,6 +140,7 @@ class DiagnosticReporterByTrackingStrategy(
             SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, (receiverValue as? ExpressionReceiver)?.expression, context, call,
                     recordExpressionType = true)
+            trace.markAsReported()
         }
     }
 
