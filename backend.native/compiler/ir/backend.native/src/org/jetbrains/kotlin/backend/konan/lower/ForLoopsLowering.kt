@@ -329,7 +329,6 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         val forLoopInfo = iteratorToLoopInfo[irIteratorAccess.symbol] ?: return null  // If we didn't lower a corresponding header.
         val builder = context.createIrBuilder(scopeOwnerSymbol, initializer.startOffset, initializer.endOffset)
 
-        // TODO: Cache it.
         val plusOperator = symbols.getBinaryOperator(
                 OperatorNameConventions.PLUS,
                 forLoopInfo.inductionVariable.descriptor.type,

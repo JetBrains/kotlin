@@ -309,7 +309,7 @@ task sum_3const(type: RunKonanTest) {
 
 task codegen_basics_for_loops(type: RunKonanTest) {
     source = "codegen/basics/for_loops.kt"
-    goldValue = "01234\n0123\n43210\n\n024\n02\n420\n\n036\n03\n630\n\n"
+    goldValue = "01234\n0123\n43210\n\n024\n02\n420\n\n036\n03\n630\n\n024\n02\n420\n\n"
 }
 
 task codegen_basics_for_loops_types(type: RunKonanTest) {

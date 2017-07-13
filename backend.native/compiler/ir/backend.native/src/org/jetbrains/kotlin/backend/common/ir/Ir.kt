@@ -207,13 +207,29 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
                 }
         )
 
-    fun getBinaryOperator(name: Name, lhsType: KotlinType, rhsType: KotlinType) =
-        symbolTable.referenceFunction(lhsType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
-                .single { it.valueParameters.size == 1 && it.valueParameters[0].type == rhsType }
-        )
+    private val binaryOperatorCache = mutableMapOf<Triple<Name, KotlinType, KotlinType>, IrFunctionSymbol>()
+    fun getBinaryOperator(name: Name, lhsType: KotlinType, rhsType: KotlinType): IrFunctionSymbol {
+        val key = Triple(name, lhsType, rhsType)
+        var result = binaryOperatorCache[key]
+        if (result == null) {
+            result = symbolTable.referenceFunction(lhsType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+                    .single { it.valueParameters.size == 1 && it.valueParameters[0].type == rhsType }
+            )
+            binaryOperatorCache[key] = result
+        }
+        return result
+    }
 
-    fun getUnaryOperator(name: Name, receiverType: KotlinType) =
-        symbolTable.referenceFunction(receiverType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
-                .single { it.valueParameters.isEmpty() }
-        )
+    private val unaryOperatorCache = mutableMapOf<Pair<Name, KotlinType>, IrFunctionSymbol>()
+    fun getUnaryOperator(name: Name, receiverType: KotlinType): IrFunctionSymbol {
+        val key = name to receiverType
+        var result = unaryOperatorCache[key]
+        if (result == null) {
+            result = symbolTable.referenceFunction(receiverType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+                    .single { it.valueParameters.isEmpty() }
+            )
+            unaryOperatorCache[key] = result
+        }
+        return result
+    }
 }

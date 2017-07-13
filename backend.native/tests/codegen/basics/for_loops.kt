@@ -51,4 +51,24 @@ fun main(args: Array<String>) {
     }
     println()
     println()
+
+    // Without constants
+    val a = 0
+    val b = 4
+    val s = 2
+    for (i in a..b step s) {
+        print(i)
+    }
+    println()
+
+    for (i in a until b step s) {
+        print(i)
+    }
+    println()
+
+    for (i in b downTo a step s) {
+        print(i)
+    }
+    println()
+    println()
 }
