@@ -474,9 +474,16 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                 throw IllegalStateException("Couldn't find declaration file for " + containerId)
             }
 
-            return getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, containerId.asString())
-        }
+            val methodNode = getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, containerId.asString()) ?: return null
 
+            // KLUDGE: Inline suspend function built with compiler version less than 1.1.4/1.2-M1 did not contain proper
+            // before/after suspension point marks, so we detect those functions here and insert the corresponding marks
+            if (isLegacySuspendInlineFunction(callableDescriptor)) {
+                insertLegacySuspendInlineMarks(methodNode.node)
+            }
+
+            return methodNode
+        }
 
         private fun isBuiltInArrayIntrinsic(callableDescriptor: CallableMemberDescriptor): Boolean {
             if (callableDescriptor is FictitiousArrayConstructor) return true

@@ -64,10 +64,6 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
         doTest("/bytecodeVersion/simple")
     }
 
-    fun testObsoleteInlineSuspend() {
-        doTest("/bytecodeVersion/obsoleteInlineSuspend", intArrayOf(1, 0, 1))
-    }
-
     companion object {
         fun transformMetadataInClassFile(bytes: ByteArray, transform: (fieldName: String, value: Any?) -> Any?): ByteArray {
             val writer = ClassWriter(0)
