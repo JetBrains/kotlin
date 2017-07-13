@@ -24,6 +24,8 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.testFramework.ModuleTestCase
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
@@ -322,9 +324,13 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         UsefulTestCase.assertSameElements(this.getDependentModules(), expected.toList())
     }
 
-    private fun stdlibCommon(): Library = projectLibrary("kotlin-stdlib-common", ForTestCompileRuntime.stdlibCommonForTests().jarRoot)
+    private fun stdlibCommon(): Library = projectLibrary("kotlin-stdlib-common",
+                                                         ForTestCompileRuntime.stdlibCommonForTests().jarRoot,
+                                                         kind = CommonLibraryKind)
 
     private fun stdlibJvm(): Library = projectLibrary("kotlin-stdlib", ForTestCompileRuntime.runtimeJarForTests().jarRoot)
 
-    private fun stdlibJs(): Library = projectLibrary("kotlin-stdlib-js", ForTestCompileRuntime.runtimeJarForTests().jarRoot)
+    private fun stdlibJs(): Library = projectLibrary("kotlin-stdlib-js",
+                                                     ForTestCompileRuntime.runtimeJarForTests().jarRoot,
+                                                     kind = JSLibraryKind)
 }
