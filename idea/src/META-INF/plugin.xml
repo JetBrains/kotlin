@@ -2280,7 +2280,8 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantProgressionStepInspection"
                      displayName="Redundant progression step"
-                     groupName="Kotlin"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"

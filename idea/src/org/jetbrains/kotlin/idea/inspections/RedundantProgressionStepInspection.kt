@@ -23,28 +23,32 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtConstantExpression
-import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 
 class RedundantProgressionStepInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitBinaryExpression(expression: KtBinaryExpression) {
-                if (isStepOneCall(expression)) {
+                if (isStepOneCall(expression.left, expression.right, expression.operationReference)) {
                     holder.registerProblem(expression,
-                                           "Iteration step is redundant. Recommended to remove it.",
+                                           "Iteration step is redundant. Remove it.",
                                            ProblemHighlightType.WEAK_WARNING,
                                            TextRange(expression.operationReference.startOffsetInParent, expression.endOffset - expression.startOffset),
                                            EliminateStepOneFix())
                 }
+            }
+
+            override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
+
             }
         }
     }
@@ -58,7 +62,7 @@ class RedundantProgressionStepInspection : AbstractKotlinInspection() {
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
             val expression = descriptor.psiElement as? KtBinaryExpression ?: return
-            if (!isStepOneCall(expression)) return
+            if (!isStepOneCall(expression.left, expression.right, expression.operationReference)) return
             expression.replaced(expression.left!!)
         }
     }
@@ -66,19 +70,24 @@ class RedundantProgressionStepInspection : AbstractKotlinInspection() {
     companion object {
         private val STEP_FUNCTION_FQ_NAME = "kotlin.ranges.step"
 
-        fun isStepOneCall(expression: KtBinaryExpression): Boolean {
-            val left = expression.left as? KtBinaryExpression ?: return false
+        fun isStepOneCall(leftParenthesized: KtExpression?, rightParenthesized: KtExpression?, reference: KtSimpleNameExpression): Boolean {
+            val left = KtPsiUtil.deparenthesize(leftParenthesized) as? KtBinaryExpression ?: return false
+            val right = KtPsiUtil.deparenthesize(rightParenthesized) as? KtConstantExpression ?: return false
             if (left.operationToken != KtTokens.RANGE) return false
-            if (expression.operationReference.text != "step") return false
-            val right = expression.right as? KtConstantExpression ?: return false
+            if (reference.text != "step") return false
+
             val rightConst = right.firstChild as? LeafPsiElement ?: return false
             if (rightConst.elementType != KtTokens.INTEGER_LITERAL) return false
 
-            if (rightConst.text !in setOf("1", "1L")) return false
+            val context = (left.parent as KtElement).analyze()
 
-            val context = expression.analyze()
+            val constant = ConstantExpressionEvaluator.getConstant(right, right.analyze()) ?: return false
+            val builtIns = left.containingKtFile.findModuleDescriptor().builtIns
 
-            val call = context[BindingContext.CALL, expression.operationReference]
+            if (constant.getValue(builtIns.longType) != 1L &&
+                constant.getValue(builtIns.intType) != 1) return false
+
+            val call = context[BindingContext.CALL, reference]
 
             val resolvedCall = call.getResolvedCall(context) ?: return false
             val fqNameString = resolvedCall.resultingDescriptor.importableFqName?.asString() ?: return false
