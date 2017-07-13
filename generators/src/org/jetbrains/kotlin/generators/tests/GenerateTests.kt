@@ -142,6 +142,8 @@ import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
+import org.jetbrains.kotlin.incremental.AbstractIncrementalJsCompilerRunnerTest
+import org.jetbrains.kotlin.incremental.AbstractIncrementalJvmCompilerRunnerTest
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
 import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
@@ -1224,7 +1226,6 @@ fun main(args: Array<String>) {
         }
     }
 
-
     testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         fun TestGroup.TestClass.commonProtoComparisonTests() {
             model("comparison/classSignatureChange", extension = null, excludeParentDirs = true)
@@ -1242,6 +1243,17 @@ fun main(args: Array<String>) {
         testClass<AbstractJsProtoComparisonTest> {
             commonProtoComparisonTests()
             model("comparison/jsOnly", extension = null, excludeParentDirs = true)
+        }
+    }
+
+    testGroup("compiler/incremental-compilation-impl/test", "jps-plugin/testData") {
+        testClass<AbstractIncrementalJvmCompilerRunnerTest> {
+            model("incremental/pureKotlin", extension = null, recursive = false)
+            model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
+        }
+
+        testClass<AbstractIncrementalJsCompilerRunnerTest> {
+            model("incremental/pureKotlin", extension = null, recursive = false)
         }
     }
 

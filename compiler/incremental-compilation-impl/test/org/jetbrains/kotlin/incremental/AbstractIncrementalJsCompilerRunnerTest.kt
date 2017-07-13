@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.incremental.utils.TestICReporter
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
 import java.io.File
 
-class IncrementalJsCompilerRunnerTest : IncrementalCompilerRunnerTestBase<K2JSCompilerArguments>() {
+abstract class AbstractIncrementalJsCompilerRunnerTest : AbstractIncrementalCompilerRunnerTestBase<K2JSCompilerArguments>() {
     override fun make(cacheDir: File, sourceRoots: Iterable<File>, args: K2JSCompilerArguments): TestCompilationResult {
         val reporter = TestICReporter()
         val messageCollector = TestMessageCollector()

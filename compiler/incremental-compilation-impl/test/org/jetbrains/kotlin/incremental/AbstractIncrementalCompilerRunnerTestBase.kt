@@ -28,19 +28,12 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
 
-@RunWith(Parameterized::class)
-abstract class IncrementalCompilerRunnerTestBase<Args : CommonCompilerArguments> : TestWithWorkingDir() {
-    @Parameterized.Parameter
-    lateinit var testDir: File
-
-    @Suppress("unused")
-    @Parameterized.Parameter(value = 1)
-    lateinit var readableName: String
-
+abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerArguments> : TestWithWorkingDir() {
     protected abstract fun createCompilerArguments(destinationDir: File, testDir: File): Args
 
-    @Test
-    fun testFromJps() {
+    fun doTest(path: String) {
+        val testDir = File(path)
+
         fun Iterable<File>.relativePaths() =
                 map { it.relativeTo(workingDir).path.replace('\\', '/') }
 
@@ -142,38 +135,6 @@ abstract class IncrementalCompilerRunnerTestBase<Args : CommonCompilerArguments>
         @JvmStatic
         protected val bootstrapKotlincLib: File = File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib")
 
-        private val jpsResourcesPath = File("jps-plugin/testData/incremental")
-        private val ignoredDirs = setOf(File(jpsResourcesPath, "cacheVersionChanged"),
-                                        File(jpsResourcesPath, "changeIncrementalOption"),
-                                        File(jpsResourcesPath, "custom"),
-                                        File(jpsResourcesPath, "lookupTracker"))
         private val buildLogFinder = BuildLogFinder(isGradleEnabled = true)
-
-        @Suppress("unused")
-        @Parameterized.Parameters(name = "{1}")
-        @JvmStatic
-        fun data(): List<Array<*>> {
-            fun File.isValidTestDir(): Boolean {
-                if (!isDirectory) return false
-
-                // multi-module tests
-                val files = list()
-                if ("dependencies.txt" in files) return false
-
-                val logFile = buildLogFinder.findBuildLog(this) ?: return false
-                val parsedLog = parseTestBuildLog(logFile)
-                // tests with java may be expected to fail in javac
-                return files.none { it.endsWith(".java") } && parsedLog.all { it.compiledJavaFiles.isEmpty() }
-            }
-
-            fun File.relativeToGrandfather() =
-                    relativeTo(parentFile.parentFile).path
-
-            return jpsResourcesPath.walk()
-                    .onEnter { it !in ignoredDirs }
-                    .filter(File::isValidTestDir)
-                    .map { arrayOf(it, it.relativeToGrandfather()) }
-                    .toList()
-        }
     }
 }
