@@ -45,7 +45,6 @@ typedef enum {
 typedef uint32_t container_offset_t;
 typedef uint32_t container_size_t;
 
-
 // Header of all container objects. Contains reference counter.
 struct ContainerHeader {
   // Reference counter of container. Uses two lower bits of counter for

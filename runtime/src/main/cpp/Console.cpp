@@ -41,7 +41,7 @@ void Kotlin_io_Console_print(KString message) {
   RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
   // TODO: system stdout must be aware about UTF-8.
   const KChar* utf16 = CharArrayAddressOfElementAt(message, 0);
-  std::string utf8;
+  KStdString utf8;
   utf8::utf16to8(utf16, utf16 + message->count_, back_inserter(utf8));
 #ifdef KONAN_ANDROID
   __android_log_print(ANDROID_LOG_INFO, "Konan_main", "%s", utf8.c_str());

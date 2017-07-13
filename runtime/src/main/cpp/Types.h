@@ -17,6 +17,13 @@
 #ifndef RUNTIME_TYPES_H
 #define RUNTIME_TYPES_H
 
+#include <deque>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
+#include "Alloc.h"
 #include "Common.h"
 #include "Memory.h"
 #include "TypeInfo.h"
@@ -35,6 +42,22 @@ typedef void*   KNativePtr;
 typedef ObjHeader* KRef;
 typedef const ObjHeader* KConstRef;
 typedef const ArrayHeader* KString;
+
+// Definitions of STL classes used inside Konan runtime.
+typedef std::basic_string<char, std::char_traits<char>,
+                          KonanAllocator<char>> KStdString;
+template<class Value>
+using KStdDeque = std::deque<Value, KonanAllocator<Value>>;
+template<class Key, class Value>
+using KStdUnorderedMap = std::unordered_map<Key, Value,
+  std::hash<Key>, std::equal_to<Key>,
+  KonanAllocator<std::pair<const Key, Value>>>;
+template<class Value>
+using KStdUnorderedSet = std::unordered_set<Value,
+  std::hash<Value>, std::equal_to<Value>,
+  KonanAllocator<Value>>;
+template<class Value>
+using KStdVector = std::vector<Value, KonanAllocator<Value>>;
 
 #ifdef __cplusplus
 extern "C" {

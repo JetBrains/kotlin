@@ -18,6 +18,7 @@
 #include <string.h>
 #include <math.h>
 #include "cbigint.h"
+#include "../KString.h"
 #include "../Natives.h"
 #include "../Exceptions.h"
 #include "../utf8.h"
@@ -547,7 +548,7 @@ KFloat
 Konan_FloatingPointParser_parseFloatImpl (KString s, KInt e)
 {
   const KChar* utf16 = CharArrayAddressOfElementAt(s, 0);
-  std::string utf8;
+  KStdString utf8;
   utf8::utf16to8(utf16, utf16 + s->count_, back_inserter(utf8));
   const char *str = utf8.c_str();
   auto flt = createFloat (str, e);

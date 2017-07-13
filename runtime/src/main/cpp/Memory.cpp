@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -22,6 +21,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include "Alloc.h"
 #include "Assert.h"
 #include "Exceptions.h"
 #include "Memory.h"
@@ -57,9 +57,9 @@ constexpr size_t kGcThreshold = 9341;
 #endif
 
 #if TRACE_MEMORY || USE_GC
-typedef std::unordered_set<ContainerHeader*> ContainerHeaderSet;
-typedef std::vector<ContainerHeader*> ContainerHeaderList;
-typedef std::vector<KRef*> KRefPtrList;
+typedef KStdUnorderedSet<ContainerHeader*> ContainerHeaderSet;
+typedef KStdVector<ContainerHeader*> ContainerHeaderList;
+typedef KStdVector<KRef*> KRefPtrList;
 #endif
 
 struct MemoryState {
@@ -96,16 +96,6 @@ namespace {
 // TODO: can we pass this variable as an explicit argument?
 __thread MemoryState* memoryState = nullptr;
 
-// TODO: use those allocators for STL containers as well.
-template <typename T>
-inline T* allocMemory(container_size_t size) {
-  return reinterpret_cast<T*>(calloc(1, size));
-}
-
-inline void freeMemory(void* memory) {
-  free(memory);
-}
-
 inline bool isFreeable(const ContainerHeader* header) {
   return (header->refCount_ & CONTAINER_TAG_MASK) < CONTAINER_TAG_PERMANENT;
 }
@@ -116,6 +106,17 @@ inline bool isPermanent(const ContainerHeader* header) {
 
 inline container_size_t alignUp(container_size_t size, int alignment) {
   return (size + alignment - 1) & ~(alignment - 1);
+}
+
+// TODO: shall we do padding for alignment?
+inline container_size_t objectSize(const ObjHeader* obj) {
+  const TypeInfo* type_info = obj->type_info();
+  container_size_t size = type_info->instanceSize_ < 0 ?
+      // An array.
+      ArrayDataSizeBytes(obj->array()) + sizeof(ArrayHeader)
+      :
+      type_info->instanceSize_ + sizeof(ObjHeader);
+  return alignUp(size, kObjectAlignment);
 }
 
 inline bool isArenaSlot(ObjHeader** slot) {
@@ -205,10 +206,10 @@ inline void initThreshold(MemoryState* state, uint32_t gcThreshold) {
 #if OPTIMIZE_GC
   if (state->toFreeCache != nullptr) {
     GarbageCollect();
-    freeMemory(state->toFreeCache);
+    konanFreeMemory(state->toFreeCache);
   }
-  state->toFreeCache = allocMemory<ContainerHeader*>(
-      sizeof(ContainerHeader*) * gcThreshold);
+  state->toFreeCache = reinterpret_cast<ContainerHeader**>(
+      konanAllocMemory(sizeof(ContainerHeader*) * gcThreshold));
   state->cacheSize = 0;
 #endif
   state->gcThreshold = gcThreshold;
@@ -218,25 +219,28 @@ inline void initThreshold(MemoryState* state, uint32_t gcThreshold) {
 ContainerHeaderList collectMutableReferred(ContainerHeader* header) {
   ContainerHeaderList result;
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(header + 1);
-  const TypeInfo* typeInfo = obj->type_info();
-  // TODO: generalize iteration over all references.
-  // TODO: this code relies on single object per container assumption.
-  for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
-    ObjHeader** location = reinterpret_cast<ObjHeader**>(
-      reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
-    ObjHeader* ref = *location;
-    if (ref != nullptr && !isPermanent(ref->container())) {
-      result.push_back(ref->container());
-    }
-  }
-  if (typeInfo == theArrayTypeInfo) {
-    ArrayHeader* array = obj->array();
-    for (int index = 0; index < array->count_; index++) {
-      ObjHeader* ref = *ArrayAddressOfElementAt(array, index);
+  for (int object = 0; object < header->objectCount_; object++) {
+    const TypeInfo* typeInfo = obj->type_info();
+    // TODO: generalize iteration over all references.
+    for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
+      ObjHeader** location = reinterpret_cast<ObjHeader**>(
+          reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
+      ObjHeader* ref = *location;
       if (ref != nullptr && !isPermanent(ref->container())) {
         result.push_back(ref->container());
       }
     }
+    if (typeInfo == theArrayTypeInfo) {
+      ArrayHeader* array = obj->array();
+      for (int index = 0; index < array->count_; index++) {
+        ObjHeader* ref = *ArrayAddressOfElementAt(array, index);
+        if (ref != nullptr && !isPermanent(ref->container())) {
+          result.push_back(ref->container());
+        }
+      }
+    }
+    obj = reinterpret_cast<ObjHeader*>(
+      reinterpret_cast<uintptr_t>(obj) + objectSize(obj));
   }
   return result;
 }
@@ -327,27 +331,16 @@ void phase4(ContainerHeader* header, ContainerHeaderSet* toRemove) {
 inline ArenaContainer* initedArena(ObjHeader** auxSlot) {
   ObjHeader* slotValue = *auxSlot;
   if (slotValue) return reinterpret_cast<ArenaContainer*>(slotValue);
-  ArenaContainer* arena = allocMemory<ArenaContainer>(sizeof(ArenaContainer));
+  ArenaContainer* arena = konanConstructInstance<ArenaContainer>();
   arena->Init();
   *auxSlot = reinterpret_cast<ObjHeader*>(arena);
   return arena;
 }
 
-// TODO: shall we do padding for alignment?
-inline container_size_t objectSize(const ObjHeader* obj) {
-  const TypeInfo* type_info = obj->type_info();
-  container_size_t size = type_info->instanceSize_ < 0 ?
-      // An array.
-      ArrayDataSizeBytes(obj->array()) + sizeof(ArrayHeader)
-      :
-      type_info->instanceSize_ + sizeof(ObjHeader);
-  return alignUp(size, kObjectAlignment);
-}
-
 }  // namespace
 
 ContainerHeader* AllocContainer(size_t size) {
-  ContainerHeader* result = allocMemory<ContainerHeader>(size);
+  ContainerHeader* result = konanConstructSizedInstance<ContainerHeader>(size);
 #if TRACE_MEMORY
   fprintf(stderr, ">>> alloc %d -> %p\n", static_cast<int>(size), result);
   memoryState->containers->insert(result);
@@ -392,7 +385,7 @@ void FreeContainer(ContainerHeader* header) {
   // And release underlying memory.
   if (isFreeable(header)) {
     memoryState->allocCount--;
-    freeMemory(header);
+    konanFreeMemory(header);
   }
 }
 
@@ -407,7 +400,7 @@ void FreeContainerNoRef(ContainerHeader* header) {
   removeFreeable(memoryState, header);
 #endif
   memoryState->allocCount--;
-  freeMemory(header);
+  konanFreeMemory(header);
 }
 #endif
 
@@ -453,19 +446,24 @@ void ArenaContainer::Init() {
 void ArenaContainer::Deinit() {
   auto chunk = currentChunk_;
   while (chunk != nullptr) {
-    auto toRemove = chunk;
     // FreeContainer() doesn't release memory when CONTAINER_TAG_STACK is set.
     FreeContainer(chunk->asHeader());
     chunk = chunk->next;
-    freeMemory(toRemove);
   }
+  chunk = currentChunk_;
+  while (chunk != nullptr) {
+    auto toRemove = chunk;
+    chunk = chunk->next;
+    konanFreeMemory(toRemove);
+  }
+
 }
 
 bool ArenaContainer::allocContainer(container_size_t minSize) {
   auto size = minSize + sizeof(ContainerHeader) + sizeof(ContainerChunk);
   size = alignUp(size, kContainerAlignment);
   // TODO: keep simple cache of container chunks.
-  ContainerChunk* result = allocMemory<ContainerChunk>(size);
+  ContainerChunk* result = konanConstructSizedInstance<ContainerChunk>(size);
   RuntimeAssert(result != nullptr, "Cannot alloc memory");
   if (result == nullptr) return false;
   result->next = currentChunk_;
@@ -560,15 +558,15 @@ MemoryState* InitMemory() {
                 offsetof(ObjHeader  , container_offset_negative_),
                 "Layout mismatch");
   RuntimeAssert(memoryState == nullptr, "memory state must be clear");
-  memoryState = allocMemory<MemoryState>(sizeof(MemoryState));
+  memoryState = konanConstructInstance<MemoryState>();
   // TODO: initialize heap here.
   memoryState->allocCount = 0;
 #if TRACE_MEMORY
-  memoryState->globalObjects = new KRefPtrList();
-  memoryState->containers = new ContainerHeaderSet();
+  memoryState->globalObjects = konanConstructInstance<KRefPtrList>();
+  memoryState->containers = konanConstructInstance<ContainerHeaderSet>();
 #endif
 #if USE_GC
-  memoryState->toFree = new ContainerHeaderSet();
+  memoryState->toFree = konanConstructInstance<ContainerHeaderSet>();
   memoryState->gcInProgress = false;
   initThreshold(memoryState, kGcThreshold);
   memoryState->gcSuspendCount = 0;
@@ -583,18 +581,18 @@ void DeinitMemory(MemoryState* memoryState) {
     fprintf(stderr, "Release global in *%p: %p\n", location, *location);
     UpdateRef(location, nullptr);
   }
-  delete memoryState->globalObjects;
+  konanDestructInstance(memoryState->globalObjects);
   memoryState->globalObjects = nullptr;
 #endif
 
 #if USE_GC
   GarbageCollect();
-  delete memoryState->toFree;
+  konanDestructInstance(memoryState->toFree);
   memoryState->toFree = nullptr;
 
 #if OPTIMIZE_GC
   if (memoryState->toFreeCache != nullptr) {
-    freeMemory(memoryState->toFreeCache);
+    konanFreeMemory(memoryState->toFreeCache);
     memoryState->toFreeCache = nullptr;
   }
 #endif
@@ -605,12 +603,12 @@ void DeinitMemory(MemoryState* memoryState) {
 #if TRACE_MEMORY
     fprintf(stderr, "*** Memory leaks, leaked %d containers ***\n", memoryState->allocCount);
     dumpReachable("", memoryState->containers);
-    delete memoryState->containers;
+    konanDestructInstance(memoryState->containers);
     memoryState->containers = nullptr;
 #endif
   }
 
-  freeMemory(memoryState);
+  konanFreeMemory(memoryState);
   ::memoryState = nullptr;
 }
 
@@ -719,7 +717,7 @@ void LeaveFrame(ObjHeader** start, int count) {
     fprintf(stderr, "LeaveFrame: free arena %p\n", arena);
 #endif
     arena->Deinit();
-    freeMemory(arena);
+    konanFreeMemory(arena);
   }
 }
 
@@ -836,7 +834,7 @@ void Kotlin_konan_internal_GC_stop(KRef) {
 #if USE_GC
   if (memoryState->toFree != nullptr) {
     GarbageCollect();
-    delete memoryState->toFree;
+    konanDestructInstance(memoryState->toFree);
     memoryState->toFree = nullptr;
   }
 #endif
@@ -845,7 +843,7 @@ void Kotlin_konan_internal_GC_stop(KRef) {
 void Kotlin_konan_internal_GC_start(KRef) {
 #if USE_GC
   if (memoryState->toFree == nullptr) {
-    memoryState->toFree = new ContainerHeaderSet();
+    memoryState->toFree = konanConstructInstance<ContainerHeaderSet>();
   }
 #endif
 }

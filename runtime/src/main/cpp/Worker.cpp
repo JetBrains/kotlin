@@ -27,6 +27,7 @@
 #include <unordered_map>
 #endif
 
+#include "Alloc.h"
 #include "Assert.h"
 #include "Memory.h"
 #include "Runtime.h"
@@ -172,7 +173,7 @@ class Worker {
 
  private:
   KInt id_;
-  std::deque<Job> queue_;
+  KStdDeque<Job> queue_;
   // Lock and condition for waiting on the queue.
   pthread_mutex_t lock_;
   pthread_cond_t cond_;
@@ -197,7 +198,7 @@ class State {
 
   Worker* addWorkerUnlocked() {
     Locker locker(&lock_);
-    Worker* worker = new Worker(nextWorkerId());
+    Worker* worker = konanConstructInstance<Worker>(nextWorkerId());
     if (worker == nullptr) return nullptr;
     workers_[worker->id()] = worker;
     return worker;
@@ -221,7 +222,7 @@ class State {
       if (it == workers_.end()) return nullptr;
       worker = it->second;
 
-      future = new Future(nextFutureId());
+      future = konanConstructInstance<Future>(nextFutureId());
       futures_[future->id()] = future;
     }
 
@@ -259,7 +260,7 @@ class State {
        auto it = futures_.find(id);
        if (it != futures_.end()) {
          futures_.erase(it);
-         delete future;
+         konanDestructInstance(future);
        }
     }
 
@@ -304,8 +305,8 @@ class State {
  private:
   pthread_mutex_t lock_;
   pthread_cond_t cond_;
-  std::unordered_map<KInt, Future*> futures_;
-  std::unordered_map<KInt, Worker*> workers_;
+  KStdUnorderedMap<KInt, Future*> futures_;
+  KStdUnorderedMap<KInt, Worker*> workers_;
   KInt currentWorkerId_;
   KInt currentFutureId_;
   KInt currentVersion_;
@@ -318,11 +319,11 @@ State* theState() {
     return state;
   }
 
-  State* result = new State();
+  State* result = konanConstructInstance<State>();
 
   State* old = __sync_val_compare_and_swap(&state, nullptr, result);
   if (old != nullptr) {
-    delete result;
+    konanDestructInstance(result);
     // Someone else inited this data.
     return old;
   }
@@ -377,7 +378,7 @@ void* workerRoutine(void* argument) {
 
   DeinitRuntime(state);
 
-  delete worker;
+  konanDestructInstance(worker);
 
   return nullptr;
 }

@@ -668,7 +668,7 @@ int iswlower_Konan(KChar ch) {
   return getType(ch) == LOWERCASE_LETTER;
 }
 
-void checkParsingErrors(const char* c_str, const char* end, std::string::size_type c_str_size) {
+void checkParsingErrors(const char* c_str, const char* end, KStdString::size_type c_str_size) {
   if (end == c_str) {
     ThrowNumberFormatException();
   }
@@ -736,7 +736,7 @@ OBJ_GETTER(Kotlin_String_toUtf8Array, KString thiz, KInt start, KInt size) {
     ThrowArrayIndexOutOfBoundsException();
   }
   const KChar* utf16 = CharArrayAddressOfElementAt(thiz, start);
-  std::string utf8;
+  KStdString utf8;
   utf8::utf16to8(utf16, utf16 + size, back_inserter(utf8));
   ArrayHeader* result = AllocArrayInstance(
       theByteArrayTypeInfo, utf8.size() + 1, OBJ_RESULT)->array();

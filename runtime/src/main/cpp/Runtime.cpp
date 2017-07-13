@@ -19,6 +19,7 @@
 #include <windows.h>
 #endif
 
+#include "Alloc.h"
 #include "Memory.h"
 #include "Runtime.h"
 
@@ -63,7 +64,7 @@ void AppendToInitializersTail(InitNode *next) {
 
 // TODO: properly use RuntimeState.
 RuntimeState* InitRuntime() {
-  RuntimeState* result = new RuntimeState();
+  RuntimeState* result = konanConstructInstance<RuntimeState>();
   result->memoryState = InitMemory();
   // Keep global variables in state as well.
   InitOrDeinitGlobalVariables(true);
@@ -80,7 +81,7 @@ void DeinitRuntime(RuntimeState* state) {
   if (state != nullptr) {
     InitOrDeinitGlobalVariables(false);
     DeinitMemory(state->memoryState);
-    delete state;
+    konanDestructInstance(state);
   }
 }
 
