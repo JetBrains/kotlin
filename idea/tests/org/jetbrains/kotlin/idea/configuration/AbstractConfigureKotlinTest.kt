@@ -14,238 +14,225 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration;
+package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathMacros;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.testFramework.PlatformTestCase;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor;
-import org.jetbrains.kotlin.utils.PathUtil;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.PathMacros
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.testFramework.PlatformTestCase
+import com.intellij.testFramework.UsefulTestCase
+import junit.framework.TestCase
+import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
+import org.jetbrains.kotlin.utils.PathUtil
+import java.io.File
+import java.io.IOException
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
+abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
 
-import static org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState;
+    @Throws(Exception::class)
+    override fun tearDown() {
+        PathMacros.getInstance().removeMacro(TEMP_DIR_MACRO_KEY)
 
-public abstract class AbstractConfigureKotlinTest extends PlatformTestCase {
-    private static final String BASE_PATH = "idea/testData/configuration/";
-    private static final String TEMP_DIR_MACRO_KEY = "TEMP_TEST_DIR";
-    protected static final KotlinJavaModuleConfigurator JAVA_CONFIGURATOR = new KotlinJavaModuleConfigurator() {
-        @Override
-        protected String getDefaultPathToJarFile(@NotNull Project project) {
-            return getPathRelativeToTemp("default_jvm_lib");
+        super.tearDown()
+    }
+
+    @Throws(Exception::class)
+    override fun initApplication() {
+        super.initApplication()
+
+        val tempLibDir = FileUtil.createTempDirectory("temp", null)
+        PathMacros.getInstance().setMacro(TEMP_DIR_MACRO_KEY, FileUtilRt.toSystemDependentName(tempLibDir.absolutePath))
+    }
+
+    protected fun doTestConfigureModulesWithNonDefaultSetup(configurator: KotlinWithLibraryConfigurator) {
+        assertNoFilesInDefaultPaths()
+
+        val modules = modules
+        for (module in modules) {
+            assertNotConfigured(module, configurator)
         }
-    };
-    protected static final KotlinJsModuleConfigurator JS_CONFIGURATOR = new KotlinJsModuleConfigurator() {
-        @Override
-        protected String getDefaultPathToJarFile(@NotNull Project project) {
-            return getPathRelativeToTemp("default_js_lib");
+
+        configurator.configure(myProject, emptyList())
+
+        assertNoFilesInDefaultPaths()
+
+        for (module in modules) {
+            assertProperlyConfigured(module, configurator)
         }
-    };
+    }
 
-    private static void configure(
-            @NotNull List<Module> modules,
-            @NotNull FileState runtimeState,
-            @NotNull KotlinWithLibraryConfigurator configurator,
-            @NotNull String jarFromDist,
-            @NotNull String jarFromTemp
-    ) {
-        Project project = modules.iterator().next().getProject();
-        NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
+    protected fun doTestOneJavaModule(jarState: FileState) {
+        doTestOneModule(jarState, JAVA_CONFIGURATOR)
+    }
 
-        for (Module module : modules) {
-            Library library = configurator.getKotlinLibrary(module);
-            if (library == null) {
-                library = configurator.createNewLibrary(project, collector);
+    protected fun doTestOneJsModule(jarState: FileState) {
+        doTestOneModule(jarState, JS_CONFIGURATOR)
+    }
+
+    private fun doTestOneModule(jarState: FileState, configurator: KotlinWithLibraryConfigurator) {
+        val module = module
+
+        assertNotConfigured(module, configurator)
+        configure(module, jarState, configurator)
+        assertProperlyConfigured(module, configurator)
+    }
+
+    override fun getModule(): Module {
+        val modules = ModuleManager.getInstance(myProject).modules
+        assert(modules.size == 1) { "One module should be loaded " + modules.size }
+        myModule = modules[0]
+        return super.getModule()
+    }
+
+    val modules: Array<Module>
+        get() = ModuleManager.getInstance(myProject).modules
+
+    @Throws(IOException::class)
+    override fun getIprFile(): File {
+        val projectFilePath = projectRoot + "/projectFile.ipr"
+        TestCase.assertTrue("Project file should exists " + projectFilePath, File(projectFilePath).exists())
+        return File(projectFilePath)
+    }
+
+    @Throws(Exception::class)
+    override fun doCreateProject(projectFile: File): Project? {
+        return myProjectManager.loadProject(projectFile.path)
+    }
+
+    private val projectName: String
+        get() {
+            val testName = getTestName(true)
+            return if (testName.contains("_")) {
+                testName.substring(0, testName.indexOf("_"))
             }
-            String pathToJar = getPathToJar(runtimeState, jarFromDist, jarFromTemp);
-            Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
-            Library.ModifiableModel model = library.getModifiableModel();
-            for (LibraryJarDescriptor descriptor : configurator.getLibraryJarDescriptors(sdk)) {
-                configurator.configureLibraryJar(model, runtimeState, pathToJar, descriptor, collector);
+            else testName
+        }
+
+    protected val projectRoot: String
+        get() = BASE_PATH + projectName
+
+    override fun setUpModule() {}
+
+    private fun assertNoFilesInDefaultPaths() {
+        UsefulTestCase.assertDoesntExist(File(JAVA_CONFIGURATOR.getDefaultPathToJarFile(project)))
+        UsefulTestCase.assertDoesntExist(File(JS_CONFIGURATOR.getDefaultPathToJarFile(project)))
+    }
+
+    companion object {
+        private val BASE_PATH = "idea/testData/configuration/"
+        private val TEMP_DIR_MACRO_KEY = "TEMP_TEST_DIR"
+        protected val JAVA_CONFIGURATOR: KotlinJavaModuleConfigurator = object : KotlinJavaModuleConfigurator() {
+            override fun getDefaultPathToJarFile(project: Project): String {
+                return getPathRelativeToTemp("default_jvm_lib")
             }
-            ApplicationManager.getApplication().runWriteAction(model::commit);
-            configurator.addLibraryToModuleIfNeeded(module, library, collector);
         }
-        collector.showNotification();
-    }
-
-    @NotNull
-    private static String getPathToJar(@NotNull FileState runtimeState, @NotNull String jarFromDist, @NotNull String jarFromTemp) {
-        switch (runtimeState) {
-            case EXISTS:
-                return jarFromDist;
-            case COPY:
-                return jarFromTemp;
-            case DO_NOT_COPY:
-                return jarFromDist;
-        }
-        return jarFromDist;
-    }
-
-    protected static void configure(@NotNull Module module, @NotNull FileState jarState, @NotNull KotlinProjectConfigurator configurator) {
-        if (configurator instanceof KotlinJavaModuleConfigurator) {
-            configure(Collections.singletonList(module), jarState,
-                      (KotlinWithLibraryConfigurator) configurator,
-                      getPathToExistentRuntimeJar(), getPathToNonexistentRuntimeJar());
-        }
-        if (configurator instanceof KotlinJsModuleConfigurator) {
-            configure(Collections.singletonList(module), jarState,
-                      (KotlinWithLibraryConfigurator) configurator,
-                      getPathToExistentJsJar(), getPathToNonexistentJsJar());
-        }
-    }
-
-    private static String getPathToNonexistentRuntimeJar() {
-        String pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.KOTLIN_JAVA_RUNTIME_JAR;
-        myFilesToDelete.add(new File(pathToTempKotlinRuntimeJar));
-        return pathToTempKotlinRuntimeJar;
-    }
-
-    private static String getPathToNonexistentJsJar() {
-        String pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.JS_LIB_JAR_NAME;
-        myFilesToDelete.add(new File(pathToTempKotlinRuntimeJar));
-        return pathToTempKotlinRuntimeJar;
-    }
-
-    private static String getPathToExistentRuntimeJar() {
-        return PathUtil.getKotlinPathsForDistDirectory().getStdlibPath().getParent();
-    }
-
-    private static String getPathToExistentJsJar() {
-        return PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().getParent();
-    }
-
-    protected static void assertNotConfigured(Module module, KotlinWithLibraryConfigurator configurator) {
-        assertFalse(
-                String.format("Module %s should not be configured as %s Module", module.getName(), configurator.getPresentableText()),
-                configurator.isConfigured(module));
-    }
-
-    protected static void assertConfigured(Module module, KotlinWithLibraryConfigurator configurator) {
-        assertTrue(String.format("Module %s should be configured with configurator '%s'", module.getName(),
-                                 configurator.getPresentableText()),
-                   configurator.isConfigured(module));
-    }
-
-    protected static void assertProperlyConfigured(Module module, KotlinWithLibraryConfigurator configurator) {
-        assertConfigured(module, configurator);
-        assertNotConfigured(module, getOppositeConfigurator(configurator));
-    }
-
-    private static KotlinWithLibraryConfigurator getOppositeConfigurator(KotlinWithLibraryConfigurator configurator) {
-        if (configurator == JAVA_CONFIGURATOR) return JS_CONFIGURATOR;
-        if (configurator == JS_CONFIGURATOR) return JAVA_CONFIGURATOR;
-
-        throw new IllegalArgumentException("Only JS_CONFIGURATOR and JAVA_CONFIGURATOR are supported");
-    }
-
-    private static String getPathRelativeToTemp(String relativePath) {
-        String tempPath = PathMacros.getInstance().getValue(TEMP_DIR_MACRO_KEY);
-        return tempPath + '/' + relativePath;
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        PathMacros.getInstance().removeMacro(TEMP_DIR_MACRO_KEY);
-
-        super.tearDown();
-    }
-
-    @Override
-    protected void initApplication() throws Exception {
-        super.initApplication();
-
-        File tempLibDir = FileUtil.createTempDirectory("temp", null);
-        PathMacros.getInstance().setMacro(TEMP_DIR_MACRO_KEY, FileUtilRt.toSystemDependentName(tempLibDir.getAbsolutePath()));
-    }
-
-    protected void doTestConfigureModulesWithNonDefaultSetup(KotlinWithLibraryConfigurator configurator) {
-        assertNoFilesInDefaultPaths();
-
-        Module[] modules = getModules();
-        for (Module module : modules) {
-            assertNotConfigured(module, configurator);
+        protected val JS_CONFIGURATOR: KotlinJsModuleConfigurator = object : KotlinJsModuleConfigurator() {
+            override fun getDefaultPathToJarFile(project: Project): String {
+                return getPathRelativeToTemp("default_js_lib")
+            }
         }
 
-        configurator.configure(myProject, Collections.<Module>emptyList());
+        private fun configure(
+                modules: List<Module>,
+                runtimeState: FileState,
+                configurator: KotlinWithLibraryConfigurator,
+                jarFromDist: String,
+                jarFromTemp: String
+        ) {
+            val project = modules.iterator().next().project
+            val collector = createConfigureKotlinNotificationCollector(project)
 
-        assertNoFilesInDefaultPaths();
-
-        for (Module module : modules) {
-            assertProperlyConfigured(module, configurator);
+            for (module in modules) {
+                var library = configurator.getKotlinLibrary(module)
+                if (library == null) {
+                    library = configurator.createNewLibrary(project, collector)
+                }
+                val pathToJar = getPathToJar(runtimeState, jarFromDist, jarFromTemp)
+                val sdk = ModuleRootManager.getInstance(module).sdk
+                val model = library.modifiableModel
+                for (descriptor in configurator.getLibraryJarDescriptors(sdk)) {
+                    configurator.configureLibraryJar(model, runtimeState, pathToJar, descriptor, collector)
+                }
+                ApplicationManager.getApplication().runWriteAction { model.commit() }
+                configurator.addLibraryToModuleIfNeeded(module, library, collector)
+            }
+            collector.showNotification()
         }
-    }
 
-    protected void doTestOneJavaModule(@NotNull FileState jarState) {
-        doTestOneModule(jarState, JAVA_CONFIGURATOR);
-    }
-
-    protected void doTestOneJsModule(@NotNull FileState jarState) {
-        doTestOneModule(jarState, JS_CONFIGURATOR);
-    }
-
-    private void doTestOneModule(@NotNull FileState jarState, @NotNull KotlinWithLibraryConfigurator configurator) {
-        Module module = getModule();
-
-        assertNotConfigured(module, configurator);
-        configure(module, jarState, configurator);
-        assertProperlyConfigured(module, configurator);
-    }
-
-    @Override
-    public Module getModule() {
-        Module[] modules = ModuleManager.getInstance(myProject).getModules();
-        assert modules.length == 1 : "One module should be loaded " + modules.length;
-        myModule = modules[0];
-        return super.getModule();
-    }
-
-    public Module[] getModules() {
-        return ModuleManager.getInstance(myProject).getModules();
-    }
-
-    @Override
-    protected File getIprFile() throws IOException {
-        String projectFilePath = getProjectRoot() + "/projectFile.ipr";
-        assertTrue("Project file should exists " + projectFilePath, new File(projectFilePath).exists());
-        return new File(projectFilePath);
-    }
-
-    @Override
-    protected Project doCreateProject(@NotNull File projectFile) throws Exception {
-        return myProjectManager.loadProject(projectFile.getPath());
-    }
-
-    private String getProjectName() {
-        String testName = getTestName(true);
-        if (testName.contains("_")) {
-            return testName.substring(0, testName.indexOf("_"));
+        private fun getPathToJar(runtimeState: FileState, jarFromDist: String, jarFromTemp: String): String {
+            when (runtimeState) {
+                KotlinWithLibraryConfigurator.FileState.EXISTS -> return jarFromDist
+                KotlinWithLibraryConfigurator.FileState.COPY -> return jarFromTemp
+                KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY -> return jarFromDist
+            }
+            return jarFromDist
         }
-        return testName;
-    }
 
-    protected String getProjectRoot() {
-        return BASE_PATH + getProjectName();
-    }
+        protected fun configure(module: Module, jarState: FileState, configurator: KotlinProjectConfigurator) {
+            if (configurator is KotlinJavaModuleConfigurator) {
+                configure(listOf(module), jarState,
+                          configurator as KotlinWithLibraryConfigurator,
+                          pathToExistentRuntimeJar, pathToNonexistentRuntimeJar)
+            }
+            if (configurator is KotlinJsModuleConfigurator) {
+                configure(listOf(module), jarState,
+                          configurator as KotlinWithLibraryConfigurator,
+                          pathToExistentJsJar, pathToNonexistentJsJar)
+            }
+        }
 
-    @Override
-    protected void setUpModule() {
-    }
+        private val pathToNonexistentRuntimeJar: String
+            get() {
+                val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.KOTLIN_JAVA_RUNTIME_JAR
+                PlatformTestCase.myFilesToDelete.add(File(pathToTempKotlinRuntimeJar))
+                return pathToTempKotlinRuntimeJar
+            }
 
-    private void assertNoFilesInDefaultPaths() {
-        assertDoesntExist(new File(JAVA_CONFIGURATOR.getDefaultPathToJarFile(getProject())));
-        assertDoesntExist(new File(JS_CONFIGURATOR.getDefaultPathToJarFile(getProject())));
+        private val pathToNonexistentJsJar: String
+            get() {
+                val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.JS_LIB_JAR_NAME
+                PlatformTestCase.myFilesToDelete.add(File(pathToTempKotlinRuntimeJar))
+                return pathToTempKotlinRuntimeJar
+            }
+
+        private val pathToExistentRuntimeJar: String
+            get() = PathUtil.getKotlinPathsForDistDirectory().stdlibPath.parent
+
+        private val pathToExistentJsJar: String
+            get() = PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath.parent
+
+        protected fun assertNotConfigured(module: Module, configurator: KotlinWithLibraryConfigurator) {
+            TestCase.assertFalse(
+                    String.format("Module %s should not be configured as %s Module", module.name, configurator.presentableText),
+                    configurator.isConfigured(module))
+        }
+
+        protected fun assertConfigured(module: Module, configurator: KotlinWithLibraryConfigurator) {
+            TestCase.assertTrue(String.format("Module %s should be configured with configurator '%s'", module.name,
+                                              configurator.presentableText),
+                                configurator.isConfigured(module))
+        }
+
+        protected fun assertProperlyConfigured(module: Module, configurator: KotlinWithLibraryConfigurator) {
+            assertConfigured(module, configurator)
+            assertNotConfigured(module, getOppositeConfigurator(configurator))
+        }
+
+        private fun getOppositeConfigurator(configurator: KotlinWithLibraryConfigurator): KotlinWithLibraryConfigurator {
+            if (configurator === JAVA_CONFIGURATOR) return JS_CONFIGURATOR
+            if (configurator === JS_CONFIGURATOR) return JAVA_CONFIGURATOR
+
+            throw IllegalArgumentException("Only JS_CONFIGURATOR and JAVA_CONFIGURATOR are supported")
+        }
+
+        private fun getPathRelativeToTemp(relativePath: String): String {
+            val tempPath = PathMacros.getInstance().getValue(TEMP_DIR_MACRO_KEY)
+            return tempPath + '/' + relativePath
+        }
     }
 }
