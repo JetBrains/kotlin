@@ -1,6 +1,6 @@
 UFile (package = ) [public final class CycleInTypeParametersKt {...]
     UClass (name = CycleInTypeParametersKt) [public final class CycleInTypeParametersKt {...}]
-        UField (name = a) [private static final var a: Device<?> = null as? Device<?>]
+        UField (name = a) [@org.jetbrains.annotations.Nullable private static final var a: Device<?> = null as? Device<?>]
             UAnnotation (fqName = org.jetbrains.annotations.Nullable) [@org.jetbrains.annotations.Nullable]
             UBinaryExpressionWithType [null as? Device<?>] : PsiType:Device<?>
                 ULiteralExpression (value = null) [null] : PsiType:Void
