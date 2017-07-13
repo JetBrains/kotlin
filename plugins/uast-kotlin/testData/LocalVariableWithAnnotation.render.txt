@@ -1,0 +1,8 @@
+public final class LocalVariableWithAnnotationKt {
+    public static final fun foo() : void {
+        @TestAnnotation var bar: <ErrorType> = "lorem ipsum"
+    }
+}
+
+public abstract annotation TestAnnotation {
+}
