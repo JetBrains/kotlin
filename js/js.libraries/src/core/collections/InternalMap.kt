@@ -28,4 +28,12 @@ internal interface InternalMap<K, V> : MutableIterable<MutableMap.MutableEntry<K
     fun put(key: K, value: V): V?
     fun remove(key: K): V?
     fun clear(): Unit
+
+    fun createJsMap() {
+        val result = js("Object.create(null)")
+        // V8 trick to force the map to be a HashMap
+        result["foo"] = 1;
+        deleteProperty(result, "foo")
+        return result
+    }
 }
