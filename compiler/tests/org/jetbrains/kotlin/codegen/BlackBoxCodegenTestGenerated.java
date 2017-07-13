@@ -12499,6 +12499,66 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/unboxComparable.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EqualityWithNullable extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInEqualityWithNullable() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("boxedEqPrimitiveEvaluationOrder.kt")
+            public void testBoxedEqPrimitiveEvaluationOrder() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/boxedEqPrimitiveEvaluationOrder.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Generated extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInGenerated() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("boxedEqPrimitiveBoolean.kt")
+                public void testBoxedEqPrimitiveBoolean() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/boxedEqPrimitiveBoolean.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boxedEqPrimitiveByte.kt")
+                public void testBoxedEqPrimitiveByte() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/boxedEqPrimitiveByte.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boxedEqPrimitiveChar.kt")
+                public void testBoxedEqPrimitiveChar() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/boxedEqPrimitiveChar.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boxedEqPrimitiveInt.kt")
+                public void testBoxedEqPrimitiveInt() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/boxedEqPrimitiveInt.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boxedEqPrimitiveLong.kt")
+                public void testBoxedEqPrimitiveLong() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/boxedEqPrimitiveLong.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boxedEqPrimitiveShort.kt")
+                public void testBoxedEqPrimitiveShort() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/boxedEqPrimitiveShort.kt");
+                    doTest(fileName);
+                }
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/private")

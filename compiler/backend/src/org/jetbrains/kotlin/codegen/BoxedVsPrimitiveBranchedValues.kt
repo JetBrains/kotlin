@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -112,3 +113,130 @@ class PrimitiveToSafeCallEquality(
     }
 }
 
+
+class BoxedToPrimitiveEquality private constructor(
+        leftBoxed: StackValue,
+        rightPrimitive: StackValue,
+        primitiveType: Type
+) : BranchedValue(leftBoxed, rightPrimitive, primitiveType, Opcodes.IFNE) {
+    private val boxedType = arg1.type
+
+    override fun patchOpcode(opcode: Int, v: InstructionAdapter): Int =
+            NumberCompare.patchOpcode(opcode, v, KtTokens.EQEQ, operandType)
+
+    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+        if (jumpIfFalse) {
+            jumpIfFalse(v, jumpLabel)
+        }
+        else {
+            jumpIfTrue(v, jumpLabel)
+        }
+    }
+
+    private fun jumpIfTrue(v: InstructionAdapter, jumpLabel: Label) {
+        if (arg1.canHaveSideEffects() || arg2!!.canHaveSideEffects()) {
+            jumpIfTrueWithPossibleSideEffects(v, jumpLabel)
+            return
+        }
+
+        val notNullLabel = Label()
+        val endLabel = Label()
+        arg1.put(boxedType, v)
+        AsmUtil.dup(v, boxedType)
+        v.ifnonnull(notNullLabel)
+
+        AsmUtil.pop(v, boxedType)
+        v.goTo(endLabel)
+
+        v.mark(notNullLabel)
+        coerce(boxedType, operandType, v)
+        arg2.put(operandType, v)
+        v.visitJumpInsn(patchOpcode(negatedOperations[opcode]!!, v), jumpLabel)
+
+        v.mark(endLabel)
+    }
+
+    private fun jumpIfTrueWithPossibleSideEffects(v: InstructionAdapter, jumpLabel: Label) {
+        val notNullLabel = Label()
+        val endLabel = Label()
+
+        arg1.put(boxedType, v)
+        arg2!!.put(operandType, v)
+        AsmUtil.swap(v, operandType, boxedType)
+        AsmUtil.dup(v, boxedType)
+        v.ifnonnull(notNullLabel)
+
+        AsmUtil.pop(v, boxedType)
+        AsmUtil.pop(v, operandType)
+        v.goTo(endLabel)
+
+        v.mark(notNullLabel)
+        coerce(boxedType, operandType, v)
+        v.visitJumpInsn(patchOpcode(negatedOperations[opcode]!!, v), jumpLabel)
+
+        v.mark(endLabel)
+
+    }
+
+    private fun jumpIfFalse(v: InstructionAdapter, jumpLabel: Label) {
+        if (arg1.canHaveSideEffects() || arg2!!.canHaveSideEffects()) {
+            jumpIfFalseWithPossibleSideEffects(v, jumpLabel)
+            return
+        }
+
+        val notNullLabel = Label()
+        arg1.put(boxedType, v)
+        AsmUtil.dup(v, boxedType)
+        v.ifnonnull(notNullLabel)
+
+        AsmUtil.pop(v, boxedType)
+        v.goTo(jumpLabel)
+
+        v.mark(notNullLabel)
+        coerce(boxedType, operandType, v)
+        arg2.put(operandType, v)
+        v.visitJumpInsn(patchOpcode(opcode, v), jumpLabel)
+    }
+
+    private fun jumpIfFalseWithPossibleSideEffects(v: InstructionAdapter, jumpLabel: Label) {
+        val notNullLabel = Label()
+        arg1.put(boxedType, v)
+        arg2!!.put(operandType, v)
+        AsmUtil.swap(v, operandType, boxedType)
+        AsmUtil.dup(v, boxedType)
+        v.ifnonnull(notNullLabel)
+
+        AsmUtil.pop(v, boxedType)
+        AsmUtil.pop(v, operandType)
+        v.goTo(jumpLabel)
+
+        v.mark(notNullLabel)
+        coerce(boxedType, operandType, v)
+        v.visitJumpInsn(patchOpcode(opcode, v), jumpLabel)
+    }
+
+    companion object {
+        @JvmStatic
+        fun create(opToken: IElementType, leftBoxed: StackValue, rightPrimitive: StackValue, primitiveType: Type): BranchedValue =
+                if (!isApplicable(opToken, primitiveType))
+                    throw IllegalArgumentException("Not applicable for $opToken, $primitiveType")
+                else when (opToken) {
+                    KtTokens.EQEQ -> BoxedToPrimitiveEquality(leftBoxed, rightPrimitive, primitiveType)
+                    KtTokens.EXCLEQ -> Invert(BoxedToPrimitiveEquality(leftBoxed, rightPrimitive, primitiveType))
+                    else -> throw AssertionError("Unexpected opToken: $opToken")
+                }
+
+        @JvmStatic
+        fun isApplicable(opToken: IElementType, primitiveType: Type) =
+                (opToken == KtTokens.EQEQ ||
+                 opToken == KtTokens.EXCLEQ
+                ) &&
+                (primitiveType == Type.BOOLEAN_TYPE ||
+                 primitiveType == Type.CHAR_TYPE ||
+                 primitiveType == Type.BYTE_TYPE ||
+                 primitiveType == Type.SHORT_TYPE ||
+                 primitiveType == Type.INT_TYPE ||
+                 primitiveType == Type.LONG_TYPE
+                )
+    }
+}

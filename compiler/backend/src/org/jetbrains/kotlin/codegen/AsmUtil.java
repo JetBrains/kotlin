@@ -140,6 +140,10 @@ public class AsmUtil {
         return primitiveTypeByBoxedType.get(boxedType);
     }
 
+    public static boolean isBoxedTypeOf(@NotNull Type boxedType, @NotNull Type unboxedType) {
+        return unboxPrimitiveTypeOrNull(boxedType) == unboxedType;
+    }
+
     public static boolean isIntPrimitive(Type type) {
         return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
     }
