@@ -21,5 +21,6 @@
     <orderEntry type="module" module-name="js.translator" />
     <orderEntry type="module" module-name="js.serializer" />
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
+    <orderEntry type="library" name="jps" level="project" scope="TEST" />
   </component>
 </module>

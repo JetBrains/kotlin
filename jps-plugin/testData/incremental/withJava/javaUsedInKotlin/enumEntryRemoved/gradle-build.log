@@ -9,7 +9,7 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-'when' expression must be exhaustive, add necessary 'C' branch or 'else' branch instead
+Unresolved reference: C
 
 ================ Step #2 =================
 

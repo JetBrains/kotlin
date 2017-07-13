@@ -1250,6 +1250,7 @@ fun main(args: Array<String>) {
         testClass<AbstractIncrementalJvmCompilerRunnerTest> {
             model("incremental/pureKotlin", extension = null, recursive = false)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
+            model("incremental/withJava", extension = null, excludeParentDirs = true)
         }
 
         testClass<AbstractIncrementalJsCompilerRunnerTest> {
