@@ -23,7 +23,9 @@ import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
 
 // wraps AsyncDependenciesResolver to provide implementation for synchronous DependenciesResolver::resolve
-class AsyncDependencyResolverWrapper(private val delegate: AsyncDependenciesResolver): AsyncDependenciesResolver {
+class AsyncDependencyResolverWrapper(
+        override val delegate: AsyncDependenciesResolver
+): AsyncDependenciesResolver, DependencyResolverWrapper<AsyncDependenciesResolver> {
 
     override fun resolve(
             scriptContents: ScriptContents, environment: Environment

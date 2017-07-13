@@ -32,6 +32,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ScriptConfigurationHighlightingTestGenerated extends AbstractScriptConfigurationHighlightingTest {
+    @TestMetadata("acceptedAnnotations")
+    public void testAcceptedAnnotations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/acceptedAnnotations/");
+        doTest(fileName);
+    }
+
     @TestMetadata("additionalImports")
     public void testAdditionalImports() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/additionalImports/");
