@@ -317,7 +317,9 @@ task codegen_basics_for_loops_types(type: RunKonanTest) {
     goldValue = "01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n" +
             "01234\n01234\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n" +
             "0123\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n" +
-            "43210\n43210\nabcd\nabc\ndcba\n"
+            "43210\n43210\nabcd\nabc\ndcba\n024\n024\n024\n024\n024\n024\n024\n024\n024\n024\n024\n024\n024\n024\n" +
+            "024\n024\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n420\n420\n420\n420\n420\n420\n" +
+            "420\n420\n420\n420\n420\n420\n420\n420\n420\n420\nac\nac\ndb\n"
 }
 
 task codegen_basics_for_loops_overflow(type: RunKonanTest) {

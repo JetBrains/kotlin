@@ -74,12 +74,6 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
     private val scopeOwnerSymbol
         get() = currentScope!!.scope.scopeOwnerSymbol
 
-    private fun irConstOne(startOffset: Int, endOffset: Int) =
-            IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, 1)
-
-    private fun irConstMinusOne(startOffset: Int, endOffset: Int) =
-            IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, -1)
-
     private val progressionElementClasses: Set<IrClassSymbol> = mutableSetOf(symbols.char).apply {
         addAll(symbols.integerClasses)
     }
@@ -149,12 +143,29 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                 dispatchReceiver = this@unaryMinus
             }
 
+    private fun ProgressionInfo.defaultStep(startOffset: Int, endOffset: Int): IrExpression =
+        progressionType.elementType.let { type ->
+            val step = if (increasing) 1 else -1
+            when {
+                KotlinBuiltIns.isInt(type) || KotlinBuiltIns.isChar(type) ->
+                    IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, step)
+                KotlinBuiltIns.isLong(type) ->
+                    IrConstImpl.long(startOffset, endOffset, context.builtIns.longType, step.toLong())
+                else -> throw IllegalArgumentException()
+            }
+        }
+
     private fun IrConst<*>.isOne() =
         when (kind) {
             IrConstKind.Long -> value as Long == 1L
             IrConstKind.Int  -> value as Int == 1
             else -> false
         }
+
+    // Used only by the assert.
+    private fun stepHasRightType(step: IrExpression, progressionType: ProgressionType) =
+            ((progressionType.isCharProgression() || progressionType.isIntProgression()) && KotlinBuiltIns.isInt(step.type)) ||
+            (progressionType.isLongProgression() && KotlinBuiltIns.isLong(step.type))
 
     private fun irCheckProgressionStep(progressionType: ProgressionType,
                                        step: IrExpression): Pair<IrExpression, Boolean> {
@@ -163,11 +174,14 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
             (step.kind == IrConstKind.Int && step.value as Int > 0))) {
             return step to !step.isOne()
         }
-        val castedStep = step.castIfNecessary(progressionType, false)
-        val symbol = symbols.checkProgressionStep[castedStep.type]
+        // The frontend checks if the step has a right type (Long for LongProgression and Int for {Int/Char}Progression)
+        // so there is no need to cast it.
+        assert(stepHasRightType(step, progressionType))
+
+        val symbol = symbols.checkProgressionStep[step.type]
                 ?: throw IllegalArgumentException("Unknown progression element type: ${step.type}")
         return IrCallImpl(step.startOffset, step.endOffset, symbol).apply {
-            putValueArgument(0, castedStep)
+            putValueArgument(0, step)
         } to true
     }
 
@@ -190,7 +204,11 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
     //region Util classes ==============================================================================================
     // TODO: Replace with a cast when such support is added in the boxing lowering.
     private data class ProgressionType(val elementType: KotlinType,
-                                       val numberCastFunctionName: Name)
+                                       val numberCastFunctionName: Name) {
+        fun isIntProgression()  = KotlinBuiltIns.isInt(elementType)
+        fun isLongProgression() = KotlinBuiltIns.isLong(elementType)
+        fun isCharProgression() = KotlinBuiltIns.isChar(elementType)
+    }
 
     private data class ProgressionInfo(
             val progressionType: ProgressionType,
@@ -287,11 +305,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         return builder.irBlock {
             with(progressionInfo) {
                 val inductionVariable = irTemporaryVar(first.castIfNecessary(progressionType), "inductionVariable")
-                val stepExpression = if (increasing) { // TODO: Remove the casts.
-                    step ?: irConstOne(startOffset, endOffset).castIfNecessary(progressionType, false)
-                } else {
-                    step?.unaryMinus() ?: irConstMinusOne(startOffset, endOffset).castIfNecessary(progressionType, false)
-                }
+                val stepExpression = (if (increasing) step else step?.unaryMinus()) ?: defaultStep(startOffset, endOffset)
                 val stepValue = irTemporary(stepExpression, "step")
                 // Don't call progression bound calculation if the step is 1.
                 val boundExpression = if (needBoundCalculation) {
@@ -357,11 +371,11 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         val irIteratorAccess = oldCondition.dispatchReceiver as? IrGetValue ?: throw AssertionError()
         // Return null if we didn't lower a corresponding header.
         val forLoopInfo = iteratorToLoopInfo[irIteratorAccess.symbol] ?: return null
-        val loopVariable = forLoopInfo.loopVariable!! // TODO: Check!
+        assert(forLoopInfo.loopVariable != null)
 
         return irCall(context.irBuiltIns.booleanNotSymbol).apply {
             val eqeqCall = irCall(context.irBuiltIns.eqeqSymbol).apply {
-                putValueArgument(0, irGet(loopVariable))
+                putValueArgument(0, irGet(forLoopInfo.loopVariable!!))
                 putValueArgument(1, irGet(forLoopInfo.bound))
             }
             putValueArgument(0, eqeqCall)
@@ -400,7 +414,6 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
             // Transform accesses to the old iterator (see visitVariable method). Store loopVariable in loopInfo.
             val newBody = loop.body?.transform(this@ForLoopsTransformer, null)
             val (newCondition, forLoopInfo) = buildNewCondition(loop.condition) ?: return super.visitWhileLoop(loop)
-            assert(forLoopInfo.loopVariable != null)
 
             val newLoop = IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {
                 label = loop.label
