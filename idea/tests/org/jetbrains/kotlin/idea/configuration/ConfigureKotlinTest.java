@@ -63,13 +63,13 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         Module[] modules = getModules();
         for (Module module : modules) {
             if (module.getName().equals("module1")) {
-                configure(module, KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, JAVA_CONFIGURATOR);
-                assertConfigured(module, JAVA_CONFIGURATOR);
+                Companion.configure(module, KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, Companion.getJAVA_CONFIGURATOR());
+                Companion.assertConfigured(module, Companion.getJAVA_CONFIGURATOR());
             }
             else if (module.getName().equals("module2")) {
-                assertNotConfigured(module, JAVA_CONFIGURATOR);
-                configure(module, KotlinWithLibraryConfigurator.FileState.EXISTS, JAVA_CONFIGURATOR);
-                assertConfigured(module, JAVA_CONFIGURATOR);
+                Companion.assertNotConfigured(module, Companion.getJAVA_CONFIGURATOR());
+                Companion.configure(module, KotlinWithLibraryConfigurator.FileState.EXISTS, Companion.getJAVA_CONFIGURATOR());
+                Companion.assertConfigured(module, Companion.getJAVA_CONFIGURATOR());
             }
         }
     }
@@ -80,21 +80,21 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         // Move fake runtime jar to default library path to pretend library is already configured
         FileUtil.copy(
                 new File(getProject().getBasePath() + "/lib/kotlin-runtime.jar"),
-                new File(JAVA_CONFIGURATOR.getDefaultPathToJarFile(getProject()) + "/kotlin-runtime.jar"));
+                new File(Companion.getJAVA_CONFIGURATOR().getDefaultPathToJarFile(getProject()) + "/kotlin-runtime.jar"));
 
-        assertNotConfigured(module, JAVA_CONFIGURATOR);
-        JAVA_CONFIGURATOR.configure(myProject, Collections.<Module>emptyList());
-        assertProperlyConfigured(module, JAVA_CONFIGURATOR);
+        Companion.assertNotConfigured(module, Companion.getJAVA_CONFIGURATOR());
+        Companion.getJAVA_CONFIGURATOR().configure(myProject, Collections.<Module>emptyList());
+        Companion.assertProperlyConfigured(module, Companion.getJAVA_CONFIGURATOR());
     }
 
     public void testTwoModulesWithNonDefaultPath_doNotCopyInDefault() throws IOException {
-        doTestConfigureModulesWithNonDefaultSetup(JAVA_CONFIGURATOR);
-        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, JS_CONFIGURATOR));
+        doTestConfigureModulesWithNonDefaultSetup(Companion.getJAVA_CONFIGURATOR());
+        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, Companion.getJS_CONFIGURATOR()));
     }
 
     public void testTwoModulesWithJSNonDefaultPath_doNotCopyInDefault() throws IOException {
-        doTestConfigureModulesWithNonDefaultSetup(JS_CONFIGURATOR);
-        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, JAVA_CONFIGURATOR));
+        doTestConfigureModulesWithNonDefaultSetup(Companion.getJS_CONFIGURATOR());
+        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, Companion.getJAVA_CONFIGURATOR()));
     }
 
     public void testNewLibrary_jarExists_js() {
