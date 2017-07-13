@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
-import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProviderBase
+import org.jetbrains.kotlin.script.ScriptContentLoader
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -29,12 +29,13 @@ import kotlin.concurrent.write
 import kotlin.script.dependencies.ScriptDependencies
 
 class KotlinScriptExternalImportsProviderImpl(
-        val project: Project,
+        project: Project,
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
-) : KotlinScriptExternalImportsProviderBase(project) {
+) : KotlinScriptExternalImportsProvider {
 
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, ScriptDependencies?>()
+    private val scriptContentLoader = ScriptContentLoader(project)
 
     override fun getScriptDependencies(file: VirtualFile): ScriptDependencies? = cacheLock.read {
         calculateExternalDependencies(file)
@@ -47,7 +48,7 @@ class KotlinScriptExternalImportsProviderImpl(
         else {
             val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
             if (scriptDef != null) {
-                val deps = resolveDependencies(scriptDef, file)
+                val deps = scriptContentLoader.loadContentsAndResolveDependencies(scriptDef, file)
 
                 if (deps != null) {
                     log.info("[kts] new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
