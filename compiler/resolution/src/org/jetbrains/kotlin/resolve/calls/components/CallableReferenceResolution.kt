@@ -214,19 +214,7 @@ class CallableReferencesCandidateFactory(
             expectedType: UnwrappedType?,
             unboundReceiverCount: Int
     ): Triple<Array<KotlinType>, CoercionStrategy, Int>? {
-        if (expectedType == null) return null
-
-        val functionType =
-                if (expectedType.isFunctionType) {
-                    expectedType
-                }
-                else if (ReflectionTypes.isNumberedKFunction(expectedType)) {
-                    expectedType.immediateSupertypes().first { it.isFunctionType }
-                }
-                else {
-                    return null
-                }
-
+        val functionType = getFunctionTypeFromCallableReferenceExpectedType(expectedType) ?: return null
 
         val expectedArgumentCount = functionType.arguments.size - unboundReceiverCount - 1 // 1 -- return type
         if (expectedArgumentCount < 0) return null
@@ -332,5 +320,19 @@ class CallableReferencesCandidateFactory(
             is LHSResult.Object -> CallableReceiver.BoundValueReference(lhsResult.qualifier, receiver)
             else -> throw IllegalStateException("Unsupported kind of lhsResult: $lhsResult")
         }
+    }
+}
+
+fun getFunctionTypeFromCallableReferenceExpectedType(expectedType: UnwrappedType?): UnwrappedType? {
+    if (expectedType == null) return null
+
+    return if (expectedType.isFunctionType) {
+        expectedType
+    }
+    else if (ReflectionTypes.isNumberedKFunction(expectedType)) {
+        expectedType.immediateSupertypes().first { it.isFunctionType }.unwrap()
+    }
+    else {
+        null
     }
 }

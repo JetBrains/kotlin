@@ -42,6 +42,8 @@ interface ConstraintSystemBuilder : ConstraintSystemOperation {
     // if runOperations return true, then this operation will be applied, and function return true
     fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean
 
+    fun buildCurrentSubstitutor(): NewTypeSubstitutor
+
     /**
      * This function removes variables for which we know exact type.
      * @return substitutor from typeVariable to result

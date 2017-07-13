@@ -141,7 +141,8 @@ private fun checkSubCallArgument(
     csBuilder.addInnerCall(resolvedCall)
 
     // subArgument cannot has stable smartcast
-    val currentReturnType = subCallArgument.receiver.receiverValue.type.unwrap()
+    // return type can contains fixed type variables
+    val currentReturnType = csBuilder.buildCurrentSubstitutor().safeSubstitute(subCallArgument.receiver.receiverValue.type.unwrap())
     if (subCallArgument.isSafeCall) {
         csBuilder.addSubtypeConstraint(currentReturnType, expectedNullableType, position)
         return null
