@@ -81,7 +81,7 @@ class CompletionBindingContextProvider(project: Project) {
     }
 
     private var prevCompletionDataCache: CachedValue<DataHolder> = CachedValuesManager.getManager(project).createCachedValue(
-            { CachedValueProvider.Result.create(DataHolder(), PsiModificationTracker.EVER_CHANGED) },
+            { CachedValueProvider.Result.create(DataHolder(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT) },
             false)
 
 
