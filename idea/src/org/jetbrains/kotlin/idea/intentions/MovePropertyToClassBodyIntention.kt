@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -42,6 +45,9 @@ class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(KtP
         val firstProperty = parentClass.getProperties().firstOrNull()
         parentClass.addDeclarationBefore(propertyDeclaration, firstProperty).apply {
             val propertyModifierList = element.modifierList?.copy() as? KtModifierList
+            propertyModifierList?.allChildren?.forEach {
+                if ((it as? LeafPsiElement)?.elementType == KtTokens.VARARG_KEYWORD) it.delete()
+            }
             propertyModifierList?.let { modifierList?.replace(it) ?: addBefore(it, firstChild) }
             modifierList?.annotationEntries?.forEach {
                 if (!it.isAppliedToProperty()) {
