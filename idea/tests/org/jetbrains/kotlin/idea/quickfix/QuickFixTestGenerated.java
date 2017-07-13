@@ -11344,9 +11344,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeToPropertyAccess"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("enumEntryCall.kt")
+            public void testEnumEntryCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyAccess/enumEntryCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nonSimpleName.kt")
             public void testNonSimpleName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyAccess/nonSimpleName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("objectCall.kt")
+            public void testObjectCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyAccess/objectCall.kt");
                 doTest(fileName);
             }
 
