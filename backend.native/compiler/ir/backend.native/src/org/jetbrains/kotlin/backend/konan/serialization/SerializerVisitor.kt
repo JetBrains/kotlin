@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.backend.konan.KonanPhase
 
 internal class DeserializerDriver(val context: Context) {
 
-    internal fun deserializeInlineBody(descriptor: FunctionDescriptor): IrDeclaration? {
+    private val cache = mutableMapOf<FunctionDescriptor, IrDeclaration?>()
+
+    internal fun deserializeInlineBody(descriptor: FunctionDescriptor): IrDeclaration? = cache.getOrPut(descriptor) {
         if (!descriptor.needsSerializedIr) return null
         if (!descriptor.isDeserializableCallable) return null
 
@@ -45,7 +47,7 @@ internal class DeserializerDriver(val context: Context) {
                 if (context.phase!!.verbose) e.printStackTrace()
             }
         }
-        return deserializedIr
+        deserializedIr
     }
 
     internal fun dumpAllInlineBodies() {
