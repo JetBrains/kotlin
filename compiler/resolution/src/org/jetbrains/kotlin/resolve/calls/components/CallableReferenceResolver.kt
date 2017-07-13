@@ -65,8 +65,10 @@ class CallableReferenceResolver(
             csBuilder: ConstraintSystemBuilder,
             postponedArgument: PostponedCallableReferenceArgument
     ): KotlinCallDiagnostic? {
+        postponedArgument.analyzed = true
+
         val argument = postponedArgument.argument
-        val expectedType = postponedArgument.expectedType
+        val expectedType = csBuilder.buildCurrentSubstitutor().safeSubstitute(postponedArgument.expectedType)
 
         val subLHSCall = argument.lhsResult.safeAs<LHSResult.Expression>()?.lshCallArgument.safeAs<SubKotlinCallArgument>()
         if (subLHSCall != null) {

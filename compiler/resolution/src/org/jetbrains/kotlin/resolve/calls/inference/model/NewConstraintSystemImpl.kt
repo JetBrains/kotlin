@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
-import org.jetbrains.kotlin.resolve.calls.components.ConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
-import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
+import org.jetbrains.kotlin.resolve.calls.model.PostponedKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.PostponedLambdaArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -36,7 +38,6 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         ConstraintInjector.Context,
         ResultTypeResolver.Context,
         KotlinCallCompleter.Context,
-        FixationOrderCalculator.Context,
         ConstraintSystemCompleter.Context,
         PostponedArgumentsAnalyzer.Context
 {
@@ -256,10 +257,6 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         get() = storage.postponedArguments.apply { checkState(State.BUILDING, State.COMPLETION) }
 
     // ConstraintSystemCompleter.Context
-    override fun asResultTypeResolverContext() = apply { checkState(State.BUILDING, State.COMPLETION) }
-
-    override fun asFixationOrderCalculatorContext() = apply { checkState(State.BUILDING, State.COMPLETION) }
-
     override fun fixVariable(variable: NewTypeVariable, resultType: UnwrappedType) {
         checkState(State.BUILDING, State.COMPLETION)
 
