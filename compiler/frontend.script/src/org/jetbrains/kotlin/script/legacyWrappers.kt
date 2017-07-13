@@ -24,7 +24,11 @@ import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptDependencies
 import kotlin.script.dependencies.ScriptReport
 
-internal class LegacyPackageDependencyResolverWrapper(val legacyResolver: ScriptDependenciesResolver) : kotlin.script.dependencies.DependenciesResolver {
+// NOTE: not implementing resolver wrapper since it was not implemented initially and this is deprecated API
+@Deprecated("Compatibility with deprecated API")
+internal class LegacyPackageDependencyResolverWrapper(
+        val legacyResolver: ScriptDependenciesResolver
+) : kotlin.script.dependencies.DependenciesResolver {
     override fun resolve(
             scriptContents: kotlin.script.dependencies.ScriptContents,
             environment: Environment
@@ -62,15 +66,16 @@ internal class LegacyPackageDependencyResolverWrapper(val legacyResolver: Script
     private fun ScriptContents.Position.convertPosition(): ScriptReport.Position = ScriptReport.Position(line, col)
 }
 
-internal class ApiChangeDependencyResolverWrapper(val legacyResolver: kotlin.script.dependencies.ScriptDependenciesResolver)
-    : kotlin.script.dependencies.DependenciesResolver {
+internal class ApiChangeDependencyResolverWrapper(
+        override val delegate: kotlin.script.dependencies.ScriptDependenciesResolver
+) : kotlin.script.dependencies.DependenciesResolver, DependencyResolverWrapper<kotlin.script.dependencies.ScriptDependenciesResolver> {
 
     override fun resolve(
             scriptContents: kotlin.script.dependencies.ScriptContents,
             environment: Environment
     ): DependenciesResolver.ResolveResult {
         val reports = ArrayList<ScriptReport>()
-        val legacyDeps = legacyResolver.resolve(
+        val legacyDeps = delegate.resolve(
                 scriptContents,
                 environment,
                 { sev, msg, pos ->
