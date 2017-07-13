@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
-import org.jetbrains.kotlin.resolve.calls.inference.components.FixationOrderCalculator.ResolveDirection
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.model.checkConstraint
@@ -33,7 +33,16 @@ class ResultTypeResolver(
         fun isProperType(type: UnwrappedType): Boolean
     }
 
-    fun findResultType(c: Context, variableWithConstraints: VariableWithConstraints, direction: ResolveDirection): UnwrappedType? {
+    fun findResultType(c: Context, variableWithConstraints: VariableWithConstraints, direction: ResolveDirection): UnwrappedType {
+        findResultTypeOrNull(c, variableWithConstraints, direction)?.let { return it }
+
+        // no proper constraints
+        return variableWithConstraints.typeVariable.freshTypeConstructor.builtIns.run {
+            if (direction == ResolveDirection.TO_SUBTYPE) nothingType else nullableAnyType
+        }
+    }
+
+    fun findResultTypeOrNull(c: Context, variableWithConstraints: VariableWithConstraints, direction: ResolveDirection): UnwrappedType? {
         findResultIfThereIsEqualsConstraint(c, variableWithConstraints, allowedFixToNotProperType = false)?.let { return it }
 
         val subType = findSubType(c, variableWithConstraints)
@@ -45,12 +54,7 @@ class ResultTypeResolver(
             c.resultType(superType, subType, variableWithConstraints)
         }
 
-        if (result != null) return result
-
-        // no proper constraints
-        return variableWithConstraints.typeVariable.freshTypeConstructor.builtIns.run {
-            if (direction == ResolveDirection.TO_SUBTYPE) nothingType else nullableAnyType
-        }
+        return result
     }
 
     private fun Context.resultType(
