@@ -205,7 +205,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         customLibEditor.addRoot(VfsUtil.getUrlForLibraryRoot(classes), OrderRootType.CLASSES);
         customLibEditor.addRoot(VfsUtil.getUrlForLibraryRoot(sources), OrderRootType.SOURCES);
 
-        ConfigLibraryUtil.addLibrary(customLibEditor, model);
+        ConfigLibraryUtil.INSTANCE.addLibrary(customLibEditor, model);
     }
 
     @Override
@@ -215,8 +215,8 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         }
 
         EdtTestUtil.runInEdtAndWait(() -> {
-            ConfigLibraryUtil.removeLibrary(getModule(), CUSTOM_LIBRARY_NAME);
-            ConfigLibraryUtil.removeLibrary(getModule(), KOTLIN_LIBRARY_NAME);
+            ConfigLibraryUtil.INSTANCE.removeLibrary(getModule(), CUSTOM_LIBRARY_NAME);
+            ConfigLibraryUtil.INSTANCE.removeLibrary(getModule(), KOTLIN_LIBRARY_NAME);
         });
 
         super.tearDown();

@@ -14,218 +14,194 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.test;
+package org.jetbrains.kotlin.idea.test
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.VfsUtil;
-import kotlin.jvm.functions.Function0;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.utils.PathUtil;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
+import com.intellij.openapi.util.Computable
+import com.intellij.openapi.vfs.VfsUtil
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.utils.PathUtil
+import java.io.File
+import java.util.*
 
 /**
  * Helper for configuring kotlin runtime in tested project.
  */
-public class ConfigLibraryUtil {
-    private static final String DEFAULT_JAVA_RUNTIME_LIB_NAME = "JAVA_RUNTIME_LIB_NAME";
-    private static final String DEFAULT_KOTLIN_TEST_LIB_NAME = "KOTLIN_TEST_LIB_NAME";
-    private static final String DEFAULT_KOTLIN_JS_STDLIB_NAME = "KOTLIN_JS_STDLIB_NAME";
+object ConfigLibraryUtil {
+    private val DEFAULT_JAVA_RUNTIME_LIB_NAME = "JAVA_RUNTIME_LIB_NAME"
+    private val DEFAULT_KOTLIN_TEST_LIB_NAME = "KOTLIN_TEST_LIB_NAME"
+    private val DEFAULT_KOTLIN_JS_STDLIB_NAME = "KOTLIN_JS_STDLIB_NAME"
 
-    private ConfigLibraryUtil() {
+    private fun getKotlinRuntimeLibEditor(libName: String, library: File): NewLibraryEditor {
+        val editor = NewLibraryEditor()
+        editor.name = libName
+        editor.addRoot(VfsUtil.getUrlForLibraryRoot(library), OrderRootType.CLASSES)
+
+        return editor
     }
 
-    private static NewLibraryEditor getKotlinRuntimeLibEditor(String libName, File library) {
-        NewLibraryEditor editor = new NewLibraryEditor();
-        editor.setName(libName);
-        editor.addRoot(VfsUtil.getUrlForLibraryRoot(library), OrderRootType.CLASSES);
-
-        return editor;
+    fun configureKotlinRuntimeAndSdk(module: Module, sdk: Sdk) {
+        configureSdk(module, sdk)
+        configureKotlinRuntime(module)
     }
 
-    public static void configureKotlinRuntimeAndSdk(Module module, Sdk sdk) {
-        configureSdk(module, sdk);
-        configureKotlinRuntime(module);
-    }
-
-    public static void configureKotlinJsRuntimeAndSdk(Module module, Sdk sdk) {
-        configureSdk(module, sdk);
+    fun configureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
+        configureSdk(module, sdk)
         addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_JS_STDLIB_NAME,
-                                             PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath()), module);
+                                             PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath), module)
     }
 
-    public static void configureKotlinRuntime(Module module) {
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().getStdlibPath()),
-                   module);
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().getKotlinTestPath()),
-                   module);
+    fun configureKotlinRuntime(module: Module) {
+        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().stdlibPath),
+                   module)
+        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().kotlinTestPath),
+                   module)
     }
 
-    public static void unConfigureKotlinRuntime(Module module) {
-        removeLibrary(module, DEFAULT_JAVA_RUNTIME_LIB_NAME);
-        removeLibrary(module, DEFAULT_KOTLIN_TEST_LIB_NAME);
+    fun unConfigureKotlinRuntime(module: Module) {
+        removeLibrary(module, DEFAULT_JAVA_RUNTIME_LIB_NAME)
+        removeLibrary(module, DEFAULT_KOTLIN_TEST_LIB_NAME)
     }
 
-    public static void unConfigureKotlinRuntimeAndSdk(Module module, Sdk sdk) {
-        configureSdk(module, sdk);
-        unConfigureKotlinRuntime(module);
+    fun unConfigureKotlinRuntimeAndSdk(module: Module, sdk: Sdk) {
+        configureSdk(module, sdk)
+        unConfigureKotlinRuntime(module)
     }
 
-    public static void unConfigureKotlinJsRuntimeAndSdk(Module module, Sdk sdk) {
-        configureSdk(module, sdk);
-        removeLibrary(module, DEFAULT_KOTLIN_JS_STDLIB_NAME);
+    fun unConfigureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
+        configureSdk(module, sdk)
+        removeLibrary(module, DEFAULT_KOTLIN_JS_STDLIB_NAME)
     }
 
-    public static void configureSdk(@NotNull final Module module, @NotNull final Sdk sdk) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-                ModifiableRootModel rootModel = rootManager.getModifiableModel();
+    fun configureSdk(module: Module, sdk: Sdk) {
+        ApplicationManager.getApplication().runWriteAction {
+            val rootManager = ModuleRootManager.getInstance(module)
+            val rootModel = rootManager.modifiableModel
 
-                rootModel.setSdk(sdk);
-                rootModel.commit();
-            }
-        });
+            rootModel.sdk = sdk
+            rootModel.commit()
+        }
     }
 
-    public static Library addLibrary(final NewLibraryEditor editor, final Module module) {
-        return ApplicationManager.getApplication().runWriteAction(new Computable<Library>() {
-            @Override
-            public Library compute() {
-                ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-                ModifiableRootModel model = rootManager.getModifiableModel();
+    fun addLibrary(editor: NewLibraryEditor, module: Module): Library {
+        return ApplicationManager.getApplication().runWriteAction(Computable {
+            val rootManager = ModuleRootManager.getInstance(module)
+            val model = rootManager.modifiableModel
 
-                Library library = addLibrary(editor, model);
+            val library = addLibrary(editor, model)
 
-                model.commit();
+            model.commit()
 
-                return library;
-            }
-        });
+            library
+        })
     }
 
-    public static Library addLibrary(NewLibraryEditor editor, ModifiableRootModel model) {
-        Library library = model.getModuleLibraryTable().createLibrary(editor.getName());
+    fun addLibrary(editor: NewLibraryEditor, model: ModifiableRootModel): Library {
+        val library = model.moduleLibraryTable.createLibrary(editor.name)
 
-        Library.ModifiableModel libModel = library.getModifiableModel();
-        editor.applyTo((LibraryEx.ModifiableModelEx) libModel);
+        val libModel = library.modifiableModel
+        editor.applyTo(libModel as LibraryEx.ModifiableModelEx)
 
-        libModel.commit();
+        libModel.commit()
 
-        return library;
+        return library
     }
 
 
-    public static boolean removeLibrary(@NotNull final Module module, @NotNull final String libraryName) {
-        return ApplicationUtilsKt.runWriteAction(
-                new Function0<Boolean>() {
-                    @Override
-                    public Boolean invoke() {
-                        boolean removed = false;
+    fun removeLibrary(module: Module, libraryName: String): Boolean {
+        return runWriteAction {
+            var removed = false
 
-                        ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-                        ModifiableRootModel model = rootManager.getModifiableModel();
+            val rootManager = ModuleRootManager.getInstance(module)
+            val model = rootManager.modifiableModel
 
-                        for (OrderEntry orderEntry : model.getOrderEntries()) {
-                            if (orderEntry instanceof LibraryOrderEntry) {
-                                LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry) orderEntry;
+            for (orderEntry in model.orderEntries) {
+                if (orderEntry is LibraryOrderEntry) {
 
-                                Library library = libraryOrderEntry.getLibrary();
-                                if (library != null) {
-                                    String name = library.getName();
-                                    if (name != null && name.equals(libraryName)) {
+                    val library = orderEntry.library
+                    if (library != null) {
+                        val name = library.name
+                        if (name != null && name == libraryName) {
 
-                                        // Dispose attached roots
-                                        Library.ModifiableModel modifiableModel = library.getModifiableModel();
-                                        for (String rootUrl : library.getRootProvider().getUrls(OrderRootType.CLASSES)) {
-                                            modifiableModel.removeRoot(rootUrl, OrderRootType.CLASSES);
-                                        }
-                                        for (String rootUrl : library.getRootProvider().getUrls(OrderRootType.SOURCES)) {
-                                            modifiableModel.removeRoot(rootUrl, OrderRootType.SOURCES);
-                                        }
-                                        modifiableModel.commit();
-
-                                        model.getModuleLibraryTable().removeLibrary(library);
-
-                                        removed = true;
-                                        break;
-                                    }
-                                }
+                            // Dispose attached roots
+                            val modifiableModel = library.modifiableModel
+                            for (rootUrl in library.rootProvider.getUrls(OrderRootType.CLASSES)) {
+                                modifiableModel.removeRoot(rootUrl, OrderRootType.CLASSES)
                             }
+                            for (rootUrl in library.rootProvider.getUrls(OrderRootType.SOURCES)) {
+                                modifiableModel.removeRoot(rootUrl, OrderRootType.SOURCES)
+                            }
+                            modifiableModel.commit()
+
+                            model.moduleLibraryTable.removeLibrary(library)
+
+                            removed = true
+                            break
                         }
-
-                        model.commit();
-
-                        return removed;
                     }
                 }
-        );
-    }
+            }
 
-    public static void addLibrary(@NotNull Module module, @NotNull String libraryName, @NotNull String rootPath, @NotNull String[] jarPaths) {
-        NewLibraryEditor editor = new NewLibraryEditor();
-        editor.setName(libraryName);
-        for (String jarPath : jarPaths) {
-            editor.addRoot(VfsUtil.getUrlForLibraryRoot(new File(rootPath, jarPath)), OrderRootType.CLASSES);
-        }
+            model.commit()
 
-        addLibrary(editor, module);
-    }
-
-    public static void configureLibraries(@NotNull Module module, String rootPath, List<String> libraryInfos) {
-        for (String libraryInfo : libraryInfos) {
-            int i = libraryInfo.indexOf('@');
-            String libraryName = libraryInfo.substring(0, i);
-            String[] jarPaths = libraryInfo.substring(i + 1).split(";");
-            addLibrary(module, libraryName, rootPath, jarPaths);
+            removed
         }
     }
 
-    public static void unconfigureLibrariesByName(@NotNull Module module, List<String> libraryNames) {
-        for (Iterator<String> iterator = libraryNames.iterator(); iterator.hasNext(); ) {
-            String libraryName = iterator.next();
+    fun addLibrary(module: Module, libraryName: String, rootPath: String, jarPaths: Array<String>) {
+        val editor = NewLibraryEditor()
+        editor.name = libraryName
+        for (jarPath in jarPaths) {
+            editor.addRoot(VfsUtil.getUrlForLibraryRoot(File(rootPath, jarPath)), OrderRootType.CLASSES)
+        }
+
+        addLibrary(editor, module)
+    }
+
+    fun configureLibraries(module: Module, rootPath: String, libraryInfos: List<String>) {
+        for (libraryInfo in libraryInfos) {
+            val i = libraryInfo.indexOf('@')
+            val libraryName = libraryInfo.substring(0, i)
+            val jarPaths = libraryInfo.substring(i + 1).split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            addLibrary(module, libraryName, rootPath, jarPaths)
+        }
+    }
+
+    fun unconfigureLibrariesByName(module: Module, libraryNames: MutableList<String>) {
+        val iterator = libraryNames.iterator()
+        while (iterator.hasNext()) {
+            val libraryName = iterator.next()
             if (removeLibrary(module, libraryName)) {
-                iterator.remove();
+                iterator.remove()
             }
         }
 
-        if (!libraryNames.isEmpty()) throw new AssertionError("Couldn't find the following libraries: " + libraryNames);
+        if (!libraryNames.isEmpty()) throw AssertionError("Couldn't find the following libraries: " + libraryNames)
     }
 
-    public static void unconfigureLibrariesByInfo(@NotNull Module module, List<String> libraryInfos) {
-        List<String> libraryNames = new ArrayList<String>();
-        for (String libraryInfo : libraryInfos) {
-            libraryNames.add(libraryInfo.substring(0, libraryInfo.indexOf('@')));
-        }
-        unconfigureLibrariesByName(module, libraryNames);
+    fun configureLibrariesByDirective(module: Module, rootPath: String, fileText: String) {
+        configureLibraries(module, rootPath, InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: "))
     }
 
-    public static void configureLibrariesByDirective(@NotNull Module module, String rootPath, String fileText) {
-        configureLibraries(module, rootPath, InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: "));
-    }
-
-    public static void unconfigureLibrariesByDirective(@NotNull Module module, String fileText) {
-        List<String> libraryNames = new ArrayList<String>();
-        for (String libInfo : InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: ")) {
-            libraryNames.add(libInfo.substring(0, libInfo.indexOf('@')));
+    fun unconfigureLibrariesByDirective(module: Module, fileText: String) {
+        val libraryNames = ArrayList<String>()
+        for (libInfo in InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: ")) {
+            libraryNames.add(libInfo.substring(0, libInfo.indexOf('@')))
         }
-        for (String libraryName : InTextDirectivesUtils.findListWithPrefixes(fileText, "// UNCONFIGURE_LIBRARY: ")) {
-            libraryNames.add(libraryName);
+        for (libraryName in InTextDirectivesUtils.findListWithPrefixes(fileText, "// UNCONFIGURE_LIBRARY: ")) {
+            libraryNames.add(libraryName)
         }
 
-        unconfigureLibrariesByName(module, libraryNames);
+        unconfigureLibrariesByName(module, libraryNames)
     }
 }
