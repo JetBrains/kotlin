@@ -25,9 +25,10 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VfsUtil
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.utils.PathUtil
@@ -58,7 +59,8 @@ object ConfigLibraryUtil {
     fun configureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
         addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_JS_STDLIB_NAME,
-                                             PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath), module)
+                                             PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath), module,
+                   JSLibraryKind)
     }
 
     fun configureKotlinRuntime(module: Module) {
@@ -93,26 +95,27 @@ object ConfigLibraryUtil {
         }
     }
 
-    fun addLibrary(editor: NewLibraryEditor, module: Module): Library {
-        return ApplicationManager.getApplication().runWriteAction(Computable {
+    fun addLibrary(editor: NewLibraryEditor, module: Module, kind: PersistentLibraryKind<*>? = null): Library =
+        runWriteAction {
             val rootManager = ModuleRootManager.getInstance(module)
             val model = rootManager.modifiableModel
 
-            val library = addLibrary(editor, model)
+            val library = addLibrary(editor, model, kind)
 
             model.commit()
 
             library
-        })
-    }
+        }
 
-    fun addLibrary(editor: NewLibraryEditor, model: ModifiableRootModel): Library {
-        val library = model.moduleLibraryTable.createLibrary(editor.name)
+    fun addLibrary(editor: NewLibraryEditor, model: ModifiableRootModel, kind: PersistentLibraryKind<*>? = null): Library {
+        val libraryTableModifiableModel = model.moduleLibraryTable.modifiableModel
+        val library = libraryTableModifiableModel.createLibrary(editor.name, kind)
 
         val libModel = library.modifiableModel
         editor.applyTo(libModel as LibraryEx.ModifiableModelEx)
 
         libModel.commit()
+        libraryTableModifiableModel.commit()
 
         return library
     }

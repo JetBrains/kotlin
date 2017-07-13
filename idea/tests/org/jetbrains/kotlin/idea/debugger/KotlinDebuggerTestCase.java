@@ -205,7 +205,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         customLibEditor.addRoot(VfsUtil.getUrlForLibraryRoot(classes), OrderRootType.CLASSES);
         customLibEditor.addRoot(VfsUtil.getUrlForLibraryRoot(sources), OrderRootType.SOURCES);
 
-        ConfigLibraryUtil.INSTANCE.addLibrary(customLibEditor, model);
+        ConfigLibraryUtil.INSTANCE.addLibrary(customLibEditor, model, null);
     }
 
     @Override

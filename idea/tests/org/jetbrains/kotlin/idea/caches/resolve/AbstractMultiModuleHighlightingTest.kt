@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiHighlightingTest
 import org.jetbrains.kotlin.test.TestJdkKind
 
@@ -41,7 +42,7 @@ abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTe
         val commonModule = module("common", jdk)
         commonModule.createFacet(TargetPlatformKind.Common)
         if (withStdlibCommon) {
-            commonModule.addLibrary(ForTestCompileRuntime.stdlibCommonForTests())
+            commonModule.addLibrary(ForTestCompileRuntime.stdlibCommonForTests(), kind = CommonLibraryKind)
         }
 
         for (platform in platforms) {

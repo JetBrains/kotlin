@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
@@ -177,7 +178,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], TargetPlatformKind.JavaScript,
                                 withStdlibCommon = true, jdk = FULL_JDK, configureModule = { module, platform ->
                 if (platform == TargetPlatformKind.JavaScript) {
-                    module.addLibrary(ForTestCompileRuntime.stdlibJsForTests())
+                    module.addLibrary(ForTestCompileRuntime.stdlibJsForTests(), kind = JSLibraryKind)
                     module.addLibrary(ForTestCompileRuntime.stdlibCommonForTests())
                 }
             })

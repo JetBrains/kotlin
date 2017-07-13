@@ -22,6 +22,7 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
@@ -30,16 +31,24 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import java.io.File
 
 fun PlatformTestCase.projectLibrary(
-        libraryName: String = "TestLibrary", classesRoot: VirtualFile? = null, sourcesRoot: VirtualFile? = null
+        libraryName: String = "TestLibrary",
+        classesRoot: VirtualFile? = null,
+        sourcesRoot: VirtualFile? = null,
+        kind: PersistentLibraryKind<*>? = null
 ): Library {
     return runWriteAction {
-        ProjectLibraryTable.getInstance(project).createLibrary(libraryName).also {
-            with (it.modifiableModel) {
-                classesRoot?.let { addRoot(it, OrderRootType.CLASSES) }
-                sourcesRoot?.let { addRoot(it, OrderRootType.SOURCES) }
-                commit()
-            }
+        val modifiableModel = ProjectLibraryTable.getInstance(project).modifiableModel
+        val library = try {
+            modifiableModel.createLibrary(libraryName, kind)
+        } finally {
+            modifiableModel.commit()
         }
+        with (library.modifiableModel) {
+            classesRoot?.let { addRoot(it, OrderRootType.CLASSES) }
+            sourcesRoot?.let { addRoot(it, OrderRootType.SOURCES) }
+            commit()
+        }
+        library
     }
 }
 
