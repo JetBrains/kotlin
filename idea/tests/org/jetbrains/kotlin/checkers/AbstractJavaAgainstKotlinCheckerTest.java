@@ -100,7 +100,7 @@ public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonA
         }
 
         if (InTextDirectivesUtils.isDirectiveDefined(configFileText, "// WITH_RUNTIME")) {
-            ConfigLibraryUtil.configureKotlinRuntime(module);
+            ConfigLibraryUtil.INSTANCE.configureKotlinRuntime(module);
         }
 
         List<String> languageLevelLines = InTextDirectivesUtils.findLinesWithPrefixesRemoved(configFileText, "// LANGUAGE_LEVEL");

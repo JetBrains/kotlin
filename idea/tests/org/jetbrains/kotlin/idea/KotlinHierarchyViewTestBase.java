@@ -26,12 +26,12 @@ public abstract class KotlinHierarchyViewTestBase extends HierarchyViewTestBase 
     protected void setUp() throws Exception {
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
         super.setUp();
-        ConfigLibraryUtil.configureKotlinRuntime(myModule);
+        ConfigLibraryUtil.INSTANCE.configureKotlinRuntime(myModule);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        ConfigLibraryUtil.unConfigureKotlinRuntime(myModule);
+        ConfigLibraryUtil.INSTANCE.unConfigureKotlinRuntime(myModule);
         super.tearDown();
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
     }
