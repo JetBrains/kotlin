@@ -42,6 +42,12 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/highlighting"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
+    @TestMetadata("asyncResolver")
+    public void testAsyncResolver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/asyncResolver/");
+        doTest(fileName);
+    }
+
     @TestMetadata("customBaseClass")
     public void testCustomBaseClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/customBaseClass/");
