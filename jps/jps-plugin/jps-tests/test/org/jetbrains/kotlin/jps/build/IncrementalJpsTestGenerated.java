@@ -38,6 +38,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("circular")
+        public void testCircular() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/circular/");
+            doTest(fileName);
+        }
+
         @TestMetadata("circularDependencyClasses")
         public void testCircularDependencyClasses() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/circularDependencyClasses/");
@@ -86,6 +92,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("defaultArgumentInConstructorRemoved")
+        public void testDefaultArgumentInConstructorRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/defaultArgumentInConstructorRemoved/");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultParameterAdded")
         public void testDefaultParameterAdded() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/defaultParameterAdded/");
@@ -110,6 +122,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("defaultValueInConstructorRemoved")
+        public void testDefaultValueInConstructorRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/defaultValueInConstructorRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exportedDependency")
+        public void testExportedDependency() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/exportedDependency/");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineFunctionInlined")
         public void testInlineFunctionInlined() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionInlined/");
@@ -125,6 +149,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("moveFileToAnotherModule")
         public void testMoveFileToAnotherModule() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/moveFileToAnotherModule/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/simple/");
             doTest(fileName);
         }
 
@@ -1520,36 +1550,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("methodRemoved")
         public void testMethodRemoved() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/methodRemoved/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multiModuleCircular")
-        public void testMultiModuleCircular() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/multiModuleCircular/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multiModuleDefaultArgumentInConstructorRemoved")
-        public void testMultiModuleDefaultArgumentInConstructorRemoved() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/multiModuleDefaultArgumentInConstructorRemoved/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multiModuleDefaultValueInConstructorRemoved")
-        public void testMultiModuleDefaultValueInConstructorRemoved() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/multiModuleDefaultValueInConstructorRemoved/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multiModuleExported")
-        public void testMultiModuleExported() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/multiModuleExported/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multiModuleSimple")
-        public void testMultiModuleSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/multiModuleSimple/");
             doTest(fileName);
         }
 
