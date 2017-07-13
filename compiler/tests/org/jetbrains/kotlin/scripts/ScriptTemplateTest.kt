@@ -49,6 +49,7 @@ import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.*
 import kotlin.script.dependencies.DependenciesResolver.ResolveResult
+import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
 import kotlin.script.templates.AcceptedAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -250,6 +251,16 @@ class ScriptTemplateTest {
     }
 
     @Test
+    fun testAsyncResolver() {
+        val aClass = compileScript("fib.kts", ScriptWithAsyncResolver::class, null)
+        Assert.assertNotNull(aClass)
+        val out = captureOut {
+            aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        }
+        assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
+    }
+
+    @Test
     fun testSmokeScriptException() {
         val aClass = compileScript("smoke_exception.kts", ScriptWithArrayParam::class)
         Assert.assertNotNull(aClass)
@@ -396,6 +407,16 @@ class ErrorReportingResolver : TestKotlinScriptDependenciesResolver() {
     }
 }
 
+class TestAsyncResolver : TestKotlinScriptDependenciesResolver(), AsyncDependenciesResolver {
+    override suspend fun resolveAsync(
+            scriptContents: ScriptContents,
+            environment: Environment
+    ): ResolveResult = super<TestKotlinScriptDependenciesResolver>.resolve(scriptContents, environment)
+
+    override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult =
+            super<AsyncDependenciesResolver>.resolve(scriptContents, environment)
+}
+
 @ScriptTemplateDefinition(
         scriptFilePattern =".*\\.kts",
         resolver = TestKotlinScriptDummyDependenciesResolver::class)
@@ -449,6 +470,9 @@ abstract class ScriptWithArray2DParam(val param: Array<Array<in String>>)
 
 @ScriptTemplateDefinition(resolver = ErrorReportingResolver::class)
 abstract class ScriptReportingErrors(val num: Int)
+
+@ScriptTemplateDefinition(resolver = TestAsyncResolver::class)
+abstract class ScriptWithAsyncResolver(val num: Int)
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
