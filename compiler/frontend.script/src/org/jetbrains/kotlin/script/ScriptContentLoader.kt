@@ -28,7 +28,7 @@ import kotlin.reflect.KClass
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependencies
 
-abstract class KotlinScriptExternalImportsProviderBase(private val project: Project) : KotlinScriptExternalImportsProvider {
+class ScriptContentLoader(private val project: Project) {
     fun getScriptContents(scriptDefinition: KotlinScriptDefinition, file: VirtualFile)
             = BasicScriptContents(file, getAnnotations = { loadAnnotations(scriptDefinition, file) })
 
@@ -57,7 +57,7 @@ abstract class KotlinScriptExternalImportsProviderBase(private val project: Proj
         override val text: CharSequence? by lazy { virtualFile.inputStream.reader(charset = virtualFile.charset).readText() }
     }
 
-    fun resolveDependencies(
+    fun loadContentsAndResolveDependencies(
             scriptDef: KotlinScriptDefinition,
             file: VirtualFile
     ): ScriptDependencies? {
