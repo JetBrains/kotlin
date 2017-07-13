@@ -47,8 +47,7 @@ private fun createElvisExpressions(
         psiParent: PsiElement): List<UExpression> {
 
     val declaration = KotlinUDeclarationsExpression(containingElement)
-    val tempVariable = KotlinUVariable.create(UastKotlinPsiVariable.create(left, declaration, psiParent),
-            declaration)
+    val tempVariable = KotlinULocalVariable(UastKotlinPsiVariable.create(left, declaration, psiParent), declaration)
     declaration.declarations = listOf(tempVariable)
 
     val ifExpression = object : UIfExpression {
