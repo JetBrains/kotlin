@@ -1,13 +1,13 @@
 UFile (package = ) [public abstract interface Callback {...]
     UClass (name = Callback) [public abstract interface Callback {...}]
-        UAnnotationMethod (name = onError) [public abstract fun onError(throwable: java.lang.Throwable) : void = UastEmptyExpression]
-            UParameter (name = throwable) [var throwable: java.lang.Throwable]
+        UAnnotationMethod (name = onError) [public abstract fun onError(@org.jetbrains.annotations.NotNull throwable: java.lang.Throwable) : void = UastEmptyExpression]
+            UParameter (name = throwable) [@org.jetbrains.annotations.NotNull var throwable: java.lang.Throwable]
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
     UClass (name = Model) [public final class Model {...}]
-        UAnnotationMethod (name = crashMe) [public final fun crashMe(clazz: java.lang.Class<T>, factory: kotlin.jvm.functions.Function0<? extends T>) : void {...}]
-            UParameter (name = clazz) [var clazz: java.lang.Class<T>]
+        UAnnotationMethod (name = crashMe) [public final fun crashMe(@org.jetbrains.annotations.NotNull clazz: java.lang.Class<T>, @org.jetbrains.annotations.NotNull factory: kotlin.jvm.functions.Function0<? extends T>) : void {...}]
+            UParameter (name = clazz) [@org.jetbrains.annotations.NotNull var clazz: java.lang.Class<T>]
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
-            UParameter (name = factory) [var factory: kotlin.jvm.functions.Function0<? extends T>]
+            UParameter (name = factory) [@org.jetbrains.annotations.NotNull var factory: kotlin.jvm.functions.Function0<? extends T>]
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
             UBlockExpression [{...}] : PsiType:Void
                 UThrowExpression [throw <init>()] : PsiType:Void
@@ -27,8 +27,8 @@ UFile (package = ) [public abstract interface Callback {...]
                             UBlockExpression [{...}]
                                 UObjectLiteralExpression [anonymous object : Callback {...            }] : PsiType:Callback
                                     UClass (name = null) [final class null {...}]
-                                        UAnnotationMethod (name = onError) [public fun onError(throwable: java.lang.Throwable) : void {...}]
-                                            UParameter (name = throwable) [var throwable: java.lang.Throwable]
+                                        UAnnotationMethod (name = onError) [public fun onError(@org.jetbrains.annotations.NotNull throwable: java.lang.Throwable) : void {...}]
+                                            UParameter (name = throwable) [@org.jetbrains.annotations.NotNull var throwable: java.lang.Throwable]
                                                 UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
                                             UBlockExpression [{...}] : PsiType:Void
                                                 UThrowExpression [throw <init>("")] : PsiType:Void
