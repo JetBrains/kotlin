@@ -131,7 +131,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         internal set
     @Optional @Input var apiVersion      : String? = null
         internal set
-    @Input var manifest              : String? = null
+    @Optional @Input var manifest        : String? = null
         internal set
 
     @Input var dumpParameters: Boolean = false
