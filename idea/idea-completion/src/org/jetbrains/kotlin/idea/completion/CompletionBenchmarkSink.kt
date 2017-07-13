@@ -16,46 +16,74 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-object CompletionBenchmarkSink {
-
-    val pendingSessions = mutableListOf<CompletionSession>()
-    lateinit var results: CompletionResults
-    var listener: ((CompletionResults) -> Unit)? = null
-
-    fun onCompletionStarted(completionSession: CompletionSession) {
-        if (pendingSessions.isEmpty())
-            results = CompletionResults()
-        pendingSessions += completionSession
-    }
-
-    fun onCompletionEnded(completionSession: CompletionSession) {
-        pendingSessions -= completionSession
-        if (pendingSessions.isEmpty()) {
-            results.onEnd()
-            listener?.invoke(results)
-        }
-    }
-
-    fun onFirstFlush(completionSession: CompletionSession) {
-        results.onFirstFlush()
-    }
-
-    fun reset() {
-        pendingSessions.clear()
-    }
+import kotlinx.coroutines.experimental.channels.ConflatedChannel
 
 
-    class CompletionResults {
-        var start: Long = System.currentTimeMillis()
-        var firstFlush: Long = 0
-        var full: Long = 0
-        fun onFirstFlush() {
-            if (firstFlush == 0L)
-                firstFlush = System.currentTimeMillis() - start
+interface CompletionBenchmarkSink {
+    fun onCompletionStarted(completionSession: CompletionSession)
+    fun onCompletionEnded(completionSession: CompletionSession)
+    fun onFirstFlush(completionSession: CompletionSession)
+
+    companion object {
+
+        fun enableAndGet(): Impl = Impl().also { _instance = it }
+
+        fun disable() {
+            _instance.let { if (it is Impl) it.channel.close() }
+            _instance = Empty
         }
 
-        fun onEnd() {
-            full = System.currentTimeMillis() - start
+        val instance get() = _instance
+        private var _instance: CompletionBenchmarkSink = Empty
+    }
+
+    private object Empty : CompletionBenchmarkSink {
+        override fun onCompletionStarted(completionSession: CompletionSession) {}
+
+        override fun onCompletionEnded(completionSession: CompletionSession) {}
+
+        override fun onFirstFlush(completionSession: CompletionSession) {}
+    }
+
+    class Impl : CompletionBenchmarkSink {
+        val pendingSessions = mutableListOf<CompletionSession>()
+        lateinit var results: CompletionBenchmarkResults
+        val channel = ConflatedChannel<CompletionBenchmarkResults>()
+
+        override fun onCompletionStarted(completionSession: CompletionSession) {
+            if (pendingSessions.isEmpty())
+                results = CompletionBenchmarkResults()
+            pendingSessions += completionSession
+        }
+
+        override fun onCompletionEnded(completionSession: CompletionSession) {
+            pendingSessions -= completionSession
+            if (pendingSessions.isEmpty()) {
+                results.onEnd()
+                channel.offer(results)
+            }
+        }
+
+        override fun onFirstFlush(completionSession: CompletionSession) {
+            results.onFirstFlush()
+        }
+
+        fun reset() {
+            pendingSessions.clear()
+        }
+
+        class CompletionBenchmarkResults {
+            var start: Long = System.currentTimeMillis()
+            var firstFlush: Long = 0
+            var full: Long = 0
+            fun onFirstFlush() {
+                if (firstFlush == 0L)
+                    firstFlush = System.currentTimeMillis() - start
+            }
+
+            fun onEnd() {
+                full = System.currentTimeMillis() - start
+            }
         }
     }
 }

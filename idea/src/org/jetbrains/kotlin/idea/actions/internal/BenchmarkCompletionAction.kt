@@ -37,10 +37,8 @@ import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBTextField
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
-import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.run
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleOrigin
 import org.jetbrains.kotlin.idea.caches.resolve.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.completion.CompletionBenchmarkSink
@@ -51,15 +49,13 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.getOrCreateBody
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.nextLeafs
 import java.awt.Robot
 import java.awt.event.KeyEvent
 import java.util.*
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.suspendCoroutine
+import javax.swing.JFileChooser
 import kotlin.properties.Delegates
 
 class BenchmarkCompletionAction : AnAction() {
@@ -185,11 +181,11 @@ class BenchmarkCompletionAction : AnAction() {
             }
         }
 
-        CompletionBenchmarkSink.reset()
-        CompletionBenchmarkSink.listener = {
-            listenerContinuation?.resume(it)
-            listenerContinuation = null
-        }
+        data class Result(val lines: Int, val filePath: String, val first: Long, val full: Long)
+
+        val allResults = mutableListOf<Result>()
+
+        val benchmark = CompletionBenchmarkSink.enableAndGet()
 
         val typeAtOffsetAndBenchmark: suspend (String, Int, KtFile) -> Unit = {
             text: String, offset: Int, file: KtFile ->
@@ -212,9 +208,11 @@ class BenchmarkCompletionAction : AnAction() {
                 val t = text
                 type(t)
 
-                val results = suspendBeforeCompletionResults()
+                val results = benchmark.channel.receive()
                 println("fsize: ${file.getLineCount()}, ${file.virtualFile.path}")
                 println("first: ${results.firstFlush}, full: ${results.full}")
+
+                allResults += Result(file.getLineCount(), "${file.virtualFile.path}:${document.getLineNumber(offset)}", results.firstFlush, results.full)
 
                 CommandProcessor.getInstance().executeCommand(project, {
                     runWriteAction {
@@ -248,19 +246,18 @@ class BenchmarkCompletionAction : AnAction() {
 
 
             }
-            CompletionBenchmarkSink.listener = null
+            CompletionBenchmarkSink.disable()
+            val jfc = JFileChooser()
+            val result = jfc.showSaveDialog(null)
+            if (result == JFileChooser.APPROVE_OPTION) {
+                val file = jfc.selectedFile
+                file.writeText(buildString {
+                    allResults.joinTo(this, separator = "\n") { (l, f, ff, lf) -> "$f, $l, $ff, $lf" }
+                })
+            }
             showPopup(project, "Done")
         }
 
-
-    }
-
-    var listenerContinuation: Continuation<CompletionBenchmarkSink.CompletionResults>? = null
-
-    suspend fun suspendBeforeCompletionResults(): CompletionBenchmarkSink.CompletionResults {
-        return suspendCoroutine { continuation ->
-            listenerContinuation = continuation
-        }
     }
 
 }

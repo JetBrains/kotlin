@@ -54,7 +54,7 @@ class LookupElementsCollector(
 
     fun flushToResultSet() {
         if (!elements.isEmpty()) {
-            CompletionBenchmarkSink.onFirstFlush(session)
+            CompletionBenchmarkSink.instance.onFirstFlush(session)
 
             resultSet.addAllElements(elements)
             elements.clear()

@@ -74,7 +74,7 @@ abstract class CompletionSession(
         resultSet: CompletionResultSet
 ) {
     init {
-        CompletionBenchmarkSink.onCompletionStarted(this)
+        CompletionBenchmarkSink.instance.onCompletionStarted(this)
     }
 
     protected val position = parameters.position
@@ -201,7 +201,7 @@ abstract class CompletionSession(
         return try {
             _complete()
         } finally {
-            CompletionBenchmarkSink.onCompletionEnded(this)
+            CompletionBenchmarkSink.instance.onCompletionEnded(this)
         }
     }
 
