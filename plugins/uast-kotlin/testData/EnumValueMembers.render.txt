@@ -3,8 +3,8 @@ public enum Style {
         public fun getExitAnimation() : java.lang.String = "bar"
         fun SHEET() = UastEmptyExpression
     }
-    private final var value: java.lang.String
+    @org.jetbrains.annotations.NotNull private final var value: java.lang.String
     public abstract fun getExitAnimation() : java.lang.String = UastEmptyExpression
     public final fun getValue() : java.lang.String = UastEmptyExpression
-    protected fun Style(value: java.lang.String) = UastEmptyExpression
+    protected fun Style(@org.jetbrains.annotations.NotNull value: java.lang.String) = UastEmptyExpression
 }
