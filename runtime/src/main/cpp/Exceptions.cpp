@@ -157,6 +157,13 @@ OBJ_GETTER0(GetCurrentStackTrace) {
 void ThrowException(KRef exception) {
   RuntimeAssert(exception != nullptr && IsInstance(exception, theThrowableTypeInfo),
 		"Throwing something non-throwable");
+
+#if (__MINGW32__ || __MINGW64__)
+  // Workaround for https://bugs.llvm.org/show_bug.cgi?id=33220
+  // This code forces the function to have at least one landingpad:
+  ObjHolder toBeDestructed(exception);
+#endif
+
   throw ObjHolder(exception);
 }
 
