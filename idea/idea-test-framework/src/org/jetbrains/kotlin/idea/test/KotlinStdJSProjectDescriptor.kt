@@ -22,6 +22,7 @@ import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
 
 object KotlinStdJSProjectDescriptor : KotlinLightProjectDescriptor() {
@@ -34,6 +35,6 @@ object KotlinStdJSProjectDescriptor : KotlinLightProjectDescriptor() {
         val editor = NewLibraryEditor(configuration.libraryType, configuration.properties)
         configuration.addRoots(editor)
 
-        ConfigLibraryUtil.addLibrary(editor, model)
+        ConfigLibraryUtil.addLibrary(editor, model, JSLibraryKind)
     }
 }

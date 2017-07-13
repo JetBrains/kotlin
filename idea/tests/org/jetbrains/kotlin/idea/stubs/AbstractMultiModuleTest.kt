@@ -25,6 +25,7 @@ import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -86,11 +87,13 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
             exported: Boolean = false
     ): Module = this.apply { ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported) }
 
-    protected fun Module.addLibrary(jar: File, name: String = KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME) {
+    protected fun Module.addLibrary(jar: File,
+                                    name: String = KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME,
+                                    kind: PersistentLibraryKind<*>? = null) {
         ConfigLibraryUtil.addLibrary(NewLibraryEditor().apply {
             this.name = name
             addRoot(VfsUtil.getUrlForLibraryRoot(jar), OrderRootType.CLASSES)
-        }, this)
+        }, this, kind)
     }
 
     protected fun Module.createFacet(platformKind: TargetPlatformKind<*>? = null) {
