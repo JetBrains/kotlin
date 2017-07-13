@@ -70,9 +70,7 @@ fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProv
                                          errorsHandler: ((ScriptTemplatesProvider, Throwable) -> Unit) = { _, ex -> throw ex }
 ): List<KotlinScriptDefinition> = providers.flatMap { provider ->
     try {
-        val classpath = provider.dependenciesClasspath + provider.additionalResolverClasspath
-        LOG.info("[kts] loading script definitions ${provider.templateClassNames} using cp: ${classpath.joinToString(File.pathSeparator)}")
-        val loader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), ScriptTemplatesProvider::class.java.classLoader)
+        val loader = createClassLoader(provider)
         provider.templateClassNames.map {
             KotlinScriptDefinitionFromAnnotatedTemplate(loader.loadClass(it).kotlin, provider.resolver, provider.filePattern, provider.environment)
         }
@@ -82,6 +80,13 @@ fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProv
         errorsHandler(provider, ex)
         emptyList<KotlinScriptDefinition>()
     }
+}
+
+private fun createClassLoader(provider: ScriptTemplatesProvider): ClassLoader {
+    val classpath = provider.dependenciesClasspath + provider.additionalResolverClasspath
+    LOG.info("[kts] loading script definitions ${provider.templateClassNames} using cp: ${classpath.joinToString(File.pathSeparator)}")
+    val baseLoader = ScriptTemplatesProvider::class.java.classLoader
+    return if (classpath.isEmpty()) baseLoader else URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseLoader)
 }
 
 private val LOG = Logger.getInstance("ScriptTemplatesProviders")
