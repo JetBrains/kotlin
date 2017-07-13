@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jetbrains.kotlin.scripts
 
 import com.intellij.openapi.util.Disposer
@@ -46,6 +45,7 @@ import java.lang.Exception
 import java.lang.reflect.InvocationTargetException
 import java.net.URL
 import java.net.URLClassLoader
+import java.util.concurrent.Future
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.*
 import kotlin.script.dependencies.DependenciesResolver.ResolveResult
@@ -261,6 +261,24 @@ class ScriptTemplateTest {
     }
 
     @Test
+    fun testAcceptedAnnotationsSync() {
+        val aClass = compileScript("acceptedAnnotations.kts", ScriptWithAcceptedAnnotationsSyncResolver::class, null)
+        Assert.assertNotNull(aClass)
+    }
+
+    @Test
+    fun testAcceptedAnnotationsAsync() {
+        val aClass = compileScript("acceptedAnnotations.kts", ScriptWithAcceptedAnnotationsAsyncResolver::class, null)
+        Assert.assertNotNull(aClass)
+    }
+
+    @Test
+    fun testAcceptedAnnotationsLegacy() {
+        val aClass = compileScript("acceptedAnnotations.kts", ScriptWithAcceptedAnnotationsLegacyResolver::class, null)
+        Assert.assertNotNull(aClass)
+    }
+
+    @Test
     fun testSmokeScriptException() {
         val aClass = compileScript("smoke_exception.kts", ScriptWithArrayParam::class)
         Assert.assertNotNull(aClass)
@@ -349,13 +367,14 @@ open class TestKotlinScriptDummyDependenciesResolver : DependenciesResolver {
             imports = listOf("org.jetbrains.kotlin.scripts.DependsOn", "org.jetbrains.kotlin.scripts.DependsOnTwo")
         ).asSuccess()
     }
-
-    protected fun classpathFromClassloader(): List<File> =
-            (TestKotlinScriptDependenciesResolver::class.java.classLoader as? URLClassLoader)?.urLs
-                    ?.mapNotNull(URL::toFile)
-                    ?.filter { it.path.contains("out") && it.path.contains("test") }
-            ?: emptyList()
 }
+
+private fun classpathFromClassloader(): List<File> =
+        (TestKotlinScriptDependenciesResolver::class.java.classLoader as? URLClassLoader)?.urLs
+                ?.mapNotNull(URL::toFile)
+                ?.filter { it.path.contains("out") && it.path.contains("test") }
+        ?: emptyList()
+
 
 open class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenciesResolver() {
 
@@ -417,6 +436,63 @@ class TestAsyncResolver : TestKotlinScriptDependenciesResolver(), AsyncDependenc
             super<AsyncDependenciesResolver>.resolve(scriptContents, environment)
 }
 
+@Target(AnnotationTarget.FILE)
+annotation class TestAnno1
+@Target(AnnotationTarget.FILE)
+annotation class TestAnno2
+@Target(AnnotationTarget.FILE)
+annotation class TestAnno3
+
+private val annotationFqNames = listOf(TestAnno1::class, TestAnno2::class, TestAnno3::class).map { it.qualifiedName!! }
+
+interface AcceptedAnnotationsCheck {
+    fun checkHasAnno1Annotation(scriptContents: ScriptContents): ResolveResult.Success {
+        val actualAnnotations = scriptContents.annotations
+        Assert.assertTrue(
+                "Loaded annotation: $actualAnnotations",
+                actualAnnotations.single().annotationClass.qualifiedName == TestAnno1::class.qualifiedName
+        )
+
+        return ScriptDependencies(
+                classpath = classpathFromClassloader(),
+                imports = annotationFqNames
+        ).asSuccess()
+    }
+}
+
+class TestAcceptedAnnotationsSyncResolver: DependenciesResolver, AcceptedAnnotationsCheck {
+    @AcceptedAnnotations(TestAnno1::class, TestAnno3::class)
+    override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
+        return checkHasAnno1Annotation(scriptContents)
+    }
+}
+
+class TestAcceptedAnnotationsAsyncResolver: AsyncDependenciesResolver, AcceptedAnnotationsCheck {
+    @AcceptedAnnotations(TestAnno1::class, TestAnno3::class)
+    override suspend fun resolveAsync(scriptContents: ScriptContents, environment: Environment): ResolveResult {
+        return checkHasAnno1Annotation(scriptContents)
+    }
+}
+
+class TestAcceptedAnnotationsLegacyResolver: ScriptDependenciesResolver, AcceptedAnnotationsCheck {
+    @AcceptedAnnotations(TestAnno1::class, TestAnno3::class)
+    override fun resolve(
+            script: ScriptContents,
+            environment: Environment?,
+            report: (ScriptDependenciesResolver.ReportSeverity, String, ScriptContents.Position?) -> Unit,
+            previousDependencies: KotlinScriptExternalDependencies?
+    ): Future<KotlinScriptExternalDependencies?> {
+        checkHasAnno1Annotation(script)
+        return object : KotlinScriptExternalDependencies {
+            override val classpath: Iterable<File>
+                get() = classpathFromClassloader()
+
+            override val imports: Iterable<String>
+                get() = annotationFqNames
+        }.asFuture()
+    }
+}
+
 @ScriptTemplateDefinition(
         scriptFilePattern =".*\\.kts",
         resolver = TestKotlinScriptDummyDependenciesResolver::class)
@@ -473,6 +549,15 @@ abstract class ScriptReportingErrors(val num: Int)
 
 @ScriptTemplateDefinition(resolver = TestAsyncResolver::class)
 abstract class ScriptWithAsyncResolver(val num: Int)
+
+@ScriptTemplateDefinition(resolver = TestAcceptedAnnotationsSyncResolver::class)
+abstract class ScriptWithAcceptedAnnotationsSyncResolver
+
+@ScriptTemplateDefinition(resolver = TestAcceptedAnnotationsAsyncResolver::class)
+abstract class ScriptWithAcceptedAnnotationsAsyncResolver
+
+@ScriptTemplateDefinition(resolver = TestAcceptedAnnotationsLegacyResolver::class)
+abstract class ScriptWithAcceptedAnnotationsLegacyResolver
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)

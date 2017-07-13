@@ -99,22 +99,31 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     override val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
 
         fun sameSignature(left: KFunction<*>, right: KFunction<*>): Boolean =
+                left.name == right.name &&
                 left.parameters.size == right.parameters.size &&
                 left.parameters.zip(right.parameters).all {
                     it.first.kind == KParameter.Kind.INSTANCE ||
                     it.first.type == it.second.type
                 }
 
-        val resolveMethod = ScriptDependenciesResolver::resolve
-        val resolverMethodAnnotations =
-                dependencyResolver::class.memberFunctions.find { function ->
-                    function.name == resolveMethod.name &&
-                    sameSignature(function, resolveMethod)
-                }?.annotations?.filterIsInstance<AcceptedAnnotations>()
-        resolverMethodAnnotations?.flatMap {
-            it.supportedAnnotationClasses.toList()
+        val resolveFunctions = getResolveFunctions()
+
+        dependencyResolver.unwrap()::class.memberFunctions
+                .filter { function -> resolveFunctions.any { sameSignature(function, it) } }
+                .flatMap { it.annotations }
+                .filterIsInstance<AcceptedAnnotations>()
+                .flatMap { it.supportedAnnotationClasses.toList() }
+                .distinctBy { it.qualifiedName }
+    }
+
+    private fun getResolveFunctions(): List<KFunction<*>> {
+        // DependenciesResolver::resolve, ScriptDependenciesResolver::resolve, AsyncDependenciesResolver::resolveAsync
+        return AsyncDependenciesResolver::class.memberFunctions.filter { it.name == "resolve" || it.name == "resolveAsync" }.also {
+            assert(it.size == 3) {
+                AsyncDependenciesResolver::class.memberFunctions
+                        .joinToString(prefix = "${AsyncDependenciesResolver::class.qualifiedName} api changed, fix this code") { it.name }
+            }
         }
-        ?: emptyList()
     }
 
     override val name = template.simpleName!!
@@ -147,4 +156,12 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     companion object {
         internal val log = Logger.getInstance(KotlinScriptDefinitionFromAnnotatedTemplate::class.java)
     }
+}
+
+interface DependencyResolverWrapper<T : ScriptDependenciesResolver> {
+    val delegate: T
+}
+
+fun ScriptDependenciesResolver.unwrap(): ScriptDependenciesResolver {
+    return if (this is DependencyResolverWrapper<*>) delegate.unwrap() else this
 }
