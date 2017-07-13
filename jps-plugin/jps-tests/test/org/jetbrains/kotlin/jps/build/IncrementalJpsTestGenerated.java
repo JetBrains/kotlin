@@ -1156,6 +1156,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("classToPackageFacade")
+            public void testClassToPackageFacade() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/classToPackageFacade/");
+                doTest(fileName);
+            }
+
             @TestMetadata("conflictingPlatformDeclarations")
             public void testConflictingPlatformDeclarations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/conflictingPlatformDeclarations/");
@@ -1171,6 +1177,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             @TestMetadata("inlineTopLevelValPropertyWithJvmName")
             public void testInlineTopLevelValPropertyWithJvmName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/inlineTopLevelValPropertyWithJvmName/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("innerClassNotGeneratedWhenRebuilding")
+            public void testInnerClassNotGeneratedWhenRebuilding() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/innerClassNotGeneratedWhenRebuilding/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmNameChanged")
+            public void testJvmNameChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/jvmNameChanged/");
                 doTest(fileName);
             }
 
@@ -1234,9 +1252,21 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("multifilePackagePartMethodAdded")
+            public void testMultifilePackagePartMethodAdded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifilePackagePartMethodAdded/");
+                doTest(fileName);
+            }
+
             @TestMetadata("optionalParameter")
             public void testOptionalParameter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/optionalParameter/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("packageFacadeToClass")
+            public void testPackageFacadeToClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/packageFacadeToClass/");
                 doTest(fileName);
             }
 
@@ -1421,12 +1451,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("classToPackageFacade")
-        public void testClassToPackageFacade() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/classToPackageFacade/");
-            doTest(fileName);
-        }
-
         @TestMetadata("companionObjectInheritedMemberChanged")
         public void testCompanionObjectInheritedMemberChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/companionObjectInheritedMemberChanged/");
@@ -1505,18 +1529,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("innerClassNotGeneratedWhenRebuilding")
-        public void testInnerClassNotGeneratedWhenRebuilding() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/innerClassNotGeneratedWhenRebuilding/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("jvmNameChanged")
-        public void testJvmNameChanged() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/jvmNameChanged/");
-            doTest(fileName);
-        }
-
         @TestMetadata("lambdaParameterAffected")
         public void testLambdaParameterAffected() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/lambdaParameterAffected/");
@@ -1553,12 +1565,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("multifilePackagePartMethodAdded")
-        public void testMultifilePackagePartMethodAdded() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/multifilePackagePartMethodAdded/");
-            doTest(fileName);
-        }
-
         @TestMetadata("overrideExplicit")
         public void testOverrideExplicit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/overrideExplicit/");
@@ -1568,12 +1574,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("overrideImplicit")
         public void testOverrideImplicit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/overrideImplicit/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("packageFacadeToClass")
-        public void testPackageFacadeToClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/packageFacadeToClass/");
             doTest(fileName);
         }
 

@@ -1078,6 +1078,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("classToPackageFacade")
+            public void testClassToPackageFacade() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/classToPackageFacade/");
+                doTest(fileName);
+            }
+
             @TestMetadata("conflictingPlatformDeclarations")
             public void testConflictingPlatformDeclarations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/conflictingPlatformDeclarations/");
@@ -1093,6 +1099,18 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
             @TestMetadata("inlineTopLevelValPropertyWithJvmName")
             public void testInlineTopLevelValPropertyWithJvmName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/inlineTopLevelValPropertyWithJvmName/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("innerClassNotGeneratedWhenRebuilding")
+            public void testInnerClassNotGeneratedWhenRebuilding() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/innerClassNotGeneratedWhenRebuilding/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmNameChanged")
+            public void testJvmNameChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/jvmNameChanged/");
                 doTest(fileName);
             }
 
@@ -1156,9 +1174,21 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 doTest(fileName);
             }
 
+            @TestMetadata("multifilePackagePartMethodAdded")
+            public void testMultifilePackagePartMethodAdded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifilePackagePartMethodAdded/");
+                doTest(fileName);
+            }
+
             @TestMetadata("optionalParameter")
             public void testOptionalParameter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/optionalParameter/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("packageFacadeToClass")
+            public void testPackageFacadeToClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/packageFacadeToClass/");
                 doTest(fileName);
             }
 
