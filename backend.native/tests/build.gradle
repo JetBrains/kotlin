@@ -330,6 +330,11 @@ task codegen_basics_for_loops_errors(type: RunKonanTest) {
     goldValue = "OK\n"
 }
 
+task codegen_basics_for_loops_empty_range(type: RunKonanTest) {
+    source = "codegen/basics/for_loops_empty_range.kt"
+    goldValue = "OK\n"
+}
+
 task local_variable(type: RunKonanTest) {
     source = "codegen/basics/local_variable.kt"
 }
