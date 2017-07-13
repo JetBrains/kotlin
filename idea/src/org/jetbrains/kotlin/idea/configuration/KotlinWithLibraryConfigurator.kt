@@ -255,7 +255,7 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
                !File(defaultPath, getLibraryJarDescriptors(null).first().jarName).exists()
     }
 
-    protected open fun getDefaultPathToJarFile(project: Project): String {
+    open fun getDefaultPathToJarFile(project: Project): String {
         return FileUIUtils.createRelativePath(project, project.baseDir, DEFAULT_LIBRARY_DIR)
     }
 
