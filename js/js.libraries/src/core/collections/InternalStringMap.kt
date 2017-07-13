@@ -30,7 +30,7 @@ import kotlin.collections.MutableMap.MutableEntry
  */
 internal class InternalStringMap<K, V>(override val equality: EqualityComparator) : InternalMap<K, V> {
 
-    private var backingMap: dynamic = js("Object.create(null)")
+    private var backingMap: dynamic = createJsMap()
     override var size: Int = 0
         private set
 
@@ -87,7 +87,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
 
 
     override fun clear() {
-        backingMap = js("Object.create(null)")
+        backingMap = createJsMap()
         size = 0
     }
 
