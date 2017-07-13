@@ -29,6 +29,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.memberFunctions
 import kotlin.script.dependencies.DependenciesResolver
 import kotlin.script.dependencies.ScriptDependenciesResolver
+import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
 import kotlin.script.templates.AcceptedAnnotations
 
 open class KotlinScriptDefinitionFromAnnotatedTemplate(
@@ -68,7 +69,11 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         } ?: return null
 
         val resolver = instantiateResolver(defAnn.resolver)
-        return if (resolver is DependenciesResolver) resolver else resolver?.let(::ApiChangeDependencyResolverWrapper)
+        return when (resolver) {
+            is AsyncDependenciesResolver -> AsyncDependencyResolverWrapper(resolver)
+            is DependenciesResolver -> resolver
+            else -> resolver?.let(::ApiChangeDependencyResolverWrapper)
+        }
     }
 
     private fun <T : Any> instantiateResolver(resolverClass: KClass<T>): T? {
