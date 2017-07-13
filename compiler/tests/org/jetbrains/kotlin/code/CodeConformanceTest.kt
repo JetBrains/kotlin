@@ -38,12 +38,26 @@ class CodeConformanceTest : TestCase() {
                 "out",
                 "dist",
                 "ideaSDK",
+                "ultimate/ideaSDK",
                 "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
                 "libraries/tools/kotlin-maven-plugin/target",
                 "compiler/testData/psi/kdoc",
                 "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java"
         ).map(::File)
+
+        private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
+                "dependencies",
+                "out",
+                "dist",
+                "ideaSDK",
+                "ultimate/ideaSDK",
+                "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+                "idea/src/org/jetbrains/kotlin/idea/copyright",
+                "libraries/stdlib/common/build",
+                "libraries/stdlib/common/target",
+                "libraries/stdlib/js/build"
+        )
     }
 
     fun testParserCode() {
@@ -131,4 +145,40 @@ class CodeConformanceTest : TestCase() {
             })
         }
     }
+
+    fun testThirdPartyCopyrights() {
+        val filesWithUnlistedCopyrights = mutableListOf<String>()
+        val root = File(".").absoluteFile
+        val knownThirdPartyCode = loadKnownThirdPartyCodeList()
+        for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, root)) {
+            val relativePath = sourceFile.toRelativeString(root)
+            if (COPYRIGHT_EXCLUDED_FILES_AND_DIRS.any { relativePath.startsWith(it) } ||
+                    knownThirdPartyCode.any { relativePath.startsWith(it)}) continue
+
+            sourceFile.useLines { lineSequence ->
+                for (line in lineSequence) {
+                    if ("Copyright" in line && "JetBrains" !in line) {
+                        filesWithUnlistedCopyrights.add("$relativePath: $line")
+                    }
+                }
+            }
+        }
+        if (filesWithUnlistedCopyrights.isNotEmpty()) {
+            fail("The following files contain third-party copyrights and no license information. " +
+                 "Please update license/README.md accordingly:\n${filesWithUnlistedCopyrights.joinToString("\n")}")
+        }
+    }
+
+    private fun loadKnownThirdPartyCodeList(): List<String> {
+        File("license/README.md").useLines { lineSequence ->
+            return lineSequence
+                    .filter { it.startsWith(" - Path: ") }
+                    .map { it.removePrefix(" - Path: ").trim().ensureFileOrEndsWithSlash() }
+                    .toList()
+
+        }
+    }
 }
+
+private fun String.ensureFileOrEndsWithSlash() =
+        if (endsWith("/") || "." in substringAfterLast('/')) this else this + "/"
