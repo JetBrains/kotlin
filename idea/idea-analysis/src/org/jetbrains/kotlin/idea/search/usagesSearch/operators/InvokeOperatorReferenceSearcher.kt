@@ -44,17 +44,24 @@ class InvokeOperatorReferenceSearcher(
 
     init {
         val uastContext = ServiceManager.getService<UastContext>(targetFunction.project, UastContext::class.java)
-        val uMethod = uastContext.convertOpt<UMethod>(targetDeclaration, null)
-        val uastParameters = uMethod?.uastParameters
+        callArgumentsSize = when {
+            uastContext != null -> {
+                val uMethod = uastContext.convertOpt<UMethod>(targetDeclaration, null)
+                val uastParameters = uMethod?.uastParameters
 
-        val isStableNumberOfArguments = uastParameters != null && uastParameters.none { it.uastInitializer != null || it.isVarArgs }
-        callArgumentsSize = if (isStableNumberOfArguments) {
-            val numberOfArguments = uastParameters!!.size
-            when {
-                targetFunction.isExtensionDeclaration() -> numberOfArguments - 1
-                else -> numberOfArguments
+                val isStableNumberOfArguments = uastParameters != null && uastParameters.none { it.uastInitializer != null || it.isVarArgs }
+                if (isStableNumberOfArguments) {
+                    val numberOfArguments = uastParameters!!.size
+                    when {
+                        targetFunction.isExtensionDeclaration() -> numberOfArguments - 1
+                        else -> numberOfArguments
+                    }
+                }
+                else null
             }
-        } else null
+
+            else -> null
+        }
     }
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {
