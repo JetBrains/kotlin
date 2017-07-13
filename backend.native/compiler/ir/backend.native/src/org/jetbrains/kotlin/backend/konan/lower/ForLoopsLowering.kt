@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
@@ -87,18 +88,17 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         progressionElementClasses.mapTo(this) { it.descriptor.defaultType }
     }
 
-    // Symbols for progression building functions ======================================================================
+    //region Symbols for progression building functions ================================================================
     private fun getProgressionBuildingMethods(name: String): Set<IrFunctionSymbol> =
             getMethodsForProgressionElements(name) {
-                it.valueParameters.size == 1 &&
-                        it.valueParameters[0].type in progressionElementClassesTypes
+                it.valueParameters.size == 1 && it.valueParameters[0].type in progressionElementClassesTypes
             }
 
     private fun getProgressionBuildingExtensions(name: String, pkg: FqName): Set<IrFunctionSymbol> =
             getExtensionsForProgressionElements(name, pkg) {
                 it.extensionReceiverParameter?.type in progressionElementClassesTypes &&
-                        it.valueParameters.size == 1 &&
-                        it.valueParameters[0].type in progressionElementClassesTypes
+                it.valueParameters.size == 1 &&
+                it.valueParameters[0].type in progressionElementClassesTypes
             }
 
     private fun getMethodsForProgressionElements(name: String,
@@ -132,6 +132,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                     (KotlinBuiltIns.isLong(it.valueParameters[0].type) || KotlinBuiltIns.isInt(it.valueParameters[0].type))
         }
     }
+    //endregion
 
     //region Util methods ==============================================================================================
     private fun IrExpression.castIfNecessary(progressionType: ProgressionType, castToChar: Boolean = true): IrExpression {
@@ -148,19 +149,26 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                 dispatchReceiver = this@unaryMinus
             }
 
+    private fun IrConst<*>.isOne() =
+        when (kind) {
+            IrConstKind.Long -> value as Long == 1L
+            IrConstKind.Int  -> value as Int == 1
+            else -> false
+        }
+
     private fun irCheckProgressionStep(progressionType: ProgressionType,
-                                       step: IrExpression): IrExpression {
+                                       step: IrExpression): Pair<IrExpression, Boolean> {
         if (step is IrConst<*> &&
             ((step.kind == IrConstKind.Long && step.value as Long > 0) ||
             (step.kind == IrConstKind.Int && step.value as Int > 0))) {
-            return step
+            return step to !step.isOne()
         }
         val castedStep = step.castIfNecessary(progressionType, false)
         val symbol = symbols.checkProgressionStep[castedStep.type]
                 ?: throw IllegalArgumentException("Unknown progression element type: ${step.type}")
         return IrCallImpl(step.startOffset, step.endOffset, symbol).apply {
             putValueArgument(0, castedStep)
-        }
+        } to true
     }
 
     private fun irGetProgressionBound(progressionType: ProgressionType,
@@ -179,7 +187,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
     }
     //endregion
 
-    //region Util classes ====================================================================================================
+    //region Util classes ==============================================================================================
     // TODO: Replace with a cast when such support is added in the boxing lowering.
     private data class ProgressionType(val elementType: KotlinType,
                                        val numberCastFunctionName: Name)
@@ -189,7 +197,8 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
             val first: IrExpression,
             val last: IrExpression,
             val step: IrExpression? = null,
-            val increasing: Boolean = true)
+            val increasing: Boolean = true,
+            var needBoundCalculation: Boolean = false)
 
     /** Contains information about variables used in the loop. */
     private data class ForLoopInfo(
@@ -224,18 +233,20 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         private fun buildStep(expression: IrCall, progressionType: ProgressionType) =
                 expression.extensionReceiver!!.accept(this, null)?.let {
                     val newStep = expression.getValueArgument(0)!!
+                    val (newStepCheck, needBoundCalculation) = irCheckProgressionStep(progressionType, newStep)
                     val step = when {
-                        it.step == null -> irCheckProgressionStep(progressionType, newStep)
+                        it.step == null -> newStepCheck
                         // There were step calls before. Just add our check in the container or create a new one.
                         it.step is IrStatementContainer -> {
-                            it.step.statements.add(irCheckProgressionStep(progressionType, newStep)); it.step
+                            it.step.statements.add(newStepCheck)
+                            it.step
                         }
                         else -> IrCompositeImpl(expression.startOffset, expression.endOffset, newStep.type).apply {
                             statements.add(it.step)
-                            statements.add(irCheckProgressionStep(progressionType, newStep))
+                            statements.add(newStepCheck)
                         }
                     }
-                    ProgressionInfo(progressionType, it.first, it.last, step, it.increasing)
+                    ProgressionInfo(progressionType, it.first, it.last, step, it.increasing, needBoundCalculation)
                 }
 
         override fun visitElement(element: IrElement, data: Nothing?): ProgressionInfo? = null
@@ -261,7 +272,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
     }
     //endregion
 
-    // Lowering ========================================================================================================
+    //region Lowering ==================================================================================================
     // Lower a loop header.
     private fun processHeader(variable: IrVariable, initializer: IrCall): IrStatement? {
         val symbol = variable.symbol
@@ -282,8 +293,12 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                     step?.unaryMinus() ?: irConstMinusOne(startOffset, endOffset).castIfNecessary(progressionType, false)
                 }
                 val stepValue = irTemporary(stepExpression, "step")
-                // TODO: Don't call the check it step is 1 or -1
-                val boundExpression = irGetProgressionBound(progressionType, inductionVariable.symbol, last, stepValue.symbol)
+                // Don't call progression bound calculation if the step is 1.
+                val boundExpression = if (needBoundCalculation) {
+                    irGetProgressionBound(progressionType, inductionVariable.symbol, last, stepValue.symbol)
+                } else {
+                    last.castIfNecessary(progressionType)
+                }
                 val boundValue = irTemporary(boundExpression, "bound")
                 iteratorToLoopInfo[symbol] = ForLoopInfo(progressionInfo,
                         inductionVariable.symbol,
@@ -410,5 +425,6 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         }
         return result ?: super.visitVariable(declaration)
     }
+    //endregion
 }
 
