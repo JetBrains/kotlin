@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Add '@JvmStatic' annotation"
+
+object Test {
+    @JvmStatic
+    fun main(args: Array<String>) {
+    }
+}
