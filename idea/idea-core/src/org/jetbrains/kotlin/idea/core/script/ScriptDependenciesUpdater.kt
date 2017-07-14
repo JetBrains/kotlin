@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
+import kotlin.script.dependencies.DependenciesResolver
 import kotlin.script.dependencies.ScriptDependencies
 import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
 
@@ -44,8 +45,12 @@ internal class ScriptDependenciesUpdater(
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
 ) {
     private val requests = ConcurrentHashMap<String, ModStampedRequest>()
-    private val scriptDependencyUpdatesDispatcher = Executors.newFixedThreadPool(1).asCoroutineDispatcher()
     private val contentLoader = ScriptContentLoader(project)
+    private val asyncUpdatesDispatcher = Executors.newFixedThreadPool(1).asCoroutineDispatcher()
+    private val legacyUpdatesDispatcher =
+            Executors.newFixedThreadPool(
+                    (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
+            ).asCoroutineDispatcher()
 
     init {
         listenToVfsChanges()
@@ -93,7 +98,7 @@ internal class ScriptDependenciesUpdater(
         val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return false
 
         return when (scriptDef.dependencyResolver) {
-            is AsyncDependenciesResolver -> {
+            is AsyncDependenciesResolver, is LegacyResolverWrapper -> {
                 updateAsync(file, scriptDef)
                 return false
             }
@@ -134,24 +139,42 @@ internal class ScriptDependenciesUpdater(
             scriptDef: KotlinScriptDefinition
     ): TimeStampedJob {
         val currentTimeStamp = TimeStamps.next()
-        val dependenciesResolver = scriptDef.dependencyResolver as AsyncDependenciesResolver
-        val path = file.path
-
-        val newJob = launch(scriptDependencyUpdatesDispatcher) {
-            val result = dependenciesResolver.resolveAsync(
-                    contentLoader.getScriptContents(scriptDef, file),
-                    contentLoader.getEnvironment(scriptDef)
-            )
-            val lastTimeStamp = requests[path]?.job?.timeStamp
-            val isLastSentRequest = lastTimeStamp == null || lastTimeStamp == currentTimeStamp
-            if (isLastSentRequest) {
-                ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
-                if (cache(result.dependencies ?: ScriptDependencies.Empty, file)) {
-                    onChange()
-                }
+        val dependenciesResolver = scriptDef.dependencyResolver
+        val newJob = if (dependenciesResolver is AsyncDependenciesResolver) {
+            launch(asyncUpdatesDispatcher) {
+                processResult(
+                        file, currentTimeStamp,
+                        dependenciesResolver.resolveAsync(
+                                contentLoader.getScriptContents(scriptDef, file),
+                                contentLoader.getEnvironment(scriptDef)
+                        )
+                )
+            }
+        }
+        else {
+            assert(dependenciesResolver is LegacyResolverWrapper)
+            launch(legacyUpdatesDispatcher) {
+                processResult(
+                        file, currentTimeStamp,
+                        dependenciesResolver.resolve(
+                                contentLoader.getScriptContents(scriptDef, file),
+                                contentLoader.getEnvironment(scriptDef)
+                        )
+                )
             }
         }
         return TimeStampedJob(newJob, currentTimeStamp)
+    }
+
+    private fun processResult(file: VirtualFile, currentTimeStamp: TimeStamp, result: DependenciesResolver.ResolveResult) {
+        val lastTimeStamp = requests[file.path]?.job?.timeStamp
+        val isLastSentRequest = lastTimeStamp == null || lastTimeStamp == currentTimeStamp
+        if (isLastSentRequest) {
+            ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
+            if (cache(result.dependencies ?: ScriptDependencies.Empty, file)) {
+                onChange()
+            }
+        }
     }
 
     fun updateSync(file: VirtualFile, scriptDef: KotlinScriptDefinition): Boolean {
