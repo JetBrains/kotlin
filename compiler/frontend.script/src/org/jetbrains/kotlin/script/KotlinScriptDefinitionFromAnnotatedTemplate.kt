@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -36,7 +37,8 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         template: KClass<out Any>,
         providedResolver: DependenciesResolver? = null,
         providedScriptFilePattern: String? = null,
-        val environment: Map<String, Any?>? = null
+        val environment: Map<String, Any?>? = null,
+        val templateClasspath: List<File> = emptyList()
 ) : KotlinScriptDefinition(template) {
 
     val scriptFilePattern by lazy {
