@@ -28,11 +28,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.asCoroutineDispatcher
-import kotlinx.coroutines.experimental.future.future
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.script.dependencies.ScriptDependencies
@@ -51,7 +51,7 @@ internal class ScriptDependenciesUpdater(
         listenToVfsChanges()
     }
 
-    private class TimeStampedRequest(val future: CompletableFuture<*>, val timeStamp: TimeStamp)
+    private class TimeStampedRequest(val job: Job, val timeStamp: TimeStamp)
 
     private class ModStampedRequest(
             val modificationStamp: Long,
@@ -108,13 +108,13 @@ internal class ScriptDependenciesUpdater(
             return
         }
 
-        lastRequest?.request?.future?.cancel(true)
+        lastRequest?.request?.job?.cancel()
 
-        val (currentTimeStamp, newFuture) = sendRequest(file, scriptDefinition)
+        val (currentTimeStamp, newJob) = sendRequest(file, scriptDefinition)
 
         requests[path] = ModStampedRequest(
                 file.modificationStamp,
-                TimeStampedRequest(newFuture, currentTimeStamp)
+                TimeStampedRequest(newJob, currentTimeStamp)
         )
         return
     }
@@ -133,17 +133,16 @@ internal class ScriptDependenciesUpdater(
     private fun sendRequest(
             file: VirtualFile,
             scriptDef: KotlinScriptDefinition
-    ): Pair<TimeStamp, CompletableFuture<*>> {
+    ): Pair<TimeStamp, Job> {
         val currentTimeStamp = TimeStamps.next()
         val dependenciesResolver = scriptDef.dependencyResolver as AsyncDependenciesResolver
         val path = file.path
 
-        val newFuture = future(scriptDependencyUpdatesDispatcher) {
-            dependenciesResolver.resolveAsync(
+        val newJob = launch(scriptDependencyUpdatesDispatcher) {
+            val result = dependenciesResolver.resolveAsync(
                     contentLoader.getScriptContents(scriptDef, file),
                     (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.environment.orEmpty()
             )
-        }.thenAccept { result ->
             val lastTimeStamp = requests[path]?.request?.timeStamp
             val isLastSentRequest = lastTimeStamp == null || lastTimeStamp == currentTimeStamp
             if (isLastSentRequest) {
@@ -153,7 +152,7 @@ internal class ScriptDependenciesUpdater(
                 }
             }
         }
-        return Pair(currentTimeStamp, newFuture)
+        return Pair(currentTimeStamp, newJob)
     }
 
     fun updateSync(file: VirtualFile, scriptDef: KotlinScriptDefinition): Boolean {
