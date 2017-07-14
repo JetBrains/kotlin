@@ -12557,6 +12557,42 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/boxedEqPrimitiveShort.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("primitiveEqBoxedBoolean.kt")
+                public void testPrimitiveEqBoxedBoolean() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/primitiveEqBoxedBoolean.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("primitiveEqBoxedByte.kt")
+                public void testPrimitiveEqBoxedByte() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/primitiveEqBoxedByte.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("primitiveEqBoxedChar.kt")
+                public void testPrimitiveEqBoxedChar() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/primitiveEqBoxedChar.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("primitiveEqBoxedInt.kt")
+                public void testPrimitiveEqBoxedInt() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/primitiveEqBoxedInt.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("primitiveEqBoxedLong.kt")
+                public void testPrimitiveEqBoxedLong() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/primitiveEqBoxedLong.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("primitiveEqBoxedShort.kt")
+                public void testPrimitiveEqBoxedShort() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable/generated/primitiveEqBoxedShort.kt");
+                    doTest(fileName);
+                }
             }
         }
     }

@@ -35,53 +35,116 @@ object GeneratePrimitiveVsObjectEqualityTestData {
     private fun PrintWriter.generateBoxedVsPrimitiveTestBody(type: String, x: String, y: String) {
         println("// $PREAMBLE_MESSAGE")
         println()
-        println("val nx: $type? = $x")
-        println("val nn: $type? = null")
-        println("val x: $type = $x")
-        println("val y: $type = $y")
+        generateGlobalVals(type, x, y)
         println()
         println("fun box(): String {")
-        println("    val ax: $type? = $x")
-        println("    val an: $type? = null")
-        println("    val bx: $type = $x")
-        println("    val by: $type = $y")
+        generateLocalVals(type, x, y)
         println()
 
         println("    return when {")
 
-        listOf(
-                "nx != $x",
-                "nx == $y",
-                "!(nx == $x)",
-                "!(nx != $y)",
-                "nx != x",
-                "nx == y",
-                "!(nx == x)",
-                "!(nx != y)",
-                "nn == $x",
-                "!(nn != $x)",
-                "nn == x",
-                "!(nn != x)",
-                "ax != $x",
-                "ax == $y",
-                "!(ax == $x)",
-                "!(ax != $y)",
-                "ax != bx",
-                "ax == by",
-                "!(ax == bx)",
-                "!(ax != by)",
-                "an == $x",
-                "!(an != $x)",
-                "an == bx",
-                "!(an != bx)"
-        ).forEachIndexed { i, condition ->
-            println("        $condition -> \"Fail $i\"")
-        }
+        generateFailureClauses(
+                *failuresForEqualAndUnequalLeft("nx", x, y),
+                *failuresForEqualAndUnequalLeft("nx", "x", "y"),
+                *failuresForUnequalLeft("nn", x),
+                *failuresForUnequalLeft("nn", "x"),
+                *failuresForEqualAndUnequalLeft("ax", x, y),
+                *failuresForEqualAndUnequalLeft("ax", "x", "y"),
+                *failuresForEqualAndUnequalLeft("ax", "bx", "by"),
+                *failuresForUnequalLeft("an", x),
+                *failuresForUnequalLeft("an", "x"),
+                *failuresForUnequalLeft("an", "bx")
+        )
 
         println("        else -> \"OK\"")
         println("    }")
         println("}")
     }
+
+    private fun failuresForEqualAndUnequalLeft(lhs: String, equalRhs: String, unequalRhs: String) =
+            arrayOf(
+                    "$lhs != $equalRhs",
+                    "$lhs == $unequalRhs",
+                    "!($lhs == $equalRhs)",
+                    "!($lhs != $unequalRhs)"
+            )
+
+    private fun failuresForUnequalLeft(lhs: String, unequalRhs: String) =
+            arrayOf(
+                    "$lhs == $unequalRhs",
+                    "!($lhs != $unequalRhs)"
+            )
+
+    private fun PrintWriter.generateLocalVals(type: String, x: String, y: String) {
+        println("    val ax: $type? = $x")
+        println("    val an: $type? = null")
+        println("    val bx: $type = $x")
+        println("    val by: $type = $y")
+    }
+
+    private fun PrintWriter.generateGlobalVals(type: String, x: String, y: String) {
+        println("val nx: $type? = $x")
+        println("val nn: $type? = null")
+        println("val x: $type = $x")
+        println("val y: $type = $y")
+    }
+
+    private fun PrintWriter.generateFailureClauses(vararg failures: String) {
+        failures.forEachIndexed { i, condition ->
+            println("        $condition -> \"Fail $i\"")
+        }
+    }
+
+    private fun generatePrimitiveVsBoxedTest(type: String, x: String, y: String) {
+        PrintWriter(File(GENERATED_DIR, "primitiveEqBoxed$type.kt")).use {
+            it.generatePrimitiveVsBoxedTestBody(type, x, y)
+        }
+    }
+
+    private fun PrintWriter.generatePrimitiveVsBoxedTestBody(type: String, x: String, y: String) {
+        println("// $PREAMBLE_MESSAGE")
+        println()
+
+        generateGlobalVals(type, x, y)
+        println()
+        println("fun box(): String {")
+        generateLocalVals(type, x, y)
+        println()
+
+        println("    return when {")
+
+        generateFailureClauses(
+                *failuresForEqualAndUnequalRight(x, y, "nx"),
+                *failuresForEqualAndUnequalRight("x", "y", "nx"),
+                *failuresForUnequalRight(x, "nn"),
+                *failuresForUnequalRight("x", "nn"),
+                *failuresForEqualAndUnequalRight(x, y, "ax"),
+                *failuresForEqualAndUnequalRight("x", "y", "ax"),
+                *failuresForEqualAndUnequalRight("bx", "by", "ax"),
+                *failuresForUnequalRight(x, "an"),
+                *failuresForUnequalRight("x", "an"),
+                *failuresForUnequalRight("bx", "an")
+        )
+
+        println("        else -> \"OK\"")
+        println("    }")
+        println("}")
+    }
+
+    private fun failuresForEqualAndUnequalRight(equalLhs: String, unequalLhs: String, rhs: String) =
+            arrayOf(
+                    "$equalLhs != $rhs",
+                    "$unequalLhs == $rhs",
+                    "!($equalLhs == $rhs)",
+                    "!($unequalLhs != $rhs)"
+            )
+
+    private fun failuresForUnequalRight(unequalLhs: String, rhs: String) =
+            arrayOf(
+                    "$unequalLhs == $rhs",
+                    "!($unequalLhs != $rhs)"
+            )
+
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -96,5 +159,12 @@ object GeneratePrimitiveVsObjectEqualityTestData {
         generateBoxedVsPrimitiveTest("Short", "0.toShort()", "1.toShort()")
         generateBoxedVsPrimitiveTest("Int", "0", "1")
         generateBoxedVsPrimitiveTest("Long", "0L", "1L")
+
+        generatePrimitiveVsBoxedTest("Boolean", "true", "false")
+        generatePrimitiveVsBoxedTest("Char", "'0'", "'1'")
+        generatePrimitiveVsBoxedTest("Byte", "0.toByte()", "1.toByte()")
+        generatePrimitiveVsBoxedTest("Short", "0.toShort()", "1.toShort()")
+        generatePrimitiveVsBoxedTest("Int", "0", "1")
+        generatePrimitiveVsBoxedTest("Long", "0L", "1L")
     }
 }
