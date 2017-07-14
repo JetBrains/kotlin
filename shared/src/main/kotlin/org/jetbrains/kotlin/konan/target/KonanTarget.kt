@@ -24,7 +24,9 @@ enum class KonanTarget(val targetSuffix: String, val programSuffix: String, var 
     LINUX("linux", "kexe"),
     MINGW("mingw", "exe"),
     MACBOOK("osx", "kexe"),
-    RASPBERRYPI("raspberrypi", "kexe");
+    RASPBERRYPI("raspberrypi", "kexe"),
+    WASM32("wasm32", "kexe");
+
     val userName get() = name.toLowerCase()
 }
 
@@ -115,7 +117,7 @@ class TargetManager(val userRequest: String? = null) {
                 else -> throw TargetSupportException("Unknown host: $host.")
             }
 
-        fun host_arch(): String { 
+        fun host_arch(): String {
             val javaArch = System.getProperty("os.arch")
             return when (javaArch) {
                 "x86_64" -> "x86_64"
@@ -153,6 +155,7 @@ class TargetManager(val userRequest: String? = null) {
                     //KonanTarget.IPHONE_SIM.enabled = true
                     KonanTarget.ANDROID_ARM32.enabled = true
                     KonanTarget.ANDROID_ARM64.enabled = true
+                    KonanTarget.WASM32.enabled = true
                 }
                 else ->
                     throw TargetSupportException("Unknown host platform: $host")

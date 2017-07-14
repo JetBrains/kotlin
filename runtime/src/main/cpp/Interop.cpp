@@ -17,14 +17,20 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
+
+#ifndef KONAN_NO_FFI
 #include <ffi.h>
+#endif
 
 #include "Memory.h"
 #include "Types.h"
 
+
 namespace {
 
 typedef int FfiTypeKind;
+
+#ifndef KONAN_NO_FFI
 // Also declared in Varargs.kt
 const FfiTypeKind FFI_TYPE_KIND_VOID = 0;
 const FfiTypeKind FFI_TYPE_KIND_SINT8 = 1;
@@ -49,6 +55,7 @@ ffi_type* convertFfiTypeKindToType(FfiTypeKind typeKind) {
         default: assert(false); return nullptr;
     }
 }
+#endif  // KONAN_NO_FFI
 
 }  // namespace
 
@@ -57,8 +64,9 @@ extern "C" {
 void Kotlin_Interop_callWithVarargs(void* codePtr, void* returnValuePtr, FfiTypeKind returnTypeKind,
                      void** arguments, intptr_t* argumentTypeKinds,
                      int fixedArgumentsNumber, int totalArgumentsNumber) {
-
-
+#ifdef KONAN_NO_FFI
+    RuntimeAssert(false, "Vararg calls are not supported on this platform");
+#else
     ffi_type** argumentTypes = (ffi_type**)argumentTypeKinds;
     // In-place convertion:
     for (int i = 0; i < totalArgumentsNumber; ++i) {
@@ -71,6 +79,7 @@ void Kotlin_Interop_callWithVarargs(void* codePtr, void* returnValuePtr, FfiType
                      convertFfiTypeKindToType(returnTypeKind), argumentTypes);
 
     ffi_call(&cif, (void (*)())codePtr, returnValuePtr, arguments);
+#endif
 }
 
 KNativePtr Kotlin_Interop_createStablePointer(KRef any) {

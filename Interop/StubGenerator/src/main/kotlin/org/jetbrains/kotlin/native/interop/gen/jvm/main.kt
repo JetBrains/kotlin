@@ -88,7 +88,8 @@ private val knownTargets = mapOf(
         "raspberrypi" to "raspberrypi",
         "android_arm32" to "android_arm32",
         "android_arm64" to "android_arm64",
-        "mingw" to "mingw"
+        "mingw" to "mingw",
+        "wasm32" to "wasm32"
 )
 
 
@@ -198,6 +199,12 @@ private fun maybeExecuteHelper(dependenciesRoot: String, properties: Properties,
     }
 }
 
+private fun Properties.getClangFlags(target: String, targetSysRoot: String) : List<String> {
+    val flags = getTargetSpecific("clangFlags", target)
+    if (flags == null) return emptyList()
+    return flags.replace("<sysrootDir>", targetSysRoot).split(' ')
+}
+
 private fun Properties.defaultCompilerOpts(target: String, dependencies: String): List<String> {
     val targetToolchainDir = getHostTargetSpecific("targetToolchain", target)!!
     val targetToolchain = "$dependencies/$targetToolchainDir"
@@ -224,7 +231,7 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
     val arch = getTargetSpecific("arch", target)
     val archSelector = if (quadruple != null)
         listOf("-target", quadruple) else listOf("-arch", arch!!)
-    val commonArgs = listOf("-isystem", isystem, "--sysroot=$targetSysRoot")
+    val commonArgs = listOf("-isystem", isystem, "--sysroot=$targetSysRoot") + getClangFlags(target, targetSysRoot)
     when (host) {
         "osx" -> {
             val osVersionMinFlag = getTargetSpecific("osVersionMinFlagClang", target)

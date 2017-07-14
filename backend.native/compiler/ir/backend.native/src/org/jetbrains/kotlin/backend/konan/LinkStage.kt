@@ -169,6 +169,21 @@ internal open class MingwPlatform(distribution: Distribution)
     override fun linkCommandSuffix() = linkerKonanFlags
 }
 
+internal open class WasmPlatform(distribution: Distribution)
+    : PlatformFlags(distribution.targetProperties) {
+
+    private val clang = "clang"
+
+    override val useCompilerDriverAsLinker: Boolean get() = false
+
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
+
+        return mutableListOf(clang).apply{
+            throw Error("Implement me!")
+        }
+    }
+}
+
 internal class LinkStage(val context: Context) {
 
     val config = context.config.configuration
@@ -184,6 +199,8 @@ internal class LinkStage(val context: Context) {
             AndroidPlatform(distribution)
         KonanTarget.MINGW ->
             MingwPlatform(distribution)
+        KonanTarget.WASM32 ->
+            WasmPlatform(distribution)
         else ->
             error("Unexpected target platform: ${context.config.targetManager.target}")
     }

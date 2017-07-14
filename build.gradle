@@ -102,7 +102,7 @@ void loadLocalProperties() {
     if (new File("$project.rootDir/local.properties").exists()) {
         Properties props = new Properties()
         props.load(new FileInputStream("$project.rootDir/local.properties"))
-        props.each {prop -> project.ext.set(prop.key, prop.value)}
+        props.each { prop -> project.ext.set(prop.key, prop.value) }
     }
 }
 
@@ -111,11 +111,11 @@ void loadCommandLineProperties() {
         throw new Error("Specify either -Ptest_flags or -Pbuild_flags.")
     }
     ext.globalBuildArgs = project.hasProperty("build_flags")
-        ? ext.build_flags.split(' ') : []
+    ? ext.build_flags.split(' '): []
     ext.globalTestArgs = project.hasProperty("test_flags")
-        ? ext.test_flags.split(' ') : []
+    ? ext.test_flags.split(' '): []
     ext.testTarget = project.hasProperty("test_target")
-        ? ext.test_target : null
+    ? ext.test_target: null
 }
 
 class PlatformInfo {

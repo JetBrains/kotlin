@@ -227,13 +227,18 @@ if (isLinux()) {
     }
 
     dependencyTask(MINGW, LIBFFI)
-} else {
+} else if (isMac()) {
     dependencyTask(MACBOOK, SYSROOT)
     dependencyTask(MACBOOK, LIBFFI)
     dependencyTask(IPHONE, SYSROOT)
     dependencyTask(IPHONE, LIBFFI)
+    dependencyTask(WASM32, SYSROOT)
+    // No FFI for webassembly.
+
     // TODO: re-enable when we known how to bring the simulator sysroot to dependencies.
-    // dependencyTask(IPHONE_SIM, SYSROOT)
+    // dependencyTask("iphoneSim", SYSROOT)
+} else {
+    throw new Error("Unsupported host")
 }
 
 if (isLinux() || isMac()) {

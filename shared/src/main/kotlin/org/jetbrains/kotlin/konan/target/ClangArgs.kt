@@ -19,16 +19,15 @@ package org.jetbrains.kotlin.konan.target
 import org.jetbrains.kotlin.konan.properties.KonanProperties
 import org.jetbrains.kotlin.konan.file.File
 
-class ClangTarget(val target: KonanTarget, val konanProperties: KonanProperties) {
+class ClangTarget(val target: KonanTarget, konanProperties: KonanProperties) {
 
-    val sysRoot = konanProperties.absoluteTargetSysRoot!!
+    val sysRoot = konanProperties.absoluteTargetSysRoot
     val targetArg = konanProperties.targetArg
 
     val specificClangArgs: List<String> get() {
-        return when (target) {
-
+        val result = when (target) {
             KonanTarget.LINUX ->
-                listOf("--sysroot=$sysRoot", 
+                listOf("--sysroot=$sysRoot",
                         "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64")
             KonanTarget.RASPBERRYPI ->
                 listOf("-target", targetArg!!,
@@ -67,7 +66,16 @@ class ClangTarget(val target: KonanTarget, val konanProperties: KonanProperties)
                         // HACKS!
                         "-I$sysRoot/usr/include/c++/4.9.x",
                         "-I$sysRoot/usr/include/c++/4.9.x/aarch64-linux-android")
+
+            KonanTarget.WASM32 ->
+                listOf("-target", targetArg!!, "-O1", "-fno-rtti", "-fno-exceptions",  "-DKONAN_WASM=1",
+                        "-D_LIBCPP_ABI_VERSION=2", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
+                        "-DKONAN_INTERNAL_DLMALLOC=1",
+                        "-nostdinc", "-Xclang", "-nobuiltininc", "-Xclang", "-nostdsysteminc",
+                        "-Xclang", "-isystem$sysRoot/include/libcxx", "-Xclang", "-isystem$sysRoot/lib/libcxxabi/include",
+                        "-Xclang", "-isystem$sysRoot/include/compat", "-Xclang", "-isystem$sysRoot/include/libc")
         }
+        return result + (if (target != KonanTarget.WASM32) listOf("-g") else emptyList())
     }
 }
 

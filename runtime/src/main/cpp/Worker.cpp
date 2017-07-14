@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#define WITH_WORKERS 1
+
+#ifndef KONAN_NO_THREADS
+# define WITH_WORKERS 1
+#endif
 
 #include <stdlib.h>
 #include <string.h>
@@ -458,6 +461,11 @@ OBJ_GETTER(shallowCopy, KConstRef object) {
 }
 
 KInt stateOfFuture(KInt id) {
+  ThrowWorkerUnsupported();
+  return 0;
+}
+
+KInt schedule(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction) {
   ThrowWorkerUnsupported();
   return 0;
 }

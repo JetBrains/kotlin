@@ -17,6 +17,13 @@
 #ifndef RUNTIME_TYPES_H
 #define RUNTIME_TYPES_H
 
+#include <stdlib.h>
+
+#if KONAN_WASM
+// assert() is needed by WASM STL.
+#define assert(cond) if (!(cond)) abort()
+#endif
+
 #include <deque>
 #include <string>
 #include <unordered_map>

@@ -17,6 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+
+#if KONAN_NO_EXCEPTIONS
+#define OMIT_BACKTRACE 1
+#endif
 #ifndef OMIT_BACKTRACE
 #if USE_GCC_UNWIND
 // GCC unwinder for backtrace.
@@ -54,7 +58,7 @@ class AutoFree {
 struct Backtrace {
   Backtrace(int count, int skip) : index(0), skipCount(skip) {
     auto result = AllocArrayInstance(
-	theArrayTypeInfo, count - skipCount, arrayHolder.slot());
+        theArrayTypeInfo, count - skipCount, arrayHolder.slot());
     // TODO: throw cached OOME?
     RuntimeAssert(result != nullptr, "Cannot create backtrace array");
   }
@@ -156,8 +160,10 @@ OBJ_GETTER0(GetCurrentStackTrace) {
 
 void ThrowException(KRef exception) {
   RuntimeAssert(exception != nullptr && IsInstance(exception, theThrowableTypeInfo),
-		"Throwing something non-throwable");
-
+                "Throwing something non-throwable");
+#if KONAN_NO_EXCEPTIONS
+  RuntimeAssert(false, "Exceptions unsupported");
+#else
 #if (__MINGW32__ || __MINGW64__)
   // Workaround for https://bugs.llvm.org/show_bug.cgi?id=33220
   // This code forces the function to have at least one landingpad:
@@ -165,6 +171,7 @@ void ThrowException(KRef exception) {
 #endif
 
   throw ObjHolder(exception);
+#endif
 }
 
 

@@ -20,5 +20,10 @@
 #define RUNTIME_NOTHROW __attribute__((nothrow))
 #define RUNTIME_CONST __attribute__((const))
 #define RUNTIME_PURE __attribute__((pure))
+#if KONAN_NO_THREADS
+#define THREAD_LOCAL_VARIABLE
+#else
+#define THREAD_LOCAL_VARIABLE __thread
+#endif
 
 #endif // RUNTIME_COMMON_H
