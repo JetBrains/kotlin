@@ -24,11 +24,13 @@ import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptDependencies
 import kotlin.script.dependencies.ScriptReport
 
+interface LegacyResolverWrapper
+
 // NOTE: not implementing resolver wrapper since it was not implemented initially and this is deprecated API
 @Deprecated("Compatibility with deprecated API")
 internal class LegacyPackageDependencyResolverWrapper(
         val legacyResolver: ScriptDependenciesResolver
-) : kotlin.script.dependencies.DependenciesResolver {
+) : kotlin.script.dependencies.DependenciesResolver, LegacyResolverWrapper {
     override fun resolve(
             scriptContents: kotlin.script.dependencies.ScriptContents,
             environment: Environment
@@ -68,8 +70,9 @@ internal class LegacyPackageDependencyResolverWrapper(
 
 internal class ApiChangeDependencyResolverWrapper(
         override val delegate: kotlin.script.dependencies.ScriptDependenciesResolver
-) : kotlin.script.dependencies.DependenciesResolver, DependencyResolverWrapper<kotlin.script.dependencies.ScriptDependenciesResolver> {
-
+) : kotlin.script.dependencies.DependenciesResolver,
+        DependencyResolverWrapper<kotlin.script.dependencies.ScriptDependenciesResolver>,
+        LegacyResolverWrapper {
     override fun resolve(
             scriptContents: kotlin.script.dependencies.ScriptContents,
             environment: Environment
@@ -93,7 +96,7 @@ internal class ApiChangeDependencyResolverWrapper(
         return DependenciesResolver.ResolveResult.Success(dependencies, reports)
     }
 
-    private fun kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.convertSeverity(): ScriptReport.Severity  = when(this) {
+    private fun kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.convertSeverity(): ScriptReport.Severity = when (this) {
         kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.ERROR -> ScriptReport.Severity.ERROR
         kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.WARNING -> ScriptReport.Severity.WARNING
         kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.INFO -> ScriptReport.Severity.INFO
