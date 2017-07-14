@@ -17,10 +17,13 @@
 package org.jetbrains.kotlin.android.synthetic.res
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 
-class CliAndroidPackageFragmentProviderExtension : AndroidPackageFragmentProviderExtension() {
+class CliAndroidPackageFragmentProviderExtension(private val isExperimental: Boolean) : AndroidPackageFragmentProviderExtension() {
+    override fun isExperimental(moduleInfo: ModuleInfo?): Boolean = isExperimental
+
     override fun getLayoutXmlFileManager(project: Project, moduleInfo: ModuleInfo?): AndroidLayoutXmlFileManager? {
         return ServiceManager.getService(project, AndroidLayoutXmlFileManager::class.java)
     }

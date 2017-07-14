@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.storage.StorageManager
 abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProviderExtension {
     protected abstract fun getLayoutXmlFileManager(project: Project, moduleInfo: ModuleInfo?): AndroidLayoutXmlFileManager?
 
+    protected abstract fun isExperimental(moduleInfo: ModuleInfo?): Boolean
+
     override fun getPackageFragmentProvider(
             project: Project,
             module: ModuleDescriptor,
@@ -38,6 +40,8 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
             trace: BindingTrace,
             moduleInfo: ModuleInfo?
     ): PackageFragmentProvider? {
+        val isExperimental = isExperimental(moduleInfo)
+
         val layoutXmlFileManager = getLayoutXmlFileManager(project, moduleInfo) ?: return null
 
         val moduleData = layoutXmlFileManager.getModuleData()
@@ -54,7 +58,7 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
                     val resources = layoutXmlFileManager.extractResources(AndroidLayoutGroupData(layoutName, layouts), module)
                     val packageData = AndroidSyntheticPackageData(moduleData, forView, isDeprecated, resources)
                     val packageDescriptor = AndroidSyntheticPackageFragmentDescriptor(
-                            module, FqName(fqName), packageData, lazyContext, storageManager)
+                            module, FqName(fqName), packageData, lazyContext, storageManager, isExperimental)
                     packagesToLookupInCompletion += packageDescriptor
                     allPackageDescriptors += packageDescriptor
                 }
@@ -79,7 +83,10 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
         // Package with clearFindViewByIdCache()
         AndroidConst.SYNTHETIC_SUBPACKAGES.last().let { s ->
             val packageDescriptor = PredefinedPackageFragmentDescriptor(s, module, storageManager, packagesToLookupInCompletion) { descriptor ->
-                (lazyContext().getWidgetReceivers(forView = false) + lazyContext().getWidgetReceivers(forView = true))
+                val widgetReceivers = lazyContext().getWidgetReceivers(forView = false, isExperimental = isExperimental) +
+                                      lazyContext().getWidgetReceivers(forView = true, isExperimental = isExperimental)
+
+                widgetReceivers
                         .filter { it.mayHaveCache }
                         .map { genClearCacheFunction(descriptor, it.type) }
             }
