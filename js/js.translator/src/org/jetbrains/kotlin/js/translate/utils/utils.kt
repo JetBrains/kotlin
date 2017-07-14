@@ -228,3 +228,18 @@ fun TranslationContext.addFunctionButNotExport(name: JsName, expression: JsExpre
     }
     return name
 }
+
+fun createPrototypeStatements(superName: JsName, name: JsName): List<JsStatement> {
+    val superclassRef = superName.makeRef()
+    val superPrototype = JsAstUtils.prototypeOf(superclassRef)
+    val superPrototypeInstance = JsInvocation(JsNameRef("create", "Object"), superPrototype)
+
+    val classRef = name.makeRef()
+    val prototype = JsAstUtils.prototypeOf(classRef)
+    val prototypeStatement = JsAstUtils.assignment(prototype, superPrototypeInstance).makeStmt()
+
+    val constructorRef = JsNameRef("constructor", prototype.deepCopy())
+    val constructorStatement = JsAstUtils.assignment(constructorRef, classRef.deepCopy()).makeStmt()
+
+    return listOf(prototypeStatement, constructorStatement)
+}

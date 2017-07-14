@@ -28,12 +28,14 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
+import org.jetbrains.kotlin.js.translate.declaration.ClassModelGenerator;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -280,6 +282,40 @@ public class TranslationContext {
     }
 
     @NotNull
+    public JsName getInlineableInnerNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        JsName name;
+        if (inlineFunctionContext == null || !isPublicInlineFunction() ||
+            DescriptorUtils.isAncestor(inlineFunctionContext.getDescriptor(), descriptor, false)) {
+            name = getInnerNameForDescriptor(descriptor);
+        }
+        else {
+            String tag = staticContext.getTag(descriptor);
+            name = inlineFunctionContext.getImports().computeIfAbsent(tag, t -> {
+                JsExpression imported = createInlineLocalImportExpression(descriptor);
+                if (imported instanceof JsNameRef) {
+                    JsNameRef importedNameRef = (JsNameRef) imported;
+                    if (importedNameRef.getQualifier() == null && importedNameRef.getIdent().equals(Namer.getRootPackageName()) &&
+                        (descriptor instanceof PackageFragmentDescriptor || descriptor instanceof ModuleDescriptor)) {
+                        return importedNameRef.getName();
+                    }
+                }
+
+                JsName result = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor));
+                if (isFromCurrentModule(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
+                    MetadataProperties.setLocalAlias(result, getInnerNameForDescriptor(descriptor));
+                }
+                MetadataProperties.setDescriptor(result, descriptor);
+                MetadataProperties.setStaticRef(result, imported);
+                MetadataProperties.setImported(result, true);
+                inlineFunctionContext.getImportBlock().getStatements().add(JsAstUtils.newVar(result, imported));
+                return result;
+            });
+        }
+
+        return name;
+    }
+
+    @NotNull
     public JsName getNameForObjectInstance(@NotNull ClassDescriptor descriptor) {
         return staticContext.getNameForObjectInstance(descriptor);
     }
@@ -340,36 +376,7 @@ public class TranslationContext {
 
     @NotNull
     public JsExpression getInnerReference(@NotNull DeclarationDescriptor descriptor) {
-        JsName name;
-        if (inlineFunctionContext == null || !isPublicInlineFunction() ||
-            DescriptorUtils.isAncestor(inlineFunctionContext.getDescriptor(), descriptor, false)) {
-            name = getInnerNameForDescriptor(descriptor);
-        }
-        else {
-            String tag = staticContext.getTag(descriptor);
-            name = inlineFunctionContext.getImports().computeIfAbsent(tag, t -> {
-                JsExpression imported = createInlineLocalImportExpression(descriptor);
-                if (imported instanceof JsNameRef) {
-                    JsNameRef importedNameRef = (JsNameRef) imported;
-                    if (importedNameRef.getQualifier() == null && importedNameRef.getIdent().equals(Namer.getRootPackageName()) &&
-                        (descriptor instanceof PackageFragmentDescriptor || descriptor instanceof ModuleDescriptor)) {
-                        return importedNameRef.getName();
-                    }
-                }
-
-                JsName result = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor));
-                if (isFromCurrentModule(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
-                    MetadataProperties.setLocalAlias(result, getInnerNameForDescriptor(descriptor));
-                }
-                MetadataProperties.setDescriptor(result, descriptor);
-                MetadataProperties.setStaticRef(result, imported);
-                MetadataProperties.setImported(result, true);
-                inlineFunctionContext.getImportBlock().getStatements().add(JsAstUtils.newVar(result, imported));
-                return result;
-            });
-        }
-
-        return pureFqn(name, null);
+        return pureFqn(getInlineableInnerNameForDescriptor(descriptor), null);
     }
 
     @NotNull
@@ -769,7 +776,18 @@ public class TranslationContext {
     }
 
     public void addClass(@NotNull ClassDescriptor classDescriptor) {
-        staticContext.addClass(classDescriptor);
+        if (inlineFunctionContext != null) {
+            JsClassModel classModel = new ClassModelGenerator(this).generateClassModel(classDescriptor);
+            List<JsStatement> targetStatements = inlineFunctionContext.getPrototypeBlock().getStatements();
+            JsName superName = classModel.getSuperName();
+            if (superName != null) {
+                targetStatements.addAll(UtilsKt.createPrototypeStatements(superName, classModel.getName()));
+            }
+            targetStatements.addAll(classModel.getPostDeclarationBlock().getStatements());
+        }
+        else {
+            staticContext.addClass(classDescriptor);
+        }
     }
 
     public void export(@NotNull MemberDescriptor descriptor) {
