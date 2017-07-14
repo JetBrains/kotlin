@@ -30,11 +30,13 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightElements
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -43,6 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.uast.*
 import java.lang.ref.WeakReference
 import java.text.StringCharacterIterator
@@ -179,4 +182,19 @@ internal inline fun <reified T : UDeclaration, reified P : PsiElement> unwrap(el
     val unwrapped = if (element is T) element.psi else element
     assert(unwrapped !is UElement)
     return unwrapped as P
+}
+
+internal fun KtExpression.getExpectedType(): KotlinType? = analyze()[BindingContext.EXPECTED_EXPRESSION_TYPE, this]
+
+internal fun KtTypeReference.getType(): KotlinType? = analyze()[BindingContext.TYPE, this]
+
+internal fun KotlinType.getFunctionalInterfaceType(source: UElement, element: KtElement): PsiType? =
+        takeIf { it.isInterface() && !it.isBuiltinFunctionalTypeOrSubtype }?.toPsiType(source, element, false)
+
+internal fun KotlinULambdaExpression.getFunctionalInterfaceType(): PsiType? {
+    val parent = psi.parent
+    return when(parent) {
+        is KtBinaryExpressionWithTypeRHS -> parent.right?.getType()?.getFunctionalInterfaceType(this, psi)
+        else -> psi.getExpectedType()?.getFunctionalInterfaceType(this, psi)
+    }
 }
