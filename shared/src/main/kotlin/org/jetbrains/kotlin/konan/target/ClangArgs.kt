@@ -44,7 +44,7 @@ class ClangTarget(val target: KonanTarget, val konanProperties: KonanProperties)
                         "-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1")
 
             KonanTarget.MACBOOK ->
-                listOf("--sysroot=$sysRoot", "-mmacosx-version-min=10.11")
+                listOf("--sysroot=$sysRoot", "-mmacosx-version-min=10.11", "-DKONAN_OSX=1")
 
             KonanTarget.IPHONE ->
                 listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", "$sysRoot", "-miphoneos-version-min=8.0.0")

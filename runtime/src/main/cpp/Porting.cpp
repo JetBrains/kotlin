@@ -101,12 +101,25 @@ size_t strnlen(const char* buffer, size_t maxSize) {
 }
 
 // Memory operations.
+#if KONAN_INTERNAL_DLMALLOC
+extern "C" void* dlcalloc(size_t, size_t);
+extern "C" void dlfree(void*);
+#endif
+
 void* calloc(size_t count, size_t size) {
+#if KONAN_INTERNAL_DLMALLOC
+  return dlcalloc(count, size);
+#else
   return ::calloc(count, size);
+#endif
 }
 
 void free(void* pointer) {
-  return ::free(pointer);
+#if KONAN_INTERNAL_DLMALLOC
+  dlfree(pointer);
+#else
+  ::free(pointer);
+#endif
 }
 
 // Time operations.
@@ -123,5 +136,12 @@ uint64_t getTimeNanos() {
 uint64_t getTimeMicros() {
   return duration_cast<microseconds>(high_resolution_clock::now().time_since_epoch()).count();
 }
+
+#if KONAN_INTERNAL_DLMALLOC
+// This function is being called when memory allocator needs more RAM.
+void* moreCore(int size) {
+  return sbrk(size);
+}
+#endif
 
 }  // namespace konan
