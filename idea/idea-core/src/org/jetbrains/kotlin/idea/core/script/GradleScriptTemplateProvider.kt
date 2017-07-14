@@ -68,7 +68,7 @@ abstract class AbstractGradleScriptTemplatesProvider(
 
     override val templateClassNames get() = listOf(templateClass)
 
-    override val dependenciesClasspath: List<File> get() {
+    override val templateClasspath: List<File> get() {
         return gradleLibDir.listFiles { it ->
             /* an inference problem without explicit 'it', TODO: remove when fixed */
             dependencySelector.matches(it.name)
