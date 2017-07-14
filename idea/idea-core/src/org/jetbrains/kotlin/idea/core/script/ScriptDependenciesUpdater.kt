@@ -141,7 +141,7 @@ internal class ScriptDependenciesUpdater(
         val newJob = launch(scriptDependencyUpdatesDispatcher) {
             val result = dependenciesResolver.resolveAsync(
                     contentLoader.getScriptContents(scriptDef, file),
-                    (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.environment.orEmpty()
+                    contentLoader.getEnvironment(scriptDef)
             )
             val lastTimeStamp = requests[path]?.request?.timeStamp
             val isLastSentRequest = lastTimeStamp == null || lastTimeStamp == currentTimeStamp

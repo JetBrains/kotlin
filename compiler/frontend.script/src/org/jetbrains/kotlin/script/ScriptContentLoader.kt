@@ -64,10 +64,13 @@ class ScriptContentLoader(private val project: Project) {
         val scriptContents = getScriptContents(scriptDef, file)
         val result = scriptDef.dependencyResolver.resolve(
                 scriptContents,
-                (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.environment ?: emptyMap()
+                getEnvironment(scriptDef)
         )
         ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
         return result.dependencies
     }
+
+    fun getEnvironment(scriptDef: KotlinScriptDefinition) =
+            (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.environment.orEmpty()
 }
 
