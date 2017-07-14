@@ -260,4 +260,7 @@ class BenchmarkCompletionAction : AnAction() {
 
     }
 
+    override fun update(e: AnActionEvent) {
+        e.presentation.isEnabledAndVisible = KotlinInternalMode.enabled
+    }
 }
