@@ -17,9 +17,7 @@
 #include "Types.h"
 #include "Exceptions.h"
 
-#ifdef __cplusplus
 extern "C" {
-#endif
 
 KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) {
   // We assume null check is handled by caller.
@@ -52,6 +50,4 @@ void CheckInstance(const ObjHeader* obj, const TypeInfo* type_info) {
   ThrowClassCastException();
 }
 
-#ifdef __cplusplus
-}
-#endif
+}  // extern "C"

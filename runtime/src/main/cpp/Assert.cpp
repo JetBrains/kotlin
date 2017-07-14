@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "Porting.h"
 
 void RuntimeAssertFailed(const char* location, const char* message) {
   // TODO: produce stacktrace and such.
-  fprintf(stderr, "%s: runtime assert: %s\n", location, message);
-  abort();
+  char buf[1024];
+  konan::snprintf(buf, sizeof(buf), "%s: runtime assert: %s\n", location, message);
+  konan::consoleErrorUtf8(buf, konan::strnlen(buf, sizeof(buf)));
+  konan::abort();
 }
