@@ -42,7 +42,7 @@ interface ScriptTemplatesProvider {
 
     val filePattern: String? get() = null
 
-    val dependenciesClasspath: List<File>
+    val templateClasspath: List<File>
 
     // TODO: need to provide a way to specify this in compiler/repl .. etc
     /*
@@ -83,7 +83,7 @@ fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProv
 }
 
 private fun createClassLoader(provider: ScriptTemplatesProvider): ClassLoader {
-    val classpath = provider.dependenciesClasspath + provider.additionalResolverClasspath
+    val classpath = provider.templateClasspath + provider.additionalResolverClasspath
     LOG.info("[kts] loading script definitions ${provider.templateClassNames} using cp: ${classpath.joinToString(File.pathSeparator)}")
     val baseLoader = ScriptTemplatesProvider::class.java.classLoader
     return if (classpath.isEmpty()) baseLoader else URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseLoader)
