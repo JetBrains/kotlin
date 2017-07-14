@@ -3837,13 +3837,14 @@ enum class CXTUResourceUsageKind(override val value: Int) : CEnum {
     CXTUResourceUsage_PreprocessingRecord(12),
     CXTUResourceUsage_SourceManager_DataStructures(13),
     CXTUResourceUsage_Preprocessor_HeaderSearch(14),
-    CXTUResourceUsage_MEMORY_IN_BYTES_BEGIN(1),
-    CXTUResourceUsage_MEMORY_IN_BYTES_END(14),
-    CXTUResourceUsage_First(1),
-    CXTUResourceUsage_Last(14),
     ;
     
     companion object {
+        val CXTUResourceUsage_MEMORY_IN_BYTES_BEGIN = CXTUResourceUsage_AST
+        val CXTUResourceUsage_MEMORY_IN_BYTES_END = CXTUResourceUsage_Preprocessor_HeaderSearch
+        val CXTUResourceUsage_First = CXTUResourceUsage_AST
+        val CXTUResourceUsage_Last = CXTUResourceUsage_Preprocessor_HeaderSearch
+        
         fun byValue(value: Int) = CXTUResourceUsageKind.values().find { it.value == value }!!
     }
     
@@ -3895,9 +3896,6 @@ enum class CXCursorKind(override val value: Int) : CEnum {
     CXCursor_ObjCSynthesizeDecl(37),
     CXCursor_ObjCDynamicDecl(38),
     CXCursor_CXXAccessSpecifier(39),
-    CXCursor_FirstDecl(1),
-    CXCursor_LastDecl(39),
-    CXCursor_FirstRef(40),
     CXCursor_ObjCSuperClassRef(40),
     CXCursor_ObjCProtocolRef(41),
     CXCursor_ObjCClassRef(42),
@@ -3909,14 +3907,10 @@ enum class CXCursorKind(override val value: Int) : CEnum {
     CXCursor_LabelRef(48),
     CXCursor_OverloadedDeclRef(49),
     CXCursor_VariableRef(50),
-    CXCursor_LastRef(50),
-    CXCursor_FirstInvalid(70),
     CXCursor_InvalidFile(70),
     CXCursor_NoDeclFound(71),
     CXCursor_NotImplemented(72),
     CXCursor_InvalidCode(73),
-    CXCursor_LastInvalid(73),
-    CXCursor_FirstExpr(100),
     CXCursor_UnexposedExpr(100),
     CXCursor_DeclRefExpr(101),
     CXCursor_MemberRefExpr(102),
@@ -3966,8 +3960,6 @@ enum class CXCursorKind(override val value: Int) : CEnum {
     CXCursor_ObjCSelfExpr(146),
     CXCursor_OMPArraySectionExpr(147),
     CXCursor_ObjCAvailabilityCheckExpr(148),
-    CXCursor_LastExpr(148),
-    CXCursor_FirstStmt(200),
     CXCursor_UnexposedStmt(200),
     CXCursor_LabelStmt(201),
     CXCursor_CompoundStmt(202),
@@ -3984,7 +3976,6 @@ enum class CXCursorKind(override val value: Int) : CEnum {
     CXCursor_BreakStmt(213),
     CXCursor_ReturnStmt(214),
     CXCursor_GCCAsmStmt(215),
-    CXCursor_AsmStmt(215),
     CXCursor_ObjCAtTryStmt(216),
     CXCursor_ObjCAtCatchStmt(217),
     CXCursor_ObjCAtFinallyStmt(218),
@@ -4039,9 +4030,7 @@ enum class CXCursorKind(override val value: Int) : CEnum {
     CXCursor_OMPDistributeParallelForSimdDirective(267),
     CXCursor_OMPDistributeSimdDirective(268),
     CXCursor_OMPTargetParallelForSimdDirective(269),
-    CXCursor_LastStmt(269),
     CXCursor_TranslationUnit(300),
-    CXCursor_FirstAttr(400),
     CXCursor_UnexposedAttr(400),
     CXCursor_IBActionAttr(401),
     CXCursor_IBOutletAttr(402),
@@ -4062,23 +4051,36 @@ enum class CXCursorKind(override val value: Int) : CEnum {
     CXCursor_VisibilityAttr(417),
     CXCursor_DLLExport(418),
     CXCursor_DLLImport(419),
-    CXCursor_LastAttr(419),
     CXCursor_PreprocessingDirective(500),
     CXCursor_MacroDefinition(501),
     CXCursor_MacroExpansion(502),
-    CXCursor_MacroInstantiation(502),
     CXCursor_InclusionDirective(503),
-    CXCursor_FirstPreprocessing(500),
-    CXCursor_LastPreprocessing(503),
     CXCursor_ModuleImportDecl(600),
     CXCursor_TypeAliasTemplateDecl(601),
     CXCursor_StaticAssert(602),
-    CXCursor_FirstExtraDecl(600),
-    CXCursor_LastExtraDecl(602),
     CXCursor_OverloadCandidate(700),
     ;
     
     companion object {
+        val CXCursor_FirstDecl = CXCursor_UnexposedDecl
+        val CXCursor_LastDecl = CXCursor_CXXAccessSpecifier
+        val CXCursor_FirstRef = CXCursor_ObjCSuperClassRef
+        val CXCursor_LastRef = CXCursor_VariableRef
+        val CXCursor_FirstInvalid = CXCursor_InvalidFile
+        val CXCursor_LastInvalid = CXCursor_InvalidCode
+        val CXCursor_FirstExpr = CXCursor_UnexposedExpr
+        val CXCursor_LastExpr = CXCursor_ObjCAvailabilityCheckExpr
+        val CXCursor_FirstStmt = CXCursor_UnexposedStmt
+        val CXCursor_AsmStmt = CXCursor_GCCAsmStmt
+        val CXCursor_LastStmt = CXCursor_OMPTargetParallelForSimdDirective
+        val CXCursor_FirstAttr = CXCursor_UnexposedAttr
+        val CXCursor_LastAttr = CXCursor_DLLImport
+        val CXCursor_MacroInstantiation = CXCursor_MacroExpansion
+        val CXCursor_FirstPreprocessing = CXCursor_PreprocessingDirective
+        val CXCursor_LastPreprocessing = CXCursor_InclusionDirective
+        val CXCursor_FirstExtraDecl = CXCursor_ModuleImportDecl
+        val CXCursor_LastExtraDecl = CXCursor_StaticAssert
+        
         fun byValue(value: Int) = CXCursorKind.values().find { it.value == value }!!
     }
     
@@ -4180,8 +4182,6 @@ enum class CXTypeKind(override val value: Int) : CEnum {
     CXType_ObjCClass(28),
     CXType_ObjCSel(29),
     CXType_Float128(30),
-    CXType_FirstBuiltin(2),
-    CXType_LastBuiltin(29),
     CXType_Complex(100),
     CXType_Pointer(101),
     CXType_BlockPointer(102),
@@ -4205,6 +4205,9 @@ enum class CXTypeKind(override val value: Int) : CEnum {
     ;
     
     companion object {
+        val CXType_FirstBuiltin = CXType_Void
+        val CXType_LastBuiltin = CXType_ObjCSel
+        
         fun byValue(value: Int) = CXTypeKind.values().find { it.value == value }!!
     }
     

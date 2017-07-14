@@ -705,6 +705,12 @@ class StubGenerator(
         out("class ${s.kotlinName.asSimpleName()}(override val rawPtr: NativePtr) : COpaque")
     }
 
+    private fun EnumConstant.isMoreCanonicalThan(other: EnumConstant): Boolean = with(other.name.toLowerCase()) {
+        contains("min") || contains("max") ||
+                contains("first") || contains("last") ||
+                contains("begin") || contains("end")
+    }
+
     /**
      * Produces to [out] the Kotlin definitions for given enum.
      */
@@ -716,13 +722,31 @@ class StubGenerator(
 
         val baseTypeMirror = mirror(e.baseType)
 
+        val canonicalsByValue = e.constants
+                .groupingBy { it.value }
+                .reduce { _, accumulator, element ->
+                    if (element.isMoreCanonicalThan(accumulator)) {
+                        element
+                    } else {
+                        accumulator
+                    }
+                }
+
+        val (canonicalConstants, aliasConstants) = e.constants.partition { canonicalsByValue[it.value] == it }
+
         block("enum class ${e.kotlinName.asSimpleName()}(override val value: ${e.baseType.kotlinType}) : CEnum") {
-            e.constants.forEach {
+            canonicalConstants.forEach {
                 out("${it.name.asSimpleName()}(${it.value}),")
             }
             out(";")
             out("")
             block("companion object") {
+                aliasConstants.forEach {
+                    val mainConstant = canonicalsByValue[it.value]!!
+                    out("val ${it.name.asSimpleName()} = ${mainConstant.name.asSimpleName()}")
+                }
+                if (aliasConstants.isNotEmpty()) out("")
+
                 out("fun byValue(value: ${e.baseType.kotlinType}) = " +
                         "${e.kotlinName.asSimpleName()}.values().find { it.value == value }!!")
             }
