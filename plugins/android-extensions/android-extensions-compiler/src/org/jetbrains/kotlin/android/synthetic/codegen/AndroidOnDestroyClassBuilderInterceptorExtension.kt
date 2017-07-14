@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.android.synthetic.codegen
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.ON_DESTROY_METHOD_NAME
 import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.CLEAR_CACHE_METHOD_NAME
 
 class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension {
 
@@ -106,7 +108,7 @@ class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptor
                 }
 
                 private fun generateClearCacheMethodCall() {
-                    if (name != AndroidExpressionCodegenExtension.ON_DESTROY_METHOD_NAME || currentClass == null) return
+                    if (name != ON_DESTROY_METHOD_NAME || currentClass == null) return
                     if (Type.getArgumentTypes(desc).isNotEmpty()) return
                     if (Type.getReturnType(desc) != Type.VOID_TYPE) return
 
@@ -118,7 +120,7 @@ class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptor
 
                     val iv = InstructionAdapter(this)
                     iv.load(0, containerType)
-                    iv.invokevirtual(currentClassName, AndroidExpressionCodegenExtension.CLEAR_CACHE_METHOD_NAME, "()V", false)
+                    iv.invokevirtual(currentClassName, CLEAR_CACHE_METHOD_NAME, "()V", false)
                 }
             }
         }

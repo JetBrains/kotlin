@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.android.synthetic.codegen
 
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
-import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension.Companion.shouldCacheResource
+import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.shouldCacheResource
+import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.CACHED_FIND_VIEW_BY_ID_METHOD_NAME
 import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
 import org.jetbrains.kotlin.codegen.StackValue
@@ -58,7 +59,7 @@ class ResourcePropertyStackValue(
             val packageName = resourceId.packageName ?: androidPackage
             v.getstatic(packageName.replace(".", "/") + "/R\$id", resourceId.name, "I")
 
-            v.invokevirtual(declarationDescriptorType.internalName, AndroidExpressionCodegenExtension.CACHED_FIND_VIEW_BY_ID_METHOD_NAME, "(I)Landroid/view/View;", false)
+            v.invokevirtual(declarationDescriptorType.internalName, CACHED_FIND_VIEW_BY_ID_METHOD_NAME, "(I)Landroid/view/View;", false)
         }
         else {
             when (containerType) {

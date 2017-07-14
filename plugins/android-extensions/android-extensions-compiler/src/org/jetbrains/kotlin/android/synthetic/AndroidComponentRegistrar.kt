@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.android.synthetic
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.Extensions
-import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidExtensionsExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.diagnostic.AndroidExtensionPropertiesCallChecker
 import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 object AndroidConfigurationKeys {
     val VARIANT: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create<List<String>>("Android build variant")
     val PACKAGE: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("application package fq name")
+    val EXPERIMENTAL: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("enable experimental features")
 }
 
 class AndroidCommandLineProcessor : CommandLineProcessor {
@@ -53,36 +54,41 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
 
         val VARIANT_OPTION: CliOption = CliOption("variant", "<name;path>", "Android build variant", allowMultipleOccurrences = true)
         val PACKAGE_OPTION: CliOption = CliOption("package", "<fq name>", "Application package")
+        val EXPERIMENTAL_OPTION: CliOption = CliOption("experimental", "true/false", "Enable experimental features", required = false)
+
+        /* This option is just for saving Android Extensions status in Kotlin facet. It should not be supported from CLI. */
+        val ENABLED_OPTION: CliOption = CliOption("enabled", "true/false", "Enable Android Extensions", required = false)
     }
 
     override val pluginId: String = ANDROID_COMPILER_PLUGIN_ID
 
-    override val pluginOptions: Collection<CliOption> = listOf(VARIANT_OPTION, PACKAGE_OPTION)
+    override val pluginOptions: Collection<CliOption> = listOf(VARIANT_OPTION, PACKAGE_OPTION, EXPERIMENTAL_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             VARIANT_OPTION -> configuration.appendList(AndroidConfigurationKeys.VARIANT, value)
             PACKAGE_OPTION -> configuration.put(AndroidConfigurationKeys.PACKAGE, value)
+            EXPERIMENTAL_OPTION -> configuration.put(AndroidConfigurationKeys.EXPERIMENTAL, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
 }
 
 class AndroidComponentRegistrar : ComponentRegistrar {
-
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val applicationPackage = configuration.get(AndroidConfigurationKeys.PACKAGE)
         val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.mapNotNull { parseVariant(it) } ?: emptyList()
+        val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"
 
         if (variants.isNotEmpty() && !applicationPackage.isNullOrBlank()) {
             val layoutXmlFileManager = CliAndroidLayoutXmlFileManager(project, applicationPackage!!, variants)
             project.registerService(AndroidLayoutXmlFileManager::class.java, layoutXmlFileManager)
 
-            ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
+            ExpressionCodegenExtension.registerExtension(project, CliAndroidExtensionsExpressionCodegenExtension(isExperimental))
             StorageComponentContainerContributor.registerExtension(project, AndroidExtensionPropertiesComponentContainerContributor())
             Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesAndroid())
             ClassBuilderInterceptorExtension.registerExtension(project, AndroidOnDestroyClassBuilderInterceptorExtension())
-            PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension())
+            PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension(isExperimental))
         }
     }
 

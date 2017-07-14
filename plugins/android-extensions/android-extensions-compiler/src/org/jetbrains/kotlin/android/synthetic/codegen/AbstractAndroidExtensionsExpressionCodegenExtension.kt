@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.android.synthetic.codegen
 
 import kotlinx.android.extensions.CacheImplementation.NO_CACHE
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.android.synthetic.codegen.AndroidContainerType.LAYOUT_CONTAINER
 import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackageFragmentDescriptor
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFunction
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -42,7 +44,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes.ACC_SYNTHETIC
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
+abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionCodegenExtension {
     companion object {
         val PROPERTY_NAME = "_\$_findViewCache"
         val CACHED_FIND_VIEW_BY_ID_METHOD_NAME = "_\$_findCachedViewById"
@@ -60,6 +62,8 @@ class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
             val container: ClassDescriptor,
             val classOrObject: KtClassOrObject,
             val containerOptions: ContainerOptionsProxy)
+
+    protected abstract fun isExperimental(clazz: KtClassOrObject): Boolean
 
     override fun applyProperty(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
         val resultingDescriptor = resolvedCall.resultingDescriptor
@@ -124,13 +128,17 @@ class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
 
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {
         val classBuilder = codegen.v
-        val targetClass = codegen.myClass as? KtClassOrObject ?: return
+        val targetClass = codegen.myClass as? KtClass ?: return
 
         val container = codegen.descriptor
         if (container.kind != ClassKind.CLASS || container.isInner || DescriptorUtils.isLocal(container)) return
 
         val containerOptions = ContainerOptionsProxy.create(container)
         if (containerOptions.cache == NO_CACHE) return
+
+        if (containerOptions.containerType == LAYOUT_CONTAINER && !isExperimental(targetClass)) {
+            return
+        }
 
         val context = SyntheticPartsGenerateContext(classBuilder, codegen.state, container, targetClass, containerOptions)
         context.generateCachedFindViewByIdFunction()
@@ -239,8 +247,8 @@ class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
                 loadId()
                 iv.invokevirtual(containerType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
             }
-            AndroidContainerType.FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT, AndroidContainerType.LAYOUT_CONTAINER -> {
-                if (containerType == AndroidContainerType.LAYOUT_CONTAINER) {
+            AndroidContainerType.FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT, LAYOUT_CONTAINER -> {
+                if (containerType == LAYOUT_CONTAINER) {
                     iv.invokeinterface(containerType.internalClassName, "getContainerView", "()Landroid/view/View;")
                 } else {
                     iv.invokevirtual(containerType.internalClassName, "getView", "()Landroid/view/View;", false)
