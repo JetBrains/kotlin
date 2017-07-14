@@ -337,6 +337,17 @@ task codegen_controlflow_for_loops_empty_range(type: RunKonanTest) {
     goldValue = "OK\n"
 }
 
+task codegen_controlflow_for_loops_nested(type: RunKonanTest) {
+    source = "codegen/controlflow/for_loops_nested.kt"
+    goldValue = "00 01 02 10 11 12 20 21 22 \n" +
+            "00 01 10 11 20 21 \n" +
+            "00 01 10 11 20 21 \n" +
+            "00 01 \n" +
+            "00 02 10 12 20 22 \n" +
+            "00 02 10 12 20 22 \n" +
+            "00 10 20 \n"
+}
+
 task local_variable(type: RunKonanTest) {
     source = "codegen/basics/local_variable.kt"
 }
