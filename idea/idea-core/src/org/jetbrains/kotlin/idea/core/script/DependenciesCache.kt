@@ -21,7 +21,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.NonClasspathDirectoriesScope
-import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -76,27 +75,13 @@ internal class DependenciesCache(private val project: Project) {
             cache[path] = new
             old
         }
-        return old == null || !new.match(old)
+        return new != old
     }
 
     fun delete(virtualFile: VirtualFile): Boolean = cacheLock.write {
         cache.remove(virtualFile.path) != null
     }
 }
-
-// TODO: relying on this to compare dependencies seems wrong, doesn't take javaHome and other stuff into account
-private fun ScriptDependencies.match(other: ScriptDependencies)
-        = classpath.isSamePathListAs(other.classpath) &&
-          sources.toSet().isSamePathListAs(other.sources.toSet()) // TODO: gradle returns stdlib and reflect sources in unstable order for some reason
-
-
-private fun Iterable<File>.isSamePathListAs(other: Iterable<File>): Boolean =
-        with(Pair(iterator(), other.iterator())) {
-            while (first.hasNext() && second.hasNext()) {
-                if (first.next().canonicalPath != second.next().canonicalPath) return false
-            }
-            !(first.hasNext() || second.hasNext())
-        }
 
 internal class ClearableLazyValue<out T : Any>(private val lock: ReentrantReadWriteLock, private val compute: () -> T) {
     private var value: T? = null
