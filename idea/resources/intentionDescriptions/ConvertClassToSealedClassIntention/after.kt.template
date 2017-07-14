@@ -1,0 +1,2 @@
+sealed class Klass(private val s: String) {
+}

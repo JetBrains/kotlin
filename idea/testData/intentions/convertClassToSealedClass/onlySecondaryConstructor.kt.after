@@ -1,0 +1,6 @@
+// INTENTION_TEXT: "Convert to sealed class"
+
+sealed class Test {
+    constructor(i: Int) {
+    }
+}
