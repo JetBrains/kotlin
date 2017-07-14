@@ -20,10 +20,15 @@ inline fun evaluateAndCheckOrder(marker: String, expectedValue: Boolean, expecte
 val nn: Int? = null
 
 fun box(): String {
-    evaluateAndCheckOrder("1", true, "ab") { a(1) == b(1) }
-    evaluateAndCheckOrder("2", true, "ab") { a(1) != b(2) }
-    evaluateAndCheckOrder("3", true, "ab") { !(a(1) == b(2)) }
-    evaluateAndCheckOrder("4", true, "ab") { !(a(1) != b(1)) }
+    evaluateAndCheckOrder("1 == 1", true, "ab") { a(1) == b(1) }
+    evaluateAndCheckOrder("1 == 2", false, "ab") { a(1) == b(2) }
+    evaluateAndCheckOrder("1 != 1", false, "ab") { a(1) != b(1) }
+    evaluateAndCheckOrder("1 != 2", true, "ab") { a(1) != b(2) }
+
+    evaluateAndCheckOrder("!(1 == 2)", true, "ab") { !(a(1) == b(2)) }
+    evaluateAndCheckOrder("!(1 == 1)", false, "ab") { !(a(1) == b(1)) }
+    evaluateAndCheckOrder("!(1 != 2)", false, "ab") { !(a(1) != b(2)) }
+    evaluateAndCheckOrder("!(1 != 1)", true, "ab") { !(a(1) != b(1)) }
 
     evaluateAndCheckOrder("null == 1", false, "a") { nn == a(1) }
     evaluateAndCheckOrder("null != 1", true, "a") { nn != a(1) }
