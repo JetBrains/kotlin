@@ -51,12 +51,16 @@ internal class ScriptDependenciesUpdater(
         listenToVfsChanges()
     }
 
-    private class TimeStampedRequest(val job: Job, val timeStamp: TimeStamp)
+    private class TimeStampedJob(val actualJob: Job, val timeStamp: TimeStamp) {
+        fun stampBy(virtualFile: VirtualFile) = ModStampedRequest(virtualFile.modificationStamp, this)
+    }
 
     private class ModStampedRequest(
             val modificationStamp: Long,
-            val request: TimeStampedRequest? = null
-    )
+            val job: TimeStampedJob? = null
+    ) {
+        fun cancel() = job?.actualJob?.cancel()
+    }
 
     fun getCurrentDependencies(file: VirtualFile): ScriptDependencies {
         cache[file]?.let { return it }
@@ -108,14 +112,9 @@ internal class ScriptDependenciesUpdater(
             return
         }
 
-        lastRequest?.request?.job?.cancel()
+        lastRequest?.cancel()
 
-        val (currentTimeStamp, newJob) = sendRequest(file, scriptDefinition)
-
-        requests[path] = ModStampedRequest(
-                file.modificationStamp,
-                TimeStampedRequest(newJob, currentTimeStamp)
-        )
+        requests[path] = sendRequest(file, scriptDefinition).stampBy(file)
         return
     }
 
@@ -127,13 +126,13 @@ internal class ScriptDependenciesUpdater(
             return true
         }
 
-        return previousRequest.request == null
+        return previousRequest.job == null
     }
 
     private fun sendRequest(
             file: VirtualFile,
             scriptDef: KotlinScriptDefinition
-    ): Pair<TimeStamp, Job> {
+    ): TimeStampedJob {
         val currentTimeStamp = TimeStamps.next()
         val dependenciesResolver = scriptDef.dependencyResolver as AsyncDependenciesResolver
         val path = file.path
@@ -143,7 +142,7 @@ internal class ScriptDependenciesUpdater(
                     contentLoader.getScriptContents(scriptDef, file),
                     contentLoader.getEnvironment(scriptDef)
             )
-            val lastTimeStamp = requests[path]?.request?.timeStamp
+            val lastTimeStamp = requests[path]?.job?.timeStamp
             val isLastSentRequest = lastTimeStamp == null || lastTimeStamp == currentTimeStamp
             if (isLastSentRequest) {
                 ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
@@ -152,7 +151,7 @@ internal class ScriptDependenciesUpdater(
                 }
             }
         }
-        return Pair(currentTimeStamp, newJob)
+        return TimeStampedJob(newJob, currentTimeStamp)
     }
 
     fun updateSync(file: VirtualFile, scriptDef: KotlinScriptDefinition): Boolean {
