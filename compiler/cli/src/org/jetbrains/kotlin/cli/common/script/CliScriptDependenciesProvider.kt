@@ -20,7 +20,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
-import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
+import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.ScriptContentLoader
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -28,10 +28,10 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.dependencies.ScriptDependencies
 
-class KotlinScriptExternalImportsProviderImpl(
+class CliScriptDependenciesProvider(
         project: Project,
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
-) : KotlinScriptExternalImportsProvider {
+) : ScriptDependenciesProvider {
 
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, ScriptDependencies?>()
@@ -63,4 +63,4 @@ class KotlinScriptExternalImportsProviderImpl(
     }
 }
 
-private val log = Logger.getInstance(KotlinScriptExternalImportsProvider::class.java)
+private val log = Logger.getInstance(ScriptDependenciesProvider::class.java)

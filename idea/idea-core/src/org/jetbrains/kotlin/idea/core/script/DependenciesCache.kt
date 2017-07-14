@@ -35,7 +35,7 @@ internal class DependenciesCache(private val project: Project) {
 
     val allScriptsClasspathCache = ClearableLazyValue(cacheLock) {
         val files = cache.values.flatMap { it.classpath }.distinct()
-        KotlinScriptConfigurationManager.toVfsRoots(files)
+        ScriptDependenciesManager.toVfsRoots(files)
     }
 
     val allScriptsClasspathScope = ClearableLazyValue(cacheLock) {
@@ -43,7 +43,7 @@ internal class DependenciesCache(private val project: Project) {
     }
 
     val allLibrarySourcesCache = ClearableLazyValue(cacheLock) {
-        KotlinScriptConfigurationManager.toVfsRoots(cache.values.flatMap { it.sources }.distinct())
+        ScriptDependenciesManager.toVfsRoots(cache.values.flatMap { it.sources }.distinct())
     }
 
     val allLibrarySourcesScope = ClearableLazyValue(cacheLock) {

@@ -30,20 +30,20 @@ import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
 import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 
 class KotlinScriptDependenciesClassFinder(project: Project,
-                                          private val kotlinScriptConfigurationManager: KotlinScriptConfigurationManager
+                                          private val scriptDependenciesManager: ScriptDependenciesManager
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
 
     private val myCaches by lazy {
         object : ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>() {
             override fun create(file: VirtualFile): PackageDirectoryCache? {
-                val scriptClasspath = kotlinScriptConfigurationManager.getScriptClasspath(file)
+                val scriptClasspath = scriptDependenciesManager.getScriptClasspath(file)
                 val v = createCache(scriptClasspath)
                 return v
             }
         }
     }
 
-    override fun calcClassRoots(): List<VirtualFile> = kotlinScriptConfigurationManager.getAllScriptsClasspath().toList()
+    override fun calcClassRoots(): List<VirtualFile> = scriptDependenciesManager.getAllScriptsClasspath().toList()
 
     override fun getCache(scope: GlobalSearchScope?): PackageDirectoryCache =
             (scope as? ScriptModuleSearchScope ?:
