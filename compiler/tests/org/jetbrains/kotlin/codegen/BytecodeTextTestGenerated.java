@@ -294,12 +294,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
-    @TestMetadata("noBoxingForBoxedEqPrimitive.kt")
-    public void testNoBoxingForBoxedEqPrimitive() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/noBoxingForBoxedEqPrimitive.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("noFlagAnnotations.kt")
     public void testNoFlagAnnotations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/noFlagAnnotations.kt");
@@ -872,6 +866,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("negatedZeroCompare.kt")
         public void testNegatedZeroCompare() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/negatedZeroCompare.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noBoxingForBoxedEqPrimitive.kt")
+        public void testNoBoxingForBoxedEqPrimitive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/noBoxingForBoxedEqPrimitive.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noBoxingForPrimitiveEqBoxed.kt")
+        public void testNoBoxingForPrimitiveEqBoxed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/noBoxingForPrimitiveEqBoxed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noBoxingForPrimitiveEqObject.kt")
+        public void testNoBoxingForPrimitiveEqObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/noBoxingForPrimitiveEqObject.kt");
             doTest(fileName);
         }
 
