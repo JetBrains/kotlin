@@ -145,7 +145,8 @@ internal class ScriptDependenciesUpdater(
             )
         }.thenAccept { result ->
             val lastTimeStamp = requests[path]?.request?.timeStamp
-            if (lastTimeStamp == currentTimeStamp) {
+            val isLastSentRequest = lastTimeStamp == null || lastTimeStamp == currentTimeStamp
+            if (isLastSentRequest) {
                 ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
                 if (cache(result.dependencies ?: ScriptDependencies.Empty, file)) {
                     onChange()
