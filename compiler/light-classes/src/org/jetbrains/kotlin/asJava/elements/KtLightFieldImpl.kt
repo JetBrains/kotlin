@@ -70,13 +70,6 @@ sealed class KtLightFieldImpl<D : PsiField>(
         return (clsDelegate as PsiVariableEx).computeConstantValue(visitedVars)
     }
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (another is KtLightField && this == another) {
-            return true
-        }
-        return super.isEquivalentTo(another)
-    }
-
     override fun copy() = Factory.create(lightMemberOrigin?.copy(), clsDelegate, containingClass)
 
 
