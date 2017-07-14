@@ -64,6 +64,14 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
     override fun getDocComment() = (clsDelegate as PsiDocCommentOwner).docComment
 
     override fun isDeprecated() = (clsDelegate as PsiDocCommentOwner).isDeprecated
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        val isEquivalentByOrigin =
+                another is KtLightMember<*> &&
+                lightMemberOrigin?.isEquivalentTo(another.lightMemberOrigin) == true
+
+        return isEquivalentByOrigin || this == another
+    }
 }
 
 internal fun getMemberOrigin(member: PsiMember): LightMemberOriginForDeclaration? {
