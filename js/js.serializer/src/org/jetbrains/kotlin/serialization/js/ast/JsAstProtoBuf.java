@@ -34763,6 +34763,15 @@ public final class JsAstProtoBuf {
      * <code>optional int32 local_name_id = 3;</code>
      */
     int getLocalNameId();
+
+    /**
+     * <code>optional bool imported = 4;</code>
+     */
+    boolean hasImported();
+    /**
+     * <code>optional bool imported = 4;</code>
+     */
+    boolean getImported();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Name}
@@ -34827,6 +34836,11 @@ public final class JsAstProtoBuf {
             case 24: {
               bitField0_ |= 0x00000004;
               localNameId_ = input.readInt32();
+              break;
+            }
+            case 32: {
+              bitField0_ |= 0x00000008;
+              imported_ = input.readBool();
               break;
             }
           }
@@ -34908,10 +34922,26 @@ public final class JsAstProtoBuf {
       return localNameId_;
     }
 
+    public static final int IMPORTED_FIELD_NUMBER = 4;
+    private boolean imported_;
+    /**
+     * <code>optional bool imported = 4;</code>
+     */
+    public boolean hasImported() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional bool imported = 4;</code>
+     */
+    public boolean getImported() {
+      return imported_;
+    }
+
     private void initFields() {
       temporary_ = false;
       identifier_ = 0;
       localNameId_ = 0;
+      imported_ = false;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -34939,6 +34969,9 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeInt32(3, localNameId_);
       }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeBool(4, imported_);
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -34959,6 +34992,10 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(3, localNameId_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeBoolSize(4, imported_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -35060,6 +35097,8 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000002);
         localNameId_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
+        imported_ = false;
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -35095,6 +35134,10 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000004;
         }
         result.localNameId_ = localNameId_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.imported_ = imported_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -35109,6 +35152,9 @@ public final class JsAstProtoBuf {
         }
         if (other.hasLocalNameId()) {
           setLocalNameId(other.getLocalNameId());
+        }
+        if (other.hasImported()) {
+          setImported(other.getImported());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -35234,6 +35280,38 @@ public final class JsAstProtoBuf {
       public Builder clearLocalNameId() {
         bitField0_ = (bitField0_ & ~0x00000004);
         localNameId_ = 0;
+        
+        return this;
+      }
+
+      private boolean imported_ ;
+      /**
+       * <code>optional bool imported = 4;</code>
+       */
+      public boolean hasImported() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional bool imported = 4;</code>
+       */
+      public boolean getImported() {
+        return imported_;
+      }
+      /**
+       * <code>optional bool imported = 4;</code>
+       */
+      public Builder setImported(boolean value) {
+        bitField0_ |= 0x00000008;
+        imported_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional bool imported = 4;</code>
+       */
+      public Builder clearImported() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        imported_ = false;
         
         return this;
       }

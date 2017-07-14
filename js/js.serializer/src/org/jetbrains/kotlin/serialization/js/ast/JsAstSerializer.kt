@@ -33,8 +33,12 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
     private val nameMap = mutableMapOf<JsName, Int>()
     private val stringMap = mutableMapOf<String, Int>()
     private val fileStack: Deque<String> = ArrayDeque()
+    private val importedNames = mutableSetOf<JsName>()
 
     fun serialize(fragment: JsProgramFragment, output: OutputStream) {
+        val namesBySignature = fragment.nameBindings.associate { it.key to it.name }
+        importedNames.clear()
+        importedNames += fragment.imports.map { namesBySignature[it.key]!! }
         serialize(fragment).writeTo(output)
     }
 
@@ -554,6 +558,10 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         builder.temporary = name.isTemporary
         name.localAlias?.let {
             builder.localNameId = serialize(it)
+        }
+
+        if (name.imported && name !in importedNames) {
+            builder.imported = true
         }
 
         val result = nameTableBuilder.entryCount

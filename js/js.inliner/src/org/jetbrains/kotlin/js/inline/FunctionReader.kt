@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
+import org.jetbrains.kotlin.js.backend.ast.metadata.imported
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.config.JsConfig
@@ -236,6 +237,12 @@ class FunctionReader(
                 super.visitNameRef(nameRef)
             }
         })
+
+        wrapperStatements?.forEach {
+            if (it is JsVars && it.vars.size == 1 && it.vars[0].initExpression?.let { extractImportTag(it) } != null) {
+                it.vars[0].name.imported = true
+            }
+        }
 
         return FunctionWithWrapper(function, wrapper)
     }

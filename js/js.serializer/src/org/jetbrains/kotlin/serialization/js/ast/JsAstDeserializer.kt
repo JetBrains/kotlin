@@ -91,7 +91,9 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         }
 
         for (nameBinding in fragment.nameBindings) {
-            nameBinding.name.imported = nameBinding.key in fragment.imports
+            if (nameBinding.key in fragment.imports) {
+                nameBinding.name.imported = true
+            }
         }
 
         return fragment
@@ -437,6 +439,9 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             }
             if (nameProto.hasLocalNameId()) {
                 name.localAlias = deserializeName(nameProto.localNameId)
+            }
+            if (nameProto.hasImported()) {
+                name.imported = nameProto.imported
             }
             nameCache[id] = name
             name

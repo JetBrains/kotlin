@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.js.inline.util
 
+import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.imported
 import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
@@ -343,4 +345,43 @@ fun JsNode.collectBreakContinueTargets(): Map<JsContinue, JsStatement> {
     })
 
     return targets
+}
+
+fun getImportTag(jsVars: JsVars): String? {
+    if (jsVars.vars.size == 1) {
+        val jsVar = jsVars.vars[0]
+        if (jsVar.initExpression != null && jsVar.name.imported) {
+            return extractImportTag(jsVar.initExpression)
+        }
+    }
+
+    return null
+}
+
+fun extractImportTag(expression: JsExpression): String? {
+    val sb = StringBuilder()
+    return if (extractImportTagImpl(expression, sb)) sb.toString() else null
+}
+
+private fun extractImportTagImpl(expression: JsExpression, sb: StringBuilder): Boolean {
+    when (expression) {
+        is JsNameRef -> {
+            val nameRef = expression
+            if (nameRef.qualifier != null) {
+                if (!extractImportTagImpl(nameRef.qualifier!!, sb)) return false
+                sb.append('.')
+            }
+            sb.append(JsToStringGenerationVisitor.javaScriptString(nameRef.ident))
+            return true
+        }
+        is JsArrayAccess -> {
+            val arrayAccess = expression
+            if (!extractImportTagImpl(arrayAccess.arrayExpression, sb)) return false
+            sb.append(".")
+            val stringLiteral = arrayAccess.indexExpression as? JsStringLiteral ?: return false
+            sb.append(JsToStringGenerationVisitor.javaScriptString(stringLiteral.value))
+            return true
+        }
+        else -> return false
+    }
 }

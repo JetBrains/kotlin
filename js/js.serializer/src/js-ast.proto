@@ -426,6 +426,7 @@ message Name {
     required bool temporary = 1;
     optional int32 identifier = 2;
     optional int32 local_name_id = 3;
+    optional bool imported = 4 [default = false];
 }
 
 
