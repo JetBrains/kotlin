@@ -180,6 +180,18 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("OnEnumEntry.kt")
+    public void testOnEnumEntry() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumEntry.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumEntryUsage.kt")
+    public void testOnEnumEntryUsage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumEntryUsage.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OnEnumUsage.kt")
     public void testOnEnumUsage() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumUsage.kt");
