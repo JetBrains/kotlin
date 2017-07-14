@@ -227,7 +227,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testSourcePackageLongPrefix() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         val buildResult = buildAllModules()
         buildResult.assertSuccessful()
         val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
@@ -236,7 +236,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testSourcePackagePrefixWithInnerClasses() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         buildAllModules().assertSuccessful()
     }
 

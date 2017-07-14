@@ -19,6 +19,10 @@ sourceSets {
     }
 }
 
+dependencies {
+    compile project(':core:builtins')
+}
+
 artifacts {
     archives sourcesJar
 }

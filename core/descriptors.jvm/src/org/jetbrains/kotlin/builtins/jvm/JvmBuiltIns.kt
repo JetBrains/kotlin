@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.utils.sure
 
 class JvmBuiltIns @JvmOverloads constructor(
     storageManager: StorageManager,
-    loadBuiltInsFromCurrentClassLoader: Boolean = true
+    loadBuiltInsFromCurrentClassLoader: Boolean = true,
+    // TODO: change this value to loadBuiltInsFromCurrentClassLoader as soon as built-ins are loaded from module dependencies everywhere
+    isFallback: Boolean = false
 ) : KotlinBuiltIns(storageManager) {
     // Module containing JDK classes or having them among dependencies
     private var ownerModuleDescriptor: ModuleDescriptor? = null
@@ -40,7 +42,7 @@ class JvmBuiltIns @JvmOverloads constructor(
 
     init {
         if (loadBuiltInsFromCurrentClassLoader) {
-            createBuiltInsModule()
+            createBuiltInsModule(isFallback)
         }
     }
 

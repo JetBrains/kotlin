@@ -28,7 +28,8 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
         builtInsModule: ModuleDescriptor,
         classDescriptorFactories: Iterable<ClassDescriptorFactory>,
         platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
-        additionalClassPartsProvider: AdditionalClassPartsProvider
+        additionalClassPartsProvider: AdditionalClassPartsProvider,
+        isFallback: Boolean
     ): PackageFragmentProvider {
         return createBuiltInPackageFragmentProvider(
             storageManager,
@@ -37,6 +38,7 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
             classDescriptorFactories,
             platformDependentDeclarationFilter,
             additionalClassPartsProvider,
+            isFallback,
             resourceLoader::loadResource
         )
     }
@@ -48,12 +50,13 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
         classDescriptorFactories: Iterable<ClassDescriptorFactory>,
         platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
         additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
+        isFallback: Boolean,
         loadResource: (String) -> InputStream?
     ): PackageFragmentProvider {
         val packageFragments = packageFqNames.map { fqName ->
             val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
             val inputStream = loadResource(resourcePath) ?: throw IllegalStateException("Resource not found in classpath: $resourcePath")
-            BuiltInsPackageFragmentImpl.create(fqName, storageManager, module, inputStream)
+            BuiltInsPackageFragmentImpl.create(fqName, storageManager, module, inputStream, isFallback)
         }
         val provider = PackageFragmentProviderImpl(packageFragments)
 

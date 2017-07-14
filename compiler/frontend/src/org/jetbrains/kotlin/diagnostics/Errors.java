@@ -98,6 +98,7 @@ public interface Errors {
     DiagnosticFactory2<PsiElement, String, String> API_NOT_AVAILABLE = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory1<PsiElement, FqName> MISSING_DEPENDENCY_CLASS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, FqName> MISSING_BUILT_IN_DECLARATION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> MISSING_SCRIPT_BASE_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> MISSING_SCRIPT_STANDARD_TEMPLATE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> MISSING_SCRIPT_RECEIVER_CLASS = DiagnosticFactory1.create(ERROR);

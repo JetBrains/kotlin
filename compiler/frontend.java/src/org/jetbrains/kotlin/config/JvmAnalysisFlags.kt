@@ -20,4 +20,7 @@ object JvmAnalysisFlags {
 
     @JvmStatic
     val sanitizeParentheses by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val suppressMissingBuiltinsError by AnalysisFlag.Delegates.Boolean
 }

@@ -28,11 +28,11 @@ import kotlin.sequences.SequencesKt;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseKt;
@@ -46,10 +46,7 @@ import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -133,7 +130,12 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
 
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
         // TODO: delete this once IDEVirtualFileFinder supports loading .kotlin_builtins files
-        configuration.put(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES, true);
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new CompilerTestLanguageVersionSettings(
+                Collections.emptyMap(),
+                ApiVersion.LATEST_STABLE,
+                LanguageVersion.LATEST_STABLE,
+                Collections.singletonMap(JvmAnalysisFlags.getSuppressMissingBuiltinsError(), true)
+        ));
 
         GenerationState state =
                 GenerationUtils.compileFiles(files, configuration, ClassBuilderFactories.TEST, scope -> PackagePartProvider.Empty.INSTANCE);

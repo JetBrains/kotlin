@@ -22,6 +22,10 @@ sourceSets {
     }
 }
 
+dependencies {
+    compile(project(":core:builtins"))
+}
+
 publish()
 
 sourcesJar()

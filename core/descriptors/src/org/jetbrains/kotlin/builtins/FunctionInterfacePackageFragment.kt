@@ -5,4 +5,7 @@
 
 package org.jetbrains.kotlin.builtins
 
-interface FunctionInterfacePackageFragment : BuiltInsPackageFragment
+interface FunctionInterfacePackageFragment : BuiltInsPackageFragment {
+    override val isFallback: Boolean
+        get() = false
+}

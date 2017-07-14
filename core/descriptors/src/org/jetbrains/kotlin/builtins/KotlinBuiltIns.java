@@ -120,11 +120,11 @@ public abstract class KotlinBuiltIns {
         });
     }
 
-    protected void createBuiltInsModule() {
+    protected void createBuiltInsModule(boolean isFallback) {
         builtInsModule = new ModuleDescriptorImpl(BUILTINS_MODULE_NAME, storageManager, this, null);
         builtInsModule.initialize(BuiltInsLoader.Companion.getInstance().createPackageFragmentProvider(
                 storageManager, builtInsModule,
-                getClassDescriptorFactories(), getPlatformDependentDeclarationFilter(), getAdditionalClassPartsProvider()
+                getClassDescriptorFactories(), getPlatformDependentDeclarationFilter(), getAdditionalClassPartsProvider(), isFallback
         ));
         builtInsModule.setDependencies(builtInsModule);
     }

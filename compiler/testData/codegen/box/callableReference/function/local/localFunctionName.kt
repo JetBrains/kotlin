@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JS_IR
 
 fun box(): String {
     fun OK() {}

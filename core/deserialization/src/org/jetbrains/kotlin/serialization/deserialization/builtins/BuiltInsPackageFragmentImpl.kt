@@ -19,7 +19,8 @@ class BuiltInsPackageFragmentImpl private constructor(
     storageManager: StorageManager,
     module: ModuleDescriptor,
     proto: ProtoBuf.PackageFragment,
-    metadataVersion: BuiltInsBinaryVersion
+    metadataVersion: BuiltInsBinaryVersion,
+    override val isFallback: Boolean
 ) : BuiltInsPackageFragment, DeserializedPackageFragmentImpl(
     fqName, storageManager, module, proto, metadataVersion, containerSource = null
 ) {
@@ -28,7 +29,8 @@ class BuiltInsPackageFragmentImpl private constructor(
             fqName: FqName,
             storageManager: StorageManager,
             module: ModuleDescriptor,
-            inputStream: InputStream
+            inputStream: InputStream,
+            isFallback: Boolean
         ): BuiltInsPackageFragmentImpl {
             lateinit var version: BuiltInsBinaryVersion
 
@@ -47,7 +49,7 @@ class BuiltInsPackageFragmentImpl private constructor(
                 ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
             }
 
-            return BuiltInsPackageFragmentImpl(fqName, storageManager, module, proto, version)
+            return BuiltInsPackageFragmentImpl(fqName, storageManager, module, proto, version, isFallback)
         }
     }
 }

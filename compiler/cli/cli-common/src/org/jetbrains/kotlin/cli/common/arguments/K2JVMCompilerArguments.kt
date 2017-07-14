@@ -165,16 +165,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var singleModule: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xadd-compiler-builtins",
-        description = "Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)"
+        value = "-Xsuppress-missing-builtins-error",
+        description = "Suppress the \"cannot access built-in declaration\" error (useful with -no-stdlib)"
     )
-    var addCompilerBuiltIns: Boolean by FreezableVar(false)
-
-    @Argument(
-        value = "-Xload-builtins-from-dependencies",
-        description = "Load definitions of built-in declarations from module dependencies, instead of from the compiler"
-    )
-    var loadBuiltInsFromDependencies: Boolean by FreezableVar(false)
+    var suppressMissingBuiltinsError: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-Xscript-resolver-environment",
@@ -283,6 +277,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             )
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
+        result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
         return result
     }
 

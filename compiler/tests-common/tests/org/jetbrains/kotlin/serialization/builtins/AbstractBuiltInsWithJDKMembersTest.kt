@@ -24,7 +24,7 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
     private val configuration = createComparatorConfiguration()
 
     override fun createEnvironment(): KotlinCoreEnvironment =
-            createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, testJdkKind)
+        createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, testJdkKind)
 
     protected open val testJdkKind: TestJdkKind
         get() = TestJdkKind.FULL_JDK
@@ -33,11 +33,12 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
         val module = JvmResolveUtil.analyze(environment).moduleDescriptor as ModuleDescriptorImpl
 
         for (packageFqName in listOf(BUILT_INS_PACKAGE_FQ_NAME, COLLECTIONS_PACKAGE_FQ_NAME, RANGES_PACKAGE_FQ_NAME)) {
-            val loaded =
-                    module.packageFragmentProvider.getPackageFragments(packageFqName).filterIsInstance<BuiltInsPackageFragment>().single()
+            val loaded = module.packageFragmentProvider.getPackageFragments(packageFqName)
+                .filterIsInstance<BuiltInsPackageFragment>()
+                .single { !it.isFallback }
             RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
-                    loaded, configuration,
-                    File("compiler/testData/builtin-classes/$builtinVersionName/" + packageFqName.asString().replace('.', '-') + ".txt")
+                loaded, configuration,
+                File("compiler/testData/builtin-classes/$builtinVersionName/" + packageFqName.asString().replace('.', '-') + ".txt")
             )
         }
     }

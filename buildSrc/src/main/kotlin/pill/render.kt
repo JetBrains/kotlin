@@ -87,8 +87,6 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
                             kotlinCompileOptions.noReflect.option("noReflect")
                             kotlinCompileOptions.moduleName.option("moduleName")
                             xml("option", "name" to "jvmTarget", "value" to platformVersion)
-                            kotlinCompileOptions.addCompilerBuiltIns.option("addCompilerBuiltIns")
-                            kotlinCompileOptions.loadBuiltInsFromDependencies.option("loadBuiltInsFromDependencies")
                             kotlinCompileOptions.languageVersion.option("languageVersion")
                             kotlinCompileOptions.apiVersion.option("apiVersion")
 

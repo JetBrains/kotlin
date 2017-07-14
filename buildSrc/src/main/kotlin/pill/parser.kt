@@ -64,8 +64,6 @@ data class PSourceRootKotlinOptions(
     val apiVersion: String?,
     val languageVersion: String?,
     val jvmTarget: String?,
-    val addCompilerBuiltIns: Boolean?,
-    val loadBuiltInsFromDependencies: Boolean?,
     val extraArguments: List<String>
 ) {
     fun intersect(other: PSourceRootKotlinOptions) = PSourceRootKotlinOptions(
@@ -75,8 +73,6 @@ data class PSourceRootKotlinOptions(
         if (apiVersion == other.apiVersion) apiVersion else null,
         if (languageVersion == other.languageVersion) languageVersion else null,
         if (jvmTarget == other.jvmTarget) jvmTarget else null,
-        if (addCompilerBuiltIns == other.addCompilerBuiltIns) addCompilerBuiltIns else null,
-        if (loadBuiltInsFromDependencies == other.loadBuiltInsFromDependencies) loadBuiltInsFromDependencies else null,
         extraArguments.intersect(other.extraArguments).toList()
     )
 }
@@ -328,15 +324,11 @@ private fun getKotlinOptions(kotlinCompileTask: Any): PSourceRootKotlinOptions? 
     fun parseBoolean(name: String) = compileArguments.contains("-$name")
     fun parseString(name: String) = compileArguments.dropWhile { it != "-$name" }.drop(1).firstOrNull()
 
-    val addCompilerBuiltins = "Xadd-compiler-builtins"
-    val loadBuiltinsFromDependencies = "Xload-builtins-from-dependencies"
-
     fun isOptionForScriptingCompilerPlugin(option: String)
             = option.startsWith("-Xplugin=") && option.contains("kotlin-scripting-compiler")
 
     val extraArguments = compileArguments.filter {
         it.startsWith("-X") && !isOptionForScriptingCompilerPlugin(it)
-                && it != "-$addCompilerBuiltins" && it != "-$loadBuiltinsFromDependencies"
     }
 
     return PSourceRootKotlinOptions(
@@ -346,8 +338,6 @@ private fun getKotlinOptions(kotlinCompileTask: Any): PSourceRootKotlinOptions? 
             parseString("api-version"),
             parseString("language-version"),
             parseString("jvm-target"),
-            parseBoolean(addCompilerBuiltins),
-            parseBoolean(loadBuiltinsFromDependencies),
             extraArguments
     )
 }

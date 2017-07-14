@@ -67,6 +67,7 @@ configurations {
     longRunningTestCompile.extendsFrom(testCompile)
     builtins
     compileOnly.extendsFrom(builtins)
+    coroutinesExperimentalCompile.extendsFrom(builtins)
 }
 
 dependencies {
