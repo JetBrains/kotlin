@@ -20,6 +20,7 @@ import kotlinx.android.extensions.CacheImplementation
 import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.PROPERTY_NAME
 
 interface CacheMechanism {
     /** Push the cache object onto the stack. */
@@ -62,7 +63,7 @@ internal class HashMapCacheMechanism(
 ) : CacheMechanism {
     override fun loadCache() {
         iv.load(0, containerType)
-        iv.getfield(containerType.internalName, AndroidExpressionCodegenExtension.PROPERTY_NAME, "Ljava/util/HashMap;")
+        iv.getfield(containerType.internalName, PROPERTY_NAME, "Ljava/util/HashMap;")
     }
 
     override fun initCache() {
@@ -70,7 +71,7 @@ internal class HashMapCacheMechanism(
         iv.anew(Type.getType("Ljava/util/HashMap;"))
         iv.dup()
         iv.invokespecial("java/util/HashMap", "<init>", "()V", false)
-        iv.putfield(containerType.internalName, AndroidExpressionCodegenExtension.PROPERTY_NAME, "Ljava/util/HashMap;")
+        iv.putfield(containerType.internalName, PROPERTY_NAME, "Ljava/util/HashMap;")
     }
 
     override fun clearCache() {
@@ -96,7 +97,7 @@ internal class SparseArrayCacheMechanism(
 ) : CacheMechanism {
     override fun loadCache() {
         iv.load(0, containerType)
-        iv.getfield(containerType.internalName, AndroidExpressionCodegenExtension.PROPERTY_NAME, "Landroid/util/SparseArray;")
+        iv.getfield(containerType.internalName, PROPERTY_NAME, "Landroid/util/SparseArray;")
     }
 
     override fun initCache() {
@@ -104,7 +105,7 @@ internal class SparseArrayCacheMechanism(
         iv.anew(Type.getType("Landroid/util/SparseArray;"))
         iv.dup()
         iv.invokespecial("android/util/SparseArray", "<init>", "()V", false)
-        iv.putfield(containerType.internalName, AndroidExpressionCodegenExtension.PROPERTY_NAME, "Landroid/util/SparseArray;")
+        iv.putfield(containerType.internalName, PROPERTY_NAME, "Landroid/util/SparseArray;")
     }
 
     override fun clearCache() {

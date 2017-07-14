@@ -25,13 +25,22 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.ANDROID_COMPILER_PLUGIN_ID
+import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.EXPERIMENTAL_OPTION
+import org.jetbrains.kotlin.android.synthetic.idea.androidExtensionsIsExperimental
+import org.jetbrains.kotlin.android.synthetic.idea.isExperimental
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.AndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 
 class IDEAndroidPackageFragmentProviderExtension(val project: Project) : AndroidPackageFragmentProviderExtension() {
     private val psiManager = PsiManager.getInstance(project)
+
+    override fun isExperimental(moduleInfo: ModuleInfo?): Boolean {
+        return moduleInfo?.androidExtensionsIsExperimental ?: false
+    }
 
     override fun getLayoutXmlFileManager(project: Project, moduleInfo: ModuleInfo?): AndroidLayoutXmlFileManager? {
         val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return null

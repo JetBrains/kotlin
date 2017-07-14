@@ -77,6 +77,11 @@ internal class SyntheticElementResolveContext(
         receivers += WidgetReceiver(dialog, mayHaveCache = false)
         fragment?.let { receivers += WidgetReceiver(it, mayHaveCache = true) }
         supportFragment?.let { receivers += WidgetReceiver(it, mayHaveCache = true) }
+        receivers
+    }
+
+    private val experimentalWidgetReceivers by lazy {
+        val receivers = widgetReceivers.toMutableList()
         layoutContainer?.let { receivers += WidgetReceiver(it, mayHaveCache = true) }
         receivers
     }
@@ -97,9 +102,9 @@ internal class SyntheticElementResolveContext(
         }
     }
 
-    fun getWidgetReceivers(forView: Boolean): List<WidgetReceiver> {
+    fun getWidgetReceivers(forView: Boolean, isExperimental: Boolean): List<WidgetReceiver> {
         if (forView) return listOf(WidgetReceiver(view, mayHaveCache = true))
-        return widgetReceivers
+        return if (isExperimental) experimentalWidgetReceivers else widgetReceivers
     }
 
 }

@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.android.synthetic.test
 import com.intellij.testFramework.registerServiceInstance
 import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
 import org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor
-import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidExtensionsExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
@@ -46,10 +46,10 @@ fun KtUsefulTestCase.createTestEnvironment(configuration: CompilerConfiguration,
     val variants = listOf(AndroidVariant.createMainVariant(resDirectories))
     project.registerServiceInstance(AndroidLayoutXmlFileManager::class.java, CliAndroidLayoutXmlFileManager(project, "test", variants))
 
-    ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
+    ExpressionCodegenExtension.registerExtension(project, CliAndroidExtensionsExpressionCodegenExtension(true))
     StorageComponentContainerContributor.registerExtension(project, AndroidExtensionPropertiesComponentContainerContributor())
     ClassBuilderInterceptorExtension.registerExtension(project, AndroidOnDestroyClassBuilderInterceptorExtension())
-    PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension())
+    PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension(true))
 
     addAndroidExtensionsRuntimeLibrary(myEnvironment)
 

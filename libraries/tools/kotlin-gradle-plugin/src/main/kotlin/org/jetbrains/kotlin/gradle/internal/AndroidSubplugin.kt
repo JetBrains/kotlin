@@ -29,15 +29,17 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.w3c.dom.Document
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
 // Use apply plugin: 'kotlin-android-extensions' to enable Android Extensions in an Android project.
-// Just a marker plugin.
 class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
     override fun apply(project: Project) {
+        project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
+
         val kotlinPluginWrapper = project.plugins.findPlugin(KotlinAndroidPluginWrapper::class.java) ?: run {
             project.logger.error("'kotlin-android' plugin should be enabled before 'kotlin-android-extensions'")
             return
@@ -84,11 +86,53 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             androidProjectHandler: Any?,
             javaSourceSet: SourceSet?
     ): List<SubpluginOption> {
+        val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return emptyList()
+        val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)
+
+        if (androidExtensionsExtension.isExperimental) {
+            return applyExperimental(androidExtension, project, variantData, androidProjectHandler)
+        }
+
+        val sourceSets = androidExtension.sourceSets
+
+        val pluginOptions = arrayListOf<SubpluginOption>()
+
+        val mainSourceSet = sourceSets.getByName("main")
+        val manifestFile = mainSourceSet.manifest.srcFile
+        val applicationPackage = getApplicationPackageFromManifest(manifestFile) ?: run {
+            project.logger.warn(
+                    "Application package name is not present in the manifest file (${manifestFile.absolutePath})")
+            ""
+        }
+        pluginOptions += SubpluginOption("package", applicationPackage)
+
+        fun addVariant(sourceSet: AndroidSourceSet) {
+            pluginOptions += SubpluginOption("variant", sourceSet.name + ';' +
+                    sourceSet.res.srcDirs.joinToString(";") { it.absolutePath })
+        }
+
+        addVariant(mainSourceSet)
+
+        val flavorSourceSets = AndroidGradleWrapper.getProductFlavorsSourceSets(androidExtension).filterNotNull()
+        for (sourceSet in flavorSourceSets) {
+            addVariant(sourceSet)
+        }
+
+        return pluginOptions
+    }
+
+    private fun applyExperimental(
+            androidExtension: BaseExtension,
+            project: Project,
+            variantData: Any?,
+            androidProjectHandler: Any?
+    ): List<SubpluginOption> {
         @Suppress("UNCHECKED_CAST")
         androidProjectHandler as? AbstractAndroidProjectHandler<Any?> ?: return emptyList()
 
-        val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return emptyList()
         val pluginOptions = arrayListOf<SubpluginOption>()
+
+        pluginOptions += SubpluginOption("experimental", "true")
 
         val mainSourceSet = androidExtension.sourceSets.getByName("main")
         pluginOptions += SubpluginOption("package", getApplicationPackage(project, mainSourceSet))
