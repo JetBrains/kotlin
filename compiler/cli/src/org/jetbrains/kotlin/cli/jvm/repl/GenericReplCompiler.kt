@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
+import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
@@ -68,7 +68,7 @@ open class GenericReplCompiler(disposable: Disposable,
                 Pair(compilerState.lastLineState!!.psiFile, compilerState.lastLineState!!.errorHolder)
             }
 
-            val newDependencies = KotlinScriptExternalImportsProvider.getInstance(checker.environment.project).getScriptDependencies(psiFile)
+            val newDependencies = ScriptDependenciesProvider.getInstance(checker.environment.project).getScriptDependencies(psiFile)
             var classpathAddendum: List<File>? = null
             if (compilerState.lastDependencies != newDependencies) {
                 compilerState.lastDependencies = newDependencies

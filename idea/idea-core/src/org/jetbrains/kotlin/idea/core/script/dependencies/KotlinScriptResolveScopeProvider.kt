@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ResolveScopeProvider
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.getScriptDefinition
 
@@ -41,7 +41,7 @@ class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
                     null
                 }
                 else {
-                    KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope()
+                    ScriptDependenciesManager.getInstance(project).getAllScriptsClasspathScope()
                 }
             else -> null
         }

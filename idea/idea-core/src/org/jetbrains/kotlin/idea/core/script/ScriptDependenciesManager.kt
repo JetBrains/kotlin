@@ -24,23 +24,23 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
-import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
+import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.makeScriptDefsFromTemplatesProviderExtensions
 import java.io.File
 import kotlin.script.dependencies.ScriptDependencies
 
 
-// NOTE: this service exists exclusively because KotlinScriptConfigurationManager
+// NOTE: this service exists exclusively because ScriptDependencyManager
 // cannot be registered as implementing two services (state would be duplicated)
-class IdeScriptExternalImportsProvider(
-        private val scriptConfigurationManager: KotlinScriptConfigurationManager
-) : KotlinScriptExternalImportsProvider {
+class IdeScriptDependenciesProvider(
+        private val scriptDependenciesManager: ScriptDependenciesManager
+) : ScriptDependenciesProvider {
     override fun getScriptDependencies(file: VirtualFile): ScriptDependencies? {
-        return scriptConfigurationManager.getScriptDependencies(file)
+        return scriptDependenciesManager.getScriptDependencies(file)
     }
 }
 
-class KotlinScriptConfigurationManager(
+class ScriptDependenciesManager(
         private val project: Project,
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
 ) {
@@ -66,8 +66,8 @@ class KotlinScriptConfigurationManager(
 
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): KotlinScriptConfigurationManager =
-                ServiceManager.getService(project, KotlinScriptConfigurationManager::class.java)
+        fun getInstance(project: Project): ScriptDependenciesManager =
+                ServiceManager.getService(project, ScriptDependenciesManager::class.java)
 
         fun toVfsRoots(roots: Iterable<File>): List<VirtualFile> {
             return roots.mapNotNull { it.classpathEntryToVfs() }
@@ -84,7 +84,7 @@ class KotlinScriptConfigurationManager(
             return res
         }
 
-        internal val log = Logger.getInstance(KotlinScriptConfigurationManager::class.java)
+        internal val log = Logger.getInstance(ScriptDependenciesManager::class.java)
 
         @TestOnly
         fun updateScriptDependenciesSynchronously(virtualFile: VirtualFile, project: Project) {

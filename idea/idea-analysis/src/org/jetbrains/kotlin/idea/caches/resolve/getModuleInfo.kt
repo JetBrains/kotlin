@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
-import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.isKotlinBinary
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
@@ -116,7 +116,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     }
 
     val isBinary = virtualFile.isKotlinBinary()
-    val scriptConfigurationManager = KotlinScriptConfigurationManager.getInstance(project)
+    val scriptConfigurationManager = ScriptDependenciesManager.getInstance(project)
     if (isBinary && virtualFile in scriptConfigurationManager.getAllScriptsClasspathScope()) {
         if (treatAsLibrarySource) {
             return ScriptDependenciesSourceModuleInfo(project)

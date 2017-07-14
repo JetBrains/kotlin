@@ -75,7 +75,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.script.CliScriptReportSink
-import org.jetbrains.kotlin.cli.common.script.KotlinScriptExternalImportsProviderImpl
+import org.jetbrains.kotlin.cli.common.script.CliScriptDependenciesProvider
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -106,7 +106,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
-import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
+import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.ScriptReportSink
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -189,7 +189,7 @@ class KotlinCoreEnvironment private constructor(
             scriptDefinitionProvider.setScriptDefinitions(
                     configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
 
-            KotlinScriptExternalImportsProvider.getInstance(project).let { importsProvider ->
+            ScriptDependenciesProvider.getInstance(project).let { importsProvider ->
                 configuration.addJvmClasspathRoots(
                         sourceFiles.mapNotNull(importsProvider::getScriptDependencies)
                                 .flatMap { it.classpath }
@@ -523,7 +523,7 @@ class KotlinCoreEnvironment private constructor(
             with (projectEnvironment.project) {
                 val kotlinScriptDefinitionProvider = KotlinScriptDefinitionProvider()
                 registerService(KotlinScriptDefinitionProvider::class.java, kotlinScriptDefinitionProvider)
-                registerService(KotlinScriptExternalImportsProvider::class.java, KotlinScriptExternalImportsProviderImpl(projectEnvironment.project, kotlinScriptDefinitionProvider))
+                registerService(ScriptDependenciesProvider::class.java, CliScriptDependenciesProvider(projectEnvironment.project, kotlinScriptDefinitionProvider))
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
                 if (messageCollector != null) {

@@ -267,11 +267,11 @@
     <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptExternalImportsProvider"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.script.ScriptDependenciesProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptDependenciesProvider"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.script.ScriptReportSink"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink"/>

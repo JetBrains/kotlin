@@ -24,8 +24,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager.Companion.updateScriptDependenciesSynchronously
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager.Companion.updateScriptDependenciesSynchronously
 import org.jetbrains.kotlin.idea.navigation.GotoCheck
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.script.ScriptTemplatesProvider
@@ -130,7 +130,7 @@ abstract class AbstractScriptConfigurationTest : AbstractPsiCheckerTest() {
                 provider,
                 testRootDisposable
         )
-        KotlinScriptConfigurationManager.reloadScriptDefinitions(project)
+        ScriptDependenciesManager.reloadScriptDefinitions(project)
     }
 
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE

@@ -30,7 +30,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.idea.KotlinModuleFileType
 import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
-import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
@@ -62,7 +62,7 @@ object ProjectRootsUtil {
         val canContainClassFiles = file.fileType == ArchiveFileType.INSTANCE || file.isDirectory
         val isBinary = file.isKotlinBinary()
 
-        val scriptConfigurationManager = if (includeScriptDependencies) KotlinScriptConfigurationManager.getInstance(project) else null
+        val scriptConfigurationManager = if (includeScriptDependencies) ScriptDependenciesManager.getInstance(project) else null
 
         if (includeLibraryClasses && (isBinary || canContainClassFiles)) {
             if (fileIndex.isInLibraryClasses(file)) return true
