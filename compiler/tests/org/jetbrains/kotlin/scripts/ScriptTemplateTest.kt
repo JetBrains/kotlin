@@ -279,6 +279,18 @@ class ScriptTemplateTest {
     }
 
     @Test
+    fun testSeveralConstructors() {
+        val aClass = compileScript("fib.kts", ScriptWithSeveralConstructorsResolver::class, null)
+        Assert.assertNotNull(aClass)
+    }
+
+    @Test
+    fun testConstructorWithDefaultArgs() {
+        val aClass = compileScript("fib.kts", ScriptWithDefaultArgsResolver::class, null)
+        Assert.assertNotNull(aClass)
+    }
+
+    @Test
     fun testSmokeScriptException() {
         val aClass = compileScript("smoke_exception.kts", ScriptWithArrayParam::class)
         Assert.assertNotNull(aClass)
@@ -493,6 +505,12 @@ class TestAcceptedAnnotationsLegacyResolver: ScriptDependenciesResolver, Accepte
     }
 }
 
+class SeveralConstructorsResolver(val c: Int): TestKotlinScriptDependenciesResolver() {
+    constructor(): this(0)
+
+}
+class DefaultArgsConstructorResolver(val c: Int = 0): TestKotlinScriptDependenciesResolver()
+
 @ScriptTemplateDefinition(
         scriptFilePattern =".*\\.kts",
         resolver = TestKotlinScriptDummyDependenciesResolver::class)
@@ -558,6 +576,12 @@ abstract class ScriptWithAcceptedAnnotationsAsyncResolver
 
 @ScriptTemplateDefinition(resolver = TestAcceptedAnnotationsLegacyResolver::class)
 abstract class ScriptWithAcceptedAnnotationsLegacyResolver
+
+@ScriptTemplateDefinition(resolver = SeveralConstructorsResolver::class)
+abstract class ScriptWithSeveralConstructorsResolver(val num: Int)
+
+@ScriptTemplateDefinition(resolver = DefaultArgsConstructorResolver::class)
+abstract class ScriptWithDefaultArgsResolver(val num: Int)
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)

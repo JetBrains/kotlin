@@ -83,7 +83,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
                 log.warn("[kts] ${resolverClass.qualifiedName} must have a constructor without parameters")
                 return null
             }
-            return constructorWithoutParameters.call()
+            return constructorWithoutParameters.callBy(emptyMap())
         }
         catch (ex: ClassCastException) {
             log.warn("[kts] Script def error ${ex.message}")
