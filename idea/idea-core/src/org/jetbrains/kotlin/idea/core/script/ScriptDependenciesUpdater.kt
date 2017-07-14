@@ -139,11 +139,23 @@ internal class ScriptDependenciesUpdater(
             scriptDef: KotlinScriptDefinition
     ): TimeStampedJob {
         val currentTimeStamp = TimeStamps.next()
+
+        fun process(result: DependenciesResolver.ResolveResult) {
+            val lastTimeStamp = requests[file.path]?.job?.timeStamp
+            val isLastSentRequest = lastTimeStamp == null || lastTimeStamp == currentTimeStamp
+            if (isLastSentRequest) {
+                ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
+                val resultingDependencies = (result.dependencies ?: ScriptDependencies.Empty).adjustByDefinition(scriptDef)
+                if (cache(resultingDependencies, file)) {
+                    onChange()
+                }
+            }
+        }
+
         val dependenciesResolver = scriptDef.dependencyResolver
         val newJob = if (dependenciesResolver is AsyncDependenciesResolver) {
             launch(asyncUpdatesDispatcher) {
-                processResult(
-                        file, currentTimeStamp,
+                process(
                         dependenciesResolver.resolveAsync(
                                 contentLoader.getScriptContents(scriptDef, file),
                                 contentLoader.getEnvironment(scriptDef)
@@ -154,8 +166,7 @@ internal class ScriptDependenciesUpdater(
         else {
             assert(dependenciesResolver is LegacyResolverWrapper)
             launch(legacyUpdatesDispatcher) {
-                processResult(
-                        file, currentTimeStamp,
+                process(
                         dependenciesResolver.resolve(
                                 contentLoader.getScriptContents(scriptDef, file),
                                 contentLoader.getEnvironment(scriptDef)
@@ -164,17 +175,6 @@ internal class ScriptDependenciesUpdater(
             }
         }
         return TimeStampedJob(newJob, currentTimeStamp)
-    }
-
-    private fun processResult(file: VirtualFile, currentTimeStamp: TimeStamp, result: DependenciesResolver.ResolveResult) {
-        val lastTimeStamp = requests[file.path]?.job?.timeStamp
-        val isLastSentRequest = lastTimeStamp == null || lastTimeStamp == currentTimeStamp
-        if (isLastSentRequest) {
-            ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
-            if (cache(result.dependencies ?: ScriptDependencies.Empty, file)) {
-                onChange()
-            }
-        }
     }
 
     fun updateSync(file: VirtualFile, scriptDef: KotlinScriptDefinition): Boolean {

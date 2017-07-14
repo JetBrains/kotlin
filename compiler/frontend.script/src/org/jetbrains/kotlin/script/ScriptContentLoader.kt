@@ -67,10 +67,18 @@ class ScriptContentLoader(private val project: Project) {
                 getEnvironment(scriptDef)
         )
         ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
-        return result.dependencies
+        return result.dependencies?.adjustByDefinition(scriptDef)
     }
 
     fun getEnvironment(scriptDef: KotlinScriptDefinition) =
             (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.environment.orEmpty()
+}
+
+fun ScriptDependencies.adjustByDefinition(
+        scriptDef: KotlinScriptDefinition
+): ScriptDependencies {
+    val additionalClasspath = (scriptDef as? KotlinScriptDefinitionFromAnnotatedTemplate)?.templateClasspath ?: return this
+    if (additionalClasspath.isEmpty()) return this
+    return copy(classpath = additionalClasspath + classpath)
 }
 

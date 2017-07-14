@@ -72,7 +72,10 @@ fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProv
     try {
         val loader = createClassLoader(provider)
         provider.templateClassNames.map {
-            KotlinScriptDefinitionFromAnnotatedTemplate(loader.loadClass(it).kotlin, provider.resolver, provider.filePattern, provider.environment)
+            KotlinScriptDefinitionFromAnnotatedTemplate(
+                    loader.loadClass(it).kotlin, provider.resolver,
+                    provider.filePattern, provider.environment, provider.templateClasspath
+            )
         }
     }
     catch (ex: Throwable) {
