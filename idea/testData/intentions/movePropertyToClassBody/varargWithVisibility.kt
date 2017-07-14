@@ -1,1 +1,0 @@
-class TestClass(private vararg val <caret>words: String)
