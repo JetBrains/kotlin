@@ -122,48 +122,39 @@
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
-    <action id="CheckPartialBodyResolve" class="org.jetbrains.kotlin.idea.actions.internal.CheckPartialBodyResolveAction"
-            text="Check Partial Body Resolve">
-      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
-    </action>
-
-    <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"
-            text="Search Not Property Candidates">
-      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
-    </action>
-
-    <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"
-            text="Find Implicit Nothing Calls">
-      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
-    </action>
-
-    <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
-            text="Check Component Functions Usage Search">
-      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
-    </action>
-
-
     <action id="KotlinInternalMode" class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalModeToggleAction">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
+
+
     <group id="KotlinInternalGroup" popup="true" text="Internal" icon="/general/balloonWarning.png"
            class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalActionGroup">
+
+      <action id="BenchmarkCompletionAction" class="org.jetbrains.kotlin.idea.actions.internal.BenchmarkCompletionAction"
+              text="Benchmark completion"/>
+
+      <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
+              text="Check Component Functions Usage Search"/>
+
+      <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"
+              text="Find Implicit Nothing Calls"/>
+
+      <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"
+              text="Search Not Property Candidates"/>
+
+      <action id="CheckPartialBodyResolve" class="org.jetbrains.kotlin.idea.actions.internal.CheckPartialBodyResolveAction"
+              text="Check Partial Body Resolve"/>
+
+      <action id="CreateIncrementalCompilationBackup"
+              class="org.jetbrains.kotlin.idea.internal.makeBackup.CreateIncrementalCompilationBackup"/>
+
+      <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
+              text="Throw cached PCE"/>
+
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </group>
 
-    <action id="BenchmarkCompletionAction" class="org.jetbrains.kotlin.idea.actions.internal.BenchmarkCompletionAction"
-            text="Benchmark completion">
-      <add-to-group group-id="KotlinInternalGroup" anchor="last"/>
-    </action>
-
-    <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
-            text="Throw cached PCE">
-    </action>
-
-    <action id="CreateIncrementalCompilationBackup" class="org.jetbrains.kotlin.idea.internal.makeBackup.CreateIncrementalCompilationBackup">
-      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
-    </action>
 
     <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionToScopeAction"
             text="Function to _Scope...">
