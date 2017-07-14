@@ -80,7 +80,8 @@ class StubGenerator(
     val forbiddenStructNames = run {
         val functionNames = nativeIndex.functions.map { it.name }
         val fieldNames = nativeIndex.structs.mapNotNull { it.def }.flatMap { it.fields }.map { it.name }
-        (functionNames + fieldNames).toSet() + keywords
+        val typedefNames = nativeIndex.typedefs.map { it.name }
+        (functionNames + fieldNames + typedefNames).toSet()
     }
 
     val StructDecl.isAnonymous: Boolean
