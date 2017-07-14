@@ -2895,8 +2895,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return genCmpPrimitiveToSafeCall(left, leftType, (KtSafeQualifiedExpression) right, opToken);
         }
 
-        if (isBoxedTypeOf(leftType, rightType) && BoxedToPrimitiveEquality.isApplicable(opToken, rightType)) {
-            return BoxedToPrimitiveEquality.create(opToken, genLazy(left, leftType), genLazy(right, rightType), rightType);
+        if (BoxedToPrimitiveEquality.isApplicable(opToken, leftType, rightType)) {
+            return BoxedToPrimitiveEquality.create(opToken, genLazy(left, leftType), leftType, genLazy(right, rightType), rightType);
         }
 
         if (isPrimitive(leftType) != isPrimitive(rightType)) {

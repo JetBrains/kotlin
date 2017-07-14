@@ -217,9 +217,9 @@ class BoxedToPrimitiveEquality private constructor(
 
     companion object {
         @JvmStatic
-        fun create(opToken: IElementType, leftBoxed: StackValue, rightPrimitive: StackValue, primitiveType: Type): BranchedValue =
-                if (!isApplicable(opToken, primitiveType))
-                    throw IllegalArgumentException("Not applicable for $opToken, $primitiveType")
+        fun create(opToken: IElementType, leftBoxed: StackValue, leftType: Type, rightPrimitive: StackValue, primitiveType: Type): BranchedValue =
+                if (!isApplicable(opToken, leftType, primitiveType))
+                    throw IllegalArgumentException("Not applicable for $opToken, $leftType, $primitiveType")
                 else when (opToken) {
                     KtTokens.EQEQ -> BoxedToPrimitiveEquality(leftBoxed, rightPrimitive, primitiveType)
                     KtTokens.EXCLEQ -> Invert(BoxedToPrimitiveEquality(leftBoxed, rightPrimitive, primitiveType))
@@ -227,16 +227,17 @@ class BoxedToPrimitiveEquality private constructor(
                 }
 
         @JvmStatic
-        fun isApplicable(opToken: IElementType, primitiveType: Type) =
+        fun isApplicable(opToken: IElementType, leftType: Type, rightType: Type) =
                 (opToken == KtTokens.EQEQ ||
                  opToken == KtTokens.EXCLEQ
                 ) &&
-                (primitiveType == Type.BOOLEAN_TYPE ||
-                 primitiveType == Type.CHAR_TYPE ||
-                 primitiveType == Type.BYTE_TYPE ||
-                 primitiveType == Type.SHORT_TYPE ||
-                 primitiveType == Type.INT_TYPE ||
-                 primitiveType == Type.LONG_TYPE
-                )
+                (rightType == Type.BOOLEAN_TYPE ||
+                 rightType == Type.CHAR_TYPE ||
+                 rightType == Type.BYTE_TYPE ||
+                 rightType == Type.SHORT_TYPE ||
+                 rightType == Type.INT_TYPE ||
+                 rightType == Type.LONG_TYPE
+                ) &&
+                AsmUtil.isBoxedTypeOf(leftType, rightType)
     }
 }
