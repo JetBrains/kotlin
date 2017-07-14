@@ -2090,6 +2090,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt19037.kt")
+        public void testKt19037() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/kt19037.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nestedConcat.kt")
         public void testNestedConcat() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/nestedConcat.kt");
