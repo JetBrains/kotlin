@@ -61,6 +61,11 @@ fun ThrowUninitializedPropertyAccessException(): Nothing {
 }
 
 @ExportForCppRuntime
+fun PrintThrowable(throwable: Throwable) {
+    println(throwable)
+}
+
+@ExportForCppRuntime
 internal fun TheEmptyString() = ""
 
 fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T

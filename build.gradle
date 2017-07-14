@@ -254,6 +254,11 @@ targetList.each { target ->
             rename("${target}Start.bc", 'start.bc')
             into("klib/stdlib/targets/$target/native")
         }
+        if (target == 'wasm32') {
+            from(project(':runtime').file('src/launcher/js')) {
+                into('konan/nativelib')
+            }
+        }
     }
 }
 

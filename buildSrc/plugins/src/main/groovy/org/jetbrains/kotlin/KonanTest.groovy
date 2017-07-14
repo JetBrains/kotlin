@@ -23,17 +23,16 @@ import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.properties.*
 
 abstract class KonanTest extends JavaExec {
     protected String source
+    def targetManager = new TargetManager(project.testTarget)
+    def target = targetManager.target
     def backendNative = project.project(":backend.native")
     def runtimeProject = project.project(":runtime")
     def dist = project.rootProject.file("dist")
-    def dependenciesDir = project.findProject(":dependencies").file("all")
-    def runtimeBc = new File("${dist.canonicalPath}/lib/runtime.bc").absolutePath
-    def launcherBc = new File("${dist.canonicalPath}/lib/launcher.bc").absolutePath
-    def startKtBc = new File("${dist.canonicalPath}/lib/start.kt.bc").absolutePath
-    def stdlibKtBc = new File("${dist.canonicalPath}/lib/stdlib.kt.bc").absolutePath
+    def dependenciesDir = project.rootProject.dependenciesDir
     def konancDriver = project.isWindows() ? "konanc.bat" : "konanc"
     def konanc = new File("${dist.canonicalPath}/bin/$konancDriver").absolutePath
     def mainC = 'main.c'
@@ -47,10 +46,15 @@ abstract class KonanTest extends JavaExec {
     List<String> flags = null
 
     boolean enabled = true
+    boolean expectedFail = false
     boolean run = true
 
     void setDisabled(boolean value) {
         this.enabled = !value
+    }
+
+    void setExpectedFail(boolean value) {
+        this.expectedFail = value
     }
 
     // Uses directory defined in $outputSourceSetName source set.
@@ -102,7 +106,7 @@ abstract class KonanTest extends JavaExec {
                     *moreArgs,
                     *project.globalTestArgs]
             if (project.testTarget) {
-                args "-target", project.testTarget
+                args "-target", target.userName
             }
             if (enableKonanAssertions) {
                 args "-ea"
@@ -212,7 +216,6 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
     void executeTest() {
         createOutputDirectory()
         def program = buildExePath()
-        def targetManager = new TargetManager(project.testTarget)
         def suffix = targetManager.programSuffix
         def exe = "$program$suffix"
 
@@ -227,7 +230,9 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
         def out = new ByteArrayOutputStream()
         //TODO Add test timeout
         ExecResult execResult = project.execRemote {
-            commandLine exe
+
+            commandLine executionCommandLine(exe)
+
             if (arguments != null) {
                 args arguments
             }
@@ -239,15 +244,43 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
             ignoreExitValue = true
         }
         def result = out.toString("UTF-8")
+
         println(result)
 
-        if (execResult.exitValue != expectedExitStatus) {
-            throw new TestFailedException(
-                    "Test failed. Expected exit status: $expectedExitStatus, actual: ${execResult.exitValue}")
-        }
+        
+        def exitCodeMismatch = execResult.exitValue != expectedExitStatus
+        if (exitCodeMismatch) {
+            def message = "Expected exit status: $expectedExitStatus, actual: ${execResult.exitValue}"
+            if (this.expectedFail) {
+                println("Expected failure. $message")
+            } else {
+                throw new TestFailedException("Test failed. $message")
+            }
+        } 
+        
+        def goldValueMismatch = goldValue != null && goldValue != result.replace(System.lineSeparator(), "\n")
+        if (goldValueMismatch) {
+            def message = "Expected output: $goldValue, actual output: $result"
+            if (this.expectedFail) {
+                println("Expected failure. $message") 
+            } else {
+                throw new TestFailedException("Test failed. $message")
+            }
+        } 
 
-        if (goldValue != null && goldValue != result.replace(System.lineSeparator(), "\n")) {
-            throw new TestFailedException("Test failed. Expected output: $goldValue, actual output: $result")
+        if (!exitCodeMismatch && !goldValueMismatch && this.expectedFail) println("Unexpected pass")
+    }
+
+    List<String> executionCommandLine(String exe) {
+        if (target == KonanTarget.WASM32) {
+            def properties = project.rootProject.konanProperties
+            def targetToolchain = TargetPropertiesKt.hostTargetString(properties, "targetToolchain", target)
+            def absoluteTargetToolchain = "$dependenciesDir/$targetToolchain"
+            def d8 = "$absoluteTargetToolchain/bin/d8"
+            def launcherJs = "${dist.absolutePath}/konan/nativelib/launcher.js"
+            return [d8, '--expose-wasm', launcherJs, '--', exe]
+        } else {
+            return [exe]
         }
     }
 }
@@ -289,7 +322,7 @@ class RunDriverKonanTest extends KonanTest {
                     *moreArgs,
                     *project.globalTestArgs]
             if (project.testTarget) {
-                args "-target", project.testTarget
+                args "-target", target.userName
             }
             if (enableKonanAssertions) {
                 args "-ea"
@@ -312,7 +345,7 @@ class RunInteropKonanTest extends KonanTest {
     void setInterop(String value) {
         this.interop = value
         this.interopConf = project.kotlinNativeInterop[value]
-        this.interopConf.target = project.testTarget
+        this.interopConf.target = target.userName
         this.dependsOn(this.interopConf.genTask)
     }
 

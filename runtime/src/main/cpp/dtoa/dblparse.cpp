@@ -173,8 +173,8 @@ static const KDouble tens[] = {
         }
 #define ERROR_OCCURED(x) (HIGH_I32_FROM_VAR(x) < 0)
 
-#define allocateU64(x, n) if (!((x) = (U_64*) malloc((n) * sizeof(U_64)))) goto OutOfMemory;
-#define release(r) if ((r)) free((r));
+#define allocateU64(x, n) if (!((x) = (U_64*) konan::calloc(1, (n) * sizeof(U_64)))) goto OutOfMemory;
+#define release(r) if ((r)) konan::free((r));
 
 /*NB the Number converter methods are synchronized so it is possible to
  *have global data for use by bigIntDigitGenerator */

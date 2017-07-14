@@ -76,7 +76,7 @@ void abort() {
 // memcpy/memmove are not here intentionally, as frequently implemented/optimized
 // by C compiler.
 void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLen) {
-#if KONAN_WINDOWS
+#if KONAN_WINDOWS || KONAN_WASM
   for (size_t i = 0; i + littleLen <= bigLen; ++i) {
     void* pos = ((char*)big) + i;
     if (::memcmp(little, pos, littleLen) == 0) return pos;
@@ -88,10 +88,19 @@ void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLe
 
 }
 
+// The sprintf family.
+#if KONAN_INTERNAL_SNPRINTF
+extern "C" int rpl_vsnprintf(char *, size_t, const char *, va_list);
+#endif
+
 int snprintf(char* buffer, size_t size, const char* format, ...) {
   va_list args;
   va_start(args, format);
+#if KONAN_INTERNAL_SNPRINTF
+  int rv = rpl_vsnprintf(buffer, size, format, args);
+#else
   int rv = ::vsnprintf(buffer, size, format, args);
+#endif
   va_end(args);
   return rv;
 }
@@ -122,6 +131,22 @@ void free(void* pointer) {
 #endif
 }
 
+#if KONAN_INTERNAL_NOW
+
+extern "C" void Konan_date_now(uint64_t*);
+
+uint64_t getTimeMillis() {
+    uint64_t now;
+    Konan_date_now(&now);
+    return now;
+}
+uint64_t getTimeMicros() {
+    return getTimeMillis() * 1000ULL;
+}
+uint64_t getTimeNanos() {
+    return getTimeMillis() * 1000000ULL;
+}
+#else
 // Time operations.
 using namespace std::chrono;
 
@@ -136,12 +161,166 @@ uint64_t getTimeNanos() {
 uint64_t getTimeMicros() {
   return duration_cast<microseconds>(high_resolution_clock::now().time_since_epoch()).count();
 }
+#endif
 
 #if KONAN_INTERNAL_DLMALLOC
 // This function is being called when memory allocator needs more RAM.
+
+#ifdef KONAN_WASM
+
+// This one is an interface to query module.env.memory.buffer.byteLength
+extern "C" unsigned long Konan_heap_upper();
+extern "C" unsigned long Konan_heap_lower();
+
+#define MFAIL ((void*) ~(size_t)0)
+#define WASM_PAGESIZE  65536U
+#define WASM_PAGEMASK ((WASM_PAGESIZE-(size_t)1))
+#define PAGE_ALIGN(value) ((value + WASM_PAGEMASK) & ~(WASM_PAGEMASK))
+
 void* moreCore(int size) {
-  return sbrk(size);
+    static int initialized = 0;
+    static void* sbrk_top = MFAIL;
+    static void* upperHeapLimit = MFAIL;
+
+    if (!initialized) {
+        sbrk_top = (void*)PAGE_ALIGN(Konan_heap_lower());
+        upperHeapLimit = (void*)Konan_heap_upper();
+        initialized = 1;
+    }
+
+    if (size == 0) {
+        return sbrk_top;
+    } else if (size < 0) {
+        return MFAIL;
+    }
+
+    size = PAGE_ALIGN(size);
+
+    void* old_sbrk_top = sbrk_top;
+    sbrk_top = (char*)sbrk_top + size;
+
+    if (((char*)sbrk_top - (char*)upperHeapLimit) >= 0) {
+        // TODO: Consider using grow() and .maximum Memory settings.
+        abort();
+    }
+    return old_sbrk_top;
 }
+
+// dlmalloc wants to know the page size.
+long getpagesize() {
+    return WASM_PAGESIZE;
+}
+
+#else
+void* moreCore(int size) {
+    return sbrk(size);
+}
+
+long getpagesize() {
+    return sysconf(_SC_PAGESIZE);
+}
+#endif
 #endif
 
 }  // namespace konan
+
+extern "C" {
+#ifdef KONAN_WASM
+    extern void Konan_abort(const char*);
+
+    // TODO: get rid of these.
+    void _ZNKSt3__220__vector_base_commonILb1EE20__throw_length_errorEv(void) {
+        Konan_abort("TODO: throw_length_error not implemented.");
+    }
+    void _ZNKSt3__221__basic_string_commonILb1EE20__throw_length_errorEv(void) {
+        Konan_abort("TODO: throw_length_error not implemented.");
+    }
+    int _ZNSt3__212__next_primeEm(unsigned long n) {
+        static unsigned long primes[] = {
+                11UL,
+                101UL, 
+                1009UL, 
+                10007UL, 
+                100003UL, 
+                1000003UL, 
+                10000019UL,
+                100000007UL,
+                1000000007UL
+        };
+        int table_length = sizeof(primes)/sizeof(unsigned long);
+
+        if (n > primes[table_length - 1]) konan::abort();
+
+        unsigned long prime = primes[0];
+        for (unsigned long i=0; i< table_length; i++) {
+            prime = primes[i];
+            if (prime >= n) break;
+        }
+        return prime;
+    }
+    void __assert_fail(const char * assertion, const char * file, unsigned int line, const char * function) {
+        char buf[1024];
+        konan::snprintf(buf, sizeof(buf), "%s:%d in %s: runtime assert: %s\n", file, line, function, assertion);
+        Konan_abort(buf);
+    }
+    int* __errno_location() {
+        static int theErrno = 0;
+        return &theErrno;
+    }
+
+    // Some math.h functions.
+
+    double pow(double x, double y) {
+        return __builtin_pow(x, y);
+    }
+
+    // Some string.h functions.
+
+    void *memcpy(void *dst, const void *src, size_t n) {
+        for (long i = 0; i != n; ++i)
+            *((char*)dst + i) = *((char*)src + i);
+        return dst;
+    }
+
+    void *memmove(void *dst, const void *src, size_t len)  {
+        if (src < dst) {
+            for (long i = len; i != 0; --i) {
+                *((char*)dst + i - 1) = *((char*)src + i - 1);
+            } 
+        } else {
+            memcpy(dst, src, len);
+        }
+        return dst;
+    }
+
+    int memcmp(const void *s1, const void *s2, size_t n) {
+        for (long i = 0; i != n; ++i) {
+            if (*((char*)s1 + i) != *((char*)s2 + i)) {
+                return *((char*)s1 + i) - *((char*)s2 + i);
+            }
+        }
+        return 0;
+    }
+
+    void *memset(void *b, int c, size_t len) {
+        for (long i = 0; i != len; ++i) {
+            *((char*)b + i) = c;
+        }
+        return b;
+    }
+
+    size_t strlen(const char *s) {
+        for (long i = 0;; ++i) {
+            if (s[i] == 0) return i;
+        }
+    }
+
+    size_t strnlen(const char *s, size_t maxlen) {
+        for (long i = 0; i<=maxlen; ++i) {
+            if (s[i] == 0) return i;
+        }
+        return maxlen;
+    }
+#endif
+
+}

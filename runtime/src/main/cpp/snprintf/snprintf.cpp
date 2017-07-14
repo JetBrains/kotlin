@@ -163,6 +163,26 @@
  * <http://www.jhweiss.de/software/snprintf.html>.
  */
 
+#if KONAN_INTERNAL_SNPRINTF
+
+/**** Start of Konan-specific c99-snprintf configuration. ****/
+
+#define HAVE_FLOAT_H 1
+#define HAVE_STDARG_H 1
+#define HAVE_STDDEF_H 1
+#define HAVE_STDLIB_H 1
+#define HAVE_SNPRINTF 1
+#define HAVE_VASPRINTF 1
+#define HAVE_ASPRINTF 1
+#define HAVE_LONG_LONG_INT 1
+#define HAVE_UNSIGNED_LONG_LONG_INT 1
+#include <stddef.h>
+#include <stdarg.h>
+extern "C" int rpl_vsnprintf(char *, size_t, const char *, va_list);
+#define malloc(size) konan:calloc(1, size)
+
+/**** End of Konan-specific c99-snprintf configuration.   ****/
+
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif	/* HAVE_CONFIG_H */
@@ -831,7 +851,7 @@ rpl_vsnprintf(char *str, size_t size, const char *format, va_list args)
 				 * characters, in an implementation-defined
 				 * manner." (C99: 7.19.6.1, 8)
 				 */
-				if ((strvalue = va_arg(args, void *)) == NULL)
+				if ((strvalue = (char*)va_arg(args, void *)) == NULL)
 					/*
 					 * We use the glibc format.  BSD prints
 					 * "0x0", SysV "0".
@@ -1472,8 +1492,8 @@ mypow10(int exponent)
 void *
 mymemcpy(void *dst, void *src, size_t len)
 {
-	const char *from = src;
-	char *to = dst;
+	const char *from = (char*)src;
+	char *to = (char*)dst;
 
 	/* No need for optimization, we use this only to replace va_copy(3). */
 	while (len-- > 0)
@@ -1492,7 +1512,7 @@ rpl_vasprintf(char **ret, const char *format, va_list ap)
 	VA_COPY(aq, ap);
 	len = vsnprintf(NULL, 0, format, aq);
 	VA_END_COPY(aq);
-	if (len < 0 || (*ret = malloc(size = len + 1)) == NULL)
+	if (len < 0 || (*ret = (char*)malloc(size = len + 1)) == NULL)
 		return -1;
 	return vsnprintf(*ret, size, format, ap);
 }
@@ -2092,4 +2112,5 @@ do {                                                                           \
 }
 #endif	/* TEST_SNPRINTF */
 
+#endif // KONAN_INTERNAL_SNPRINTF
 /* vim: set joinspaces noexpandtab textwidth=80 cinoptions=(4,u0: */

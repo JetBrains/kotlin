@@ -43,6 +43,7 @@ class KonanProperties(val target: KonanTarget, val properties: Properties, val b
     val linkerKonanFlags get() = targetList("linkerKonanFlags")
     val linkerDebugFlags get() = targetList("linkerDebugFlags")
     val llvmDebugOptFlags get() = targetList("llvmDebugOptFlags")
+    val s2wasmFlags get() = targetList("s2wasmFlags")
 
     val targetSysRoot get() = targetString("targetSysRoot")
     val libffiDir get() = targetString("libffiDir")

@@ -57,4 +57,20 @@ extern "C" RUNTIME_USED int Konan_main(int argc, const char** argv) {
   return exitStatus;
 }
 
+#ifdef KONAN_WASM
+// Before we pass control to Konan_main, we need to obtain argv elements
+// from the javascript world.
+extern "C" int Konan_js_arg_size(int index);
+extern "C" int Konan_js_fetch_arg(int index, char* ptr);
+
+extern "C" int Konan_js_main(int argc) {
+    char** argv = (char**)konan::calloc(1, argc);
+    for (int i = 0; i< argc; ++i) {
+        argv[i] = (char*)konan::calloc(1, Konan_js_arg_size(i));
+        Konan_js_fetch_arg(i, argv[i]);
+    }
+    return Konan_main(argc, (const char**)argv);
+}
+#endif 
+
 #endif

@@ -53,7 +53,7 @@ void* Kotlin_interop_malloc(KLong size, KInt align) {
     return nullptr;
   }
 
-  void* result = malloc(size);
+  void* result = konan::calloc(1, size);
   if ((reinterpret_cast<uintptr_t>(result) & (align - 1)) != 0) {
     // Unaligned!
     RuntimeAssert(false, "unsupported alignment");
@@ -63,7 +63,7 @@ void* Kotlin_interop_malloc(KLong size, KInt align) {
 }
 
 void Kotlin_interop_free(void* ptr) {
-  free(ptr);
+  konan::free(ptr);
 }
 
 }  // extern "C"

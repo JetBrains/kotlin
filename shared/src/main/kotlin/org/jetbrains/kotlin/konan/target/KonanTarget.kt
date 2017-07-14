@@ -25,7 +25,7 @@ enum class KonanTarget(val targetSuffix: String, val programSuffix: String, var 
     MINGW("mingw", "exe"),
     MACBOOK("osx", "kexe"),
     RASPBERRYPI("raspberrypi", "kexe"),
-    WASM32("wasm32", "kexe");
+    WASM32("wasm32", "wasm");
 
     val userName get() = name.toLowerCase()
 }

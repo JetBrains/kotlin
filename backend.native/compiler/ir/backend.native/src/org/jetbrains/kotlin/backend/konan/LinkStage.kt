@@ -37,16 +37,16 @@ internal abstract class PlatformFlags(val properties: KonanProperties) {
     val linkerKonanFlags = properties.linkerKonanFlags
     val linkerDebugFlags = properties.linkerDebugFlags
     val llvmDebugOptFlags = properties.llvmDebugOptFlags
+    val s2wasmFlags = properties.s2wasmFlags
+    val targetToolchain = properties.absoluteTargetToolchain
+    val targetSysRoot = properties.absoluteTargetSysRoot
+
+    val targetLibffi = properties.libffiDir ?.let { listOf("${properties.absoluteLibffiDir}/lib/libffi.a") } ?: emptyList()
 
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 
-   abstract fun linkCommand(objectFiles: List<ObjectFile>,
+    abstract fun linkCommand(objectFiles: List<ObjectFile>,
         executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String>
-
-    val targetLibffiDir = properties.absoluteLibffiDir
-    val targetLibffi = "$targetLibffiDir/lib/libffi.a"
-    val targetToolchain = properties.absoluteTargetToolchain
-    val targetSysRoot = properties.absoluteTargetSysRoot
 
     open fun linkCommandSuffix(): List<String> = emptyList()
 
@@ -178,19 +178,19 @@ internal open class WasmPlatform(distribution: Distribution)
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
 
-        return mutableListOf(clang).apply{
-            throw Error("Implement me!")
-        }
+        //No link stage for WASM yet, just give '.wasm' as output.
+        return mutableListOf("/bin/cp", objectFiles.single(), executable)
     }
 }
 
 internal class LinkStage(val context: Context) {
 
     val config = context.config.configuration
+    val target = context.config.targetManager.target
 
     private val distribution = context.config.distribution
 
-    private val platform = when (context.config.targetManager.target) {
+    private val platform = when (target) {
         KonanTarget.LINUX, KonanTarget.RASPBERRYPI ->
             LinuxBasedPlatform(distribution)
         KonanTarget.MACBOOK, KonanTarget.IPHONE, KonanTarget.IPHONE_SIM ->
@@ -202,7 +202,7 @@ internal class LinkStage(val context: Context) {
         KonanTarget.WASM32 ->
             WasmPlatform(distribution)
         else ->
-            error("Unexpected target platform: ${context.config.targetManager.target}")
+            error("Unexpected target platform: ${target}")
     }
 
     private val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
@@ -216,9 +216,7 @@ internal class LinkStage(val context: Context) {
     }
 
     private fun llvmLto(files: List<BitcodeFile>): ObjectFile {
-        val tmpCombined = createTempFile("combined", ".o")
-        tmpCombined.deleteOnExit()
-        val combined = tmpCombined.absolutePath
+        val combined = temporary("combined", ".o")
 
         val tool = distribution.llvmLto
         val command = mutableListOf(tool, "-o", combined)
@@ -232,6 +230,41 @@ internal class LinkStage(val context: Context) {
         runTool(*command.toTypedArray())
 
         return combined
+    }
+
+    private fun temporary(name: String, suffix: String): String {
+        val temporaryFile = createTempFile(name, suffix)
+        temporaryFile.deleteOnExit()
+        return temporaryFile.absolutePath
+    }
+
+    private fun targetTool(tool: String, vararg arg: String) {
+        val absoluteToolName = "${platform.targetToolchain}/bin/$tool"
+        runTool(absoluteToolName, *arg)
+    }
+
+    private fun hostLlvmTool(tool: String, args: List<String>) {
+        val absoluteToolName = "${distribution.llvmBin}/$tool"
+        val command = listOf(absoluteToolName) + args
+        runTool(*command.toTypedArray())
+    }
+
+    private fun bitcodeToWasm(bitcodeFiles: List<BitcodeFile>): String {
+        val combinedBc = temporary("combined", ".bc")
+        hostLlvmTool("llvm-link", bitcodeFiles + listOf("-o", combinedBc))
+
+        val combinedS = temporary("combined", ".s")
+        targetTool("llc", combinedBc, "-o", combinedS)
+
+        val s2wasmFlags = platform.s2wasmFlags.toTypedArray()
+        val combinedWast = temporary( "combined", ".wast")
+        targetTool("s2wasm", combinedS, "-o", combinedWast, *s2wasmFlags)
+
+        val combinedWasm = temporary( "combined", ".wasm")
+        val combinedSmap = temporary( "combined", ".smap")
+        targetTool("wasm-as", combinedWast, "-o", combinedWasm, "-g", "-s", combinedSmap)
+
+        return combinedWasm
     }
 
     private fun asLinkerArgs(args: List<String>): List<String> {
@@ -261,8 +294,12 @@ internal class LinkStage(val context: Context) {
     private val entryPointSelector: List<String>
         get() = if (nomain) emptyList() else platform.entrySelector
 
+    private val libffi 
+        get() = platform.targetLibffi ?.let { listOf(it) } ?: emptyList()
+
     private fun link(objectFiles: List<ObjectFile>, libraryProvidedLinkerFlags: List<String>): ExecutableFile {
         val executable = context.config.outputFile
+
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize, debug) +
                 platform.targetLibffi +
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
@@ -333,7 +370,12 @@ internal class LinkStage(val context: Context) {
 
         val phaser = PhaseManager(context)
         phaser.phase(KonanPhase.OBJECT_FILES) {
-            objectFiles = listOf( llvmLto(bitcodeFiles ) )
+            objectFiles = listOf( 
+                if (target == KonanTarget.WASM32)
+                    bitcodeToWasm(bitcodeFiles) 
+                else 
+                    llvmLto(bitcodeFiles)
+            )
         }
         phaser.phase(KonanPhase.LINKER) {
             link(objectFiles, libraryProvidedLinkerFlags)

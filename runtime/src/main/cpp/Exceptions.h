@@ -44,6 +44,8 @@ void ThrowArithmeticException();
 void ThrowNumberFormatException();
 // Throws out of memory error.
 void ThrowOutOfMemoryError();
+// Prints out mesage of Throwable.
+void PrintThrowable(KRef);
 
 #ifdef __cplusplus
 } // extern "C"

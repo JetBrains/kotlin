@@ -50,7 +50,7 @@ class AutoFree {
   AutoFree(void* mem): mem_(mem) {}
 
   ~AutoFree() {
-    free(mem_);
+    konan::free(mem_);
   }
 };
 
@@ -105,7 +105,7 @@ _Unwind_Reason_Code unwindCallback(
   }
 
   char line[512];
-  snprintf(line, sizeof(line) - 1, "%s (%p)",
+  konan::snprintf(line, sizeof(line) - 1, "%s (%p)",
     symbol, (void*)(intptr_t)address);
   backtrace->setNextElement(line);
   return _URC_NO_REASON;
@@ -162,6 +162,7 @@ void ThrowException(KRef exception) {
   RuntimeAssert(exception != nullptr && IsInstance(exception, theThrowableTypeInfo),
                 "Throwing something non-throwable");
 #if KONAN_NO_EXCEPTIONS
+  PrintThrowable(exception);
   RuntimeAssert(false, "Exceptions unsupported");
 #else
 #if (__MINGW32__ || __MINGW64__)
