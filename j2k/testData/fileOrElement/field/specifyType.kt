@@ -15,20 +15,6 @@ internal class A {
     private var field9: String? = "a"
     private var field10: String? = foo()
 
-    fun foo(): String {
-        return "x"
-    }
-
-    fun bar() {
-        field5 = ArrayList()
-        field7++
-        field8++
-        field9 = null
-        field10 = null
-    }
-
-    internal interface I
-
     private val anonymous: I = object : I {
 
     }
@@ -42,6 +28,20 @@ internal class A {
     }
 
     private var iimpl = anonymous
+
+    fun foo(): String {
+        return "x"
+    }
+
+    fun bar() {
+        field5 = ArrayList()
+        field7++
+        field8++
+        field9 = null
+        field10 = null
+    }
+
+    internal interface I
 
     fun testAnonymousObject(i: Any) {
         if (true) {

@@ -15,9 +15,9 @@ internal interface I {
 }
 
 internal interface I1 : I {
-    fun setSomething1(value: Int)
 
     val something6: Int
+    fun setSomething1(value: Int)
 }
 
 internal open class B {
@@ -59,14 +59,6 @@ internal abstract class C(override val something1: Int) : B(), I {
 
         }
 
-    fun getSomething6(): Int {
-        return mySomething6
-    }
-
-    override fun setSomething6(value: Int) {
-        mySomething6 = value
-    }
-
     override val fromB1: String
         get() = super.fromB1
 
@@ -90,6 +82,14 @@ internal abstract class C(override val something1: Int) : B(), I {
 
     val fromB5: String
         get() = ""
+
+    fun getSomething6(): Int {
+        return mySomething6
+    }
+
+    override fun setSomething6(value: Int) {
+        mySomething6 = value
+    }
 
     override fun setFromB5(value: String) {
         super.setFromB5(value)
