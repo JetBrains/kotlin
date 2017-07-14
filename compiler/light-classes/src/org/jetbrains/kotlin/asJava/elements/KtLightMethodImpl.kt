@@ -139,14 +139,6 @@ class KtLightMethodImpl private constructor(
         return typeParameters.all { processor.execute(it, state) }
     }
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (another is KtLightMethod && this == another) {
-            return true
-        }
-
-        return super.isEquivalentTo(another)
-    }
-
     private val _memberIndex: MemberIndex?
         get() = (dummyDelegate ?: clsDelegate).memberIndex
 
