@@ -2899,6 +2899,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return BoxedToPrimitiveEquality.create(opToken, genLazy(left, leftType), leftType, genLazy(right, rightType), rightType);
         }
 
+        if (PrimitiveToBoxedEquality.isApplicable(opToken, leftType, rightType)) {
+            return BoxedToPrimitiveEquality.create(opToken, genLazy(left, leftType), leftType, genLazy(right, rightType), rightType);
+        }
+
+
         if (isPrimitive(leftType) != isPrimitive(rightType)) {
             leftType = boxType(leftType);
             rightType = boxType(rightType);

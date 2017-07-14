@@ -228,16 +228,85 @@ class BoxedToPrimitiveEquality private constructor(
 
         @JvmStatic
         fun isApplicable(opToken: IElementType, leftType: Type, rightType: Type) =
-                (opToken == KtTokens.EQEQ ||
-                 opToken == KtTokens.EXCLEQ
-                ) &&
-                (rightType == Type.BOOLEAN_TYPE ||
-                 rightType == Type.CHAR_TYPE ||
-                 rightType == Type.BYTE_TYPE ||
-                 rightType == Type.SHORT_TYPE ||
-                 rightType == Type.INT_TYPE ||
-                 rightType == Type.LONG_TYPE
-                ) &&
+                (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) &&
+                AsmUtil.isIntPrimitiveOrBoolean(rightType) &&
                 AsmUtil.isBoxedTypeOf(leftType, rightType)
+    }
+}
+
+
+class PrimitiveToBoxedEquality private constructor(
+        leftPrimitive: StackValue,
+        rightBoxed: StackValue,
+        primitiveType: Type
+) : BranchedValue(leftPrimitive, rightBoxed, primitiveType, Opcodes.IFNE) {
+    private val primitiveType = leftPrimitive.type
+    private val boxedType = rightBoxed.type
+
+    override fun patchOpcode(opcode: Int, v: InstructionAdapter): Int =
+            NumberCompare.patchOpcode(opcode, v, KtTokens.EQEQ, operandType)
+
+    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+        if (jumpIfFalse) {
+            jumpIfFalse(v, jumpLabel)
+        }
+        else {
+            jumpIfTrue(v, jumpLabel)
+        }
+    }
+
+    private fun jumpIfFalse(v: InstructionAdapter, jumpLabel: Label) {
+        val notNullLabel = Label()
+
+        arg1.put(primitiveType, v)
+        arg2!!.put(boxedType, v)
+        AsmUtil.dup(v, boxedType)
+        v.ifnonnull(notNullLabel)
+
+        AsmUtil.pop(v, boxedType)
+        AsmUtil.pop(v, primitiveType)
+        v.goTo(jumpLabel)
+
+        v.mark(notNullLabel)
+        coerce(boxedType, primitiveType, v)
+        v.visitJumpInsn(patchOpcode(opcode, v), jumpLabel)
+    }
+
+    private fun jumpIfTrue(v: InstructionAdapter, jumpLabel: Label) {
+        val notNullLabel = Label()
+        val endLabel = Label()
+
+        arg1.put(primitiveType, v)
+        arg2!!.put(boxedType, v)
+        AsmUtil.dup(v, boxedType)
+        v.ifnonnull(notNullLabel)
+
+        AsmUtil.pop(v, boxedType)
+        AsmUtil.pop(v, primitiveType)
+        v.goTo(endLabel)
+
+        v.mark(notNullLabel)
+        coerce(boxedType, primitiveType, v)
+        v.visitJumpInsn(patchOpcode(negatedOperations[opcode]!!, v), jumpLabel)
+
+        v.mark(endLabel)
+    }
+
+    companion object {
+        @JvmStatic
+        fun create(opToken: IElementType, left: StackValue, leftType: Type, right: StackValue, rightType: Type): BranchedValue =
+                if (!isApplicable(opToken, leftType, rightType))
+                    throw IllegalArgumentException("Not applicable for $opToken, $leftType, $rightType")
+                else when (opToken) {
+                    KtTokens.EQEQ -> PrimitiveToBoxedEquality(left, right, leftType)
+                    KtTokens.EXCLEQ -> Invert(PrimitiveToBoxedEquality(left, right, leftType))
+                    else -> throw AssertionError("Unexpected opToken: $opToken")
+                }
+
+        @JvmStatic
+        fun isApplicable(opToken: IElementType, leftType: Type, rightType: Type) =
+                (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) &&
+                AsmUtil.isIntPrimitiveOrBoolean(rightType) &&
+                AsmUtil.isBoxedTypeOf(rightType, leftType)
     }
 }
