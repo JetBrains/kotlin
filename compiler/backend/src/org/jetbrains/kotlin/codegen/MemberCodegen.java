@@ -738,6 +738,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
             class PropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
                 private final PropertyAccessorDescriptor callableDescriptor;
+
                 private PropertyAccessorStrategy(@NotNull PropertyAccessorDescriptor callableDescriptor) {
                     super(MemberCodegen.this.state);
                     this.callableDescriptor = callableDescriptor;
@@ -745,7 +746,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                    boolean syntheticBackingField = accessor instanceof AccessorForPropertyBackingFieldFromLocal;
+                    boolean syntheticBackingField =
+                            accessor instanceof AccessorForPropertyBackingField &&
+                            ((AccessorForPropertyBackingField) accessor).getFieldAccessorKind() == FieldAccessorKind.FIELD_FROM_LOCAL;
                     boolean forceFieldForCompanionProperty = JvmAbi.isPropertyWithBackingFieldInOuterClass(original) &&
                                                              !isCompanionObject(accessor.getContainingDeclaration());
                     boolean forceField = forceFieldForCompanionProperty ||
