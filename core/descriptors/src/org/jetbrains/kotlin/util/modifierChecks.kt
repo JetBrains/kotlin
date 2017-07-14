@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ private object NoTypeParametersCheck : Check {
 }
 
 private object IsKPropertyCheck : Check {
-    override val description = "second parameter must have a KProperty type or its supertype"
+    override val description = "second parameter must be of type KProperty<*> or its supertype"
     override fun check(functionDescriptor: FunctionDescriptor): Boolean {
         val secondParameter = functionDescriptor.valueParameters[1]
         return ReflectionTypes.createKPropertyStarType(secondParameter.module)?.isSubtypeOf(secondParameter.type.makeNotNullable()) ?: false
