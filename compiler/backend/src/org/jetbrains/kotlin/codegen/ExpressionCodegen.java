@@ -831,24 +831,29 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public StackValue visitStringTemplateExpression(@NotNull KtStringTemplateExpression expression, StackValue receiver) {
         List<StringTemplateEntry> entries = preprocessStringTemplate(expression);
 
-        if (entries.size() == 1) {
+        Type type = expressionType(expression);
+
+        if (entries.size() == 0) {
+            return StackValue.constant("", type);
+        }
+        else if (entries.size() == 1) {
             StringTemplateEntry entry = entries.get(0);
             if (entry instanceof StringTemplateEntry.Expression) {
                 KtExpression expr = ((StringTemplateEntry.Expression) entry).expression;
-                return genToString(gen(expr), expressionType(expr));
+                return genToString(gen(expr), type);
             }
             else {
-                Type type = expressionType(expression);
                 return StackValue.constant(((StringTemplateEntry.Constant) entry).value, type);
             }
         }
-
-        return StackValue.operation(JAVA_STRING_TYPE, v -> {
-            genStringBuilderConstructor(v);
-            invokeAppendForEntries(v, entries);
-            v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
-            return Unit.INSTANCE;
-        });
+        else {
+            return StackValue.operation(type, v -> {
+                genStringBuilderConstructor(v);
+                invokeAppendForEntries(v, entries);
+                v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+                return Unit.INSTANCE;
+            });
+        }
     }
 
     private void invokeAppendForEntries(InstructionAdapter v, List<StringTemplateEntry> entries) {
