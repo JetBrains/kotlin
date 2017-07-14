@@ -39,9 +39,7 @@ class ClassBody(
         builder append " " append lBrace append "\n"
 
         if (!classKind.isEnum()) {
-            builder.append(membersFiltered.sortedWith(Comparator { o1, o2 ->
-                if (o1 is Property) if (o2 is Property) 0 else -1 else if (o2 is Property) 1 else 0
-            }), "\n")
+            builder.append(membersFiltered.sortedWith(PropertyComparator), "\n")
         }
         else {
             val (constants, otherMembers) = membersFiltered.partition { it is EnumConstant }
@@ -52,9 +50,7 @@ class ClassBody(
                 builder.append(";\n")
             }
 
-            builder.append(otherMembers.sortedWith(Comparator { o1, o2 ->
-                if (o1 is Property) if (o2 is Property) 0 else -1 else if (o2 is Property) 1 else 0
-            }), "\n")
+            builder.append(otherMembers.sortedWith(PropertyComparator), "\n")
         }
 
         appendCompanionObject(builder, membersFiltered.isNotEmpty())
@@ -66,5 +62,11 @@ class ClassBody(
         if (companionObjectMembers.isEmpty()) return
         if (blankLineBefore) builder.append("\n\n")
         builder.append(companionObjectMembers, "\n", "companion object {\n", "\n}")
+    }
+}
+
+private object PropertyComparator : Comparator<Member> {
+    override fun compare(o1: Member?, o2: Member?): Int {
+        return if (o1 is Property) if (o2 is Property) 0 else -1 else if (o2 is Property) 1 else 0
     }
 }
