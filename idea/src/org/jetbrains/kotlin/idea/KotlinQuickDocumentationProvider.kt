@@ -194,6 +194,18 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 // element is not an KtReferenceExpression, but KtClass of enum
                 return renderEnum(element, originalElement, quickNavigation)
             }
+            else if (element is KtEnumEntry && !quickNavigation) {
+                val ordinal = element.containingClassOrObject?.getBody()?.run { getChildrenOfType<KtEnumEntry>().indexOf(element) }
+
+                return buildString {
+                    append(renderKotlinDeclaration(element, quickNavigation))
+                    ordinal?.let {
+                        wrapTag("b") {
+                            append("Enum constant ordinal: $ordinal")
+                        }
+                    }
+                }
+            }
             else if (element is KtDeclaration) {
                 return renderKotlinDeclaration(element, quickNavigation)
             }
