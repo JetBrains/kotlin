@@ -1,4 +1,5 @@
 internal object F {
+    var i: Int? = 0
 
     //c1
 
@@ -13,7 +14,6 @@ internal object F {
     //c4
 
     fun f2() {}
-    var i: Int? = 0
 
     fun f3() {}
 

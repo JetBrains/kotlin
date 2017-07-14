@@ -3,11 +3,11 @@ internal interface I {
 
     var something2: Int
 
-    fun setSomething3(value: Int)
-
     val something4: Int
-    fun setSomething4(value: String)
 
     val something5: Int
+
+    fun setSomething3(value: Int)
+    fun setSomething4(value: String)
     fun setSomething5(value: Int): Int
 }
