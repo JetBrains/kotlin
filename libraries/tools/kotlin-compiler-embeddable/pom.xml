@@ -124,6 +124,10 @@
                                     <pattern>javax.inject</pattern>
                                     <shadedPattern>${kotlin.relocated.package}.javax.inject</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>kotlinx.coroutines</pattern>
+                                    <shadedPattern>${kotlin.relocated.package}.kotlinx.coroutines</shadedPattern>
+                                </relocation>
                             </relocations>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
