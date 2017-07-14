@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import java.io.PrintWriter
 
-object GeneratePrimitiveEqualityWithNullableTestData {
+object GeneratePrimitiveVsObjectEqualityTestData {
     private val TEST_DATA_DIR = File("compiler/testData/codegen/box/primitiveTypes/equalityWithNullable")
     private val GENERATED_DIR = File(TEST_DATA_DIR, "generated")
 
