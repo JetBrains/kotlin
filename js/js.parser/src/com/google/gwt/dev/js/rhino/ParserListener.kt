@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.parser
+package com.google.gwt.dev.js.rhino
 
-import com.google.gwt.dev.js.rhino.*
+interface ParserListener {
+    fun functionStarted()
 
-object ParserEvents {
-
-    class OnFunctionParsingStart
-
-    class OnFunctionParsingEnd(val tokenStream: TokenStream)
+    fun functionEnded(tokenStream: TokenStream)
 }

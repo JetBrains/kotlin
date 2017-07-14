@@ -37,10 +37,9 @@
 
 package com.google.gwt.dev.js.rhino;
 
-import org.jetbrains.kotlin.js.parser.ParserEvents;
-
 import java.io.IOException;
-import java.util.Observable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class implements the JavaScript parser.
@@ -51,10 +50,19 @@ import java.util.Observable;
  * @see TokenStream
  */
 
-public class Parser extends Observable {
+public class Parser {
+    private List<ParserListener> listeners;
+
     public Parser(IRFactory nf, boolean insideFunction) {
         this.nf = nf;
         this.insideFunction = insideFunction;
+    }
+
+    public void addListener(ParserListener listener) {
+        if (listeners == null) {
+            listeners = new ArrayList<>();
+        }
+        listeners.add(listener);
     }
 
     private void mustMatchToken(TokenStream ts, int toMatch, String messageId) throws IOException, JavaScriptException {
@@ -167,7 +175,11 @@ public class Parser extends Observable {
     }
 
     private Node function(TokenStream ts, boolean isExpr) throws IOException, JavaScriptException {
-        notifyObservers(new ParserEvents.OnFunctionParsingStart());
+        if (listeners != null) {
+            for (ParserListener listener : listeners) {
+                listener.functionStarted();
+            }
+        }
         CodePosition basePosition = ts.tokenPosition;
 
         Node nameNode;
@@ -247,7 +259,11 @@ public class Parser extends Observable {
             wellTerminated(ts, TokenStream.FUNCTION);
         }
 
-        notifyObservers(new ParserEvents.OnFunctionParsingEnd(ts));
+        if (listeners != null) {
+            for (ParserListener listener : listeners) {
+                listener.functionEnded(ts);
+            }
+        }
         return pn;
     }
 

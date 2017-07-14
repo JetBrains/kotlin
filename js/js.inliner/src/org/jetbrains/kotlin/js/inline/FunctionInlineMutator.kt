@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.inline.util.rewriters.ReturnReplacingVisitor
 import org.jetbrains.kotlin.js.translate.context.Namer
 
-class FunctionInlineMutator(
+class FunctionInlineMutator
+private constructor(
         private val call: JsInvocation,
         private val inliningContext: InliningContext,
         function: JsFunction
@@ -181,7 +182,6 @@ class FunctionInlineMutator(
 
             return InlineableResult(inlineableBody, mutator.resultExpr)
         }
-
 
         @JvmStatic
         private fun getThisReplacement(call: JsInvocation): JsExpression? {
