@@ -52,14 +52,8 @@ class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
             val virtualFile = provider.virtualFile
             val fileIndex = ServiceManager.getService(project, FileIndexFacade::class.java)
             if (!fileIndex.isInLibraryClasses(virtualFile) && fileIndex.isInSource(virtualFile)) return@factory null
-            val content = try {
-                virtualFile.contentsToByteArray(false)
-            }
-            catch (e: IOException) {
-                return@factory null
-            }
 
-            if (isKotlinInternalCompiledFile(virtualFile, content))
+            if (isKotlinInternalCompiledFile(virtualFile))
                 null
             else
                 KtClsFile(provider)
