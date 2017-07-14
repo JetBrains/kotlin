@@ -134,7 +134,7 @@ class BoxedToPrimitiveEquality private constructor(
     }
 
     private fun jumpIfTrue(v: InstructionAdapter, jumpLabel: Label) {
-        if (arg1.canHaveSideEffects() || arg2!!.canHaveSideEffects()) {
+        if (arg2!!.canHaveSideEffects()) {
             jumpIfTrueWithPossibleSideEffects(v, jumpLabel)
             return
         }
@@ -179,7 +179,7 @@ class BoxedToPrimitiveEquality private constructor(
     }
 
     private fun jumpIfFalse(v: InstructionAdapter, jumpLabel: Label) {
-        if (arg1.canHaveSideEffects() || arg2!!.canHaveSideEffects()) {
+        if (arg2!!.canHaveSideEffects()) {
             jumpIfFalseWithPossibleSideEffects(v, jumpLabel)
             return
         }
