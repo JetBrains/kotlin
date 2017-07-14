@@ -1,8 +1,9 @@
 internal object Library {
-    fun call() {}
 
     val string: String
         get() = ""
+
+    fun call() {}
 }
 
 internal class User {
