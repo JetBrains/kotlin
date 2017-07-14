@@ -986,6 +986,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/diagnosticsMessage"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("fullPackageFQNameOnVisiblityError.kt")
+        public void testFullPackageFQNameOnVisiblityError() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/fullPackageFQNameOnVisiblityError.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("incompleteTypeArgumentList.kt")
         public void testIncompleteTypeArgumentList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/incompleteTypeArgumentList.kt");
