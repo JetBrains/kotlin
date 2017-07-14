@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
@@ -120,8 +122,7 @@ class BasicLookupElementFactory(
     ): LookupElement {
         val declarationLazy by lazy { DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) }
 
-        //TODO: try JavaClassDescriptor?
-        if (descriptor is ClassifierDescriptor &&
+        if (descriptor is JavaClassDescriptor &&
             declarationLazy is PsiClass &&
             declarationLazy !is KtLightClass) {
             // for java classes we create special lookup elements
@@ -157,8 +158,7 @@ class BasicLookupElementFactory(
             }
             else -> {
                 lookupObject = object : DeclarationLookupObjectImpl(descriptor) {
-                    override val psiElement: PsiElement?
-                        get() = declarationLazy
+                    override val psiElement by lazy { DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) }
 
                     override fun getIcon(flags: Int) = KotlinDescriptorIconProvider.getIcon(descriptor, psiElement, flags)
                 }
