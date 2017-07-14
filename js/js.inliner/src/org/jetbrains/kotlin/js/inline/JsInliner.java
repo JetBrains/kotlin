@@ -107,6 +107,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         for (JsProgramFragment fragment : fragmentsToProcess) {
             JsBlock block = new JsBlock(fragment.getDeclarationBlock(), fragment.getInitializerBlock(), fragment.getExportBlock());
             RemoveUnusedImportsKt.removeUnusedImports(block);
+            SimplifyWrappedFunctionsKt.simplifyWrappedFunctions(block);
             RemoveUnusedFunctionDefinitionsKt.removeUnusedFunctionDefinitions(block, CollectUtilsKt.collectNamedFunctions(block));
         }
     }
