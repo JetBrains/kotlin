@@ -78,6 +78,18 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         doTest(fileName);
     }
 
+    @TestMetadata("emptyAsyncResolver")
+    public void testEmptyAsyncResolver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/emptyAsyncResolver/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("noResolver")
+    public void testNoResolver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/noResolver/");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/simple/");
