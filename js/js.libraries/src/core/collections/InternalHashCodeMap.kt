@@ -156,7 +156,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
 
             private fun computeNext(): Int {
                 if (chainOrEntry != null && isChain) {
-                    val chainSize: Int = chainOrEntry.size
+                    val chainSize: Int = chainOrEntry.unsafeCast<Array<MutableEntry<K, V>>>().size
                     if (++itemIndex < chainSize)
                         return 0
                 }
@@ -181,7 +181,12 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
 
             override fun next(): MutableEntry<K, V> {
                 if (!hasNext()) throw NoSuchElementException()
-                val lastEntry = if (isChain) chainOrEntry!![itemIndex] else chainOrEntry
+                val lastEntry = if (isChain) {
+                    chainOrEntry.unsafeCast<Array<MutableEntry<K, V>>>()[itemIndex]
+                }
+                else {
+                    chainOrEntry.unsafeCast<MutableEntry<K, V>>()
+                }
                 this.lastEntry = lastEntry
                 state = -1
                 return lastEntry
