@@ -60,9 +60,10 @@ sealed class KtLightFieldImpl<D : PsiField>(
     }
 
     override fun equals(other: Any?): Boolean =
-            other is KtLightFieldImpl<*> &&
-            this.name == other.name &&
-            this.containingClass == other.containingClass
+            this === other ||
+            (other is KtLightFieldImpl<*> &&
+             this.name == other.name &&
+             this.containingClass == other.containingClass)
 
     override fun hashCode() = 31 * containingClass.hashCode() + name.hashCode()
 
