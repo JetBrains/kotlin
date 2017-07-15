@@ -29,10 +29,6 @@ object SwitchDemo {
                 print(4)
                 print(5)
             }
-            else -> {
-                print(4)
-                print(5)
-            }
             5 -> print(5)
             6 -> {
                 print(6)
@@ -74,6 +70,10 @@ object SwitchDemo {
                 monthString = "December"
             }
             12 -> monthString = "December"
+            else -> {
+                print(4)
+                print(5)
+            }
         }
         println(monthString)
     }

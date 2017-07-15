@@ -38,6 +38,7 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
         val result = ArrayList<WhenEntry>()
         var pendingSelectors = ArrayList<WhenEntrySelector>()
         var defaultSelector: WhenEntrySelector? = null
+        var defaultEntry: WhenEntry? = null
         for ((i, case) in cases.withIndex()) {
             if (case.label == null) { // invalid switch - no case labels
                 result.add(WhenEntry(listOf(ValueWhenEntrySelector(Expression.Empty).assignNoPrototype()), convertCaseStatementsToBody(cases, i)).assignNoPrototype())
@@ -51,11 +52,12 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
                 if (pendingSelectors.isNotEmpty())
                     result.add(WhenEntry(pendingSelectors, statement).assignNoPrototype())
                 if (defaultSelector != null)
-                    result.add(WhenEntry(listOf(defaultSelector!!), statement).assignNoPrototype())
+                    defaultEntry = WhenEntry(listOf(defaultSelector!!), statement).assignNoPrototype()
                 pendingSelectors = ArrayList()
                 defaultSelector = null
             }
         }
+        defaultEntry?.let(result::add)
         return result
     }
 
