@@ -1613,10 +1613,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         // If it does not end with return we should return something
         // because if we don't there can be VerifyError (specific cases with Nothing-typed expressions)
         if (!endsWithReturn(expr)) {
-            markLineNumber(expr, true);
-
             if (isLambdaVoidBody(expr, typeForExpression)) {
                 markLineNumber((KtFunctionLiteral) expr.getParent(), true);
+            }
+            else {
+                markLineNumber(expr, true);
             }
 
             if (typeForExpression.getSort() == Type.VOID) {
