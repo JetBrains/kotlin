@@ -777,6 +777,8 @@ public class DefaultErrorMessages {
                 "Annotations on block-level expressions are being parsed differently depending on presence of a new line after them. " +
                 "Use new line if whole block-level expression must be annotated or wrap annotated expression in parentheses");
 
+        MAP.put(ANNOTATION_USED_AS_ANNOTATION_ARGUMENT, "An annotation can't be used as the annotations argument");
+
         MAP.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects");
         MAP.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate");
         MAP.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter");

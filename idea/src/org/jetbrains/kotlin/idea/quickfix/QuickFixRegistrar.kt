@@ -496,5 +496,7 @@ class QuickFixRegistrar : QuickFixContributor {
         RETURN_NOT_ALLOWED.registerFactory(ChangeToLabeledReturnFix)
 
         INAPPLICABLE_RECEIVER_TARGET.registerFactory(MoveReceiverAnnotationFix)
+
+        ANNOTATION_USED_AS_ANNOTATION_ARGUMENT.registerFactory(RemoveAtFromAnnotationArgument)
     }
 }
