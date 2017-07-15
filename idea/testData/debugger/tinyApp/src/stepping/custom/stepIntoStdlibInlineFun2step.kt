@@ -5,4 +5,4 @@ fun main(args: Array<String>) {
 }
 
 // ADDITIONAL_BREAKPOINT: functionInLibrary.kt:public inline fun simpleFun()
-// STEP_INTO: 4
+// STEP_INTO: 5
