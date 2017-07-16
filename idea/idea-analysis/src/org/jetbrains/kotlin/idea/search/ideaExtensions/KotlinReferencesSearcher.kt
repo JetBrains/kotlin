@@ -60,13 +60,13 @@ data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean = 
     }
 }
 
-class KotlinReferencesSearchParameters(elementToSearch: PsiElement,
-                                              scope: SearchScope = runReadAction { elementToSearch.project.allScope() },
-                                              ignoreAccessScope: Boolean = false,
-                                              optimizer: SearchRequestCollector? = null,
-                                              val kotlinOptions: KotlinReferencesSearchOptions = KotlinReferencesSearchOptions.Empty)
-        : ReferencesSearch.SearchParameters(elementToSearch, scope, ignoreAccessScope, optimizer) {
-}
+class KotlinReferencesSearchParameters(
+        elementToSearch: PsiElement,
+        scope: SearchScope = runReadAction { elementToSearch.project.allScope() },
+        ignoreAccessScope: Boolean = false,
+        optimizer: SearchRequestCollector? = null,
+        val kotlinOptions: KotlinReferencesSearchOptions = KotlinReferencesSearchOptions.Empty)
+    : ReferencesSearch.SearchParameters(elementToSearch, scope, ignoreAccessScope, optimizer)
 
 class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
     override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
@@ -105,9 +105,9 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 }
             }
 
-            val refFilter: (PsiReference) -> Boolean = when {
-                unwrappedElement is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
-                else -> ({true})
+            val refFilter: (PsiReference) -> Boolean = when (unwrappedElement) {
+                is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
+                else -> ({ true })
             }
 
             val resultProcessor = KotlinRequestResultProcessor(unwrappedElement, filter = refFilter, options = kotlinOptions)
@@ -166,7 +166,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
         private fun searchNamedArguments(parameter: KtParameter) {
             val parameterName = parameter.name ?: return
             val function = parameter.ownerFunction as? KtFunction ?: return
-            if (function.nameAsName?.isSpecial ?: true) return
+            if (function.nameAsName?.isSpecial != false) return
             val project = function.project
             var namedArgsScope = function.useScope.intersectWith(queryParameters.scopeDeterminedByUser)
 
