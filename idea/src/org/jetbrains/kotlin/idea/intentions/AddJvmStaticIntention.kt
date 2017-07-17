@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
 class AddJvmStaticIntention : SelfTargetingIntention<KtNamedFunction>(
     KtNamedFunction::class.java,
@@ -34,11 +35,11 @@ class AddJvmStaticIntention : SelfTargetingIntention<KtNamedFunction>(
 
     override fun isApplicableTo(element: KtNamedFunction, caretOffset: Int): Boolean {
         if (element.findAnnotation(annotationFqName) != null) return false
-        if (!UnusedSymbolInspection.isEntryPoint(element)) return false
-        element.parent.parent.run {
-            if (this !is KtObjectDeclaration || this.name == null) return false
+        if (element.isTopLevel) return false
+        val detector = MainFunctionDetector { function ->
+            function.resolveToDescriptor() as FunctionDescriptor
         }
-        return true
+        return detector.isMain(element, false)
     }
 
     override fun applyTo(element: KtNamedFunction, editor: Editor?) {

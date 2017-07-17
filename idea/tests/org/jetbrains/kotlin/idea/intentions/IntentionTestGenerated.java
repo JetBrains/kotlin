@@ -332,6 +332,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mainJvmName.kt")
+        public void testMainJvmName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/mainJvmName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notMainJvmName.kt")
+        public void testNotMainJvmName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/notMainJvmName.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notMainMethod.kt")
         public void testNotMainMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/notMainMethod.kt");

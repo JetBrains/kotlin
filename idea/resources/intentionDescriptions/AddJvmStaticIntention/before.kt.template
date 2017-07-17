@@ -1,2 +1,4 @@
-fun main(args: Array<String>) {
+object Test {
+    fun main(args: Array<String>) {
+    }
 }

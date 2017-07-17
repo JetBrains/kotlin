@@ -46,7 +46,8 @@ class MainFunctionDetector {
         return findMainFunction(declarations) != null
     }
 
-    fun isMain(function: KtNamedFunction): Boolean {
+    @JvmOverloads
+    fun isMain(function: KtNamedFunction, checkJvmStaticAnnotation: Boolean = true): Boolean {
         if (function.isLocal) {
             return false
         }
@@ -61,11 +62,11 @@ class MainFunctionDetector {
         }
 
         /* Psi only check for kotlin.jvm.jvmStatic annotation */
-        if (!function.isTopLevel && !hasAnnotationWithExactNumberOfArguments(function, 0)) {
+        if (checkJvmStaticAnnotation && !function.isTopLevel && !hasAnnotationWithExactNumberOfArguments(function, 0)) {
             return false
         }
 
-        return isMain(getFunctionDescriptor(function))
+        return isMain(getFunctionDescriptor(function), checkJvmStaticAnnotation)
     }
 
     fun getMainFunction(module: ModuleDescriptor): FunctionDescriptor? = getMainFunction(module, module.getPackage(FqName.ROOT))
@@ -90,7 +91,7 @@ class MainFunctionDetector {
 
     companion object {
 
-        fun isMain(descriptor: DeclarationDescriptor): Boolean {
+        fun isMain(descriptor: DeclarationDescriptor, checkJvmStaticAnnotation: Boolean = true): Boolean {
             if (descriptor !is FunctionDescriptor) return false
 
             if (getJVMFunctionName(descriptor) != "main") {
@@ -123,7 +124,7 @@ class MainFunctionDetector {
             val containingDeclaration = descriptor.containingDeclaration
             return containingDeclaration is ClassDescriptor
                    && containingDeclaration.kind.isSingleton
-                   && descriptor.hasJvmStaticAnnotation()
+                   && (descriptor.hasJvmStaticAnnotation() || !checkJvmStaticAnnotation)
         }
 
         private fun getJVMFunctionName(functionDescriptor: FunctionDescriptor): String {
