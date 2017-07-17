@@ -152,14 +152,6 @@ public class AsmUtil {
         return isIntPrimitive(type) || type == Type.LONG_TYPE;
     }
 
-    public static boolean isNumberPrimitiveOrBoolean(Type type) {
-        return isNumberPrimitive(type) || type.getSort() == Type.BOOLEAN;
-    }
-
-    public static boolean isNumberPrimitive(Type type) {
-        return isIntPrimitive(type) || type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE || type == Type.LONG_TYPE;
-    }
-
     public static boolean isPrimitive(Type type) {
         return type.getSort() != Type.OBJECT && type.getSort() != Type.ARRAY;
     }
