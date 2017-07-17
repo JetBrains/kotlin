@@ -22,10 +22,7 @@ import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
-import org.jetbrains.kotlin.js.backend.ast.metadata.imported
-import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
-import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.parser.OffsetToSourceMapping
@@ -51,6 +48,7 @@ private val JS_IDENTIFIER_PART = "$JS_IDENTIFIER_START\\p{Pc}\\p{Mc}\\p{Mn}\\d"
 private val JS_IDENTIFIER="[$JS_IDENTIFIER_START][$JS_IDENTIFIER_PART]*"
 private val DEFINE_MODULE_PATTERN = ("($JS_IDENTIFIER)\\.defineModule\\(\\s*(['\"])([^'\"]+)\\2\\s*,\\s*(\\w+)\\s*\\)").toRegex().toPattern()
 private val DEFINE_MODULE_FIND_PATTERN = ".defineModule("
+private val WRAP_FUNCTION_PATTERN = Regex("var\\s+($JS_IDENTIFIER)\\s*=\\s*($JS_IDENTIFIER)\\.wrapFunction\\s*;").toPattern()
 
 class FunctionReader(
         private val reporter: JsConfig.Reporter,
@@ -73,10 +71,13 @@ class FunctionReader(
             val fileContent: String,
             val moduleVariable: String,
             val kotlinVariable: String,
+            val wrapFunctionVariable: String?,
             offsetToSourceMappingProvider: () -> OffsetToSourceMapping,
             val sourceMap: SourceMap?
     ) {
         val offsetToSourceMapping by lazy(offsetToSourceMappingProvider)
+
+        val wrapFunctionRegex = wrapFunctionVariable?.let { Regex("\\s*$it\\s*\\(\\s*").toPattern() }
     }
 
     private val moduleNameToInfo by lazy {
@@ -98,6 +99,10 @@ class FunctionReader(
                 val moduleVariable = preciseMatcher.group(4)
                 val kotlinVariable = preciseMatcher.group(1)
 
+                val wrapFunctionVariable = WRAP_FUNCTION_PATTERN.matcher(content).let { matcher ->
+                    if (matcher.find() && matcher.group(2) == kotlinVariable) matcher.group(1) else null
+                }
+
                 val sourceMap = sourceMapContent?.let {
                     val sourceMapResult = SourceMapParser.parse(StringReader(it))
                     when (sourceMapResult) {
@@ -114,6 +119,7 @@ class FunctionReader(
                         fileContent = content,
                         moduleVariable = moduleVariable,
                         kotlinVariable = kotlinVariable,
+                        wrapFunctionVariable = wrapFunctionVariable,
                         offsetToSourceMappingProvider = { OffsetToSourceMapping(content) },
                         sourceMap = sourceMap
                 )
@@ -195,10 +201,11 @@ class FunctionReader(
             offset++
         }
 
-        val wrapFunctionMatcher = wrapFunctionRegex.matcher(ShallowSubSequence(source, offset, source.length))
-        val isWrapped = wrapFunctionMatcher.lookingAt()
+        val sourcePart = ShallowSubSequence(source, offset, source.length)
+        val wrapFunctionMatcher = info.wrapFunctionRegex?.matcher(sourcePart)
+        val isWrapped = wrapFunctionMatcher?.lookingAt() == true
         if (isWrapped) {
-            offset += wrapFunctionMatcher.end()
+            offset += wrapFunctionMatcher!!.end()
         }
 
         val position = info.offsetToSourceMapping[offset]
@@ -220,11 +227,18 @@ class FunctionReader(
             wrapperStatements?.forEach { remapper.remap(it) }
         }
 
+        val allDefinedNames = collectDefinedNamesInAllScopes(function)
         val replacements = hashMapOf(info.moduleVariable to moduleReference,
                                      info.kotlinVariable to Namer.kotlinObject())
-        replaceExternalNames(function, replacements)
-        wrapperStatements?.forEach { replaceExternalNames(it, replacements) }
+        replaceExternalNames(function, replacements, allDefinedNames)
+        wrapperStatements?.forEach { replaceExternalNames(it, replacements, allDefinedNames) }
         function.markInlineArguments(descriptor)
+
+        info.wrapFunctionVariable.let { wrapFunction ->
+            for (externalName in (collectReferencedNames(function) - allDefinedNames).filter { it.ident == wrapFunction }) {
+                externalName.specialFunction = SpecialFunction.WRAP_FUNCTION
+            }
+        }
 
         val namesWithoutSizeEffects = wrapperStatements.orEmpty().asSequence()
                 .flatMap { collectDefinedNames(it).asSequence() }
@@ -283,12 +297,10 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
     visitor.accept(this)
 }
 
-private fun replaceExternalNames(node: JsNode, replacements: Map<String, JsExpression>) {
-    val skipNames = collectDefinedNamesInAllScopes(node)
-
+private fun replaceExternalNames(node: JsNode, replacements: Map<String, JsExpression>, definedNames: Set<JsName>) {
     val visitor = object: JsVisitorWithContextImpl() {
         override fun endVisit(x: JsNameRef, ctx: JsContext<JsNode>) {
-            if (x.qualifier != null || x.name in skipNames) return
+            if (x.qualifier != null || x.name in definedNames) return
 
             replacements[x.ident]?.let {
                 ctx.replaceMe(it)
@@ -298,8 +310,6 @@ private fun replaceExternalNames(node: JsNode, replacements: Map<String, JsExpre
 
     visitor.accept(node)
 }
-
-private val wrapFunctionRegex = Regex("\\s*[a-zA-Z_$][a-zA-Z0-9_$]*\\s*\\.\\s*wrapFunction\\s*\\(\\s*").toPattern()
 
 private class ShallowSubSequence(private val underlying: CharSequence, private val start: Int, end: Int) : CharSequence {
     override val length: Int = end - start

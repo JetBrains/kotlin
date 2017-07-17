@@ -114,7 +114,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
 private fun TranslationContext.addFunctionDeclaration(name: JsName, function: JsFunction, source: Any?) {
     addFunctionButNotExport(name, if (isPublicInlineFunction) {
-        InlineMetadata.wrapFunction(FunctionWithWrapper(function, null), source)
+        InlineMetadata.wrapFunction(this, FunctionWithWrapper(function, null), source)
     }
     else {
         function
@@ -127,7 +127,7 @@ fun JsFunction.withCapturedParameters(
         invokingContext: TranslationContext,
         source: KtDeclaration
 ): JsExpression {
-    context.addFunctionDeclaration(functionName, this, source)
+    invokingContext.addFunctionDeclaration(functionName, this, source)
     val ref = JsAstUtils.pureFqn(functionName, null)
     val invocation = JsInvocation(ref).apply { sideEffects = SideEffectKind.PURE }
 

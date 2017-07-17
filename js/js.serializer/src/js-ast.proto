@@ -427,6 +427,12 @@ message Name {
     optional int32 identifier = 2;
     optional int32 local_name_id = 3;
     optional bool imported = 4 [default = false];
+    optional SpecialFunction special_function = 5;
+}
+
+enum SpecialFunction {
+    DEFINE_INLINE_FUNCTION = 1;
+    WRAP_FUNCTION = 2;
 }
 
 

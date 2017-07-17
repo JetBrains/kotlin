@@ -31,6 +31,8 @@ var JsName.descriptor: DeclarationDescriptor? by MetadataProperty(default = null
 
 var JsName.localAlias: JsName? by MetadataProperty(default = null)
 
+var JsName.specialFunction: SpecialFunction? by MetadataProperty(default = null)
+
 var JsExpression.localAlias: JsName? by MetadataProperty(default = null)
 
 // TODO: move this to module 'js.inliner' and change dependency on 'frontend' to dependency on 'descriptors'
@@ -133,4 +135,9 @@ enum class SideEffectKind {
     AFFECTS_STATE,
     DEPENDS_ON_STATE,
     PURE
+}
+
+enum class SpecialFunction(val suggestedName: String) {
+    DEFINE_INLINE_FUNCTION("defineInlineFunction"),
+    WRAP_FUNCTION("wrapFunction")
 }

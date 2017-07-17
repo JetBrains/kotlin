@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.NameSuggestionKt;
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.SignatureUtilsKt;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -140,6 +142,8 @@ public final class StaticContext {
     private JsName nameForImportsForInline;
 
     private final Map<String, JsExpression> modulesImportedForInline = new HashMap<>();
+
+    private final Map<SpecialFunction, JsName> specialFunctions = new EnumMap<>(SpecialFunction.class);
 
     public StaticContext(
             @NotNull BindingTrace bindingTrace,
@@ -858,5 +862,15 @@ public final class StaticContext {
 
             return moduleRef;
         }).deepCopy();
+    }
+
+    @NotNull
+    public JsName getNameForSpecialFunction(@NotNull SpecialFunction specialFunction) {
+        return specialFunctions.computeIfAbsent(specialFunction, f -> {
+            JsExpression expression = Namer.createSpecialFunction(specialFunction);
+            JsName name = importDeclaration(f.getSuggestedName(), TranslationUtils.getTagForSpecialFunction(f), expression);
+            MetadataProperties.setSpecialFunction(name, f);
+            return name;
+        });
     }
 }

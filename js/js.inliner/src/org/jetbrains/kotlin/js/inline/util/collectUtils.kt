@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
         collectReferencedNames(scope).filter { it.staticRef is JsFunction }
 
-private fun collectReferencedNames(scope: JsNode): Set<JsName> {
+fun collectReferencedNames(scope: JsNode): Set<JsName> {
     val references = mutableSetOf<JsName>()
 
     object : RecursiveJsVisitor() {

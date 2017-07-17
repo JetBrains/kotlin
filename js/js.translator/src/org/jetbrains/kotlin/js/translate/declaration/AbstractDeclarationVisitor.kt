@@ -113,7 +113,7 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
             function.body.statements += FunctionBodyTranslator.setDefaultValueForArguments(descriptor, innerContext)
         }
         innerContext.translateFunction(expression, function)
-        return innerContext.wrapWithInlineMetadata(function, descriptor)
+        return innerContext.wrapWithInlineMetadata(context, function, descriptor)
     }
 
     // used from kotlinx.serialization

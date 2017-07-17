@@ -101,11 +101,14 @@ fun TranslationContext.translateFunction(declaration: KtDeclarationWithBody, fun
     function.functionDescriptor = descriptor
 }
 
-fun TranslationContext.wrapWithInlineMetadata(function: JsFunction, descriptor: FunctionDescriptor): JsExpression {
+fun TranslationContext.wrapWithInlineMetadata(
+        outerContext: TranslationContext,
+        function: JsFunction, descriptor: FunctionDescriptor
+): JsExpression {
     val sourceInfo = descriptor.source.getPsi()
     return if (descriptor.isInline && descriptor.isEffectivelyPublicApi) {
         val metadata = InlineMetadata.compose(function, descriptor, this)
-        val functionWithMetadata = metadata.functionWithMetadata(sourceInfo)
+        val functionWithMetadata = metadata.functionWithMetadata(outerContext, sourceInfo)
 
         config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]?.apply {
             val psiFile = (descriptor.source.containingFile as? PsiSourceFile)?.psiFile ?: return@apply
@@ -136,6 +139,6 @@ fun TranslationContext.wrapWithInlineMetadata(function: JsFunction, descriptor: 
         else {
             null
         }
-        if (block != null) InlineMetadata.wrapFunction(FunctionWithWrapper(function, block), sourceInfo) else function
+        if (block != null) InlineMetadata.wrapFunction(outerContext, FunctionWithWrapper(function, block), sourceInfo) else function
     }
 }

@@ -138,6 +138,62 @@ public final class JsAstProtoBuf {
     // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.js.ast.InlineStrategy)
   }
 
+  /**
+   * Protobuf enum {@code org.jetbrains.kotlin.serialization.js.ast.SpecialFunction}
+   */
+  public enum SpecialFunction
+      implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
+    /**
+     * <code>DEFINE_INLINE_FUNCTION = 1;</code>
+     */
+    DEFINE_INLINE_FUNCTION(0, 1),
+    /**
+     * <code>WRAP_FUNCTION = 2;</code>
+     */
+    WRAP_FUNCTION(1, 2),
+    ;
+
+    /**
+     * <code>DEFINE_INLINE_FUNCTION = 1;</code>
+     */
+    public static final int DEFINE_INLINE_FUNCTION_VALUE = 1;
+    /**
+     * <code>WRAP_FUNCTION = 2;</code>
+     */
+    public static final int WRAP_FUNCTION_VALUE = 2;
+
+
+    public final int getNumber() { return value; }
+
+    public static SpecialFunction valueOf(int value) {
+      switch (value) {
+        case 1: return DEFINE_INLINE_FUNCTION;
+        case 2: return WRAP_FUNCTION;
+        default: return null;
+      }
+    }
+
+    public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<SpecialFunction>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<SpecialFunction>
+        internalValueMap =
+          new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<SpecialFunction>() {
+            public SpecialFunction findValueByNumber(int number) {
+              return SpecialFunction.valueOf(number);
+            }
+          };
+
+    private final int value;
+
+    private SpecialFunction(int index, int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.js.ast.SpecialFunction)
+  }
+
   public interface LocationOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.Location)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
@@ -34765,13 +34821,22 @@ public final class JsAstProtoBuf {
     int getLocalNameId();
 
     /**
-     * <code>optional bool imported = 4;</code>
+     * <code>optional bool imported = 4 [default = false];</code>
      */
     boolean hasImported();
     /**
-     * <code>optional bool imported = 4;</code>
+     * <code>optional bool imported = 4 [default = false];</code>
      */
     boolean getImported();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.SpecialFunction special_function = 5;</code>
+     */
+    boolean hasSpecialFunction();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.SpecialFunction special_function = 5;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction getSpecialFunction();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Name}
@@ -34841,6 +34906,18 @@ public final class JsAstProtoBuf {
             case 32: {
               bitField0_ |= 0x00000008;
               imported_ = input.readBool();
+              break;
+            }
+            case 40: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction value = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction.valueOf(rawValue);
+              if (value == null) {
+                unknownFieldsCodedOutput.writeRawVarint32(tag);
+                unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+              } else {
+                bitField0_ |= 0x00000010;
+                specialFunction_ = value;
+              }
               break;
             }
           }
@@ -34925,16 +35002,31 @@ public final class JsAstProtoBuf {
     public static final int IMPORTED_FIELD_NUMBER = 4;
     private boolean imported_;
     /**
-     * <code>optional bool imported = 4;</code>
+     * <code>optional bool imported = 4 [default = false];</code>
      */
     public boolean hasImported() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional bool imported = 4;</code>
+     * <code>optional bool imported = 4 [default = false];</code>
      */
     public boolean getImported() {
       return imported_;
+    }
+
+    public static final int SPECIAL_FUNCTION_FIELD_NUMBER = 5;
+    private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction specialFunction_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.SpecialFunction special_function = 5;</code>
+     */
+    public boolean hasSpecialFunction() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.SpecialFunction special_function = 5;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction getSpecialFunction() {
+      return specialFunction_;
     }
 
     private void initFields() {
@@ -34942,6 +35034,7 @@ public final class JsAstProtoBuf {
       identifier_ = 0;
       localNameId_ = 0;
       imported_ = false;
+      specialFunction_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction.DEFINE_INLINE_FUNCTION;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -34972,6 +35065,9 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeBool(4, imported_);
       }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeEnum(5, specialFunction_.getNumber());
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -34996,6 +35092,10 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeBoolSize(4, imported_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(5, specialFunction_.getNumber());
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -35099,6 +35199,8 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000004);
         imported_ = false;
         bitField0_ = (bitField0_ & ~0x00000008);
+        specialFunction_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction.DEFINE_INLINE_FUNCTION;
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -35138,6 +35240,10 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000008;
         }
         result.imported_ = imported_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.specialFunction_ = specialFunction_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -35155,6 +35261,9 @@ public final class JsAstProtoBuf {
         }
         if (other.hasImported()) {
           setImported(other.getImported());
+        }
+        if (other.hasSpecialFunction()) {
+          setSpecialFunction(other.getSpecialFunction());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -35286,19 +35395,19 @@ public final class JsAstProtoBuf {
 
       private boolean imported_ ;
       /**
-       * <code>optional bool imported = 4;</code>
+       * <code>optional bool imported = 4 [default = false];</code>
        */
       public boolean hasImported() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>optional bool imported = 4;</code>
+       * <code>optional bool imported = 4 [default = false];</code>
        */
       public boolean getImported() {
         return imported_;
       }
       /**
-       * <code>optional bool imported = 4;</code>
+       * <code>optional bool imported = 4 [default = false];</code>
        */
       public Builder setImported(boolean value) {
         bitField0_ |= 0x00000008;
@@ -35307,11 +35416,46 @@ public final class JsAstProtoBuf {
         return this;
       }
       /**
-       * <code>optional bool imported = 4;</code>
+       * <code>optional bool imported = 4 [default = false];</code>
        */
       public Builder clearImported() {
         bitField0_ = (bitField0_ & ~0x00000008);
         imported_ = false;
+        
+        return this;
+      }
+
+      private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction specialFunction_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction.DEFINE_INLINE_FUNCTION;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.SpecialFunction special_function = 5;</code>
+       */
+      public boolean hasSpecialFunction() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.SpecialFunction special_function = 5;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction getSpecialFunction() {
+        return specialFunction_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.SpecialFunction special_function = 5;</code>
+       */
+      public Builder setSpecialFunction(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000010;
+        specialFunction_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.SpecialFunction special_function = 5;</code>
+       */
+      public Builder clearSpecialFunction() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        specialFunction_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction.DEFINE_INLINE_FUNCTION;
         
         return this;
       }

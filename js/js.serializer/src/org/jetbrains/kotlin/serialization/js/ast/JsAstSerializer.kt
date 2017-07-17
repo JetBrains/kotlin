@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.js.ast
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.BinaryOperation.Type.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.UnaryOperation.Type.*
@@ -552,6 +553,11 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         KotlinInlineStrategy.NOT_INLINE -> InlineStrategy.NOT_INLINE
     }
 
+    private fun map(specialFunction: SpecialFunction) = when (specialFunction) {
+        SpecialFunction.DEFINE_INLINE_FUNCTION -> JsAstProtoBuf.SpecialFunction.DEFINE_INLINE_FUNCTION
+        SpecialFunction.WRAP_FUNCTION -> JsAstProtoBuf.SpecialFunction.WRAP_FUNCTION
+    }
+
     private fun serialize(name: JsName): Int = nameMap.getOrPut(name) {
         val builder = Name.newBuilder()
         builder.identifier = serialize(name.ident)
@@ -562,6 +568,10 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
 
         if (name.imported && name !in importedNames) {
             builder.imported = true
+        }
+
+        name.specialFunction?.let {
+            builder.specialFunction = map(it)
         }
 
         val result = nameTableBuilder.entryCount

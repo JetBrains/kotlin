@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization.js.ast
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.ExpressionCase
@@ -443,6 +444,9 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             if (nameProto.hasImported()) {
                 name.imported = nameProto.imported
             }
+            if (nameProto.hasSpecialFunction()) {
+                name.specialFunction = map(nameProto.specialFunction)
+            }
             nameCache[id] = name
             name
         }
@@ -511,6 +515,11 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         InlineStrategy.AS_FUNCTION -> KotlinInlineStrategy.AS_FUNCTION
         InlineStrategy.IN_PLACE -> KotlinInlineStrategy.IN_PLACE
         InlineStrategy.NOT_INLINE -> KotlinInlineStrategy.NOT_INLINE
+    }
+
+    private fun map(specialFunction: JsAstProtoBuf.SpecialFunction) = when(specialFunction) {
+        JsAstProtoBuf.SpecialFunction.DEFINE_INLINE_FUNCTION -> SpecialFunction.DEFINE_INLINE_FUNCTION
+        JsAstProtoBuf.SpecialFunction.WRAP_FUNCTION -> SpecialFunction.WRAP_FUNCTION
     }
 
     private fun <T : JsNode> withLocation(fileId: Int?, location: Location?, action: () -> T): T {

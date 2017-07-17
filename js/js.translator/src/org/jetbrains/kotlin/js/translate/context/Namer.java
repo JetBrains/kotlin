@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.backend.ast.metadata.TypeCheck;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
@@ -359,6 +360,18 @@ public final class Namer {
     @NotNull
     public static JsNameRef wrapFunction() {
         return pureFqn(WRAP_FUNCTION, kotlinObject());
+    }
+
+    @NotNull
+    public static JsExpression createSpecialFunction(@NotNull SpecialFunction specialFunction) {
+        switch (specialFunction) {
+            case DEFINE_INLINE_FUNCTION:
+                return createInlineFunction();
+            case WRAP_FUNCTION:
+                return wrapFunction();
+            default:
+                throw new IllegalArgumentException("Unknown function: " + specialFunction);
+        }
     }
 
     @NotNull

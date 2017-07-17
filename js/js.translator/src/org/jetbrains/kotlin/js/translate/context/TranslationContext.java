@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.translate.declaration.ClassModelGenerator;
@@ -818,5 +819,23 @@ public class TranslationContext {
     @Nullable
     public TranslationContext getParent() {
         return parent;
+    }
+
+    @NotNull
+    public JsName getNameForSpecialFunction(@NotNull SpecialFunction function) {
+        if (inlineFunctionContext == null || !isPublicInlineFunction()) {
+            return staticContext.getNameForSpecialFunction(function);
+        }
+        else {
+            String tag = TranslationUtils.getTagForSpecialFunction(function);
+            return inlineFunctionContext.getImports().computeIfAbsent(tag, t -> {
+                JsExpression imported = Namer.createSpecialFunction(function);
+                JsName result = JsScope.declareTemporaryName(function.getSuggestedName());
+                MetadataProperties.setImported(result, true);
+                MetadataProperties.setSpecialFunction(result, function);
+                inlineFunctionContext.getImportBlock().getStatements().add(JsAstUtils.newVar(result, imported));
+                return result;
+            });
+        }
     }
 }

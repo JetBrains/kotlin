@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -58,14 +59,15 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
-            @NotNull FunctionDescriptor descriptor,
-            @NotNull TranslationContext context) {
+    public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(
+            @NotNull JsFunction function, @NotNull FunctionDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
         JsExpression functionExpression = function;
         if (InlineUtil.isInline(descriptor)) {
             InlineMetadata metadata = InlineMetadata.compose(function, descriptor, context);
             PsiElement sourceInfo = KotlinSourceElementKt.getPsi(descriptor.getSource());
-            functionExpression = metadata.functionWithMetadata(sourceInfo);
+            functionExpression = metadata.functionWithMetadata(context, sourceInfo);
         }
 
         if (DescriptorUtils.isExtension(descriptor) ||
@@ -413,5 +415,10 @@ public final class TranslationUtils {
             return JsAstUtils.charToBoxedChar(e);
         }
         return e;
+    }
+
+    @NotNull
+    public static String getTagForSpecialFunction(@NotNull SpecialFunction specialFunction) {
+        return "special:" + specialFunction.name();
     }
 }

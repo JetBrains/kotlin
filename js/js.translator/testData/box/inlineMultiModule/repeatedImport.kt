@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 994
 // MODULE: lib
 // FILE: lib.kt
 fun foo(x: String) = "foo($x)"
