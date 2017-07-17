@@ -3,7 +3,7 @@ sealed class MyClass(val s: String = "") {
 
     }
 
-    object FOO : MyEnum("FOO")
-    object BAR : MyEnum("BAR")
-    object DEFAULT : MyEnum()
+    object FOO : MyClass("FOO")
+    object BAR : MyClass("BAR")
+    object DEFAULT : MyClass()
 }
