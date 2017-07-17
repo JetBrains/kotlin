@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,6 +67,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
     private final Function1<JsNode, Boolean> canBeExtractedByInliner =
             node -> node instanceof JsInvocation && hasToBeInlined((JsInvocation) node);
     private int inlineFunctionDepth;
+
+    private final Map<JsWrapperKey, Map<JsName, JsExpression>> replacementsInducedByWrappers = new HashMap<>();
 
     public static void process(
             @NotNull JsConfig.Reporter reporter,
@@ -342,7 +345,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
         JsFunction function = functionWithWrapper.getFunction().deepCopy();
         if (functionWithWrapper.getWrapperBody() != null) {
-            applyWrapper(functionWithWrapper.getWrapperBody(), function, inliningContext);
+            applyWrapper(functionWithWrapper.getWrapperBody(), function, functionWithWrapper.getFunction(), inliningContext);
         }
         InlineableResult inlineableResult = FunctionInlineMutator.getInlineableCallReplacement(call, function, inliningContext);
 
@@ -369,72 +372,81 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     private void applyWrapper(
-            @NotNull JsBlock wrapper, @NotNull JsFunction function,
+            @NotNull JsBlock wrapper, @NotNull JsFunction function, @NotNull JsFunction originalFunction,
             @NotNull InliningContext inliningContext
     ) {
-        Map<JsName, JsExpression> replacements = new HashMap<>();
+        // Apparently we should avoid this trick when we implement fair support for crossinline
+        Function<JsWrapperKey, Map<JsName, JsExpression>> replacementGen = k -> {
+            JsContext ctx = k.context;
 
-        List<JsStatement> copiedStatements = new ArrayList<>();
-        for (JsStatement statement : wrapper.getStatements()) {
-            if (statement instanceof JsReturn) continue;
+            Map<JsName, JsExpression> newReplacements = new HashMap<>();
 
-            statement = statement.deepCopy();
-            if (inlineFunctionDepth == 0) {
-                replaceExpressionsWithLocalAliases(statement);
+            List<JsStatement> copiedStatements = new ArrayList<>();
+            for (JsStatement statement : wrapper.getStatements()) {
+                if (statement instanceof JsReturn) continue;
+
+                statement = statement.deepCopy();
+                if (inlineFunctionDepth == 0) {
+                    replaceExpressionsWithLocalAliases(statement);
+                }
+
+                if (statement instanceof JsVars) {
+                    JsVars jsVars = (JsVars) statement;
+                    String tag = getImportTag(jsVars);
+                    if (tag != null) {
+                        JsName name = jsVars.getVars().get(0).getName();
+                        JsName existingName = inlineFunctionDepth == 0 ? MetadataProperties.getLocalAlias(name) : null;
+                        if (existingName == null) {
+                            existingName = existingImports.computeIfAbsent(tag, t -> {
+                                copiedStatements.add(jsVars);
+                                JsName alias = JsScope.declareTemporaryName(name.getIdent());
+                                alias.copyMetadataFrom(name);
+                                newReplacements.put(name, pureFqn(alias, null));
+                                return alias;
+                            });
+                        }
+
+                        if (name != existingName) {
+                            JsExpression replacement = pureFqn(existingName, null);
+                            newReplacements.put(name, replacement);
+                        }
+
+                        continue;
+                    }
+                }
+
+                copiedStatements.add(statement);
             }
 
-            if (statement instanceof JsVars) {
-                JsVars jsVars = (JsVars) statement;
-                String tag = getImportTag(jsVars);
-                if (tag != null) {
-                    JsName name = jsVars.getVars().get(0).getName();
-                    JsName existingName = inlineFunctionDepth == 0 ? MetadataProperties.getLocalAlias(name) : null;
-                    if (existingName == null) {
-                        existingName = existingImports.computeIfAbsent(tag, t -> {
-                            copiedStatements.add(jsVars);
-                            JsName alias = JsScope.declareTemporaryName(name.getIdent());
-                            alias.copyMetadataFrom(name);
-                            replacements.put(name, pureFqn(alias, null));
-                            return alias;
-                        });
-                    }
+            Set<JsName> definedNames = copiedStatements.stream()
+                    .flatMap(node -> CollectUtilsKt.collectDefinedNamesInAllScopes(node).stream())
+                    .filter(name -> !newReplacements.containsKey(name))
+                    .collect(Collectors.toSet());
+            for (JsName name : definedNames) {
+                JsName alias = JsScope.declareTemporaryName(name.getIdent());
+                alias.copyMetadataFrom(name);
+                JsExpression replacement = pureFqn(alias, null);
+                newReplacements.put(name, replacement);
+            }
 
-                    if (name != existingName) {
-                        JsExpression replacement = pureFqn(existingName, null);
-                        replacements.put(name, replacement);
-                    }
+            for (JsStatement statement : copiedStatements) {
+                statement = RewriteUtilsKt.replaceNames(statement, newReplacements);
+                ctx.addPrevious(accept(statement));
+            }
 
-                    continue;
+            for (Map.Entry<JsName, JsFunction> entry : CollectUtilsKt.collectNamedFunctions(new JsBlock(copiedStatements)).entrySet()) {
+                if (MetadataProperties.getStaticRef(entry.getKey()) instanceof JsFunction) {
+                    MetadataProperties.setStaticRef(entry.getKey(), entry.getValue());
                 }
             }
 
-            copiedStatements.add(statement);
-        }
+            return newReplacements;
+        };
 
-        Set<JsName> definedNames = copiedStatements.stream()
-                .flatMap(node -> CollectUtilsKt.collectDefinedNamesInAllScopes(node).stream())
-                .filter(name -> !replacements.containsKey(name))
-                .collect(Collectors.toSet());
-        for (JsName name : definedNames) {
-            JsName alias = JsScope.declareTemporaryName(name.getIdent());
-            alias.copyMetadataFrom(name);
-            JsExpression replacement = pureFqn(alias, null);
-            replacements.put(name, replacement);
-        }
-
-        for (JsStatement statement : copiedStatements) {
-            statement = RewriteUtilsKt.replaceNames(statement, replacements);
-            inliningContext.getStatementContextBeforeCurrentFunction().addPrevious(accept(statement));
-        }
+        JsWrapperKey key = new JsWrapperKey(inliningContext.getStatementContextBeforeCurrentFunction(), originalFunction);
+        Map<JsName, JsExpression> replacements = replacementsInducedByWrappers.computeIfAbsent(key, replacementGen);
 
         RewriteUtilsKt.replaceNames(function, replacements);
-
-        copiedStatements.add(new JsExpressionStatement(function));
-        for (Map.Entry<JsName, JsFunction> entry : CollectUtilsKt.collectNamedFunctions(new JsBlock(copiedStatements)).entrySet()) {
-            if (MetadataProperties.getStaticRef(entry.getKey()) instanceof JsFunction) {
-                MetadataProperties.setStaticRef(entry.getKey(), entry.getValue());
-            }
-        }
     }
 
     private static void replaceExpressionsWithLocalAliases(@NotNull JsStatement statement) {
@@ -573,6 +585,29 @@ public class JsInliner extends JsVisitorWithContextImpl {
         private JsCallInfo(@NotNull JsInvocation call, @NotNull JsFunction function) {
             this.call = call;
             containingFunction = function;
+        }
+    }
+
+    static class JsWrapperKey {
+        final JsContext context;
+        private final JsFunction function;
+
+        public JsWrapperKey(@NotNull JsContext context, @NotNull JsFunction function) {
+            this.context = context;
+            this.function = function;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            JsWrapperKey key = (JsWrapperKey) o;
+            return Objects.equals(context, key.context) && Objects.equals(function, key.function);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(context, function);
         }
     }
 }
