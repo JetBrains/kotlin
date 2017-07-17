@@ -131,7 +131,8 @@ open class KonanCompileTask: KonanTargetableTask() {
         internal set
     @Optional @Input var apiVersion      : String? = null
         internal set
-    @Optional @Input var manifest        : String? = null
+
+    @Optional @InputFile var manifest    : File? = null
         internal set
 
     @Input var dumpParameters: Boolean = false
@@ -152,7 +153,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         addArgIfNotNull("-target", target)
         addArgIfNotNull("-language-version", languageVersion)
         addArgIfNotNull("-api-version", apiVersion)
-        addArgIfNotNull("-manifest", manifest)
+        addArgIfNotNull("-manifest", manifest?.canonicalPath)
 
         addKey("-g", enableDebug)
         addKey("-nostdlib", noStdLib)
@@ -287,8 +288,8 @@ open class KonanCompileConfig(
         linkerOpts.addAll(args)
     }
 
-    fun manifest(arg: String) = with(compilationTask) {
-        manifest = arg
+    fun manifest(arg: Any) = with(compilationTask) {
+        manifest = project.file(arg)
     }
 
     fun target(tgt: String) = with(compilationTask) {
