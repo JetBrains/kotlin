@@ -322,7 +322,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
 
             val parameters = expression.getParameterInfos()
 
-            return SecondaryConstructorInfo(parameters, klass)
+            return ConstructorInfo(parameters, klass)
         }
     }
 

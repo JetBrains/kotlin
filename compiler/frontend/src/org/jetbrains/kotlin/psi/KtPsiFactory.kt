@@ -432,12 +432,12 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return file.importDirectives
     }
 
-    fun createPrimaryConstructor(): KtPrimaryConstructor {
-        return createClass("class A()").primaryConstructor!!
+    fun createPrimaryConstructor(text: String = ""): KtPrimaryConstructor {
+        return createClass(if (text.isNotEmpty())"class A $text" else "class A()" ).primaryConstructor!!
     }
 
-    fun createPrimaryConstructor(modifiers: String?): KtPrimaryConstructor {
-        return modifiers?.let { createClass("class A $modifiers constructor()").primaryConstructor } ?: createPrimaryConstructor()
+    fun createPrimaryConstructorWithModifiers(modifiers: String?): KtPrimaryConstructor {
+        return modifiers?.let { createPrimaryConstructor("$it constructor()") } ?: createPrimaryConstructor()
     }
 
     fun createConstructorKeyword(): PsiElement =

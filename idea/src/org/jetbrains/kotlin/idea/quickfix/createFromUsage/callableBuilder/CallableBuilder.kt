@@ -322,7 +322,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     returnTypeCandidate?.theType?.isUnit() ?: false
                 CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR ->
                     callableInfo.returnTypeInfo == TypeInfo.Empty || returnTypeCandidate?.theType?.isAnyOrNullableAny() ?: false
-                CallableKind.SECONDARY_CONSTRUCTOR -> true
+                CallableKind.CONSTRUCTOR -> true
                 CallableKind.PROPERTY -> containingElement is KtBlockExpression
             }
 
@@ -432,18 +432,18 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     if (isFunctionType) "($renderedType)." else "$renderedType."
                 } else ""
 
-                val classKind = (callableInfo as? PrimaryConstructorInfo)?.classInfo?.kind
+                val classKind = (callableInfo as? ClassWithPrimaryConstructorInfo)?.classInfo?.kind
 
                 fun renderParamList(): String {
                     val prefix = if (classKind == ClassKind.ANNOTATION_CLASS) "val " else ""
                     val list = callableInfo.parameterInfos.indices.joinToString(", ") { i -> "${prefix}p$i: Any" }
                     return if (callableInfo.parameterInfos.isNotEmpty()
                                || callableInfo.kind == CallableKind.FUNCTION
-                               || callableInfo.kind == CallableKind.SECONDARY_CONSTRUCTOR) "($list)" else list
+                               || callableInfo.kind == CallableKind.CONSTRUCTOR) "($list)" else list
                 }
 
                 val paramList = when (callableInfo.kind) {
-                    CallableKind.FUNCTION, CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR, CallableKind.SECONDARY_CONSTRUCTOR ->
+                    CallableKind.FUNCTION, CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR, CallableKind.CONSTRUCTOR ->
                         renderParamList()
                     CallableKind.PROPERTY -> ""
                 }
@@ -459,7 +459,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         else if (containingElement is KtClassOrObject
                                  && !(containingElement is KtClass && containingElement.isInterface())
                                  && containingElement.isAncestor(config.originalElement)
-                                 && callableInfo.kind != CallableKind.SECONDARY_CONSTRUCTOR) "private "
+                                 && callableInfo.kind != CallableKind.CONSTRUCTOR) "private "
                         else if (isExtension) "private "
                         else ""
 
@@ -468,9 +468,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
 
                 val declaration: KtNamedDeclaration = when (callableInfo.kind) {
-                    CallableKind.FUNCTION, CallableKind.SECONDARY_CONSTRUCTOR -> {
+                    CallableKind.FUNCTION, CallableKind.CONSTRUCTOR -> {
                         val body = when {
-                            callableInfo.kind == CallableKind.SECONDARY_CONSTRUCTOR -> ""
+                            callableInfo.kind == CallableKind.CONSTRUCTOR -> ""
                             callableInfo.isAbstract -> ""
                             containingElement is KtClass && containingElement.hasModifier(KtTokens.EXTERNAL_KEYWORD) -> ""
                             containingElement is KtObjectDeclaration && containingElement.hasModifier(KtTokens.EXTERNAL_KEYWORD) -> ""
@@ -487,12 +487,16 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             val infixModifier = if (callableInfo.isInfix) "infix " else ""
                             psiFactory.createFunction("$modifiers$infixModifier${operatorModifier}fun<> $header $body") as KtNamedDeclaration
                         }
+                        else if ((callableInfo as ConstructorInfo).isPrimary) {
+                            val constructorText = if (modifiers.isNotEmpty()) "${modifiers}constructor$paramList" else paramList
+                            psiFactory.createPrimaryConstructor(constructorText) as KtNamedDeclaration
+                        }
                         else {
                             psiFactory.createSecondaryConstructor("${modifiers}constructor$paramList $body") as KtNamedDeclaration
                         }
                     }
                     CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR -> {
-                        with((callableInfo as PrimaryConstructorInfo).classInfo) {
+                        with((callableInfo as ClassWithPrimaryConstructorInfo).classInfo) {
                             val classBody = when (kind) {
                                 ClassKind.ANNOTATION_CLASS, ClassKind.ENUM_ENTRY -> ""
                                 else -> "{\n\n}"
@@ -824,7 +828,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             val needStatic = when (callableInfo) {
-                is PrimaryConstructorInfo -> with(callableInfo.classInfo) {
+                is ClassWithPrimaryConstructorInfo -> with(callableInfo.classInfo) {
                     !inner && kind != ClassKind.ENUM_ENTRY && kind != ClassKind.ENUM_CLASS
                 }
                 else -> callableInfo.receiverTypeInfo.staticContextRequired
@@ -1052,6 +1056,10 @@ internal fun <D : KtNamedDeclaration> placeDeclarationInContainer(
     }
 
     val declarationInPlace = when {
+        declaration is KtPrimaryConstructor -> {
+            (container as KtClass).createPrimaryConstructorIfAbsent().replaced(declaration) as D
+        }
+
         actualContainer.isAncestor(anchor, true) -> {
             val insertToBlock = container is KtBlockExpression
             if (insertToBlock) {

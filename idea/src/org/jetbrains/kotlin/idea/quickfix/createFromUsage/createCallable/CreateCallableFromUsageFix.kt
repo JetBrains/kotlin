@@ -89,7 +89,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
                 val kind = when (it.kind) {
                     CallableKind.FUNCTION -> "function"
                     CallableKind.PROPERTY -> "property"
-                    CallableKind.SECONDARY_CONSTRUCTOR -> "secondary constructor"
+                    CallableKind.CONSTRUCTOR -> "secondary constructor"
                     else -> throw AssertionError("Unexpected callable info: $it")
                 }
                 append(kind)
@@ -185,7 +185,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
             project.executeCommand(text) { callableBuilder.build() }
         }
 
-        if (callableInfo is SecondaryConstructorInfo) {
+        if (callableInfo is ConstructorInfo) {
             runBuilder(CallablePlacement.NoReceiver(callableInfo.targetClass))
             return
         }

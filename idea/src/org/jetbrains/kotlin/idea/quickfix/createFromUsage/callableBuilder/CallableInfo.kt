@@ -161,7 +161,7 @@ class ParameterInfo(
 enum class CallableKind {
     FUNCTION,
     CLASS_WITH_PRIMARY_CONSTRUCTOR,
-    SECONDARY_CONSTRUCTOR,
+    CONSTRUCTOR,
     PROPERTY
 }
 
@@ -206,7 +206,7 @@ class FunctionInfo(name: String,
     )
 }
 
-class PrimaryConstructorInfo(val classInfo: ClassInfo, expectedTypeInfo: TypeInfo): CallableInfo(
+class ClassWithPrimaryConstructorInfo(val classInfo: ClassInfo, expectedTypeInfo: TypeInfo): CallableInfo(
         classInfo.name, TypeInfo.Empty, expectedTypeInfo.forceNotNull(), Collections.emptyList(), classInfo.typeArguments, false
 ) {
     override val kind: CallableKind get() = CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR
@@ -215,11 +215,12 @@ class PrimaryConstructorInfo(val classInfo: ClassInfo, expectedTypeInfo: TypeInf
     override fun copy(receiverTypeInfo: TypeInfo, possibleContainers: List<KtElement>, isAbstract: Boolean) = throw UnsupportedOperationException()
 }
 
-class SecondaryConstructorInfo(
+class ConstructorInfo(
         override val parameterInfos: List<ParameterInfo>,
-        val targetClass: PsiElement
+        val targetClass: PsiElement,
+        val isPrimary: Boolean = false
 ): CallableInfo("", TypeInfo.Empty, TypeInfo.Empty, Collections.emptyList(), Collections.emptyList(), false) {
-    override val kind: CallableKind get() = CallableKind.SECONDARY_CONSTRUCTOR
+    override val kind: CallableKind get() = CallableKind.CONSTRUCTOR
 
     override fun copy(receiverTypeInfo: TypeInfo, possibleContainers: List<KtElement>, isAbstract: Boolean) = throw UnsupportedOperationException()
 }
