@@ -62,7 +62,7 @@ internal class ScriptDependenciesUpdater(
 
     private class ModStampedRequest(
             val modificationStamp: Long,
-            val job: TimeStampedJob? = null
+            val job: TimeStampedJob?
     ) {
         fun cancel() = job?.actualJob?.cancel()
     }
@@ -124,14 +124,9 @@ internal class ScriptDependenciesUpdater(
     }
 
     private fun shouldSendNewRequest(file: VirtualFile, previousRequest: ModStampedRequest?): Boolean {
-        val currentStamp = file.modificationStamp
-        val previousStamp = previousRequest?.modificationStamp
+        if (previousRequest == null) return true
 
-        if (currentStamp != previousStamp) {
-            return true
-        }
-
-        return previousRequest.job == null
+        return file.modificationStamp != previousRequest.modificationStamp
     }
 
     private fun sendRequest(
@@ -141,9 +136,14 @@ internal class ScriptDependenciesUpdater(
         val currentTimeStamp = TimeStamps.next()
 
         fun process(result: DependenciesResolver.ResolveResult) {
-            val lastTimeStamp = requests[file.path]?.job?.timeStamp
+            val lastRequest = requests[file.path]
+            val lastTimeStamp = lastRequest?.job?.timeStamp
             val isLastSentRequest = lastTimeStamp == null || lastTimeStamp == currentTimeStamp
             if (isLastSentRequest) {
+                if (lastRequest != null) {
+                    // no job running atm unless there is a job started while we process this result
+                    requests.replace(file.path, lastRequest, ModStampedRequest(lastRequest.modificationStamp, job = null))
+                }
                 ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
                 val resultingDependencies = (result.dependencies ?: ScriptDependencies.Empty).adjustByDefinition(scriptDef)
                 if (cache(resultingDependencies, file)) {
