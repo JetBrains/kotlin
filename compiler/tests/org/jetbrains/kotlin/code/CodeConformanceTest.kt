@@ -151,7 +151,7 @@ class CodeConformanceTest : TestCase() {
         val root = File(".").absoluteFile
         val knownThirdPartyCode = loadKnownThirdPartyCodeList()
         for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, root)) {
-            val relativePath = sourceFile.toRelativeString(root)
+            val relativePath = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
             if (COPYRIGHT_EXCLUDED_FILES_AND_DIRS.any { relativePath.startsWith(it) } ||
                     knownThirdPartyCode.any { relativePath.startsWith(it)}) continue
 
