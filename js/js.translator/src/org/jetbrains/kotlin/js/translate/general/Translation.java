@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -188,7 +189,8 @@ public final class Translation {
         JsNode jsNode = translateExpression(expression, context, block);
         if (jsNode instanceof JsExpression) {
             KotlinType expressionType = context.bindingContext().getType(expression);
-            return unboxIfNeeded((JsExpression) jsNode, expressionType != null && KotlinBuiltIns.isCharOrNullableChar(expressionType));
+            return unboxIfNeeded(context, (JsExpression) jsNode,
+                                 expressionType != null && KotlinBuiltIns.isCharOrNullableChar(expressionType));
         }
 
         assert jsNode instanceof JsStatement : "Unexpected node of type: " + jsNode.getClass().toString();
@@ -204,11 +206,15 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsExpression unboxIfNeeded(@NotNull JsExpression expression, boolean charOrNullableChar) {
+    public static JsExpression unboxIfNeeded(
+            @NotNull TranslationContext context,
+            @NotNull JsExpression expression,
+            boolean charOrNullableChar
+    ) {
         if (charOrNullableChar &&
             (expression instanceof JsInvocation || expression instanceof JsNameRef || expression instanceof JsArrayAccess)
         ) {
-            expression = JsAstUtils.boxedCharToChar(expression);
+            expression = TranslationUtils.boxedCharToChar(context, expression);
         }
         return expression;
     }

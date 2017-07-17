@@ -149,7 +149,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             KotlinType bodyType = context().bindingContext().getType(declaration.getBodyExpression());
             if (bodyType == null && KotlinBuiltIns.isCharOrNullableChar(descriptor.getReturnType()) ||
                 bodyType != null && KotlinBuiltIns.isCharOrNullableChar(bodyType) && TranslationUtils.shouldBoxReturnValue(descriptor)) {
-                node = JsAstUtils.charToBoxedChar((JsExpression) node);
+                node = TranslationUtils.charToBoxedChar(context(), (JsExpression) node);
             }
 
             JsReturn jsReturn = new JsReturn((JsExpression) node);

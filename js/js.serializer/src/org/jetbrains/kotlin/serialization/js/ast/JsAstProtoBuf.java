@@ -151,6 +151,14 @@ public final class JsAstProtoBuf {
      * <code>WRAP_FUNCTION = 2;</code>
      */
     WRAP_FUNCTION(1, 2),
+    /**
+     * <code>TO_BOXED_CHAR = 3;</code>
+     */
+    TO_BOXED_CHAR(2, 3),
+    /**
+     * <code>UNBOX_CHAR = 4;</code>
+     */
+    UNBOX_CHAR(3, 4),
     ;
 
     /**
@@ -161,6 +169,14 @@ public final class JsAstProtoBuf {
      * <code>WRAP_FUNCTION = 2;</code>
      */
     public static final int WRAP_FUNCTION_VALUE = 2;
+    /**
+     * <code>TO_BOXED_CHAR = 3;</code>
+     */
+    public static final int TO_BOXED_CHAR_VALUE = 3;
+    /**
+     * <code>UNBOX_CHAR = 4;</code>
+     */
+    public static final int UNBOX_CHAR_VALUE = 4;
 
 
     public final int getNumber() { return value; }
@@ -169,6 +185,8 @@ public final class JsAstProtoBuf {
       switch (value) {
         case 1: return DEFINE_INLINE_FUNCTION;
         case 2: return WRAP_FUNCTION;
+        case 3: return TO_BOXED_CHAR;
+        case 4: return UNBOX_CHAR;
         default: return null;
       }
     }

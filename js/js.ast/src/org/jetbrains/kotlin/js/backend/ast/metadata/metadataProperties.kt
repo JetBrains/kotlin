@@ -139,5 +139,7 @@ enum class SideEffectKind {
 
 enum class SpecialFunction(val suggestedName: String) {
     DEFINE_INLINE_FUNCTION("defineInlineFunction"),
-    WRAP_FUNCTION("wrapFunction")
+    WRAP_FUNCTION("wrapFunction"),
+    TO_BOXED_CHAR("toBoxedChar"),
+    UNBOX_CHAR("unboxChar"),
 }

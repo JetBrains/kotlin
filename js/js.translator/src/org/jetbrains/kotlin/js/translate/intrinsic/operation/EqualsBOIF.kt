@@ -62,8 +62,8 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
             if (leftType != null && (leftType in SIMPLE_PRIMITIVES || leftType == rightType && leftType != PrimitiveType.LONG)) {
                 return JsBinaryOperation(if (isNegated) JsBinaryOperator.REF_NEQ else JsBinaryOperator.REF_EQ,
-                                         Translation.unboxIfNeeded(left, leftType == PrimitiveType.CHAR),
-                                         Translation.unboxIfNeeded(right, rightType == PrimitiveType.CHAR))
+                                         Translation.unboxIfNeeded(context, left, leftType == PrimitiveType.CHAR),
+                                         Translation.unboxIfNeeded(context, right, rightType == PrimitiveType.CHAR))
             }
 
             val resolvedCall = expression.getResolvedCall(context.bindingContext())
@@ -77,8 +77,8 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
                 return JsBinaryOperation(if (isNegated) JsBinaryOperator.NEQ else JsBinaryOperator.EQ, left, right)
             }
 
-            val maybeBoxedLeft = if (leftType == PrimitiveType.CHAR) JsAstUtils.charToBoxedChar(left) else left
-            val maybeBoxedRight = if (rightType == PrimitiveType.CHAR) JsAstUtils.charToBoxedChar(right) else right
+            val maybeBoxedLeft = if (leftType == PrimitiveType.CHAR) TranslationUtils.charToBoxedChar(context, left) else left
+            val maybeBoxedRight = if (rightType == PrimitiveType.CHAR) TranslationUtils.charToBoxedChar(context, right) else right
 
             val result = TopLevelFIF.KOTLIN_EQUALS.apply(maybeBoxedLeft, Arrays.asList<JsExpression>(maybeBoxedRight), context)
             return if (isNegated) JsAstUtils.not(result) else result

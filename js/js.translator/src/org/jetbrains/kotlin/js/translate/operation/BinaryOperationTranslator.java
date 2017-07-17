@@ -127,15 +127,14 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     private JsExpression translateElvis() {
         KotlinType expressionType = context().bindingContext().getType(expression);
 
-        JsExpression leftExpression = TranslationUtils.boxCastIfNeeded(Translation.translateAsExpression(leftKtExpression, context()),
-                                                                       context().bindingContext().getType(leftKtExpression),
-                                                                       expressionType);
+        JsExpression leftExpression = TranslationUtils.boxCastIfNeeded(
+                context(), Translation.translateAsExpression(leftKtExpression, context()),
+                context().bindingContext().getType(leftKtExpression), expressionType);
 
         JsBlock rightBlock = new JsBlock();
-        JsExpression rightExpression =
-                TranslationUtils.boxCastIfNeeded(Translation.translateAsExpression(rightKtExpression, context(), rightBlock),
-                                                 context().bindingContext().getType(rightKtExpression),
-                                                 expressionType);
+        JsExpression rightExpression = TranslationUtils.boxCastIfNeeded(
+                context(),Translation.translateAsExpression(rightKtExpression, context(), rightBlock),
+                context().bindingContext().getType(rightKtExpression), expressionType);
 
         if (rightBlock.isEmpty()) {
             return TranslationUtils.notNullConditional(leftExpression, rightExpression, context());

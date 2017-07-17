@@ -67,7 +67,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
                 result = JsAstUtils.charToString(result);
             }
             else if (leftType == null || !KotlinBuiltIns.isCharOrNullableChar(leftType)) {
-                result = JsAstUtils.charToBoxedChar(result);
+                result = TranslationUtils.charToBoxedChar(context, result);
             }
         }
         return result;

@@ -99,8 +99,8 @@ fun TranslationContext.getCallInfo(
     return FunctionCallInfo(callInfo, argumentsInfo)
 }
 
-private fun boxIfNeedeed(v: ReceiverValue?, d: ReceiverParameterDescriptor?, r: JsExpression?): JsExpression? {
-    return r?.let { TranslationUtils.boxCastIfNeeded(it, v?.type, d?.type) }
+private fun TranslationContext.boxIfNeedeed(v: ReceiverValue?, d: ReceiverParameterDescriptor?, r: JsExpression?): JsExpression? {
+    return r?.let { receiver -> TranslationUtils.boxCastIfNeeded(this, receiver, v?.type, d?.type) }
 }
 
 private fun TranslationContext.getDispatchReceiver(receiverValue: ReceiverValue): JsExpression {

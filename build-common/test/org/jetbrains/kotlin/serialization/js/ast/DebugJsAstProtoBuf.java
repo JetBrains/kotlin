@@ -203,6 +203,14 @@ public final class DebugJsAstProtoBuf {
      * <code>WRAP_FUNCTION = 2;</code>
      */
     WRAP_FUNCTION(1, 2),
+    /**
+     * <code>TO_BOXED_CHAR = 3;</code>
+     */
+    TO_BOXED_CHAR(2, 3),
+    /**
+     * <code>UNBOX_CHAR = 4;</code>
+     */
+    UNBOX_CHAR(3, 4),
     ;
 
     /**
@@ -213,6 +221,14 @@ public final class DebugJsAstProtoBuf {
      * <code>WRAP_FUNCTION = 2;</code>
      */
     public static final int WRAP_FUNCTION_VALUE = 2;
+    /**
+     * <code>TO_BOXED_CHAR = 3;</code>
+     */
+    public static final int TO_BOXED_CHAR_VALUE = 3;
+    /**
+     * <code>UNBOX_CHAR = 4;</code>
+     */
+    public static final int UNBOX_CHAR_VALUE = 4;
 
 
     public final int getNumber() { return value; }
@@ -221,6 +237,8 @@ public final class DebugJsAstProtoBuf {
       switch (value) {
         case 1: return DEFINE_INLINE_FUNCTION;
         case 2: return WRAP_FUNCTION;
+        case 3: return TO_BOXED_CHAR;
+        case 4: return UNBOX_CHAR;
         default: return null;
       }
     }
@@ -49343,9 +49361,10 @@ public final class DebugJsAstProtoBuf {
       "t.Fragment*@\n\013SideEffects\022\021\n\rAFFECTS_STA" +
       "TE\020\001\022\024\n\020DEPENDS_ON_STATE\020\002\022\010\n\004PURE\020\003*?\n\016" +
       "InlineStrategy\022\017\n\013AS_FUNCTION\020\000\022\014\n\010IN_PL" +
-      "ACE\020\001\022\016\n\nNOT_INLINE\020\002*@\n\017SpecialFunction" +
+      "ACE\020\001\022\016\n\nNOT_INLINE\020\002*c\n\017SpecialFunction" +
       "\022\032\n\026DEFINE_INLINE_FUNCTION\020\001\022\021\n\rWRAP_FUN" +
-      "CTION\020\002B\024B\022DebugJsAstProtoBuf"
+      "CTION\020\002\022\021\n\rTO_BOXED_CHAR\020\003\022\016\n\nUNBOX_CHAR" +
+      "\020\004B\024B\022DebugJsAstProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

@@ -84,7 +84,8 @@ public class DestructuringDeclarationTranslator extends AbstractTranslator {
                 setInlineCallMetadata(entryInitializer, entry, entryInitCall, context());
             }
 
-            entryInitializer = TranslationUtils.boxCastIfNeeded(entryInitializer, candidateDescriptor.getReturnType(), descriptor.getType());
+            entryInitializer = TranslationUtils.boxCastIfNeeded(context(), entryInitializer, candidateDescriptor.getReturnType(),
+                                                                descriptor.getType());
 
             JsName name = context().getNameForDescriptor(descriptor);
             if (isVarCapturedInClosure(context().bindingContext(), descriptor)) {

@@ -106,7 +106,7 @@ class CallArgumentTranslator private constructor(
                 if (hasSpreadOperator) {
                     if (isNativeFunctionCall) {
                         argsBeforeVararg = result
-                        result = mutableListOf<JsExpression>()
+                        result = mutableListOf()
                         concatArguments = prepareConcatArguments(arguments,
                                                                  translateResolvedArgument(actualArgument, argsToJsExpr),
                                                                  null)
@@ -196,7 +196,7 @@ class CallArgumentTranslator private constructor(
 
             val argJs = Translation.translateAsExpression(parenthisedArgumentExpression, argumentContext)
 
-            arg to TranslationUtils.boxCastIfNeeded(argJs, argType, parameterType)
+            arg to TranslationUtils.boxCastIfNeeded(context, argJs, argType, parameterType)
         }
 
         val resolvedOrder = resolvedCall.valueArgumentsByIndex.orEmpty()
@@ -229,7 +229,7 @@ class CallArgumentTranslator private constructor(
         val arguments = resolvedArgument.arguments
         if (arguments.isEmpty()) {
             return if (shouldWrapVarargInArray) {
-                return listOf(toArray(varargPrimitiveType, listOf<JsExpression>()))
+                return listOf(toArray(varargPrimitiveType, listOf()))
             }
             else {
                 listOf()
@@ -266,14 +266,14 @@ class CallArgumentTranslator private constructor(
         var lastArrayContent = mutableListOf<JsExpression>()
 
         val size = arguments.size
-        for (index in 0..size - 1) {
+        for (index in 0 until size) {
             val valueArgument = arguments[index]
             val expressionArgument = list[index]
 
             if (valueArgument.getSpreadElement() != null) {
                 if (lastArrayContent.size > 0) {
                     concatArguments.add(toArray(varargPrimitiveType, lastArrayContent))
-                    lastArrayContent = mutableListOf<JsExpression>()
+                    lastArrayContent = mutableListOf()
                 }
                 concatArguments.add(expressionArgument)
             }

@@ -83,7 +83,7 @@ public final class PatternTranslator extends AbstractTranslator {
 
         KotlinType leftType = context().bindingContext().getType(left);
         if (leftType != null && KotlinBuiltIns.isChar(leftType)) {
-            expressionToCast = JsAstUtils.charToBoxedChar(expressionToCast);
+            expressionToCast = TranslationUtils.charToBoxedChar(context(), expressionToCast);
         }
 
         TemporaryVariable temporary = context().declareTemporary(expressionToCast, expression);
@@ -104,7 +104,7 @@ public final class PatternTranslator extends AbstractTranslator {
 
         KotlinType expressionType = context().bindingContext().getType(expression);
         if (expressionType != null && KotlinBuiltIns.isCharOrNullableChar(expressionType)) {
-            result = JsAstUtils.boxedCharToChar(result);
+            result = TranslationUtils.boxedCharToChar(context(), result);
         }
 
         return result;
@@ -117,7 +117,7 @@ public final class PatternTranslator extends AbstractTranslator {
 
         KotlinType leftType = context().bindingContext().getType(left);
         if (leftType != null && KotlinBuiltIns.isChar(leftType)) {
-            expressionToCheck = JsAstUtils.charToBoxedChar(expressionToCheck);
+            expressionToCheck = TranslationUtils.charToBoxedChar(context(), expressionToCheck);
         }
 
         KtTypeReference typeReference = expression.getTypeReference();

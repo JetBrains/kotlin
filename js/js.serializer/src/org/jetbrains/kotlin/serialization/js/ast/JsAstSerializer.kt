@@ -556,6 +556,8 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
     private fun map(specialFunction: SpecialFunction) = when (specialFunction) {
         SpecialFunction.DEFINE_INLINE_FUNCTION -> JsAstProtoBuf.SpecialFunction.DEFINE_INLINE_FUNCTION
         SpecialFunction.WRAP_FUNCTION -> JsAstProtoBuf.SpecialFunction.WRAP_FUNCTION
+        SpecialFunction.TO_BOXED_CHAR -> JsAstProtoBuf.SpecialFunction.TO_BOXED_CHAR
+        SpecialFunction.UNBOX_CHAR -> JsAstProtoBuf.SpecialFunction.UNBOX_CHAR
     }
 
     private fun serialize(name: JsName): Int = nameMap.getOrPut(name) {

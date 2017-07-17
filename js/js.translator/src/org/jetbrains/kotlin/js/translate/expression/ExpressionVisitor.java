@@ -148,7 +148,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
             if (KotlinBuiltIns.isCharOrNullableChar(returnedType) &&
                 TranslationUtils.shouldBoxReturnValue((CallableDescriptor)context.getDeclarationDescriptor())) {
-                jsReturnExpression = JsAstUtils.charToBoxedChar(jsReturnExpression);
+                jsReturnExpression = TranslationUtils.charToBoxedChar(context, jsReturnExpression);
             }
 
             jsReturn = new JsReturn(jsReturnExpression);
@@ -247,7 +247,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             JsExpression receiver = translateAsExpression(receiverExpression, context);
             KotlinType type = context.bindingContext().getType(receiverExpression);
             if (type != null && KotlinBuiltIns.isChar(type)) {
-                receiver = JsAstUtils.charToBoxedChar(receiver);
+                receiver = TranslationUtils.charToBoxedChar(context, receiver);
             }
             return new JsInvocation(context.namer().kotlin(GET_KCLASS_FROM_EXPRESSION), receiver);
         }
