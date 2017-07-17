@@ -18,11 +18,23 @@ package kotlin.test
 
 /**
  * Serves as a bridge to a testing framework.
+ *
+ * The tests structure is defined using internal functions suite and test, which delegate to correspoding functions of a [FrameworkAdapter].
+ * Sample test layout:
+ *
+ * suite('a suite', false, function() {
+ *   suite('a subsuite', false, function() {
+ *     test('a test', false, function() {...});
+ *     test('an ignored/pending test', true, function() {...});
+ *   });
+ *   suite('an ignored/pending test', true, function() {...});
+ * });
+ *
  */
 public external interface FrameworkAdapter {
 
     /**
-     * A test suite. [kotlin.test.suite] delegates to this function.
+     * Declares a test suite.
      *
      * @param name the name of the test suite, e.g. a class name
      * @param ignored whether the test suite is ignored, e.g. marked with [Ignore] annotation
@@ -31,7 +43,7 @@ public external interface FrameworkAdapter {
     fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
 
     /**
-     * A test. [kotlin.test.test] delegates to this function.
+     * Declares a test.
      *
      * @param name the test name.
      * @param ignored whether the test is ignored

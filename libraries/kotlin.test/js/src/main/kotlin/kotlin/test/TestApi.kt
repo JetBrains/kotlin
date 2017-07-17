@@ -19,8 +19,7 @@ package kotlin.test
 import kotlin.test.adapters.*
 
 /**
- * Overrides the framework adapter with the provided instance of a [FrameworkAdapter]. Use in order to add support to a
- * custom test framework.
+ * Overrides currentframework adapter with a provided instance of [FrameworkAdapter]. Use in order to support custom test frameworks.
  *
  * Also some string arguments are supported. Use "qunit" to set the adapter to [QUnit](https://qunitjs.com/), "mocha" for
  * [Mocha](https://mochajs.org/), "jest" for [Jest](https://facebook.github.io/jest/),
