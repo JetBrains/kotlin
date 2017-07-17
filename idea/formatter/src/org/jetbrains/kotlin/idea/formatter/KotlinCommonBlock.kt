@@ -438,6 +438,13 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                         Indent.getNormalIndent()
                 },
 
+        strategy("Property accessor expression body")
+                .within(KtNodeTypes.PROPERTY_ACCESSOR)
+                .forElement {
+                    it.psi is KtExpression && it.psi !is KtBlockExpression
+                }
+                .set(Indent.getNormalIndent()),
+
         strategy("Indent for parts")
                 .within(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
                 .notForType(KtNodeTypes.BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, CONSTRUCTOR_KEYWORD)
