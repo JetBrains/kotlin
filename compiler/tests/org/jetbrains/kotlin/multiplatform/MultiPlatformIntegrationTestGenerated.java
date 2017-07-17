@@ -96,6 +96,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         doTest(fileName);
     }
 
+    @TestMetadata("missingOverload")
+    public void testMissingOverload() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/missingOverload/");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/simple/");

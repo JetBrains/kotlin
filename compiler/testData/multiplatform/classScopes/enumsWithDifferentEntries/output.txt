@@ -5,22 +5,15 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/common.kt:1:19: error: header declaration 'AB' has no implementation in module
+compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:1:17: error: 'impl' enum class 'AB' has no corresponding 'header' declaration
 The following declaration is incompatible because some entries from header enum are missing in the impl enum:
-    public final impl enum class AB : Enum<AB>
+    public final header enum class AB : Enum<AB>
 
-header enum class AB { A, B }
-                  ^
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/common.kt:3:19: error: header declaration 'CD' has no implementation in module
-The following declaration is incompatible because some entries from header enum are missing in the impl enum:
-    public final impl enum class CD : Enum<CD>
-
-header enum class CD { C, D }
-                  ^
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl enum class AB { A, C }
-^
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:3:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-impl enum class CD { C }
-^
+                ^
+compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:3:17: error: 'impl' enum class 'CD' has no corresponding 'header' declaration
+The following declaration is incompatible because some entries from header enum are missing in the impl enum:
+    public final header enum class CD : Enum<CD>
 
+impl enum class CD { C }
+                ^

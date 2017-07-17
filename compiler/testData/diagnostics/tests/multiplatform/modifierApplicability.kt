@@ -23,7 +23,7 @@ fun foo() {
 // FILE: jvm.kt
 
 class Outer impl constructor() {
-    <!IMPLEMENTATION_WITHOUT_HEADER!>impl<!> class Nested
+    impl class <!IMPLEMENTATION_WITHOUT_HEADER!>Nested<!>
 
     <!WRONG_MODIFIER_TARGET!>impl<!> init {}
 }
@@ -31,5 +31,5 @@ class Outer impl constructor() {
 fun foo() {
     <!WRONG_MODIFIER_TARGET!>impl<!> fun localFun() {}
     <!WRONG_MODIFIER_TARGET!>impl<!> var <!UNUSED_VARIABLE!>x<!> = 42
-    <!IMPLEMENTATION_WITHOUT_HEADER, WRONG_MODIFIER_TARGET!>impl<!> class Bar
+    <!WRONG_MODIFIER_TARGET!>impl<!> class <!IMPLEMENTATION_WITHOUT_HEADER!>Bar<!>
 }

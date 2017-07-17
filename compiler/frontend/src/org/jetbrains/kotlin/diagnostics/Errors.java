@@ -562,7 +562,9 @@ public interface Errors {
     DiagnosticFactory3<KtDeclaration, MemberDescriptor, ModuleDescriptor,
             Map<HeaderImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>> HEADER_WITHOUT_IMPLEMENTATION =
             DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<PsiElement> IMPLEMENTATION_WITHOUT_HEADER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory2<KtDeclaration, MemberDescriptor,
+            Map<HeaderImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>> IMPLEMENTATION_WITHOUT_HEADER =
+            DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

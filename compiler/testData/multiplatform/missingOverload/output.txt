@@ -1,0 +1,22 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/missingOverload/common.kt:7:1: error: 'header' function 'g' has no implementation in module
+The following declaration is incompatible because parameter types are different:
+    public impl fun g(a: Any): Unit
+
+header fun g(s: String)
+^
+compiler/testData/multiplatform/missingOverload/jvm.kt:1:12: error: 'impl' class 'Foo' has no implementations of 'header' class members:
+
+    public final header fun f(a: Any): Unit
+
+    The following declaration is incompatible because parameter types are different:
+        public final impl fun f(s: String): Unit
+
+impl class Foo {
+           ^

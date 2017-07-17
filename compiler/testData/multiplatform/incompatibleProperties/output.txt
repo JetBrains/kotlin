@@ -5,22 +5,15 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleProperties/common.kt:1:1: error: header declaration 'pval' has no implementation in module
+compiler/testData/multiplatform/incompatibleProperties/jvm.kt:1:1: error: 'impl' property 'pval' has no corresponding 'header' declaration
 The following declaration is incompatible because property kinds are different (val vs var):
-    public impl var pval: String
+    public header val pval: String
 
-header val pval: String
-^
-compiler/testData/multiplatform/incompatibleProperties/common.kt:2:1: error: header declaration 'pvar' has no implementation in module
-The following declaration is incompatible because property kinds are different (val vs var):
-    public impl val pvar: String
-
-header var pvar: String
-^
-compiler/testData/multiplatform/incompatibleProperties/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl var pval: String = ""
 ^
-compiler/testData/multiplatform/incompatibleProperties/jvm.kt:2:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleProperties/jvm.kt:2:1: error: 'impl' property 'pvar' has no corresponding 'header' declaration
+The following declaration is incompatible because property kinds are different (val vs var):
+    public header var pvar: String
+
 impl val pvar: String = ""
 ^
-

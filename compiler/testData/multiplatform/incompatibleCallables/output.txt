@@ -11,202 +11,135 @@ header fun <A, B : Continuation<A>> f13()
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleCallables/common.kt:3:1: error: header declaration 'f1' has no implementation in module
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:3:1: error: 'impl' function 'f1' has no corresponding 'header' declaration
 The following declaration is incompatible because return type is different:
-    public impl fun f1(): String
+    public header fun f1(): Unit
 
-header fun f1()
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:5:1: error: header declaration 'f2' has no implementation in module
-The following declaration is incompatible because parameter names are different:
-    public impl fun f2(otherName: String): Unit
-
-header fun f2(name: String)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:7:1: error: header declaration 'f3' has no implementation in module
-The following declaration is incompatible because parameter types are different:
-    public impl fun f3(name: Double): Unit
-
-header fun f3(name: String)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:8:1: error: header declaration 'f3ext' has no implementation in module
-The following declaration is incompatible because parameter types are different:
-    public impl fun Double.f3ext(): Unit
-
-header fun String.f3ext()
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:10:1: error: header declaration 'f4' has no implementation in module
-The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
-    public impl fun String.f4(): Unit
-
-header fun f4(name: String)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:12:1: error: header declaration 'f5' has no implementation in module
-The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
-    public impl fun f5(name: String): Unit
-
-header fun String.f5()
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:14:1: error: header declaration 'f6' has no implementation in module
-The following declaration is incompatible because number of value parameters is different:
-    public impl fun f6(p2: Int): Unit
-
-header fun f6(p1: String, p2: Int)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:16:1: error: header declaration 'f7' has no implementation in module
-The following declaration is incompatible because number of type parameters is different:
-    public impl fun <K, V> f7(): Unit
-
-header fun <T> f7()
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:18:1: error: header declaration 'f8' has no implementation in module
-The following declaration is incompatible because visibility is different:
-    public impl fun f8(): Unit
-
-internal header fun f8()
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:19:1: error: header declaration 'f9' has no implementation in module
-The following declaration is incompatible because visibility is different:
-    internal impl fun f9(): Unit
-
-private header fun f9()
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:20:1: error: header declaration 'f10' has no implementation in module
-The following declaration is incompatible because visibility is different:
-    private impl fun f10(): Unit
-
-public header fun f10()
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:26:1: error: header declaration 'f14' has no implementation in module
-The following declaration is incompatible because some type parameter is reified in one declaration and non-reified in the other:
-    public impl inline fun <reified X> f14(): Unit
-
-header inline fun <X> f14()
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:27:1: error: header declaration 'f15' has no implementation in module
-The following declaration is incompatible because some type parameter is reified in one declaration and non-reified in the other:
-    public impl inline fun <Y> f15(): Unit
-
-header inline fun <reified Y> f15()
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:29:1: error: header declaration 'f16' has no implementation in module
-The following declaration is incompatible because some parameters have default values:
-    public impl fun f16(s: String = ...): Unit
-
-header fun f16(s: String)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:31:1: error: header declaration 'f17' has no implementation in module
-The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
-    public impl fun f17(s: Array<out String>): Unit
-
-header fun f17(vararg s: String)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:32:1: error: header declaration 'f18' has no implementation in module
-The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
-    public impl fun f18(vararg s: String): Unit
-
-header fun f18(s: Array<out String>)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:33:1: error: header declaration 'f19' has no implementation in module
-The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
-    public impl inline fun f19(s: () -> Unit): Unit
-
-header inline fun f19(crossinline s: () -> Unit)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:34:1: error: header declaration 'f20' has no implementation in module
-The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
-    public impl inline fun f20(crossinline s: () -> Unit): Unit
-
-header inline fun f20(s: () -> Unit)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:35:1: error: header declaration 'f21' has no implementation in module
-The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
-    public impl inline fun f21(s: () -> Unit): Unit
-
-header inline fun f21(noinline s: () -> Unit)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:36:1: error: header declaration 'f22' has no implementation in module
-The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
-    public impl inline fun f22(noinline s: () -> Unit): Unit
-
-header inline fun f22(s: () -> Unit)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:37:1: error: header declaration 'f23' has no implementation in module
-The following declaration is incompatible because parameter types are different:
-    public impl fun f23(c: Unit.() -> Unit): Unit
-
-header fun f23(c: suspend Unit.() -> Unit)
-^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:38:1: error: header declaration 'f24' has no implementation in module
-The following declaration is incompatible because parameter types are different:
-    public impl fun f24(c: suspend Unit.() -> Unit): Unit
-
-header fun f24(c: Unit.() -> Unit)
-^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:3:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl fun f1(): String = ""
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:5:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:5:1: error: 'impl' function 'f2' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter names are different:
+    public header fun f2(name: String): Unit
+
 impl fun f2(otherName: String) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:7:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:7:1: error: 'impl' function 'f3' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter types are different:
+    public header fun f3(name: String): Unit
+
 impl fun f3(name: Double) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:8:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:8:1: error: 'impl' function 'f3ext' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter types are different:
+    public header fun String.f3ext(): Unit
+
 impl fun Double.f3ext() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:10:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:10:1: error: 'impl' function 'f4' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
+    public header fun f4(name: String): Unit
+
 impl fun String.f4() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:12:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:12:1: error: 'impl' function 'f5' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
+    public header fun String.f5(): Unit
+
 impl fun f5(name: String) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:14:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:14:1: error: 'impl' function 'f6' has no corresponding 'header' declaration
+The following declaration is incompatible because number of value parameters is different:
+    public header fun f6(p1: String, p2: Int): Unit
+
 impl fun f6(p2: Int) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:16:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:16:1: error: 'impl' function 'f7' has no corresponding 'header' declaration
+The following declaration is incompatible because number of type parameters is different:
+    public header fun <T> f7(): Unit
+
 impl fun <K, V> f7() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:18:8: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:18:1: error: 'impl' function 'f8' has no corresponding 'header' declaration
+The following declaration is incompatible because visibility is different:
+    internal header fun f8(): Unit
+
 public impl fun f8() {}
-       ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:19:10: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:19:1: error: 'impl' function 'f9' has no corresponding 'header' declaration
+The following declaration is incompatible because visibility is different:
+    private header fun f9(): Unit
+
 internal impl fun f9() {}
-         ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:20:9: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:20:1: error: 'impl' function 'f10' has no corresponding 'header' declaration
+The following declaration is incompatible because visibility is different:
+    public header fun f10(): Unit
+
 private impl fun f10() {}
-        ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:26:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:26:1: error: 'impl' function 'f14' has no corresponding 'header' declaration
+The following declaration is incompatible because some type parameter is reified in one declaration and non-reified in the other:
+    public header inline fun <X> f14(): Unit
+
 impl inline fun <reified X> f14() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:27:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:27:1: error: 'impl' function 'f15' has no corresponding 'header' declaration
+The following declaration is incompatible because some type parameter is reified in one declaration and non-reified in the other:
+    public header inline fun <reified Y> f15(): Unit
+
 impl inline fun <Y> f15() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:29:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:29:1: error: 'impl' function 'f16' has no corresponding 'header' declaration
+The following declaration is incompatible because some parameters have default values:
+    public header fun f16(s: String): Unit
+
 impl fun f16(s: String = "") {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:31:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:31:1: error: 'impl' function 'f17' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
+    public header fun f17(vararg s: String): Unit
+
 impl fun f17(s: Array<out String>) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:32:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:32:1: error: 'impl' function 'f18' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
+    public header fun f18(s: Array<out String>): Unit
+
 impl fun f18(vararg s: String) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:33:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:33:1: error: 'impl' function 'f19' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
+    public header inline fun f19(crossinline s: () -> Unit): Unit
+
 impl inline fun f19(s: () -> Unit) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:34:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:34:1: error: 'impl' function 'f20' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
+    public header inline fun f20(s: () -> Unit): Unit
+
 impl inline fun f20(crossinline s: () -> Unit) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:35:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:35:1: error: 'impl' function 'f21' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
+    public header inline fun f21(noinline s: () -> Unit): Unit
+
 impl inline fun f21(s: () -> Unit) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:36:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:36:1: error: 'impl' function 'f22' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
+    public header inline fun f22(s: () -> Unit): Unit
+
 impl inline fun f22(noinline s: () -> Unit) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:37:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:37:1: error: 'impl' function 'f23' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter types are different:
+    public header fun f23(c: suspend Unit.() -> Unit): Unit
+
 impl fun f23(c: Unit.() -> Unit) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:38:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:38:1: error: 'impl' function 'f24' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter types are different:
+    public header fun f24(c: Unit.() -> Unit): Unit
+
 impl fun f24(c: suspend Unit.() -> Unit) {}
 ^
-

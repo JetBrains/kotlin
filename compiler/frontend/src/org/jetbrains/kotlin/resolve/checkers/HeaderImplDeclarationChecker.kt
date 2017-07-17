@@ -77,9 +77,16 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             platformModule: ModuleDescriptor,
             checkImpl: Boolean
     ) {
-        val compatibility = findImplForHeader(descriptor, platformModule, checkImpl)
+        val compatibility = findImplForHeader(descriptor, platformModule, checkImpl) ?: return
 
-        if (compatibility != null && Compatible !in compatibility) {
+        val shouldReportError =
+                compatibility.isEmpty() ||
+                Compatible !in compatibility && compatibility.values.flatMapTo(hashSetOf()) { it }.all { impl ->
+                    val headers = findHeaderForImpl(impl, descriptor.module)
+                    headers != null && Compatible in headers.keys
+                }
+
+        if (shouldReportError) {
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
@@ -120,12 +127,13 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         // Using the platform module instead of the common module is sort of fine here because the former always depends on the latter.
         // However, it would be clearer to find the common module this platform module implements and look for headers there instead.
         // TODO: use common module here
-        val compatibility = findHeaderForImpl(descriptor, descriptor.module)
+        val compatibility = findHeaderForImpl(descriptor, descriptor.module) ?: return
 
-        if (compatibility != null && Compatible !in compatibility) {
+        if (Compatible !in compatibility) {
             assert(compatibility.keys.all { it is Incompatible })
-            // TODO: do not report this error for members which are "almost compatible" with some header declarations
-            diagnosticHolder.report(Errors.IMPLEMENTATION_WITHOUT_HEADER.on(reportOn.modifierList!!.getModifier(KtTokens.IMPL_KEYWORD)!!))
+            @Suppress("UNCHECKED_CAST")
+            val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
+            diagnosticHolder.report(Errors.IMPLEMENTATION_WITHOUT_HEADER.on(reportOn, descriptor, incompatibility))
         }
     }
 

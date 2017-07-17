@@ -1,4 +1,4 @@
-header class <error>My</error> {
+header class My {
 
     fun foo(): Int
 
@@ -6,7 +6,7 @@ header class <error>My</error> {
 
 }
 
-header class <error>Your</error> {
+header class Your {
 
     fun foo(): Int
 

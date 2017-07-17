@@ -93,19 +93,19 @@ object Renderers {
     }
 
     @JvmField val DECLARATION_NAME_WITH_KIND = Renderer<DeclarationDescriptor> {
-        val declarationKindWithSpace = when (it) {
-            is PackageFragmentDescriptor -> "package "
-            is ClassDescriptor -> "${it.renderKind()} "
-            is TypeAliasDescriptor -> "typealias "
-            is ConstructorDescriptor -> "constructor "
-            is TypeAliasConstructorDescriptor -> "typealias constructor "
-            is PropertyGetterDescriptor -> "property getter "
-            is PropertySetterDescriptor -> "property setter "
-            is FunctionDescriptor -> "function "
-            is PropertyDescriptor -> "property "
+        val name = it.name.asString()
+        when (it) {
+            is PackageFragmentDescriptor -> "package '$name'"
+            is ClassDescriptor -> "${it.renderKind()} '$name'"
+            is TypeAliasDescriptor -> "typealias '$name'"
+            is TypeAliasConstructorDescriptor -> "constructor of '${it.typeAliasDescriptor.name.asString()}'"
+            is ConstructorDescriptor -> "constructor of '${it.constructedClass.name.asString()}'"
+            is PropertyGetterDescriptor -> "getter of property '${it.correspondingProperty.name.asString()}'"
+            is PropertySetterDescriptor -> "setter of property '${it.correspondingProperty.name.asString()}'"
+            is FunctionDescriptor -> "function '$name'"
+            is PropertyDescriptor -> "property '$name'"
             else -> throw AssertionError("Unexpected declaration kind: $it")
         }
-        "$declarationKindWithSpace'${it.name.asString()}'"
     }
 
     @JvmField val NAME_OF_CONTAINING_DECLARATION_OR_FILE = Renderer<DeclarationDescriptor> {

@@ -4,8 +4,8 @@
 // FILE: common.kt
 
 header class C1
-header interface <!JVM:HEADER_WITHOUT_IMPLEMENTATION!>C2<!><A>
-header interface <!JVM:HEADER_WITHOUT_IMPLEMENTATION!>C3<!><B>
+header interface C2<A>
+header interface C3<B>
 header interface C4<D, E>
 header interface C5<F, G>
 header interface C6<H>

@@ -9,4 +9,4 @@ header fun foo()
 
 <!NON_MEMBER_FUNCTION_NO_BODY!>impl fun foo()<!>
 
-<!NON_MEMBER_FUNCTION_NO_BODY!><!IMPLEMENTATION_WITHOUT_HEADER!>impl<!> fun bar()<!>
+<!NON_MEMBER_FUNCTION_NO_BODY, IMPLEMENTATION_WITHOUT_HEADER!>impl fun bar()<!>

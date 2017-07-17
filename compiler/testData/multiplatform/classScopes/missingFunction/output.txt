@@ -5,15 +5,12 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/missingFunction/common.kt:1:14: error: header declaration 'Foo' has no implementation in module
+compiler/testData/multiplatform/classScopes/missingFunction/jvm.kt:1:12: error: 'impl' class 'Foo' has no corresponding 'header' declaration
 The following declaration is incompatible because some members are not implemented:
-    public final impl class Foo
+    public final header class Foo
 No implementations are found for members listed below:
 
     public final header fun function(s: String): Unit
 
-header class Foo {
-             ^
-compiler/testData/multiplatform/classScopes/missingFunction/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl class Foo
-^
+           ^
