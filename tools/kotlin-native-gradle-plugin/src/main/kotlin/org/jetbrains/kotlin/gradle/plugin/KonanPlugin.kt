@@ -93,24 +93,14 @@ class KonanArtifactsContainer(val project: ProjectInternal): AbstractNamedDomain
         KonanCompileConfig::class.java,
         project.gradle.services.get(Instantiator::class.java)) {
 
-    override fun doCreate(name: String): KonanCompileConfig =
-            KonanCompileConfig(name, project).apply {
-                project.konanDefaultSrcDir?.takeIf { it.exists() }?.let {
-                    inputDir(it.canonicalPath)
-                }
-            }
+    override fun doCreate(name: String): KonanCompileConfig = KonanCompileConfig(name, project)
 }
 
 class KonanInteropContainer(val project: ProjectInternal): AbstractNamedDomainObjectContainer<KonanInteropConfig>(
         KonanInteropConfig::class.java,
         project.gradle.services.get(Instantiator::class.java)) {
 
-    override fun doCreate(name: String): KonanInteropConfig =
-            KonanInteropConfig(name, project).apply {
-                project.konanDefaultDefFile(name).takeIf { it.exists() }?.let {
-                    defFile(it.canonicalFile)
-                }
-            }
+    override fun doCreate(name: String): KonanInteropConfig = KonanInteropConfig(name, project)
 }
 
 // Useful extensions and functions ---------------------------------------
@@ -192,6 +182,24 @@ internal fun dumpProperties(task: Task) {
     }
 }
 
+private fun setDefaultInputs(project: Project) {
+    project.tasks.withType(KonanCompileTask::class.java).forEach { task ->
+        if (task.inputFiles.isEmpty()) {
+            project.konanDefaultSrcDir?.takeIf { it.exists() }?.let { srcDir ->
+                task.inputFiles.add(project.fileTree(srcDir))
+            }
+        }
+    }
+
+    project.tasks.withType(KonanInteropTask::class.java).forEach { task ->
+        if (task.defFile == null) {
+            project.konanDefaultDefFile(task.libName).takeIf { it.exists() }?.let {
+                task.defFile = it
+            }
+        }
+    }
+}
+
 class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderRegistry)
     : Plugin<ProjectInternal> {
 
@@ -249,6 +257,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.getTask("build").apply {
             dependsOn(compileKonanTask)
         }
+        project.afterEvaluate(::setDefaultInputs)
 
         project.getOrCreateTask("run").apply {
             dependsOn(project.getTask("build"))
