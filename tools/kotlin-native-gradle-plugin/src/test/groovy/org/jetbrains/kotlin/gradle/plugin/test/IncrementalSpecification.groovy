@@ -116,8 +116,6 @@ class IncrementalSpecification extends Specification {
         "enableAssertions"   | "enableAssertions()"
         "enableDebug"        | "enableDebug true"
         "outputName"         | "outputName 'foo'"
-
-
     }
 
     def 'inputFiles change for a compilation task should cause only recompilation'() {
@@ -305,8 +303,13 @@ class IncrementalSpecification extends Specification {
         } else {
             throw new IllegalStateException("Unknown host platform")
         }
+        def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
+            it.generateSrcFile('main.kt')
+            it.propertiesFile.append("konan.build.targets=all\n")
+        }
 
-        def results = buildTwiceEmpty { KonanInteropProject project ->
+
+        def results = buildTwice(project) { KonanInteropProject it ->
             project.buildFile.append("konanArtifacts['main'].target '$newTarget'\n")
             project.buildFile.append("konanInterop['stdio'].target '$newTarget'\n")
         }
@@ -315,8 +318,5 @@ class IncrementalSpecification extends Specification {
         recompilationAndInteropProcessingHappened(*results)
     }
 
-
     //endregion
 }
-
-
