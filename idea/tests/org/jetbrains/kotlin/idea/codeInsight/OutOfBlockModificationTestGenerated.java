@@ -180,6 +180,12 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         doTest(fileName);
     }
 
+    @TestMetadata("InPropertyAccessorWithInferenceInClass.kt")
+    public void testInPropertyAccessorWithInferenceInClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InPropertyAccessorWithInferenceInClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InPropertyWithFunctionLiteral.kt")
     public void testInPropertyWithFunctionLiteral() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InPropertyWithFunctionLiteral.kt");

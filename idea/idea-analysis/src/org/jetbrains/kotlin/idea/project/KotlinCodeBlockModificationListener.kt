@@ -89,10 +89,12 @@ class KotlinCodeBlockModificationListener(
                 }
 
                 is KtProperty -> {
-                    for (accessor in blockDeclaration.accessors) {
-                        (accessor.initializer ?: accessor.bodyExpression)
-                                ?.takeIf { it.isAncestor(element) }
-                                ?.let { return it }
+                    if (blockDeclaration.typeReference != null) {
+                        for (accessor in blockDeclaration.accessors) {
+                            (accessor.initializer ?: accessor.bodyExpression)
+                                    ?.takeIf { it.isAncestor(element) }
+                                    ?.let { return it }
+                        }
                     }
                 }
 
