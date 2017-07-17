@@ -180,7 +180,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                 );
 
                 showCustomOption(KotlinCodeStyleSettings::SPACE_AROUND_RANGE,
-                                 "Around range (..)",
+                                 "Range operator (..)",
                                  CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS)
 
                 showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_TYPE_COLON,
