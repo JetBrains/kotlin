@@ -757,4 +757,4 @@ private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode):
 }
 
 private val SAFE_OPCODES =
-        ((Opcodes.DUP..Opcodes.DUP2_X2) + Opcodes.POP + Opcodes.POP2 + (Opcodes.IFEQ..Opcodes.GOTO)).toSet()
+        ((Opcodes.DUP..Opcodes.DUP2_X2) + Opcodes.NOP + Opcodes.POP + Opcodes.POP2 + (Opcodes.IFEQ..Opcodes.GOTO)).toSet()
