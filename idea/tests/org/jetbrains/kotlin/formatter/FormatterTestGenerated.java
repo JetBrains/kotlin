@@ -596,6 +596,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PropertyAccessorLineBreak.after.kt")
+        public void testPropertyAccessorLineBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyAccessorLineBreak.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PropertyAccessors.after.kt")
         public void testPropertyAccessors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyAccessors.after.kt");
