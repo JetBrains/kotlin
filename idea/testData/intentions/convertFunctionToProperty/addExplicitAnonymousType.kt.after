@@ -3,11 +3,12 @@ interface T {
 }
 
 class A(val n: Int) {
-    val foo get() = object : T {
-        override fun bar() {
+    val foo
+        get() = object : T {
+            override fun bar() {
 
+            }
         }
-    }
 }
 
 fun test() {
