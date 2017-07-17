@@ -116,7 +116,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             LBRACKET // Collection literal expression
     );
 
-    private static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
+    public static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
             EXPRESSION_FIRST,
             TokenSet.create(
                     // declaration

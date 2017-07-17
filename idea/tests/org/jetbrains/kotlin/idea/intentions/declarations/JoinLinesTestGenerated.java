@@ -36,6 +36,117 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("idea/testData/joinLines/addSemicolon")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddSemicolon extends AbstractJoinLinesTest {
+        public void testAllFilesPresentInAddSemicolon() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/addSemicolon"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("ClassDeclarations.kt")
+        public void testClassDeclarations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/ClassDeclarations.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCalls.kt")
+        public void testFunctionCalls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionCalls.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCallsAndAComment.kt")
+        public void testFunctionCallsAndAComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionCallsAndAComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCallsAndAMultilineComment.kt")
+        public void testFunctionCallsAndAMultilineComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionCallsAndAMultilineComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCallsAndSeveralComments.kt")
+        public void testFunctionCallsAndSeveralComments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionCallsAndSeveralComments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCallsWithMutlineSeparator.kt")
+        public void testFunctionCallsWithMutlineSeparator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionCallsWithMutlineSeparator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionDeclarations.kt")
+        public void testFunctionDeclarations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionDeclarations.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InsideBraces.kt")
+        public void testInsideBraces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/InsideBraces.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InsideIfBlock.kt")
+        public void testInsideIfBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/InsideIfBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LocalAssingments.kt")
+        public void testLocalAssingments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/LocalAssingments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LocalAssingmentsWithSemicolon.kt")
+        public void testLocalAssingmentsWithSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/LocalAssingmentsWithSemicolon.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LocalClasses.kt")
+        public void testLocalClasses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/LocalClasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LocalFunctions.kt")
+        public void testLocalFunctions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/LocalFunctions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MemberFunctions.kt")
+        public void testMemberFunctions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/MemberFunctions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WhileAndACall.kt")
+        public void testWhileAndACall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/WhileAndACall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WhileBlockAndACall.kt")
+        public void testWhileBlockAndACall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/WhileBlockAndACall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WhileBlockAndACall2.kt")
+        public void testWhileBlockAndACall2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/WhileBlockAndACall2.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/joinLines/declarationAndAssignment")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
