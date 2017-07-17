@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -46,10 +45,6 @@ abstract class AbstractAllOpenDeclarationAttributeAltererExtension : Declaration
             isImplicitModality: Boolean
     ): Modality? {
         if (currentModality != Modality.FINAL) {
-            return null
-        }
-
-        if (modifierListOwner.hasModifier(KtTokens.PRIVATE_KEYWORD) && modifierListOwner is KtCallableDeclaration) {
             return null
         }
 
