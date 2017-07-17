@@ -167,7 +167,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
                         .singleOrNull()
                 if (declaration != null && declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
 
-                if (!reference.canBeResolvedViaImport(descriptor)) continue
+                if (!reference.canBeResolvedViaImport(descriptor, bindingContext)) continue
 
                 val fqName = descriptor.importableFqName!!
 

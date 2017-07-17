@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
@@ -34,7 +33,9 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -254,7 +255,7 @@ fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean): ReferenceAcce
         ReferenceAccess.READ
 }
 
-fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor): Boolean {
+fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor, bindingContext: BindingContext): Boolean {
     if (!target.canBeReferencedViaImport()) return false
 
     if (this is KDocReference) return element.getQualifiedName().size == 1
@@ -267,6 +268,10 @@ fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor): Boolean {
     if (callTypeAndReceiver.receiver != null) {
         if (target !is PropertyDescriptor || !target.type.isExtensionFunctionType) return false
         if (callTypeAndReceiver !is CallTypeAndReceiver.DOT && callTypeAndReceiver !is CallTypeAndReceiver.SAFE) return false
+
+        val resolvedCall = bindingContext[BindingContext.CALL, referenceExpression].getResolvedCall(bindingContext)
+                                   as? VariableAsFunctionResolvedCall ?: return false
+        if (resolvedCall.variableCall.explicitReceiverKind.isDispatchReceiver) return false
     }
 
     if (element.parent is KtThisExpression || element.parent is KtSuperExpression) return false // TODO: it's a bad design of PSI tree, we should change it
