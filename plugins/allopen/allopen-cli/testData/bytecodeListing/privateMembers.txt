@@ -14,7 +14,7 @@ class Test {
     protected @org.jetbrains.annotations.NotNull method getProtectedProp(): java.lang.String
     public @org.jetbrains.annotations.NotNull method getPublicProp(): java.lang.String
     public method internalMethod$test_module(): void
-    private final method privateMethod(): void
+    private method privateMethod(): void
     protected method protectedMethod(): void
     public method publicMethod(): void
 }
