@@ -16,11 +16,11 @@ fun testInt2(a: Int, b: Any?) = a != b
 fun testLong1(a: Long, b: Any?) = a == b
 fun testLong2(a: Long, b: Any?) = a != b
 
-// 2 booleanValue
 // 2 charValue
 // 2 byteValue
 // 2 shortValue
 // 2 intValue
 // 2 longValue
-// 0 valueOf
-// 0 areEqual
+// 2 valueOf
+// 2 Boolean.valueOf
+// 2 areEqual

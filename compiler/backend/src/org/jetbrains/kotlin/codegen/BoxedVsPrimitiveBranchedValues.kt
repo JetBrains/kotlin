@@ -249,7 +249,7 @@ class BoxedToPrimitiveEquality private constructor(
         @JvmStatic
         fun isApplicable(opToken: IElementType, leftType: Type, rightType: Type) =
                 (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) &&
-                AsmUtil.isNonFloatingPointPrimitive(rightType) &&
+                AsmUtil.isIntOrLongPrimitive(rightType) &&
                 AsmUtil.isBoxedTypeOf(leftType, rightType)
     }
 }
@@ -323,7 +323,7 @@ class PrimitiveToBoxedEquality private constructor(
         @JvmStatic
         fun isApplicable(opToken: IElementType, leftType: Type, rightType: Type) =
                 (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) &&
-                AsmUtil.isNonFloatingPointPrimitive(leftType) &&
+                AsmUtil.isIntOrLongPrimitive(leftType) &&
                 AsmUtil.isBoxedTypeOf(rightType, leftType)
     }
 }
@@ -402,7 +402,7 @@ class PrimitiveToObjectEquality private constructor(
         @JvmStatic
         fun isApplicable(opToken: IElementType, leftType: Type, rightType: Type) =
                 (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) &&
-                AsmUtil.isNonFloatingPointPrimitive(leftType) &&
+                AsmUtil.isIntOrLongPrimitive(leftType) &&
                 rightType.sort == Type.OBJECT
     }
 }

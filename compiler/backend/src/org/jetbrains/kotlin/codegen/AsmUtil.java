@@ -148,12 +148,8 @@ public class AsmUtil {
         return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
     }
 
-    public static boolean isNonFloatingPointPrimitive(Type type) {
-        return isIntPrimitive(type) || type == Type.LONG_TYPE || type == Type.BOOLEAN_TYPE;
-    }
-
-    public static boolean isIntPrimitiveOrBoolean(Type type) {
-        return isIntPrimitive(type) || type == Type.BOOLEAN_TYPE;
+    public static boolean isIntOrLongPrimitive(Type type) {
+        return isIntPrimitive(type) || type == Type.LONG_TYPE;
     }
 
     public static boolean isNumberPrimitiveOrBoolean(Type type) {
