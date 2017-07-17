@@ -41,3 +41,9 @@ internal fun StaticData.createAlias(name: String, aliasee: ConstPointer): ConstP
     val alias = LLVMAddAlias(context.llvmModule, aliasee.llvmType, aliasee.llvm, name)!!
     return constPointer(alias)
 }
+
+internal fun StaticData.placeCStringLiteral(value: String): ConstPointer {
+    val chars = value.toByteArray(Charsets.UTF_8).map { Int8(it) } + Int8(0)
+
+    return placeGlobalConstArray("", int8Type, chars)
+}

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -35,9 +35,15 @@ internal class OverriddenFunctionDescriptor(val descriptor: FunctionDescriptor, 
         get() = descriptor.target.bridgeDirectionsTo(overriddenDescriptor)
 
     val canBeCalledVirtually: Boolean
+        get() {
+            if (overriddenDescriptor.isObjCClassMethod()) {
+                return descriptor.canObjCClassMethodBeCalledVirtually(this.overriddenDescriptor)
+            }
+
             // We check that either method is open, or one of declarations it overrides is open.
-        get() = overriddenDescriptor.isOverridable
-                || DescriptorUtils.getAllOverriddenDeclarations(overriddenDescriptor).any { it.isOverridable }
+            return (overriddenDescriptor.isOverridable
+                    || DescriptorUtils.getAllOverriddenDeclarations(overriddenDescriptor).any { it.isOverridable })
+        }
 
     val inheritsBridge: Boolean
         get() = !descriptor.kind.isReal

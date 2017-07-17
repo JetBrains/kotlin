@@ -27,7 +27,7 @@ internal fun findMacroConstants(library: NativeLibrary, nativeIndex: NativeIndex
     val names = collectMacroConstantsNames(library)
     // TODO: apply user-defined filters.
 
-    val constants = expandMacroConstants(library, names, typeConverter = nativeIndex::convertType)
+    val constants = expandMacroConstants(library, names, typeConverter = { nativeIndex.convertType(it) })
 
     nativeIndex.macroConstants.addAll(constants)
 }
@@ -109,7 +109,7 @@ private fun reparseWithCodeSnippet(library: NativeLibrary,
         // so the code pattern should force the constant evaluation that corresponds to language rules.
         val codeSnippetLines = when (library.language) {
             // Note: __auto_type is a GNU extension which is supported by clang.
-            Language.C -> listOf(
+            Language.C, Language.OBJECTIVE_C -> listOf(
                     "const __auto_type KNI_INDEXER_VARIABLE = $name;",
                     // Clang evaluate API doesn't provide a way to get a `long long` value yet;
                     // so extract such values from the enum declaration:

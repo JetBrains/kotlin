@@ -21,6 +21,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.isKotlinObjCClass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -75,9 +76,16 @@ internal class ClassLlvmDeclarations(
         val fields: List<PropertyDescriptor>, // TODO: it is not an LLVM declaration.
         val typeInfoGlobal: StaticData.Global,
         val typeInfo: ConstPointer,
-        val singletonDeclarations: SingletonLlvmDeclarations?)
+        val singletonDeclarations: SingletonLlvmDeclarations?,
+        val objCDeclarations: KotlinObjCClassLlvmDeclarations?)
 
 internal class SingletonLlvmDeclarations(val instanceFieldRef: LLVMValueRef)
+
+internal class KotlinObjCClassLlvmDeclarations(
+        val classPointerGlobal: StaticData.Global,
+        val classInfoGlobal: StaticData.Global,
+        val bodyOffsetGlobal: StaticData.Global
+)
 
 internal class FunctionLlvmDeclarations(val llvmFunction: LLVMValueRef)
 
@@ -236,7 +244,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             "ktype:$internalName"
         }
 
-        if (!descriptor.isAbstract()) {
+        if (descriptor.typeInfoHasVtableAttached) {
             // Create the special global consisting of TypeInfo and vtable.
 
             val typeInfoGlobalName = "ktypeglobal:$internalName"
@@ -273,7 +281,14 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             null
         }
 
-        return ClassLlvmDeclarations(bodyType, fields, typeInfoGlobal, typeInfoPtr, singletonDeclarations)
+        val objCDeclarations = if (descriptor.isKotlinObjCClass()) {
+            createKotlinObjCClassDeclarations(descriptor)
+        } else {
+            null
+        }
+
+        return ClassLlvmDeclarations(bodyType, fields, typeInfoGlobal, typeInfoPtr,
+                singletonDeclarations, objCDeclarations)
     }
 
     private fun createSingletonDeclarations(
@@ -297,6 +312,23 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                 symbolName, getLLVMType(descriptor.defaultType), isExported = isExported, threadLocal = true)
 
         return SingletonLlvmDeclarations(instanceFieldRef)
+    }
+
+    private fun createKotlinObjCClassDeclarations(descriptor: ClassDescriptor): KotlinObjCClassLlvmDeclarations {
+        val internalName = qualifyInternalName(descriptor)
+
+        val classPointerGlobal = staticData.createGlobal(int8TypePtr, "kobjcclassptr:$internalName")
+
+        val classInfoGlobal = staticData.createGlobal(
+                context.llvm.runtime.kotlinObjCClassInfo,
+                "kobjcclassinfo:$internalName"
+        ).apply {
+            setConstant(true)
+        }
+
+        val bodyOffsetGlobal = staticData.createGlobal(int32Type, "kobjcbodyoffs:$internalName")
+
+        return KotlinObjCClassLlvmDeclarations(classPointerGlobal, classInfoGlobal, bodyOffsetGlobal)
     }
 
     override fun visitField(declaration: IrField) {
@@ -329,6 +361,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
     override fun visitFunction(declaration: IrFunction) {
         super.visitFunction(declaration)
+
+        if (!declaration.descriptor.kind.isReal) return
 
         val descriptor = declaration.descriptor
         val llvmFunctionType = getLlvmFunctionType(descriptor)

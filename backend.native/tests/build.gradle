@@ -1995,6 +1995,13 @@ kotlinNativeInterop {
             linkerOpts '-framework', 'OpenGL', '-framework', 'GLUT'
             flavor 'native'
         }
+
+        objcSmoke {
+            defFile 'interop/objc/objcSmoke.def'
+            headers "$projectDir/interop/objc/smoke.h"
+            linkerOpts "-L$buildDir",  "-lobjcsmoke"
+            flavor 'native'
+        }
     }
 }
 
@@ -2056,5 +2063,20 @@ if (isMac()) {
         run = false
         source = "interop/basics/opengl_teapot.kt"
         interop = 'opengl'
+    }
+
+    task interop_objc_smoke(type: RunInteropKonanTest) {
+        goldValue = "Hello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\nDeallocated\nDeallocated\n"
+
+        source = "interop/objc/smoke.kt"
+        interop = 'objcSmoke'
+
+        doFirst {
+            execClang {
+                args "$projectDir/interop/objc/smoke.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjcsmoke.dylib"
+            }
+        }
     }
 }

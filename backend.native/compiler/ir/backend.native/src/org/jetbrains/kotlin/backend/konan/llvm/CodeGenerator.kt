@@ -376,6 +376,33 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return LLVMBuildLandingPad(builder, landingpadType, personalityFunction, numClauses, name)!!
     }
 
+    inline fun ifThenElse(
+            condition: LLVMValueRef,
+            thenValue: LLVMValueRef,
+            elseBlock: () -> LLVMValueRef
+    ): LLVMValueRef {
+        val resultType = thenValue.type
+
+        val bbExit = basicBlock(locationInfo = position())
+        val resultPhi = appendingTo(bbExit) {
+            phi(resultType)
+        }
+
+        val bbElse = basicBlock(locationInfo = position())
+
+        condBr(condition, bbExit, bbElse)
+        assignPhis(resultPhi to thenValue)
+
+        appendingTo(bbElse) {
+            val elseValue = elseBlock()
+            br(bbExit)
+            assignPhis(resultPhi to elseValue)
+        }
+
+        positionAtEnd(bbExit)
+        return resultPhi
+    }
+
     internal fun debugLocation(locationInfo: LocationInfo): DILocationRef? {
         if (!context.shouldContainDebugInfo()) return null
         update(currentBlock, locationInfo)

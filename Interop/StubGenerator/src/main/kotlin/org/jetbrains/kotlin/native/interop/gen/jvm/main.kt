@@ -324,6 +324,19 @@ private fun downloadDependencies(dependenciesRoot: String, target: String, konan
     maybeExecuteHelper(dependenciesRoot, konanProperties, dependencyList)
 }
 
+private fun selectNativeLanguage(config: Properties): Language {
+    val languages = mapOf(
+            "C" to Language.C,
+            "Objective-C" to Language.OBJECTIVE_C
+    )
+
+    val language = config.getProperty("language") ?: return Language.C
+
+    return languages[language] ?:
+            error("Unexpected language '$language'. Possible values are: ${languages.keys.joinToString { "'$it'" }}")
+}
+
+
 private fun processLib(konanHome: String,
                        substitutions: Map<String, String>,
                        args: Map<String, List<String>>) {
@@ -363,9 +376,24 @@ private fun processLib(konanHome: String,
 
     val defaultOpts = konanProperties.defaultCompilerOpts(target, dependencies)
     val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
-    val compilerOpts = config.getSpaceSeparated("compilerOpts") + defaultOpts + additionalCompilerOpts
+    val language = selectNativeLanguage(config)
+    val compilerOpts: List<String> = mutableListOf<String>().apply {
+        addAll(config.getSpaceSeparated("compilerOpts"))
+        addAll(defaultOpts)
+        addAll(additionalCompilerOpts)
+        addAll(when (language) {
+            Language.C -> emptyList()
+            Language.OBJECTIVE_C -> {
+                // "Objective-C" within interop means "Objective-C with ARC":
+                listOf("-fobjc-arc")
+                // Using this flag here has two effects:
+                // 1. The headers are parsed with ARC enabled, thus the API is visible correctly.
+                // 2. The generated Objective-C stubs are compiled with ARC enabled, so reference counting
+                // calls are inserted automatically.
+            }
+        })
+    }
     val compiler = "clang"
-    val language = Language.C
     val excludeSystemLibs = config.getProperty("excludeSystemLibs")?.toBoolean() ?: false
     val excludeDependentModules = config.getProperty("excludeDependentModules")?.toBoolean() ?: false
 
@@ -422,7 +450,7 @@ private fun processLib(konanHome: String,
     outKtFile.parentFile.mkdirs()
 
     File(nativeLibsDir).mkdirs()
-    val outCFile = File("$nativeLibsDir/$libName.c") // TODO: select the better location.
+    val outCFile = File("$nativeLibsDir/$libName.${language.sourceFileExtension}") // TODO: select the better location.
 
     outKtFile.bufferedWriter().use { ktFile ->
         outCFile.bufferedWriter().use { cFile ->

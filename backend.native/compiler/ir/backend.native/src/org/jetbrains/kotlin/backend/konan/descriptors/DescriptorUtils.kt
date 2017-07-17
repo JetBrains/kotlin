@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -308,3 +309,9 @@ internal val FunctionDescriptor.needsInlining: Boolean
 internal val FunctionDescriptor.needsSerializedIr: Boolean 
     get() = (this.needsInlining && this.isExported())
 
+fun AnnotationDescriptor.getStringValue(name: String): String {
+    val constantValue = this.allValueArguments.entries.single {
+        it.key.asString() == name
+    }.value
+    return constantValue.value as String
+}

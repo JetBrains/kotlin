@@ -326,6 +326,9 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val throwExceptionFunction = importRtFunction("ThrowException")
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
 
+    val createKotlinObjCClass by lazy { importRtFunction("CreateKotlinObjCClass") }
+    val getObjCKotlinTypeInfo by lazy { importRtFunction("GetObjCKotlinTypeInfo") }
+
     private val personalityFunctionName = when (context.config.targetManager.target) {
         KonanTarget.MINGW -> "__gxx_personality_seh0"
         else -> "__gxx_personality_v0"

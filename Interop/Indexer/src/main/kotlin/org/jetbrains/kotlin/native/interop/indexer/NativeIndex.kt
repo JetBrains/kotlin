@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.native.interop.indexer
 
-enum class Language {
-    C
+enum class Language(val sourceFileExtension: String) {
+    C("c"),
+    OBJECTIVE_C("m")
 }
 
 data class NativeLibrary(val includes: List<String>,
@@ -39,6 +40,8 @@ fun buildNativeIndex(library: NativeLibrary): NativeIndex = buildNativeIndexImpl
 abstract class NativeIndex {
     abstract val structs: List<StructDecl>
     abstract val enums: List<EnumDef>
+    abstract val objCClasses: List<ObjCClass>
+    abstract val objCProtocols: List<ObjCProtocol>
     abstract val typedefs: List<TypedefDef>
     abstract val functions: List<FunctionDecl>
     abstract val macroConstants: List<ConstantDef>
@@ -65,7 +68,8 @@ abstract class StructDecl(val spelling: String) {
  */
 abstract class StructDef(val size: Long, val align: Int,
                          val decl: StructDecl,
-                         val hasNaturalLayout: Boolean) {
+                         val hasNaturalLayout: Boolean,
+                         val hasUnalignedFields: Boolean) {
 
     abstract val fields: List<Field>
 }
@@ -78,15 +82,48 @@ class EnumConstant(val name: String, val value: Long, val isExplicitlyDefined: B
 /**
  * C enum definition.
  */
-abstract class EnumDef(val spelling: String, val baseType: PrimitiveType) {
+abstract class EnumDef(val spelling: String, val baseType: Type) {
 
     abstract val constants: List<EnumConstant>
 }
 
+sealed class ObjCClassOrProtocol(val name: String) {
+    abstract val protocols: List<ObjCProtocol>
+    abstract val methods: List<ObjCMethod>
+    abstract val properties: List<ObjCProperty>
+}
+
+data class ObjCMethod(
+        val selector: String, val encoding: String, val parameters: List<Parameter>, private val returnType: Type,
+        val isClass: Boolean, val nsConsumesSelf: Boolean, val nsReturnsRetained: Boolean,
+        val isOptional: Boolean, val isInit: Boolean
+) {
+
+    fun returnsInstancetype(): Boolean = returnType is ObjCInstanceType
+
+    fun getReturnType(container: ObjCClassOrProtocol): Type = if (returnType is ObjCInstanceType) {
+        when (container) {
+            is ObjCClass -> ObjCObjectPointer(container, returnType.nullability, protocols = emptyList())
+            is ObjCProtocol -> ObjCIdType(returnType.nullability, protocols = listOf(container))
+        }
+    } else {
+        returnType
+    }
+}
+
+data class ObjCProperty(val name: String, val getter: ObjCMethod, val setter: ObjCMethod?) {
+    fun getType(container: ObjCClassOrProtocol): Type = getter.getReturnType(container)
+}
+
+abstract class ObjCClass(name: String) : ObjCClassOrProtocol(name) {
+    abstract val baseClass: ObjCClass?
+}
+abstract class ObjCProtocol(name: String) : ObjCClassOrProtocol(name)
+
 /**
  * C function parameter.
  */
-class Parameter(val name: String?, val type: Type)
+class Parameter(val name: String?, val type: Type, val nsConsumed: Boolean)
 
 /**
  * C function declaration.
@@ -117,6 +154,8 @@ interface PrimitiveType : Type
 
 object CharType : PrimitiveType
 
+object BoolType : PrimitiveType
+
 data class IntegerType(val size: Int, val isSigned: Boolean, val spelling: String) : PrimitiveType
 
 // TODO: floating type is not actually defined entirely by its size.
@@ -141,5 +180,35 @@ data class ConstArrayType(override val elemType: Type, val length: Long) : Array
 data class IncompleteArrayType(override val elemType: Type) : ArrayType
 
 data class Typedef(val def: TypedefDef) : Type
+
+sealed class ObjCPointer : Type {
+    enum class Nullability {
+        Nullable, NonNull, Unspecified
+    }
+
+    abstract val nullability: Nullability
+}
+
+sealed class ObjCQualifiedPointer : ObjCPointer() {
+    abstract val protocols: List<ObjCProtocol>
+}
+
+data class ObjCObjectPointer(
+        val def: ObjCClass,
+        override val nullability: Nullability,
+        override val protocols: List<ObjCProtocol>
+) : ObjCQualifiedPointer()
+
+data class ObjCClassPointer(
+        override val nullability: Nullability,
+        override val protocols: List<ObjCProtocol>
+) : ObjCQualifiedPointer()
+
+data class ObjCIdType(
+        override val nullability: Nullability,
+        override val protocols: List<ObjCProtocol>
+) : ObjCQualifiedPointer()
+
+data class ObjCInstanceType(override val nullability: Nullability) : ObjCPointer()
 
 object UnsupportedType : Type

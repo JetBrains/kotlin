@@ -61,6 +61,7 @@ sourceSets {
           srcDir 'compiler/ir/backend.native/src/'
           srcDir "${rootProject.projectDir}/shared/src/main/kotlin"
       }
+      resources.srcDir 'compiler/ir/backend.native/resources/'
     }
     cli_bc {
       java.srcDir 'cli.bc/src'
@@ -213,7 +214,8 @@ task jars(type: Jar) {
     from 'build/classes/cli_bc', 
          'build/classes/compiler', 
          'build/classes/hashInteropStubs', 
-         'build/classes/llvmInteropStubs'
+         'build/classes/llvmInteropStubs',
+         'build/resources/compiler'
 
     dependsOn 'build', ':runtime:hostRuntime', 'external_jars'
 }

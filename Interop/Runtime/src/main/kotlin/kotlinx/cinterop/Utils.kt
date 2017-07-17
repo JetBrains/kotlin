@@ -218,6 +218,21 @@ fun <T : CVariable> CPointed.readValue(size: Long, align: Int): CValue<T> {
 // TODO: find better name.
 inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readValue(sizeOf<T>(), alignOf<T>())
 
+fun CValue<*>.write(location: NativePtr) {
+    // TODO: probably CValue must be redesigned.
+    val fakePlacement = object : NativePlacement {
+        var used = false
+        override fun alloc(size: Long, align: Int): NativePointed {
+            assert(!used)
+            used = true
+            return interpretPointed<ByteVar>(location)
+        }
+    }
+
+    this.getPointer(fakePlacement)
+    assert(fakePlacement.used)
+}
+
 // TODO: optimize
 fun <T : CVariable> CValues<T>.getBytes(): ByteArray = memScoped {
     val result = ByteArray(size)

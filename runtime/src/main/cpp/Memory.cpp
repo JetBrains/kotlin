@@ -350,6 +350,31 @@ ContainerHeader* AllocContainer(size_t size) {
   return result;
 }
 
+extern "C" {
+void objc_release(void* ptr);
+}
+
+inline void runDeallocationHooks(ObjHeader* obj) {
+#if KONAN_OBJC_INTEROP
+  if (obj->type_info() == theObjCPointerHolderTypeInfo) {
+    void* objcPtr =  *reinterpret_cast<void**>(obj + 1); // TODO: use more reliable layout description
+    objc_release(objcPtr);
+  }
+#endif
+}
+
+static inline void DeinitInstanceBodyImpl(const TypeInfo* typeInfo, void* body) {
+  for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
+    ObjHeader** location = reinterpret_cast<ObjHeader**>(
+        reinterpret_cast<uintptr_t>(body) + typeInfo->objOffsets_[index]);
+    UpdateRef(location, nullptr);
+  }
+}
+
+void DeinitInstanceBody(const TypeInfo* typeInfo, void* body) {
+  DeinitInstanceBodyImpl(typeInfo, body);
+}
+
 void FreeContainer(ContainerHeader* header) {
   RuntimeAssert(!isPermanent(header), "this kind of container shalln't be freed");
 #if TRACE_MEMORY
@@ -366,13 +391,12 @@ void FreeContainer(ContainerHeader* header) {
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(header + 1);
 
   for (int index = 0; index < header->objectCount_; index++) {
+    runDeallocationHooks(obj);
+
     const TypeInfo* typeInfo = obj->type_info();
 
-    for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
-      ObjHeader** location = reinterpret_cast<ObjHeader**>(
-          reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
-      UpdateRef(location, nullptr);
-    }
+    DeinitInstanceBodyImpl(typeInfo, reinterpret_cast<void*>(obj + 1));
+
     // Object arrays are *special*.
     if (typeInfo == theArrayTypeInfo) {
       ArrayHeader* array = obj->array();
@@ -399,6 +423,15 @@ void FreeContainerNoRef(ContainerHeader* header) {
 #if USE_GC
   removeFreeable(memoryState, header);
 #endif
+  ObjHeader* obj = reinterpret_cast<ObjHeader*>(header + 1);
+
+  for (int index = 0; index < header->objectCount_; index++) {
+    runDeallocationHooks(obj);
+
+    obj = reinterpret_cast<ObjHeader*>(
+      reinterpret_cast<uintptr_t>(obj) + objectSize(obj));
+  }
+
   memoryState->allocCount--;
   konanFreeMemory(header);
 }

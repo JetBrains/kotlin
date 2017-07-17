@@ -67,6 +67,25 @@ abstract class CValuesRef<T : CPointed> {
     abstract fun getPointer(placement: NativePlacement): CPointer<T>
 }
 
+inline fun <T : CPointed, R> CValuesRef<T>?.usePointer(block: (CPointer<T>?) -> R): R {
+    val allocated: Boolean
+    val pointer: CPointer<T>? = if (this is CPointer<T>?) {
+        allocated = false
+        this
+    } else {
+        allocated = true
+        this!!.getPointer(nativeHeap)
+    }
+
+    return try {
+        block(pointer)
+    } finally {
+        if (allocated) {
+            nativeHeap.free(pointer.rawValue)
+        }
+    }
+}
+
 /**
  * The (possibly empty) sequence of immutable C values.
  * It is self-contained and doesn't depend on native memory.
@@ -242,6 +261,11 @@ abstract class CEnumVar : CPrimitiveVar()
 // these classes are not supposed to be used directly, instead the typealiases are provided.
 
 @Suppress("FINAL_UPPER_BOUND")
+class BooleanVarOf<T : Boolean>(override val rawPtr: NativePtr) : CPrimitiveVar() {
+    companion object : Type(1)
+}
+
+@Suppress("FINAL_UPPER_BOUND")
 class ByteVarOf<T : Byte>(override val rawPtr: NativePtr) : CPrimitiveVar() {
     companion object : Type(1)
 }
@@ -271,12 +295,27 @@ class DoubleVarOf<T : Double>(override val rawPtr: NativePtr) : CPrimitiveVar() 
     companion object : Type(8)
 }
 
+typealias BooleanVar = BooleanVarOf<Boolean>
 typealias ByteVar = ByteVarOf<Byte>
 typealias ShortVar = ShortVarOf<Short>
 typealias IntVar = IntVarOf<Int>
 typealias LongVar = LongVarOf<Long>
 typealias FloatVar = FloatVarOf<Float>
 typealias DoubleVar = DoubleVarOf<Double>
+
+@Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
+var <T : Boolean> BooleanVarOf<T>.value: T
+    get() {
+        val byte = nativeMemUtils.getByte(this)
+        return byte.toBoolean() as T
+    }
+    set(value) = nativeMemUtils.putByte(this, value.toByte())
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun Boolean.toByte(): Byte = if (this) 1 else 0
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun Byte.toBoolean() = (this - 0 != 0)
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
 var <T : Byte> ByteVarOf<T>.value: T

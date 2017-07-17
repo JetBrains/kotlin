@@ -66,6 +66,11 @@ private tailrec fun convertArgument(
 
     is CEnum -> convertArgument(argument.value, isVariadic, location, additionalPlacement)
 
+    is ObjCPointerHolder -> {
+        location.reinterpret<COpaquePointerVar>()[0] = interpretCPointer(argument.rawPtr)
+        FFI_TYPE_KIND_POINTER
+    }
+
     else -> throw Error("unsupported argument: $argument")
 }
 

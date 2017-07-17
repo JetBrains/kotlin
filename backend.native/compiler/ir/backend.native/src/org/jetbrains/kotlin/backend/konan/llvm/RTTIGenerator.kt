@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.isExternalObjCClassMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
@@ -166,11 +167,18 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val typeInfoGlobal = llvmDeclarations.typeInfoGlobal
 
-        val typeInfoGlobalValue = if (classDesc.isAbstract()) {
+        val typeInfoGlobalValue = if (!classDesc.typeInfoHasVtableAttached) {
             typeInfo
         } else {
             // TODO: compile-time resolution limits binary compatibility
-            val vtableEntries = context.getVtableBuilder(classDesc).vtableEntries.map { it.implementation.entryPointAddress }
+            val vtableEntries = context.getVtableBuilder(classDesc).vtableEntries.map {
+                val implementation = it.implementation
+                if (implementation.isExternalObjCClassMethod()) {
+                    NullPointer(int8Type)
+                } else {
+                    implementation.entryPointAddress
+                }
+            }
             val vtable = ConstArray(int8TypePtr, vtableEntries)
             Struct(typeInfo, vtable)
         }

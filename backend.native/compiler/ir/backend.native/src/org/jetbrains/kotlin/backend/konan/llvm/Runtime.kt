@@ -53,4 +53,7 @@ class Runtime(bitcodeFile: String) {
     val dataLayout = LLVMGetDataLayout(llvmModule)!!.toKString()
 
     val targetData = LLVMCreateTargetData(dataLayout)!!
+
+    val kotlinObjCClassInfo by lazy { getStructType("KotlinObjCClassInfo") }
+    val objCMethodDescription by lazy { getStructType("ObjCMethodDescription") }
 }

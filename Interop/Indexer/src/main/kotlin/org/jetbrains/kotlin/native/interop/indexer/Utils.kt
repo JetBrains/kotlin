@@ -176,10 +176,7 @@ internal fun Appendable.appendPreamble(library: NativeLibrary) = this.apply {
  * Creates temporary source file which includes the library.
  */
 internal fun NativeLibrary.createTempSource(): File {
-    val suffix = when (language) {
-        Language.C -> ".c"
-    }
-    val result = createTempFile(suffix = suffix)
+    val result = createTempFile(suffix = ".${language.sourceFileExtension}")
     result.deleteOnExit()
 
     result.bufferedWriter().use { writer ->
@@ -479,3 +476,9 @@ internal fun getFilteredHeaders(library: NativeLibrary, index: CXIndex, translat
 
     return result
 }
+
+fun ObjCMethod.replaces(other: ObjCMethod): Boolean =
+        this.isClass == other.isClass && this.selector == other.selector
+
+fun ObjCProperty.replaces(other: ObjCProperty): Boolean =
+        this.getter.replaces(other.getter)

@@ -379,22 +379,7 @@ private class Struct(val size: Long, val align: Int, elementTypes: List<CType<*>
 ) {
     override fun read(location: NativePtr) = interpretPointed<ByteVar>(location).readValue<CStructVar>(size, align)
 
-    override fun write(location: NativePtr, value: CValue<*>) {
-        // TODO: probably CValue must be redesigned.
-        val fakePlacement = object : NativePlacement {
-            var used = false
-            override fun alloc(size: Long, align: Int): NativePointed {
-                assert(!used)
-                assert (size == this@Struct.size)
-                assert (align == this@Struct.align)
-                used = true
-                return interpretPointed<ByteVar>(location)
-            }
-        }
-
-        value.getPointer(fakePlacement)
-        assert (fakePlacement.used)
-    }
+    override fun write(location: NativePtr, value: CValue<*>) = value.write(location)
 }
 
 private class CEnumType(private val rawValueCType: CType<Number>) : CType<CEnum>(rawValueCType.ffiType) {

@@ -20,40 +20,282 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.ValueType
-import org.jetbrains.kotlin.backend.konan.isRepresentedAs
-import org.jetbrains.kotlin.backend.konan.reportCompilationError
+import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.common.peek
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
+import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.ir.builders.IrBuilder
-import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArguments
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-internal class InteropLoweringPart1(val context: Context) : IrElementTransformerVoid(), FileLoweringPass {
+internal class InteropLoweringPart1(val context: Context) : IrBuildingTransformer(context), FileLoweringPass {
+
+    private val symbols get() = context.ir.symbols
+    private val symbolTable get() = symbols.symbolTable
+
+    lateinit var currentFile: IrFile
+
     override fun lower(irFile: IrFile) {
+        currentFile = irFile
         irFile.transformChildrenVoid(this)
+    }
+
+    private fun IrBuilderWithScope.callAlloc(classSymbol: IrClassSymbol): IrExpression {
+        return irCall(symbols.interopAllocObjCObject, listOf(classSymbol.descriptor.defaultType)).apply {
+            putValueArgument(0, getObjCClass(classSymbol))
+        }
+    }
+
+    private fun IrBuilderWithScope.getObjCClass(classSymbol: IrClassSymbol): IrExpression {
+        val classDescriptor = classSymbol.descriptor
+        assert(!classDescriptor.isObjCMetaClass())
+
+        if (classDescriptor.isExternalObjCClass()) {
+            val companionObject = classDescriptor.companionObjectDescriptor!!
+            if (companionObject.unsubstitutedPrimaryConstructor != scope.scopeOwner) {
+                // Optimization: get class pointer from companion object thus avoiding lookup by name.
+                return irCall(symbols.interopObjCObjectRawValueGetter).apply {
+                    extensionReceiver = irGetObject(symbolTable.referenceClass(companionObject))
+                }
+            }
+        }
+        return irCall(symbols.interopGetObjCClass, listOf(classDescriptor.defaultType))
+    }
+
+    private val outerClasses = mutableListOf<IrClass>()
+
+    override fun visitClass(declaration: IrClass): IrStatement {
+        if (declaration.descriptor.isKotlinObjCClass()) {
+            checkKotlinObjCClass(declaration)
+        }
+
+        outerClasses.push(declaration)
+        try {
+            return super.visitClass(declaration)
+        } finally {
+            outerClasses.pop()
+        }
+    }
+
+    private fun checkKotlinObjCClass(irClass: IrClass) {
+        val kind = irClass.descriptor.kind
+        if (kind != ClassKind.CLASS && kind != ClassKind.OBJECT) {
+            context.reportCompilationError(
+                    "Only classes are supported as subtypes of Objective-C types",
+                    currentFile, irClass
+            )
+        }
+
+        if (!irClass.descriptor.isFinalClass) {
+            context.reportCompilationError(
+                    "Non-final Kotlin subclasses of Objective-C classes are not yet supported",
+                    currentFile, irClass
+            )
+        }
+
+        var hasObjCClassSupertype = false
+        irClass.descriptor.defaultType.constructor.supertypes.forEach {
+            val descriptor = it.constructor.declarationDescriptor as ClassDescriptor
+            if (!descriptor.isObjCClass()) {
+                context.reportCompilationError(
+                        "Mixing Kotlin and Objective-C supertypes is not supported",
+                        currentFile, irClass
+                )
+            }
+
+            if (descriptor.kind == ClassKind.CLASS) {
+                hasObjCClassSupertype = true
+            }
+        }
+
+        if (!hasObjCClassSupertype) {
+            context.reportCompilationError(
+                    "Kotlin implementation of Objective-C protocol must have Objective-C superclass (e.g. NSObject)",
+                    currentFile, irClass
+            )
+        }
+
+    }
+
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+        expression.transformChildrenVoid()
+
+        builder.at(expression)
+
+        val constructedClass = outerClasses.peek()!!
+        val constructedClassDescriptor = constructedClass.descriptor
+
+        if (!constructedClassDescriptor.isObjCClass()) {
+            return expression
+        }
+
+        constructedClassDescriptor.containingDeclaration.let { classContainer ->
+            if (classContainer is ClassDescriptor && classContainer.isObjCClass() &&
+                    constructedClassDescriptor == classContainer.companionObjectDescriptor) {
+
+                val outerConstructedClass = outerClasses[outerClasses.lastIndex - 1]
+                assert (outerConstructedClass.descriptor == classContainer)
+
+                assert(expression.getArguments().isEmpty())
+
+                return builder.irBlock(expression) {
+                    +expression // Required for the IR to be valid, will be ignored in codegen.
+                    +irCall(symbols.interopObjCObjectInitFromPtr).apply {
+                        extensionReceiver = irGet(constructedClass.thisReceiver!!.symbol)
+                        putValueArgument(0, getObjCClass(outerConstructedClass.symbol))
+                    }
+                }
+            }
+        }
+
+        if (!constructedClassDescriptor.isExternalObjCClass() &&
+                expression.descriptor.constructedClass.isExternalObjCClass()) {
+
+            // Calling super constructor from Kotlin Objective-C class.
+
+            assert(constructedClassDescriptor.getSuperClassNotAny() == expression.descriptor.constructedClass)
+
+            val initMethod = getObjCInitMethod(expression.descriptor)!!
+            val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
+
+            assert(expression.dispatchReceiver == null)
+            assert(expression.extensionReceiver == null)
+
+            val initCall = builder.genLoweredObjCMethodCall(
+                    initMethodInfo,
+                    superQualifier = symbolTable.referenceClass(expression.descriptor.constructedClass),
+                    receiver = builder.callAlloc(constructedClass.symbol),
+                    arguments = initMethod.valueParameters.map { expression.getValueArgument(it)!! }
+            )
+
+            val superConstructor = symbolTable.referenceConstructor(
+                    expression.descriptor.constructedClass.constructors.single { it.valueParameters.size == 0 }
+            )
+
+            return builder.irBlock(expression) {
+                // Required for the IR to be valid, will be ignored in codegen:
+                +IrDelegatingConstructorCallImpl(startOffset, endOffset, superConstructor, superConstructor.descriptor)
+
+                +irCall(symbols.interopObjCObjectInitFrom).apply {
+                    extensionReceiver = irGet(constructedClass.thisReceiver!!.symbol)
+                    putValueArgument(0, initCall)
+                }
+            }
+        }
+
+        return expression
+    }
+
+    private fun IrBuilderWithScope.genLoweredObjCMethodCall(info: ObjCMethodInfo, superQualifier: IrClassSymbol?,
+                                         receiver: IrExpression, arguments: List<IrExpression>): IrExpression {
+
+        val superClass = superQualifier?.let { getObjCClass(it) } ?:
+                irCall(symbols.getNativeNullPtr)
+
+        val bridge = symbolTable.referenceSimpleFunction(info.bridge)
+        return irCall(bridge).apply {
+            putValueArgument(0, superClass)
+            putValueArgument(1, receiver)
+
+            assert(arguments.size + 2 == info.bridge.valueParameters.size)
+            arguments.forEachIndexed { index, argument ->
+                putValueArgument(index + 2, argument)
+            }
+        }
+    }
+
+    private fun getObjCInitMethod(descriptor: ConstructorDescriptor): FunctionDescriptor? {
+        return descriptor.annotations.findAnnotation(FqName("kotlinx.cinterop.ObjCConstructor"))?.let {
+            val initSelector = it.getStringValue("initSelector")
+            descriptor.constructedClass.unsubstitutedMemberScope.getContributedDescriptors().asSequence()
+                    .filterIsInstance<FunctionDescriptor>()
+                    .single { it.getExternalObjCMethodInfo()?.selector == initSelector }
+        }
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
 
-        return when (expression.descriptor.original) {
+        val descriptor = expression.descriptor.original
+
+        if (descriptor is ConstructorDescriptor) {
+            val initMethod = getObjCInitMethod(descriptor)
+
+            if (initMethod != null) {
+                val arguments = descriptor.valueParameters.map { expression.getValueArgument(it)!! }
+                assert(expression.extensionReceiver == null)
+                assert(expression.dispatchReceiver == null)
+
+                builder.at(expression)
+
+                return builder.genLoweredObjCMethodCall(
+                        initMethod.getExternalObjCMethodInfo()!!,
+                        superQualifier = null,
+                        receiver = builder.callAlloc(symbolTable.referenceClass(descriptor.constructedClass)),
+                        arguments = arguments
+                )
+            }
+        }
+
+        descriptor.getExternalObjCMethodInfo()?.let { methodInfo ->
+            val isInteropStubsFile =
+                    currentFile.fileAnnotations.any { it.fqName ==  FqName("kotlinx.cinterop.InteropStubs") }
+
+            // Special case: bridge from Objective-C method implementation template to Kotlin method;
+            // handled in CodeGeneratorVisitor.callVirtual.
+            val useKotlinDispatch = isInteropStubsFile &&
+                    builder.scope.scopeOwner.annotations.hasAnnotation(FqName("konan.internal.ExportForCppRuntime"))
+
+            if (!useKotlinDispatch) {
+                val arguments = descriptor.valueParameters.map { expression.getValueArgument(it)!! }
+                assert(expression.extensionReceiver == null)
+
+                if (expression.superQualifier?.isObjCMetaClass() == true) {
+                    context.reportCompilationError(
+                            "Super calls to Objective-C meta classes are not supported yet",
+                            currentFile, expression
+                    )
+                }
+
+                if (expression.superQualifier?.isInterface == true) {
+                    context.reportCompilationError(
+                            "Super calls to Objective-C protocols are not allowed",
+                            currentFile, expression
+                    )
+                }
+
+                builder.at(expression)
+                return builder.genLoweredObjCMethodCall(
+                        methodInfo,
+                        superQualifier = expression.superQualifierSymbol,
+                        receiver = expression.dispatchReceiver!!,
+                        arguments = arguments
+                )
+            }
+        }
+
+        return when (descriptor) {
             context.interopBuiltIns.typeOf -> {
                 val typeArgument = expression.getSingleTypeArgument()
                 val classDescriptor = TypeUtils.getClassDescriptor(typeArgument)
@@ -65,8 +307,8 @@ internal class InteropLoweringPart1(val context: Context) : IrElementTransformer
                             error("native variable class $classDescriptor must have the companion object")
 
                     IrGetObjectValueImpl(
-                            expression.startOffset, expression.endOffset,
-                            companionObjectDescriptor.defaultType, companionObjectDescriptor
+                            expression.startOffset, expression.endOffset, companionObjectDescriptor.defaultType,
+                            symbolTable.referenceClass(companionObjectDescriptor)
                     )
                 }
             }
