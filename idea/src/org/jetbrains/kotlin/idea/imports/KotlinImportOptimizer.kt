@@ -104,7 +104,7 @@ class KotlinImportOptimizer : ImportOptimizer {
                     if (target is PackageViewDescriptor && parentFqName == FqName.ROOT) continue // no need to import top-level packages
                     if (target !is PackageViewDescriptor && parentFqName == currentPackageName) continue
 
-                    if (!reference.canBeResolvedViaImport(target)) continue
+                    if (!reference.canBeResolvedViaImport(target, bindingContext)) continue
 
                     if (isAccessibleAsMember(importableDescriptor, element, bindingContext)) continue
 

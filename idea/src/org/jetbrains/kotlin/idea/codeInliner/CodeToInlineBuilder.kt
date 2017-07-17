@@ -143,7 +143,7 @@ class CodeToInlineBuilder(
             val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
 
             //TODO: other types of references ('[]' etc)
-            if (expression.mainReference.canBeResolvedViaImport(target)) {
+            if (expression.mainReference.canBeResolvedViaImport(target, bindingContext)) {
                 codeToInline.fqNamesToImport.add(target.importableFqName!!)
             }
 

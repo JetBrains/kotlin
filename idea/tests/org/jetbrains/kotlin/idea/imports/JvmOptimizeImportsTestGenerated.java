@@ -290,6 +290,24 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             doTest(fileName);
         }
 
+        @TestMetadata("ExtensionFunctionalTypeValFromCompanionObject.kt")
+        public void testExtensionFunctionalTypeValFromCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/ExtensionFunctionalTypeValFromCompanionObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionFunctionalTypeValFromCompanionObjectCallOnCompanion.kt")
+        public void testExtensionFunctionalTypeValFromCompanionObjectCallOnCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/ExtensionFunctionalTypeValFromCompanionObjectCallOnCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionFunctionalTypeValFromCompanionObjectNonExtCall.kt")
+        public void testExtensionFunctionalTypeValFromCompanionObjectNonExtCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/ExtensionFunctionalTypeValFromCompanionObjectNonExtCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InvokeFunction.kt")
         public void testInvokeFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/InvokeFunction.kt");
