@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -27,7 +26,7 @@ abstract class NumberLikeCompare(
         left: StackValue,
         right: StackValue,
         operandType: Type,
-        protected val opToken: IElementType
+        private val opToken: IElementType
 ) : BranchedValue(left, right, operandType, NumberCompare.getNumberCompareOpcode(opToken)) {
     override fun patchOpcode(opcode: Int, v: InstructionAdapter): Int =
             NumberCompare.patchOpcode(opcode, v, opToken, operandType)
@@ -130,102 +129,51 @@ class BoxedToPrimitiveEquality private constructor(
     private val boxedType = arg1.type
 
     override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        if (jumpIfFalse) {
-            jumpIfFalse(v, jumpLabel)
+        if (arg2!!.canHaveSideEffects()) {
+            val tmp = frameMap.enterTemp(operandType)
+            doJump(
+                    v, jumpLabel, jumpIfFalse,
+                    {
+                        arg1.put(boxedType, v)
+                        arg2.put(operandType, v)
+                        v.store(tmp, operandType)
+                    },
+                    { v.load(tmp, operandType) }
+            )
+            frameMap.leaveTemp(operandType)
         }
         else {
-            jumpIfTrue(v, jumpLabel)
+            doJump(
+                    v, jumpLabel, jumpIfFalse,
+                    { arg1.put(boxedType, v) },
+                    { arg2.put(operandType, v) }
+            )
         }
     }
 
-    private fun jumpIfTrue(v: InstructionAdapter, jumpLabel: Label) {
-        if (arg2!!.canHaveSideEffects()) {
-            jumpIfTrueWithPossibleSideEffects(v, jumpLabel)
-            return
-        }
-
-        val notNullLabel = Label()
-        val endLabel = Label()
-        arg1.put(boxedType, v)
-        AsmUtil.dup(v, boxedType)
-        v.ifnonnull(notNullLabel)
-
-        AsmUtil.pop(v, boxedType)
-        v.goTo(endLabel)
-
-        v.mark(notNullLabel)
-        coerce(boxedType, operandType, v)
-        arg2.put(operandType, v)
-        v.visitJumpInsn(patchOpcode(negatedOperations[opcode]!!, v), jumpLabel)
-
-        v.mark(endLabel)
-    }
-
-    private fun jumpIfTrueWithPossibleSideEffects(v: InstructionAdapter, jumpLabel: Label) {
+    private inline fun doJump(
+            v: InstructionAdapter,
+            jumpLabel: Label,
+            jumpIfFalse: Boolean,
+            putArg1: () -> Unit,
+            putArg2: () -> Unit
+    ) {
         val notNullLabel = Label()
         val endLabel = Label()
 
-        arg1.put(boxedType, v)
-        arg2!!.put(operandType, v)
-
-        val tempArg2 = frameMap.enterTemp(operandType)
-
-        v.store(tempArg2, operandType)
+        putArg1()
         AsmUtil.dup(v, boxedType)
         v.ifnonnull(notNullLabel)
 
         AsmUtil.pop(v, boxedType)
-        v.goTo(endLabel)
+        if (jumpIfFalse) v.goTo(jumpLabel) else v.goTo(endLabel)
 
         v.mark(notNullLabel)
         coerce(boxedType, operandType, v)
-        v.load(tempArg2, operandType)
-        v.visitJumpInsn(patchOpcode(negatedOperations[opcode]!!, v), jumpLabel)
+        putArg2()
+        v.visitJumpInsn(patchOpcode(if (jumpIfFalse) opcode else negatedOperations[opcode]!!, v), jumpLabel)
 
-        frameMap.leaveTemp(operandType)
         v.mark(endLabel)
-
-    }
-
-    private fun jumpIfFalse(v: InstructionAdapter, jumpLabel: Label) {
-        if (arg2!!.canHaveSideEffects()) {
-            jumpIfFalseWithPossibleSideEffects(v, jumpLabel)
-            return
-        }
-
-        val notNullLabel = Label()
-        arg1.put(boxedType, v)
-        AsmUtil.dup(v, boxedType)
-        v.ifnonnull(notNullLabel)
-
-        AsmUtil.pop(v, boxedType)
-        v.goTo(jumpLabel)
-
-        v.mark(notNullLabel)
-        coerce(boxedType, operandType, v)
-        arg2.put(operandType, v)
-        v.visitJumpInsn(patchOpcode(opcode, v), jumpLabel)
-    }
-
-    private fun jumpIfFalseWithPossibleSideEffects(v: InstructionAdapter, jumpLabel: Label) {
-        val notNullLabel = Label()
-
-        arg1.put(boxedType, v)
-        arg2!!.put(operandType, v)
-        val tempArg2 = frameMap.enterTemp(operandType)
-        v.store(tempArg2, operandType)
-        AsmUtil.dup(v, boxedType)
-        v.ifnonnull(notNullLabel)
-
-        AsmUtil.pop(v, boxedType)
-        v.goTo(jumpLabel)
-
-        v.mark(notNullLabel)
-        coerce(boxedType, operandType, v)
-        v.load(tempArg2, operandType)
-        v.visitJumpInsn(patchOpcode(opcode, v), jumpLabel)
-
-        frameMap.leaveTemp(operandType)
     }
 
     companion object {
@@ -254,59 +202,53 @@ class BoxedToPrimitiveEquality private constructor(
     }
 }
 
+abstract class PrimitiveToSomethingEquality
+protected constructor(
+        leftPrimitive: StackValue,
+        right: StackValue,
+        primitiveType: Type
+) : NumberLikeCompare(leftPrimitive, right, primitiveType, KtTokens.EQEQ) {
+    protected val primitiveType = leftPrimitive.type
+    protected val rightType = right.type
+
+    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+        val notNullLabel = Label()
+        val endLabel = Label()
+
+        arg1.put(primitiveType, v)
+        arg2!!.put(rightType, v)
+        AsmUtil.dup(v, rightType)
+        jumpIfCanCompareTopWithPrimitive(v, notNullLabel)
+
+        AsmUtil.pop(v, rightType)
+        AsmUtil.pop(v, primitiveType)
+        if (jumpIfFalse) v.goTo(jumpLabel) else v.goTo(endLabel)
+
+        v.mark(notNullLabel)
+        coerceRightToPrimitive(v)
+        v.visitJumpInsn(patchOpcode(if (jumpIfFalse) opcode else negatedOperations[opcode]!!, v), jumpLabel)
+
+        v.mark(endLabel)
+    }
+
+    protected abstract fun jumpIfCanCompareTopWithPrimitive(v: InstructionAdapter, label: Label)
+    protected abstract fun coerceRightToPrimitive(v: InstructionAdapter)
+}
+
 
 class PrimitiveToBoxedEquality private constructor(
         leftPrimitive: StackValue,
         rightBoxed: StackValue,
         primitiveType: Type
-) : NumberLikeCompare(leftPrimitive, rightBoxed, primitiveType, KtTokens.EQEQ) {
-    private val primitiveType = leftPrimitive.type
+) : PrimitiveToSomethingEquality(leftPrimitive, rightBoxed, primitiveType) {
     private val boxedType = rightBoxed.type
 
-    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        if (jumpIfFalse) {
-            jumpIfFalse(v, jumpLabel)
-        }
-        else {
-            jumpIfTrue(v, jumpLabel)
-        }
+    override fun jumpIfCanCompareTopWithPrimitive(v: InstructionAdapter, label: Label) {
+        v.ifnonnull(label)
     }
 
-    private fun jumpIfFalse(v: InstructionAdapter, jumpLabel: Label) {
-        val notNullLabel = Label()
-
-        arg1.put(primitiveType, v)
-        arg2!!.put(boxedType, v)
-        AsmUtil.dup(v, boxedType)
-        v.ifnonnull(notNullLabel)
-
-        AsmUtil.pop(v, boxedType)
-        AsmUtil.pop(v, primitiveType)
-        v.goTo(jumpLabel)
-
-        v.mark(notNullLabel)
+    override fun coerceRightToPrimitive(v: InstructionAdapter) {
         coerce(boxedType, primitiveType, v)
-        v.visitJumpInsn(patchOpcode(opcode, v), jumpLabel)
-    }
-
-    private fun jumpIfTrue(v: InstructionAdapter, jumpLabel: Label) {
-        val notNullLabel = Label()
-        val endLabel = Label()
-
-        arg1.put(primitiveType, v)
-        arg2!!.put(boxedType, v)
-        AsmUtil.dup(v, boxedType)
-        v.ifnonnull(notNullLabel)
-
-        AsmUtil.pop(v, boxedType)
-        AsmUtil.pop(v, primitiveType)
-        v.goTo(endLabel)
-
-        v.mark(notNullLabel)
-        coerce(boxedType, primitiveType, v)
-        v.visitJumpInsn(patchOpcode(negatedOperations[opcode]!!, v), jumpLabel)
-
-        v.mark(endLabel)
     }
 
     companion object {
@@ -333,59 +275,17 @@ class PrimitiveToObjectEquality private constructor(
         leftPrimitive: StackValue,
         rightObject: StackValue,
         primitiveType: Type
-) : NumberLikeCompare(leftPrimitive, rightObject, primitiveType, KtTokens.EQEQ) {
-    private val primitiveType = leftPrimitive.type
-    private val objectType = rightObject.type
+) : PrimitiveToSomethingEquality(leftPrimitive, rightObject, primitiveType) {
     private val boxedType = AsmUtil.boxType(primitiveType)
 
-    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        if (jumpIfFalse) {
-            jumpIfFalse(v, jumpLabel)
-        }
-        else {
-            jumpIfTrue(v, jumpLabel)
-        }
+    override fun jumpIfCanCompareTopWithPrimitive(v: InstructionAdapter, label: Label) {
+        v.instanceOf(boxedType)
+        v.ifne(label)
     }
 
-    private fun jumpIfFalse(v: InstructionAdapter, jumpLabel: Label) {
-        val isBoxedLabel = Label()
-
-        arg1.put(primitiveType, v)
-        arg2!!.put(objectType, v)
-        AsmUtil.dup(v, objectType)
-        v.instanceOf(boxedType)
-        v.ifne(isBoxedLabel)
-
-        AsmUtil.pop(v, objectType)
-        AsmUtil.pop(v, primitiveType)
-        v.goTo(jumpLabel)
-
-        v.mark(isBoxedLabel)
-        coerce(objectType, boxedType, v)
+    override fun coerceRightToPrimitive(v: InstructionAdapter) {
+        coerce(rightType, boxedType, v)
         coerce(boxedType, primitiveType, v)
-        v.visitJumpInsn(patchOpcode(opcode, v), jumpLabel)
-    }
-
-    private fun jumpIfTrue(v: InstructionAdapter, jumpLabel: Label) {
-        val isBoxedLabel = Label()
-        val endLabel = Label()
-
-        arg1.put(primitiveType, v)
-        arg2!!.put(objectType, v)
-        AsmUtil.dup(v, objectType)
-        v.instanceOf(boxedType)
-        v.ifne(isBoxedLabel)
-
-        AsmUtil.pop(v, objectType)
-        AsmUtil.pop(v, primitiveType)
-        v.goTo(endLabel)
-
-        v.mark(isBoxedLabel)
-        coerce(objectType, boxedType, v)
-        coerce(boxedType, primitiveType, v)
-        v.visitJumpInsn(patchOpcode(negatedOperations[opcode]!!, v), jumpLabel)
-
-        v.mark(endLabel)
     }
 
     companion object {
