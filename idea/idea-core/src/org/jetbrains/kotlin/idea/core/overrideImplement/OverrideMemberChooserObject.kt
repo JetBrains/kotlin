@@ -136,9 +136,9 @@ private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
 }
 
 private fun PropertyDescriptor.wrap(): PropertyDescriptor {
-    val newDescriptor = object : PropertyDescriptor by this {
+    val delegate = copy(containingDeclaration, Modality.OPEN, visibility, kind, true) as PropertyDescriptor
+    val newDescriptor = object : PropertyDescriptor by delegate {
         override fun isHeader() = false
-        override fun getModality() = Modality.OPEN
     }
     newDescriptor.setSingleOverridden(this)
     return newDescriptor
