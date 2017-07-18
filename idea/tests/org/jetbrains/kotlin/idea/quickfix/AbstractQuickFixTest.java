@@ -177,7 +177,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                     for (String fixtureClass : fixtureClasses) {
                         TestFixtureExtension.Companion.unloadFixture(fixtureClass);
                     }
-                    ConfigLibraryUtil.unconfigureLibrariesByDirective(getModule(), fileText);
+                    ConfigLibraryUtil.INSTANCE.unconfigureLibrariesByDirective(getModule(), fileText);
                 }
             }
         }, "", "");
@@ -226,10 +226,10 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             // Without the following line of code subsequent tests with js-runtime will be prone to failure due "outdated stub in index" error.
             FileBasedIndex.getInstance().requestRebuild(StubUpdatingIndex.INDEX_ID);
 
-            ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk(getModule(), getFullJavaJDK());
+            ConfigLibraryUtil.INSTANCE.configureKotlinJsRuntimeAndSdk(getModule(), getFullJavaJDK());
         }
         else if (isRuntimeNeeded(beforeFileName)) {
-            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(getModule(), getFullJavaJDK());
+            ConfigLibraryUtil.INSTANCE.configureKotlinRuntimeAndSdk(getModule(), getFullJavaJDK());
         }
         else if (beforeFileName.contains("Runtime") || beforeFileName.contains("JsRuntime")) {
             Assert.fail("Runtime marker is used in test name, but not in test file end. " +
@@ -245,10 +245,10 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
     private void unConfigureRuntimeIfNeeded(@NotNull String beforeFileName) throws IOException {
         if (beforeFileName.endsWith("JsRuntime.kt")) {
-            ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(getModule(), getProjectJDK());
+            ConfigLibraryUtil.INSTANCE.unConfigureKotlinJsRuntimeAndSdk(getModule(), getProjectJDK());
         }
         else if (isRuntimeNeeded(beforeFileName)) {
-            ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(getModule(), getProjectJDK());
+            ConfigLibraryUtil.INSTANCE.unConfigureKotlinRuntimeAndSdk(getModule(), getProjectJDK());
         }
     }
 
