@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.js.translate.reference;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation;
 import org.jetbrains.kotlin.js.backend.ast.JsName;
@@ -32,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSelectorAsSimpleName;
@@ -49,6 +53,41 @@ public final class ReferenceTranslator {
 
     @NotNull
     public static JsExpression translateAsValueReference(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
+        JsExpression result = translateAsValueReferenceWithoutType(descriptor, context);
+        MetadataProperties.setType(result, getType(descriptor));
+        if (descriptor instanceof ClassDescriptor) {
+            if (KotlinBuiltIns.isUnit(((ClassDescriptor) descriptor).getDefaultType())) {
+                MetadataProperties.setUnit(result, true);
+                MetadataProperties.setSideEffects(result, SideEffectKind.PURE);
+                MetadataProperties.setSynthetic(result, true);
+            }
+        }
+        return result;
+    }
+
+    @Nullable
+    private static KotlinType getType(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ClassDescriptor) {
+            return ((ClassDescriptor) descriptor).getDefaultType();
+        }
+        else if (descriptor instanceof CallableDescriptor) {
+            if (descriptor instanceof ValueParameterDescriptor) {
+                ValueParameterDescriptor parameter = (ValueParameterDescriptor) descriptor;
+                if (parameter.getContainingDeclaration() instanceof AnonymousFunctionDescriptor) {
+                    return DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
+                }
+            }
+            return ((CallableDescriptor) descriptor).getReturnType();
+        }
+
+        return null;
+    }
+
+    @NotNull
+    private static JsExpression translateAsValueReferenceWithoutType(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
         if (AnnotationsUtils.isNativeObject(descriptor) || AnnotationsUtils.isLibraryObject(descriptor)) {
             return context.getInnerReference(descriptor);
         }

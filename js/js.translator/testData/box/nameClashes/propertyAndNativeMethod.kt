@@ -3,7 +3,7 @@
 // FILE: lib.kt
 package lib
 
-external fun bar()
+external fun bar(): Int
 
 val bar = 32
 

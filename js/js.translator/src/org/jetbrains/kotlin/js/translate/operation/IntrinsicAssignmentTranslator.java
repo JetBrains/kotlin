@@ -66,7 +66,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
             if (leftType != null && KotlinBuiltIns.isStringOrNullableString(leftType)) {
                 result = JsAstUtils.charToString(result);
             }
-            else if (leftType == null || !KotlinBuiltIns.isCharOrNullableChar(leftType)) {
+            else if (leftType != null && !KotlinBuiltIns.isCharOrNullableChar(leftType)) {
                 result = TranslationUtils.charToBoxedChar(context, result);
             }
         }

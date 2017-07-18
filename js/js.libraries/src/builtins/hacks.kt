@@ -24,4 +24,4 @@ internal external annotation class JsName(val name: String)
 
 internal external annotation class native
 
-internal external fun js(code: String): dynamic
+external fun js(code: String): dynamic

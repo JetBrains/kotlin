@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -166,13 +167,14 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
 
     @NotNull
-    public static final FunctionIntrinsic CHAR_TO_STRING = new FunctionIntrinsicWithReceiverComputed() {
+    private static final FunctionIntrinsic CHAR_TO_STRING = new FunctionIntrinsicWithReceiverComputed() {
         @NotNull
         @Override
         public JsExpression apply(
                 @Nullable JsExpression receiver, @NotNull List<? extends JsExpression> arguments, @NotNull TranslationContext context
         ) {
             assert receiver != null;
+            receiver = TranslationUtils.coerce(context, receiver, context.getCurrentModule().getBuiltIns().getCharType());
             return JsAstUtils.charToString(receiver);
         }
     };
