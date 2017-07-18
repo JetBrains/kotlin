@@ -271,3 +271,16 @@ internal object CheckOperatorResolutionPart : ResolutionPart {
         return emptyList()
     }
 }
+
+internal object CheckAbstractSuperCallPart : ResolutionPart {
+    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+        if (callContext.externalPredicates.isSuperExpression(dispatchReceiverArgument)) {
+            if (candidateDescriptor is MemberDescriptor && candidateDescriptor.modality == Modality.ABSTRACT) {
+                return listOf(AbstractSuperCall)
+            }
+        }
+
+        return emptyList()
+    }
+
+}

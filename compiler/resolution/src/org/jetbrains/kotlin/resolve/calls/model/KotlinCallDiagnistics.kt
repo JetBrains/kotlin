@@ -139,3 +139,9 @@ class UnsafeCallError(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagno
 object InstantiationOfAbstractClass : KotlinCallDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
 }
+
+object AbstractSuperCall : KotlinCallDiagnostic(RUNTIME_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}
