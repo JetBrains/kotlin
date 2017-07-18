@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.android.configure
 
-import com.android.tools.idea.gradle.AndroidProjectKeys
-import com.android.tools.idea.gradle.JavaProject
+import com.android.tools.idea.gradle.project.model.JavaModuleModel
+import com.android.tools.idea.gradle.project.sync.idea.data.service.AndroidProjectKeys
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
@@ -28,11 +28,11 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import org.jetbrains.kotlin.idea.configuration.detectPlatformByPlugin
 import org.jetbrains.kotlin.idea.framework.libraryKind
 
-class KotlinAndroidGradleLibraryDataService : AbstractProjectDataService<JavaProject, Void>() {
-    override fun getTargetDataKey() = AndroidProjectKeys.JAVA_PROJECT
+class KotlinAndroidGradleLibraryDataService : AbstractProjectDataService<JavaModuleModel, Void>() {
+    override fun getTargetDataKey() = AndroidProjectKeys.JAVA_MODULE_MODEL
 
     override fun postProcess(
-            toImport: MutableCollection<DataNode<JavaProject>>,
+            toImport: MutableCollection<DataNode<JavaModuleModel>>,
             projectData: ProjectData?,
             project: Project,
             modelsProvider: IdeModifiableModelsProvider
