@@ -95,4 +95,10 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/simple/");
         doTest(fileName);
     }
+
+    @TestMetadata("throwingResolver")
+    public void testThrowingResolver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/throwingResolver/");
+        doTest(fileName);
+    }
 }
