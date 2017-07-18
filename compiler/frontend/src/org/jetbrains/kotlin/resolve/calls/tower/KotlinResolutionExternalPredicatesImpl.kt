@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isSuperOrDelegatingConstructorCall
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionExternalPredicates
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
+import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 
 class KotlinResolutionExternalPredicatesImpl(
@@ -45,4 +47,7 @@ class KotlinResolutionExternalPredicatesImpl(
 
     override fun isHiddenInResolution(descriptor: DeclarationDescriptor, kotlinCall: KotlinCall) =
             descriptor.isHiddenInResolution(languageVersionSettings, isSuperOrDelegatingConstructorCall(kotlinCall))
+
+    override fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean =
+            receiver?.psiExpression is KtSuperExpression
 }

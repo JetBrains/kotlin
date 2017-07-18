@@ -28,6 +28,7 @@ interface KotlinResolutionExternalPredicates {
     fun isOperatorCall(kotlinCall: KotlinCall): Boolean
     fun isSuperOrDelegatingConstructorCall(kotlinCall: KotlinCall): Boolean
     fun isHiddenInResolution(descriptor: DeclarationDescriptor, kotlinCall: KotlinCall): Boolean
+    fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean
 }
 
 // This components hold state (trace). Work with this carefully.

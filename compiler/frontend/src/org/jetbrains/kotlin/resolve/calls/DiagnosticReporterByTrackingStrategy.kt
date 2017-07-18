@@ -53,6 +53,7 @@ class DiagnosticReporterByTrackingStrategy(
             VisibilityError::class.java -> tracingStrategy.invisibleMember(trace, (diagnostic as VisibilityError).invisibleMember)
             NoValueForParameter::class.java -> tracingStrategy.noValueForParameter(trace, (diagnostic as NoValueForParameter).parameterDescriptor)
             InstantiationOfAbstractClass::class.java -> tracingStrategy.instantiationOfAbstractClass(trace)
+            AbstractSuperCall::class.java -> tracingStrategy.abstractSuperCall(trace)
         }
     }
 
