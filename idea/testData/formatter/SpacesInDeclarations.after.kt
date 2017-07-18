@@ -67,7 +67,12 @@ annotation class A1
 
 annotation class A2
 
-private @[A1 A2 A1] @A1 @A2 @[A1 A2 A2] @[A1] val fooProp1 = 1
+private @[A1 A2 A1]
+@A1
+@A2
+@[A1 A2 A2]
+@[A1]
+val fooProp1 = 1
 
 private @[
 
@@ -75,17 +80,23 @@ private @[
 A1
 
 
-A2 A1] @A1 @A2 @[A1
+A2 A1]
+@A1
+@A2
+@[A1
 A2
 
 
 A2
 
-] @[A1] val fooProp1 = 1
+]
+@[A1]
+val fooProp1 = 1
 
 private @A1
 
-@A2 val
+@A2
+val
         fooProp2 = 1
 
 
