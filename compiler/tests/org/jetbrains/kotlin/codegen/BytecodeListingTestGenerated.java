@@ -90,6 +90,18 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("invisibleCompanionObject.kt")
+    public void testInvisibleCompanionObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/invisibleCompanionObject.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("invisibleCompanionObject_lv11.kt")
+    public void testInvisibleCompanionObject_lv11() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/invisibleCompanionObject_lv11.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("jvmOverloadsAndParametersAnnotations.kt")
     public void testJvmOverloadsAndParametersAnnotations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/jvmOverloadsAndParametersAnnotations.kt");
