@@ -66,7 +66,9 @@ class ClassBody(
 }
 
 private object PropertyComparator : Comparator<Member> {
-    override fun compare(o1: Member?, o2: Member?): Int {
-        return if (o1 is Property) if (o2 is Property) 0 else -1 else if (o2 is Property) 1 else 0
+    override fun compare(o1: Member?, o2: Member?): Int = when {
+        o1 is Property -> if (o2 is Property) 0 else -1
+        o2 is Property -> 1
+        else -> 0
     }
 }
