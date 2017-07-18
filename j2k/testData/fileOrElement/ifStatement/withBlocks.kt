@@ -1,6 +1,5 @@
-if (1 > 0) {
-    val n = 1
-    return n
+return if (1 > 0) {
+    1
 } else {
-    return 0
+    0
 }

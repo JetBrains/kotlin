@@ -7,7 +7,6 @@ internal class Test : Iterable<String> {
     }
 
     fun push(i: Iterator<String>): Iterator<String> {
-        val j = i
-        return j
+        return i
     }
 }

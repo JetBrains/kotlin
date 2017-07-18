@@ -22,14 +22,13 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtReturnExpression
-import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
@@ -42,44 +41,60 @@ class UnnecessaryVariableInspection : AbstractKotlinInspection() {
                 override fun visitProperty(property: KtProperty) {
                     super.visitProperty(property)
 
-                    if (!property.isLocal) return
-                    val initializer = property.initializer ?: return
                     val nameIdentifier = property.nameIdentifier ?: return
+                    val status = statusFor(property) ?: return
+                    holder.registerProblem(
+                            nameIdentifier,
+                            when (status) {
+                                UnnecessaryVariableInspection.Companion.Status.RETURN_ONLY ->
+                                    "Variable used only in following return and can be inlined"
+                                UnnecessaryVariableInspection.Companion.Status.EXACT_COPY ->
+                                    "Variable is an exact copy of another variable and can be inlined"
+                            },
+                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                            InlineVariableFix()
+                    )
+                }
+            }
 
-                    if (!property.isVar && initializer is KtNameReferenceExpression && property.typeReference == null) {
-                        val context = property.analyze()
-                        val initializerDescriptor = context[REFERENCE_TARGET, initializer]
-                        if (initializerDescriptor is VariableDescriptor) {
-                            if (!initializerDescriptor.isVar &&
-                                initializerDescriptor.containingDeclaration is FunctionDescriptor) {
-                                holder.registerProblem(
-                                        nameIdentifier,
-                                        "Variable is an exact copy of another variable and can be inlined",
-                                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                        InlineVariableFix()
-                                )
-                                return
-                            }
-                        }
-                    }
+    companion object {
+        private enum class Status {
+            RETURN_ONLY,
+            EXACT_COPY
+        }
 
-                    val nextStatement = property.getNextSiblingIgnoringWhitespaceAndComments()
-                    if (nextStatement is KtReturnExpression) {
-                        val returned = nextStatement.returnedExpression
-                        if (returned is KtNameReferenceExpression) {
-                            val context = nextStatement.analyze()
-                            if (context[REFERENCE_TARGET, returned] == context[DECLARATION_TO_DESCRIPTOR, property]) {
-                                holder.registerProblem(
-                                        nameIdentifier,
-                                        "Variable used only in following return and can be inlined",
-                                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                        InlineVariableFix()
-                                )
-                            }
+        private fun statusFor(property: KtProperty): Status? {
+            val enclosingElement = KtPsiUtil.getEnclosingElementForLocalDeclaration(property) ?: return null
+            val initializer = property.initializer ?: return null
+
+            if (!property.isVar && initializer is KtNameReferenceExpression && property.typeReference == null) {
+                val context = property.analyze()
+                val initializerDescriptor = context[REFERENCE_TARGET, initializer]
+                if (initializerDescriptor is VariableDescriptor) {
+                    if (!initializerDescriptor.isVar && initializerDescriptor.containingDeclaration is FunctionDescriptor) {
+                        if (ReferencesSearch.search(property, LocalSearchScope(enclosingElement)).findFirst() != null) {
+                            return Status.EXACT_COPY
                         }
                     }
                 }
             }
+
+            val nextStatement = property.getNextSiblingIgnoringWhitespaceAndComments()
+            if (nextStatement is KtReturnExpression) {
+                val returned = nextStatement.returnedExpression
+                if (returned is KtNameReferenceExpression) {
+                    val context = nextStatement.analyze()
+                    if (context[REFERENCE_TARGET, returned] == context[DECLARATION_TO_DESCRIPTOR, property]) {
+                        return Status.RETURN_ONLY
+                    }
+                }
+            }
+
+            return null
+        }
+
+        fun isActiveFor(property: KtProperty) = statusFor(property) != null
+    }
 
     class InlineVariableFix : LocalQuickFix {
 
