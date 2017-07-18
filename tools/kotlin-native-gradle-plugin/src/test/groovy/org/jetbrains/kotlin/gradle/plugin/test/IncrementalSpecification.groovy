@@ -185,7 +185,7 @@ class IncrementalSpecification extends Specification {
         }
         def results = buildTwice(project) { KonanInteropProject it ->
             def manifest = it.generateSrcFile('manifest', "#some manifest file")
-            it.buildFile.append("konanArtifacts['main'].manifest '${manifest.canonicalPath}'")
+            it.buildFile.append("konanArtifacts['main'].manifest '${manifest.canonicalPath.replace('\\', '\\\\')}'")
         }
 
         then:
@@ -198,7 +198,7 @@ class IncrementalSpecification extends Specification {
         def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
             manifest = it.generateSrcFile('manifest', "#some manifest file\n")
-            it.buildFile.append("konanArtifacts['main'].manifest '${manifest.canonicalPath}'")
+            it.buildFile.append("konanArtifacts['main'].manifest '${manifest.canonicalPath.replace('\\', '\\\\')}'")
         }
         def results = buildTwice(project) { KonanInteropProject it ->
             manifest.append("#something else\n")
@@ -232,7 +232,7 @@ class IncrementalSpecification extends Specification {
         project.generateSrcFile('main.kt')
         def defFile = project.generateDefFile("foo.def", "#some content")
         def results = buildTwice(project) { KonanInteropProject it ->
-            it.buildFile.append("konanInterop['stdio'].defFile file('${defFile.canonicalPath}')\n")
+            it.buildFile.append("konanInterop['stdio'].defFile file('${defFile.canonicalPath.replace('\\', '\\\\')}')\n")
         }
 
         then:
@@ -245,7 +245,7 @@ class IncrementalSpecification extends Specification {
         project.generateSrcFile('main.kt')
         def header = project.generateSrcFile('header.h', "#define CONST 1")
         def results = buildTwice(project) { KonanInteropProject it ->
-            it.buildFile.append("konanInterop['stdio'].headers '${header.canonicalPath}'\n")
+            it.buildFile.append("konanInterop['stdio'].headers '${header.canonicalPath.replace('\\', '\\\\')}'\n")
         }
 
         then:
@@ -294,7 +294,7 @@ class IncrementalSpecification extends Specification {
         recompilationAndInteropProcessingHappened(*results)
     }
 
-    @IgnoreIf({ System.getProperty('os.name').contains('windows') })
+    @IgnoreIf(System.getProperty('os.name').contains('windows'))
     def 'target change should cause recompilation and interop reprocessing'() {
         when:
         def newTarget

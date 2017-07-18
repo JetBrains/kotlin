@@ -9,7 +9,7 @@ class KonanProject {
 
     File getProjectDirRoot() { return projectDir.root }
 
-    String konanHome = System.getProperty("konan.home") ?: { throw new IllegalStateException("konan.home isn't specified") }()
+    String konanHome
 
     File         buildFile
     File         propertiesFile
@@ -26,6 +26,16 @@ class KonanProject {
 
     protected KonanProject(TemporaryFolder projectDir) {
         this.projectDir = projectDir
+        def konanHome = System.getProperty("konan.home")
+        if (konanHome == null) {
+            throw new IllegalStateException("konan.home isn't specified")
+        }
+        def konanHomeDir = new File(konanHome)
+        if (!konanHomeDir.exists() || !konanHomeDir.directory) {
+            throw new IllegalStateException("konan.home doesn't exist or is not a directory: $konanHomeDir.canonicalPath")
+        }
+        // Escape windows path separator
+        this.konanHome = konanHomeDir.canonicalPath.replace('\\', '\\\\')
     }
 
     void generateFolders() {
