@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.compactIfPossible
+import org.jetbrains.kotlin.utils.compact
 import java.util.*
 
 /**
@@ -80,7 +80,7 @@ abstract class GivenFunctionsMemberScope(
             }
         }
 
-        return result.compactIfPossible()
+        return result.compact()
     }
 
     override fun printScopeStructure(p: Printer) {

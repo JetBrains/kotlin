@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.compactIfPossible
+import org.jetbrains.kotlin.utils.compact
 import java.util.*
 
 abstract class DeserializedMemberScope protected constructor(
@@ -100,7 +100,7 @@ abstract class DeserializedMemberScope protected constructor(
         val descriptors = protos.mapTo(arrayListOf(), factory)
 
         computeNonDeclared(descriptors)
-        return descriptors.compactIfPossible()
+        return descriptors.compact()
     }
 
     protected open fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
@@ -163,7 +163,7 @@ abstract class DeserializedMemberScope protected constructor(
             }
         }
 
-        return result.compactIfPossible()
+        return result.compact()
     }
 
     private fun addFunctionsAndProperties(

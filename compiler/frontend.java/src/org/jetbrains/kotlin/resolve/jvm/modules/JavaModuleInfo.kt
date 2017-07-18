@@ -20,7 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.compactIfPossible
+import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.ModuleVisitor
@@ -82,7 +82,7 @@ class JavaModuleInfo(
             }, ClassReader.SKIP_DEBUG or ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES)
 
             return if (moduleName != null)
-                JavaModuleInfo(moduleName!!, requires.compactIfPossible(), exports.compactIfPossible())
+                JavaModuleInfo(moduleName!!, requires.compact(), exports.compact())
             else null
         }
     }

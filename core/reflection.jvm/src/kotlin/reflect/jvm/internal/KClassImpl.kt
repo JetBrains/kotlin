@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.utils.compactIfPossible
+import org.jetbrains.kotlin.utils.compact
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
@@ -145,7 +145,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
             }) {
                 result += KTypeImpl(descriptor.builtIns.anyType) { Any::class.java }
             }
-            result.compactIfPossible()
+            result.compact()
         }
 
         val declaredNonStaticMembers: Collection<KCallableImpl<*>>

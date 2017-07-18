@@ -78,7 +78,7 @@ fun <E> newLinkedHashSetWithExpectedSize(expectedSize: Int): LinkedHashSet<E> =
 private fun capacity(expectedSize: Int): Int =
         if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1
 
-fun <T> ArrayList<T>.compactIfPossible(): List<T> =
+fun <T> ArrayList<T>.compact(): List<T> =
         when (size) {
             0 -> emptyList()
             1 -> listOf(first())
