@@ -20,7 +20,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleScriptException
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.konan.DependencyDownloader
-import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 
 open class KonanCompilerDownloadTask : DefaultTask() {
@@ -33,8 +32,8 @@ open class KonanCompilerDownloadTask : DefaultTask() {
 
     @TaskAction
     fun downloadAndExtract() {
-        if (!project.hasProperty(KonanPlugin.DOWNLOAD_COMPILER_PROPERTY_NAME)) {
-            val konanHome = project.property(KonanPlugin.KONAN_HOME_PROPERTY_NAME)
+        if (!project.hasProperty(KonanPlugin.PropertyNames.DOWNLOAD_COMPILER)) {
+            val konanHome = project.property(KonanPlugin.PropertyNames.KONAN_HOME)
             logger.info("Use a user-defined compiler path: $konanHome")
             return
         }

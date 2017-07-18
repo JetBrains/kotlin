@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.Named
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.tasks.*
 import java.io.File
 
@@ -145,7 +144,7 @@ open class KonanInteropTask: KonanTargetableTask() {
 
 open class KonanInteropConfig(
         val configName: String,
-        val project: ProjectInternal
+        val project: Project
 ): Named {
 
     override fun getName() = configName
