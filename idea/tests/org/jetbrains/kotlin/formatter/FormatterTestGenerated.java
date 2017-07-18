@@ -320,6 +320,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("EnumWrapping.after.kt")
+        public void testEnumWrapping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EnumWrapping.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExtendsListWrap.after.kt")
         public void testExtendsListWrap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ExtendsListWrap.after.kt");

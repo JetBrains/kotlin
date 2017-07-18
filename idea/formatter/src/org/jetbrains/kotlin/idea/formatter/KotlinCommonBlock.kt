@@ -352,6 +352,9 @@ abstract class KotlinCommonBlock(
                 }
             }
 
+            elementType === KtNodeTypes.CLASS_BODY ->
+                return getWrappingStrategyForItemList(commonSettings.ENUM_CONSTANTS_WRAP, KtNodeTypes.ENUM_ENTRY)
+
             elementType === KtNodeTypes.MODIFIER_LIST ->
                 when (node.treeParent.psi) {
                     is KtParameter ->
