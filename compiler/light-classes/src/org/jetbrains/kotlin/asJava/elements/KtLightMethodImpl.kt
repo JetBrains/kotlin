@@ -139,14 +139,6 @@ class KtLightMethodImpl private constructor(
         return typeParameters.all { processor.execute(it, state) }
     }
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (another is KtLightMethod && this == another) {
-            return true
-        }
-
-        return super.isEquivalentTo(another)
-    }
-
     private val _memberIndex: MemberIndex?
         get() = (dummyDelegate ?: clsDelegate).memberIndex
 
@@ -155,11 +147,12 @@ class KtLightMethodImpl private constructor(
             for source elements index is unique to each member
             */
     override fun equals(other: Any?): Boolean =
-            other is KtLightMethodImpl &&
-            this.name == other.name &&
-            this.containingClass == other.containingClass &&
-            this.lightMemberOrigin == other.lightMemberOrigin &&
-            this._memberIndex == other._memberIndex
+            this === other ||
+            (other is KtLightMethodImpl &&
+             this.name == other.name &&
+             this.containingClass == other.containingClass &&
+             this.lightMemberOrigin == other.lightMemberOrigin &&
+             this._memberIndex == other._memberIndex)
 
     override fun hashCode(): Int = ((getName().hashCode() * 31 + (lightMemberOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + (_memberIndex?.hashCode() ?: 0)
 

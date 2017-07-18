@@ -14,4 +14,4 @@ fun main(args: Array<String>) {
 }
 
 /*Threre are two constuctors so we should be sure that we check LOCALVARIABLEs from same method*/
-// 1 LOCALVARIABLE this LInlinedConstuctorWithSuperCallParamsKt\$main\$\$inlined\$test\$1; L0 L6 0\s+LOCALVARIABLE \$super_call_param\$1 Ljava/lang/String; L0 L6 1
+// 1 LOCALVARIABLE this LInlinedConstuctorWithSuperCallParamsKt\$main\$\$inlined\$test\$1; L0 L7 0\s+LOCALVARIABLE \$super_call_param\$1 Ljava/lang/String; L0 L7 1

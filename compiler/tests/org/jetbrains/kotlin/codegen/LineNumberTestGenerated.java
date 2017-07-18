@@ -209,6 +209,12 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
             doTestCustom(fileName);
         }
 
+        @TestMetadata("inTheEndOfLambdaArgumentOfInlineCall.kt")
+        public void testInTheEndOfLambdaArgumentOfInlineCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/inTheEndOfLambdaArgumentOfInlineCall.kt");
+            doTestCustom(fileName);
+        }
+
         @TestMetadata("multilineFunctionCall.kt")
         public void testMultilineFunctionCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/multilineFunctionCall.kt");

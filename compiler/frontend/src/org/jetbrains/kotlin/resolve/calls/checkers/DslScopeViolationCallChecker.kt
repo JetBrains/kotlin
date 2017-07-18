@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
+import org.jetbrains.kotlin.types.KotlinType
 
 object DslScopeViolationCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -55,28 +55,29 @@ object DslScopeViolationCallChecker : CallChecker {
 
         if (receiversUntilOneFromTheCall.isEmpty()) return
 
-        val callDslMarkers = callImplicitReceiver.extractDslMarkerFqNames()
+        val callDslMarkers = callImplicitReceiver.type.extractDslMarkerFqNames()
         if (callDslMarkers.isEmpty()) return
 
         val closestAnotherReceiverWithSameDslMarker =
-                receiversUntilOneFromTheCall.firstOrNull { receiver -> receiver.extractDslMarkerFqNames().any(callDslMarkers::contains) }
+                receiversUntilOneFromTheCall.firstOrNull { receiver -> receiver.type.extractDslMarkerFqNames().any(callDslMarkers::contains) }
 
         if (closestAnotherReceiverWithSameDslMarker != null) {
             // TODO: report receivers configuration (what's one is used and what's one is the closest)
             context.trace.report(Errors.DSL_SCOPE_VIOLATION.on(reportOn, resolvedCall.resultingDescriptor))
         }
     }
-}
 
-private fun ReceiverValue.extractDslMarkerFqNames(): Set<FqName> {
-    val result = mutableSetOf<FqName>()
+    fun KotlinType.extractDslMarkerFqNames(): Set<FqName> {
+        val result = mutableSetOf<FqName>()
 
-    result.addAll(type.annotations.extractDslMarkerFqNames())
+        result.addAll(annotations.extractDslMarkerFqNames())
 
-    type.constructor.declarationDescriptor?.getAllSuperClassifiers()?.asIterable()
-            ?.flatMapTo(result) { it.annotations.extractDslMarkerFqNames() }
+        constructor.declarationDescriptor?.getAllSuperClassifiers()?.asIterable()
+                ?.flatMapTo(result) { it.annotations.extractDslMarkerFqNames() }
 
-    return result
+        return result
+    }
+
 }
 
 private fun Annotations.extractDslMarkerFqNames() =

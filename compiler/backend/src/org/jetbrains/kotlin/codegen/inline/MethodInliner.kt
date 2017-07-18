@@ -846,9 +846,13 @@ class MethodInliner(
                     }
 
                     if (isLocalReturn && endLabel != null) {
+                        val nop = InsnNode(Opcodes.NOP)
+                        instructions.insert(insnNode, nop)
+
                         val labelNode = endLabel.info as LabelNode
                         val jumpInsnNode = JumpInsnNode(Opcodes.GOTO, labelNode)
-                        instructions.insert(insnNode, jumpInsnNode)
+                        instructions.insert(nop, jumpInsnNode)
+
                         instructions.remove(insnNode)
                         insnNode = jumpInsnNode
                     }

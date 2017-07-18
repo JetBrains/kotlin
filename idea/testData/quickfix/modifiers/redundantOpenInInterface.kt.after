@@ -1,4 +1,4 @@
-// "Make 'foo' not open" "true"
+// "Remove redundant 'open' modifier" "true"
 
 interface My {
     fun foo()

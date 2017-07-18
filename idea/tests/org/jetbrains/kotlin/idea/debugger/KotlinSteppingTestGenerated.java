@@ -602,6 +602,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("soInlineUnitFunDex.kt")
+        public void testSoInlineUnitFunDex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soInlineUnitFunDex.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("soInlineWhileCondition.kt")
         public void testSoInlineWhileCondition() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soInlineWhileCondition.kt");
@@ -611,6 +617,42 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("soInlineWhileConditionDex.kt")
         public void testSoInlineWhileConditionDex() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soInlineWhileConditionDex.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soLastStatementInInlineFunctionArgumenBeforeOtherArgument.kt")
+        public void testSoLastStatementInInlineFunctionArgumenBeforeOtherArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soLastStatementInInlineFunctionArgumenBeforeOtherArgument.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soLastStatementInInlineFunctionArgumentAsAnonymous.kt")
+        public void testSoLastStatementInInlineFunctionArgumentAsAnonymous() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soLastStatementInInlineFunctionArgumentAsAnonymous.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soLastStatementInInlineFunctionArgumentAsAnonymousParNextLine.kt")
+        public void testSoLastStatementInInlineFunctionArgumentAsAnonymousParNextLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soLastStatementInInlineFunctionArgumentAsAnonymousParNextLine.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soLastStatementInInlineFunctionArgumentInGetOperator.kt")
+        public void testSoLastStatementInInlineFunctionArgumentInGetOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soLastStatementInInlineFunctionArgumentInGetOperator.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soLastStatementInInlineFunctionArgumentInNonInlineCall.kt")
+        public void testSoLastStatementInInlineFunctionArgumentInNonInlineCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soLastStatementInInlineFunctionArgumentInNonInlineCall.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soLastStatementInInlineFunctionArgumentInPars.kt")
+        public void testSoLastStatementInInlineFunctionArgumentInPars() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soLastStatementInInlineFunctionArgumentInPars.kt");
             doStepOverTest(fileName);
         }
 

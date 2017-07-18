@@ -9,4 +9,4 @@ inline fun lookAtMe(f: (String) -> Unit) {
     f(a) // Should be no unneeded nops on this line, that might be generated for zero-parameters lambda
 }
 
-// 2 NOP
+// 4 NOP

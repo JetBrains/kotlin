@@ -27,6 +27,7 @@ import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleOrigin
 import org.jetbrains.kotlin.idea.caches.resolve.OriginCapability
@@ -36,10 +37,13 @@ import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.checkers.DslScopeViolationCallChecker.extractDslMarkerFqNames
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -48,6 +52,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class CompletionSessionConfiguration(
         val useBetterPrefixMatcherForNonImportedClasses: Boolean,
@@ -374,10 +379,28 @@ abstract class CompletionSession(
                                       callTypeAndReceiver: CallTypeAndReceiver<*, *>): Collection<ReceiverType>? {
         var receiverTypes = callTypeAndReceiver.receiverTypesWithIndex(
                 bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
-                stableSmartCastsOnly = true /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */)
+                stableSmartCastsOnly = true, /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */
+                withImplicitReceiversWhenExplicitPresent = true)
 
         if (callTypeAndReceiver is CallTypeAndReceiver.SAFE || isDebuggerContext) {
             receiverTypes = receiverTypes?.map { ReceiverType(it.type.makeNotNullable(), it.receiverIndex) }
+        }
+
+        if (receiverTypes != null && nameExpression.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)) {
+
+            val typesByDslScopes = LinkedHashMap<FqName, MutableList<ReceiverType>>()
+
+            receiverTypes
+                    .mapNotNull { receiver ->
+                        val dslMarkers = receiver.type.extractDslMarkerFqNames()
+                        (receiver to dslMarkers).takeIf { dslMarkers.isNotEmpty() }
+                    }
+                    .forEach { (v, dslMarkers) -> dslMarkers.forEach { typesByDslScopes.getOrPut(it, { mutableListOf() }) += v } }
+
+            val shadowedDslReceivers = mutableSetOf<ReceiverType>()
+            typesByDslScopes.flatMapTo(shadowedDslReceivers) { (_, v) -> v.asSequence().drop(1).asIterable() }
+
+            receiverTypes -= shadowedDslReceivers
         }
 
         return receiverTypes

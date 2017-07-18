@@ -3,6 +3,7 @@ Run Java
 Connected to the target VM
 soInlineCallInLastStatementInInlineDex.kt:10
 soInlineCallInLastStatementInInlineDex.kt:11
+soInlineCallInLastStatementInInlineDex.kt:12
 soInlineCallInLastStatementInInlineDex.kt:5
 soInlineCallInLastStatementInInlineDex.kt:6
 Disconnected from the target VM
