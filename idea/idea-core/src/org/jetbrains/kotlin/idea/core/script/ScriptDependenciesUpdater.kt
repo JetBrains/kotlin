@@ -153,25 +153,17 @@ internal class ScriptDependenciesUpdater(
         }
 
         val dependenciesResolver = scriptDef.dependencyResolver
+        val scriptContents = contentLoader.getScriptContents(scriptDef, file)
+        val environment = contentLoader.getEnvironment(scriptDef)
         val newJob = if (dependenciesResolver is AsyncDependenciesResolver) {
             launch(asyncUpdatesDispatcher) {
-                process(
-                        dependenciesResolver.resolveAsync(
-                                contentLoader.getScriptContents(scriptDef, file),
-                                contentLoader.getEnvironment(scriptDef)
-                        )
-                )
+                process(dependenciesResolver.resolveAsync(scriptContents, environment))
             }
         }
         else {
             assert(dependenciesResolver is LegacyResolverWrapper)
             launch(legacyUpdatesDispatcher) {
-                process(
-                        dependenciesResolver.resolve(
-                                contentLoader.getScriptContents(scriptDef, file),
-                                contentLoader.getEnvironment(scriptDef)
-                        )
-                )
+                process(dependenciesResolver.resolve(scriptContents, environment))
             }
         }
         return TimeStampedJob(newJob, currentTimeStamp)
