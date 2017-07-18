@@ -16,10 +16,24 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils
 import com.intellij.openapi.project.Project
+
+fun <T : Any> runInReadActionWithWriteActionPriority(f: () -> T): T? {
+    var r: T? = null
+    if (!with(ApplicationManager.getApplication()) { isDispatchThread && isUnitTestMode }) {
+        ProgressIndicatorUtils.runInReadActionWithWriteActionPriority {
+            r = f()
+        }
+    }
+    else {
+        r = f()
+    }
+    return r
+}
 
 fun <T : Any> runInReadActionWithWriteActionPriorityWithPCE(f: () -> T): T {
     var r: T? = null

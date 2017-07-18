@@ -19,18 +19,16 @@ package org.jetbrains.kotlin.idea.injection
 import com.intellij.codeInsight.AnnotationUtil
 import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiReference
+import com.intellij.openapi.util.Key
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.intelliLang.Configuration
-import org.intellij.plugins.intelliLang.inject.InjectedLanguage
 import org.intellij.plugins.intelliLang.inject.InjectorUtils
 import org.intellij.plugins.intelliLang.inject.LanguageInjectionSupport
 import org.intellij.plugins.intelliLang.inject.TemporaryPlacesRegistry
@@ -40,6 +38,7 @@ import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriority
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -54,11 +53,16 @@ class KotlinLanguageInjector(
         val temporaryPlacesRegistry: TemporaryPlacesRegistry) : MultiHostInjector {
     companion object {
         private val STRING_LITERALS_REGEXP = "\"([^\"]*)\"".toRegex()
+        private val ABSENT_KOTLIN_INJECTION = BaseInjection("ABSENT_KOTLIN_BASE_INJECTION")
     }
 
     val kotlinSupport: KotlinLanguageInjectionSupport? by lazy {
         ArrayList(InjectorUtils.getActiveInjectionSupports()).filterIsInstance(KotlinLanguageInjectionSupport::class.java).firstOrNull()
     }
+
+    private data class KotlinCachedInjection(val modificationCount: Long, val baseInjection: BaseInjection)
+    private var KtStringTemplateExpression.cachedInjectionWithModification: KotlinCachedInjection? by UserDataProperty(
+            Key.create<KotlinCachedInjection>("CACHED_INJECTION_WITH_MODIFICATION"))
 
     override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
         val ktHost: KtStringTemplateExpression = context as? KtStringTemplateExpression ?: return
@@ -68,21 +72,27 @@ class KotlinLanguageInjector(
 
         if (!ProjectRootsUtil.isInProjectOrLibSource(ktHost)) return
 
-        val containingFile = ktHost.containingFile
-        val tempInjectedLanguage: InjectedLanguage? = temporaryPlacesRegistry.getLanguageFor(ktHost, containingFile)
+        val needImmediateAnswer = with(ApplicationManager.getApplication()) { isDispatchThread && !isUnitTestMode }
+        val kotlinCachedInjection = ktHost.cachedInjectionWithModification
+        val cachedBaseInjection = kotlinCachedInjection?.baseInjection ?: ABSENT_KOTLIN_INJECTION
+        val modificationCount = PsiManager.getInstance(project).modificationTracker.modificationCount
 
-        val baseInjection: BaseInjection = if (tempInjectedLanguage == null) {
-            val injectionInfo = findInjectionInfo(context) ?: return
-            injectionInfo.toBaseInjection(support)
-        }
-        else {
-            InjectorUtils.putInjectedFileUserData(registrar, LanguageInjectionSupport.TEMPORARY_INJECTED_LANGUAGE, tempInjectedLanguage)
-            BaseInjection(support.id).apply {
-                injectedLanguageId = tempInjectedLanguage.id
-                prefix = tempInjectedLanguage.prefix
-                suffix = tempInjectedLanguage.suffix
+        val baseInjection = when {
+            needImmediateAnswer -> cachedBaseInjection
+            kotlinCachedInjection != null && (modificationCount == kotlinCachedInjection.modificationCount) ->
+                kotlinCachedInjection.baseInjection
+            else -> {
+                runInReadActionWithWriteActionPriority {
+                    val computedInjection = computeBaseInjection(ktHost, support, registrar) ?: ABSENT_KOTLIN_INJECTION
+                    ktHost.cachedInjectionWithModification = KotlinCachedInjection(modificationCount, computedInjection)
+                    computedInjection
+                } ?: cachedBaseInjection
             }
-        } ?: return
+        }
+
+        if (baseInjection == ABSENT_KOTLIN_INJECTION) {
+            return
+        }
 
         val language = InjectorUtils.getLanguageByString(baseInjection.injectedLanguageId) ?: return
 
@@ -100,6 +110,26 @@ class KotlinLanguageInjector(
         else {
             InjectorUtils.registerInjectionSimple(ktHost, baseInjection, support, registrar)
         }
+    }
+
+    @Suppress("FoldInitializerAndIfToElvis")
+    private fun computeBaseInjection(
+            ktHost: KtStringTemplateExpression,
+            support: KotlinLanguageInjectionSupport,
+            registrar: MultiHostRegistrar): BaseInjection? {
+        val containingFile = ktHost.containingFile
+
+        val tempInjectedLanguage = temporaryPlacesRegistry.getLanguageFor(ktHost, containingFile)
+        if (tempInjectedLanguage != null) {
+            InjectorUtils.putInjectedFileUserData(registrar, LanguageInjectionSupport.TEMPORARY_INJECTED_LANGUAGE, tempInjectedLanguage)
+            return BaseInjection(support.id).apply {
+                injectedLanguageId = tempInjectedLanguage.id
+                prefix = tempInjectedLanguage.prefix
+                suffix = tempInjectedLanguage.suffix
+            }
+        }
+
+        return findInjectionInfo(ktHost)?.toBaseInjection(support)
     }
 
     override fun elementsToInjectIn(): List<Class<out PsiElement>> {
@@ -175,7 +205,7 @@ class KotlinLanguageInjector(
         if (!originalHost) return null
 
         val ktHost: KtElement = host
-        val ktProperty = host.parent as? KtProperty?: return null
+        val ktProperty = host.parent as? KtProperty ?: return null
         if (ktProperty.initializer != host) return null
 
         if (isAnalyzeOff(ktHost.project)) return null
