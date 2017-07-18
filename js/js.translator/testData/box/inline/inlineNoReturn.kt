@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 528
+// EXPECTED_REACHABLE_NODES: 1027
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: factAbsNoInline1 except=imul

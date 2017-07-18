@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 547
+// EXPECTED_REACHABLE_NODES: 1072
 // MODULE: lib-1
 // FILE: lib-1.js
 define("lib-1", [], function() {

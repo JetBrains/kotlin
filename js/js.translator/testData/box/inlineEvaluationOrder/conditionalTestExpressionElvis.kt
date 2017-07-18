@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 496
+// EXPECTED_REACHABLE_NODES: 1001
 package foo
 
 fun test(x: Boolean?): Boolean = buzz(x) ?: fizz(true)

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 552
+// EXPECTED_REACHABLE_NODES: 1055
 // FILE: a.kt
 // WITH_RUNTIME
 import kotlin.coroutines.experimental.*

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 489
+// EXPECTED_REACHABLE_NODES: 992
 // FILE: castToNativeInterface.kt
 external interface I {
     fun foo(): String

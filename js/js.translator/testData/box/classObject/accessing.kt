@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 501
+// EXPECTED_REACHABLE_NODES: 1004
 // KT-4130 object fields are not evaluated correctly
 
 package foo

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 494
+// EXPECTED_REACHABLE_NODES: 996
 package foo
 
 fun multiplyBy(x: Int): () -> ((Int) -> Int) {

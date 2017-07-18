@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 502
+// EXPECTED_REACHABLE_NODES: 1005
 package foo
 
 var t: Any? = null

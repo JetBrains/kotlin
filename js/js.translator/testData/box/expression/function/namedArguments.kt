@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 488
+// EXPECTED_REACHABLE_NODES: 993
 package foo
 
 fun test(x: Int, y: Int) = y - x

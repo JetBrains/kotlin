@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 503
+// EXPECTED_REACHABLE_NODES: 1006
 interface M {
     var backingB: Int
     var b: Int

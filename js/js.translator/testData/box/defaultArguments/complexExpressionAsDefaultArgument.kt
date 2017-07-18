@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 495
+// EXPECTED_REACHABLE_NODES: 998
 // http://youtrack.jetbrains.com/issue/KT-4879
 // JS: extra side effect when use when in default arguments
 

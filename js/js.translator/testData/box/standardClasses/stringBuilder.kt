@@ -1,6 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 503
+// EXPECTED_REACHABLE_NODES: 990
 package foo
-
 
 fun box(): String {
     val s = StringBuilder()

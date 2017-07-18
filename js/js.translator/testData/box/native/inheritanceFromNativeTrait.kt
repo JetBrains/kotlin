@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 506
+// EXPECTED_REACHABLE_NODES: 1011
 package foo
 
 external interface NativeTrait {

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 495
+// EXPECTED_REACHABLE_NODES: 998
 // Order of evaluation differs for JVM and Javascript backend
 // http://youtrack.jetbrains.com/issue/KT-5254
 

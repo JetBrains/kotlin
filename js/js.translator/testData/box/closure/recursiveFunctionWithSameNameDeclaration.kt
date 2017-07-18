@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 492
+// EXPECTED_REACHABLE_NODES: 995
 package foo
 
 fun bar(i: Int = 0): Int {
