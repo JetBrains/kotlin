@@ -1,5 +1,5 @@
+// WITH_RUNTIME
 val a = "a"
-
 fun f1() {}
 
 fun f2() {
@@ -147,5 +147,15 @@ private class H(val a: String = "",
         println(c)
         println(d)
         println(e)
+    }
+}
+
+class J(@JvmField val a: String) {
+    @JvmField
+    val b = ""
+
+    fun foo() {
+        println(a)
+        println(b)
     }
 }

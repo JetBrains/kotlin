@@ -26,11 +26,15 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
 
@@ -67,6 +71,7 @@ class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
         val inheritable = classOrObject is KtClass && classOrObject.isInheritable()
         if (!inheritable && declaration.hasModifier(KtTokens.PROTECTED_KEYWORD)) return false //reported by ProtectedInFinalInspection
         if (declaration.isOverridable()) return false
+        if (declaration.annotationEntries.any { it.isJvmField() }) return false
 
         val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.project)
         val useScope = declaration.useScope
@@ -118,4 +123,7 @@ class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                IntentionWrapper(AddModifierFix(modifierListOwner, KtTokens.PRIVATE_KEYWORD), declaration.containingFile))
     }
+
+    private fun KtAnnotationEntry.isJvmField() =
+            typeReference?.analyze(BodyResolveMode.PARTIAL)?.get(BindingContext.TYPE, typeReference)?.constructor?.declarationDescriptor?.fqNameSafe?.asString() == "kotlin.jvm.JvmField"
 }
