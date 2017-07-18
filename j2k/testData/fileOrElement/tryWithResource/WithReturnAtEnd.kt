@@ -5,8 +5,7 @@ class C {
         try {
             ByteArrayInputStream(ByteArray(10)).use { stream ->
                 // reading something
-                val c = stream.read()
-                return c
+                return stream.read()
             }
         } catch (e: IOException) {
             println(e)
