@@ -16,10 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -34,8 +31,15 @@ import org.jetbrains.kotlin.load.kotlin.reflect.ReflectAnnotationSource
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import kotlin.jvm.internal.FunctionReference
@@ -152,3 +156,25 @@ internal val CallableMemberDescriptor.isPublicInBytecode: Boolean
         val visibility = visibility
         return (visibility == Visibilities.PUBLIC || visibility == Visibilities.INTERNAL) && !isEffectivelyInlineOnly()
     }
+
+internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
+        moduleAnchor: Class<*>,
+        proto: M,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        createDescriptor: MemberDeserializer.(M) -> D
+): D? {
+    val moduleData = moduleAnchor.getOrCreateModule()
+
+    val typeParameters = when (proto) {
+        is ProtoBuf.Function -> proto.typeParameterList
+        is ProtoBuf.Property -> proto.typeParameterList
+        else -> error("Unsupported message: $proto")
+    }
+
+    val context = DeserializationContext(
+            moduleData.deserialization, nameResolver, moduleData.module, typeTable, SinceKotlinInfoTable.EMPTY,
+            containerSource = null, parentTypeDeserializer = null, typeParameters = typeParameters
+    )
+    return MemberDeserializer(context).createDescriptor(proto)
+}

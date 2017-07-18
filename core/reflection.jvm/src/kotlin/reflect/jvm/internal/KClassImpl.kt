@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.utils.compactIfPossible
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.reflect.*
-import kotlin.reflect.jvm.deserializeToDescriptor
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
 
