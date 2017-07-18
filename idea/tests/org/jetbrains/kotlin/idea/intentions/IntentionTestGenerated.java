@@ -4040,6 +4040,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("primaryConstructorWithAnnotation.kt")
+        public void testPrimaryConstructorWithAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/primaryConstructorWithAnnotation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("primaryConstructorWithValueParameter.kt")
         public void testPrimaryConstructorWithValueParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/primaryConstructorWithValueParameter.kt");
@@ -4049,6 +4055,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("secondaryConstructor.kt")
         public void testSecondaryConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/secondaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorWithAnnotation.kt")
+        public void testSecondaryConstructorWithAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/secondaryConstructorWithAnnotation.kt");
             doTest(fileName);
         }
     }

@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -32,34 +32,34 @@ class ConvertClassToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(
 
         val constructors = listOfNotNull(element.primaryConstructor) + element.secondaryConstructors
         if (constructors.isEmpty()) return null
-        if (constructors.any { !it.hasModifier(PRIVATE_KEYWORD) }) return null
+        if (!constructors.all { it.hasModifier(PRIVATE_KEYWORD) && it.getAnnotationEntries().isEmpty() }) return null
 
         val nameIdentifier = element.nameIdentifier ?: return null
         return TextRange(element.startOffset, nameIdentifier.endOffset)
     }
 
     override fun applyTo(element: KtClass, editor: Editor?) {
-        val newElement = element.copy() as KtClass
-
-        newElement.modifierList?.run {
+        element.modifierList?.run {
             getModifier(OPEN_KEYWORD)?.delete()
             getModifier(ABSTRACT_KEYWORD)?.delete()
-            newElement.addModifier(SEALED_KEYWORD)
+        }
+        element.addModifier(SEALED_KEYWORD)
+
+        element.primaryConstructor?.run {
+            if (element.secondaryConstructors.isEmpty() && valueParameters.isEmpty()) {
+                this.delete()
+            }
+            else {
+                val newConstructor = this.copy() as KtPrimaryConstructor
+                newConstructor.modifierList?.getModifier(PRIVATE_KEYWORD)?.delete()
+                newConstructor.getConstructorKeyword()?.delete()
+                this.replace(newConstructor)
+            }
         }
 
-        newElement.primaryConstructor?.run {
-            modifierList?.getModifier(PRIVATE_KEYWORD)?.delete()
-            getConstructorKeyword()?.delete()
-            if (newElement.secondaryConstructors.isEmpty() && valueParameters.isEmpty()) valueParameterList?.delete()
-            (newElement.nameIdentifier?.prevSibling as? PsiWhiteSpace)?.delete()
-            (newElement.nameIdentifier?.nextSibling as? PsiWhiteSpace)?.delete()
-        }
-
-        newElement.secondaryConstructors.forEach {
+        element.secondaryConstructors.forEach {
             it.modifierList?.getModifier(PRIVATE_KEYWORD)?.delete()
         }
-
-        element.replace(newElement)
     }
 
 }
