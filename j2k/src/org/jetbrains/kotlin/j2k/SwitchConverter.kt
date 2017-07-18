@@ -44,15 +44,14 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
                 result.add(WhenEntry(listOf(ValueWhenEntrySelector(Expression.Empty).assignNoPrototype()), convertCaseStatementsToBody(cases, i)).assignNoPrototype())
                 continue
             }
-            (codeConverter.convertStatement(case.label) as WhenEntrySelector).run {
-                if (case.label.isDefaultCase) defaultSelector = this else pendingSelectors.add(this)
-            }
+            val sel = codeConverter.convertStatement(case.label) as WhenEntrySelector
+            if (case.label.isDefaultCase) defaultSelector = sel else pendingSelectors.add(sel)
             if (case.statements.isNotEmpty()) {
                 val statement = convertCaseStatementsToBody(cases, i)
                 if (pendingSelectors.isNotEmpty())
                     result.add(WhenEntry(pendingSelectors, statement).assignNoPrototype())
                 if (defaultSelector != null)
-                    defaultEntry = WhenEntry(listOf(defaultSelector!!), statement).assignNoPrototype()
+                    defaultEntry = WhenEntry(listOf(defaultSelector), statement).assignNoPrototype()
                 pendingSelectors = ArrayList()
                 defaultSelector = null
             }
