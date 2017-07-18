@@ -181,8 +181,6 @@ class KotlinCallCompleter(
     // true if it is the end (happy or not)
     // every step we fix type variable or analyzeLambda
     private fun SimpleKotlinResolutionCandidate.oneStepToEndOrLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks): Boolean {
-        if (c.hasContradiction) return true
-
         val lambda = c.lambdaArguments.find { canWeAnalyzeIt(c, it) }
         if (lambda != null) {
             analyzeLambda(c, resolutionCallbacks, lambda)
