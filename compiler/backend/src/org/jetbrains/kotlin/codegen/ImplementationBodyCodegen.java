@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -64,10 +65,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.org.objectweb.asm.FieldVisitor;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -838,9 +836,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         @Nullable KtObjectDeclaration companionObject = CollectionsKt.firstOrNull(myClass.getCompanionObjects());
 
+        int properFieldVisibilityFlag = getVisibilityAccessFlag(companionObjectDescriptor);
+        boolean fieldShouldBeDeprecated =
+                state.getLanguageVersionSettings().supportsFeature(LanguageFeature.DeprecatedFieldForInvisibleCompanionObject) &&
+                (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
+        // TODO generate field with proper visibility in language version 1.3
+        int fieldAccessFlags = ACC_PUBLIC | ACC_STATIC | ACC_FINAL;
+        if (fieldShouldBeDeprecated) {
+            fieldAccessFlags |= ACC_DEPRECATED;
+        }
         StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
-        v.newField(JvmDeclarationOriginKt.OtherOrigin(companionObject == null ? myClass.getPsiOrParent() : companionObject),
-                   ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+        FieldVisitor fv = v.newField(JvmDeclarationOriginKt.OtherOrigin(companionObject == null ? myClass.getPsiOrParent() : companionObject),
+                                     fieldAccessFlags, field.name, field.type.getDescriptor(), null, null);
+        if (fieldShouldBeDeprecated) {
+            AnnotationCodegen.forField(fv, this, typeMapper).visitAnnotation("Ljava/lang/Deprecated;", true).visitEnd();
+        }
     }
 
     private void generateCompanionObjectBackingFieldCopies() {
