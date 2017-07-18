@@ -294,7 +294,7 @@ class IncrementalSpecification extends Specification {
         recompilationAndInteropProcessingHappened(*results)
     }
 
-    @IgnoreIf(System.getProperty('os.name').contains('windows'))
+    @IgnoreIf({ System.getProperty('os.name').contains('windows') })
     def 'target change should cause recompilation and interop reprocessing'() {
         when:
         def newTarget
