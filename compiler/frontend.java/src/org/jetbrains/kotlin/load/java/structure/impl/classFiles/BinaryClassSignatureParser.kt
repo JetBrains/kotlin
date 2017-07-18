@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
-import org.jetbrains.kotlin.utils.compactIfPossible
+import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.org.objectweb.asm.Type
 import java.text.CharacterIterator
 import java.text.StringCharacterIterator
@@ -53,7 +53,7 @@ class BinaryClassSignatureParser(globalContext: ClassifierResolutionContext) {
             typeParameters.add(parseTypeParameter(signature, context))
         }
         signature.next()
-        return typeParameters.compactIfPossible()
+        return typeParameters.compact()
     }
 
     private fun parseTypeParameter(signature: CharacterIterator, context: ClassifierResolutionContext): JavaTypeParameter {
@@ -152,7 +152,7 @@ class BinaryClassSignatureParser(globalContext: ClassifierResolutionContext) {
 
         return PlainJavaClassifierType(
                 { context.resolveByInternalName(canonicalName.toString()) },
-                argumentGroups.reversed().flattenTo(arrayListOf()).compactIfPossible()
+                argumentGroups.reversed().flattenTo(arrayListOf()).compact()
         )
     }
 

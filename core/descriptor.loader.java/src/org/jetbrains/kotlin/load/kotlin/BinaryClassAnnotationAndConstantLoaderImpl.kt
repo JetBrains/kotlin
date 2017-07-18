@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.compactIfPossible
+import org.jetbrains.kotlin.utils.compact
 import java.util.*
 
 class BinaryClassAnnotationAndConstantLoaderImpl(
@@ -116,7 +116,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                     override fun visitEnd() {
                         val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                         if (parameter != null) {
-                            arguments[parameter] = factory.createArrayValue(elements.compactIfPossible(), parameter.type)
+                            arguments[parameter] = factory.createArrayValue(elements.compact(), parameter.type)
                         }
                     }
                 }
