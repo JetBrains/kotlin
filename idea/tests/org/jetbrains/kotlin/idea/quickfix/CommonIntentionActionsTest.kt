@@ -168,6 +168,20 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin(), true)
     }
 
+    fun testRemoveConstructorParameters() {
+        myFixture.configureByText("foo.kt", """
+        |class <caret>Foo(i: Int) {
+        |}
+        """.trim().trimMargin())
+
+        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.constructorInfo(
+                atCaret<UClass>(myFixture), makeParams())).findWithText("Remove 1st parameter from method 'Foo'"))
+        myFixture.checkResult("""
+        |class Foo() {
+        |}
+        """.trim().trimMargin(), true)
+    }
+
     fun testAddStringVarProperty() {
         myFixture.configureByText("foo.kt", """
         |class Foo<caret> {
