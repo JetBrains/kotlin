@@ -45,7 +45,7 @@ object KotlinTypeFactory {
             return constructor.declarationDescriptor!!.defaultType
         }
 
-        return SimpleTypeImpl(annotations, constructor, arguments, nullable, computeMemberScope(constructor, arguments))
+        return simpleType(annotations, constructor, arguments, nullable, computeMemberScope(constructor, arguments))
     }
 
     @JvmStatic
@@ -55,14 +55,21 @@ object KotlinTypeFactory {
             arguments: List<TypeProjection>,
             nullable: Boolean,
             memberScope: MemberScope
-    ): SimpleType = SimpleTypeImpl(annotations, constructor, arguments, nullable, memberScope)
+    ): SimpleType =
+            SimpleTypeImpl(constructor, arguments, nullable, memberScope)
+                    .let {
+                        if (annotations.isEmpty())
+                            it
+                        else
+                            AnnotatedSimpleType(it, annotations)
+                    }
 
     @JvmStatic
     fun simpleNotNullType(
             annotations: Annotations,
             descriptor: ClassDescriptor,
             arguments: List<TypeProjection>
-    ): SimpleType = SimpleTypeImpl(annotations, descriptor.typeConstructor, arguments, false, descriptor.getMemberScope(arguments))
+    ): SimpleType = simpleType(annotations, descriptor.typeConstructor, arguments, false, descriptor.getMemberScope(arguments))
 
     @JvmStatic
     fun simpleType(
@@ -82,17 +89,18 @@ object KotlinTypeFactory {
 }
 
 private class SimpleTypeImpl(
-        override val annotations: Annotations,
         override val constructor: TypeConstructor,
         override val arguments: List<TypeProjection>,
         override val isMarkedNullable: Boolean,
         override val memberScope: MemberScope
 ) : SimpleType() {
+    override val annotations: Annotations get() = Annotations.EMPTY
+
     override fun replaceAnnotations(newAnnotations: Annotations) =
-            if (newAnnotations === annotations)
+            if (newAnnotations.isEmpty())
                 this
             else
-                SimpleTypeImpl(newAnnotations, constructor, arguments, isMarkedNullable, memberScope)
+                AnnotatedSimpleType(this, newAnnotations)
 
     override fun makeNullableAsSpecified(newNullability: Boolean) =
             if (newNullability == isMarkedNullable)
@@ -100,7 +108,7 @@ private class SimpleTypeImpl(
             else if (newNullability)
                 NullableSimpleType(this)
             else
-                SimpleTypeImpl(annotations, constructor, arguments, newNullability, memberScope)
+                NotNullSimpleType(this)
 
     init {
         if (memberScope is ErrorUtils.ErrorScope) {
@@ -109,18 +117,30 @@ private class SimpleTypeImpl(
     }
 }
 
-private class NullableSimpleType(override val delegate: SimpleType) : DelegatingSimpleType() {
-    override val isMarkedNullable: Boolean
-        get() = true
-
+abstract class DelegatingSimpleTypeImpl(override val delegate: SimpleType) : DelegatingSimpleType() {
     override fun replaceAnnotations(newAnnotations: Annotations) =
-            if (newAnnotations !== delegate.annotations)
-                NullableSimpleType(delegate.replaceAnnotations(newAnnotations))
+            if (newAnnotations !== annotations)
+                AnnotatedSimpleType(this, newAnnotations)
             else
                 this
 
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType {
-        if (newNullability) return this
-        return delegate.makeNullableAsSpecified(newNullability)
+        if (newNullability == isMarkedNullable) return this
+        return delegate.makeNullableAsSpecified(newNullability).replaceAnnotations(annotations)
     }
+}
+
+private class AnnotatedSimpleType(
+        delegate: SimpleType,
+        override val annotations: Annotations
+) : DelegatingSimpleTypeImpl(delegate)
+
+private class NullableSimpleType(delegate: SimpleType) : DelegatingSimpleTypeImpl(delegate) {
+    override val isMarkedNullable: Boolean
+        get() = true
+}
+
+private class NotNullSimpleType(delegate: SimpleType) : DelegatingSimpleTypeImpl(delegate) {
+    override val isMarkedNullable: Boolean
+        get() = false
 }
