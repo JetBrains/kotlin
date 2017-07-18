@@ -263,6 +263,9 @@ abstract class KotlinCommonBlock(
                     }
                 }
 
+            parentType == KtNodeTypes.TYPE_CONSTRAINT_LIST ->
+                createAlignmentStrategy(true, getAlignment())
+
             else ->
                 getNullAlignmentStrategy()
         }
@@ -505,7 +508,12 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                         Indent.getContinuationIndent()
                     else
                         Indent.getNormalIndent()
-                })
+                },
+
+        strategy("Where clause")
+                .within(KtNodeTypes.CLASS, KtNodeTypes.FUN, KtNodeTypes.PROPERTY)
+                .forType(KtTokens.WHERE_KEYWORD)
+                .set(Indent.getContinuationIndent()))
 
 
 private fun getOperationType(node: ASTNode): IElementType? = node.findChildByType(KtNodeTypes.OPERATION_REFERENCE)?.firstChildNode?.elementType
