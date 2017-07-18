@@ -1,0 +1,75 @@
+plugins {
+    id "com.moowork.node" version "1.2.0"
+}
+
+description = 'Kotlin-test integration tests for JS'
+
+apply plugin: 'kotlin-platform-js'
+
+dependencies {
+    compile project(':kotlin-test:kotlin-test-js')
+}
+
+
+sourceSets {
+    main.kotlin.srcDirs += 'src'
+    test.kotlin.srcDirs += 'test'
+}
+
+
+compileKotlin2Js {
+    kotlinOptions {
+        moduleKind = "commonjs"
+    }
+}
+
+compileTestKotlin2Js {
+    kotlinOptions {
+        moduleKind = "commonjs"
+    }
+}
+
+compileKotlin2Js.doLast {
+    configurations.compile.each { File file ->
+        copy {
+            includeEmptyDirs = false
+
+            from zipTree(file.absolutePath)
+            into "${buildDir}/classes/"
+            include { fileTreeElement ->
+                def path = fileTreeElement.path
+                path.endsWith(".js") && (path.startsWith("META-INF/resources/") || !path.startsWith("META-INF/"))
+            }
+        }
+    }
+}
+
+node {
+    version = '6.11.0'
+    download = true
+}
+
+task testJest(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
+    args = ['run', 'test-jest']
+}
+
+task testJasmine(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
+    args = ['run', 'test-jasmine']
+}
+
+task testMocha(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
+    args = ['run', 'test-mocha']
+}
+
+task testQunit(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
+    args = ['run', 'test-qunit']
+}
+
+task testTape(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
+    args = ['run', 'test-tape']
+}
+
+[testJest, testJasmine, testMocha, testQunit, testTape].each {
+    check.dependsOn it
+    it.group = "verification"
+}

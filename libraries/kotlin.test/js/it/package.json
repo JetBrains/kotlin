@@ -1,0 +1,39 @@
+{
+  "name": "it",
+  "version": "1.0.0",
+  "description": "",
+  "main": "js/index.js",
+  "scripts": {
+    "test-jasmine": "jasmine js/paths.js js/jasmine-reporter.js build/classes/test/kotlin-test-js-it_test.js",
+    "test-jest": "jest",
+    "test-mocha": "mocha -r js/paths.js --reporter js/mocha-reporter.js build/classes/test/kotlin-test-js-it_test.js",
+    "test-qunit": "qunit -c js/paths.js -d js/qunit-reporter.js -t build/classes/test/kotlin-test-js-it_test.js",
+    "test-tape": "tape js/paths.js js/tape-reporter.js js/tape-plugin.js build/classes/test/kotlin-test-js-it_test.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "app-module-path": "^2.2.0",
+    "jasmine": "^2.6.0",
+    "jest": "^20.0.4",
+    "mocha": "^3.4.2",
+    "qunit": "^1.0.0",
+    "tape": "^4.6.3",
+    "watchify": "^3.9.0"
+  },
+  "jest": {
+    "verbose": true,
+    "roots": [
+      "<rootDir>/build/classes/",
+      "<rootDir>/build/classes/main/",
+      "<rootDir>/build/classes/test/"
+    ],
+    "testResultsProcessor": "<rootDir>/js/jest-reporter.js",
+    "testRegex": "_test\\.js$",
+    "moduleNameMapper": {
+      "^kotlin$": "<rootDir>/build/classes/kotlin.js",
+      "^kotlin-test$": "<rootDir>/build/classes/kotlin-test.js",
+      "^kotlin-test-js-it_main$": "<rootDir>/build/classes/main/kotlin-test-js-it_main.js"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,33 +40,6 @@ impl fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: Str
 
 
 /**
- * Provides the JS implementation of asserter using [QUnit](http://QUnitjs.com/)
+ * Provides the JS implementation of asserter
  */
-internal impl fun lookupAsserter(): Asserter = qunitAsserter
-
-private val qunitAsserter = QUnitAsserter()
-
-// TODO: make object in 1.2
-class QUnitAsserter : Asserter {
-
-    override fun assertTrue(lazyMessage: () -> String?, actual: Boolean) {
-        assertTrue(actual, lazyMessage())
-    }
-
-    override fun assertTrue(message: String?, actual: Boolean) {
-        QUnit.ok(actual, message)
-        if (!actual) failWithMessage(message)
-    }
-
-    override fun fail(message: String?): Nothing {
-        QUnit.ok(false, message)
-        failWithMessage(message)
-    }
-
-    private fun failWithMessage(message: String?): Nothing {
-        if (message == null)
-            throw AssertionError()
-        else
-            throw AssertionError(message)
-    }
-}
+internal impl fun lookupAsserter(): Asserter = DefaultJsAsserter

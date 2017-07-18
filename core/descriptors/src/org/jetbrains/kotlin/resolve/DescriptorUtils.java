@@ -575,6 +575,17 @@ public class DescriptorUtils {
 
     @NotNull
     public static FunctionDescriptor getFunctionByName(@NotNull MemberScope scope, @NotNull Name name) {
+        FunctionDescriptor result = getFunctionByNameOrNull(scope, name);
+
+        if (result == null) {
+            throw new IllegalStateException("Function not found");
+        }
+
+        return result;
+    }
+
+    @Nullable
+    public static FunctionDescriptor getFunctionByNameOrNull(@NotNull MemberScope scope, @NotNull Name name) {
         Collection<DeclarationDescriptor> functions = scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS,
                                                                                       MemberScope.Companion.getALL_NAME_FILTER());
         for (DeclarationDescriptor d : functions) {
@@ -583,7 +594,7 @@ public class DescriptorUtils {
             }
         }
 
-        throw new IllegalStateException("Function not found");
+        return null;
     }
 
     @NotNull

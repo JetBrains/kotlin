@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.js.translate.declaration.FileDeclarationVisitor;
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor;
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator;
 import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
-import org.jetbrains.kotlin.js.translate.test.JSTester;
-import org.jetbrains.kotlin.js.translate.test.QUnitTester;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
@@ -395,8 +393,8 @@ public final class Translation {
     ) {
         StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor);
         TranslationContext context = TranslationContext.rootContext(staticContext);
-        JSTester tester = new QUnitTester(context);
-        JSTestGenerator.generateTestCalls(context, moduleDescriptor, tester);
+
+        new JSTestGenerator(context).generateTestCalls(moduleDescriptor);
 
         return staticContext.getFragment();
     }
