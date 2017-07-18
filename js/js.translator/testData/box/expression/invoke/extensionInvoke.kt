@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 497
+// EXPECTED_REACHABLE_NODES: 1002
 package foo
 
 class A(val f: (B.() -> Int)?)

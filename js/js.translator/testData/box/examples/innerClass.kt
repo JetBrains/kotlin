@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 511
+// EXPECTED_REACHABLE_NODES: 998
 class Outer(val foo: StringBuilder) {
     inner class Inner() {
         fun len(): Int {

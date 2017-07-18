@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 953
+// EXPECTED_REACHABLE_NODES: 1005
 package foo
 
 data class A(private val x: Int) {

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 496
+// EXPECTED_REACHABLE_NODES: 999
 package foo
 
 class A<T>(val a: T) {

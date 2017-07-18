@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 497
+// EXPECTED_REACHABLE_NODES: 1000
 package foo
 
 class Sum(x: Int, y: Int) {

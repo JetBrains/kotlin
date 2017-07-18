@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 502
+// EXPECTED_REACHABLE_NODES: 1005
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/simple/simpleInt.1.kt

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 533
+// EXPECTED_REACHABLE_NODES: 1032
 package foo
 
 fun box() = MyEnum.E1.f() + MyEnum.E2.f()

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 504
+// EXPECTED_REACHABLE_NODES: 1009
 open class Base() {
     fun n(n: Int): Int = n + 1
 }

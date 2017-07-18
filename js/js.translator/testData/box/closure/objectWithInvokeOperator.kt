@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 536
+// EXPECTED_REACHABLE_NODES: 1035
 package foo
 
 object O {

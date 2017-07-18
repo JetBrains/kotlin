@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 497
+// EXPECTED_REACHABLE_NODES: 1000
 data class A(val number: Int)
 
 external fun foo(first: A, second: A): Boolean

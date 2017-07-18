@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 496
+// EXPECTED_REACHABLE_NODES: 994
 package foo
 
 class B(val name: String)
