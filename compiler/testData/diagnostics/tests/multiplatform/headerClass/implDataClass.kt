@@ -25,8 +25,8 @@ header class Baz(w: List<String>) {
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
-impl data class Foo(impl val x: Int, impl val y: String)
+impl data class Foo impl constructor(impl val x: Int, impl val y: String)
 
-impl data class Bar(val z: Double)
+impl data class Bar impl constructor(val z: Double)
 
-impl data class Baz(impl val w: List<String>)
+impl data class Baz impl constructor(impl val w: List<String>)

@@ -108,6 +108,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         doTest(fileName);
     }
 
+    @TestMetadata("simpleNoImplKeywordOnTopLevelFunction")
+    public void testSimpleNoImplKeywordOnTopLevelFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/simpleNoImplKeywordOnTopLevelFunction/");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/multiplatform/classScopes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

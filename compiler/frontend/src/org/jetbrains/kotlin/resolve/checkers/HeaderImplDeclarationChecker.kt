@@ -63,11 +63,13 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         if (descriptor !is MemberDescriptor) return
 
         val checkImpl = !languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckImpl)
-        if (descriptor.isHeader && declaration.hasModifier(KtTokens.HEADER_KEYWORD)) {
-            checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, descriptor.module, checkImpl)
+        if (descriptor.isHeader) {
+            if (declaration.hasModifier(KtTokens.HEADER_KEYWORD)) {
+                checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, descriptor.module, checkImpl)
+            }
         }
-        else if (checkImpl && descriptor.isImpl && declaration.hasModifier(KtTokens.IMPL_KEYWORD)) {
-            checkImplementationHasHeaderDeclaration(declaration, descriptor, diagnosticHolder)
+        else {
+            checkImplementationHasHeaderDeclaration(declaration, descriptor, diagnosticHolder, checkImpl)
         }
     }
 
@@ -123,12 +125,19 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
     }
 
     private fun checkImplementationHasHeaderDeclaration(
-            reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink
+            reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkImpl: Boolean
     ) {
         // Using the platform module instead of the common module is sort of fine here because the former always depends on the latter.
         // However, it would be clearer to find the common module this platform module implements and look for headers there instead.
         // TODO: use common module here
         val compatibility = findHeaderForImpl(descriptor, descriptor.module) ?: return
+
+        if (!descriptor.isImpl || !reportOn.hasModifier(KtTokens.IMPL_KEYWORD)) {
+            if (checkImpl && (Compatible in compatibility || Incompatible.NoImpl in compatibility)) {
+                diagnosticHolder.report(Errors.IMPL_MISSING.on(reportOn))
+            }
+            return
+        }
 
         // 'firstOrNull' is needed because in diagnostic tests, common sources appear twice, so the same class is duplicated
         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
@@ -173,7 +182,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
                 DescriptorToSourceUtils.getSourceFromDescriptor(this) is KtConstructor<*>
             }
             else {
-                isImpl && kind == CallableMemberDescriptor.Kind.DECLARATION
+                kind == CallableMemberDescriptor.Kind.DECLARATION
             }
 
     private fun findHeaderForImpl(impl: MemberDescriptor, commonModule: ModuleDescriptor): Map<Compatibility, List<MemberDescriptor>>? {
@@ -201,7 +210,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
                                 Substitutor(headerClass.declaredTypeParameters, container.declaredTypeParameters)
                             }
                             else null
-                    areCompatibleCallables(declaration, impl, checkImpl = false, parentSubstitutor = substitutor)
+                    areCompatibleCallables(declaration, impl, checkImpl = true, parentSubstitutor = substitutor)
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> {
