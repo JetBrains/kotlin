@@ -3,6 +3,11 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+
+## 1.1.3-3
+
+- [`KT-18954`](https://youtrack.jetbrains.com/issue/KT-18954) Fixed exception in Kotlin plugin updater
+
 ## 1.1.3-2
 
 #### Fixes
