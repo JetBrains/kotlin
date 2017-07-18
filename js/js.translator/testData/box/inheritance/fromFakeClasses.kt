@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 510
+// EXPECTED_REACHABLE_NODES: 1013
 package foo
 
 class FromAny : Any()

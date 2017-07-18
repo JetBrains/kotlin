@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 487
+// EXPECTED_REACHABLE_NODES: 990
 // FILE: a.kt
 
 inline fun foo(f: (Int) -> String, x: Int = 23): String = "foo(${f(x)})"

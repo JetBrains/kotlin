@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 487
+// EXPECTED_REACHABLE_NODES: 990
 package foo
 
 annotation class bar

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 488
+// EXPECTED_REACHABLE_NODES: 993
 // KT-2221 if in when
 
 package foo

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 901
+// EXPECTED_REACHABLE_NODES: 1389
 external fun p(m: String): String
 
 var log = ""

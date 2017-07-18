@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 487
+// EXPECTED_REACHABLE_NODES: 990
 // FILE: a.kt
 
 private inline fun bar(f: () -> String): String = "bar(${f()})"

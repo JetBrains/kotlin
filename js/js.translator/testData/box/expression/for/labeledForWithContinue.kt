@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 493
+// EXPECTED_REACHABLE_NODES: 996
 // http://youtrack.jetbrains.com/issue/KT-5257
 // JS: for with continue with label fails on runtime
 

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 505
+// EXPECTED_REACHABLE_NODES: 1007
 package foo
 
 class Runner {

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 490
+// EXPECTED_REACHABLE_NODES: 993
 package foo
 
 fun f(a: Int?, b: Int.(Int) -> Int) = a?.b(2)

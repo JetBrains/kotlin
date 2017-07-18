@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 491
+// EXPECTED_REACHABLE_NODES: 994
 class Slot() {
     var vitality: Int = 10000
 

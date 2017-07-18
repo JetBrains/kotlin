@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 490
+// EXPECTED_REACHABLE_NODES: 993
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/lambdaTransformation/regeneratedLambdaName.1.kt

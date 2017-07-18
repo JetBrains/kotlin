@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 491
+// EXPECTED_REACHABLE_NODES: 994
 // KT-2901 nullable type in string template
 package foo
 

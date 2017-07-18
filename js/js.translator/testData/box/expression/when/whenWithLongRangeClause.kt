@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 493
+// EXPECTED_REACHABLE_NODES: 996
 // see KT-7683
 // WhenTranslator must recognize KtWhenConditionInRange in general case of a class that has rangeTo method
 package foo

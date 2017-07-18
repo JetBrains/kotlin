@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 523
+// EXPECTED_REACHABLE_NODES: 1026
 package foo
 
 data class Holder<T>(val v: T)

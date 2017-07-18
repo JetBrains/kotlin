@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 506
+// EXPECTED_REACHABLE_NODES: 1009
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/trait/trait.1.kt

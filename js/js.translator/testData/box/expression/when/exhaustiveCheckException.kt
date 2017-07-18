@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 555
+// EXPECTED_REACHABLE_NODES: 1054
 fun <T> checkThrown(x: T, block: (T) -> Any?): Unit? {
     return try {
         println((block(x) ?: "").toString())
