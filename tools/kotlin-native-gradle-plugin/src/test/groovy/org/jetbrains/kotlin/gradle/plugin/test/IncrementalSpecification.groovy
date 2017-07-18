@@ -124,7 +124,7 @@ class IncrementalSpecification extends Specification {
             it.generateSrcFile('main.kt')
             it.newFolder('src', 'foo', 'kotlin')
             it.generateSrcFile('src/foo/kotlin/', 'bar.kt', """
-                fun bar() { println("Hello!") }
+                fun main(args: Array<String>) { println("Hello!") }
             """.stripIndent())
         }
         def results = buildTwice(project) { KonanInteropProject it ->
@@ -257,11 +257,13 @@ class IncrementalSpecification extends Specification {
         def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
             it.newFolder('src', 'lib', 'kotlin')
+            it.generateSrcFile('src/lib/kotlin', 'lib.kt', 'fun foo() { println(42) }')
             it.buildFile.append("""
                 konanArtifacts {
                     lib {
                         inputFiles fileTree('src/lib/kotlin')
                         produce 'bitcode'
+                        noMain()
                     }
                 }
             """.stripIndent())
