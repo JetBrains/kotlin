@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
-import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ControlStructureDataFlowInfo
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
 
@@ -385,9 +384,6 @@ class PSICallResolver(
         val resolvedExplicitReceiver = resolveExplicitReceiver(context, forcedExplicitReceiver?: oldCall.explicitReceiver, oldCall.isSafeCall())
         val resolvedTypeArguments = resolveTypeArguments(context, oldCall.typeArguments)
 
-        // this is hack for special calls. Note that special call has only arguments in parenthesis.
-        val givenDataFlowInfo: ControlStructureDataFlowInfo? = context.dataFlowInfoForArguments as? ControlStructureDataFlowInfo
-
         val argumentsInParenthesis = if (oldCall.callType != Call.CallType.ARRAY_SET_METHOD && oldCall.functionLiteralArguments.isEmpty()) {
             oldCall.valueArguments
         }
@@ -395,10 +391,9 @@ class PSICallResolver(
             oldCall.valueArguments.dropLast(1)
         }
 
-        val (resolvedArgumentsInParenthesis, dataFlowInfoAfterArgumentsInParenthesis) = resolveArgumentsInParenthesis(
-                context, context.dataFlowInfoForArguments.resultInfo, argumentsInParenthesis, givenDataFlowInfo)
-
         val externalLambdaArguments = oldCall.functionLiteralArguments
+        val resolvedArgumentsInParenthesis = resolveArgumentsInParenthesis(context, argumentsInParenthesis)
+
         val externalArgument = if (oldCall.callType == Call.CallType.ARRAY_SET_METHOD) {
             assert(externalLambdaArguments.isEmpty()) {
                 "Unexpected lambda parameters for call $oldCall"
@@ -415,11 +410,17 @@ class PSICallResolver(
             externalLambdaArguments.firstOrNull()
         }
 
+        val dataFlowInfoAfterArgumentsInParenthesis =
+                if (externalArgument != null && resolvedArgumentsInParenthesis.isNotEmpty())
+                    resolvedArgumentsInParenthesis.last().psiCallArgument.dataFlowInfoAfterThisArgument
+                else
+                    context.dataFlowInfoForArguments.resultInfo
+
         val astExternalArgument = externalArgument?.let { resolveValueArgument(context, dataFlowInfoAfterArgumentsInParenthesis, it) }
         val resultDataFlowInfo = astExternalArgument?.dataFlowInfoAfterThisArgument ?: dataFlowInfoAfterArgumentsInParenthesis
 
         return PSIKotlinCallImpl(kotlinCallKind, oldCall, tracingStrategy, resolvedExplicitReceiver, name, resolvedTypeArguments, resolvedArgumentsInParenthesis,
-                                 astExternalArgument, context.dataFlowInfo, resultDataFlowInfo)
+                                 astExternalArgument, context.dataFlowInfo, resultDataFlowInfo, context.dataFlowInfoForArguments)
     }
 
     private fun resolveExplicitReceiver(context: BasicCallResolutionContext, oldReceiver: Receiver?, isSafeCall: Boolean): ReceiverKotlinCallArgument? =
@@ -472,26 +473,14 @@ class PSICallResolver(
 
     private fun resolveArgumentsInParenthesis(
             context: BasicCallResolutionContext,
-            dataFlowInfoForArguments: DataFlowInfo,
-            arguments: List<ValueArgument>,
-            givenDataFlowInfo: ControlStructureDataFlowInfo?
-    ): Pair<List<KotlinCallArgument>, DataFlowInfo> {
-        if (givenDataFlowInfo != null) {
-            val resolvedArguments = arguments.map {
-                resolveValueArgument(context, givenDataFlowInfo.getInfo(it), it)
+            arguments: List<ValueArgument>
+    ): List<KotlinCallArgument> {
+        val dataFlowInfoForArguments = context.dataFlowInfoForArguments
+        return arguments.map { argument ->
+            resolveValueArgument(context, dataFlowInfoForArguments.getInfo(argument), argument).also { resolvedArgument ->
+                dataFlowInfoForArguments.updateInfo(argument, resolvedArgument.dataFlowInfoAfterThisArgument)
             }
-            return resolvedArguments to givenDataFlowInfo.resultInfo
         }
-
-        var dataFlowInfo = dataFlowInfoForArguments
-
-        val resolvedArguments = arguments.map {
-            val argument = resolveValueArgument(context, dataFlowInfo, it)
-            dataFlowInfo = argument.dataFlowInfoAfterThisArgument
-            argument
-        }
-
-        return resolvedArguments to dataFlowInfo
     }
 
     private fun resolveValueArgument(

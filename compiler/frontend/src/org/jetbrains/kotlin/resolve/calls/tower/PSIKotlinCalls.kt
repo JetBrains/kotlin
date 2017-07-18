@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ abstract class PSIKotlinCall : KotlinCall {
     abstract val psiCall: Call
     abstract val startingDataFlowInfo: DataFlowInfo
     abstract val resultDataFlowInfo: DataFlowInfo
+    abstract val dataFlowInfoForArguments: DataFlowInfoForArguments
     abstract val tracingStrategy: TracingStrategy
 
     override fun toString() = "$psiCall"
@@ -52,7 +53,8 @@ class PSIKotlinCallImpl(
         override val argumentsInParenthesis: List<KotlinCallArgument>,
         override val externalArgument: KotlinCallArgument?,
         override val startingDataFlowInfo: DataFlowInfo,
-        override val resultDataFlowInfo: DataFlowInfo
+        override val resultDataFlowInfo: DataFlowInfo,
+        override val dataFlowInfoForArguments: DataFlowInfoForArguments
 ) : PSIKotlinCall()
 
 class PSIKotlinCallForVariable(
@@ -67,6 +69,7 @@ class PSIKotlinCallForVariable(
 
     override val startingDataFlowInfo: DataFlowInfo get() = baseCall.startingDataFlowInfo
     override val resultDataFlowInfo: DataFlowInfo get() = baseCall.startingDataFlowInfo
+    override val dataFlowInfoForArguments: DataFlowInfoForArguments get() = baseCall.dataFlowInfoForArguments
 
     override val tracingStrategy: TracingStrategy get() = baseCall.tracingStrategy
     override val psiCall: Call = CallTransformer.stripCallArguments(baseCall.psiCall).let {
@@ -87,6 +90,7 @@ class PSIKotlinCallForInvoke(
 
     override val startingDataFlowInfo: DataFlowInfo get() = baseCall.startingDataFlowInfo
     override val resultDataFlowInfo: DataFlowInfo get() = baseCall.resultDataFlowInfo
+    override val dataFlowInfoForArguments: DataFlowInfoForArguments get() = baseCall.dataFlowInfoForArguments
     override val psiCall: Call
     override val tracingStrategy: TracingStrategy
 

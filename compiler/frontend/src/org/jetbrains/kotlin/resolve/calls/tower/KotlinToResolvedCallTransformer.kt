@@ -409,13 +409,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>(): ResolvedCall<D> 
             if (externalPsiCallArgument?.valueArgument == valueArgument) {
                 return externalPsiCallArgument.dataFlowInfoAfterThisArgument
             }
-            kotlinCall.argumentsInParenthesis.find { it.psiCallArgument.valueArgument == valueArgument }?.let {
-                return it.psiCallArgument.dataFlowInfoAfterThisArgument
-            }
-
-            // valueArgument is not found
-            // may be we should return initial DataFlowInfo but I think that it isn't important
-            return kotlinCall.psiKotlinCall.resultDataFlowInfo
+            return kotlinCall.psiKotlinCall.dataFlowInfoForArguments.getInfo(valueArgument)
         }
     }
 
