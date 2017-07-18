@@ -131,8 +131,9 @@ object GeneratePrimitiveVsObjectEqualityTestData {
         println("}")
     }
 
-    private fun generatePrimitiveVsObjectTest(type: String, x: String, y: String) {
+    private fun generatePrimitiveVsObjectTest(type: String, x: String, y: String, header: String = "") {
         PrintWriter(File(GENERATED_DIR, "primitiveEqObject$type.kt")).use {
+            if (header.isNotBlank()) it.println(header)
             it.generatePrimitiveVsObjectTestBody(type, x, y)
         }
     }
@@ -204,7 +205,7 @@ object GeneratePrimitiveVsObjectEqualityTestData {
         generatePrimitiveVsBoxedTest("Long", "0L", "1L")
 
         generatePrimitiveVsObjectTest("Boolean", "true", "false")
-        generatePrimitiveVsObjectTest("Char", "'0'", "'1'")
+        generatePrimitiveVsObjectTest("Char", "'0'", "'1'", header = "// IGNORE_BACKEND: JS") // KT-19081
         generatePrimitiveVsObjectTest("Byte", "0.toByte()", "1.toByte()")
         generatePrimitiveVsObjectTest("Short", "0.toShort()", "1.toShort()")
         generatePrimitiveVsObjectTest("Int", "0", "1")
