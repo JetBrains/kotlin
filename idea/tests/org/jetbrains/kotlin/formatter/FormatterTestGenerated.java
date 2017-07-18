@@ -842,6 +842,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("WhereClause.after.kt")
+        public void testWhereClause() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhereClause.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("WhileLineBreak.after.kt")
         public void testWhileLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhileLineBreak.after.kt");
