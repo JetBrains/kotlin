@@ -26,6 +26,8 @@
       <excludeFolder url="file://$MODULE_DIR$/libraries/examples/kotlin-jsr223-local-example/target" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/kotlin.test/common/build" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/kotlin.test/js/build" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/kotlin.test/js/it/build" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/kotlin.test/js/it/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/kotlin.test/junit/build" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/kotlin.test/jvm/build" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/stdlib/build" />

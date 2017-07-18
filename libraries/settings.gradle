@@ -6,6 +6,7 @@ include ':kotlin-test:kotlin-test-common'
 include ':kotlin-test:kotlin-test-jvm'
 include ':kotlin-test:kotlin-test-junit'
 include ':kotlin-test:kotlin-test-js'
+include ':kotlin-test:kotlin-test-js:kotlin-test-js-it'
 include ':kotlin-stdlib-common'
 include ':kotlin-stdlib'
 include ':kotlin-stdlib-js'
@@ -58,6 +59,7 @@ project(':kotlin-test:kotlin-test-common').projectDir = "$rootDir/kotlin.test/co
 project(':kotlin-test:kotlin-test-jvm').projectDir = "$rootDir/kotlin.test/jvm" as File
 project(':kotlin-test:kotlin-test-junit').projectDir = "$rootDir/kotlin.test/junit" as File
 project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/kotlin.test/js" as File
+project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/kotlin.test/js/it" as File
 project(':kotlin-stdlib-common').projectDir = "$rootDir/stdlib/common" as File
 project(':kotlin-stdlib').projectDir = "$rootDir/stdlib" as File
 project(':kotlin-stdlib-js').projectDir = "$rootDir/stdlib/js" as File
