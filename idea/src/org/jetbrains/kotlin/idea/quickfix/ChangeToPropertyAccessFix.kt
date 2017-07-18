@@ -19,12 +19,17 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 
-class ChangeToPropertyAccessFix(element: KtCallExpression) : KotlinQuickFixAction<KtCallExpression>(element) {
-    override fun getFamilyName() = "Change to property access"
+class ChangeToPropertyAccessFix(
+        element: KtCallExpression,
+        private val isObjectCall: Boolean) : KotlinQuickFixAction<KtCallExpression>(element) {
+
+    override fun getFamilyName() = if (isObjectCall) "Remove invocation" else "Change to property access"
 
     override fun getText() = familyName
 
@@ -36,8 +41,9 @@ class ChangeToPropertyAccessFix(element: KtCallExpression) : KotlinQuickFixActio
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtCallExpression>? {
             val expression = diagnostic.psiElement.parent as? KtCallExpression ?: return null
-            if (expression is KtExpression && expression.valueArguments.isEmpty()) {
-                return ChangeToPropertyAccessFix(expression)
+            if (expression.valueArguments.isEmpty()) {
+                val isObjectCall = expression.calleeExpression?.getCallableDescriptor() is FakeCallableDescriptorForObject
+                return ChangeToPropertyAccessFix(expression, isObjectCall)
             }
             return null
         }
