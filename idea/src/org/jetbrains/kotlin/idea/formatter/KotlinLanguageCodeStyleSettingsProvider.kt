@@ -53,8 +53,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                }
 
                enum class Enumeration {
-                   A,
-                   B
+                   A, B
                }
             """.trimIndent()
 
@@ -242,7 +241,8 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE",
                         "METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE",
                         "CALL_PARAMETERS_LPAREN_ON_NEXT_LINE",
-                        "CALL_PARAMETERS_RPAREN_ON_NEXT_LINE"
+                        "CALL_PARAMETERS_RPAREN_ON_NEXT_LINE",
+                        "ENUM_CONSTANTS_WRAP"
                 )
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
                 showCustomOption(KotlinCodeStyleSettings::ALIGN_IN_COLUMNS_CASE_BRANCH,
