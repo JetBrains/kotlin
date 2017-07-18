@@ -1472,6 +1472,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("copyOfValUnused.kt")
+        public void testCopyOfValUnused() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfValUnused.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("copyOfValWithExplicitType.kt")
         public void testCopyOfValWithExplicitType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfValWithExplicitType.kt");
