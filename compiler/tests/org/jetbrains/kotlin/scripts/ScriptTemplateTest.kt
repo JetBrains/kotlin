@@ -291,6 +291,14 @@ class ScriptTemplateTest {
     }
 
     @Test
+    fun testThrowing() {
+        val messageCollector = TestMessageCollector()
+        compileScript("fib.kts", ScriptWithThrowingResolver::class, null, messageCollector = messageCollector)
+
+        messageCollector.assertHasMessage("Exception from resolver", desiredSeverity = CompilerMessageSeverity.ERROR)
+    }
+
+    @Test
     fun testSmokeScriptException() {
         val aClass = compileScript("smoke_exception.kts", ScriptWithArrayParam::class)
         Assert.assertNotNull(aClass)
@@ -511,6 +519,12 @@ class SeveralConstructorsResolver(val c: Int): TestKotlinScriptDependenciesResol
 }
 class DefaultArgsConstructorResolver(val c: Int = 0): TestKotlinScriptDependenciesResolver()
 
+class ThrowingResolver: DependenciesResolver {
+    override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
+        throw IllegalStateException("Exception from resolver")
+    }
+}
+
 @ScriptTemplateDefinition(
         scriptFilePattern =".*\\.kts",
         resolver = TestKotlinScriptDummyDependenciesResolver::class)
@@ -582,6 +596,9 @@ abstract class ScriptWithSeveralConstructorsResolver(val num: Int)
 
 @ScriptTemplateDefinition(resolver = DefaultArgsConstructorResolver::class)
 abstract class ScriptWithDefaultArgsResolver(val num: Int)
+
+@ScriptTemplateDefinition(resolver = ThrowingResolver::class)
+abstract class ScriptWithThrowingResolver(val num: Int)
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
