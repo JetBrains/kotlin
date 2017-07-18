@@ -21,7 +21,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.utils.compactIfPossible
+import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -95,7 +95,7 @@ abstract class BinaryJavaMethodBase(
                     else
                         BinaryJavaMethod(
                                 access, containingClass,
-                                parameterList.compactIfPossible(),
+                                parameterList.compact(),
                                 info.typeParameters,
                                 Name.identifier(name), info.returnType
                         )
@@ -141,7 +141,7 @@ abstract class BinaryJavaMethodBase(
                 }
                 if (iterator.current() != ')') throw ClsFormatException()
 
-                paramTypes = (paramTypes as ArrayList).compactIfPossible()
+                paramTypes = (paramTypes as ArrayList).compact()
             }
             iterator.next()
 
