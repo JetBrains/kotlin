@@ -49,8 +49,11 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
 
                    fun longMethod(@Named("param1") param1: Int,
                     param2: String) {
+                       @Deprecated val foo = 1
                    }
                }
+
+               @Deprecated val bar = 1
 
                enum class Enumeration {
                    A, B
@@ -238,6 +241,8 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "METHOD_ANNOTATION_WRAP",
                         "CLASS_ANNOTATION_WRAP",
                         "PARAMETER_ANNOTATION_WRAP",
+                        "VARIABLE_ANNOTATION_WRAP",
+                        "FIELD_ANNOTATION_WRAP",
                         "METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE",
                         "METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE",
                         "CALL_PARAMETERS_LPAREN_ON_NEXT_LINE",
@@ -245,6 +250,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "ENUM_CONSTANTS_WRAP"
                 )
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
+                consumer.renameStandardOption("FIELD_ANNOTATION_WRAP", "Property annotations")
                 showCustomOption(KotlinCodeStyleSettings::ALIGN_IN_COLUMNS_CASE_BRANCH,
                                  "Align 'when' branches in columns",
                                  CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT)
