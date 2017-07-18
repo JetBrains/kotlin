@@ -26,6 +26,7 @@ import com.intellij.testFramework.TestDataFile;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
+import kotlin.script.dependencies.ScriptDependencies;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +42,7 @@ import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider;
+import org.jetbrains.kotlin.script.ScriptDependenciesProvider;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -361,11 +362,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             files.add(javaClassesOutputDirectory);
         }
 
-        KotlinScriptExternalImportsProvider externalImportsProvider =
-                KotlinScriptExternalImportsProvider.Companion.getInstance(myEnvironment.getProject());
-        if (externalImportsProvider != null) {
-            files.addAll(externalImportsProvider.getCombinedClasspathFor(myEnvironment.getSourceFiles()));
-        }
+        ScriptDependenciesProvider externalImportsProvider =
+                ScriptDependenciesProvider.Companion.getInstance(myEnvironment.getProject());
+        myEnvironment.getSourceFiles().forEach(
+                file -> {
+                    ScriptDependencies dependencies = externalImportsProvider.getScriptDependencies(file);
+                    if (dependencies != null) {
+                        files.addAll(dependencies.getClasspath());
+                    }
+                }
+        );
 
         try {
             URL[] result = new URL[files.size()];
