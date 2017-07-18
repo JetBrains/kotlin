@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.intention.*
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.intention.JvmCommonIntentionActionsFactory
+import com.intellij.codeInsight.intention.MethodInsertionInfo
+import com.intellij.codeInsight.intention.QuickFixFactory
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -217,11 +220,14 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
     }
 
     private fun fakeParametersExpressions(parameters: List<PsiParameter>): Array<PsiExpression> =
-            JavaPsiFacade.getElementFactory(parameters.first().project)
-                    .createParameterList(
-                            parameters.map { it.name }.toTypedArray(),
-                            parameters.map { it.type }.toTypedArray()
-                    ).parameters.map { FakeExpressionFromParameter(it) }.toTypedArray()
+            when {
+                parameters.isEmpty() -> emptyArray<PsiExpression>()
+                else -> JavaPsiFacade.getElementFactory(parameters.first().project)
+                        .createParameterList(
+                                parameters.map { it.name }.toTypedArray(),
+                                parameters.map { it.type }.toTypedArray()
+                        ).parameters.map { FakeExpressionFromParameter(it) }.toTypedArray()
+            }
 
     private class FakeExpressionFromParameter(private val psiParam: PsiParameter) : PsiReferenceExpressionImpl() {
 
