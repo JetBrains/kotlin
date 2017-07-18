@@ -500,6 +500,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("LocalVariableAnnotationWrap.after.kt")
+        public void testLocalVariableAnnotationWrap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LocalVariableAnnotationWrap.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LoopParameterWithExplicitType.after.kt")
         public void testLoopParameterWithExplicitType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LoopParameterWithExplicitType.after.kt");
@@ -611,6 +617,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("PropertyAccessors.after.kt")
         public void testPropertyAccessors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyAccessors.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("PropertyAnnotationWrap.after.kt")
+        public void testPropertyAnnotationWrap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyAnnotationWrap.after.kt");
             doTest(fileName);
         }
 
