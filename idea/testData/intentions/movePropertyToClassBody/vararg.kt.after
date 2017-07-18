@@ -1,3 +1,3 @@
-class TestClass(words: String) {
+class TestClass(vararg words: String) {
     var words = words
 }
