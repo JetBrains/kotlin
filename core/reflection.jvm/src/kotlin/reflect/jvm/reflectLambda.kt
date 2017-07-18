@@ -18,22 +18,17 @@
 
 package kotlin.reflect.jvm
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
-import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.internal.EmptyContainerForLocal
 import kotlin.reflect.jvm.internal.KFunctionImpl
-import kotlin.reflect.jvm.internal.getOrCreateModule
+import kotlin.reflect.jvm.internal.deserializeToDescriptor
 
 /**
  * This is an experimental API. Given a class for a compiled Kotlin lambda or a function expression,
@@ -53,26 +48,4 @@ fun <R> Function<R>.reflect(): KFunction<R>? {
 
     @Suppress("UNCHECKED_CAST")
     return KFunctionImpl(EmptyContainerForLocal, descriptor) as KFunction<R>
-}
-
-internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
-        moduleAnchor: Class<*>,
-        proto: M,
-        nameResolver: NameResolver,
-        typeTable: TypeTable,
-        createDescriptor: MemberDeserializer.(M) -> D
-): D? {
-    val moduleData = moduleAnchor.getOrCreateModule()
-
-    val typeParameters = when (proto) {
-        is ProtoBuf.Function -> proto.typeParameterList
-        is ProtoBuf.Property -> proto.typeParameterList
-        else -> error("Unsupported message: $proto")
-    }
-
-    val context = DeserializationContext(
-            moduleData.deserialization, nameResolver, moduleData.module, typeTable, SinceKotlinInfoTable.EMPTY,
-            containerSource = null, parentTypeDeserializer = null, typeParameters = typeParameters
-    )
-    return MemberDeserializer(context).createDescriptor(proto)
 }
