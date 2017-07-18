@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
 import org.jetbrains.kotlin.js.backend.ast.metadata.isCallableReference
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
+import org.jetbrains.kotlin.js.backend.ast.metadata.type
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.finalElement
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -107,15 +109,19 @@ object CallableReferenceTranslator {
             null
         }
 
+        val functionDescriptor = realResolvedCall.resultingDescriptor
         val aliases = mutableMapOf<KtExpression, JsExpression>()
         for ((index, valueArg) in fakeCall.valueArguments.withIndex()) {
             val paramName = JsScope.declareTemporaryName(descriptor.valueParameters[index].name.asString())
             function.parameters += JsParameter(paramName)
-            aliases[valueArg.getArgumentExpression()!!] = paramName.makeRef()
+            val paramRef = paramName.makeRef()
+            paramRef.type = context.currentModule.builtIns.anyType
+            val type = functionDescriptor.valueParameters[index].type
+            aliases[valueArg.getArgumentExpression()!!] = TranslationUtils.coerce(context, paramRef, type)
         }
         val functionContext = context.innerBlock(function.body).innerContextWithAliasesForExpressions(aliases)
         val invocation = CallTranslator.translate(functionContext, fakeResolvedCall, receiverParam)
-        function.body.statements += JsReturn(invocation)
+        function.body.statements += JsReturn(TranslationUtils.coerce(context, invocation, context.currentModule.builtIns.anyType))
 
         val rawCallableRef = bindIfNecessary(function, receiver)
         return wrapFunctionCallableRef(expression.callableReference.getReferencedName(), rawCallableRef)

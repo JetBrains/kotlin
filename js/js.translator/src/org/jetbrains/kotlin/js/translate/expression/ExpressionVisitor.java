@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
@@ -39,6 +38,8 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
+import org.jetbrains.kotlin.js.translate.utils.mutator.CoercionMutator;
+import org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMutator;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -107,6 +108,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                 jsBlock.getStatements().add(jsStatement);
             }
         }
+        if (statements.isEmpty()) {
+            ClassDescriptor unitClass = context.getCurrentModule().getBuiltIns().getUnit();
+            jsBlock.getStatements().add(JsAstUtils.asSyntheticStatement(
+                    ReferenceTranslator.translateAsValueReference(unitClass, context)));
+        }
         return jsBlock;
     }
 
@@ -135,6 +141,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return new JsReturn(ref.source(jetReturnExpression));
         }
 
+        FunctionDescriptor returnTarget = getNonLocalReturnTarget(jetReturnExpression, context);
+
         JsReturn jsReturn;
         if (returned == null) {
             jsReturn = new JsReturn(null);
@@ -146,15 +154,19 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             assert returnedType != null : "Resolved return expression is expected to have type: " +
                                           PsiUtilsKt.getTextWithLocation(jetReturnExpression);
 
-            if (KotlinBuiltIns.isCharOrNullableChar(returnedType) &&
-                TranslationUtils.shouldBoxReturnValue((CallableDescriptor)context.getDeclarationDescriptor())) {
-                jsReturnExpression = TranslationUtils.charToBoxedChar(context, jsReturnExpression);
+            CallableDescriptor returnTargetOrCurrentFunction = returnTarget;
+            if (returnTargetOrCurrentFunction == null) {
+                returnTargetOrCurrentFunction = (CallableDescriptor) context.getDeclarationDescriptor();
+            }
+            if (returnTargetOrCurrentFunction != null) {
+                jsReturnExpression = TranslationUtils.coerce(context, jsReturnExpression,
+                                                             TranslationUtils.getReturnTypeForCoercion(returnTargetOrCurrentFunction));
             }
 
             jsReturn = new JsReturn(jsReturnExpression);
         }
 
-        MetadataProperties.setReturnTarget(jsReturn, getNonLocalReturnTarget(jetReturnExpression, context));
+        MetadataProperties.setReturnTarget(jsReturn, returnTarget);
 
         return jsReturn.source(jetReturnExpression);
     }
@@ -245,10 +257,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
         if (lhs instanceof DoubleColonLHS.Expression && !((DoubleColonLHS.Expression) lhs).isObjectQualifier()) {
             JsExpression receiver = translateAsExpression(receiverExpression, context);
-            KotlinType type = context.bindingContext().getType(receiverExpression);
-            if (type != null && KotlinBuiltIns.isChar(type)) {
-                receiver = TranslationUtils.charToBoxedChar(context, receiver);
-            }
+            receiver = TranslationUtils.coerce(context, receiver, context.getCurrentModule().getBuiltIns().getAnyType());
             return new JsInvocation(context.namer().kotlin(GET_KCLASS_FROM_EXPRESSION), receiver);
         }
 
@@ -270,6 +279,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitIfExpression(@NotNull KtIfExpression expression, @NotNull TranslationContext context) {
         assert expression.getCondition() != null : "condition should not ne null: " + expression.getText();
         JsExpression testExpression = Translation.translateAsExpression(expression.getCondition(), context);
+        KotlinType type = context.bindingContext().getType(expression);
 
         boolean isKotlinExpression = BindingContextUtilsKt.isUsedAsExpression(expression, context.bindingContext());
 
@@ -280,6 +290,15 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                 thenExpression != null ? Translation.translateAsStatementAndMergeInBlockIfNeeded(thenExpression, context) : null;
         JsStatement elseStatement =
                 elseExpression != null ? Translation.translateAsStatementAndMergeInBlockIfNeeded(elseExpression, context) : null;
+
+        if (type != null) {
+            if (thenStatement != null) {
+                thenStatement = LastExpressionMutator.mutateLastExpression(thenStatement, new CoercionMutator(type, context));
+            }
+            if (elseStatement != null) {
+                elseStatement = LastExpressionMutator.mutateLastExpression(elseStatement, new CoercionMutator(type, context));
+            }
+        }
 
         if (isKotlinExpression) {
             JsExpression jsThenExpression = JsAstUtils.extractExpressionFromStatement(thenStatement);

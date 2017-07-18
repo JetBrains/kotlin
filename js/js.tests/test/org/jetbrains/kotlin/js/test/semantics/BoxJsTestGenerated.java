@@ -795,6 +795,117 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/coercion")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Coercion extends AbstractBoxJsTest {
+        public void testAllFilesPresentInCoercion() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/coercion"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("classProperty.kt")
+        public void testClassProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/classProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("derivedFunctionReturningChar.kt")
+        public void testDerivedFunctionReturningChar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/derivedFunctionReturningChar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("derivedFunctionReturningUnit.kt")
+        public void testDerivedFunctionReturningUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/derivedFunctionReturningUnit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("destructuringToUnit.kt")
+        public void testDestructuringToUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/destructuringToUnit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionReceiver.kt")
+        public void testExtensionReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/extensionReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifWithUnit.kt")
+        public void testIfWithUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/ifWithUnit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineFunReturningUnit.kt")
+        public void testInlineFunReturningUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/inlineFunReturningUnit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaParameters.kt")
+        public void testLambdaParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/lambdaParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("loopOverUnits.kt")
+        public void testLoopOverUnits() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/loopOverUnits.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("receiverSmartCast.kt")
+        public void testReceiverSmartCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/receiverSmartCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeCallLetReturningUnit.kt")
+        public void testSafeCallLetReturningUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/safeCallLetReturningUnit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/topLevelProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("tryWithEmptyCatch.kt")
+        public void testTryWithEmptyCatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/tryWithEmptyCatch.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unitAsExtensionReceiver.kt")
+        public void testUnitAsExtensionReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/unitAsExtensionReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unitIsAs.kt")
+        public void testUnitIsAs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/unitIsAs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unitSafeCall.kt")
+        public void testUnitSafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/unitSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenWithUnit.kt")
+        public void testWhenWithUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/whenWithUnit.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/crossModuleRef")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -7793,6 +7904,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("arraysIterator.kt")
         public void testArraysIterator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/standardClasses/arraysIterator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("charArrayGetSet.kt")
+        public void testCharArrayGetSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/standardClasses/charArrayGetSet.kt");
             doTest(fileName);
         }
 

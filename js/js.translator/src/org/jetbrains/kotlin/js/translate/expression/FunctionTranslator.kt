@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.functionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.hasDefaultValue
+import org.jetbrains.kotlin.js.backend.ast.metadata.type
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.descriptorUtils.shouldBeExported
 import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
@@ -58,7 +59,9 @@ fun TranslationContext.translateAndAliasParameters(
 
     if (descriptor.requiresExtensionReceiverParameter) {
         val receiverParameterName = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
-        aliases[descriptor.extensionReceiverParameter!!] = receiverParameterName.makeRef()
+        val receiverRef = receiverParameterName.makeRef()
+        receiverRef.type = descriptor.extensionReceiverParameter!!.type
+        aliases[descriptor.extensionReceiverParameter!!] = receiverRef
         targetList += JsParameter(receiverParameterName)
     }
 

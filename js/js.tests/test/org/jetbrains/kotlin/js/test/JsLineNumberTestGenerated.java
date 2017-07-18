@@ -60,12 +60,6 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
-    @TestMetadata("charBoxing.kt")
-    public void testCharBoxing() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/charBoxing.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("classCapturingLocals.kt")
     public void testClassCapturingLocals() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/classCapturingLocals.kt");
