@@ -5,18 +5,9 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:1:12: error: 'impl' class 'Foo' has no corresponding 'header' declaration
-The following declaration is incompatible because some members are not implemented:
-    public final header class Foo
-No implementations are found for members listed below:
-
+compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:2:5: error: 'impl' function 'function' has no corresponding 'header' declaration
+The following declaration is incompatible because return type is different:
     public final header fun function(b: ByteArray): Int
 
-    The following declaration is incompatible because return type is different:
-        public final impl fun function(b: ByteArray): Long
-
-impl class Foo {
-           ^
-compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:2:5: error: 'impl' function 'function' has no corresponding 'header' declaration
     impl fun function(b: ByteArray): Long = b.size.toLong()
     ^

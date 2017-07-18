@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -102,7 +103,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         return when (header) {
             is CallableMemberDescriptor -> {
                 header.findNamesakesFromModule(platformModule).filter { impl ->
-                    header != impl &&
+                    header != impl && !impl.isHeader &&
                     // TODO: support non-source definitions (e.g. from Java)
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
                 }.groupBy { impl ->
@@ -111,7 +112,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             }
             is ClassDescriptor -> {
                 header.findClassifiersFromModule(platformModule).filter { impl ->
-                    header != impl &&
+                    header != impl && !impl.isHeader &&
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
                 }.groupBy { impl ->
                     areCompatibleClassifiers(header, impl, checkImpl)
@@ -129,7 +130,35 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         // TODO: use common module here
         val compatibility = findHeaderForImpl(descriptor, descriptor.module) ?: return
 
-        if (Compatible !in compatibility) {
+        // 'firstOrNull' is needed because in diagnostic tests, common sources appear twice, so the same class is duplicated
+        // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
+        val singleIncompatibility = compatibility.keys.firstOrNull()
+        if (singleIncompatibility is Incompatible.ClassScopes) {
+            assert(descriptor is ClassDescriptor) { "Incompatible.ClassScopes is only possible for a class: $descriptor" }
+
+            // Do not report "header members are not implemented" for those header members, for which there's a clear
+            // (albeit maybe incompatible) single implementation suspect, declared in the impl class.
+            // This is needed only to reduce the number of errors. Incompatibility errors for those members will be reported
+            // later when this checker is called for them
+            fun hasSingleImplSuspect(
+                    headerWithIncompatibility: Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>
+            ): Boolean {
+                val (headerMember, incompatibility) = headerWithIncompatibility
+                val implMember = incompatibility.values.singleOrNull()?.singleOrNull()
+                return implMember != null &&
+                       implMember.isExplicitImplDeclaration() &&
+                       findHeaderForImpl(implMember, headerMember.module)?.values?.singleOrNull()?.singleOrNull() == headerMember
+            }
+
+            val nonTrivialUnimplemented = singleIncompatibility.unimplemented.filterNot(::hasSingleImplSuspect)
+
+            if (nonTrivialUnimplemented.isNotEmpty()) {
+                diagnosticHolder.report(Errors.HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED.on(
+                        reportOn, descriptor as ClassDescriptor, nonTrivialUnimplemented
+                ))
+            }
+        }
+        else if (Compatible !in compatibility) {
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
@@ -137,13 +166,24 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         }
     }
 
+    // This should ideally be handled by CallableMemberDescriptor.Kind, but default constructors have kind DECLARATION and non-empty source.
+    // Their source is the containing KtClass instance though, as opposed to explicit constructors, whose source is KtConstructor
+    private fun CallableMemberDescriptor.isExplicitImplDeclaration(): Boolean =
+            if (this is ConstructorDescriptor) {
+                DescriptorToSourceUtils.getSourceFromDescriptor(this) is KtConstructor<*>
+            }
+            else {
+                isImpl && kind == CallableMemberDescriptor.Kind.DECLARATION
+            }
+
     private fun findHeaderForImpl(impl: MemberDescriptor, commonModule: ModuleDescriptor): Map<Compatibility, List<MemberDescriptor>>? {
         return when (impl) {
             is CallableMemberDescriptor -> {
                 val container = impl.containingDeclaration
                 val candidates = when (container) {
                     is ClassDescriptor -> {
-                        val headerClass = findHeaderForImpl(container, commonModule)?.get(Compatible)?.firstOrNull() as? ClassDescriptor
+                        // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
+                        val headerClass = findHeaderForImpl(container, commonModule)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
                         headerClass?.getMembers(impl.name).orEmpty()
                     }
                     is PackageFragmentDescriptor -> impl.findNamesakesFromModule(commonModule)
@@ -169,7 +209,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
                     impl != declaration &&
                     declaration is ClassDescriptor && declaration.isHeader
                 }.groupBy { header ->
-                    areCompatibleClassifiers(header as ClassDescriptor, impl, checkImpl = false)
+                    areCompatibleClassifiers(header as ClassDescriptor, impl, checkImpl = true)
                 }
             }
             else -> null
@@ -229,10 +269,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
 
     sealed class Compatibility {
         // Note that the reason is used in the diagnostic output, see PlatformIncompatibilityDiagnosticRenderer
-        sealed class Incompatible(
-                val reason: String?,
-                val unimplemented: List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>? = null
-        ) : Compatibility() {
+        sealed class Incompatible(val reason: String?) : Compatibility() {
             // Callables
 
             object ParameterShape : Incompatible("parameter shapes are different (extension vs non-extension)")
@@ -268,8 +305,8 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             object Supertypes : Incompatible("some supertypes are missing in the implementation")
 
             class ClassScopes(
-                    unimplemented: List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>
-            ) : Incompatible("some members are not implemented", unimplemented)
+                    val unimplemented: List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>
+            ) : Incompatible("some members are not implemented")
 
             object EnumEntries : Incompatible("some entries from header enum are missing in the impl enum")
 

@@ -13770,6 +13770,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("noImplKeywordOnMember.kt")
+                public void testNoImplKeywordOnMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/noImplKeywordOnMember.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("simpleHeaderClass.kt")
                 public void testSimpleHeaderClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/simpleHeaderClass.kt");

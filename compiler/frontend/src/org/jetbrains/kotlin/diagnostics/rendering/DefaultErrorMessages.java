@@ -275,6 +275,9 @@ public class DefaultErrorMessages {
         MAP.put(IMPLEMENTATION_WITHOUT_HEADER, "''impl'' {0} has no corresponding ''header'' declaration{1}", DECLARATION_NAME_WITH_KIND,
                 PlatformIncompatibilityDiagnosticRenderer.INSTANCE);
 
+        MAP.put(HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED, "''impl'' class ''{0}'' has no implementation of ''header'' class members:{1}",
+                NAME, IncompatibleHeaderImplClassScopesRenderer.INSTANCE);
+
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");
         MAP.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing", NAME);

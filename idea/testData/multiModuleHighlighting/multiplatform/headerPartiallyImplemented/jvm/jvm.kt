@@ -1,11 +1,11 @@
 impl class <error>My</error> {
 
-    <error>impl fun foo()</error> = 42
+    impl fun foo() = 42
 }
 
-impl class <error>Your</error> {
+impl class Your {
 
-    <error>impl fun foo()</error> = 13
+    impl fun foo() = 13
 
     <error>impl fun bar(arg: Int)</error> = arg
 
