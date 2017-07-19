@@ -20,12 +20,14 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class RedundantUnitReturnTypeInspection : AbstractKotlinInspection() {
@@ -34,13 +36,24 @@ class RedundantUnitReturnTypeInspection : AbstractKotlinInspection() {
             override fun visitNamedFunction(function: KtNamedFunction) {
                 super.visitNamedFunction(function)
                 if (function.containingFile is KtCodeFragment) return
-                if ((function.descriptor as? FunctionDescriptor)?.returnType?.isUnit() == true) {
-                    function.typeReference?.typeElement?.let {
-                        holder.registerProblem(it,
-                                               "Redundant 'Unit' return type",
-                                               ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                               IntentionWrapper(RemoveExplicitTypeIntention(), function.containingKtFile))
+                val typeElement = function.typeReference?.typeElement ?: return
+                val context = function.analyze(BodyResolveMode.PARTIAL)
+                val descriptor = context[BindingContext.FUNCTION, function] ?: return
+                if (descriptor.returnType?.isUnit() == true) {
+                    if (!function.hasBlockBody()) {
+                        val bodyExpression = function.bodyExpression
+                        if (bodyExpression != null) {
+                            val resolvedCall = bodyExpression.getResolvedCall(bodyExpression.analyze(BodyResolveMode.PARTIAL))
+                            if (resolvedCall != null) {
+                                if (resolvedCall.candidateDescriptor.returnType?.isUnit() != true) return
+                            }
+                        }
                     }
+
+                    holder.registerProblem(typeElement,
+                                           "Redundant 'Unit' return type",
+                                           ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                           IntentionWrapper(RemoveExplicitTypeIntention(), function.containingKtFile))
                 }
             }
         }
