@@ -72,6 +72,7 @@
         </element>
         <element id="archive" name="android-extensions-compiler.jar">
           <element id="module-output" name="android-extensions-compiler" />
+          <element id="module-output" name="android-extensions-runtime" />
         </element>
         <element id="archive" name="android-lint.jar">
           <element id="module-output" name="uast-kotlin" />

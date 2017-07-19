@@ -13,5 +13,6 @@
     <orderEntry type="module" module-name="frontend.java" exported="" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="backend" scope="PROVIDED" />
+    <orderEntry type="module" module-name="android-extensions-runtime" />
   </component>
 </module>

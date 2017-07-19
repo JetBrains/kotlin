@@ -8,6 +8,8 @@ kotlinx.android.synthetic
 
     public fun android.app.Activity.clearFindViewByIdCache(): kotlin.Unit
     public fun android.app.Fragment.clearFindViewByIdCache(): kotlin.Unit
+    public fun android.view.View.clearFindViewByIdCache(): kotlin.Unit
+    public fun kotlinx.android.extensions.LayoutContainer.clearFindViewByIdCache(): kotlin.Unit
 
 
 kotlinx.android.synthetic.main
@@ -18,6 +20,7 @@ kotlinx.android.synthetic.main.test
     public val android.app.Activity.MyKeyboardView: android.view.View!
     public val android.app.Dialog.MyKeyboardView: android.view.View!
     public val android.app.Fragment.MyKeyboardView: android.view.View!
+    public val kotlinx.android.extensions.LayoutContainer.MyKeyboardView: android.view.View!
 
 
 kotlinx.android.synthetic.main.test.view

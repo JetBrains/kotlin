@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.debugger.BinaryCacheKey
 import org.jetbrains.kotlin.idea.debugger.BytecodeDebugInfo
 import org.jetbrains.kotlin.idea.debugger.WeakBytecodeDebugInfoStorage
+import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
 import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriority
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCodeFragment
@@ -217,8 +218,7 @@ class KotlinDebuggerCaches(project: Project) {
     }
 
     data class CompiledDataDescriptor(
-            val bytecodes: ByteArray,
-            val additionalClasses: List<Pair<String, ByteArray>>,
+            val classes: List<ClassToLoad>,
             val sourcePosition: SourcePosition,
             val parameters: ParametersDescriptor
     )

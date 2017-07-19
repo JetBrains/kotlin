@@ -1,5 +1,0 @@
-@Anno(name = "Mary")
-@Anno(name = "Tom")
-public final class MyClass {
-    public void <init>()
-}

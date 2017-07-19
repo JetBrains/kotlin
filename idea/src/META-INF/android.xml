@@ -7,7 +7,7 @@
         <moduleService serviceInterface="org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager"
                        serviceImplementation="org.jetbrains.kotlin.android.synthetic.idea.res.IDEAndroidLayoutXmlFileManager"/>
         <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidPsiTreeChangePreprocessor"/>
-        <errorHandler implementation="org.jetbrains.kotlin.plugin.android.AndroidExtensionsReportSubmitter"/>
+        <errorHandler implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidExtensionsReportSubmitter"/>
         <gotoDeclarationHandler implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidGotoDeclarationHandler"/>
 
         <localInspection implementationClass="org.jetbrains.kotlin.android.inspection.IllegalIdentifierInspection"
@@ -66,19 +66,26 @@
         <externalProjectDataService implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidGradleLibraryDataService"/>
     </extensions>
 
+    <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+        <projectResolve implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidExtensionsProjectResolverExtension"/>
+    </extensions>
+
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension"/>
+        <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.IDEAndroidExtensionsExpressionCodegenExtension"/>
         <defaultErrorMessages implementation="org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid"/>
         <storageComponentContainerContributor implementation="org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor"/>
         <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension"/>
         <packageFragmentProviderExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.res.IDEAndroidPackageFragmentProviderExtension"/>
         <simpleNameReferenceExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidSimpleNameReferenceExtension"/>
         <kotlinIndicesHelperExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidIndicesHelperExtension"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidExtensionsGradleImportHandler"/>
 
         <quickFixContributor implementation="org.jetbrains.kotlin.android.quickfix.AndroidQuickFixRegistrar"/>
         <projectConfigurator implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidGradleModuleConfigurator"/>
         <platformGradleDetector implementation="org.jetbrains.kotlin.android.configure.PlatformAndroidGradleDetector"/>
         <completionInformationProvider implementation="org.jetbrains.kotlin.AndroidExtensionsCompletionInformationProvider" />
+
+        <androidDexer implementation="org.jetbrains.kotlin.android.debugger.AndroidDexerImpl"/>
     </extensions>
 
     <project-components>

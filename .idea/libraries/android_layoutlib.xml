@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="android-layoutlib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/android/lib/layoutlib.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

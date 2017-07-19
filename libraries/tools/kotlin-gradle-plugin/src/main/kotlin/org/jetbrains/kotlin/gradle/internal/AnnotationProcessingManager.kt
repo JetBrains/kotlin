@@ -47,7 +47,8 @@ internal fun Project.initKapt(
         variantName: String,
         kotlinOptions: KotlinJvmOptionsImpl?,
         subpluginEnvironment: SubpluginEnvironment,
-        tasksProvider: KotlinTasksProvider
+        tasksProvider: KotlinTasksProvider,
+        androidProjectHandler: AbstractAndroidProjectHandler<*>?
 ): KotlinCompile? {
     val kaptExtension = extensions.getByType(KaptExtension::class.java)
     val kotlinAfterJavaTask: KotlinCompile?
@@ -72,7 +73,7 @@ internal fun Project.initKapt(
 
         kotlinAfterJavaTask.source(kaptManager.generatedKotlinSourceDir)
         kotlinAfterJavaTask.source(kaptManager.aptOutputDir)
-        subpluginEnvironment.addSubpluginOptions(this, kotlinAfterJavaTask, javaTask, null, null)
+        subpluginEnvironment.addSubpluginOptions(this, kotlinAfterJavaTask, javaTask, null, androidProjectHandler, null)
 
         javaTask.doLast {
             moveGeneratedJavaFilesToCorrespondingDirectories(kaptManager.aptOutputDir)
@@ -163,6 +164,9 @@ class AnnotationProcessingManager(
         originalJavaCompilerArgs = javaTask.options.compilerArgs
 
         if (aptFiles.isEmpty()) return
+
+        project.logger.warn("${project.name}: " +
+                "Original kapt is deprecated. Please add \"apply plugin: 'kotlin-kapt'\" to your build.gradle.")
 
         if (project.plugins.findPlugin(ANDROID_APT_PLUGIN_ID) != null) {
             project.logger.warn("Please do not use `$ANDROID_APT_PLUGIN_ID` with kapt.")

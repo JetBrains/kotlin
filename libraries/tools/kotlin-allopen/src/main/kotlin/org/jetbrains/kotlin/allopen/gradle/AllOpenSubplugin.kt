@@ -79,6 +79,7 @@ class AllOpenKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
             kotlinCompile: AbstractCompile,
             javaCompile: AbstractCompile,
             variantData: Any?,
+            androidProjectHandler: Any?,
             javaSourceSet: SourceSet?
     ): List<SubpluginOption> {
         if (!AllOpenGradleSubplugin.isEnabled(project)) return emptyList()

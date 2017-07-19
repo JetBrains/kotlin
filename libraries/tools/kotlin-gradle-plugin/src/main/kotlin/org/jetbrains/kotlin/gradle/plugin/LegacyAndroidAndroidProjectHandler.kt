@@ -91,6 +91,10 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
     override fun getTestedVariantData(variantData: BaseVariantData<*>): BaseVariantData<*>? =
             ((variantData as? TestVariantData)?.testedVariantData as? BaseVariantData<*>)
 
+    override fun getResDirectories(variantData: BaseVariantData<out BaseVariantOutputData>): List<File> {
+        return variantData.mergeResourcesTask?.rawInputFolders?.toList() ?: emptyList()
+    }
+
     private fun Project.tryGetSingleArtifact(variantData: BaseVariantData<*>): File? {
         val log = logger
         log.kotlinDebug { "Trying to determine single artifact for project $path" }

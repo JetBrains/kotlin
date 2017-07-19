@@ -31,10 +31,8 @@
       </library>
     </orderEntry>
     <orderEntry type="library" scope="TEST" name="gradle-and-groovy-plugin" level="project" />
-    <orderEntry type="module" module-name="java-model-wrappers" scope="TEST" />
     <orderEntry type="module" module-name="light-classes" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="junit-plugin" level="project" />
-    <orderEntry type="module" module-name="annotation-processing" scope="TEST" />
     <orderEntry type="module" module-name="build-common" scope="TEST" />
     <orderEntry type="module" module-name="jps-tests" scope="TEST" />
     <orderEntry type="module" module-name="kapt3" scope="TEST" />

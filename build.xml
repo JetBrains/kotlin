@@ -655,9 +655,11 @@
             <skip pattern="kotlin/Metadata"/>
             <src>
                 <pathelement path="plugins/android-extensions/android-extensions-compiler/src"/>
+                <pathelement path="plugins/android-extensions/android-extensions-runtime/src"/>
             </src>
             <classpath>
                 <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
+                <pathelement path="${idea.sdk}/plugins/android/lib/layoutlib.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
             </classpath>
         </javac2>

@@ -14,3 +14,8 @@ public class MyActivity : Activity() {
 // 1 GETSTATIC test/R\$id\.login
 // 1 INVOKEVIRTUAL test/MyActivity\._\$_findCachedViewById
 // 1 CHECKCAST android/widget/Button
+// 12 android/util/SparseArray
+// 1 INVOKEVIRTUAL android/util/SparseArray\.get
+// 1 INVOKEVIRTUAL android/util/SparseArray\.put
+// 1 INVOKEVIRTUAL android/util/SparseArray\.clear
+// 0 java/util/HashMap
