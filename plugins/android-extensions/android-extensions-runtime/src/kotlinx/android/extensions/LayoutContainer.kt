@@ -16,7 +16,9 @@
 
 package kotlinx.android.extensions
 
-import android.view.View
+//import android.view.View
+
+interface View
 
 public interface LayoutContainer {
     public val containerView: View?
