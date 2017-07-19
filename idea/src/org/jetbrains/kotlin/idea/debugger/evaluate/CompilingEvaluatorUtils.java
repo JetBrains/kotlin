@@ -25,7 +25,7 @@ public class CompilingEvaluatorUtils {
     // Copied from com.intellij.debugger.ui.impl.watch.CompilingEvaluator.changeSuperToMagicAccessor
     public static byte[] changeSuperToMagicAccessor(byte[] bytes) {
         ClassWriter classWriter = new ClassWriter(0);
-        ClassVisitor classVisitor = new ClassVisitor(Opcodes.API_VERSION, classWriter) {
+        ClassVisitor classVisitor = new ClassVisitor(Opcodes.ASM5, classWriter) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
                 if ("java/lang/Object".equals(superName)) {
