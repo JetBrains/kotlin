@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.codeInsight.gradle
 
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
@@ -75,8 +76,8 @@ class GradleLanguageFeatureQuickFixTest : GradleImportingTestCase() {
 
     private fun checkResult(file: VirtualFile) {
         val expectedPath = File(getTestDataPath(), "build.gradle.after")
-        val expectedContent = expectedPath.readText()
-        val actualContent = LoadTextUtil.loadText(file).toString()
+        val expectedContent = StringUtil.convertLineSeparators(expectedPath.readText())
+        val actualContent = StringUtil.convertLineSeparators(LoadTextUtil.loadText(file).toString())
         if (actualContent != expectedContent) {
             throw FileComparisonFailure("build.gradle doesn't match", expectedContent, actualContent, expectedPath.path)
         }
