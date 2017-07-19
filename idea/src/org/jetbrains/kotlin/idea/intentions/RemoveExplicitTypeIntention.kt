@@ -43,25 +43,6 @@ class RemoveSetterParameterTypeInspection : AbstractKotlinInspection() {
     }
 }
 
-class RedundantUnitReturnTypeInspection : AbstractKotlinInspection() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitNamedFunction(function: KtNamedFunction) {
-                super.visitNamedFunction(function)
-                if (function.containingFile is KtCodeFragment) return
-                if ((function.descriptor as? FunctionDescriptor)?.returnType?.isUnit() ?: false) {
-                    function.typeReference?.typeElement?.let {
-                        holder.registerProblem(it,
-                                               "Redundant 'Unit' return type",
-                                               ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                               IntentionWrapper(RemoveExplicitTypeIntention(), function.containingKtFile))
-                    }
-                }
-            }
-        }
-    }
-}
-
 class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
         KtCallableDeclaration::class.java,
         "Remove explicit type specification"
