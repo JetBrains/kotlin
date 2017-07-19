@@ -1,0 +1,4 @@
+sealed class Test() {
+    constructor(i: Int) : this() {
+    }
+}
