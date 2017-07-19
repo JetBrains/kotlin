@@ -3990,6 +3990,81 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertClassToSealedClass")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertClassToSealedClass extends AbstractIntentionTest {
+        @TestMetadata("abstract.kt")
+        public void testAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/abstract.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInConvertClassToSealedClass() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertClassToSealedClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("noConstructor.kt")
+        public void testNoConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/noConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notOpenAndAbstract.kt")
+        public void testNotOpenAndAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/notOpenAndAbstract.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notPrivatePrimaryConstructor.kt")
+        public void testNotPrivatePrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/notPrivatePrimaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notPrivateSecondaryConstructor.kt")
+        public void testNotPrivateSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/notPrivateSecondaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("onlySecondaryConstructor.kt")
+        public void testOnlySecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/onlySecondaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryConstructor.kt")
+        public void testPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/primaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryConstructorWithAnnotation.kt")
+        public void testPrimaryConstructorWithAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/primaryConstructorWithAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryConstructorWithValueParameter.kt")
+        public void testPrimaryConstructorWithValueParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/primaryConstructorWithValueParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/secondaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorWithAnnotation.kt")
+        public void testSecondaryConstructorWithAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertClassToSealedClass/secondaryConstructorWithAnnotation.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertEnumToSealedClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
