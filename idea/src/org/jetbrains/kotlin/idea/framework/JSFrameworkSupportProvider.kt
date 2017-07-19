@@ -53,14 +53,14 @@ class JSFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                         rootModel,
                         JavaRuntimeLibraryDescription.SUITABLE_LIBRARY_KINDS,
-                        JavaFrameworkType.getInstance())
+                        JavaFrameworkType.instance)
 
                 description.finishLibConfiguration(module, rootModel)
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {
                 if (selected) {
-                    val providerId = JavaFrameworkType.getInstance().id
+                    val providerId = JavaFrameworkType.instance.id
                     if (model.isFrameworkSelected(providerId)) {
                         model.setFrameworkComponentEnabled(providerId, false)
                     }

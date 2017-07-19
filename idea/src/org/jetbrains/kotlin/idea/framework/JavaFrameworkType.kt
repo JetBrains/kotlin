@@ -14,39 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.framework;
+package org.jetbrains.kotlin.idea.framework
 
-import com.intellij.framework.FrameworkTypeEx;
-import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinIcons;
+import com.intellij.framework.FrameworkTypeEx
+import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
+import org.jetbrains.kotlin.idea.KotlinIcons
+import javax.swing.Icon
 
-import javax.swing.*;
+class JavaFrameworkType : FrameworkTypeEx("kotlin-java-framework-id") {
 
-public class JavaFrameworkType extends FrameworkTypeEx {
-    public static JavaFrameworkType getInstance() {
-        return FrameworkTypeEx.EP_NAME.findExtension(JavaFrameworkType.class);
-    }
+    override fun createProvider(): FrameworkSupportInModuleProvider = JavaFrameworkSupportProvider()
 
-    public JavaFrameworkType() {
-        super("kotlin-java-framework-id");
-    }
+    override fun getPresentableName() = "Kotlin (Java)"
 
-    @NotNull
-    @Override
-    public FrameworkSupportInModuleProvider createProvider() {
-        return new JavaFrameworkSupportProvider();
-    }
+    override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
 
-    @NotNull
-    @Override
-    public String getPresentableName() {
-        return "Kotlin (Java)";
-    }
-
-    @NotNull
-    @Override
-    public Icon getIcon() {
-        return KotlinIcons.SMALL_LOGO;
+    companion object {
+        val instance: JavaFrameworkType
+            get() = FrameworkTypeEx.EP_NAME.findExtension(JavaFrameworkType::class.java)
     }
 }
