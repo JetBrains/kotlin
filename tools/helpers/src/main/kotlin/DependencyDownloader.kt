@@ -135,7 +135,7 @@ class DependencyDownloader(dependenciesRoot: File,
             }
             val exp = (Math.log(this.toDouble()) / Math.log(1024.0)).toInt()
             val prefix = "kMGTPE"[exp-1]
-            return "%.1f %sB".format(this / Math.pow(1024.0, exp.toDouble()), prefix)
+            return "%.1f %siB".format(this / Math.pow(1024.0, exp.toDouble()), prefix)
         }
 
     private fun updateProgressMsg(url: String, currentBytes: Long, totalBytes: Long) {
