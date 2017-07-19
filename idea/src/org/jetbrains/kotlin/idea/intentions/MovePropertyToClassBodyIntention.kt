@@ -21,6 +21,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.resolve.AnnotationChecker
@@ -42,6 +43,7 @@ class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(KtP
         val firstProperty = parentClass.getProperties().firstOrNull()
         parentClass.addDeclarationBefore(propertyDeclaration, firstProperty).apply {
             val propertyModifierList = element.modifierList?.copy() as? KtModifierList
+            propertyModifierList?.getModifier(KtTokens.VARARG_KEYWORD)?.delete()
             propertyModifierList?.let { modifierList?.replace(it) ?: addBefore(it, firstChild) }
             modifierList?.annotationEntries?.forEach {
                 if (!it.isAppliedToProperty()) {
@@ -59,12 +61,14 @@ class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(KtP
                 ?.takeIf { it.isNotEmpty() }
                 ?.joinToString(separator = " ") { it.textWithoutUseSite() }
 
+        val hasVararg = element.hasModifier(KtTokens.VARARG_KEYWORD)
         if (parameterAnnotationsText != null) {
             element.modifierList?.replace(KtPsiFactory(element).createModifierList(parameterAnnotationsText))
         }
         else {
             element.modifierList?.delete()
         }
+        if (hasVararg) element.addModifier(KtTokens.VARARG_KEYWORD)
     }
 
     fun KtAnnotationEntry.isAppliedToProperty(): Boolean {

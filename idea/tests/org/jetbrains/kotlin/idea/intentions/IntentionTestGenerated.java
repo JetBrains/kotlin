@@ -11362,6 +11362,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToClassBody/simple.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToClassBody/vararg.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargWithAnnotation.kt")
+        public void testVarargWithAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToClassBody/varargWithAnnotation.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/movePropertyToConstructor")
