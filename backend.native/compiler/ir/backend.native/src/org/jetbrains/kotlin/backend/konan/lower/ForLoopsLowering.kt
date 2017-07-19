@@ -300,24 +300,38 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         assert(symbol !in iteratorToLoopInfo)
 
         val builder = context.createIrBuilder(scopeOwnerSymbol, variable.startOffset, variable.endOffset)
-        // Collect loop info and form the loop header block.
+        // Collect loop info and form the loop header composite.
         val progressionInfo = initializer.dispatchReceiver?.accept(ProgressionInfoBuilder(), null) ?: return null
-        return builder.irBlock {
+
+        with(builder) {
             with(progressionInfo) {
-                val inductionVariable = irTemporaryVar(first.castIfNecessary(progressionType), "inductionVariable")
+                val statements = mutableListOf<IrStatement>()
+
+
+                val inductionVariable = scope.createTemporaryVariable(first.castIfNecessary(progressionType),
+                        "inductionVariable",
+                        true)
+                statements.add(inductionVariable)
+
                 val stepExpression = (if (increasing) step else step?.unaryMinus()) ?: defaultStep(startOffset, endOffset)
-                val stepValue = irTemporary(stepExpression, "step")
+                val stepValue = scope.createTemporaryVariable(stepExpression, "step")
+                statements.add(stepValue)
+
                 // Don't call progression bound calculation if the step is 1.
                 val boundExpression = if (needBoundCalculation) {
                     irGetProgressionBound(progressionType, inductionVariable.symbol, last, stepValue.symbol)
                 } else {
                     last.castIfNecessary(progressionType)
                 }
-                val boundValue = irTemporary(boundExpression, "bound")
+                val boundValue = scope.createTemporaryVariable(boundExpression, "bound")
+                statements.add(boundValue)
+
                 iteratorToLoopInfo[symbol] = ForLoopInfo(progressionInfo,
                         inductionVariable.symbol,
                         boundValue.symbol,
                         stepValue.symbol)
+
+                return IrCompositeImpl(startOffset, endOffset, context.builtIns.unitType, null, statements)
             }
         }
     }
@@ -411,7 +425,14 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
 
         with(context.createIrBuilder(scopeOwnerSymbol)) {
             // Transform accesses to the old iterator (see visitVariable method). Store loopVariable in loopInfo.
-            val newBody = loop.body?.transform(this@ForLoopsTransformer, null)
+            // Replace not transparent containers with transparent ones (IrComposite)
+            val newBody = loop.body?.transform(this@ForLoopsTransformer, null)?.let {
+                if (it is IrContainerExpression && !it.isTransparentScope) {
+                    with(it) { IrCompositeImpl(startOffset, endOffset, type, origin, statements) }
+                } else {
+                    it
+                }
+            }
             val (newCondition, forLoopInfo) = buildNewCondition(loop.condition) ?: return super.visitWhileLoop(loop)
 
             val newLoop = IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {

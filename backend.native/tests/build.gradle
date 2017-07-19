@@ -348,6 +348,15 @@ task codegen_controlflow_for_loops_nested(type: RunKonanTest) {
             "00 10 20 \n"
 }
 
+task codegen_controlflow_for_loops_coroutines(type: RunKonanTest) {
+    source = "codegen/controlflow/for_loops_coroutines.kt"
+    goldValue = "before: 0 after: 0\n" +
+            "before: 2 after: 2\n" +
+            "before: 4 after: 4\n" +
+            "before: 6 after: 6\n" +
+            "Got: 0 2 4 6\n"
+}
+
 task local_variable(type: RunKonanTest) {
     source = "codegen/basics/local_variable.kt"
 }
