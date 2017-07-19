@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
@@ -212,7 +213,8 @@ object TopDownAnalyzerFacadeForJVM {
             targetIds?.mapTo(additionalProviders) { targetId ->
                 IncrementalPackageFragmentProvider(
                         files, module, storageManager, container.get<DeserializationComponentsForJava>().components,
-                        incrementalComponents.getIncrementalCache(targetId), targetId
+                        incrementalComponents.getIncrementalCache(targetId), targetId,
+                        container.get<KotlinClassFinder>()
                 )
             }
         }
