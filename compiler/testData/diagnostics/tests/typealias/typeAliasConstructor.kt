@@ -17,7 +17,7 @@ typealias TI = Interface
 object AnObject
 typealias TO = AnObject
 
-val test6 = <!UNRESOLVED_REFERENCE!>TI<!>()
+val test6 = <!RESOLUTION_TO_CLASSIFIER!>TI<!>()
 val test6a = <!RESOLUTION_TO_CLASSIFIER!>Interface<!>()
 
 val test7 = <!FUNCTION_EXPECTED!>TO<!>()

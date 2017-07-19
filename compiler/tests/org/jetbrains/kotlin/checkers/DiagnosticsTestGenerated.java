@@ -22951,6 +22951,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeAliasConstructorForInterface.kt")
+            public void testTypeAliasConstructorForInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorForInterface.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeAliasConstructorForProjection.kt")
             public void testTypeAliasConstructorForProjection() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorForProjection.kt");
