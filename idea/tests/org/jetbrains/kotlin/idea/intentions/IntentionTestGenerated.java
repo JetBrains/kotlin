@@ -288,6 +288,69 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addJvmStatic")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddJvmStatic extends AbstractIntentionTest {
+        public void testAllFilesPresentInAddJvmStatic() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addJvmStatic"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("hasJvmStatic.kt")
+        public void testHasJvmStatic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/hasJvmStatic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inAnonymousObject.kt")
+        public void testInAnonymousObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/inAnonymousObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inClass.kt")
+        public void testInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/inClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inCompanionObject.kt")
+        public void testInCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/inCompanionObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inObjedct.kt")
+        public void testInObjedct() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/inObjedct.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inTopLevel.kt")
+        public void testInTopLevel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/inTopLevel.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mainJvmName.kt")
+        public void testMainJvmName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/mainJvmName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notMainJvmName.kt")
+        public void testNotMainJvmName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/notMainJvmName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notMainMethod.kt")
+        public void testNotMainMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/notMainMethod.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/addMissingDestructuring")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
