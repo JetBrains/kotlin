@@ -566,6 +566,9 @@ class CandidateResolver(
                 if (isDispatchReceiver) {
                     candidateCall.setSmartCastDispatchReceiverType(smartCastResult.resultType)
                 }
+                else {
+                    candidateCall.updateExtensionReceiverWithSmartCastIfNeeded(smartCastResult.resultType)
+                }
                 if (!smartCastResult.isCorrect) {
                     // Error about unstable smart cast reported within checkAndRecordPossibleCast
                     return UNSTABLE_SMARTCAST_FOR_RECEIVER_ERROR
