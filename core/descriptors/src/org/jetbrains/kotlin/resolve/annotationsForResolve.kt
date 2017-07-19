@@ -58,13 +58,11 @@ fun TypeParameterDescriptor.hasOnlyInputTypesAnnotation(): Boolean = annotations
 fun getExactInAnnotations(): Annotations = AnnotationsWithOnly(EXACT_ANNOTATION_FQ_NAME)
 
 private class AnnotationsWithOnly(val presentAnnotation: FqName): Annotations {
-    override fun iterator(): Iterator<AnnotationDescriptor> = listOf<AnnotationDescriptor>().iterator()
+    override fun iterator(): Iterator<AnnotationDescriptor> = emptyList<AnnotationDescriptor>().iterator()
 
     override fun isEmpty(): Boolean = false
 
     override fun hasAnnotation(fqName: FqName): Boolean = fqName == this.presentAnnotation
-
-    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? = null
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
