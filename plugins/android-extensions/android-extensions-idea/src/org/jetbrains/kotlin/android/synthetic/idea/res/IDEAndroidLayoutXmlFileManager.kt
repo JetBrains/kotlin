@@ -143,7 +143,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         val allResDirectories = androidFacet.getAppResources(true)?.resourceDirs.orEmpty().mapNotNull { it.canonicalPath }
 
         val resDirectoriesForMainVariant = androidFacet.run {
-            val resDirsFromSourceProviders = AndroidGradleModel.get(this.module)?.allSourceProviders.orEmpty()
+            val resDirsFromSourceProviders = AndroidModuleModel.get(this.module)?.allSourceProviders.orEmpty()
                     .filter { it.name != "main" }
                     .flatMap { it.resDirectories }
                     .map { it.canonicalPath }
@@ -153,7 +153,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
 
         val variants = mutableListOf(AndroidVariant("main", resDirectoriesForMainVariant))
 
-        AndroidGradleModel.get(androidFacet.module)?.let { androidGradleModel ->
+        AndroidModuleModel.get(androidFacet.module)?.let { androidGradleModel ->
             androidGradleModel.activeSourceProviders.filter { it.name != "main" }.forEach { sourceProvider ->
                 variants += sourceProvider.toVariant()
             }
