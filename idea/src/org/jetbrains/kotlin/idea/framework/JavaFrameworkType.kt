@@ -25,7 +25,7 @@ class JavaFrameworkType : FrameworkTypeEx("kotlin-java-framework-id") {
 
     override fun createProvider(): FrameworkSupportInModuleProvider = JavaFrameworkSupportProvider()
 
-    override fun getPresentableName() = "Kotlin (Java)"
+    override fun getPresentableName() = "Kotlin/JVM"
 
     override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
 
