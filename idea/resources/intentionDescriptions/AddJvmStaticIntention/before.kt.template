@@ -1,0 +1,4 @@
+object Test {
+    fun main(args: Array<String>) {
+    }
+}
