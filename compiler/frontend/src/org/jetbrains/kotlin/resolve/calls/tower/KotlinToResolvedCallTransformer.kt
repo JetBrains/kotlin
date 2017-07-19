@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSafeReceiver
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -243,9 +244,9 @@ class KotlinToResolvedCallTransformer(
         } ?: return null
 
         val recordedType = context.trace.getType(deparenthesized)
-        var updatedType = recordedType
-
-        updatedType = getResolvedCallForArgumentExpression(deparenthesized, context)?.run { resultingDescriptor.returnType } ?: updatedType
+        var updatedType = getResolvedCallForArgumentExpression(deparenthesized, context)?.run {
+            makeNullableTypeIfSafeReceiver(resultingDescriptor.returnType, context)
+        } ?: recordedType
 
         // For the cases like 'foo(1)' the type of '1' depends on expected type (it can be Int, Byte, etc.),
         // so while the expected type is not known, it's IntegerValueType(1), and should be updated when the expected type is known.
