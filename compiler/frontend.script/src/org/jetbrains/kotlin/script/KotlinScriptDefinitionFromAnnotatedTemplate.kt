@@ -82,7 +82,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         try {
             val constructorWithoutParameters = resolverClass.constructors.find { it.parameters.all { it.isOptional } }
             if (constructorWithoutParameters == null) {
-                log.warn("[kts] ${resolverClass.qualifiedName} must have a constructor without parameters")
+                log.warn("[kts] ${resolverClass.qualifiedName} must have a constructor without required parameters")
                 return null
             }
             return constructorWithoutParameters.callBy(emptyMap())
