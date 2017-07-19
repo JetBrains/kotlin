@@ -5684,6 +5684,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("asyncIteratorNullMerge.kt")
+        public void testAsyncIteratorNullMerge() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/asyncIteratorNullMerge.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("asyncIteratorToList.kt")
         public void testAsyncIteratorToList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/asyncIteratorToList.kt");
