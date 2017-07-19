@@ -57,9 +57,7 @@ class AndroidDexerImpl(val project: Project) : AndroidDexer {
         for (module in ModuleManager.getInstance(project).modules) {
             val androidFacet = AndroidFacet.getInstance(module) ?: continue
             val sdkData = androidFacet.sdkData ?: continue
-            val latestBuildTool = sdkData.getLatestBuildTool(/* allowPreview = */ false)
-                                  ?: sdkData.getLatestBuildTool(/* allowPreview = */ true)
-                                  ?: continue
+            val latestBuildTool = sdkData.latestBuildTool ?: continue
 
             val dxJar = File(latestBuildTool.location, "lib/dx.jar")
             if (dxJar.exists()) {

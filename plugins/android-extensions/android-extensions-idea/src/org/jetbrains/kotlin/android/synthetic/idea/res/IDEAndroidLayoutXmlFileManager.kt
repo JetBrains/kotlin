@@ -140,7 +140,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
     private fun getAndroidModuleInfoExperimental(androidFacet: AndroidFacet): AndroidModule? {
         val applicationPackage = androidFacet.manifest?.`package`?.toString() ?: return null
 
-        val allResDirectories = androidFacet.getAppResources(true)?.resourceDirs.orEmpty().mapNotNull { it.canonicalPath }
+        val allResDirectories = androidFacet.allResourceDirectories.mapNotNull { it.canonicalPath }
 
         val resDirectoriesForMainVariant = androidFacet.run {
             val resDirsFromSourceProviders = AndroidGradleModel.get(this.module)?.allSourceProviders.orEmpty()
