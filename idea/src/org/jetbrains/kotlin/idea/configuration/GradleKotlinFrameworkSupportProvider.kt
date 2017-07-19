@@ -31,9 +31,10 @@ import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvi
 import javax.swing.Icon
 
 abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
-                                                    val displayName: String) : GradleFrameworkSupportProvider() {
+                                                    val displayName: String,
+                                                    val frameworkIcon: Icon) : GradleFrameworkSupportProvider() {
     override fun getFrameworkType(): FrameworkTypeEx = object : FrameworkTypeEx(frameworkTypeId) {
-        override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
+        override fun getIcon(): Icon = frameworkIcon
 
         override fun getPresentableName(): String = displayName
 
@@ -74,7 +75,7 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
     protected abstract fun getPluginDefinition(): String
 }
 
-class GradleKotlinJavaFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider("KOTLIN", "Kotlin (Java)") {
+class GradleKotlinJavaFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider("KOTLIN", "Kotlin (Java)", KotlinIcons.SMALL_LOGO) {
     override fun getPluginDefinition() =
             KotlinWithGradleConfigurator.getGroovyApplyPluginDirective(KotlinGradleModuleConfigurator.KOTLIN)
 
@@ -91,7 +92,7 @@ class GradleKotlinJavaFrameworkSupportProvider : GradleKotlinFrameworkSupportPro
     }
 }
 
-class GradleKotlinJSFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin (JavaScript)") {
+class GradleKotlinJSFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin (JavaScript)", KotlinIcons.JS) {
     override fun getPluginDefinition(): String =
             KotlinWithGradleConfigurator.getGroovyApplyPluginDirective(KotlinJsGradleModuleConfigurator.KOTLIN_JS)
 
