@@ -31,8 +31,6 @@ open class DeserializedAnnotations(
 
     override fun isEmpty(): Boolean = annotations.isEmpty()
 
-    override fun findAnnotation(fqName: FqName) = annotations.firstOrNull { it.fqName == fqName }
-
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
     override fun getAllAnnotations(): List<AnnotationWithTarget> = annotations.map { AnnotationWithTarget(it, null) }

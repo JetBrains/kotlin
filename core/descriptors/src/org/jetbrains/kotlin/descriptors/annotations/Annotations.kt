@@ -26,9 +26,9 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 
     fun isEmpty(): Boolean
 
-    fun findAnnotation(fqName: FqName): AnnotationDescriptor?
+    fun findAnnotation(fqName: FqName): AnnotationDescriptor? = firstOrNull { it.fqName == fqName }
 
-    fun hasAnnotation(fqName: FqName) = findAnnotation(fqName) != null
+    fun hasAnnotation(fqName: FqName): Boolean = findAnnotation(fqName) != null
 
     fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor? = null
 

@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-import org.jetbrains.kotlin.name.FqName
-
 class AnnotationsImpl : Annotations {
     private val annotations: List<AnnotationDescriptor>
     private val targetedAnnotations: List<AnnotationWithTarget>
@@ -37,8 +35,6 @@ class AnnotationsImpl : Annotations {
     }
 
     override fun isEmpty() = targetedAnnotations.isEmpty()
-
-    override fun findAnnotation(fqName: FqName) = annotations.firstOrNull { it.fqName == fqName }
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
         return targetedAnnotations

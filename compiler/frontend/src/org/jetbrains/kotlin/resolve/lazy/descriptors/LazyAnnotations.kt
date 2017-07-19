@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.AnnotationResolver
@@ -63,8 +62,6 @@ class LazyAnnotations(
         val target = entry.useSiteTarget?.getAnnotationUseSiteTarget()
         AnnotationWithTarget(descriptor, target)
     }
-
-    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? = firstOrNull { it.fqName == fqName }
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
         return annotationEntries
