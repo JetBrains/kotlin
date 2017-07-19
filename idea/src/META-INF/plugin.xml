@@ -134,8 +134,17 @@
     <group id="KotlinInternalGroup" popup="true" text="Internal" icon="/general/balloonWarning.png"
            class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalActionGroup">
 
-      <action id="BenchmarkCompletionAction" class="org.jetbrains.kotlin.idea.actions.internal.BenchmarkCompletionAction"
-              text="Benchmark completion"/>
+      <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion"
+             class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalActionGroup" >
+
+        <action id="TopLevelCompletionBenchmarkAction"
+                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.TopLevelCompletionBenchmarkAction"
+                text="Top-level scenario"/>
+
+        <action id="LocalCompletionBenchmarkAction"
+                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.LocalCompletionBenchmarkAction"
+                text="Local scenario"/>
+      </group>
 
       <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
               text="Check Component Functions Usage Search"/>

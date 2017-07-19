@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import java.util.*
 
 class LookupElementsCollector(
-        private val session: CompletionSession,
+        private val onFlush: () -> Unit,
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         resultSet: CompletionResultSet,
@@ -54,7 +54,7 @@ class LookupElementsCollector(
 
     fun flushToResultSet() {
         if (!elements.isEmpty()) {
-            CompletionBenchmarkSink.instance.onFirstFlush(session)
+            onFlush()
 
             resultSet.addAllElements(elements)
             elements.clear()
