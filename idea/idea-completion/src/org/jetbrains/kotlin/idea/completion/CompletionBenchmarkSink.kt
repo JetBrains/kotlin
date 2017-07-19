@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.idea.completion
 
 import kotlinx.coroutines.experimental.channels.ConflatedChannel
+import java.lang.System.currentTimeMillis
 
 
 interface CompletionBenchmarkSink {
     fun onCompletionStarted(completionSession: CompletionSession)
-    fun onCompletionEnded(completionSession: CompletionSession)
-    fun onFirstFlush(completionSession: CompletionSession)
+    fun onCompletionEnded(completionSession: CompletionSession, canceled: Boolean)
+    fun onFlush(completionSession: CompletionSession)
 
     companion object {
 
@@ -40,49 +41,60 @@ interface CompletionBenchmarkSink {
     private object Empty : CompletionBenchmarkSink {
         override fun onCompletionStarted(completionSession: CompletionSession) {}
 
-        override fun onCompletionEnded(completionSession: CompletionSession) {}
+        override fun onCompletionEnded(completionSession: CompletionSession, canceled: Boolean) {}
 
-        override fun onFirstFlush(completionSession: CompletionSession) {}
+        override fun onFlush(completionSession: CompletionSession) {}
     }
 
     class Impl : CompletionBenchmarkSink {
         private val pendingSessions = mutableListOf<CompletionSession>()
-        private lateinit var results: CompletionBenchmarkResults
         val channel = ConflatedChannel<CompletionBenchmarkResults>()
+
+        private val perSessionResults = LinkedHashMap<CompletionSession, PerSessionResults>()
+        private var start: Long = 0
 
         override fun onCompletionStarted(completionSession: CompletionSession) = synchronized(this) {
             if (pendingSessions.isEmpty())
-                results = CompletionBenchmarkResults()
+                start = currentTimeMillis()
             pendingSessions += completionSession
+            perSessionResults[completionSession] = PerSessionResults()
         }
 
-        override fun onCompletionEnded(completionSession: CompletionSession) = synchronized(this) {
+        override fun onCompletionEnded(completionSession: CompletionSession, canceled: Boolean) = synchronized(this) {
             pendingSessions -= completionSession
+            perSessionResults[completionSession]?.onEnd(canceled)
             if (pendingSessions.isEmpty()) {
-                results.onEnd()
-                channel.offer(results)
+                val firstFlush = perSessionResults.values.filterNot { results -> results.canceled }.map { it.firstFlush }.min() ?: 0
+                val full = perSessionResults.values.map { it.full }.max() ?: 0
+                channel.offer(CompletionBenchmarkResults(firstFlush, full))
+                reset()
             }
         }
 
-        override fun onFirstFlush(completionSession: CompletionSession) = synchronized(this) {
-            results.onFirstFlush()
+        override fun onFlush(completionSession: CompletionSession) = synchronized(this) {
+            perSessionResults[completionSession]?.onFirstFlush()
+            Unit
         }
 
         fun reset() = synchronized(this) {
             pendingSessions.clear()
+            perSessionResults.clear()
         }
 
-        class CompletionBenchmarkResults {
-            var start: Long = System.currentTimeMillis()
-            var firstFlush: Long = 0
-            var full: Long = 0
+        data class CompletionBenchmarkResults(var firstFlush: Long = 0, var full: Long = 0)
+
+        private inner class PerSessionResults {
+            var firstFlush = 0L
+            var full = 0L
+            var canceled = false
+
             fun onFirstFlush() {
-                if (firstFlush == 0L)
-                    firstFlush = System.currentTimeMillis() - start
+                firstFlush = currentTimeMillis() - start
             }
 
-            fun onEnd() {
-                full = System.currentTimeMillis() - start
+            fun onEnd(canceled: Boolean) {
+                full = currentTimeMillis() - start
+                this.canceled = canceled
             }
         }
     }
