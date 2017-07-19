@@ -25,9 +25,9 @@ class JSFrameworkType : FrameworkTypeEx("kotlin-js-framework-id") {
 
     override fun createProvider(): FrameworkSupportInModuleProvider = JSFrameworkSupportProvider()
 
-    override fun getPresentableName() = "Kotlin (JavaScript)"
+    override fun getPresentableName() = "Kotlin/JS"
 
-    override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
+    override fun getIcon(): Icon = KotlinIcons.JS
 
     companion object {
         val instance: JSFrameworkType

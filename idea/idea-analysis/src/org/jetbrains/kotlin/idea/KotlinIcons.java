@@ -52,4 +52,6 @@ public interface KotlinIcons {
     Icon FROM_IMPL = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/fromImpl.png");
 
     Icon LAUNCH = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_launch_configuration.png");
+
+    Icon JS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_js.png");
 }
