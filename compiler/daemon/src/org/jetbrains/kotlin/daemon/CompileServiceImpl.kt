@@ -234,7 +234,7 @@ class CompileServiceImpl(
                                              port = port.toString()))
         try {
             if (!runFile.createNewFile()) throw Exception("createNewFile returned false")
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             throw IllegalStateException("Unable to create run file '${runFile.absolutePath}'", e)
         }
         runFile.deleteOnExit()
@@ -598,7 +598,7 @@ class CompileServiceImpl(
         try {
             body()
         }
-        catch (e: Exception) {
+        catch (e: Throwable) {
             System.err.println("Exception in timer thread: " + e.message)
             e.printStackTrace(System.err)
             log.log(Level.SEVERE, "Exception in timer thread", e)
@@ -667,6 +667,7 @@ class CompileServiceImpl(
 
         ifAliveUnit {
 
+            log.info("initiate elections")
             val aliveWithOpts = walkDaemons(File(daemonOptions.runFilesPathOrDefault), compilerId, runFile, filter = { _, p -> p != port }, report = { _, msg -> log.info(msg) }).toList()
             val comparator = compareByDescending<DaemonWithMetadata, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
                     .thenBy(FileAgeComparator()) { it.runFile }
@@ -682,7 +683,7 @@ class CompileServiceImpl(
                             }
                             daemon.scheduleShutdown(true)
                         }
-                        catch (e: Exception) {
+                        catch (e: Throwable) {
                             log.info("Cannot connect to a daemon, assuming dying ('${runFile.canonicalPath}'): ${e.message}")
                         }
                     }
@@ -883,7 +884,7 @@ class CompileServiceImpl(
             return res
         }
         // TODO: consider possibilities to handle OutOfMemory
-        catch (e: Exception) {
+        catch (e: Throwable) {
             log.info("Error: $e")
             throw e
         }
@@ -927,7 +928,7 @@ class CompileServiceImpl(
                 try {
                     body()
                 }
-                catch (e: Exception) {
+                catch (e: Throwable) {
                     log.log(Level.SEVERE, "Exception", e)
                     CompileService.CallResult.Error(e.message ?: "unknown")
                 }
