@@ -435,7 +435,7 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         override fun buildStarted(context: CompileContext, chunk: ModuleChunk) {
-            if (context.projectDescriptor.project.modules.size > 1) {
+            if (!chunk.isDummy(context) && context.projectDescriptor.project.modules.size > 1) {
                 logLine("Building ${chunk.modules.sortedBy { it.name }.joinToString { it.name }}")
             }
         }
