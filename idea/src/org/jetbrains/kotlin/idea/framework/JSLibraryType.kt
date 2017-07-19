@@ -48,7 +48,7 @@ class JSLibraryType : LibraryType<DummyLibraryProperties>(JSLibraryKind) {
                                                                        project)
     }
 
-    override fun getIcon(properties: DummyLibraryProperties?) = KotlinIcons.SMALL_LOGO
+    override fun getIcon(properties: DummyLibraryProperties?) = KotlinIcons.JS
 
     companion object {
         fun getInstance() = Extensions.findExtension(EP_NAME, JSLibraryType::class.java)
