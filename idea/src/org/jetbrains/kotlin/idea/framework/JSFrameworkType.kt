@@ -14,39 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.framework;
+package org.jetbrains.kotlin.idea.framework
 
-import com.intellij.framework.FrameworkTypeEx;
-import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinIcons;
+import com.intellij.framework.FrameworkTypeEx
+import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
+import org.jetbrains.kotlin.idea.KotlinIcons
+import javax.swing.Icon
 
-import javax.swing.*;
+class JSFrameworkType : FrameworkTypeEx("kotlin-js-framework-id") {
 
-public class JSFrameworkType extends FrameworkTypeEx {
-    public static JSFrameworkType getInstance() {
-        return FrameworkTypeEx.EP_NAME.findExtension(JSFrameworkType.class);
-    }
+    override fun createProvider(): FrameworkSupportInModuleProvider = JSFrameworkSupportProvider()
 
-    public JSFrameworkType() {
-        super("kotlin-js-framework-id");
-    }
+    override fun getPresentableName() = "Kotlin (JavaScript)"
 
-    @NotNull
-    @Override
-    public FrameworkSupportInModuleProvider createProvider() {
-        return new JSFrameworkSupportProvider();
-    }
+    override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
 
-    @NotNull
-    @Override
-    public String getPresentableName() {
-        return "Kotlin (JavaScript)";
-    }
-
-    @NotNull
-    @Override
-    public Icon getIcon() {
-        return KotlinIcons.SMALL_LOGO;
+    companion object {
+        val instance: JSFrameworkType
+            get() = FrameworkTypeEx.EP_NAME.findExtension(JSFrameworkType::class.java)
     }
 }
