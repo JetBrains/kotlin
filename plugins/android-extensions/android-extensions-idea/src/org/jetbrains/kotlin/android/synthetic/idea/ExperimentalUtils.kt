@@ -16,23 +16,35 @@
 
 package org.jetbrains.kotlin.android.synthetic.idea
 
+import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.ANDROID_COMPILER_PLUGIN_ID
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.EXPERIMENTAL_OPTION
+import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.ENABLED_OPTION
+import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 
-private val ANNOTATION_OPTION_PREFIX = "plugin:$ANDROID_COMPILER_PLUGIN_ID:${EXPERIMENTAL_OPTION.name}="
+private val ANNOTATION_OPTION_PREFIX = "plugin:$ANDROID_COMPILER_PLUGIN_ID:"
+
+private fun Module.isOptionEnabledInFacet(option: CliOption): Boolean {
+    val kotlinFacet = KotlinFacet.get(this) ?: return false
+    val commonArgs = kotlinFacet.configuration.settings.compilerArguments ?: return false
+
+    val prefix = ANNOTATION_OPTION_PREFIX + option.name + "="
+
+    val optionValue = commonArgs.pluginOptions
+            ?.firstOrNull { it.startsWith(prefix) }
+            ?.substring(prefix.length)
+
+    return optionValue == "true"
+}
+
+internal val Module.androidExtensionsIsEnabled: Boolean
+    get() = isOptionEnabledInFacet(ENABLED_OPTION)
 
 internal val ModuleInfo.androidExtensionsIsExperimental: Boolean
     get() {
         val module = (this as? ModuleSourceInfo)?.module ?: return false
-        val kotlinFacet = KotlinFacet.get(module) ?: return false
-        val commonArgs = kotlinFacet.configuration.settings.compilerArguments ?: return false
-
-        val isExperimentalString = commonArgs.pluginOptions
-                ?.firstOrNull { it.startsWith(ANNOTATION_OPTION_PREFIX) }
-                ?.substring(ANNOTATION_OPTION_PREFIX.length)
-
-        return isExperimentalString == "true"
+        return module.isOptionEnabledInFacet(EXPERIMENTAL_OPTION)
     }
