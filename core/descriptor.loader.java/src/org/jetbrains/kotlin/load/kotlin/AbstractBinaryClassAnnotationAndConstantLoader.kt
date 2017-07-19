@@ -242,7 +242,10 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
             }
         }
         if (container is ProtoContainer.Package && container.source is JvmPackagePartSource) {
-            return kotlinClassFinder.findKotlinClass((container.source as JvmPackagePartSource).classId)
+            val jvmPackagePartSource = container.source as JvmPackagePartSource
+
+            return jvmPackagePartSource.knownJvmBinaryClass
+                   ?: kotlinClassFinder.findKotlinClass(jvmPackagePartSource.classId)
         }
         return null
     }

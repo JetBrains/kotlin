@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -42,7 +44,8 @@ class IncrementalPackageFragmentProvider(
         val storageManager: StorageManager,
         val deserializationComponents: DeserializationComponents,
         val incrementalCache: IncrementalCache,
-        val target: TargetId
+        val target: TargetId,
+        private val kotlinClassFinder: KotlinClassFinder
 ) : PackageFragmentProvider {
     val fqNameToPackageFragment =
             PackagePartClassUtils.getFilesWithCallables(sourceFiles)
@@ -79,11 +82,17 @@ class IncrementalPackageFragmentProvider(
                     partsInternalNames.mapNotNull { internalName ->
                         incrementalCache.getPackagePartData(internalName)?.let { (data, strings) ->
                             val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+
+                            val jvmBinaryClass = kotlinClassFinder.findKotlinClass(
+                                    ClassId.topLevel(FqName(internalName.replace('/', '.')))
+                            )
+
                             DeserializedPackageMemberScope(
                                     this, packageProto, nameResolver,
                                     JvmPackagePartSource(
                                             JvmClassName.byInternalName(internalName),
-                                            JvmClassName.byFqNameWithoutInnerClasses(multifileClassFqName.asString())
+                                            JvmClassName.byFqNameWithoutInnerClasses(multifileClassFqName.asString()),
+                                            knownJvmBinaryClass = jvmBinaryClass
                                     ),
                                     deserializationComponents, classNames = { emptyList() }
                             )

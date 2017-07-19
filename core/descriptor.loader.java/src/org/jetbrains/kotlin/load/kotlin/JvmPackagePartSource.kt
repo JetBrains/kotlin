@@ -27,7 +27,8 @@ class JvmPackagePartSource(
         val className: JvmClassName,
         val facadeClassName: JvmClassName?,
         override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
-        override val isPreReleaseInvisible: Boolean = false
+        override val isPreReleaseInvisible: Boolean = false,
+        val knownJvmBinaryClass: KotlinJvmBinaryClass? = null
 ) : DeserializedContainerSource {
     constructor(
             kotlinClass: KotlinJvmBinaryClass,
@@ -39,7 +40,8 @@ class JvmPackagePartSource(
                 if (it.isNotEmpty()) JvmClassName.byInternalName(it) else null
             },
             incompatibility,
-            isPreReleaseInvisible
+            isPreReleaseInvisible,
+            kotlinClass
     )
 
     override val presentableString: String
