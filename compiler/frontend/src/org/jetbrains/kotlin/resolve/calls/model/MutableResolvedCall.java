@@ -67,4 +67,6 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
     boolean hasInferredReturnType();
 
     void setSmartCastDispatchReceiverType(@NotNull KotlinType smartCastDispatchReceiverType);
+
+    void updateExtensionReceiverWithSmartCastIfNeeded(@NotNull KotlinType smartCastExtensionReceiverType);
 }

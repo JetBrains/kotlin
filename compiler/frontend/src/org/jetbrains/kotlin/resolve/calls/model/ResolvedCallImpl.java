@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
@@ -60,7 +62,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
     private final ReceiverValue dispatchReceiver; // receiver object of a method
-    private final ReceiverValue extensionReceiver; // receiver of an extension function
+    private ReceiverValue extensionReceiver; // receiver of an extension function
     private final ExplicitReceiverKind explicitReceiverKind;
     private final TypeSubstitutor knownTypeParametersSubstitutor;
 
@@ -377,5 +379,15 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     @Nullable
     public KotlinType getSmartCastDispatchReceiverType() {
         return smartCastDispatchReceiverType;
+    }
+
+    @Override
+    public void updateExtensionReceiverWithSmartCastIfNeeded(@NotNull KotlinType smartCastExtensionReceiverType) {
+        if (extensionReceiver instanceof ImplicitClassReceiver) {
+            extensionReceiver = new CastImplicitClassReceiver(
+                    ((ImplicitClassReceiver) extensionReceiver).getClassDescriptor(),
+                    smartCastExtensionReceiverType
+            );
+        }
     }
 }
