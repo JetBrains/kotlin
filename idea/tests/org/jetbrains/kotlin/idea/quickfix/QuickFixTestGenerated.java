@@ -1647,6 +1647,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("expectedTypeBySuperFunction.kt")
+                public void testExpectedTypeBySuperFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/expectedTypeBySuperFunction.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("quotedName.kt")
                 public void testQuotedName() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/quotedName.kt");
