@@ -57,6 +57,9 @@ open class StrictBasicValue(type: Type?) : BasicValue(type) {
 
         other as StrictBasicValue
 
+        if (this === NULL_VALUE) return other === NULL_VALUE
+        if (other === NULL_VALUE) return this === NULL_VALUE
+
         if (type != other.type) return false
 
         return true
