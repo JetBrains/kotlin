@@ -2055,7 +2055,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveSetterParameterTypeInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveSetterParameterTypeInspection"
                      displayName="Redundant setter parameter type"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
