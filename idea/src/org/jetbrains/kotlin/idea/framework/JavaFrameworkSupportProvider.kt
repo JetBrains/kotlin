@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import javax.swing.JComponent
 
 internal class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
-    override fun getFrameworkType(): FrameworkTypeEx = JavaFrameworkType.getInstance()
+    override fun getFrameworkType(): FrameworkTypeEx = JavaFrameworkType.instance
 
     override fun createConfigurable(model: FrameworkSupportModel): FrameworkSupportInModuleConfigurable {
         return object : FrameworkSupportInModuleConfigurable() {
