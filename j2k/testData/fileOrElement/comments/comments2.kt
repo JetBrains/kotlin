@@ -4,7 +4,7 @@ package foo
 
 internal class A {
 
-    private /*it's private*/ val field = 0
+    private/*it's private*/ val field = 0
     fun /* nothing to return */ foo(/* no parameters at all */) {
         // let declare a variable
         // with 2 comments before
