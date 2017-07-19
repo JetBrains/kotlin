@@ -86,24 +86,32 @@ private fun ErrorCandidateContext.asClassifierCall(asFunction: Boolean) {
                 else -> scopeTower.lexicalScope.findClassifier(name, scopeTower.location)
             } ?: return
 
-    val kind =
-            when (classifier) {
-                is TypeParameterDescriptor -> if (asFunction) TYPE_PARAMETER_AS_FUNCTION else TYPE_PARAMETER_AS_VALUE
-                is ClassDescriptor -> {
-                    when (classifier.kind) {
-                        ClassKind.INTERFACE -> if (asFunction) INTERFACE_AS_FUNCTION else INTERFACE_AS_VALUE
-                        ClassKind.OBJECT -> if (asFunction) OBJECT_AS_FUNCTION else return
-                        ClassKind.CLASS -> when {
-                            asFunction && explicitReceiver is QualifierReceiver? && classifier.isInner -> INNER_CLASS_CONSTRUCTOR_NO_RECEIVER
-                            !asFunction -> CLASS_AS_VALUE
-                            else -> return
-                        }
-                        else -> return
-                    }
-                }
-                else -> return
-            }
-
+    val kind = getWrongResolutionToClassifier(classifier, asFunction) ?: return
 
     add(ErrorCandidate.Classifier(classifier, kind))
 }
+
+private fun ErrorCandidateContext.getWrongResolutionToClassifier(classifier: ClassifierDescriptor, asFunction: Boolean): WrongResolutionToClassifier? =
+        when (classifier) {
+            is TypeAliasDescriptor -> classifier.classDescriptor?.let { getWrongResolutionToClassifier(it, asFunction) }
+
+            is TypeParameterDescriptor -> if (asFunction) TYPE_PARAMETER_AS_FUNCTION else TYPE_PARAMETER_AS_VALUE
+
+            is ClassDescriptor -> {
+                when (classifier.kind) {
+                    ClassKind.INTERFACE -> if (asFunction) INTERFACE_AS_FUNCTION else INTERFACE_AS_VALUE
+
+                    ClassKind.OBJECT -> if (asFunction) OBJECT_AS_FUNCTION else null
+
+                    ClassKind.CLASS -> when {
+                        asFunction && explicitReceiver is QualifierReceiver? && classifier.isInner -> INNER_CLASS_CONSTRUCTOR_NO_RECEIVER
+                        !asFunction -> CLASS_AS_VALUE
+                        else -> null
+                    }
+
+                    else -> null
+                }
+            }
+
+            else -> null
+        }
