@@ -24,11 +24,19 @@ import com.intellij.util.indexing.ID
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import java.io.FileNotFoundException
 import java.io.InputStream
 
 class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileFinder() {
     override fun findMetadata(classId: ClassId): InputStream? {
-        return findVirtualFileWithHeader(classId, KotlinMetadataFileIndex.KEY)?.inputStream
+        val file = findVirtualFileWithHeader(classId, KotlinMetadataFileIndex.KEY) ?: return null
+
+        return try {
+            file.inputStream
+        }
+        catch (e: FileNotFoundException) {
+            null
+        }
     }
 
     override fun hasMetadataPackage(fqName: FqName): Boolean = KotlinMetadataFilePackageIndex.hasSomethingInPackage(fqName, scope)
