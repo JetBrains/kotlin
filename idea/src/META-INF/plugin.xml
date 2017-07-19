@@ -1960,7 +1960,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RedundantUnitReturnTypeInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantUnitReturnTypeInspection"
                      displayName="Redundant 'Unit' return type"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
