@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.idea.core.script
 import com.intellij.openapi.components.service
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
-import com.intellij.util.io.DataInputOutputUtil.readSeq
-import com.intellij.util.io.DataInputOutputUtil.writeSeq
+import com.intellij.util.io.DataInputOutputUtil.*
 import com.intellij.util.io.IOUtil.readUTF
 import com.intellij.util.io.IOUtil.writeUTF
 import org.jetbrains.kotlin.idea.caches.FileAttributeService
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
+import java.io.IOException
 import kotlin.script.dependencies.ScriptDependencies
 
 object ScriptDependenciesFileAttribute {
@@ -104,4 +104,22 @@ private fun <T : Any> DataOutput.writeNullable(nullable: T?, writeT: DataOutput.
 private fun <T : Any> DataInput.readNullable(readT: DataInput.() -> T): T? {
     val hasValue = readBoolean()
     return if (hasValue) readT() else null
+}
+
+@Throws(IOException::class)
+private fun <T> readSeq(`in`: DataInput, readElement: () -> T): List<T> {
+    val size = readINT(`in`)
+    val result = ArrayList<T>(size)
+    for (i in 0 until size) {
+        result.add(readElement())
+    }
+    return result
+}
+
+@Throws(IOException::class)
+private fun <T> writeSeq(out: DataOutput, collection: Collection<T>, writeElement: (T) -> Unit) {
+    writeINT(out, collection.size)
+    for (t in collection) {
+        writeElement(t)
+    }
 }
