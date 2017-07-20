@@ -284,6 +284,12 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdater"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdater"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.script.ScriptReportSink"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink"/>
 

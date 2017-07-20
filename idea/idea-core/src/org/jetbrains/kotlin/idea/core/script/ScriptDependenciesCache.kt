@@ -26,7 +26,7 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.dependencies.ScriptDependencies
 
-internal class DependenciesCache(private val project: Project) {
+internal class ScriptDependenciesCache(private val project: Project) {
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, ScriptDependencies>()
 
