@@ -155,6 +155,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("discriminateHeaderClassInFavorOfTypeAlias")
+        public void testDiscriminateHeaderClassInFavorOfTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/implTypeAlias/discriminateHeaderClassInFavorOfTypeAlias/");
+            doTest(fileName);
+        }
+
         @TestMetadata("generic")
         public void testGeneric() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/implTypeAlias/generic/");
