@@ -56,7 +56,8 @@ class Variety<C> {
     var <T> List<T>.genVarL: T where T : C
         get() = last()
         set(p) {}
-    @MemAnn val annotatedVal = 0
+    @MemAnn
+    val annotatedVal = 0
     var byVar by Delegates.notNull<Int>()
     lateinit var lateVal: String
     final val finalVal = 0
