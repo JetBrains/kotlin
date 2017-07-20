@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker.Compatibility.Incompatible
 
-object PlatformIncompatibilityDiagnosticRenderer : DiagnosticParameterRenderer<Map<Incompatible, Collection<MemberDescriptor>>> {
+class PlatformIncompatibilityDiagnosticRenderer(
+        private val mode: MultiplatformDiagnosticRenderingMode
+) : DiagnosticParameterRenderer<Map<Incompatible, Collection<MemberDescriptor>>> {
     override fun render(
             obj: Map<Incompatible, Collection<MemberDescriptor>>,
             renderingContext: RenderingContext
@@ -29,47 +31,80 @@ object PlatformIncompatibilityDiagnosticRenderer : DiagnosticParameterRenderer<M
         if (obj.isEmpty()) return ""
 
         return buildString {
-            appendln()
-            renderIncompatibilityInformation(obj, "", renderingContext)
+            mode.newLine(this)
+            renderIncompatibilityInformation(obj, "", renderingContext, mode)
         }
+    }
+
+    companion object {
+        @JvmField
+        val TEXT = PlatformIncompatibilityDiagnosticRenderer(MultiplatformDiagnosticRenderingMode())
     }
 }
 
-object IncompatibleHeaderImplClassScopesRenderer :
-        DiagnosticParameterRenderer<List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>> {
+class IncompatibleHeaderImplClassScopesRenderer(
+        private val mode: MultiplatformDiagnosticRenderingMode
+) : DiagnosticParameterRenderer<List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>> {
     override fun render(
             obj: List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>,
-            renderingContext: RenderingContext): String {
+            renderingContext: RenderingContext
+    ): String {
         if (obj.isEmpty()) return ""
 
         return buildString {
-            appendln()
-            renderIncompatibleClassScopes(obj, "", renderingContext)
+            mode.newLine(this)
+            renderIncompatibleClassScopes(obj, "", renderingContext, mode)
         }
+    }
+
+    companion object {
+        @JvmField
+        val TEXT = IncompatibleHeaderImplClassScopesRenderer(MultiplatformDiagnosticRenderingMode())
+    }
+}
+
+open class MultiplatformDiagnosticRenderingMode {
+    open fun newLine(sb: StringBuilder) {
+        sb.appendln()
+    }
+
+    open fun renderList(sb: StringBuilder, elements: List<() -> Unit>) {
+        sb.appendln()
+        for (element in elements) {
+            element()
+        }
+    }
+
+    open fun renderDescriptor(sb: StringBuilder, descriptor: DeclarationDescriptor, context: RenderingContext, indent: String) {
+        sb.append(indent)
+        sb.append(INDENTATION_UNIT)
+        sb.appendln(Renderers.COMPACT_WITH_MODIFIERS.render(descriptor, context))
     }
 }
 
 private fun StringBuilder.renderIncompatibilityInformation(
         map: Map<Incompatible, Collection<MemberDescriptor>>,
         indent: String,
-        context: RenderingContext
+        context: RenderingContext,
+        mode: MultiplatformDiagnosticRenderingMode
 ) {
     for ((incompatibility, descriptors) in map) {
         append(indent)
         append("The following declaration")
         if (descriptors.size == 1) append(" is") else append("s are")
         append(" incompatible")
-        incompatibility.reason?.let { appendln(" because $it:") }
+        incompatibility.reason?.let { append(" because $it") }
+        append(":")
 
-        for (descriptor in descriptors) {
-            append(indent + "    ")
-            appendln(descriptor.render(context))
-        }
+        mode.renderList(this, descriptors.map { descriptor ->
+            { mode.renderDescriptor(this, descriptor, context, indent) }
+        })
 
         if (incompatibility is Incompatible.ClassScopes) {
             append(indent)
-            appendln("No implementations are found for members listed below:")
-            renderIncompatibleClassScopes(incompatibility.unimplemented, indent, context)
+            append("No implementations are found for members listed below:")
+            mode.newLine(this)
+            renderIncompatibleClassScopes(incompatibility.unimplemented, indent, context, mode)
         }
     }
 }
@@ -77,21 +112,22 @@ private fun StringBuilder.renderIncompatibilityInformation(
 private fun StringBuilder.renderIncompatibleClassScopes(
         unimplemented: List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>,
         indent: String,
-        context: RenderingContext
+        context: RenderingContext,
+        mode: MultiplatformDiagnosticRenderingMode
 ) {
-    for ((descriptor, mapping) in unimplemented) {
-        appendln()
-        append(indent + "    ")
-        appendln(descriptor.render(context))
-        if (mapping.isNotEmpty()) {
-            appendln()
+    mode.renderList(this, unimplemented.indices.map { index ->
+        {
+            val (descriptor, mapping) = unimplemented[index]
+            mode.renderDescriptor(this, descriptor, context, indent)
+            if (mapping.isNotEmpty()) {
+                mode.newLine(this)
+                renderIncompatibilityInformation(mapping, indent + INDENTATION_UNIT, context, mode)
+            }
+            if (index != unimplemented.lastIndex) {
+                mode.newLine(this)
+            }
         }
-        renderIncompatibilityInformation(mapping, indent + INDENTATION_UNIT, context)
-    }
+    })
 }
 
 private const val INDENTATION_UNIT = "    "
-
-private fun DeclarationDescriptor.render(context: RenderingContext): String {
-    return Renderers.COMPACT_WITH_MODIFIERS.render(this, context)
-}
