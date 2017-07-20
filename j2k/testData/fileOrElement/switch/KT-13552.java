@@ -1,9 +1,5 @@
 public class SwitchDemo {
-    public static void print(Object o) {
-        System.out.println(o);
-    }
-
-    public static void test(int i) {
+    public static int test(int i) {
         String monthString = "<empty>";
         switch (i) {
             case 1:  print(1);
@@ -20,6 +16,21 @@ public class SwitchDemo {
             case 11: print(11);
             case 12: monthString = "December"; break;
         }
-        System.out.println(monthString);
+        String status="";
+        switch (status) {
+            case "init":
+            case "dial":
+            case "transmit":
+                return 0x111111;
+            case "ok":
+                return 0xFF006600;
+            case "cancel":
+                return 0xFF666666;
+            case "fail":
+            case "busy":
+            case "error":
+            default:
+                return 0xFF660000;
+        }
     }
 }

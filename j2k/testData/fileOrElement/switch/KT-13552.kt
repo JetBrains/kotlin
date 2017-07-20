@@ -1,10 +1,5 @@
-// ERROR: 'else' entry must be the last one in a when-expression
 object SwitchDemo {
-    fun print(o: Any) {
-        println(o)
-    }
-
-    fun test(i: Int) {
+    fun test(i: Int): Int {
         var monthString = "<empty>"
         when (i) {
             1 -> {
@@ -75,6 +70,13 @@ object SwitchDemo {
                 print(5)
             }
         }
-        println(monthString)
+        val status = ""
+        when (status) {
+            "init", "dial", "transmit" -> return 0x111111
+            "ok" -> return 0xFF006600.toInt()
+            "cancel" -> return 0xFF666666.toInt()
+            "fail", "busy", "error" -> return 0xFF660000.toInt()
+            else -> return 0xFF660000.toInt()
+        }
     }
 }
