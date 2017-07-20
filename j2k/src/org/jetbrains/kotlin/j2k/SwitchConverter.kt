@@ -19,10 +19,9 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import com.intellij.psi.controlFlow.ControlFlowFactory
 import com.intellij.psi.controlFlow.ControlFlowUtil
+import com.intellij.psi.controlFlow.LocalsOrMyInstanceFieldsControlFlowPolicy
 import org.jetbrains.kotlin.j2k.ast.*
 import java.util.*
-import com.intellij.psi.controlFlow.LocalsOrMyInstanceFieldsControlFlowPolicy
-
 
 
 class SwitchConverter(private val codeConverter: CodeConverter) {
@@ -38,17 +37,26 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
 
         val result = ArrayList<WhenEntry>()
         var pendingSelectors = ArrayList<WhenEntrySelector>()
+        var defaultSelector: WhenEntrySelector? = null
+        var defaultEntry: WhenEntry? = null
         for ((i, case) in cases.withIndex()) {
             if (case.label == null) { // invalid switch - no case labels
                 result.add(WhenEntry(listOf(ValueWhenEntrySelector(Expression.Empty).assignNoPrototype()), convertCaseStatementsToBody(cases, i)).assignNoPrototype())
                 continue
             }
-            pendingSelectors.add(codeConverter.convertStatement(case.label) as WhenEntrySelector)
+            val sel = codeConverter.convertStatement(case.label) as WhenEntrySelector
+            if (case.label.isDefaultCase) defaultSelector = sel else pendingSelectors.add(sel)
             if (case.statements.isNotEmpty()) {
-                result.add(WhenEntry(pendingSelectors, convertCaseStatementsToBody(cases, i)).assignNoPrototype())
+                val statement = convertCaseStatementsToBody(cases, i)
+                if (pendingSelectors.isNotEmpty())
+                    result.add(WhenEntry(pendingSelectors, statement).assignNoPrototype())
+                if (defaultSelector != null)
+                    defaultEntry = WhenEntry(listOf(defaultSelector), statement).assignNoPrototype()
                 pendingSelectors = ArrayList()
+                defaultSelector = null
             }
         }
+        defaultEntry?.let(result::add)
         return result
     }
 
