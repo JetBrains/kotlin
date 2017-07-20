@@ -19,6 +19,12 @@ package org.jetbrains.kotlin.gradle.internal
 import groovy.lang.Closure
 import org.gradle.util.Configurable
 
+enum class CacheImplementation(val optionName: String) {
+    HASH_MAP("hashMap"),
+    SPARSE_ARRAY("sparseArray"),
+    NONE("none")
+}
+
 open class AndroidExtensionsExtension : Configurable<AndroidExtensionsExtension> {
     private lateinit var onEvaluatedHandler: (AndroidExtensionsExtension) -> Unit
 
@@ -27,6 +33,8 @@ open class AndroidExtensionsExtension : Configurable<AndroidExtensionsExtension>
     }
 
     open var isExperimental: Boolean = false
+
+    open var defaultCacheImplementation: CacheImplementation = CacheImplementation.HASH_MAP
 
     override fun configure(closure: Closure<*>): AndroidExtensionsExtension {
         // ConfigureUtil is not used here to prevent infinite recursion
