@@ -149,6 +149,22 @@
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="temp:///src/implicitReceiver.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>property.kt</file>
+    <line>10</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/property.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe cast expression</description>
+  </problem>
+  <problem>
+    <file>propertyNotNull.kt</file>
+    <line>9</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/propertyNotNull.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
     <description>Remove redundant 'if' expression</description>
   </problem>
 </problems>
