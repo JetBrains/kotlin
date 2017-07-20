@@ -58,10 +58,10 @@ fun KtBinaryExpression.expressionComparedToNull(): KtExpression? {
 }
 
 fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
-    val innerExpression = KtPsiUtil.safeDeparenthesize(this)
+    val innerExpression = KtPsiUtil.safeDeparenthesize(this, true)
     if (innerExpression is KtBlockExpression) {
         val statement = innerExpression.statements.singleOrNull() ?: return this
-        return KtPsiUtil.safeDeparenthesize(statement)
+        return KtPsiUtil.safeDeparenthesize(statement, true)
     }
     return innerExpression
 }

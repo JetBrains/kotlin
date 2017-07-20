@@ -113,6 +113,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("withAnnotation.kt")
+        public void testWithAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/cascadeIf/withAnnotation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("withBreak.kt")
         public void testWithBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/cascadeIf/withBreak.kt");
