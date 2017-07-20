@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.configuration.ui
 import com.intellij.ProjectTopics
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationsConfiguration
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -56,9 +57,12 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
                 }
 
                 if (ConfigureKotlinNotificationManager.getVisibleNotifications(project).isNotEmpty()) {
-                    DumbService.getInstance(myProject).smartInvokeLater {
+                    ApplicationManager.getApplication().executeOnPooledThread {
+                        DumbService.getInstance(myProject).waitForSmartMode()
                         if (getModulesWithKotlinFiles(project).all(::isModuleConfigured)) {
-                            ConfigureKotlinNotificationManager.expireOldNotifications(project)
+                            ApplicationManager.getApplication().invokeLater {
+                                ConfigureKotlinNotificationManager.expireOldNotifications(project)
+                            }
                         }
                     }
                 }
