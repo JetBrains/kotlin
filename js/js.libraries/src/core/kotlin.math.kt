@@ -17,6 +17,7 @@
 package kotlin.math
 
 
+import kotlin.internal.InlineOnly
 import kotlin.js.Math as nativeMath
 
 // constants, can't use them from nativeMath as they are not constants there
@@ -28,36 +29,243 @@ public const val E: Double = 2.718281828459045
 
 // Double
 
-inline fun sin(a: Double): Double = nativeMath.sin(a)
-inline fun cos(a: Double): Double = nativeMath.cos(a)
-inline fun tan(a: Double): Double = nativeMath.tan(a)
+/** Computes the sine of the angle [a] given in radians.
+ *
+ *  Special cases:
+ *
+ *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ */
+@InlineOnly
+public inline fun sin(a: Double): Double = nativeMath.sin(a)
 
-inline fun asin(a: Double): Double = nativeMath.asin(a)
-inline fun acos(a: Double): Double = nativeMath.acos(a)
-inline fun atan(a: Double): Double = nativeMath.atan(a)
-inline fun atan2(y: Double, x: Double): Double = nativeMath.atan2(y, x)
+/** Computes the cosine of the angle [a] given in radians.
+ *
+ *  Special cases:
+ *
+ *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ */
+@InlineOnly
+public inline fun cos(a: Double): Double = nativeMath.cos(a)
 
-// TODO: Polyfill
-/*
-inline fun sinh(a: Double): Double = nativeMath.sinh(a)
-inline fun cosh(a: Double): Double = nativeMath.cosh(a)
-inline fun tanh(a: Double): Double = nativeMath.tanh(a)
+/** Computes the tangent of the angle [a] given in radians.
+ *
+ *  Special cases:
+ *
+ *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ */
+@InlineOnly
+public inline fun tan(a: Double): Double = nativeMath.tan(a)
 
-inline fun hypot(x: Double, y: Double): Double = nativeMath.hypot(x, y)
-*/
+/**
+ * Computes the arc sine of the value [a];
+ * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
+ *
+ * Special cases:
+ *    - `asin(v)` is `NaN`, when `abs(v) > 1` or v is `NaN`
+ */
+@InlineOnly
+public inline fun asin(a: Double): Double = nativeMath.asin(a)
 
-inline fun pow(a: Double, b: Double): Double = nativeMath.pow(a, b)
-inline fun pow(a: Double, b: Int): Double = nativeMath.pow(a, b.toDouble())
+/**
+ * Computes the arc cosine of the value [a];
+ * the returned value is an angle in the range from `0.0` to `PI` radians.
+ *
+ * Special cases:
+ *    - `acos(v)` is `NaN`, when `abs(v) > 1` or v is `NaN`
+ */
+@InlineOnly
+public inline fun acos(a: Double): Double = nativeMath.acos(a)
 
-inline fun sqrt(a: Double): Double = nativeMath.sqrt(a)
+/**
+ * Computes the arc tangent of the value [a];
+ * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
+ *
+ * Special cases:
+ *     - `atan(NaN)` is `NaN`
+ */
+@InlineOnly
+public inline fun atan(a: Double): Double = nativeMath.atan(a)
 
-inline fun exp(a: Double): Double = nativeMath.exp(a)
-// inline fun expm1(a: Double): Double = nativeMath.expm1(a) // polyfill
+/**
+ * Returns the angle `theta` of the polar coordinates `(r, theta)` that correspond
+ * to the rectangular coordinates `(x, y)` by computing the arc tangent of the value [y] / [x];
+ * the returned value is an angle in the range from `-PI` to `PI` radians.
+ *
+ * Special cases:
+ *     - `atan2(0.0, 0.0)` is `0.0`
+ *     - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
+ *     - `atan2(-0.0, x)` is `-0.0` for 'x > 0` and `-PI` for `x < 0`
+ *     - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for '-Inf < y < 0`
+ *     - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
+ *     - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
+ *     - `atan2(+Inf, x)` is `PI/2` for finite `x`y
+ *     - `atan2(-Inf, x)` is `-PI/2` for finite `x`
+ *     - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+ */
+@InlineOnly
+public inline fun atan2(y: Double, x: Double): Double = nativeMath.atan2(y, x)
 
-inline fun log(a: Double): Double = nativeMath.log(a)
-fun log(a: Double, base: Double): Double = nativeMath.log(a) / nativeMath.log(base)
-//inline fun log10(a: Double): Double = nativeMath.log10(a) // polyfill
-//inline fun log1p(a: Double): Double = nativeMath.log1p(a) // polyfill
+/**
+ * Computes the hyperbolic sine of the value [a].
+ *
+ * Special cases:
+ *
+ *     - `sinh(NaN)` is `NaN`
+ *     - `sinh(+Inf)` is `+Inf`
+ *     - `sinh(-Inf)` is `-Inf`
+ */
+@InlineOnly
+public inline fun sinh(a: Double): Double = nativeMath.sinh(a)
+
+/**
+ * Computes the hyperbolic cosine of the value [a].
+ *
+ * Special cases:
+ *
+ *     - `cosh(NaN)` is `NaN`
+ *     - `cosh(+Inf|-Inf)` is `+Inf`
+ */
+@InlineOnly
+public inline fun cosh(a: Double): Double = nativeMath.cosh(a)
+
+/**
+ * Computes the hyperbolic tangent of the value [a].
+ *
+ * Special cases:
+ *
+ *     - `tanh(NaN)` is `NaN`
+ *     - `tanh(+Inf)` is `1.0`
+ *     - `tanh(-Inf)` is `-1.0`
+ */
+@InlineOnly
+public inline fun tanh(a: Double): Double = nativeMath.tanh(a)
+
+/**
+ * Computes `sqrt(x^2 + y^2)` without intermediate overflow or underflow.
+ *
+ * Special cases:
+ *     - returns `+Inf` if any of arguments is infinite
+ *     - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ */
+@InlineOnly
+public inline fun hypot(x: Double, y: Double): Double = nativeMath.hypot(x, y)
+
+/**
+ * Raises the first argument [a] to the power of the second argument [b].
+ *
+ * Special cases:
+ *     - `pow(x, 0.0)` is `1.0`
+ *     - `pow(x, 1.0) == x`
+ *     - `pow(x, NaN)` is `NaN`
+ *     - `pow(NaN, x)` is `NaN` for `x != 0.0`
+ *     - `pow(x, Inf)` is `NaN` for `abs(x) == 1.0`
+ *     - `pow(x, y)` is `NaN` for `x < 0` and `y` is finite and not an integer
+ */
+@InlineOnly
+public inline fun pow(a: Double, b: Double): Double = nativeMath.pow(a, b)
+
+/**
+ * Raises the first argument [a] to the integer power of the second argument [b].
+ *
+ * See the other overload of [pow] for details.
+ */
+@InlineOnly
+public inline fun pow(a: Double, b: Int): Double = nativeMath.pow(a, b.toDouble())
+
+/**
+ * Computes the positive square root of the value [a].
+ *
+ * Special cases:
+ *     - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
+ */
+@InlineOnly
+public inline fun sqrt(a: Double): Double = nativeMath.sqrt(a)
+
+/**
+ * Computes Euler's number `e` raised to the power of the value [a].
+ *
+ * Special cases:
+ *     - `exp(NaN)` is `NaN`
+ *     - `exp(+Inf)` is `+Inf`
+ *     - `exp(-Inf)` is `0.0`
+ */
+@InlineOnly
+public inline fun exp(a: Double): Double = nativeMath.exp(a)
+
+/**
+ * Computes `exp(a) - 1`.
+ *
+ * This function can be implemented to produce more precise result for [a] near zero.
+ *
+ * Special cases:
+ *     - `expm1(NaN)` is `NaN`
+ *     - `expm1(+Inf)` is `+Inf`
+ *     - `expm1(-Inf)` is `-1.0`
+ *
+ * @see [exp] function.
+ */
+@InlineOnly
+public inline fun expm1(a: Double): Double = nativeMath.expm1(a)
+
+/**
+ * Computes the logarithm in the given [base] of the [a] value.
+ *
+ * Special cases:
+ *     - `log(a, b)` is `NaN` if either `a` or `b` are `NaN`
+ *     - `log(a, b)` is `NaN` when `a < 0` or `b <= 0` or `b == 1.0`
+ *     - `log(+Inf, +Inf)` is `NaN`
+ *     - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
+ *     - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
+ */
+public fun log(a: Double, base: Double): Double {
+    if (base <= 0.0 || base == 1.0) return Double.NaN
+    return nativeMath.log(a) / nativeMath.log(base)
+}
+
+/**
+ * Computes the natural logarithm (base `E`) of the [a] value.
+ *
+ * Special cases:
+ *     - `log(NaN)` is `NaN`
+ *     - `log(x)` is `NaN` when `x < 0.0`
+ *     - `log(+Inf)` is `+Inf`
+ *     - `log(0.0)` is `-Inf`
+ */
+@InlineOnly
+public inline fun log(a: Double): Double = nativeMath.log(a)
+
+/**
+ * Computes the decimal logarithm (base 10) of the [a] value.
+ *
+ * @see [log] function for special cases.
+ */
+@InlineOnly
+public inline fun log10(a: Double): Double = nativeMath.log10(a)
+
+/**
+ * Computes the binary logarithm (base 2) of the [a] value.
+ *
+ * @see [log] function for special cases.
+ */
+@InlineOnly
+public inline fun log2(a: Double): Double = nativeMath.log2(a)
+
+/**
+ * Computes `log(a + 1)`.
+ *
+ * This function can be implemented to produce more precise result for [a] near zero.
+ *
+ * Special cases:
+ *     - `log1p(NaN)` is `NaN`
+ *     - `log1p(x)` is `NaN` where `x < -1.0`
+ *     - `log1p(-1.0)` is `-Inf`
+ *     - `log1p(+Inf)` is `+Inf`
+ *
+ * @see [log] function.
+ */
+@InlineOnly
+public inline fun log1p(a: Double): Double = nativeMath.log1p(a)
+
 
 inline fun ceil(a: Double): Double = nativeMath.ceil(a).unsafeCast<Double>() // TODO: Remove unsafe cast after removing public js.math
 inline fun floor(a: Double): Double = nativeMath.floor(a).unsafeCast<Double>()
@@ -67,9 +275,20 @@ inline fun truncate(a: Double): Double = nativeMath.trunc(a) // polyfill
 inline fun abs(a: Double): Double = nativeMath.abs(a)
 // also as extension val [sign]
 inline fun sgn(a: Double): Double = nativeMath.sign(a)
-
-inline fun min(a: Double, b: Double): Double = nativeMath.min(a, b)
-inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b)
+/**
+ * Returns the smaller of two values.
+ *
+ * If either value is `NaN`, then the result is `NaN`.
+ */
+@InlineOnly
+public inline fun min(a: Double, b: Double): Double = nativeMath.min(a, b)
+/**
+ * Returns the greater of two values.
+ *
+ * If either value is `NaN`, then the result is `NaN`.
+ */
+@InlineOnly
+public inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b)
 
 // extensions
 
@@ -82,7 +301,6 @@ inline val Double.sign: Double get() = nativeMath.sign(this)
 // TODO: Reimplement here
 fun Double.withSign(sign: Double): Double = this.absoluteValue * sign.sign
 inline fun Double.withSign(sign: Int): Double = this.withSign(sign.toDouble())
-//inline fun Double.adjustExponent(scaleFactor: Int): Double = nativeMath.scalb(this, scaleFactor)
 
 
 fun Double.roundToLong(): Long = if (isNaN()) throw IllegalArgumentException("Cannot round NaN value.") else nativeMath.round(this).unsafeCast<Double>().toLong()
@@ -101,13 +319,10 @@ inline fun min(a: Float, b: Float): Float = nativeMath.min(a, b)
 
 inline val Float.absoluteValue: Float get() = nativeMath.abs(this.toDouble()).toFloat()
 inline val Float.sign: Float get() = nativeMath.sign(this.toDouble()).toFloat()
-//inline val Float.exponent: Int get() = nativeMath.getExponent(this)
 
 // TODO: Reimplement
 inline fun Float.withSign(sign: Float): Float = this.toDouble().withSign(sign.toDouble()).toFloat()
 inline fun Float.withSign(sign: Int): Float = this.toDouble().withSign(sign.toDouble()).toFloat()
-//inline fun Float.adjustExponent(scaleFactor: Int): Float = nativeMath.scalb(this, scaleFactor)
-//fun Float.withExponent(exponent: Int): Float = nativeMath.scalb(this, exponent - this.exponent)
 
 
 fun Float.roundToInt(): Int = if (isNaN()) throw IllegalArgumentException("Cannot round NaN value.") else nativeMath.round(this)
