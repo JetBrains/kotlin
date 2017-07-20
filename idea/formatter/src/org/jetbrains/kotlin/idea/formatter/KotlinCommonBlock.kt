@@ -403,7 +403,7 @@ abstract class KotlinCommonBlock(
 
 private fun ASTNode.startsWithAnnotation() = firstChildNode?.firstChildNode?.elementType == KtNodeTypes.ANNOTATION_ENTRY
 
-private fun ASTNode.isFirstParameter(): Boolean = treePrev.elementType == KtTokens.LPAR
+private fun ASTNode.isFirstParameter(): Boolean = treePrev?.elementType == KtTokens.LPAR
 
 private fun wrapAfterAnnotation(wrapType: Int): WrappingStrategy {
     return object : WrappingStrategy {
