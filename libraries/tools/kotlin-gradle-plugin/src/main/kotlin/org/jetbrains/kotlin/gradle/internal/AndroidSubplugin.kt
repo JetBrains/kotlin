@@ -98,7 +98,8 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)
 
         if (androidExtensionsExtension.isExperimental) {
-            return applyExperimental(androidExtension, project, variantData, androidProjectHandler)
+            return applyExperimental(androidExtension, androidExtensionsExtension,
+                    project, variantData, androidProjectHandler)
         }
 
         val sourceSets = androidExtension.sourceSets
@@ -131,6 +132,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private fun applyExperimental(
             androidExtension: BaseExtension,
+            androidExtensionsExtension: AndroidExtensionsExtension,
             project: Project,
             variantData: Any?,
             androidProjectHandler: Any?
@@ -141,6 +143,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val pluginOptions = arrayListOf<SubpluginOption>()
 
         pluginOptions += SubpluginOption("experimental", "true")
+        pluginOptions += SubpluginOption("defaultCacheImplementation", androidExtensionsExtension.defaultCacheImplementation.optionName)
 
         val mainSourceSet = androidExtension.sourceSets.getByName("main")
         pluginOptions += SubpluginOption("package", getApplicationPackage(project, mainSourceSet))
