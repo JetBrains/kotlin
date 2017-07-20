@@ -1176,8 +1176,7 @@ public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = fal
 /**
  * Splits this char sequence around matches of the given regular expression.
  *
- * @param limit Non-negative value specifying the maximum number of substrings to return.
- * Zero by default means no limit is set.
+ * @param limit Non-negative value specifying the maximum number of substrings to return. Zero by default means no limit is set.
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String> = regex.split(this, limit)
