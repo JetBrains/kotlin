@@ -87,6 +87,8 @@ class UnnecessaryVariableInspection : AbstractKotlinInspection() {
 
         override fun getFamilyName() = name
 
+        override fun startInWriteAction() = false
+
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val property = descriptor.psiElement.getParentOfType<KtProperty>(strict = true) ?: return
             KotlinInlineValHandler().inlineElement(project, property.findExistingEditor(), property)
