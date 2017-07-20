@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.android.synthetic.codegen
 
 import kotlinx.android.extensions.CacheImplementation
-import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.PROPERTY_NAME
@@ -39,16 +38,16 @@ interface CacheMechanism {
     fun putViewToCache(getView: () -> Unit)
 
     companion object {
-        fun getType(containerOptions: ContainerOptionsProxy): Type {
-            return Type.getObjectType(when (containerOptions.cache) {
+        fun getType(cacheImpl: CacheImplementation): Type {
+            return Type.getObjectType(when (cacheImpl) {
                 CacheImplementation.SPARSE_ARRAY -> "android.util.SparseArray"
                 CacheImplementation.HASH_MAP -> HashMap::class.java.canonicalName
                 CacheImplementation.NO_CACHE -> throw IllegalArgumentException("Container should support cache")
             }.replace('.', '/'))
         }
 
-        fun get(containerOptions: ContainerOptionsProxy, iv: InstructionAdapter, containerType: Type): CacheMechanism {
-            return when (containerOptions.cache) {
+        fun get(cacheImpl: CacheImplementation, iv: InstructionAdapter, containerType: Type): CacheMechanism {
+            return when (cacheImpl) {
                 CacheImplementation.HASH_MAP -> HashMapCacheMechanism(iv, containerType)
                 CacheImplementation.SPARSE_ARRAY -> SparseArrayCacheMechanism(iv, containerType)
                 CacheImplementation.NO_CACHE -> throw IllegalArgumentException("Container should support cache")

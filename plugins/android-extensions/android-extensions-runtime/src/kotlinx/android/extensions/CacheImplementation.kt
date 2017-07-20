@@ -23,4 +23,8 @@ public enum class CacheImplementation {
 
     public val hasCache: Boolean
         get() = this != NO_CACHE
+
+    companion object {
+        val DEFAULT = HASH_MAP
+    }
 }
