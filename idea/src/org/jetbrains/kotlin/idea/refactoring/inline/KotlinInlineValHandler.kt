@@ -187,7 +187,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
 
         val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignmentToDelete)
 
-        if (!ApplicationManager.getApplication().isUnitTestMode) {
+        if (!ApplicationManager.getApplication().isUnitTestMode && dialog.shouldBeShown()) {
             dialog.show()
             if (!dialog.isOK && hasHighlightings) {
                 val statusBar = WindowManager.getInstance().getStatusBar(declaration.project)
