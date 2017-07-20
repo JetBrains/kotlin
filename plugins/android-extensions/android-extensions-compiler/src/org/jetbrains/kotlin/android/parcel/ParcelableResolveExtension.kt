@@ -26,14 +26,16 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 
-class ParcelableResolveExtension : SyntheticResolveExtension {
+open class ParcelableResolveExtension : SyntheticResolveExtension {
     companion object {
         fun resolveParcelClassType(module: ModuleDescriptor): SimpleType {
             return module.findClassAcrossModuleDependencies(
@@ -72,6 +74,8 @@ class ParcelableResolveExtension : SyntheticResolveExtension {
         }
     }
 
+    protected open fun isExperimental(element: KtElement) = true
+
     override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor) = null
 
     override fun generateSyntheticMethods(
@@ -80,9 +84,22 @@ class ParcelableResolveExtension : SyntheticResolveExtension {
             fromSupertypes: List<SimpleFunctionDescriptor>,
             result: MutableCollection<SimpleFunctionDescriptor>
     ) {
-        if (name.asString() == DESCRIBE_CONTENTS.methodName && clazz.isMagicParcelable && result.none { it.isDescribeContents() }) {
+        fun isExperimental(): Boolean {
+            val sourceElement = (clazz.source as? PsiSourceElement)?.psi as? KtElement ?: return false
+            return isExperimental(sourceElement)
+        }
+
+        if (name.asString() == DESCRIBE_CONTENTS.methodName
+                && clazz.isMagicParcelable
+                && isExperimental()
+                && result.none { it.isDescribeContents() }
+        ) {
             result += createMethod(clazz, DESCRIBE_CONTENTS, clazz.builtIns.intType)
-        } else if (name.asString() == WRITE_TO_PARCEL.methodName && clazz.isMagicParcelable && result.none { it.isWriteToParcel() }) {
+        } else if (name.asString() == WRITE_TO_PARCEL.methodName
+                && clazz.isMagicParcelable
+                && isExperimental()
+                && result.none { it.isWriteToParcel() }
+        ) {
             val builtIns = clazz.builtIns
             val parcelClassType = resolveParcelClassType(clazz.module)
             result += createMethod(clazz, WRITE_TO_PARCEL, builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType)
