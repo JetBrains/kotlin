@@ -4,7 +4,7 @@ public external val bar: kotlin.Int
 public external val baz: kotlin.Int
 public external inline fun foo(): kotlin.Unit
 
-public external final class A {
+public final external class A {
     public constructor A()
     public final val bar: kotlin.Int
     public final val baz: kotlin.Int

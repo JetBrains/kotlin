@@ -1,6 +1,6 @@
 package
 
-public external final class A {
+public final external class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.js.nativeGetter public final fun foo(/*0*/ a: kotlin.Double): kotlin.String?
@@ -20,7 +20,7 @@ public external final class A {
     }
 }
 
-public external final class B {
+public final external class B {
     public constructor B()
     @kotlin.js.nativeGetter public final val foo: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -50,7 +50,7 @@ public external final class B {
     }
 }
 
-public external final class C {
+public final external class C {
     public constructor C()
     @kotlin.js.nativeGetter public final fun bar(/*0*/ a: kotlin.String): kotlin.Int
     @kotlin.js.nativeGetter public final fun baz(/*0*/ a: kotlin.String = ...): kotlin.Int?

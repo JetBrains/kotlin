@@ -10,7 +10,7 @@ public external fun f(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): kotlin
 public external fun foo(): kotlin.Int
 public external fun g(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): kotlin.Unit
 
-public external final class C {
+public final external class C {
     public constructor C()
     public final fun bar(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

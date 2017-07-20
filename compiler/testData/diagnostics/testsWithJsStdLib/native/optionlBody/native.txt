@@ -5,7 +5,7 @@ public external val boo: kotlin.Int
 public external fun bar(): kotlin.Unit
 public external fun foo(): kotlin.Unit
 
-public external final class C {
+public final external class C {
     public constructor C()
     public final val baz: kotlin.Int
     public final val boo: kotlin.Int

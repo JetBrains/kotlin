@@ -5,7 +5,7 @@ package foo {
     @kotlin.js.JsNonModule public external val baz: kotlin.Int
     @kotlin.js.JsModule(import = "foo") public external fun foo(): kotlin.Int
 
-    @kotlin.js.JsModule(import = "A") public external final class A {
+    @kotlin.js.JsModule(import = "A") public final external class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

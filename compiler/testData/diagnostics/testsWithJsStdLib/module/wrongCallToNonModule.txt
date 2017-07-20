@@ -4,7 +4,7 @@ package bar {
     public inline fun </*0*/ reified T> boo(/*0*/ x: T): kotlin.Unit
     public fun box(): kotlin.Unit
 
-    public external final class DerivedB : foo.B {
+    public final external class DerivedB : foo.B {
         public constructor DerivedB()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
@@ -25,7 +25,7 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.js.JsNonModule public external open class B {
+    @kotlin.js.JsNonModule public open external class B {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final fun foo(): kotlin.Int

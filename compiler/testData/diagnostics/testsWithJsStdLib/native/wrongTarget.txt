@@ -3,7 +3,7 @@ package
 public val x: kotlin.Int
 public val B.x: kotlin.Int
 
-public external final annotation class A : kotlin.Annotation {
+public final external annotation class A : kotlin.Annotation {
     public constructor A(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -26,7 +26,7 @@ public final class C {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external final class D {
+public final external class D {
     public constructor D()
     public final val a: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -34,7 +34,7 @@ public external final class D {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external final data class E {
+public final external data class E {
     public constructor E(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int

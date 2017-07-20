@@ -1,6 +1,6 @@
 package
 
-public external final class C {
+public final external class C {
     public constructor C()
     private final val b: kotlin.String
     private final var c: kotlin.Float
@@ -23,7 +23,7 @@ public external object O {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external final class Outer {
+public final external class Outer {
     public constructor Outer()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
