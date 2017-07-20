@@ -467,6 +467,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("functionReferencingClass")
+        public void testFunctionReferencingClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/functionReferencingClass/");
+            doTest(fileName);
+        }
+
         @TestMetadata("independentClasses")
         public void testIndependentClasses() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/independentClasses/");
