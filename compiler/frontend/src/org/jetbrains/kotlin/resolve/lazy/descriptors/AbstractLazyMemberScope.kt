@@ -69,13 +69,17 @@ protected constructor(
         // NB we should resolve type alias descriptors even if a class descriptor with corresponding name is present
         val classes = classDescriptors(name)
         val typeAliases = typeAliasDescriptors(name)
-        var resultingClass: ClassDescriptor? = null
+        // See getFirstClassifierDiscriminateHeaders()
+        var result: ClassifierDescriptor? = null
         for (klass in classes) {
-            // See getFirstClassifierDiscriminateHeaders()
             if (!klass.isHeader) return klass
-            if (resultingClass == null) resultingClass = klass
+            if (result == null) result = klass
         }
-        return resultingClass ?: typeAliases.firstOrNull()
+        for (typeAlias in typeAliases) {
+            if (!typeAlias.isHeader) return typeAlias
+            if (result == null) result = typeAlias
+        }
+        return result
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
