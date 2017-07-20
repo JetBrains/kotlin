@@ -85,8 +85,8 @@
         <platformGradleDetector implementation="org.jetbrains.kotlin.android.configure.PlatformAndroidGradleDetector"/>
         <completionInformationProvider implementation="org.jetbrains.kotlin.AndroidExtensionsCompletionInformationProvider" />
 
-        <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.parcel.ParcelableCodegenExtension"/>
-        <syntheticResolveExtension implementation="org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension"/>
+        <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.parcel.IDEParcelableCodegenExtension"/>
+        <syntheticResolveExtension implementation="org.jetbrains.kotlin.android.parcel.IDEParcelableResolveExtension"/>
         <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.android.synthetic.codegen.ParcelableClinitClassBuilderInterceptorExtension"/>
 
         <androidDexer implementation="org.jetbrains.kotlin.android.debugger.AndroidDexerImpl"/>
