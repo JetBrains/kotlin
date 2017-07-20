@@ -42,7 +42,7 @@ import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
 
 internal class ScriptDependenciesUpdater(
         private val project: Project,
-        private val cache: DependenciesCache,
+        private val cache: ScriptDependenciesCache,
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
 ) {
     private val requests = ConcurrentHashMap<String, ModStampedRequest>()

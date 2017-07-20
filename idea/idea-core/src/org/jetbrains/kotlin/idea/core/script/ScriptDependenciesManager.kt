@@ -40,13 +40,12 @@ class IdeScriptDependenciesProvider(
     }
 }
 
-class ScriptDependenciesManager(
+class ScriptDependenciesManager internal constructor(
         private val project: Project,
-        private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
+        private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
+        private val cacheUpdater: ScriptDependenciesUpdater,
+        private val cache: ScriptDependenciesCache
 ) {
-    private val cache = DependenciesCache(project)
-    private val cacheUpdater = ScriptDependenciesUpdater(project, cache, scriptDefinitionProvider)
-
     init {
         reloadScriptDefinitions()
     }
