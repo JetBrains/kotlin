@@ -50,56 +50,57 @@ internal fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUppe
 
 private fun String.checkPackageName(): Boolean = isNotEmpty() && Character.isLowerCase(first())
 
-internal fun getTargetParentByQualifier(
+internal fun getTargetParentsByQualifier(
         file: KtFile,
         isQualified: Boolean,
-        qualifierDescriptor: DeclarationDescriptor?): PsiElement? {
+        qualifierDescriptor: DeclarationDescriptor?
+): List<PsiElement> {
     val project = file.project
-    val targetParent: PsiElement? = when {
+    val targetParents: List<PsiElement> = when {
         !isQualified ->
-            file
+            listOf(file)
         qualifierDescriptor is ClassDescriptor ->
-            DescriptorToSourceUtilsIde.getAnyDeclaration(project, qualifierDescriptor)
+            listOfNotNull(DescriptorToSourceUtilsIde.getAnyDeclaration(project, qualifierDescriptor))
         qualifierDescriptor is PackageViewDescriptor ->
             if (qualifierDescriptor.fqName != file.packageFqName) {
-                JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.fqName.asString())
+                listOfNotNull(JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.fqName.asString()))
             }
-            else file
+            else listOf(file)
         else ->
-            null
+            emptyList()
     }
-    return if (targetParent?.canRefactor() ?: false) return targetParent else null
+    return targetParents.filter { it.canRefactor() }
 }
 
-internal fun getTargetParentByCall(call: Call, file: KtFile, context: BindingContext): PsiElement? {
+internal fun getTargetParentsByCall(call: Call, file: KtFile, context: BindingContext): List<PsiElement> {
     val receiver = call.explicitReceiver
     return when (receiver) {
-        null -> getTargetParentByQualifier(file, false, null)
-        is Qualifier -> getTargetParentByQualifier(file, true, context[BindingContext.REFERENCE_TARGET, receiver.referenceExpression])
-        is ReceiverValue -> getTargetParentByQualifier(file, true, receiver.type.constructor.declarationDescriptor)
+        null -> getTargetParentsByQualifier(file, false, null)
+        is Qualifier -> getTargetParentsByQualifier(file, true, context[BindingContext.REFERENCE_TARGET, receiver.referenceExpression])
+        is ReceiverValue -> getTargetParentsByQualifier(file, true, receiver.type.constructor.declarationDescriptor)
         else -> throw AssertionError("Unexpected receiver: $receiver")
     }
 }
 
 internal fun isInnerClassExpected(call: Call) = call.explicitReceiver is ReceiverValue
 
-internal fun KtExpression.getInheritableTypeInfo(
-        context: BindingContext,
-        moduleDescriptor: ModuleDescriptor,
-        containingDeclaration: PsiElement): Pair<TypeInfo, (ClassKind) -> Boolean> {
-    val types = guessTypes(context, moduleDescriptor, coerceUnusedToUnit = false)
-    if (types.size != 1) return TypeInfo.Empty to { _ -> true }
+internal fun KtExpression.guessTypeForClass(context: BindingContext, moduleDescriptor: ModuleDescriptor) =
+        guessTypes(context, moduleDescriptor, coerceUnusedToUnit = false).singleOrNull()
 
-    val type = types.first()
-    val descriptor = type.constructor.declarationDescriptor ?: return TypeInfo.Empty to { _ -> false }
+internal fun KotlinType.toClassTypeInfo(): TypeInfo {
+    return TypeInfo.ByType(this, Variance.OUT_VARIANCE).noSubstitutions()
+}
 
-    val canHaveSubtypes = !(type.constructor.isFinal || type.containsStarProjections())
+internal fun getClassKindFilter(expectedType: KotlinType, containingDeclaration: PsiElement): (ClassKind) -> Boolean {
+    val descriptor = expectedType.constructor.declarationDescriptor ?: return { _ -> false }
+
+    val canHaveSubtypes = !(expectedType.constructor.isFinal || expectedType.containsStarProjections())
     val isEnum = DescriptorUtils.isEnumClass(descriptor)
 
     if (!(canHaveSubtypes || isEnum)
-        || descriptor is TypeParameterDescriptor) return TypeInfo.Empty to { _ -> false }
+        || descriptor is TypeParameterDescriptor) return { _ -> false }
 
-    return TypeInfo.ByType(type, Variance.OUT_VARIANCE).noSubstitutions() to { classKind ->
+    return { classKind ->
         when (classKind) {
             ClassKind.ENUM_ENTRY -> isEnum && containingDeclaration == DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
             ClassKind.INTERFACE -> containingDeclaration !is PsiClass

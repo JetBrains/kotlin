@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.Arrays
 import java.util.Collections
 
@@ -69,11 +70,15 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
             val receiverSelector = (fullCallExpr as? KtQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? KtReferenceExpression
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
-            val targetParent =
-                    getTargetParentByQualifier(element.containingKtFile, receiverSelector != null, qualifierDescriptor)
-                    ?: return Collections.emptyList()
+            val targetParents = getTargetParentsByQualifier(
+                    element.containingKtFile,
+                    receiverSelector != null,
+                    qualifierDescriptor
+            ).ifEmpty { return emptyList() }
 
-            element.getCreatePackageFixIfApplicable(targetParent)?.let { return emptyList() }
+            targetParents.forEach {
+                if (element.getCreatePackageFixIfApplicable(it) != null) return emptyList()
+            }
 
             if (!name.checkClassName()) return emptyList()
 
@@ -82,7 +87,7 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
                     .filter {
                         when (it) {
                             ClassKind.ANNOTATION_CLASS -> inImport
-                            ClassKind.ENUM_ENTRY -> inImport && isEnum(targetParent)
+                            ClassKind.ENUM_ENTRY -> inImport && targetParents.any { isEnum(it) }
                             else -> true
                         }
                     }
@@ -95,19 +100,22 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
         if (fullCallExpr.getAssignmentByLHS() != null) return Collections.emptyList()
 
         val call = element.getCall(context) ?: return Collections.emptyList()
-        val targetParent = getTargetParentByCall(call, file, context) ?: return Collections.emptyList()
+        val targetParents = getTargetParentsByCall(call, file, context).ifEmpty { return emptyList() }
         if (isInnerClassExpected(call)) return Collections.emptyList()
 
-        val filter = fullCallExpr.getInheritableTypeInfo(context, moduleDescriptor, targetParent).second
+        val allKinds = Arrays.asList(ClassKind.OBJECT, ClassKind.ENUM_ENTRY)
 
-        return Arrays.asList(ClassKind.OBJECT, ClassKind.ENUM_ENTRY)
-                .filter {
-                    filter(it) && when (it) {
-                        ClassKind.OBJECT -> true
-                        ClassKind.ENUM_ENTRY -> isEnum(targetParent)
-                        else -> false
-                    }
+        val expectedType = fullCallExpr.guessTypeForClass(context, moduleDescriptor)
+
+        return allKinds.filter { classKind ->
+            targetParents.any { targetParent ->
+                (expectedType == null || getClassKindFilter(expectedType, targetParent)(classKind)) && when (classKind) {
+                    ClassKind.OBJECT -> true
+                    ClassKind.ENUM_ENTRY -> isEnum(targetParent)
+                    else -> false
                 }
+            }
+        }
     }
 
     override fun extractFixData(element: KtSimpleNameExpression, diagnostic: Diagnostic): ClassInfo? {
@@ -123,25 +131,27 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
             val receiverSelector = (fullCallExpr as? KtQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? KtReferenceExpression
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
-            val targetParent =
-                    getTargetParentByQualifier(element.containingKtFile, receiverSelector != null, qualifierDescriptor)
-                    ?: return null
+            val targetParents = getTargetParentsByQualifier(
+                    element.containingKtFile,
+                    receiverSelector != null,
+                    qualifierDescriptor
+            ).ifEmpty { return null }
 
             return ClassInfo(
                     name = name,
-                    targetParent = targetParent,
+                    targetParents = targetParents,
                     expectedTypeInfo = TypeInfo.Empty
             )
         }
 
         val call = element.getCall(context) ?: return null
-        val targetParent = getTargetParentByCall(call, file, context) ?: return null
+        val targetParents = getTargetParentsByCall(call, file, context).ifEmpty { return null }
 
-        val expectedTypeInfo = fullCallExpr.getInheritableTypeInfo(context, moduleDescriptor, targetParent).first
+        val expectedTypeInfo = fullCallExpr.guessTypeForClass(context, moduleDescriptor)?.toClassTypeInfo() ?: TypeInfo.Empty
 
         return ClassInfo(
                 name = name,
-                targetParent = targetParent,
+                targetParents = targetParents,
                 expectedTypeInfo = expectedTypeInfo
         )
     }

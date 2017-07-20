@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUsageFactory<KtCallElement>() {
@@ -61,7 +62,7 @@ object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUs
         val qualifier = userType.qualifier?.referenceExpression
         val qualifierDescriptor = qualifier?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
-        val targetParent = getTargetParentByQualifier(file, qualifier != null, qualifierDescriptor) ?: return null
+        val targetParents = getTargetParentsByQualifier(file, qualifier != null, qualifierDescriptor).ifEmpty { return null }
 
         val anyType = module.builtIns.nullableAnyType
         val valueArguments = element.valueArguments
@@ -80,7 +81,7 @@ object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUs
 
         return ClassInfo(
                 name = calleeRef.getReferencedName(),
-                targetParent = targetParent,
+                targetParents = targetParents,
                 expectedTypeInfo = TypeInfo.Empty,
                 parameterInfos = parameterInfos,
                 open = !isAnnotation,

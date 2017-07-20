@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<KtUserType>() {
@@ -82,14 +83,14 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
         val qualifier = element.qualifier?.referenceExpression
         val qualifierDescriptor = qualifier?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
-        val targetParent = getTargetParentByQualifier(file, qualifier != null, qualifierDescriptor) ?: return null
+        val targetParents = getTargetParentsByQualifier(file, qualifier != null, qualifierDescriptor).ifEmpty { return null }
         val expectedUpperBound = getExpectedUpperBound(element, context)
 
         val anyType = module.builtIns.anyType
 
         return ClassInfo(
                 name = name,
-                targetParent = targetParent,
+                targetParents = targetParents,
                 expectedTypeInfo = expectedUpperBound?.let { TypeInfo.ByType(it, Variance.INVARIANT) } ?: TypeInfo.Empty,
                 typeArguments = element.typeArgumentsAsTypes.map {
                     if (it != null) TypeInfo(it, Variance.INVARIANT) else TypeInfo(anyType, Variance.INVARIANT)

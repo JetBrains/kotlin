@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<KtCallExpression>() {
@@ -43,11 +44,12 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
         val (context, moduleDescriptor) = element.analyzeFullyAndGetResult()
         val file = element.containingFile as? KtFile ?: return emptyList()
         val call = element.getCall(context) ?: return emptyList()
-        val targetParent = getTargetParentByCall(call, file, context) ?: return emptyList()
+        val targetParents = getTargetParentsByCall(call, file, context).ifEmpty { return emptyList() }
 
         val classKind = if (inAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS
         val fullCallExpr = element.getQualifiedExpressionForSelectorOrThis()
-        if (!fullCallExpr.getInheritableTypeInfo(context, moduleDescriptor, targetParent).second(classKind)) return emptyList()
+        val expectedType = fullCallExpr.guessTypeForClass(context, moduleDescriptor)
+        if (expectedType != null && !targetParents.any { getClassKindFilter(expectedType, it)(classKind) }) return emptyList()
 
         return listOf(classKind)
     }
@@ -75,7 +77,7 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
         val (context, moduleDescriptor) = callExpr.analyzeFullyAndGetResult()
 
         val call = callExpr.getCall(context) ?: return null
-        val targetParent = getTargetParentByCall(call, file, context) ?: return null
+        val targetParents = getTargetParentsByCall(call, file, context).ifEmpty { return null }
         val inner = isInnerClassExpected(call)
 
         val valueArguments = callExpr.valueArguments
@@ -90,14 +92,17 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
 
         val classKind = if (inAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS
 
-        val (expectedTypeInfo, filter) = fullCallExpr.getInheritableTypeInfo(context, moduleDescriptor, targetParent)
-        if (!filter(classKind)) return null
+        val expectedType = fullCallExpr.guessTypeForClass(context, moduleDescriptor)
+        val expectedTypeInfo = expectedType?.toClassTypeInfo() ?: TypeInfo.Empty
+        val filteredParents = if (expectedType != null) {
+            targetParents.filter { getClassKindFilter(expectedType, it)(classKind) }.ifEmpty { return null }
+        } else targetParents
 
         val typeArgumentInfos = if (inAnnotationEntry) Collections.emptyList() else callExpr.getTypeInfoForTypeArguments()
 
         return ClassInfo(
                 name = name,
-                targetParent = targetParent,
+                targetParents = filteredParents,
                 expectedTypeInfo = expectedTypeInfo,
                 inner = inner,
                 typeArguments = typeArgumentInfos,
