@@ -23,13 +23,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootAdapter
 import com.intellij.openapi.roots.ModuleRootEvent
+import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.startup.StartupManager
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinNotificationManager
-import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
-import org.jetbrains.kotlin.idea.configuration.isModuleConfigured
-import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
+import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.versions.collectModulesWithOutdatedRuntime
 import org.jetbrains.kotlin.idea.versions.findOutdatedKotlinLibraries
@@ -44,10 +41,11 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
         NotificationsConfiguration.getNotificationsConfiguration().register(CONFIGURE_NOTIFICATION_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true)
 
         val connection = project.messageBus.connect()
-        connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootAdapter() {
+        connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
             override fun rootsChanged(event: ModuleRootEvent?) {
                 if (notificationPostponed && !isSyncing) {
-                    DumbService.getInstance(myProject).smartInvokeLater {
+                    ApplicationManager.getApplication().executeOnPooledThread {
+                        DumbService.getInstance(myProject).waitForSmartMode()
                         if (!isSyncing) {
                             notificationPostponed = false
                             showConfigureKotlinNotificationIfNeeded(myProject,
@@ -59,7 +57,7 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
                 if (ConfigureKotlinNotificationManager.getVisibleNotifications(project).isNotEmpty()) {
                     ApplicationManager.getApplication().executeOnPooledThread {
                         DumbService.getInstance(myProject).waitForSmartMode()
-                        if (getModulesWithKotlinFiles(project).all(::isModuleConfigured)) {
+                        if (getConfigurableModulesWithKotlinFiles(project).all(::isModuleConfigured)) {
                             ApplicationManager.getApplication().invokeLater {
                                 ConfigureKotlinNotificationManager.expireOldNotifications(project)
                             }
@@ -74,18 +72,22 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
         super.projectOpened()
 
         StartupManager.getInstance(myProject).registerPostStartupActivity {
-            DumbService.getInstance(myProject).smartInvokeLater {
+            ApplicationManager.getApplication().executeOnPooledThread {
+                DumbService.getInstance(myProject).waitForSmartMode()
+
                 for (module in getModulesWithKotlinFiles(myProject)) {
                     module.getAndCacheLanguageLevelByDependencies()
                 }
 
                 val libraries = findOutdatedKotlinLibraries(myProject)
                 if (!libraries.isEmpty()) {
-                    notifyOutdatedKotlinRuntime(myProject, libraries)
+                    ApplicationManager.getApplication().invokeLater {
+                        notifyOutdatedKotlinRuntime(myProject, libraries)
+                    }
                 }
-                if (syncDepth.get() == 0) {
-                    showConfigureKotlinNotificationIfNeeded(myProject,
-                                                            collectModulesWithOutdatedRuntime(libraries))
+                if (!isSyncing) {
+                    val excludeModules = collectModulesWithOutdatedRuntime(libraries)
+                    showConfigureKotlinNotificationIfNeeded(myProject, excludeModules)
                 }
                 else {
                     notificationPostponed = true

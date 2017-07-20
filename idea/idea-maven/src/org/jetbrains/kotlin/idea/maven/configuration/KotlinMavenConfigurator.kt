@@ -48,7 +48,8 @@ abstract class KotlinMavenConfigurator
                               override val name: String,
                               override val presentableText: String) : KotlinProjectConfigurator {
 
-    override fun getStatus(module: Module): ConfigureKotlinStatus {
+    override fun getStatus(moduleSourceRootGroup: ModuleSourceRootGroup): ConfigureKotlinStatus {
+        val module = moduleSourceRootGroup.baseModule
         if (!KotlinPluginUtil.isMavenModule(module))
             return ConfigureKotlinStatus.NON_APPLICABLE
 
