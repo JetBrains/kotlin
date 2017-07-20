@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
-import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriority
+import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
@@ -154,7 +154,7 @@ private fun KtFile.findContextElement(): KtElement? {
 private var PsiElement.DEBUG_SMART_CAST: PsiElement? by CopyableUserDataProperty(Key.create("DEBUG_SMART_CAST"))
 
 private fun KtCodeFragment.markSmartCasts() {
-    val bindingContext = runInReadActionWithWriteActionPriority { analyzeFully() }
+    val bindingContext = runInReadActionWithWriteActionPriorityWithPCE { analyzeFully() }
     val factory = KtPsiFactory(project)
 
     getContentElement()?.forEachDescendantOfType<KtExpression> { expression ->

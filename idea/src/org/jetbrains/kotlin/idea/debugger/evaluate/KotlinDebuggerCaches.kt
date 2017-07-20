@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.idea.debugger.BinaryCacheKey
 import org.jetbrains.kotlin.idea.debugger.BytecodeDebugInfo
 import org.jetbrains.kotlin.idea.debugger.WeakBytecodeDebugInfoStorage
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
-import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriority
+import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
@@ -177,12 +177,12 @@ class KotlinDebuggerCaches(project: Project) {
                 runReadAction { element as? KtElement ?: PsiTreeUtil.getParentOfType(element, KtElement::class.java)!! }
 
         private fun createTypeMapperForLibraryFile(element: KtElement, file: KtFile): KotlinTypeMapper =
-                runInReadActionWithWriteActionPriority {
+                runInReadActionWithWriteActionPriorityWithPCE {
                     createTypeMapper(file, element.analyzeAndGetResult())
                 }
 
         private fun createTypeMapperForSourceFile(file: KtFile): KotlinTypeMapper =
-                runInReadActionWithWriteActionPriority {
+                runInReadActionWithWriteActionPriorityWithPCE {
                     createTypeMapper(file, file.analyzeFullyAndGetResult().apply(AnalysisResult::throwIfError))
                 }
 
