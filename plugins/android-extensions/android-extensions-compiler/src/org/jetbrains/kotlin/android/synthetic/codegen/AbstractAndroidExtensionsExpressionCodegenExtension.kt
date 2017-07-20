@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.android.synthetic.codegen
 
+import kotlinx.android.extensions.CacheImplementation
 import kotlinx.android.extensions.CacheImplementation.NO_CACHE
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidContainerType.LAYOUT_CONTAINER
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -51,9 +53,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         val CLEAR_CACHE_METHOD_NAME = "_\$_clearFindViewByIdCache"
         val ON_DESTROY_METHOD_NAME = "onDestroyView"
 
-        fun shouldCacheResource(resource: PropertyDescriptor): Boolean {
-            return (resource as? AndroidSyntheticProperty)?.shouldBeCached == true
-        }
+        fun shouldCacheResource(resource: PropertyDescriptor) = (resource as? AndroidSyntheticProperty)?.shouldBeCached == true
     }
 
     private class SyntheticPartsGenerateContext(
@@ -63,7 +63,10 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
             val classOrObject: KtClassOrObject,
             val containerOptions: ContainerOptionsProxy)
 
-    protected abstract fun isExperimental(clazz: KtClassOrObject): Boolean
+    protected abstract fun isExperimental(element: KtElement?): Boolean
+    protected abstract fun getGlobalCacheImpl(element: KtElement?): CacheImplementation
+
+    private fun ContainerOptionsProxy.getCacheOrDefault(element: KtElement?) = this.cache ?: getGlobalCacheImpl(element)
 
     override fun applyProperty(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
         val resultingDescriptor = resolvedCall.resultingDescriptor
@@ -79,7 +82,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
 
         return if (targetCallable.name.asString() == AndroidConst.CLEAR_FUNCTION_NAME) {
             val container = resolvedCall.getReceiverDeclarationDescriptor() as? ClassDescriptor ?: return null
-            generateClearFindViewByIdCacheFunctionCall(receiver, container, c)
+            generateClearFindViewByIdCacheFunctionCall(receiver, resolvedCall, container, c)
         }
         else {
             null
@@ -88,12 +91,13 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
 
     private fun generateClearFindViewByIdCacheFunctionCall(
             receiver: StackValue,
+            resolvedCall: ResolvedCall<*>,
             container: ClassDescriptor,
             c: ExpressionCodegenExtension.Context
     ): StackValue? {
         val containerOptions = ContainerOptionsProxy.create(container)
 
-        if (!containerOptions.cache.hasCache) {
+        if (!containerOptions.getCacheOrDefault(resolvedCall.call.calleeExpression).hasCache) {
             return StackValue.functionCall(Type.VOID_TYPE) {}
         }
 
@@ -119,7 +123,8 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         val container = resolvedCall.getReceiverDeclarationDescriptor() as? ClassDescriptor ?: return null
 
         val containerOptions = ContainerOptionsProxy.create(container)
-        return ResourcePropertyStackValue(receiver, c.typeMapper, resource, container, containerOptions, androidPackage)
+        return ResourcePropertyStackValue(receiver, c.typeMapper, resource, container,
+                                          containerOptions, androidPackage, getGlobalCacheImpl(resolvedCall.call.calleeExpression))
     }
 
     private fun ResolvedCall<*>.getReceiverDeclarationDescriptor(): ClassifierDescriptor? {
@@ -134,7 +139,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         if (container.kind != ClassKind.CLASS || container.isInner || DescriptorUtils.isLocal(container)) return
 
         val containerOptions = ContainerOptionsProxy.create(container)
-        if (containerOptions.cache == NO_CACHE) return
+        if (containerOptions.getCacheOrDefault(targetClass) == NO_CACHE) return
 
         if (containerOptions.containerType == LAYOUT_CONTAINER && !isExperimental(targetClass)) {
             return
@@ -184,7 +189,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         val iv = InstructionAdapter(methodVisitor)
 
         val containerType = state.typeMapper.mapClass(container)
-        val cacheImpl = CacheMechanism.get(containerOptions, iv, containerType)
+        val cacheImpl = CacheMechanism.get(containerOptions.getCacheOrDefault(classOrObject), iv, containerType)
 
         cacheImpl.loadCache()
         val lCacheIsNull = Label()
@@ -199,7 +204,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
     }
 
     private fun SyntheticPartsGenerateContext.generateCacheField() {
-        val cacheImpl = CacheMechanism.getType(containerOptions)
+        val cacheImpl = CacheMechanism.getType(containerOptions.getCacheOrDefault(classOrObject))
         classBuilder.newField(JvmDeclarationOrigin.NO_ORIGIN, ACC_PRIVATE, PROPERTY_NAME, cacheImpl.descriptor, null, null)
     }
 
@@ -213,7 +218,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         methodVisitor.visitCode()
         val iv = InstructionAdapter(methodVisitor)
 
-        val cacheImpl = CacheMechanism.get(containerOptions, iv, containerAsmType)
+        val cacheImpl = CacheMechanism.get(containerOptions.getCacheOrDefault(classOrObject), iv, containerAsmType)
 
         fun loadId() = iv.load(1, Type.INT_TYPE)
 

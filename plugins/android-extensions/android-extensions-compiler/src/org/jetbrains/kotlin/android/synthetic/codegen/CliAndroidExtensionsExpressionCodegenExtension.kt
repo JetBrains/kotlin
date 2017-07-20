@@ -16,8 +16,13 @@
 
 package org.jetbrains.kotlin.android.synthetic.codegen
 
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import kotlinx.android.extensions.CacheImplementation
+import org.jetbrains.kotlin.psi.KtElement
 
-class CliAndroidExtensionsExpressionCodegenExtension(val isExperimental: Boolean) : AbstractAndroidExtensionsExpressionCodegenExtension() {
-    override fun isExperimental(clazz: KtClassOrObject) = isExperimental
+class CliAndroidExtensionsExpressionCodegenExtension(
+        val isExperimental: Boolean,
+        private val globalCacheImpl: CacheImplementation
+) : AbstractAndroidExtensionsExpressionCodegenExtension() {
+    override fun isExperimental(element: KtElement?) = isExperimental
+    override fun getGlobalCacheImpl(element: KtElement?) = globalCacheImpl
 }
