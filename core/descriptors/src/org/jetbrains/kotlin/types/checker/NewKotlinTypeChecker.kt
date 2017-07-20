@@ -116,9 +116,8 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
                 if (constructor.newTypeConstructor == null) {
                     constructor.newTypeConstructor = NewCapturedTypeConstructor(constructor.typeProjection, constructor.supertypes.map { it.unwrap() })
                 }
-                val newCapturedType = NewCapturedType(CaptureStatus.FOR_SUBTYPING, constructor.newTypeConstructor!!,
-                                                      lowerType, type.annotations, type.isMarkedNullable)
-                return newCapturedType
+                return NewCapturedType(CaptureStatus.FOR_SUBTYPING, constructor.newTypeConstructor!!,
+                                       lowerType, type.annotations, type.isMarkedNullable)
             }
 
             is IntegerValueTypeConstructor -> {

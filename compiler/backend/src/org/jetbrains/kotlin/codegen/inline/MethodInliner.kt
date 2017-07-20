@@ -716,10 +716,9 @@ class MethodInliner(
                 "Captured field template should start with $CAPTURED_FIELD_FOLD_PREFIX prefix"
             }
             val fin = FieldInsnNode(node.opcode, node.owner, node.name.substring(3), node.desc)
-            val field = fieldRemapper.findField(fin) ?: throw IllegalStateException(
+            return fieldRemapper.findField(fin) ?: throw IllegalStateException(
                     "Couldn't find captured field ${node.owner}.${node.name} in ${fieldRemapper.originalLambdaInternalName}"
             )
-            return field
         }
 
         private fun analyzeMethodNodeWithoutMandatoryTransformations(node: MethodNode): Array<Frame<SourceValue>?> {

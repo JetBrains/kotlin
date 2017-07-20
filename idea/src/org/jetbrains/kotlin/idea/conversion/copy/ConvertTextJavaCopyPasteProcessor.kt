@@ -262,7 +262,7 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
             }
         }
 
-        val copiedJavaCode = when (context) {
+        return when (context) {
             JavaContext.TOP_LEVEL -> createCopiedJavaCode(prefix, "$", text)
 
             JavaContext.CLASS_BODY -> createCopiedJavaCode(prefix, "$classDef {\n$\n}", text)
@@ -271,8 +271,6 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
 
             JavaContext.EXPRESSION -> createCopiedJavaCode(prefix, "$classDef {\nObject field = $\n}", text)
         }
-
-        return copiedJavaCode
     }
 
     private fun createCopiedJavaCode(prefix: String, templateWithoutPrefix: String, text: String): CopiedJavaCode {

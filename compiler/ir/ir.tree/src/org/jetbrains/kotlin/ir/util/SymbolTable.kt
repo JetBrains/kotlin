@@ -43,8 +43,7 @@ class SymbolTable {
                 unboundSymbols.remove(existing)
                 existing
             }
-            val owner = createOwner(symbol)
-            return owner
+            return createOwner(symbol)
         }
 
         inline fun referenced(d: D, createSymbol: () -> S): S {
@@ -115,8 +114,7 @@ class SymbolTable {
         inline fun declareLocal(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
             val scope = currentScope ?: throw AssertionError("No active scope")
             val symbol = scope.getLocal(d) ?: createSymbol().also { scope[d] = it }
-            val owner = createOwner(symbol)
-            return owner
+            return createOwner(symbol)
         }
 
         fun introduceLocal(descriptor: D, symbol: S) {

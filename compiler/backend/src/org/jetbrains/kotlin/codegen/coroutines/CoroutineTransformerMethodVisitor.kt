@@ -111,12 +111,11 @@ class CoroutineTransformerMethodVisitor(
         methodNode.instructions.apply {
             val startLabel = LabelNode()
             val defaultLabel = LabelNode()
-            val firstToInsertBefore = actualCoroutineStart
             val tableSwitchLabel = LabelNode()
             val lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0
 
             // tableswitch(this.label)
-            insertBefore(firstToInsertBefore,
+            insertBefore(actualCoroutineStart,
                          insnListOf(
                                  *withInstructionAdapter { loadCoroutineSuspendedMarker() }.toArray(),
                                  tableSwitchLabel,

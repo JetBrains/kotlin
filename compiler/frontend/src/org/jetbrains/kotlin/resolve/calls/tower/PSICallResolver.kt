@@ -463,11 +463,10 @@ class PSICallResolver(
             val newDataFlowInfo = (lhsResult as? DoubleColonLHS.Expression)?.dataFlowInfo ?: startDataFlowInfo
 
             // todo ChosenCallableReferenceDescriptor
-            val argument = CallableReferenceKotlinCallArgumentImpl(valueArgument, startDataFlowInfo, newDataFlowInfo,
-                                                                   ktExpression, argumentName, (lhsResult as? DoubleColonLHS.Type)?.type?.unwrap(),
-                                                                   ConstraintStorage.Empty) // todo
 
-            return argument
+            return CallableReferenceKotlinCallArgumentImpl(valueArgument, startDataFlowInfo, newDataFlowInfo,
+                                                           ktExpression, argumentName, (lhsResult as? DoubleColonLHS.Type)?.type?.unwrap(),
+                                                           ConstraintStorage.Empty)
         }
 
         // valueArgument.getArgumentExpression()!! instead of ktExpression is hack -- type info should be stored also for parenthesized expression

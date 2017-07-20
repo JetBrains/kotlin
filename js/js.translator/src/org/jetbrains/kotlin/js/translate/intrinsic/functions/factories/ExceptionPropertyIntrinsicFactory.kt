@@ -51,8 +51,7 @@ object ExceptionPropertyIntrinsicFactory : FunctionIntrinsicFactory {
                     .getContributedDescriptors(DescriptorKindFilter.CALLABLES)
                     .filterIsInstance<PropertyDescriptor>()
                     .first { it.overriddenDescriptors.any { it == property } }
-            val fieldRef = JsAstUtils.pureFqn(context.getNameForBackingField(currentClassProperty), callInfo.dispatchReceiver!!)
-            return fieldRef
+            return JsAstUtils.pureFqn(context.getNameForBackingField(currentClassProperty), callInfo.dispatchReceiver!!)
         }
     }
 }

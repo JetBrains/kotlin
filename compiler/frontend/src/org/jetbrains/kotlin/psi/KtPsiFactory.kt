@@ -274,9 +274,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         val file = createFile(text)
         val declarations = file.declarations
         assert(declarations.size == 1) { "${declarations.size} declarations in $text" }
-        @Suppress("UNCHECKED_CAST")
-        val result = declarations.first() as TDeclaration
-        return result
+        return declarations.first() as TDeclaration
     }
 
     fun createNameIdentifier(name: String): PsiElement {

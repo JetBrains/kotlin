@@ -37,8 +37,7 @@ class KotlinScriptDependenciesClassFinder(project: Project,
         object : ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>() {
             override fun create(file: VirtualFile): PackageDirectoryCache? {
                 val scriptClasspath = scriptDependenciesManager.getScriptClasspath(file)
-                val v = createCache(scriptClasspath)
-                return v
+                return createCache(scriptClasspath)
             }
         }
     }

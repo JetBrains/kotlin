@@ -90,7 +90,7 @@ object LambdaItems {
             explicitParameterTypes: Boolean
     ): LookupElement {
         val lookupString = LambdaSignatureTemplates.lambdaPresentation(functionType, signaturePresentation)
-        val lookupElement = LookupElementBuilder.create(lookupString)
+        return LookupElementBuilder.create(lookupString)
                 .withInsertHandler({ context, lookupElement ->
                                        val offset = context.startOffset
                                        val placeholder = "{}"
@@ -101,6 +101,5 @@ object LambdaItems {
                 .suppressAutoInsertion()
                 .assignSmartCompletionPriority(SmartCompletionItemPriority.LAMBDA)
                 .addTailAndNameSimilarity(functionExpectedInfos.filter { it.fuzzyType?.type == functionType })
-        return lookupElement
     }
 }

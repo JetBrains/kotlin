@@ -73,7 +73,7 @@ object LambdaSignatureItems {
             SmartCompletionItemPriority.LAMBDA_SIGNATURE_EXPLICIT_PARAMETER_TYPES
         else
             SmartCompletionItemPriority.LAMBDA_SIGNATURE
-        val lookupElement = LookupElementBuilder.create(lookupString)
+        return LookupElementBuilder.create(lookupString)
                 .withInsertHandler({ context, lookupElement ->
                                        val offset = context.startOffset
                                        val placeholder = "{}"
@@ -82,6 +82,5 @@ object LambdaSignatureItems {
                                    })
                 .suppressAutoInsertion()
                 .assignSmartCompletionPriority(priority)
-        return lookupElement
     }
 }

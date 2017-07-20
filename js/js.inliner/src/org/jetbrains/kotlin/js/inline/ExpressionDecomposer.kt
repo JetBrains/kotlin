@@ -378,11 +378,10 @@ internal class ExpressionDecomposer private constructor(
             get() = name.makeRef()
 
         fun assign(value: JsExpression): JsStatement {
-            val statement = JsExpressionStatement(assignment(nameRef, value)).apply {
+            return JsExpressionStatement(assignment(nameRef, value)).apply {
                 synthetic = true
                 expression.source = sourceInfo ?: value.source
             }
-            return statement
         }
     }
 

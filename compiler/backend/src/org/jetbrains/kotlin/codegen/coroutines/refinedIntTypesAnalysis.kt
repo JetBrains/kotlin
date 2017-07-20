@@ -144,7 +144,7 @@ internal fun performRefinedTypeAnalysis(methodNode: MethodNode, thisName: String
         }
     })
 
-    val refinedFrames = Array(basicFrames.size) {
+    return Array(basicFrames.size) {
         insnIndex ->
         val current = Frame(basicFrames[insnIndex] ?: return@Array null)
 
@@ -158,8 +158,6 @@ internal fun performRefinedTypeAnalysis(methodNode: MethodNode, thisName: String
 
         current
     }
-
-    return refinedFrames
 }
 
 private fun AbstractInsnNode.isIntLoad() = opcode == Opcodes.ILOAD

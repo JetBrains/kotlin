@@ -166,7 +166,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
     }
 
     private fun createFixes(property: KtProperty, conflictingExtension: SyntheticJavaPropertyDescriptor, isOnTheFly: Boolean): Array<IntentionWrapper> {
-        val fixes = if (isSameAsSynthetic(property, conflictingExtension)) {
+        return if (isSameAsSynthetic(property, conflictingExtension)) {
             val fix1 = IntentionWrapper(DeleteRedundantExtensionAction(property), property.containingFile)
             // don't add the second fix when on the fly to allow code cleanup
             val fix2 = if (isOnTheFly)
@@ -178,7 +178,6 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
         else {
             emptyArray()
         }
-        return fixes
     }
 
     private class DeleteRedundantExtensionAction(property: KtProperty) : KotlinQuickFixAction<KtProperty>(property) {

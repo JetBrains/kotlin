@@ -151,13 +151,13 @@ class ReplOutputProcessor(
         logError(this::class.java, internalErrorText)
     }
 
-    private fun getAttributesForSeverity(start: Int, end: Int, severity: Severity): TextAttributes {
-        val attributes = when (severity) {
-            Severity.ERROR   -> getAttributesForSeverity(HighlightInfoType.ERROR, HighlightSeverity.ERROR, CodeInsightColors.ERRORS_ATTRIBUTES, start, end)
-            Severity.WARNING -> getAttributesForSeverity(HighlightInfoType.WARNING, HighlightSeverity.WARNING, CodeInsightColors.WARNINGS_ATTRIBUTES, start, end)
-            Severity.INFO    -> getAttributesForSeverity(HighlightInfoType.WEAK_WARNING, HighlightSeverity.WEAK_WARNING, CodeInsightColors.WEAK_WARNING_ATTRIBUTES, start, end)
-        }
-        return attributes
+    private fun getAttributesForSeverity(start: Int, end: Int, severity: Severity): TextAttributes = when (severity) {
+        Severity.ERROR   ->
+            getAttributesForSeverity(HighlightInfoType.ERROR, HighlightSeverity.ERROR, CodeInsightColors.ERRORS_ATTRIBUTES, start, end)
+        Severity.WARNING ->
+            getAttributesForSeverity(HighlightInfoType.WARNING, HighlightSeverity.WARNING, CodeInsightColors.WARNINGS_ATTRIBUTES, start, end)
+        Severity.INFO    ->
+            getAttributesForSeverity(HighlightInfoType.WEAK_WARNING, HighlightSeverity.WEAK_WARNING, CodeInsightColors.WEAK_WARNING_ATTRIBUTES, start, end)
     }
 
     private fun getAttributesForSeverity(

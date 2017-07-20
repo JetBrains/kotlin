@@ -117,12 +117,11 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         private fun transformEnumConstructor(enumConstructor: IrConstructor): IrConstructor {
             val constructorDescriptor = enumConstructor.descriptor
             val loweredConstructorDescriptor = lowerEnumConstructor(constructorDescriptor)
-            val loweredEnumConstructor = IrConstructorImpl(
+            return IrConstructorImpl(
                     enumConstructor.startOffset, enumConstructor.endOffset, enumConstructor.origin,
                     loweredConstructorDescriptor,
                     enumConstructor.body!! // will be transformed later
             )
-            return loweredEnumConstructor
         }
 
         private fun lowerEnumConstructor(constructorDescriptor: ClassConstructorDescriptor): ClassConstructorDescriptor {
@@ -221,10 +220,9 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
             val irValuesInitializer = createSyntheticValuesFieldInitializerExpression()
 
-            val irField = IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_VALUES,
-                                      valuesFieldDescriptor,
-                                      IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValuesInitializer))
-            return irField
+            return IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_VALUES,
+                               valuesFieldDescriptor,
+                               IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValuesInitializer))
         }
 
         private fun createSyntheticValuesFieldInitializerExpression(): IrExpression =

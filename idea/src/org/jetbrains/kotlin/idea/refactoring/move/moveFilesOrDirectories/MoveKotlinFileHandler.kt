@@ -91,7 +91,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
             }
         }
 
-        val declarationMoveProcessor = MoveKotlinDeclarationsProcessor(
+        return MoveKotlinDeclarationsProcessor(
                 MoveDeclarationsDescriptor(
                         project = project,
                         elementsToMove = psiFile.declarations.filterIsInstance<KtNamedDeclaration>(),
@@ -102,7 +102,6 @@ class MoveKotlinFileHandler : MoveFileHandler() {
                 ),
                 Mover.Idle
         )
-        return declarationMoveProcessor
     }
 
     override fun canProcessElement(element: PsiFile?): Boolean {

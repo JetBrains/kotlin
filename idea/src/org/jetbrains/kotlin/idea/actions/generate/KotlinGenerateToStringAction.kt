@@ -113,12 +113,11 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
 
         protected fun renderVariableValue(variableDescriptor: VariableDescriptor, ref: String): String {
             val type = variableDescriptor.type
-            val rhs = when {
+            return when {
                 KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type) -> "\${java.util.Arrays.toString($ref)}"
                 KotlinBuiltIns.isString(type) -> "'$$ref'"
                 else -> "$$ref"
             }
-            return rhs
         }
 
         abstract fun generate(info: Info): String

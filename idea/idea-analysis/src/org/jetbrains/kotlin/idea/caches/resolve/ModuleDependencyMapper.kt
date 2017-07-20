@@ -120,8 +120,7 @@ fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
 
     val sdksInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map { SdkInfo(project, it) }
 
-    val collectAllModuleInfos = modulesSourcesInfos + librariesInfos + sdksInfos
-    return collectAllModuleInfos
+    return modulesSourcesInfos + librariesInfos + sdksInfos
 }
 
 private fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns = when {

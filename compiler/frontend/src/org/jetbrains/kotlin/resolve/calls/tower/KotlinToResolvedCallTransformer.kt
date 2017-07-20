@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import java.util.*
-import kotlin.collections.HashMap
 
 
 class KotlinToResolvedCallTransformer(
@@ -112,7 +111,7 @@ class KotlinToResolvedCallTransformer(
             return this
         }
 
-        val resolvedCall = when (completedCall) {
+        return when (completedCall) {
             is CompletedKotlinCall.Simple -> {
                 NewResolvedCallImpl<D>(completedCall).runIfTraceNotNull(this::bindResolvedCall).runIfTraceNotNull(this::runArgumentsChecks)
             }
@@ -127,8 +126,6 @@ class KotlinToResolvedCallTransformer(
                 (resolvedCall as ResolvedCall<D>)
             }
         }
-
-        return resolvedCall
     }
 
     private fun runCallCheckers(resolvedCall: ResolvedCall<*>, callCheckerContext: CallCheckerContext) {
@@ -333,8 +330,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>(): ResolvedCall<D> 
         if (argumentToParameterMap == null) {
             argumentToParameterMap = argumentToParameterMap(resultingDescriptor, valueArguments)
         }
-        val argumentMatch = argumentToParameterMap!![valueArgument] ?: return ArgumentUnmapped
-        return argumentMatch
+        return argumentToParameterMap!![valueArgument] ?: ArgumentUnmapped
     }
 
     override fun getDataFlowInfoForArguments() = object : DataFlowInfoForArguments {

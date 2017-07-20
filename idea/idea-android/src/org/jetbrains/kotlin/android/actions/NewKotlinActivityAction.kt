@@ -194,8 +194,7 @@ class NewKotlinActivityAction: AnAction(KotlinIcons.ACTIVITY) {
         val project = e.project
         if (project == null || project.isDisposed) return null
         val module = LangDataKeys.MODULE.getData(e.dataContext)
-        val facet = if (module != null) AndroidFacet.getInstance(module) else null
-        return facet
+        return if (module != null) AndroidFacet.getInstance(module) else null
     }
 
     private fun isVisible(facet: AndroidFacet): Boolean {

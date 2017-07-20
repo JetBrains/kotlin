@@ -108,11 +108,10 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
         }
         parent is KtCallExpression -> {
             //This is in case `a().b()`
-            val callExpression = parent
-            val grandParent = callExpression.parent
+            val grandParent = parent.parent
             if (grandParent is KtQualifiedExpression) {
                 val parentsReceiver = grandParent.receiverExpression
-                if (parentsReceiver != callExpression) {
+                if (parentsReceiver != parent) {
                     return parentsReceiver
                 }
             }

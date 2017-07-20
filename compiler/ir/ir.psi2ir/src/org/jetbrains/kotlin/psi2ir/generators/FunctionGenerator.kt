@@ -173,13 +173,12 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     private fun generateReceiverExpressionForDefaultPropertyAccessor(ktProperty: KtElement, property: PropertyDescriptor): IrExpression? {
         val containingDeclaration = property.containingDeclaration
-        val receiver = when (containingDeclaration) {
+        return when (containingDeclaration) {
             is ClassDescriptor ->
                 IrGetValueImpl(ktProperty.startOffset, ktProperty.endOffset,
                                context.symbolTable.referenceValue(containingDeclaration.thisAsReceiverParameter))
             else -> null
         }
-        return receiver
     }
 
     fun generatePrimaryConstructor(
