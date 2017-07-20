@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.inline.InlineOptionsDialog
@@ -29,7 +31,7 @@ class KotlinInlineValDialog(
         private val reference: KtSimpleNameReference?,
         private val replacementStrategy: UsageReplacementStrategy,
         private val assignmentToDelete: KtBinaryExpression?
- ) : InlineOptionsDialog(property.project, true, property) {
+) : InlineOptionsDialog(property.project, true, property) {
 
     private var occurrenceCount = initOccurrencesNumber(property)
 
@@ -40,8 +42,28 @@ class KotlinInlineValDialog(
     init {
         myInvokedOnReference = reference != null
         title = refactoringName
+        setPreviewResults(shouldBeShown())
+        if (forSimpleLocal()) {
+            setDoNotAskOption(object : DialogWrapper.DoNotAskOption {
+                override fun isToBeShown() = EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog
+
+                override fun setToBeShown(value: Boolean, exitCode: Int) {
+                    EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog = value
+                }
+
+                override fun canBeHidden() = true
+
+                override fun shouldSaveOptionsOnCancel() = false
+
+                override fun getDoNotShowMessage() = "Do not show for local variables in future"
+            })
+        }
         init()
     }
+
+    private fun forSimpleLocal() = property.isLocal && (reference == null || occurrenceCount == 1)
+
+    fun shouldBeShown() = !forSimpleLocal() || EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog
 
     override fun allowInlineAll() = true
 
