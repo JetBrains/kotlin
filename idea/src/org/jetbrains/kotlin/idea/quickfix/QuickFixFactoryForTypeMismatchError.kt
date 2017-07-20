@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunction
@@ -115,15 +116,24 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             expressionTypeDeclaration?.let { actions.add(LetImplementInterfaceFix(it, expectedType, expressionType)) }
         }
 
+        fun KtExpression.getTopMostQualifiedForSelectorIfAny(): KtExpression {
+            var qualifiedOrThis = this
+            do {
+                val element = qualifiedOrThis
+                qualifiedOrThis = element.getQualifiedExpressionForSelectorOrThis()
+            } while (qualifiedOrThis !== element)
+            return qualifiedOrThis
+        }
+
         // We don't want to cast a cast or type-asserted expression:
         if (diagnosticElement !is KtBinaryExpressionWithTypeRHS && diagnosticElement.parent !is KtBinaryExpressionWithTypeRHS) {
-            actions.add(CastExpressionFix(diagnosticElement, expectedType))
+            actions.add(CastExpressionFix(diagnosticElement.getTopMostQualifiedForSelectorIfAny(), expectedType))
         }
 
         if (!expectedType.isMarkedNullable && org.jetbrains.kotlin.types.TypeUtils.isNullableType(expressionType)) {
             val nullableExpected = expectedType.makeNullable()
             if (expressionType.isSubtypeOf(nullableExpected)) {
-                actions.add(AddExclExclCallFix(diagnosticElement))
+                actions.add(AddExclExclCallFix(diagnosticElement.getTopMostQualifiedForSelectorIfAny()))
             }
         }
 
