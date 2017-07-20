@@ -1774,6 +1774,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("property.kt")
+            public void testProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/property.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyNotNull.kt")
+            public void testPropertyNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/propertyNotNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyWithProperty.kt")
+            public void testPropertyWithProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/propertyWithProperty.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("rhsEqualsNull.kt")
             public void testRhsEqualsNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/rhsEqualsNull.kt");

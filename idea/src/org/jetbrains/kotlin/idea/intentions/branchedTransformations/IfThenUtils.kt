@@ -88,9 +88,8 @@ fun KtThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
            && thrownExpression.valueArguments.isEmpty()
 }
 
-fun KtExpression.evaluatesTo(other: KtExpression): Boolean {
-    return this.unwrapBlockOrParenthesis().text == other.text
-}
+fun KtExpression.evaluatesTo(other: KtExpression): Boolean =
+        this.unwrapBlockOrParenthesis().text == other.text
 
 fun KtExpression.convertToIfNotNullExpression(conditionLhs: KtExpression, thenClause: KtExpression, elseClause: KtExpression?): KtIfExpression {
     val condition = KtPsiFactory(this).createExpressionByPattern("$0 != null", conditionLhs)
@@ -102,9 +101,8 @@ fun KtExpression.convertToIfNullExpression(conditionLhs: KtExpression, thenClaus
     return this.convertToIfStatement(condition, thenClause)
 }
 
-fun KtExpression.convertToIfStatement(condition: KtExpression, thenClause: KtExpression, elseClause: KtExpression? = null): KtIfExpression {
-    return replaced(KtPsiFactory(this).createIf(condition, thenClause, elseClause))
-}
+fun KtExpression.convertToIfStatement(condition: KtExpression, thenClause: KtExpression, elseClause: KtExpression? = null): KtIfExpression =
+        replaced(KtPsiFactory(this).createIf(condition, thenClause, elseClause))
 
 fun KtIfExpression.introduceValueForCondition(occurrenceInThenClause: KtExpression, editor: Editor?) {
     val project = this.project
@@ -157,14 +155,17 @@ data class IfThenToSelectData(
         val baseClause: KtExpression?,
         val negatedClause: KtExpression?
 ) {
+    internal fun baseClauseEvaluatesToReceiver() =
+            baseClause?.evaluatesTo(receiverExpression) == true
+
     internal fun replacedBaseClause(factory: KtPsiFactory): KtExpression {
         baseClause ?: error("Base clause must be not-null here")
         val newReceiver = (condition as? KtIsExpression)?.let {
             factory.createExpressionByPattern("$0 as? $1",
-                                              (baseClause as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: baseClause,
+                                              it.leftHandSide,
                                               it.typeReference!!)
         }
-        return if (baseClause.evaluatesTo(receiverExpression)) {
+        return if (baseClauseEvaluatesToReceiver()) {
             if (condition is KtIsExpression) newReceiver!! else baseClause
         }
         else {
@@ -177,9 +178,8 @@ data class IfThenToSelectData(
         }
     }
 
-    internal fun hasImplicitReceiver(): Boolean {
-        return baseClause.getResolvedCall(context)?.getImplicitReceiverValue() != null
-    }
+    internal fun hasImplicitReceiver(): Boolean =
+            baseClause.getResolvedCall(context)?.getImplicitReceiverValue() != null
 }
 
 internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData? {
