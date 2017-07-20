@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.android.synthetic.idea
+package org.jetbrains.kotlin.android.synthetic.codegen
 
 import kotlinx.android.extensions.CacheImplementation
-import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 import org.jetbrains.kotlin.psi.KtElement
 
-class IDEAndroidExtensionsExpressionCodegenExtension : AbstractAndroidExtensionsExpressionCodegenExtension() {
-    override fun isExperimental(element: KtElement?) =
-            element?.getModuleInfo()?.androidExtensionsIsExperimental ?: false
-
-    override fun getGlobalCacheImpl(element: KtElement?) =
-            element?.getModuleInfo()?.androidExtensionsGlobalCacheImpl ?: CacheImplementation.DEFAULT
+class CliAndroidOnDestroyClassBuilderInterceptorExtension(
+        private val globalCacheImpl: CacheImplementation
+) : AbstractAndroidOnDestroyClassBuilderInterceptorExtension() {
+    override fun getGlobalCacheImpl(element: KtElement) = globalCacheImpl
 }

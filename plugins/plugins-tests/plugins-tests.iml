@@ -42,5 +42,6 @@
     <orderEntry type="module" module-name="allopen-cli" scope="TEST" />
     <orderEntry type="module" module-name="noarg-cli" scope="TEST" />
     <orderEntry type="module" module-name="frontend.script" />
+    <orderEntry type="module" module-name="android-extensions-runtime" scope="TEST" />
   </component>
 </module>

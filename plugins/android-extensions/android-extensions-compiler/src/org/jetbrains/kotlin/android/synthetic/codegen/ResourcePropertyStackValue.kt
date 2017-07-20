@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.android.synthetic.codegen
 
+import kotlinx.android.extensions.CacheImplementation
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.shouldCacheResource
 import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.CACHED_FIND_VIEW_BY_ID_METHOD_NAME
@@ -35,7 +36,8 @@ class ResourcePropertyStackValue(
         val resource: PropertyDescriptor,
         val container: ClassDescriptor,
         private val containerOptions: ContainerOptionsProxy,
-        private val androidPackage: String
+        private val androidPackage: String,
+        private val globalCacheImpl: CacheImplementation
 ) : StackValue(typeMapper.mapType(resource.returnType!!)) {
     private val containerType get() = containerOptions.containerType
 
@@ -51,7 +53,7 @@ class ResourcePropertyStackValue(
 
         val syntheticProperty = resource as AndroidSyntheticProperty
 
-        if (containerOptions.cache.hasCache && shouldCacheResource(resource)) {
+        if ((containerOptions.cache ?: globalCacheImpl).hasCache && shouldCacheResource(resource)) {
             val declarationDescriptorType = typeMapper.mapType(container)
             receiver.put(declarationDescriptorType, v)
 
