@@ -1,6 +1,6 @@
 package kotlin.js
 
-//TODO: declare using number
+//TODO: deprecate
 /**
  * Exposes the JavaScript [Math object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Math) to Kotlin.
  */
@@ -28,6 +28,31 @@ public external object Math {
     public fun round(value: Number): Int
     public fun floor(value: Number): Int
     public fun ceil(value: Number): Int
+
+    @PublishedApi
+    internal fun trunc(value: Number): Double
+    @PublishedApi
+    internal fun sign(value: Number): Double
+
+    @PublishedApi
+    internal fun sinh(value: Double): Double
+    @PublishedApi
+    internal fun cosh(value: Double): Double
+    @PublishedApi
+    internal fun tanh(value: Double): Double
+
+    @PublishedApi
+    internal fun hypot(x: Double, y: Double): Double
+
+    @PublishedApi
+    internal fun expm1(value: Double): Double
+
+    @PublishedApi
+    internal fun log10(value: Double): Double
+    @PublishedApi
+    internal fun log2(value: Double): Double
+    @PublishedApi
+    internal fun log1p(value: Double): Double
 }
 
 /**
