@@ -177,19 +177,18 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
     }
 
     private fun analyzeSingleImport(result: Result, importedFqName: FqName?, isAllUnder: Boolean, aliasName: String?): Result {
-        val qName = importedFqName
         if (!isAllUnder) {
-            if (qName?.asString() == targetClassFqName &&
+            if (importedFqName?.asString() == targetClassFqName &&
                 (aliasName == null || aliasName == targetShortName)) {
                 return result.changeTo(Result.Found)
             }
-            else if (qName?.shortName()?.asString() == targetShortName &&
-                     qName.parent().asString() in conflictingPackages &&
+            else if (importedFqName?.shortName()?.asString() == targetShortName &&
+                     importedFqName.parent().asString() in conflictingPackages &&
                      aliasName == null) {
                 return result.changeTo(Result.FoundOther)
             }
-            else if (qName?.shortName()?.asString() == targetShortName &&
-                     qName.parent().asString() in packagesWithTypeAliases &&
+            else if (importedFqName?.shortName()?.asString() == targetShortName &&
+                     importedFqName.parent().asString() in packagesWithTypeAliases &&
                      aliasName == null) {
                 return Result.Ambiguity
             }
@@ -199,9 +198,9 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
         }
         else {
             when {
-                qName?.asString() == targetPackage -> return result.changeTo(Result.Found)
-                qName?.asString() in conflictingPackages -> return result.changeTo(Result.FoundOther)
-                qName?.asString() in packagesWithTypeAliases -> return Result.Ambiguity
+                importedFqName?.asString() == targetPackage -> return result.changeTo(Result.Found)
+                importedFqName?.asString() in conflictingPackages -> return result.changeTo(Result.FoundOther)
+                importedFqName?.asString() in packagesWithTypeAliases -> return Result.Ambiguity
             }
         }
         return result

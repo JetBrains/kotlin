@@ -94,8 +94,7 @@ class JvmStaticInCompanionObjectGenerator(
                     CallableMemberDescriptor.Kind.SYNTHESIZED,
                     false
             )
-            val staticFunctionDescriptor = copies[descriptor]!!
-            return staticFunctionDescriptor
+            return copies[descriptor]!!
         }
     }
 }

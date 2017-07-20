@@ -341,10 +341,9 @@ class ExpressionCodegen(
     }
 
     private fun findLocalIndex(descriptor: CallableDescriptor): Int {
-        val index = frame.getIndex(descriptor).apply {
+        return frame.getIndex(descriptor).apply {
             if (this < 0) throw AssertionError("Non-mapped local variable descriptor: $descriptor")
         }
-        return index
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: BlockInfo): StackValue {
@@ -453,13 +452,12 @@ class ExpressionCodegen(
         }
         else {
             mv.iconst(size)
-            val asmType = elementType
             newArrayInstruction(expression.type)
             for ((i, element)  in expression.elements.withIndex()) {
                 mv.dup()
                 StackValue.constant(i, Type.INT_TYPE).put(Type.INT_TYPE, mv)
-                val rightSide = gen(element, asmType, data)
-                StackValue.arrayElement(asmType, StackValue.onStack(asmType), StackValue.onStack(Type.INT_TYPE)).store(rightSide, mv)
+                val rightSide = gen(element, elementType, data)
+                StackValue.arrayElement(elementType, StackValue.onStack(elementType), StackValue.onStack(Type.INT_TYPE)).store(rightSide, mv)
             }
         }
         return expression.onStack

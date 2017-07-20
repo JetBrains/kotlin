@@ -186,8 +186,7 @@ private fun getInlineFunctionsIfAny(file: KtFile, offset: Int): List<KtNamedFunc
     val descriptor = containingFunction.resolveToDescriptor()
     if (!InlineUtil.isInline(descriptor)) return emptyList()
 
-    val inlineFunctionsCalls = DebuggerUtils.analyzeElementWithInline(containingFunction, false).filterIsInstance<KtNamedFunction>()
-    return inlineFunctionsCalls
+    return DebuggerUtils.analyzeElementWithInline(containingFunction, false).filterIsInstance<KtNamedFunction>()
 }
 
 private fun getInlineArgumentsIfAny(inlineFunctionCalls: List<KtCallExpression>): List<KtFunction> {

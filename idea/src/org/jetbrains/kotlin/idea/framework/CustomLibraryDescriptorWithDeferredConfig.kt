@@ -191,10 +191,8 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
     }
 
     private val configurator: KotlinWithLibraryConfigurator
-        get() {
-            val configurator = getConfiguratorByName(configuratorName) as KotlinWithLibraryConfigurator? ?: error("Configurator with name $configuratorName should exists")
-            return configurator
-        }
+        get() = getConfiguratorByName(configuratorName) as KotlinWithLibraryConfigurator?
+                ?: error("Configurator with name ${configuratorName} should exists")
 
     // Implements an API added in IDEA 16
     override fun createNewLibraryWithDefaultSettings(contextDirectory: VirtualFile?): NewLibraryConfiguration? {

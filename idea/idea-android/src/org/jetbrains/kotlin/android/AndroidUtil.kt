@@ -52,7 +52,7 @@ internal fun KtClass.findComponentDeclarationInManifest(manifest: Manifest): And
     val application = manifest.application ?: return null
     val type = (resolveToDescriptor(BodyResolveMode.PARTIAL) as? ClassDescriptor)?.defaultType ?: return null
 
-    val component = when {
+    return when {
         type.isSubclassOf(AndroidUtils.ACTIVITY_BASE_CLASS_NAME) ->
             application.activities?.find { it.activityClass.value?.qualifiedName == fqName?.asString() }?.activityClass
         type.isSubclassOf(AndroidUtils.SERVICE_CLASS_NAME) ->
@@ -63,8 +63,6 @@ internal fun KtClass.findComponentDeclarationInManifest(manifest: Manifest): And
             application.providers?.find { it.providerClass.value?.qualifiedName == fqName?.asString() }?.providerClass
         else -> null
     }
-
-    return component
 }
 
 internal fun PsiElement.getAndroidFacetForFile(): AndroidFacet? {

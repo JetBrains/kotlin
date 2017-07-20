@@ -126,9 +126,7 @@ class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerL
 
                 val newCallee = localFunctionData.transformedDescriptor
 
-                val newCall = createNewCall(expression, newCallee).fillArguments(localFunctionData, expression)
-
-                return newCall
+                return createNewCall(expression, newCallee).fillArguments(localFunctionData, expression)
             }
 
             private fun <T : IrMemberAccessExpression> T.fillArguments(calleeContext: LocalFunctionContext, oldExpression: IrMemberAccessExpression): T {
@@ -160,15 +158,13 @@ class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerL
                 val localFunctionData = localFunctions[oldCallee] ?: return expression
                 val newCallee = localFunctionData.transformedDescriptor
 
-                val newCallableReference = IrFunctionReferenceImpl(
+                return IrFunctionReferenceImpl(
                         expression.startOffset, expression.endOffset,
                         expression.type, // TODO functional type for transformed descriptor
                         newCallee,
                         remapTypeArguments(expression, newCallee),
                         expression.origin
                 ).fillArguments(localFunctionData, expression)
-
-                return newCallableReference
             }
 
             override fun visitReturn(expression: IrReturn): IrExpression {

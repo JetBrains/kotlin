@@ -286,9 +286,8 @@ internal fun getMarkedReturnLabelOrNull(returnInsn: AbstractInsnNode): String? {
     }
     val previous = returnInsn.previous
     if (previous is MethodInsnNode) {
-        val marker = previous
-        if (NON_LOCAL_RETURN == marker.owner) {
-            return marker.name
+        if (NON_LOCAL_RETURN == previous.owner) {
+            return previous.name
         }
     }
     return null
@@ -457,13 +456,12 @@ private fun isInlineMarker(insn: AbstractInsnNode, name: String?): Boolean {
         return false
     }
 
-    val methodInsnNode = insn
     return insn.getOpcode() == Opcodes.INVOKESTATIC &&
-           methodInsnNode.owner == INLINE_MARKER_CLASS_NAME &&
+           insn.owner == INLINE_MARKER_CLASS_NAME &&
            if (name != null)
-               methodInsnNode.name == name
+               insn.name == name
            else
-               methodInsnNode.name == INLINE_MARKER_BEFORE_METHOD_NAME || methodInsnNode.name == INLINE_MARKER_AFTER_METHOD_NAME
+               insn.name == INLINE_MARKER_BEFORE_METHOD_NAME || insn.name == INLINE_MARKER_AFTER_METHOD_NAME
 }
 
 internal fun isBeforeInlineMarker(insn: AbstractInsnNode): Boolean {

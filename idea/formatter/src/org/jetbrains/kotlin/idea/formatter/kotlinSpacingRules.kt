@@ -448,12 +448,11 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     .customRule { _, _, right ->
                 val rightNode = right.node!!
                 val rightType = rightNode.elementType
-                val numSpaces = spacesInSimpleFunction
                 if (rightType == VALUE_PARAMETER_LIST) {
-                    createSpacing(numSpaces, keepLineBreaks = false)
+                    createSpacing(spacesInSimpleFunction, keepLineBreaks = false)
                 }
                 else {
-                    createSpacing(numSpaces)
+                    createSpacing(spacesInSimpleFunction)
                 }
             }
 

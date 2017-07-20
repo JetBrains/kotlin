@@ -68,7 +68,8 @@ abstract class KotlinIntentionActionFactoryWithDelegate<E : KtElement, D : Any> 
         // Cache data so that it can be shared between quick fixes bound to the same element & diagnostic
         // Cache null values
         val cachedData: Ref<D> = Ref.create(extractFixData(originalElement, diagnostic))
-        val actions: List<QuickFixWithDelegateFactory> = try {
+
+        return try {
             createFixes(originalElementPointer, diagnostic) factory@ {
                 val element = originalElementPointer.element ?: return@factory null
                 val diagnosticElement = diagnosticElementPointer.element ?: return@factory null
@@ -86,7 +87,5 @@ abstract class KotlinIntentionActionFactoryWithDelegate<E : KtElement, D : Any> 
         finally {
             cachedData.set(null) // Do not keep cache after all actions are initialized
         }
-
-        return actions
     }
 }

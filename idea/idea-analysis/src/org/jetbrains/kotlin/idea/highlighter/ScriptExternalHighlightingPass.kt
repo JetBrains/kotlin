@@ -85,9 +85,8 @@ class ScriptExternalHighlightingPass(
     private fun Int.coerceLineIn(document: Document) = coerceIn(0, document.lineCount - 1)
 
     private fun Document.offsetBy(line: Int, col: Int): Int {
-        val offset = (getLineStartOffset(line) + col).
+        return (getLineStartOffset(line) + col).
                 coerceIn(getLineStartOffset(line), getLineEndOffset(line))
-        return offset
     }
 
     private fun ScriptReport.Severity.convertSeverity(): HighlightSeverity? {

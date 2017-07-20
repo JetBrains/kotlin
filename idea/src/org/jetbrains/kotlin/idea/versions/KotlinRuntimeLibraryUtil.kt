@@ -335,12 +335,11 @@ fun getStdlibArtifactId(sdk: Sdk?, version: String): String {
     }
 
     val sdkVersion = sdk?.let { JavaSdk.getInstance().getVersion(it) }
-    val artifactId = when (sdkVersion) {
+    return when (sdkVersion) {
         JavaSdkVersion.JDK_1_8, JavaSdkVersion.JDK_1_9 -> MAVEN_STDLIB_ID_JRE8
         JavaSdkVersion.JDK_1_7 -> MAVEN_STDLIB_ID_JRE7
         else -> MAVEN_STDLIB_ID
     }
-    return artifactId
 }
 
 fun getDefaultJvmTarget(sdk: Sdk?, version: String): JvmTarget? {

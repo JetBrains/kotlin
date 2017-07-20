@@ -232,17 +232,15 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
         }
 
         private fun findCleanInstructions(refValue: CapturedVarDescriptor, oldVarIndex: Int, instructions: InsnList): List<VarInsnNode> {
-            val cleanInstructions =
-                InsnSequence(instructions).filterIsInstance<VarInsnNode>().filter {
-                    it.opcode == Opcodes.ASTORE && it.`var` == oldVarIndex
-                }.filter {
-                    it.previous?.opcode == Opcodes.ACONST_NULL
-                }.filter {
-                    val operationIndex = instructions.indexOf(it)
-                    val localVariableNode = refValue.localVar!!
-                    instructions.indexOf(localVariableNode.start) < operationIndex && operationIndex < instructions.indexOf(localVariableNode.end)
-                }.toList()
-            return cleanInstructions
+            return InsnSequence(instructions).filterIsInstance<VarInsnNode>().filter {
+                it.opcode == Opcodes.ASTORE && it.`var` == oldVarIndex
+            }.filter {
+                it.previous?.opcode == Opcodes.ACONST_NULL
+            }.filter {
+                val operationIndex = instructions.indexOf(it)
+                val localVariableNode = refValue.localVar!!
+                instructions.indexOf(localVariableNode.start) < operationIndex && operationIndex < instructions.indexOf(localVariableNode.end)
+            }.toList()
         }
 
         private fun rewrite() {

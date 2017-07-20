@@ -42,8 +42,7 @@ class CommandExecutor(private val runner: KotlinConsoleRunner) {
     private fun getTrimmedCommandText(): String {
         val consoleView = runner.consoleView
         val document = consoleView.editorDocument
-        val inputText = document.text.trim()
-        return inputText
+        return document.text.trim()
     }
 
     private fun sendCommandToProcess(command: String) {

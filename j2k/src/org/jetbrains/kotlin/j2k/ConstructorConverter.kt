@@ -77,7 +77,7 @@ class ConstructorConverter(
                                   modifiers: Modifiers,
                                   fieldsToDrop: MutableSet<PsiField>,
                                   postProcessBody: (Block) -> Block): Constructor? {
-        val result = if (constructor == primaryConstructor) {
+        return if (constructor == primaryConstructor) {
             convertPrimaryConstructor(annotations, modifiers, fieldsToDrop, postProcessBody)
         }
         else {
@@ -104,7 +104,6 @@ class ConstructorConverter(
 
             SecondaryConstructor(annotations, modifiers, params, converter.deferredElement(::convertBody), thisOrSuperDeferred)
         }
-        return result
     }
 
     private fun findThisOrSuperCall(constructor: PsiMethod): PsiExpressionStatement? {

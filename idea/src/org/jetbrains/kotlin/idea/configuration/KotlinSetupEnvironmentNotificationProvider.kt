@@ -137,8 +137,7 @@ class KotlinSetupEnvironmentNotificationProvider(
                     }
                 }
             }
-            val configuratorsPopup = JBPopupFactory.getInstance().createListPopup(step)
-            return configuratorsPopup
+            return JBPopupFactory.getInstance().createListPopup(step)
         }
     }
 }

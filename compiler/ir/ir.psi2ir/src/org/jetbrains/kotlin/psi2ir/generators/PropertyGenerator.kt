@@ -129,7 +129,6 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     private fun getPropertyDescriptor(ktProperty: KtProperty): PropertyDescriptor {
         val variableDescriptor = getOrFail(BindingContext.VARIABLE, ktProperty)
-        val propertyDescriptor = variableDescriptor as? PropertyDescriptor ?: TODO("not a property?")
-        return propertyDescriptor
+        return variableDescriptor as? PropertyDescriptor ?: TODO("not a property?")
     }
 }

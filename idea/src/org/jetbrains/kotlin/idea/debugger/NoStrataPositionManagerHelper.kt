@@ -269,9 +269,8 @@ internal fun getLocationsOfInlinedLine(type: ReferenceType, position: SourcePosi
     }
 
     val lines = inlinedLinesNumbers(line + 1, position.file.name, FqName(type.name()), type.sourceName(), project, sourceSearchScope)
-    val inlineLocations = lines.flatMap { type.locationsOfLine(it) }
 
-    return inlineLocations
+    return lines.flatMap { type.locationsOfLine(it) }
 }
 
 fun isInCrossinlineArgument(ktElement: KtElement): Boolean {
@@ -313,13 +312,11 @@ private fun inlinedLinesNumbers(
     val mappingsToInlinedFile = smap.fileMappings.filter { it.name == inlineFileName }
     val mappingIntervals = mappingsToInlinedFile.flatMap { it.lineMappings }
 
-    val mappedLines = mappingIntervals.asSequence().
+    return mappingIntervals.asSequence().
             filter { rangeMapping -> rangeMapping.hasMappingForSource(inlineLineNumber) }.
             map { rangeMapping -> rangeMapping.mapSourceToDest(inlineLineNumber) }.
             filter { line -> line != -1 }.
             toList()
-
-    return mappedLines
 }
 
 @Volatile var emulateDexDebugInTests: Boolean = false

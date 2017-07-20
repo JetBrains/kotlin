@@ -159,8 +159,7 @@ fun KtExpression.guessTypes(
         }
         parent is KtTypeConstraint -> {
             // expression is on the left side of a type assertion
-            val constraint = parent
-            arrayOf(context[BindingContext.TYPE, constraint.boundTypeReference]!!)
+            arrayOf(context[BindingContext.TYPE, parent.boundTypeReference]!!)
         }
         this is KtDestructuringDeclarationEntry -> {
             // expression is on the lhs of a multi-declaration
@@ -188,15 +187,14 @@ fun KtExpression.guessTypes(
         }
         parent is KtProperty && parent.isLocal -> {
             // the expression is the RHS of a variable assignment with a specified type
-            val variable = parent
-            val typeRef = variable.typeReference
+            val typeRef = parent.typeReference
             if (typeRef != null) {
                 // and has a specified type
                 arrayOf(context[BindingContext.TYPE, typeRef]!!)
             }
             else {
                 // otherwise guess, based on LHS
-                variable.guessType(context)
+                parent.guessType(context)
             }
         }
         parent is KtPropertyDelegate -> {

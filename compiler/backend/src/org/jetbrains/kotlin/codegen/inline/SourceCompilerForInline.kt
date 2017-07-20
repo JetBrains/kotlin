@@ -169,8 +169,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
         val strategy = when (expression) {
             is KtCallableReferenceExpression -> {
-                val callableReferenceExpression = expression
-                val receiverExpression = callableReferenceExpression.receiverExpression
+                val receiverExpression = expression.receiverExpression
                 val receiverType = if (receiverExpression != null && state.bindingContext.getType(receiverExpression) != null)
                     state.typeMapper.mapType(state.bindingContext.getType(receiverExpression)!!)
                 else
@@ -187,7 +186,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                     FunctionReferenceGenerationStrategy(
                             state,
                             descriptor,
-                            callableReferenceExpression.callableReference
+                            expression.callableReference
                                     .getResolvedCallWithAssert(state.bindingContext),
                             receiverType, null,
                             true

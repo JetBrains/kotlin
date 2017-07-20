@@ -44,8 +44,7 @@ class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpres
     }
 
     override fun getReferencedNameElement(): PsiElement {
-        val element = findChildByType<PsiElement>(NAME_REFERENCE_EXPRESSIONS) ?: return this
-        return element
+        return findChildByType(NAME_REFERENCE_EXPRESSIONS) ?: this
     }
 
     override fun getIdentifier(): PsiElement? {

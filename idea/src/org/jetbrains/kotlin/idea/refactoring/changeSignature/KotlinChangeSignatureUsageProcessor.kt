@@ -513,8 +513,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         val parameterNames = HashSet<String>()
         val function = info.method
-        val element = function
-        val bindingContext = (element as KtElement).analyze(BodyResolveMode.FULL)
+        val bindingContext = (function as KtElement).analyze(BodyResolveMode.FULL)
         val oldDescriptor = ktChangeInfo.originalBaseFunctionDescriptor
         val containingDeclaration = oldDescriptor.containingDeclaration
 
@@ -557,7 +556,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             val parameterName = parameter.name
 
             if (!parameterNames.add(parameterName)) {
-                result.putValue(element, "Duplicating parameter '$parameterName'")
+                result.putValue(function, "Duplicating parameter '$parameterName'")
             }
 
             if (parametersScope != null) {

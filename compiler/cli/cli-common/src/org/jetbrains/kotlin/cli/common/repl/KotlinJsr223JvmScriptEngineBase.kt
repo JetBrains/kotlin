@@ -59,14 +59,13 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
         val codeLine = nextCodeLine(context, script)
         val state = getCurrentState(context)
         val result = replEvaluator.compileAndEval(state, codeLine, scriptArgs = overrideScriptArgs(context))
-        val ret = when (result) {
+        return when (result) {
             is ReplEvalResult.ValueResult -> result.value
             is ReplEvalResult.UnitResult -> null
             is ReplEvalResult.Error -> throw ScriptException(result.message)
             is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
             is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
         }
-        return ret
     }
 
     open fun compile(script: String, context: ScriptContext): CompiledScript {
@@ -91,14 +90,13 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
             throw ScriptException(e)
         }
 
-        val ret = when (result) {
+        return when (result) {
             is ReplEvalResult.ValueResult -> result.value
             is ReplEvalResult.UnitResult -> null
             is ReplEvalResult.Error -> throw ScriptException(result.message)
             is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
             is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
         }
-        return ret
     }
 
     class CompiledKotlinScript(val engine: KotlinJsr223JvmScriptEngineBase, val codeLine: ReplCodeLine, val compiledData: ReplCompileResult.CompiledClasses) : CompiledScript() {

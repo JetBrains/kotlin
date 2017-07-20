@@ -385,9 +385,7 @@ internal object KotlinConverter {
         val file = createAnalyzableFile("dummy.kt", text, context)
         val declarations = file.declarations
         assert(declarations.size == 1) { "${declarations.size} declarations in $text" }
-        @Suppress("UNCHECKED_CAST")
-        val result = declarations.first() as TDeclaration
-        return result
+        return declarations.first() as TDeclaration
     }
 
     internal fun KtContainerNode.getExpression(): KtExpression? =

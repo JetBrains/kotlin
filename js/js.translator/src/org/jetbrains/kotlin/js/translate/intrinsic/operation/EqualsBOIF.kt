@@ -124,18 +124,15 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
     override fun getSupportTokens() = OperatorConventions.EQUALS_OPERATIONS!!
 
-    override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? {
-        val result = when {
-            isEnumIntrinsicApplicable(descriptor, leftType, rightType) -> EnumEqualsIntrinsic
+    override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? =
+            when {
+                isEnumIntrinsicApplicable(descriptor, leftType, rightType) -> EnumEqualsIntrinsic
 
-            KotlinBuiltIns.isBuiltIn(descriptor) ||
-            TopLevelFIF.EQUALS_IN_ANY.test(descriptor) -> EqualsIntrinsic
+                KotlinBuiltIns.isBuiltIn(descriptor) ||
+                TopLevelFIF.EQUALS_IN_ANY.test(descriptor) -> EqualsIntrinsic
 
-            else -> null
-        }
-
-        return result
-    }
+                else -> null
+            }
 
     private fun isEnumIntrinsicApplicable(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): Boolean {
         return DescriptorUtils.isEnumClass(descriptor.containingDeclaration) && leftType != null && rightType != null &&
