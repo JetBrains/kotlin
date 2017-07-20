@@ -38,8 +38,16 @@ import javax.xml.parsers.DocumentBuilderFactory
 // Use apply plugin: 'kotlin-android-extensions' to enable Android Extensions in an Android project.
 class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
     override fun apply(project: Project) {
-        project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
+        val extension = project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
 
+        extension.setEvaluatedHandler { evaluatedExtension ->
+            if (evaluatedExtension.isExperimental) {
+                addAndroidExtensionsRuntimeIfNeeded(project)
+            }
+        }
+    }
+
+    private fun addAndroidExtensionsRuntimeIfNeeded(project: Project) {
         val kotlinPluginWrapper = project.plugins.findPlugin(KotlinAndroidPluginWrapper::class.java) ?: run {
             project.logger.error("'kotlin-android' plugin should be enabled before 'kotlin-android-extensions'")
             return
