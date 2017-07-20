@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.codeInsight.gradle
 
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.LibraryOrderEntry
@@ -27,9 +28,13 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
+import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootMap
+import org.jetbrains.kotlin.idea.configuration.allConfigurators
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -46,9 +51,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     @Test
     fun testJvmImport() {
         createProjectSubFile("build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
             buildscript {
                 repositories {
                     mavenCentral()
@@ -97,6 +99,48 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("-Xdump-declarations-to=tmpTest",
                                 compilerSettings!!.additionalArguments)
         }
+
+        assertAllModulesConfigured()
+    }
+
+    @Test
+    fun testJvmImportWithPlugin() {
+        createProjectSubFile("build.gradle", """
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.1.3"
+}
+
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.3"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+        """)
+        importProject()
+
+        assertAllModulesConfigured()
     }
 
     @Test
@@ -227,6 +271,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("-Xdump-declarations-to=tmpTest",
                                 compilerSettings!!.additionalArguments)
         }
+
+        assertAllModulesConfigured()
     }
 
     @Test
@@ -436,6 +482,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
         val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
         assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
+
+        assertAllModulesConfigured()
     }
 
     @Test
@@ -511,6 +559,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("-main callTest",
                                 compilerSettings!!.additionalArguments)
         }
+
+        assertAllModulesConfigured()
     }
 
     @Test
@@ -1158,6 +1208,17 @@ class GradleFacetImportTest : GradleImportingTestCase() {
                     jdkTable.removeJdk(jdkTable.findJdk("myJDK")!!)
                 }
             }.execute()
+        }
+    }
+
+    private fun assertAllModulesConfigured() {
+        runReadAction {
+            for (moduleGroup in ModuleSourceRootMap(myProject).groupByBaseModules(myProject.allModules())) {
+                val configurator = allConfigurators().find {
+                    it.getStatus(moduleGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED
+                }
+                Assert.assertNull("Configurator $configurator tells that ${moduleGroup.baseModule} can be configured", configurator)
+            }
         }
     }
 }

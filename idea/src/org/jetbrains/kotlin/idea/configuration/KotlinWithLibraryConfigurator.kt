@@ -51,7 +51,8 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
 
     protected  val libraryKind: PersistentLibraryKind<*>? = libraryType?.kind
 
-    override fun getStatus(module: Module): ConfigureKotlinStatus {
+    override fun getStatus(moduleSourceRootGroup: ModuleSourceRootGroup): ConfigureKotlinStatus {
+        val module = moduleSourceRootGroup.baseModule
         if (!isApplicable(module)) {
             return ConfigureKotlinStatus.NON_APPLICABLE
         }
