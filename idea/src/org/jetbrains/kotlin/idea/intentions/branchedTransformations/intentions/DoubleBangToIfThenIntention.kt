@@ -50,7 +50,7 @@ class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpress
     override fun applyTo(element: KtPostfixExpression, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
 
-        val base = KtPsiUtil.safeDeparenthesize(element.baseExpression!!)
+        val base = KtPsiUtil.safeDeparenthesize(element.baseExpression!!, true)
         val expressionText = formatForUseInExceptionArgument(base.text!!)
 
         val defaultException = KtPsiFactory(element).createExpression("throw NullPointerException()")

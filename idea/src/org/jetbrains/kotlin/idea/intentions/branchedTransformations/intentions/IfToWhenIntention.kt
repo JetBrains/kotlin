@@ -165,7 +165,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
             }
         }
 
-        add(KtPsiUtil.safeDeparenthesize(expression))
+        add(KtPsiUtil.safeDeparenthesize(expression, true))
         return this
     }
 }
