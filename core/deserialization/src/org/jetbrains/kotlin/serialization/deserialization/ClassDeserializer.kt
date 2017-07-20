@@ -55,13 +55,8 @@ class ClassDeserializer(private val components: DeserializationComponents) {
         }
         else {
             val fragments = components.packageFragmentProvider.getPackageFragments(classId.packageFqName)
-            assert(fragments.size == 1) { "There should be exactly one package: $fragments, class id is $classId" }
-
-            val fragment = fragments.single()
-            if (fragment is DeserializedPackageFragment) {
-                // Similarly, verify that the containing package has information about this class
-                if (!fragment.hasTopLevelClass(classId.shortClassName)) return null
-            }
+            val fragment = fragments.firstOrNull { it !is DeserializedPackageFragment || it.hasTopLevelClass(classId.shortClassName) }
+                           ?: return null
 
             components.createContext(
                     fragment, nameResolver,
