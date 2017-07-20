@@ -90,11 +90,13 @@ class AndroidComponentRegistrar : ComponentRegistrar {
     }
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        registerParcelExtensions(project)
-
         val applicationPackage = configuration.get(AndroidConfigurationKeys.PACKAGE)
         val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.mapNotNull { parseVariant(it) } ?: emptyList()
         val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"
+
+        if (isExperimental) {
+            registerParcelExtensions(project)
+        }
 
         if (variants.isNotEmpty() && !applicationPackage.isNullOrBlank()) {
             val layoutXmlFileManager = CliAndroidLayoutXmlFileManager(project, applicationPackage!!, variants)

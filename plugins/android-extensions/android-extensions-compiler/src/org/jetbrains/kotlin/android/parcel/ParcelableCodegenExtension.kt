@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -50,7 +52,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import java.io.FileDescriptor
 
-class ParcelableCodegenExtension : ExpressionCodegenExtension {
+open class ParcelableCodegenExtension : ExpressionCodegenExtension {
     private companion object {
         private val FILE_DESCRIPTOR_FQNAME = FqName(FileDescriptor::class.java.canonicalName)
         private val PARCELER_FQNAME = FqName(Parceler::class.java.canonicalName)
@@ -58,9 +60,15 @@ class ParcelableCodegenExtension : ExpressionCodegenExtension {
         fun KotlinType.isParceler() = constructor.declarationDescriptor?.fqNameSafe == PARCELER_FQNAME
     }
 
+    protected open fun isExperimental(element: KtElement) = true
+
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {
         val parcelableClass = codegen.descriptor
         if (!parcelableClass.isMagicParcelable) return
+
+        val sourceElement = (codegen.myClass as? KtClassOrObject) ?: return
+        if (!isExperimental(sourceElement)) return
+
         assert(parcelableClass.kind == ClassKind.CLASS || parcelableClass.kind == ClassKind.OBJECT)
 
         val propertiesToSerialize = getPropertiesToSerialize(codegen, parcelableClass)
