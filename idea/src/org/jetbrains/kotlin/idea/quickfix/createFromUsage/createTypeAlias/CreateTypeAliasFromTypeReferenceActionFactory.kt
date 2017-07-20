@@ -40,17 +40,16 @@ object CreateTypeAliasFromTypeReferenceActionFactory : KotlinSingleIntentionActi
         if (!element.languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)) return null
 
         val classInfo = CreateClassFromTypeReferenceActionFactory.extractFixData(element, diagnostic) ?: return null
-        if (classInfo.targetParent is KtDeclaration) return null
-        if (classInfo.targetParent is PsiPackage) return null
+        val targetParent = classInfo.targetParents.singleOrNull { it !is KtDeclaration && it !is PsiPackage } ?: return null
 
         val expectedType = getTypeConstraintInfo(element)?.upperBound
         if (expectedType != null && expectedType.containsError()) return null
 
         val validator = CollectingNameValidator(
-                filter = NewDeclarationNameValidator(classInfo.targetParent, null, NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES)
+                filter = NewDeclarationNameValidator(targetParent, null, NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES)
         )
         val typeParameterNames = KotlinNameSuggester.suggestNamesForTypeParameters(classInfo.typeArguments.size, validator)
-        return TypeAliasInfo(classInfo.name, classInfo.targetParent, typeParameterNames, expectedType)
+        return TypeAliasInfo(classInfo.name, targetParent, typeParameterNames, expectedType)
     }
 
     override fun createFix(originalElement: KtUserType, data: TypeAliasInfo) = CreateTypeAliasFromUsageFix(originalElement, data)

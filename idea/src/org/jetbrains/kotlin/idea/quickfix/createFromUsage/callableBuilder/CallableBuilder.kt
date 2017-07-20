@@ -490,7 +490,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             val safeName = name.quoteIfNeeded()
                             when (kind) {
                                 ClassKind.ENUM_ENTRY -> {
-                                    if (!(targetParent is KtClass && targetParent.isEnum())) throw AssertionError("Enum class expected: ${targetParent.text}")
+                                    val targetParent = targetParents.singleOrNull()
+                                    if (!(targetParent is KtClass && targetParent.isEnum())) throw AssertionError("Enum class expected: ${targetParent?.text}")
                                     val hasParameters = targetParent.primaryConstructorParameters.isNotEmpty()
                                     psiFactory.createEnumEntry("$safeName${if (hasParameters) "()" else " "}")
                                 }

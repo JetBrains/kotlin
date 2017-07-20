@@ -34,8 +34,10 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.*
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
@@ -56,7 +58,7 @@ val ClassKind.actionPriority: IntentionActionPriority
 data class ClassInfo(
         val kind: ClassKind = ClassKind.DEFAULT,
         val name: String,
-        val targetParent: PsiElement,
+        val targetParents: List<PsiElement>,
         val expectedTypeInfo: TypeInfo,
         val inner: Boolean = false,
         val open: Boolean = false,
@@ -74,13 +76,18 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
         if (!super.isAvailable(project, editor, file)) return false
         with(classInfo) {
             if (kind == DEFAULT) return false
-            if (targetParent is PsiClass) {
-                if (kind == OBJECT || kind == ENUM_ENTRY) return false
-                if (targetParent.isInterface && inner) return false
+            targetParents.forEach {
+                if (it is PsiClass) {
+                    if (kind == OBJECT || kind == ENUM_ENTRY) return false
+                    if (it.isInterface && inner) return false
+                }
             }
+
         }
         return true
     }
+
+    override fun startInWriteAction() = false
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         fun createFileByPackage(psiPackage: PsiPackage): KtFile? {
@@ -114,20 +121,30 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
             return targetFile
         }
 
-        with (classInfo) {
-            val targetParent =
-                    when (targetParent) {
-                        is KtElement, is PsiClass -> targetParent
-                        is PsiPackage -> createFileByPackage(targetParent)
-                        else -> throw AssertionError("Unexpected element: " + targetParent.text)
-                    } ?: return
+        if (editor == null) return
 
-            val constructorInfo = PrimaryConstructorInfo(classInfo, expectedTypeInfo)
-            val builder = CallableBuilderConfiguration(
-                    Collections.singletonList(constructorInfo), element as KtElement, file, editor, false, kind == PLAIN_CLASS || kind == INTERFACE
-            ).createBuilder()
-            builder.placement = CallablePlacement.NoReceiver(targetParent)
-            project.executeCommand(text) { builder.build() }
+        with (classInfo) {
+            chooseContainerElementIfNecessary(targetParents, editor, "Choose class container", true, { it }) {
+                runWriteAction {
+                    val targetParent =
+                            when (it) {
+                                is KtElement, is PsiClass -> it
+                                is PsiPackage -> createFileByPackage(it)
+                                else -> throw AssertionError("Unexpected element: " + it.text)
+                            } ?: return@runWriteAction
+                    val constructorInfo = PrimaryConstructorInfo(classInfo, expectedTypeInfo)
+                    val builder = CallableBuilderConfiguration(
+                            Collections.singletonList(constructorInfo),
+                            element as KtElement,
+                            file,
+                            editor,
+                            false,
+                            kind == PLAIN_CLASS || kind == INTERFACE
+                    ).createBuilder()
+                    builder.placement = CallablePlacement.NoReceiver(targetParent)
+                    project.executeCommand(text) { builder.build() }
+                }
+            }
         }
     }
 
