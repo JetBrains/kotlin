@@ -10375,6 +10375,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addExclExclToQualifiedArgument.kt")
+        public void testAddExclExclToQualifiedArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/addExclExclToQualifiedArgument.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("addExclExclToRemoveNullability.kt")
         public void testAddExclExclToRemoveNullability() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/addExclExclToRemoveNullability.kt");
@@ -10739,6 +10745,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public static class Casts extends AbstractQuickFixTest {
             public void testAllFilesPresentInCasts() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/casts"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("castQualifiedArgument.kt")
+            public void testCastQualifiedArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/castQualifiedArgument.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("castToFunctionType.kt")
