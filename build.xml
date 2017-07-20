@@ -558,6 +558,8 @@
                 <pathelement path="build-common/test"/>
                 <pathelement path="compiler/incremental-compilation-impl/test"/>
             </src>
+            <exclude name="**/*Generated.java"/>
+
             <classpath>
                 <pathelement path="${bootstrap.runtime}"/>
                 <pathelement path="${bootstrap.reflect}"/>
