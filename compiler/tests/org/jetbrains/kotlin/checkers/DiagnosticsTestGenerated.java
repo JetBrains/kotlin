@@ -7257,21 +7257,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/smartcasts"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
-                @TestMetadata("basicEquals.kt")
-                public void testBasicEquals() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/basicEquals.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("basicIsInstance.kt")
-                public void testBasicIsInstance() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/basicIsInstance.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("compositions.kt")
                 public void testCompositions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/compositions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("deeplyNested.kt")
+                public void testDeeplyNested() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/deeplyNested.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("intersectingInfo.kt")
+                public void testIntersectingInfo() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/intersectingInfo.kt");
                     doTest(fileName);
                 }
 
@@ -7305,10 +7305,79 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("throwsEffect.kt")
+                public void testThrowsEffect() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/throwsEffect.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("typeSmartcastWhenNullability.kt")
                 public void testTypeSmartcastWhenNullability() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/typeSmartcastWhenNullability.kt");
                     doTest(fileName);
+                }
+
+                @TestMetadata("unreachableBranches.kt")
+                public void testUnreachableBranches() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/unreachableBranches.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class OperatorsTests extends AbstractDiagnosticsTest {
+                    public void testAllFilesPresentInOperatorsTests() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("andOperator.kt")
+                    public void testAndOperator() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/andOperator.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("andOperatorWithConstant.kt")
+                    public void testAndOperatorWithConstant() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/andOperatorWithConstant.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("andOperatorWithUnknown.kt")
+                    public void testAndOperatorWithUnknown() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/andOperatorWithUnknown.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("equalsOperator.kt")
+                    public void testEqualsOperator() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/equalsOperator.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("isInstaceOperator.kt")
+                    public void testIsInstaceOperator() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/isInstaceOperator.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("orOperator.kt")
+                    public void testOrOperator() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/orOperator.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("orOperatorWithConstant.kt")
+                    public void testOrOperatorWithConstant() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/orOperatorWithConstant.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("orOperatorWithUnknown.kt")
+                    public void testOrOperatorWithUnknown() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/orOperatorWithUnknown.kt");
+                        doTest(fileName);
+                    }
                 }
             }
         }
