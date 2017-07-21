@@ -237,6 +237,10 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             is KtParameter ->
                 findUsagesByJavaProcessor(element)
 
+            is KtTypeAlias -> {
+                findKotlinDeclarationUsages(element)
+            }
+
             else -> null
         } ?: getSearchInfo(element)
     }
