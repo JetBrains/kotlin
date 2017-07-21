@@ -114,7 +114,7 @@ class KotlinSetupEnvironmentNotificationProvider(
                     createComponentActionLabel("Configure") { label ->
                         val singleConfigurator = configurators.singleOrNull()
                         if (singleConfigurator != null) {
-                            singleConfigurator.configure(module.project, emptyList())
+                            singleConfigurator.apply(module.project)
                         }
                         else {
                             val configuratorsPopup = createConfiguratorsPopup(module.project, configurators)
@@ -125,15 +125,19 @@ class KotlinSetupEnvironmentNotificationProvider(
             }
         }
 
+        private fun KotlinProjectConfigurator.apply(project: Project) {
+            configure(project, emptyList())
+            EditorNotifications.getInstance(project).updateAllNotifications()
+            checkHideNonConfiguredNotifications(project)
+        }
+
         fun createConfiguratorsPopup(project: Project, configurators: List<KotlinProjectConfigurator>): ListPopup {
             val step = object : BaseListPopupStep<KotlinProjectConfigurator>("Choose Configurator", configurators) {
-                override fun getTextFor(value: KotlinProjectConfigurator?): String {
-                    return value?.presentableText ?: "<none>"
-                }
+                override fun getTextFor(value: KotlinProjectConfigurator?) = value?.presentableText ?: "<none>"
 
                 override fun onChosen(selectedValue: KotlinProjectConfigurator?, finalChoice: Boolean): PopupStep<*>? {
                     return doFinalStep {
-                        selectedValue?.configure(project, emptyList())
+                        selectedValue?.apply(project)
                     }
                 }
             }

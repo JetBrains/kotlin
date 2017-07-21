@@ -137,7 +137,8 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
     ) {
         val project = module.project
 
-        val library = getKotlinLibrary(module)
+        val library = findAndFixBrokenKotlinLibrary(module, collector)
+                      ?: getKotlinLibrary(module)
                       ?: getKotlinLibrary(project)
                       ?: createNewLibrary(project, collector)
 
@@ -316,14 +317,16 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
     protected open fun configureKotlinSettings(modules: List<Module>) {
     }
 
+    protected open fun findAndFixBrokenKotlinLibrary(module: Module, collector: NotificationMessageCollector): Library? = null
+
+    protected open fun isApplicable(module: Module): Boolean {
+        return !KotlinPluginUtil.isAndroidGradleModule(module) &&
+               !KotlinPluginUtil.isMavenModule(module) &&
+               !KotlinPluginUtil.isGradleModule(module)
+    }
+
     companion object {
         val DEFAULT_LIBRARY_DIR = "lib"
-
-        protected fun isApplicable(module: Module): Boolean {
-            return !KotlinPluginUtil.isAndroidGradleModule(module) &&
-                   !KotlinPluginUtil.isMavenModule(module) &&
-                   !KotlinPluginUtil.isGradleModule(module)
-        }
 
         fun getPathFromLibrary(library: Library?, type: OrderRootType): String? {
             if (library == null) return null
