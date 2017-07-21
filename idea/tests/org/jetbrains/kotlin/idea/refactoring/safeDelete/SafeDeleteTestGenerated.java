@@ -720,6 +720,27 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @TestMetadata("idea/testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class KotlinTypeAlias extends AbstractSafeDeleteTest {
+        public void testAllFilesPresentInKotlinTypeAlias() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias/simple.kt");
+            doTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("used.kt")
+        public void testUsed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias/used.kt");
+            doTypeAliasTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

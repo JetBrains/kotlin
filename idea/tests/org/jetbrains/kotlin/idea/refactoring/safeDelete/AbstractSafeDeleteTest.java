@@ -91,6 +91,10 @@ public abstract class AbstractSafeDeleteTest extends KotlinLightCodeInsightFixtu
         doTest(path, PsiMethod.class, true);
     }
 
+    public void doTypeAliasTest(@NotNull String path) throws Exception {
+        doTest(path, KtTypeAlias.class, false);
+    }
+
     public void doTypeParameterTest(@NotNull String path) throws Exception {
         doTest(path, KtTypeParameter.class, false);
     }
