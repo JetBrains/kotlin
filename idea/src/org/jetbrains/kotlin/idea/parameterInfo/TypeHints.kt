@@ -84,11 +84,13 @@ private fun isUnclearType(type: KotlinType, element: KtCallableDeclaration): Boo
     if (element is KtProperty) {
         val initializer = element.initializer ?: return true
         if (initializer is KtConstantExpression || initializer is KtStringTemplateExpression) return false
+        if (initializer is KtUnaryExpression && initializer.baseExpression is KtConstantExpression) return false
         if (initializer is KtCallExpression) {
             val bindingContext = element.analyze()
             val resolvedCall = initializer.getResolvedCall(bindingContext)
             val constructorDescriptor = resolvedCall?.candidateDescriptor as? ConstructorDescriptor
-            if (constructorDescriptor != null && constructorDescriptor.constructedClass.declaredTypeParameters.isEmpty()) {
+            if (constructorDescriptor != null &&
+                (constructorDescriptor.constructedClass.declaredTypeParameters.isEmpty() || initializer.typeArgumentList != null)) {
                 return false
             }
         }
