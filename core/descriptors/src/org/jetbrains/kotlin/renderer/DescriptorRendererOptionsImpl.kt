@@ -77,7 +77,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var unitReturnType by property(true)
     override var withoutReturnType by property(false)
     override var normalizedVisibilities by property(false)
-    override var showInternalKeyword by property(true)
+    override var renderDefaultVisibility by property(true)
     override var uninferredTypeParameterAsName by property(false)
     override var includePropertyConstant by property(false)
     override var withoutTypeParameters by property(false)

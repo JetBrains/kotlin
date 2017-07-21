@@ -194,7 +194,7 @@ interface DescriptorRendererOptions {
     var unitReturnType: Boolean
     var withoutReturnType: Boolean
     var normalizedVisibilities: Boolean
-    var showInternalKeyword: Boolean
+    var renderDefaultVisibility: Boolean
     var uninferredTypeParameterAsName: Boolean
     var overrideRenderingPolicy: OverrideRenderingPolicy
     var valueParametersHandler: DescriptorRenderer.ValueParametersHandler
@@ -233,7 +233,7 @@ object ExcludedTypeAnnotations {
 
 enum class RenderingFormat {
     PLAIN {
-        override fun escape(string: String) = string;
+        override fun escape(string: String) = string
     },
     HTML {
         override fun escape(string: String) = string.replace("<", "&lt;").replace(">", "&gt;")
