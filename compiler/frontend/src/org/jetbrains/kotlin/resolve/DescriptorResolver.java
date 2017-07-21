@@ -836,7 +836,7 @@ public class DescriptorResolver {
 
     @NotNull
     private PropertyDescriptor resolveAsPropertyDescriptor(
-            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull DeclarationDescriptor container,
             @NotNull LexicalScope scopeForDeclarationResolution,
             @NotNull LexicalScope scopeForInitializerResolution,
             @NotNull KtVariableDeclaration variableDeclaration,
@@ -847,11 +847,11 @@ public class DescriptorResolver {
         KtModifierList modifierList = variableDeclaration.getModifierList();
         boolean isVar = variableDeclaration.isVar();
 
-        Visibility visibility = resolveVisibilityFromModifiers(variableDeclaration, getDefaultVisibility(variableDeclaration, containingDeclaration));
-        Modality modality = containingDeclaration instanceof ClassDescriptor
+        Visibility visibility = resolveVisibilityFromModifiers(variableDeclaration, getDefaultVisibility(variableDeclaration, container));
+        Modality modality = container instanceof ClassDescriptor
                             ? resolveMemberModalityFromModifiers(variableDeclaration,
-                                                                 getDefaultModality(containingDeclaration, visibility, propertyInfo.getHasBody()),
-                                                                 trace.getBindingContext(), containingDeclaration)
+                                                                 getDefaultModality(container, visibility, propertyInfo.getHasBody()),
+                                                                 trace.getBindingContext(), container)
                             : Modality.FINAL;
 
         AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper(variableDeclaration);
@@ -866,7 +866,7 @@ public class DescriptorResolver {
                 annotationSplitter.getOtherAnnotations()));
 
         PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
-                containingDeclaration,
+                container,
                 propertyAnnotations,
                 modality,
                 visibility,
@@ -876,8 +876,8 @@ public class DescriptorResolver {
                 KotlinSourceElementKt.toSourceElement(variableDeclaration),
                 modifierList != null && modifierList.hasModifier(KtTokens.LATEINIT_KEYWORD),
                 modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD),
-                modifierList != null && modifierList.hasModifier(KtTokens.HEADER_KEYWORD) ||
-                containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isHeader(),
+                modifierList != null && modifierList.hasModifier(KtTokens.HEADER_KEYWORD) && container instanceof PackageFragmentDescriptor ||
+                container instanceof ClassDescriptor && ((ClassDescriptor) container).isHeader(),
                 modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
                 modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD),
                 propertyInfo.getHasDelegate()
@@ -898,10 +898,10 @@ public class DescriptorResolver {
             }
             else {
                 LexicalWritableScope writableScopeForDeclarationResolution = new LexicalWritableScope(
-                        scopeForDeclarationResolution, containingDeclaration, false, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
+                        scopeForDeclarationResolution, container, false, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
                         LexicalScopeKind.PROPERTY_HEADER);
                 LexicalWritableScope writableScopeForInitializerResolution = new LexicalWritableScope(
-                        scopeForInitializerResolution, containingDeclaration, false, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
+                        scopeForInitializerResolution, container, false, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                         LexicalScopeKind.PROPERTY_HEADER);
                 typeParameterDescriptors = resolveTypeParametersForDescriptor(
                         propertyDescriptor,
@@ -951,8 +951,7 @@ public class DescriptorResolver {
                 propertyDescriptor, scopeForInitializer, variableDeclaration, dataFlowInfo, type, trace
         );
 
-        propertyDescriptor.setType(type, typeParameterDescriptors, getDispatchReceiverParameterIfNeeded(containingDeclaration),
-                                   receiverDescriptor);
+        propertyDescriptor.setType(type, typeParameterDescriptors, getDispatchReceiverParameterIfNeeded(container), receiverDescriptor);
 
         PropertySetterDescriptor setter = resolvePropertySetterDescriptor(
                 scopeForDeclarationResolutionWithTypeParameters,

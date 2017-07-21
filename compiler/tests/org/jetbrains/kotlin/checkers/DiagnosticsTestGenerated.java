@@ -13630,6 +13630,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("headerFunInNonHeaderClass.kt")
+            public void testHeaderFunInNonHeaderClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerFunInNonHeaderClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("implDelegatedMember.kt")
             public void testImplDelegatedMember() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/implDelegatedMember.kt");
@@ -13731,6 +13737,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("explicitConstructorDelegation.kt")
                 public void testExplicitConstructorDelegation() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/explicitConstructorDelegation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extraHeaderOnMembers.kt")
+                public void testExtraHeaderOnMembers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/extraHeaderOnMembers.kt");
                     doTest(fileName);
                 }
 

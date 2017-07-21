@@ -80,6 +80,9 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             platformModule: ModuleDescriptor,
             checkImpl: Boolean
     ) {
+        // Only look for implementations of top level members; class members will be handled as a part of that header class
+        if (descriptor is CallableMemberDescriptor && descriptor.containingDeclaration !is PackageFragmentDescriptor) return
+
         val compatibility = findImplForHeader(descriptor, platformModule, checkImpl) ?: return
 
         val shouldReportError =

@@ -134,7 +134,7 @@ class FunctionDescriptorResolver(
     }
 
     fun initializeFunctionDescriptorAndExplicitReturnType(
-            containingDescriptor: DeclarationDescriptor,
+            container: DeclarationDescriptor,
             scope: LexicalScope,
             function: KtFunction,
             functionDescriptor: SimpleFunctionDescriptorImpl,
@@ -164,12 +164,12 @@ class FunctionDescriptorResolver(
 
         val returnType = function.typeReference?.let { typeResolver.resolveType(headerScope, it, trace, true) }
 
-        val visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor))
-        val modality = resolveMemberModalityFromModifiers(function, getDefaultModality(containingDescriptor, visibility, function.hasBody()),
-                                                          trace.bindingContext, containingDescriptor)
+        val visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, container))
+        val modality = resolveMemberModalityFromModifiers(function, getDefaultModality(container, visibility, function.hasBody()),
+                                                          trace.bindingContext, container)
         functionDescriptor.initialize(
                 receiverType,
-                getDispatchReceiverParameterIfNeeded(containingDescriptor),
+                getDispatchReceiverParameterIfNeeded(container),
                 typeParameterDescriptors,
                 valueParameterDescriptors,
                 returnType,
@@ -182,8 +182,8 @@ class FunctionDescriptorResolver(
         functionDescriptor.isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
         functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
         functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
-        functionDescriptor.isHeader = function.hasModifier(KtTokens.HEADER_KEYWORD) ||
-                                        containingDescriptor is ClassDescriptor && containingDescriptor.isHeader
+        functionDescriptor.isHeader = container is PackageFragmentDescriptor && function.hasModifier(KtTokens.HEADER_KEYWORD) ||
+                                      container is ClassDescriptor && container.isHeader
         functionDescriptor.isImpl = function.hasModifier(KtTokens.IMPL_KEYWORD)
 
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
