@@ -1256,6 +1256,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("intrinsicArrayConstructorsUseCounterLoop.kt")
+        public void testIntrinsicArrayConstructorsUseCounterLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/intrinsicArrayConstructorsUseCounterLoop.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("loopVarInterval.kt")
         public void testLoopVarInterval() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/loopVarInterval.kt");
