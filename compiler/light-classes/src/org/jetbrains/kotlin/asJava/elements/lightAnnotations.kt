@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
@@ -102,13 +102,15 @@ class KtLightAnnotationForSourceEntry(
     }
 
     private fun getMemberValueAsCallArgument(memberValue: PsiElement, callHolder: KtCallElement): PsiElement {
-
-        val nameAndValue = memberValue.getStrictParentOfType<PsiNameValuePair>()
         val resolvedCall = callHolder.getResolvedCall()!!
         val annotationConstructor = resolvedCall.resultingDescriptor
-        val parameterName = nameAndValue?.name ?: "value"
+        val parameterName =
+                memberValue.getNonStrictParentOfType<PsiNameValuePair>()?.name ?:
+                memberValue.getNonStrictParentOfType<PsiAnnotationMethod>()?.name ?:
+                "value"
+
         val parameter = annotationConstructor.valueParameters.singleOrNull { it.name.asString() == parameterName }
-                        ?: error("single parameter $parameterName was not found in ${annotationConstructor.valueParameters}")
+                        ?: error("single parameter '$parameterName' was not found in ${annotationConstructor.valueParameters.map { it.name.asString() }}")
         val resolvedArgument = resolvedCall.valueArguments[parameter]!!
         return when (resolvedArgument) {
             is DefaultValueArgument -> {
