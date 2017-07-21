@@ -32,6 +32,11 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         check("""fun foo() { val a<hint text=": List<String>" /> = listOf("a") }""")
     }
 
+    fun testDestructuringType() {
+        HintType.LOCAL_VARIABLE_HINT.option.set(true)
+        check("""fun foo() { val (i<hint text=": Int" />, s<hint text=": String" />) = 1 to "" }""")
+    }
+
     fun testPropertyType() {
         HintType.PROPERTY_HINT.option.set(true)
         check("""val a<hint text=": List<String>" /> = listOf("a")""")
@@ -42,9 +47,24 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         check("""val a = 1""")
     }
 
+    fun testUnaryConstInitializerType() {
+        HintType.PROPERTY_HINT.option.set(true)
+        check("""val a = -1; val b = +1""")
+    }
+
     fun testConstructorWithoutTypeParametersType() {
         HintType.PROPERTY_HINT.option.set(true)
         check("""val a = Any()""")
+    }
+
+    fun testConstructorWithExplicitTypeParametersType() {
+        HintType.PROPERTY_HINT.option.set(true)
+        check("""class Bar<T>; val a = Bar<String>()""")
+    }
+
+    fun testConstructorWithoutExplicitTypeParametersType() {
+        HintType.PROPERTY_HINT.option.set(true)
+        check("""class Bar<T>(val t: T); val a<hint text=": Bar<String>" /> = Bar(<hint text="t:" />"")""")
     }
 
     fun testLoopParameter() {
