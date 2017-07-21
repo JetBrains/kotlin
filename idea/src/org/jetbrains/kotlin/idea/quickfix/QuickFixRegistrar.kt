@@ -505,5 +505,7 @@ class QuickFixRegistrar : QuickFixContributor {
         INAPPLICABLE_RECEIVER_TARGET.registerFactory(MoveReceiverAnnotationFix)
 
         NO_CONSTRUCTOR.registerFactory(RemoveNoConstructorFix)
+
+        ANNOTATION_USED_AS_ANNOTATION_ARGUMENT.registerFactory(RemoveAtFromAnnotationArgument)
     }
 }

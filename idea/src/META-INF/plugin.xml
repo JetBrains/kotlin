@@ -1413,11 +1413,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.RemoveAtFromAnnotationArgumentIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.RemoveSingleExpressionStringTemplateIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -2033,15 +2028,6 @@
                      displayName="Property is explicitly assigned to constructor parameter"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
-                     enabledByDefault="true"
-                     level="WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveAtFromAnnotationArgumentInspection"
-                     displayName="Unnecessary @"
-                     groupPath="Kotlin"
-                     groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"

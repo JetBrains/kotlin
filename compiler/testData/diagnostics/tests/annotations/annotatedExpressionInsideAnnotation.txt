@@ -1,0 +1,20 @@
+package
+
+@X(y = Y) public fun foo1(): kotlin.Unit
+@X public fun foo2(): kotlin.Unit
+
+public final annotation class X : kotlin.Annotation {
+    public constructor X(/*0*/ value: Y, /*1*/ y: Y)
+    public final val value: Y
+    public final val y: Y
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Y : kotlin.Annotation {
+    public constructor Y()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
