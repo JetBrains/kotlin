@@ -873,6 +873,24 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToAssignment/simpleWhenWithoutTerminatingAssignment.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("whenHasMissingCase.kt")
+            public void testWhenHasMissingCase() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToAssignment/whenHasMissingCase.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenHasNoMissingCase.kt")
+            public void testWhenHasNoMissingCase() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToAssignment/whenHasNoMissingCase.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenHasNoMissingCaseWithElse.kt")
+            public void testWhenHasNoMissingCaseWithElse() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToAssignment/whenHasNoMissingCaseWithElse.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn")
@@ -922,6 +940,24 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("simpleWhenWithBlocks.kt")
             public void testSimpleWhenWithBlocks() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/simpleWhenWithBlocks.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenHasMissingCase.kt")
+            public void testWhenHasMissingCase() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/whenHasMissingCase.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenHasNoMissingCase.kt")
+            public void testWhenHasNoMissingCase() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/whenHasNoMissingCase.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenHasNoMissingCaseWithElse.kt")
+            public void testWhenHasNoMissingCaseWithElse() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/whenHasNoMissingCaseWithElse.kt");
                 doTest(fileName);
             }
 
