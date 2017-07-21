@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.psi.tree.IElementType;
 import kotlin.Unit;
 import kotlin.collections.ArraysKt;
-import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
@@ -518,9 +515,11 @@ public abstract class StackValue {
                     descriptor
             );
             StackValue extensionReceiver = genReceiver(receiver, codegen, resolvedCall, callableMethod, callExtensionReceiver, true);
-            Type type = CallReceiver.calcType(resolvedCall, dispatchReceiverParameter, extensionReceiverParameter, codegen.typeMapper, callableMethod, codegen.getState());
-            assert type != null : "Could not map receiver type for " + resolvedCall;
-            return new CallReceiver(dispatchReceiver, extensionReceiver, type);
+            return CallReceiver.generateCallReceiver(
+                    resolvedCall, codegen, callableMethod,
+                    dispatchReceiverParameter, dispatchReceiver,
+                    extensionReceiverParameter, extensionReceiver
+            );
         }
         return receiver;
     }
@@ -569,14 +568,13 @@ public abstract class StackValue {
     }
 
     @Contract("null -> false")
-    private static boolean isLocalFunCall(@Nullable Callable callableMethod) {
+    static boolean isLocalFunCall(@Nullable Callable callableMethod) {
         return callableMethod != null && callableMethod.getGenerateCalleeType() != null;
     }
 
     public static StackValue receiverWithoutReceiverArgument(StackValue receiverWithParameter) {
         if (receiverWithParameter instanceof CallReceiver) {
-            CallReceiver callReceiver = (CallReceiver) receiverWithParameter;
-            return new CallReceiver(callReceiver.dispatchReceiver, none(), callReceiver.type);
+            return ((CallReceiver) receiverWithParameter).withoutReceiverArgument();
         }
         return receiverWithParameter;
     }
@@ -1514,101 +1512,6 @@ public abstract class StackValue {
 
             value.put(this.type, v, true);
             coerceTo(type, v);
-        }
-    }
-
-    public static class CallReceiver extends StackValue {
-        private final StackValue dispatchReceiver;
-        private final StackValue extensionReceiver;
-
-        public CallReceiver(
-                @NotNull StackValue dispatchReceiver,
-                @NotNull StackValue extensionReceiver,
-                @NotNull Type type
-        ) {
-            super(type, dispatchReceiver.canHaveSideEffects() || extensionReceiver.canHaveSideEffects());
-            this.dispatchReceiver = dispatchReceiver;
-            this.extensionReceiver = extensionReceiver;
-        }
-
-        @Nullable
-        public static Type calcType(
-                @NotNull ResolvedCall<?> resolvedCall,
-                @Nullable ReceiverParameterDescriptor dispatchReceiver,
-                @Nullable ReceiverParameterDescriptor extensionReceiver,
-                @NotNull KotlinTypeMapper typeMapper,
-                @Nullable Callable callableMethod,
-                @NotNull GenerationState state
-        ) {
-            if (extensionReceiver != null) {
-                CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
-
-                if (descriptor instanceof PropertyDescriptor &&
-                    // hackaround: boxing changes behaviour of T.javaClass intrinsic
-                    state.getIntrinsics().getIntrinsic((PropertyDescriptor) descriptor) != JavaClassProperty.INSTANCE
-                ) {
-                    ReceiverParameterDescriptor receiverCandidate = descriptor.getExtensionReceiverParameter();
-                    assert receiverCandidate != null;
-                    return typeMapper.mapType(receiverCandidate.getType());
-                }
-
-                return callableMethod != null ? callableMethod.getExtensionReceiverType() : typeMapper.mapType(extensionReceiver.getType());
-            }
-            else if (dispatchReceiver != null) {
-                CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-
-                if (CodegenUtilKt.isJvmStaticInObjectOrClass(descriptor)) {
-                    return Type.VOID_TYPE;
-                }
-
-                if (callableMethod != null) {
-                    return callableMethod.getDispatchReceiverType();
-                }
-
-                // Extract the receiver from the resolved call, workarounding the fact that ResolvedCall#dispatchReceiver doesn't have
-                // all the needed information, for example there's no way to find out whether or not a smart cast was applied to the receiver.
-                DeclarationDescriptor container = descriptor.getContainingDeclaration();
-                if (container instanceof ClassDescriptor) {
-                    return typeMapper.mapClass((ClassDescriptor) container);
-                }
-
-                return typeMapper.mapType(dispatchReceiver);
-            }
-            else if (isLocalFunCall(callableMethod)) {
-                return callableMethod.getGenerateCalleeType();
-            }
-
-            return Type.VOID_TYPE;
-        }
-
-        @Override
-        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-            StackValue currentExtensionReceiver = extensionReceiver;
-            boolean hasExtensionReceiver = extensionReceiver != none();
-            if (extensionReceiver instanceof StackValue.SafeCall) {
-                currentExtensionReceiver.put(currentExtensionReceiver.type, v);
-                currentExtensionReceiver = StackValue.onStack(currentExtensionReceiver.type);
-            }
-
-            dispatchReceiver.put(hasExtensionReceiver ? dispatchReceiver.type : type, v);
-
-            currentExtensionReceiver
-                    .moveToTopOfStack(hasExtensionReceiver ? type : currentExtensionReceiver.type, v, dispatchReceiver.type.getSize());
-        }
-
-        @Override
-        public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
-            AsmUtil.dup(v, extensionReceiver.type, dispatchReceiver.type);
-        }
-
-        @NotNull
-        public StackValue getDispatchReceiver() {
-            return dispatchReceiver;
-        }
-
-        @NotNull
-        public StackValue getExtensionReceiver() {
-            return extensionReceiver;
         }
     }
 
