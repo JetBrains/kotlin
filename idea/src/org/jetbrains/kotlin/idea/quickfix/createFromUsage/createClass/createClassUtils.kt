@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessT
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.noSubstitutions
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -51,14 +52,15 @@ internal fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUppe
 private fun String.checkPackageName(): Boolean = isNotEmpty() && Character.isLowerCase(first())
 
 internal fun getTargetParentsByQualifier(
-        file: KtFile,
+        element: KtElement,
         isQualified: Boolean,
         qualifierDescriptor: DeclarationDescriptor?
 ): List<PsiElement> {
+    val file = element.containingKtFile
     val project = file.project
     val targetParents: List<PsiElement> = when {
         !isQualified ->
-            listOf(file)
+            element.parents.filterIsInstance<KtClassOrObject>().toList() + file
         qualifierDescriptor is ClassDescriptor ->
             listOfNotNull(DescriptorToSourceUtilsIde.getAnyDeclaration(project, qualifierDescriptor))
         qualifierDescriptor is PackageViewDescriptor ->
@@ -72,12 +74,13 @@ internal fun getTargetParentsByQualifier(
     return targetParents.filter { it.canRefactor() }
 }
 
-internal fun getTargetParentsByCall(call: Call, file: KtFile, context: BindingContext): List<PsiElement> {
+internal fun getTargetParentsByCall(call: Call, context: BindingContext): List<PsiElement> {
+    val callElement = call.callElement
     val receiver = call.explicitReceiver
     return when (receiver) {
-        null -> getTargetParentsByQualifier(file, false, null)
-        is Qualifier -> getTargetParentsByQualifier(file, true, context[BindingContext.REFERENCE_TARGET, receiver.referenceExpression])
-        is ReceiverValue -> getTargetParentsByQualifier(file, true, receiver.type.constructor.declarationDescriptor)
+        null -> getTargetParentsByQualifier(callElement, false, null)
+        is Qualifier -> getTargetParentsByQualifier(callElement, true, context[BindingContext.REFERENCE_TARGET, receiver.referenceExpression])
+        is ReceiverValue -> getTargetParentsByQualifier(callElement, true, receiver.type.constructor.declarationDescriptor)
         else -> throw AssertionError("Unexpected receiver: $receiver")
     }
 }

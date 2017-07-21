@@ -53,7 +53,6 @@ object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUs
         val isAnnotation = element is KtAnnotationEntry
         val callee = element.calleeExpression as? KtConstructorCalleeExpression ?: return null
         val calleeRef = callee.constructorReferenceExpression ?: return null
-        val file = element.containingFile as? KtFile ?: return null
         val typeRef = callee.typeReference ?: return null
         val userType = typeRef.typeElement as? KtUserType ?: return null
 
@@ -62,7 +61,7 @@ object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUs
         val qualifier = userType.qualifier?.referenceExpression
         val qualifierDescriptor = qualifier?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
-        val targetParents = getTargetParentsByQualifier(file, qualifier != null, qualifierDescriptor).ifEmpty { return null }
+        val targetParents = getTargetParentsByQualifier(element, qualifier != null, qualifierDescriptor).ifEmpty { return null }
 
         val anyType = module.builtIns.nullableAnyType
         val valueArguments = element.valueArguments

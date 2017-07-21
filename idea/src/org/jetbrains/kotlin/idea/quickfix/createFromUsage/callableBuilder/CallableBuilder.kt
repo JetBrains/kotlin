@@ -413,6 +413,11 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             typeCandidates[typeInfo]?.forEach { it.render(typeParameterNameMap, fakeFunction) }
         }
 
+        private fun isInsideInnerOrLocalClass(): Boolean {
+            val classOrObject = containingElement.getNonStrictParentOfType<KtClassOrObject>()
+            return classOrObject is KtClass && (classOrObject.isInner() || classOrObject.isLocal)
+        }
+
         private fun createDeclarationSkeleton(): KtNamedDeclaration {
             with (config) {
                 val assignmentToReplace =
@@ -490,14 +495,14 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             val safeName = name.quoteIfNeeded()
                             when (kind) {
                                 ClassKind.ENUM_ENTRY -> {
-                                    val targetParent = targetParents.singleOrNull()
+                                    val targetParent = applicableParents.singleOrNull()
                                     if (!(targetParent is KtClass && targetParent.isEnum())) throw AssertionError("Enum class expected: ${targetParent?.text}")
                                     val hasParameters = targetParent.primaryConstructorParameters.isNotEmpty()
                                     psiFactory.createEnumEntry("$safeName${if (hasParameters) "()" else " "}")
                                 }
                                 else -> {
                                     val openMod = if (open) "open " else ""
-                                    val innerMod = if (inner) "inner " else ""
+                                    val innerMod = if (inner || isInsideInnerOrLocalClass()) "inner " else ""
                                     val typeParamList = when (kind) {
                                         ClassKind.PLAIN_CLASS, ClassKind.INTERFACE -> "<>"
                                         else -> ""

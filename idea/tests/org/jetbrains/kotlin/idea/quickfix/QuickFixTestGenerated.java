@@ -1647,6 +1647,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("createNestedClass.kt")
+                public void testCreateNestedClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/createNestedClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("createNestedClassInInner.kt")
+                public void testCreateNestedClassInInner() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/createNestedClassInInner.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("expectedTypeBySuperFunction.kt")
                 public void testExpectedTypeBySuperFunction() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/expectedTypeBySuperFunction.kt");
@@ -1959,6 +1971,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("createNestedObject.kt")
+                public void testCreateNestedObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/createNestedObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("createNestedObjectInInner.kt")
+                public void testCreateNestedObjectInInner() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/createNestedObjectInInner.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("enumByClassLiteral.kt")
                 public void testEnumByClassLiteral() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumByClassLiteral.kt");
@@ -2193,6 +2217,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("classUserTypeReceiverNoBody.kt")
                 public void testClassUserTypeReceiverNoBody() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/classUserTypeReceiverNoBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("createNestedClass.kt")
+                public void testCreateNestedClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/createNestedClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("createNestedClassInInner.kt")
+                public void testCreateNestedClassInInner() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/createNestedClassInInner.kt");
                     doTest(fileName);
                 }
 

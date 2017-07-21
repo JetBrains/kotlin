@@ -77,13 +77,11 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
         val name = element.referenceExpression?.getReferencedName() ?: return null
         if (element.parent.parent is KtConstructorCalleeExpression) return null
 
-        val file = element.containingFile as? KtFile ?: return null
-
         val (context, module) = element.analyzeAndGetResult()
         val qualifier = element.qualifier?.referenceExpression
         val qualifierDescriptor = qualifier?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
-        val targetParents = getTargetParentsByQualifier(file, qualifier != null, qualifierDescriptor).ifEmpty { return null }
+        val targetParents = getTargetParentsByQualifier(element, qualifier != null, qualifierDescriptor).ifEmpty { return null }
         val expectedUpperBound = getExpectedUpperBound(element, context)
 
         val anyType = module.builtIns.anyType
