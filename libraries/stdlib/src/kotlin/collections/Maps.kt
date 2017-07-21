@@ -298,8 +298,7 @@ public inline operator fun <K, V> Map<out K, V>.iterator(): Iterator<Map.Entry<K
  * Returns a [MutableIterator] over the mutable entries in the [MutableMap].
  *
  */
-@JvmVersion
-@JvmName("mutableIterator")
+@kotlin.jvm.JvmName("mutableIterator")
 @kotlin.internal.InlineOnly
 public inline operator fun <K, V> MutableMap<K, V>.iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> = entries.iterator()
 
