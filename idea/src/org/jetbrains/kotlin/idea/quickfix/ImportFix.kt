@@ -31,6 +31,7 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
@@ -51,10 +52,9 @@ import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.idea.util.receiverTypes
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
@@ -74,6 +74,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 /**
@@ -300,17 +301,27 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
         indicesHelper.getKotlinEnumsByName(name).filterTo(result, filterByCallType)
 
         val resolutionFacade = element.getResolutionFacade()
-        val actualReceiverTypes =
-                callTypeAndReceiver.receiverTypes(bindingContext, element, resolutionFacade.moduleDescriptor, resolutionFacade, false).orEmpty()
+        var actualReceiverTypes = callTypeAndReceiver
+                .receiverTypesWithIndex(bindingContext, element,
+                                        resolutionFacade.moduleDescriptor, resolutionFacade,
+                                        stableSmartCastsOnly = false,
+                                        withImplicitReceiversWhenExplicitPresent = true).orEmpty()
+
+        if (element.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)) {
+            actualReceiverTypes -= actualReceiverTypes.shadowedByDslMarkers()
+        }
+
+        val explicitReceiverTypes = actualReceiverTypes.filterNot { it.implicit }
+
+        val checkDispatchReceiver = when(callTypeAndReceiver) {
+            is CallTypeAndReceiver.OPERATOR, is CallTypeAndReceiver.INFIX -> true
+            else -> false
+        }
 
         val processor = { descriptor: CallableDescriptor ->
-            if (descriptor.canBeReferencedViaImport() && filterByCallType(descriptor)) {
-                val extensionReceiverType = descriptor.extensionReceiverParameter?.type
-
-                if ((actualReceiverTypes.isEmpty() && extensionReceiverType == null) ||
-                    (extensionReceiverType != null && actualReceiverTypes.any { it.isSubtypeOf(extensionReceiverType) })) {
-                    result.add(descriptor)
-                }
+            if (descriptor.canBeReferencedViaImport() && filterByCallType(descriptor)
+                && descriptor.isValidByReceiversFor(explicitReceiverTypes, actualReceiverTypes, checkDispatchReceiver)) {
+                result.add(descriptor)
             }
         }
 
@@ -330,6 +341,18 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
         return result
     }
 
+
+    private fun CallableDescriptor.isValidByReceiversFor(explicitReceiverTypes: Collection<ReceiverType>,
+                                                         allReceiverTypes: Collection<ReceiverType>,
+                                                         checkDispatchReceiver: Boolean): Boolean {
+        val bothReceivers = listOfNotNull(extensionReceiverParameter, dispatchReceiverParameter.takeIf { checkDispatchReceiver })
+
+        val receiverTypesPerReceiver = generateSequence(explicitReceiverTypes.ifEmpty { allReceiverTypes }) { allReceiverTypes }
+
+        return bothReceivers
+                .zip(receiverTypesPerReceiver.asIterable())
+                .all { (receiver, possibleTypes) -> possibleTypes.any { it.type.isSubtypeOf(receiver.type) } }
+    }
 
     override fun fillCandidates(
             name: String,

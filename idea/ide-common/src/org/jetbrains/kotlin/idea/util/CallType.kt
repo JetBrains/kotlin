@@ -20,12 +20,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.calls.checkers.DslScopeViolationCallChecker.extractDslMarkerFqNames
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
@@ -327,4 +329,21 @@ private fun receiverValueTypes(
     else {
         listOf(receiverValue.type)
     }
+}
+
+
+fun Collection<ReceiverType>.shadowedByDslMarkers(): Set<ReceiverType> {
+    val typesByDslScopes = LinkedHashMap<FqName, MutableList<ReceiverType>>()
+
+    this
+            .mapNotNull { receiver ->
+                val dslMarkers = receiver.type.extractDslMarkerFqNames()
+                (receiver to dslMarkers).takeIf { dslMarkers.isNotEmpty() }
+            }
+            .forEach { (v, dslMarkers) -> dslMarkers.forEach { typesByDslScopes.getOrPut(it, { mutableListOf() }) += v } }
+
+    val shadowedDslReceivers = mutableSetOf<ReceiverType>()
+    typesByDslScopes.flatMapTo(shadowedDslReceivers) { (_, v) -> v.asSequence().drop(1).asIterable() }
+
+    return shadowedDslReceivers
 }

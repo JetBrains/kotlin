@@ -131,6 +131,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("dslMarkers.before.Main.kt")
+        public void testDslMarkers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/dslMarkers.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("extensionFunctionImport.before.Main.kt")
         public void testExtensionFunctionImport() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/extensionFunctionImport.before.Main.kt");
@@ -542,6 +548,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("objectImport.before.Main.kt")
         public void testObjectImport() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/objectImport.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("objectMemberFunctionImportWhenReceiverPresent.before.Main.kt")
+        public void testObjectMemberFunctionImportWhenReceiverPresent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/objectMemberFunctionImportWhenReceiverPresent.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
 

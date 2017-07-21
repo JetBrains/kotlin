@@ -403,20 +403,7 @@ abstract class CompletionSession(
         }
 
         if (receiverTypes != null && nameExpression.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)) {
-
-            val typesByDslScopes = LinkedHashMap<FqName, MutableList<ReceiverType>>()
-
-            receiverTypes
-                    .mapNotNull { receiver ->
-                        val dslMarkers = receiver.type.extractDslMarkerFqNames()
-                        (receiver to dslMarkers).takeIf { dslMarkers.isNotEmpty() }
-                    }
-                    .forEach { (v, dslMarkers) -> dslMarkers.forEach { typesByDslScopes.getOrPut(it, { mutableListOf() }) += v } }
-
-            val shadowedDslReceivers = mutableSetOf<ReceiverType>()
-            typesByDslScopes.flatMapTo(shadowedDslReceivers) { (_, v) -> v.asSequence().drop(1).asIterable() }
-
-            receiverTypes -= shadowedDslReceivers
+            receiverTypes -= receiverTypes.shadowedByDslMarkers()
         }
 
         return receiverTypes
