@@ -38,7 +38,7 @@ import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriority
+import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -74,19 +74,18 @@ class KotlinLanguageInjector(
 
         val needImmediateAnswer = with(ApplicationManager.getApplication()) { isDispatchThread && !isUnitTestMode }
         val kotlinCachedInjection = ktHost.cachedInjectionWithModification
-        val cachedBaseInjection = kotlinCachedInjection?.baseInjection ?: ABSENT_KOTLIN_INJECTION
         val modificationCount = PsiManager.getInstance(project).modificationTracker.modificationCount
 
         val baseInjection = when {
-            needImmediateAnswer -> cachedBaseInjection
+            needImmediateAnswer -> kotlinCachedInjection?.baseInjection ?: ABSENT_KOTLIN_INJECTION
             kotlinCachedInjection != null && (modificationCount == kotlinCachedInjection.modificationCount) ->
                 kotlinCachedInjection.baseInjection
             else -> {
-                runInReadActionWithWriteActionPriority {
+                runInReadActionWithWriteActionPriorityWithPCE {
                     val computedInjection = computeBaseInjection(ktHost, support, registrar) ?: ABSENT_KOTLIN_INJECTION
                     ktHost.cachedInjectionWithModification = KotlinCachedInjection(modificationCount, computedInjection)
                     computedInjection
-                } ?: cachedBaseInjection
+                }
             }
         }
 
