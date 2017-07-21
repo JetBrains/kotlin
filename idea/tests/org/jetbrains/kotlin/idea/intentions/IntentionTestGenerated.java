@@ -12147,39 +12147,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/removeAtFromAnnotationArgument")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class RemoveAtFromAnnotationArgument extends AbstractIntentionTest {
-        public void testAllFilesPresentInRemoveAtFromAnnotationArgument() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeAtFromAnnotationArgument"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("atmarkArgument.kt")
-        public void testAtmarkArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeAtFromAnnotationArgument/atmarkArgument.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("atmarkArrayArguments.kt")
-        public void testAtmarkArrayArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeAtFromAnnotationArgument/atmarkArrayArguments.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multipleAtmarkArguments.kt")
-        public void testMultipleAtmarkArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeAtFromAnnotationArgument/multipleAtmarkArguments.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("stringAtmark.kt")
-        public void testStringAtmark() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeAtFromAnnotationArgument/stringAtmark.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("idea/testData/intentions/removeBraces")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
