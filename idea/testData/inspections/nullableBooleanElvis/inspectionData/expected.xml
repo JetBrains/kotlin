@@ -4,48 +4,48 @@
         <line>4</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="test.kt"/>
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis</problem_class>
-        <description>Equality check can be used instead of elvis</description>
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis for nullable boolean check</problem_class>
+        <description>Equality check should be used instead of elvis for nullable boolean check</description>
     </problem>
     <problem>
         <file>test.kt</file>
         <line>7</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="test.kt"/>
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis</problem_class>
-        <description>Equality check can be used instead of elvis</description>
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis for nullable boolean check</problem_class>
+        <description>Equality check should be used instead of elvis for nullable boolean check</description>
     </problem>
     <problem>
         <file>test.kt</file>
         <line>10</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="test.kt"/>
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis</problem_class>
-        <description>Equality check can be used instead of elvis</description>
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis for nullable boolean check</problem_class>
+        <description>Equality check should be used instead of elvis for nullable boolean check</description>
     </problem>
     <problem>
         <file>test.kt</file>
         <line>10</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="test.kt"/>
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis</problem_class>
-        <description>Equality check can be used instead of elvis</description>
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis for nullable boolean check</problem_class>
+        <description>Equality check should be used instead of elvis for nullable boolean check</description>
     </problem>
     <problem>
         <file>test.kt</file>
         <line>13</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="test.kt"/>
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis</problem_class>
-        <description>Equality check can be used instead of elvis</description>
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis for nullable boolean check</problem_class>
+        <description>Equality check can be used instead of elvis for nullable boolean check</description>
     </problem>
     <problem>
         <file>test.kt</file>
         <line>14</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="test.kt"/>
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis</problem_class>
-        <description>Equality check can be used instead of elvis</description>
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Equality check can be used instead of elvis for nullable boolean check</problem_class>
+        <description>Equality check can be used instead of elvis for nullable boolean check</description>
     </problem>
 
 </problems>
