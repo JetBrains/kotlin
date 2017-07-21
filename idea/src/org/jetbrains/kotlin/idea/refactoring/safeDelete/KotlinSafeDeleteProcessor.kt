@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.formatClass
 import org.jetbrains.kotlin.idea.refactoring.formatFunction
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.search.usagesSearch.buildProcessDelegationCallConstructorUsagesTask
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -68,9 +67,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             deleteSet.any { element -> JavaSafeDeleteProcessor.isInside(it, element.unwrapped) }
         }
 
-        fun getSearchInfo(element: PsiElement): NonCodeUsageSearchInfo {
-            return NonCodeUsageSearchInfo(getIgnoranceCondition(), element)
-        }
+        fun getSearchInfo(element: PsiElement) = NonCodeUsageSearchInfo(getIgnoranceCondition(), element)
 
         fun findUsagesByJavaProcessor(element: PsiElement, forceReferencedElementUnwrapping: Boolean): NonCodeUsageSearchInfo? {
             val javaUsages = ArrayList<UsageInfo>()
@@ -89,7 +86,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
                     is SafeDeleteOverrideAnnotation ->
                         usageInfo.smartPointer.element?.let { usageElement ->
-                            if (usageElement.toLightMethods().all { method -> method.findSuperMethods().size == 0 }) {
+                            if (usageElement.toLightMethods().all { method -> method.findSuperMethods().isEmpty() }) {
                                 KotlinSafeDeleteOverrideAnnotation(usageElement, usageInfo.referencedElement)
                             }
                             else null
@@ -214,11 +211,13 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 }
             }
 
-            is PsiMethod ->
+            is PsiMethod -> {
                 findUsagesByJavaProcessor(element, false)
+            }
 
-            is PsiClass ->
+            is PsiClass -> {
                 findUsagesByJavaProcessor(element, false)
+            }
 
             is KtProperty -> {
                 if (element.isLocal) {
@@ -255,13 +254,13 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
             val bindingContext = (element as KtElement).analyze()
 
-            val declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
-            if (declarationDescriptor !is CallableMemberDescriptor) return null
+            val declarationDescriptor =
+                    bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? CallableMemberDescriptor ?: return null
 
             return declarationDescriptor.overriddenDescriptors
                     .asSequence()
                     .filter { overridenDescriptor -> overridenDescriptor.modality == Modality.ABSTRACT }
-                    .mapTo(ArrayList<String>()) { overridenDescriptor ->
+                    .mapTo(ArrayList()) { overridenDescriptor ->
                         KotlinBundle.message(
                                 "x.implements.y",
                                 formatFunction(declarationDescriptor, true),
