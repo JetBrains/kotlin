@@ -2282,12 +2282,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             // But the problem is that we should leave the receiver itself on the stack, so we store it in a temporary variable.
             if (isSuspendCall && isSafeCallOrOnStack) {
                 boolean bothReceivers =
-                        receiver instanceof StackValue.CallReceiver
-                        && ((StackValue.CallReceiver) receiver).getDispatchReceiver().type.getSort() != Type.VOID
-                        && ((StackValue.CallReceiver) receiver).getExtensionReceiver().type.getSort() != Type.VOID;
+                        receiver instanceof CallReceiver
+                        && ((CallReceiver) receiver).getDispatchReceiver().type.getSort() != Type.VOID
+                        && ((CallReceiver) receiver).getExtensionReceiver().type.getSort() != Type.VOID;
                 Type firstReceiverType =
                         bothReceivers
-                        ? ((StackValue.CallReceiver) receiver).getDispatchReceiver().type
+                        ? ((CallReceiver) receiver).getDispatchReceiver().type
                         : receiver.type;
 
                 Type secondReceiverType = bothReceivers ? receiver.type : null;
