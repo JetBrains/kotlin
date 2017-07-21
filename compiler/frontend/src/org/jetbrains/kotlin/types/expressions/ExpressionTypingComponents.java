@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
+import org.jetbrains.kotlin.effectsystem.adapters.EffectSystem;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.*;
@@ -63,6 +64,7 @@ public class ExpressionTypingComponents {
     /*package*/ Iterable<RttiExpressionChecker> rttiExpressionCheckers;
     /*package*/ WrappedTypeFactory wrappedTypeFactory;
     /*package*/ CollectionLiteralResolver collectionLiteralResolver;
+    /*package*/ EffectSystem effectSystem;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -212,5 +214,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setCollectionLiteralResolver(CollectionLiteralResolver collectionLiteralResolver) {
         this.collectionLiteralResolver = collectionLiteralResolver;
+    }
+
+    @Inject
+    public void setEffectSystem(EffectSystem effectSystem) {
+        this.effectSystem = effectSystem;
     }
 }
