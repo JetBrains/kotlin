@@ -17600,6 +17600,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("kt17725.kt")
+        public void testKt17725() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/kt17725.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt19058.kt")
         public void testKt19058() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/kt19058.kt");

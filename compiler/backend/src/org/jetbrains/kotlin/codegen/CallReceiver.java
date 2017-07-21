@@ -29,19 +29,22 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 public class CallReceiver extends StackValue {
     private final StackValue dispatchReceiver;
     private final StackValue extensionReceiver;
+    private final Type secondReceiverType;
 
     private CallReceiver(
             @NotNull StackValue dispatchReceiver,
             @NotNull StackValue extensionReceiver,
-            @NotNull Type type
+            @NotNull Type type,
+            @Nullable Type secondReceiverType
     ) {
         super(type, dispatchReceiver.canHaveSideEffects() || extensionReceiver.canHaveSideEffects());
         this.dispatchReceiver = dispatchReceiver;
         this.extensionReceiver = extensionReceiver;
+        this.secondReceiverType = secondReceiverType;
     }
 
     public StackValue withoutReceiverArgument() {
-        return new CallReceiver(dispatchReceiver, none(), type);
+        return new CallReceiver(dispatchReceiver, none(), type, secondReceiverType);
     }
 
     public static StackValue generateCallReceiver(
@@ -57,8 +60,12 @@ public class CallReceiver extends StackValue {
         GenerationState state = codegen.getState();
 
         Type type;
+        Type secondReceiverType = null;
         if (extensionReceiverParameter != null) {
             type = calcExtensionReceiverType(resolvedCall, extensionReceiverParameter, typeMapper, callableMethod, state);
+            if (dispatchReceiverParameter != null) {
+                secondReceiverType = calcDispatchReceiverType(resolvedCall, dispatchReceiverParameter, typeMapper, callableMethod);
+            }
         }
         else if (dispatchReceiverParameter != null) {
             type = calcDispatchReceiverType(resolvedCall, dispatchReceiverParameter, typeMapper, callableMethod);
@@ -72,7 +79,7 @@ public class CallReceiver extends StackValue {
 
         assert type != null : "Could not map receiver type for " + resolvedCall;
 
-        return new CallReceiver(dispatchReceiver, extensionReceiver, type);
+        return new CallReceiver(dispatchReceiver, extensionReceiver, type, secondReceiverType);
     }
 
     private static Type calcDispatchReceiverType(
@@ -135,10 +142,13 @@ public class CallReceiver extends StackValue {
             currentExtensionReceiver = StackValue.onStack(currentExtensionReceiver.type);
         }
 
-        dispatchReceiver.put(hasExtensionReceiver ? dispatchReceiver.type : type, v);
+        Type dispatchReceiverType = secondReceiverType != null ? secondReceiverType :
+                                    hasExtensionReceiver ? dispatchReceiver.type :
+                                    type;
+        dispatchReceiver.put(dispatchReceiverType, v);
 
         currentExtensionReceiver
-                .moveToTopOfStack(hasExtensionReceiver ? type : currentExtensionReceiver.type, v, dispatchReceiver.type.getSize());
+                .moveToTopOfStack(hasExtensionReceiver ? type : currentExtensionReceiver.type, v, dispatchReceiverType.getSize());
     }
 
     @Override
