@@ -51,10 +51,6 @@ fun AbstractCompile.mapClasspath(fn: () -> FileCollection) {
     conventionMapping.map("classpath", fn)
 }
 
-internal fun AbstractCompile.mapSource(fn: () -> FileTree) {
-    conventionMapping.map("source", fn)
-}
-
 internal inline fun <reified T : Any> Any.addConvention(name: String, plugin: T) {
     (this as HasConvention).convention.plugins[name] = plugin
 }
