@@ -29,11 +29,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
 
 val ModuleDescriptor.sourceKind: SourceKind
@@ -55,7 +56,7 @@ val ModuleDescriptor.allImplementingCompatibleModules
 class PlatformHeaderAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         val declaration = element as? KtDeclaration ?: return
-        if (!declaration.hasModifier(KtTokens.HEADER_KEYWORD)) return
+        if (!isHeaderDeclaration(declaration)) return
 
         if (TargetPlatformDetector.getPlatform(declaration.containingKtFile) !is TargetPlatform.Default) return
 
@@ -77,5 +78,10 @@ class PlatformHeaderAnnotator : Annotator {
         if (filteredList.isEmpty()) return
 
         KotlinPsiChecker().annotateElement(declaration, holder, SimpleDiagnostics(filteredList))
+    }
+
+    private fun isHeaderDeclaration(declaration: KtDeclaration): Boolean {
+        return declaration.hasModifier(KtTokens.HEADER_KEYWORD) ||
+               declaration is KtClassOrObject && KtPsiUtil.getOutermostClassOrObject(declaration)?.hasModifier(KtTokens.HEADER_KEYWORD) == true
     }
 }

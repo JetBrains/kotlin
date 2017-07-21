@@ -58,7 +58,7 @@ header class Regex {
     fun split(input: CharSequence): List<String>
     fun split(input: CharSequence, limit: Int): List<String>
 
-    header companion object {
+    companion object {
         fun fromLiteral(literal: String): Regex
         fun escape(literal: String): String
         fun escapeReplacement(literal: String): String

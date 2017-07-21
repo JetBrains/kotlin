@@ -4,10 +4,10 @@ header class <caret>WithNested {
     fun foo(): Int
 
     class Nested {
-        fun bar() = "Nested"
+        fun bar()
     }
 
     inner class Inner {
-        fun baz() = "Inner"
+        fun baz()
     }
 }

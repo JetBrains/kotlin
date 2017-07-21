@@ -1,9 +1,9 @@
 package
 
 public final header enum class En : kotlin.Enum<En> {
-    enum entry E1
+    header enum entry E1
 
-    enum entry E2
+    header enum entry E2
 
     private constructor En(/*0*/ x: kotlin.Int)
     private constructor En(/*0*/ s: kotlin.String)
@@ -21,7 +21,7 @@ public final header enum class En : kotlin.Enum<En> {
 }
 
 public final header enum class En2 : kotlin.Enum<En2> {
-    enum entry E1
+    header enum entry E1
 
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int

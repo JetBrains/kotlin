@@ -17,7 +17,7 @@ public final header class Class {
 }
 
 public final header enum class En : kotlin.Enum<En> {
-    enum entry ENTRY
+    header enum entry ENTRY
 
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int

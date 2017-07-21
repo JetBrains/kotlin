@@ -5,7 +5,7 @@
 <!WRONG_MODIFIER_TARGET!>header<!> typealias Foo = String
 
 class Outer <!WRONG_MODIFIER_TARGET!>header<!> constructor() {
-    header class Nested
+    <!WRONG_MODIFIER_TARGET!>header<!> class Nested
 
     <!WRONG_MODIFIER_TARGET!>header<!> init {}
 

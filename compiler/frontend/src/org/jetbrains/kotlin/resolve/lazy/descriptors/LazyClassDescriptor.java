@@ -165,8 +165,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.isInner = modifierList != null && modifierList.hasModifier(INNER_KEYWORD) && !isIllegalInner(this);
         this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
-        this.isHeader = modifierList != null && modifierList.hasModifier(KtTokens.HEADER_KEYWORD);
         this.isImpl = modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD);
+
+        this.isHeader = modifierList != null && modifierList.hasModifier(KtTokens.HEADER_KEYWORD) ||
+                        containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isHeader();
 
         // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)
         List<KtAnnotationEntry> annotationEntries = new ArrayList<>();

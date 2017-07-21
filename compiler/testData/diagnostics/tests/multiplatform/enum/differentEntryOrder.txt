@@ -2,11 +2,11 @@
 package
 
 public final header enum class Bar : kotlin.Enum<Bar> {
-    enum entry X
+    header enum entry X
 
-    enum entry Y
+    header enum entry Y
 
-    enum entry Z
+    header enum entry Z
 
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
@@ -22,9 +22,9 @@ public final header enum class Bar : kotlin.Enum<Bar> {
 }
 
 public final header enum class Foo : kotlin.Enum<Foo> {
-    enum entry A
+    header enum entry A
 
-    enum entry B
+    header enum entry B
 
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int

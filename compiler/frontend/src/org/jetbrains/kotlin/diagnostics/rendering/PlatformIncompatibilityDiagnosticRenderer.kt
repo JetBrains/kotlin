@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker.Compatibility.Incompatible
@@ -44,9 +43,9 @@ class PlatformIncompatibilityDiagnosticRenderer(
 
 class IncompatibleHeaderImplClassScopesRenderer(
         private val mode: MultiplatformDiagnosticRenderingMode
-) : DiagnosticParameterRenderer<List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>> {
+) : DiagnosticParameterRenderer<List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>> {
     override fun render(
-            obj: List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>,
+            obj: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>,
             renderingContext: RenderingContext
     ): String {
         if (obj.isEmpty()) return ""
@@ -110,7 +109,7 @@ private fun StringBuilder.renderIncompatibilityInformation(
 }
 
 private fun StringBuilder.renderIncompatibleClassScopes(
-        unimplemented: List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>,
+        unimplemented: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>,
         indent: String,
         context: RenderingContext,
         mode: MultiplatformDiagnosticRenderingMode

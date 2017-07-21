@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker;
 import org.jetbrains.kotlin.resolve.checkers.PublishedApiUsageChecker;
@@ -35,8 +36,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.NESTED_CLASS_NOT_ALLOWED;
-import static org.jetbrains.kotlin.diagnostics.Errors.NESTED_OBJECT_NOT_ALLOWED;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 public class ModifiersChecker {
@@ -160,6 +160,7 @@ public class ModifiersChecker {
             checkObjectInsideInnerClass(modifierListOwner, descriptor);
             checkTypeParametersModifiers(modifierListOwner);
             checkModifierListCommon(modifierListOwner, descriptor);
+            checkIllegalHeader(modifierListOwner, descriptor);
         }
 
         private void checkObjectInsideInnerClass(@NotNull KtDeclaration modifierListOwner, @NotNull MemberDescriptor descriptor) {
@@ -192,6 +193,16 @@ public class ModifiersChecker {
                 annotationChecker.check(multiEntry, trace, null);
                 ModifierCheckerCore.INSTANCE.check(multiEntry, trace, null, languageVersionSettings);
                 UnderscoreChecker.INSTANCE.checkNamed(multiEntry, trace, languageVersionSettings, /* allowSingleUnderscore = */ true);
+            }
+        }
+
+        private void checkIllegalHeader(@NotNull KtModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
+            // Most cases are already handled by ModifierCheckerCore, only check nested classes here
+            KtModifierList modifierList = modifierListOwner.getModifierList();
+            PsiElement keyword = modifierList != null ? modifierList.getModifier(HEADER_KEYWORD) : null;
+            if (keyword != null &&
+                descriptor instanceof ClassDescriptor && descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+                trace.report(WRONG_MODIFIER_TARGET.on(keyword, KtTokens.HEADER_KEYWORD, "nested class"));
             }
         }
 

@@ -13782,6 +13782,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("nestedClassesWithErrors.kt")
+                public void testNestedClassesWithErrors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/nestedClassesWithErrors.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("noImplKeywordOnMember.kt")
                 public void testNoImplKeywordOnMember() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/noImplKeywordOnMember.kt");

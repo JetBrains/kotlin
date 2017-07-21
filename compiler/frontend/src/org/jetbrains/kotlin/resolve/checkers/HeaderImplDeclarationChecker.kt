@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker.Compatibility.Compatible
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker.Compatibility.Incompatible
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -64,9 +63,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
 
         val checkImpl = !languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckImpl)
         if (descriptor.isHeader) {
-            if (declaration.hasModifier(KtTokens.HEADER_KEYWORD)) {
-                checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, descriptor.module, checkImpl)
-            }
+            checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, descriptor.module, checkImpl)
         }
         else {
             checkImplementationHasHeaderDeclaration(declaration, descriptor, diagnosticHolder, checkImpl)
@@ -81,7 +78,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             checkImpl: Boolean
     ) {
         // Only look for implementations of top level members; class members will be handled as a part of that header class
-        if (descriptor is CallableMemberDescriptor && descriptor.containingDeclaration !is PackageFragmentDescriptor) return
+        if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
 
         val compatibility = findImplForHeader(descriptor, platformModule, checkImpl) ?: return
 
@@ -180,12 +177,11 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
 
     // This should ideally be handled by CallableMemberDescriptor.Kind, but default constructors have kind DECLARATION and non-empty source.
     // Their source is the containing KtClass instance though, as opposed to explicit constructors, whose source is KtConstructor
-    private fun CallableMemberDescriptor.isExplicitImplDeclaration(): Boolean =
-            if (this is ConstructorDescriptor) {
-                DescriptorToSourceUtils.getSourceFromDescriptor(this) is KtConstructor<*>
-            }
-            else {
-                kind == CallableMemberDescriptor.Kind.DECLARATION
+    private fun MemberDescriptor.isExplicitImplDeclaration(): Boolean =
+            when (this) {
+                is ConstructorDescriptor -> DescriptorToSourceUtils.getSourceFromDescriptor(this) is KtConstructor<*>
+                is CallableMemberDescriptor -> kind == CallableMemberDescriptor.Kind.DECLARATION
+                else -> true
             }
 
     private fun findHeaderForImpl(impl: MemberDescriptor, commonModule: ModuleDescriptor): Map<Compatibility, List<MemberDescriptor>>? {
@@ -196,7 +192,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
                     is ClassDescriptor -> {
                         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
                         val headerClass = findHeaderForImpl(container, commonModule)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
-                        headerClass?.getMembers(impl.name).orEmpty()
+                        headerClass?.getMembers(impl.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
                     }
                     is PackageFragmentDescriptor -> impl.findNamesakesFromModule(commonModule)
                     else -> return null // do not report anything for incorrect code, e.g. 'impl' local function
@@ -317,7 +313,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             object Supertypes : Incompatible("some supertypes are missing in the implementation")
 
             class ClassScopes(
-                    val unimplemented: List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>
+                    val unimplemented: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>
             ) : Incompatible("some members are not implemented")
 
             object EnumEntries : Incompatible("some entries from header enum are missing in the impl enum")
@@ -472,7 +468,8 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
     }
 
     private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor, checkImpl: Boolean): Compatibility {
-        assert(a.fqNameUnsafe == other.fqNameUnsafe) { "This function should be invoked only for declarations with the same name: $a, $other" }
+        // Can't check FQ names here because nested header class may be implemented via impl typealias's expansion with the other FQ name
+        assert(a.name == other.name) { "This function should be invoked only for declarations with the same name: $a, $other" }
 
         var implTypealias = false
         val b = when (other) {
@@ -515,6 +512,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         return Compatible
     }
 
+
     private fun areCompatibleClassScopes(
             a: ClassDescriptor,
             b: ClassDescriptor,
@@ -522,19 +520,30 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             platformModule: ModuleDescriptor,
             substitutor: Substitutor
     ): Compatibility {
-        val unimplemented = arrayListOf<Pair<CallableMemberDescriptor, Map<Incompatible, MutableCollection<CallableMemberDescriptor>>>>()
+        val unimplemented = arrayListOf<Pair<MemberDescriptor, Map<Incompatible, MutableCollection<MemberDescriptor>>>>()
 
         val bMembersByName = b.getMembers().groupBy { it.name }
 
         outer@ for (aMember in a.getMembers()) {
-            if (!aMember.kind.isReal) continue
+            if (aMember is CallableMemberDescriptor && !aMember.kind.isReal) continue
 
-            val mapping = bMembersByName[aMember.name].orEmpty().keysToMap { bMember ->
-                areCompatibleCallables(aMember, bMember, checkImpl, platformModule, substitutor)
+            val bMembers = bMembersByName[aMember.name]?.filter { bMember ->
+                aMember is CallableMemberDescriptor && bMember is CallableMemberDescriptor ||
+                aMember is ClassDescriptor && bMember is ClassDescriptor
+            }.orEmpty()
+
+            val mapping = bMembers.keysToMap { bMember ->
+                when (aMember) {
+                    is CallableMemberDescriptor ->
+                            areCompatibleCallables(aMember, bMember as CallableMemberDescriptor, checkImpl, platformModule, substitutor)
+                    is ClassDescriptor ->
+                            areCompatibleClassifiers(aMember, bMember as ClassDescriptor, checkImpl)
+                    else -> throw UnsupportedOperationException("Unsupported declaration: $aMember ($bMembers)")
+                }
             }
             if (mapping.values.any { it == Compatible }) continue
 
-            val incompatibilityMap = mutableMapOf<Incompatible, MutableCollection<CallableMemberDescriptor>>()
+            val incompatibilityMap = mutableMapOf<Incompatible, MutableCollection<MemberDescriptor>>()
             for ((descriptor, compatibility) in mapping) {
                 when (compatibility) {
                     Compatible -> continue@outer
@@ -561,10 +570,13 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         return Incompatible.ClassScopes(unimplemented)
     }
 
-    private fun ClassDescriptor.getMembers(name: Name? = null): Collection<CallableMemberDescriptor> {
+    private fun ClassDescriptor.getMembers(name: Name? = null): Collection<MemberDescriptor> {
         val nameFilter = if (name != null) { it -> it == name } else MemberScope.ALL_NAME_FILTER
-        return defaultType.memberScope.getDescriptorsFiltered(nameFilter = nameFilter).filterIsInstance<CallableMemberDescriptor>() +
-               constructors.filter { nameFilter(it.name) }
+        return defaultType.memberScope
+                .getDescriptorsFiltered(nameFilter = nameFilter)
+                .filterIsInstance<MemberDescriptor>()
+                .filterNot(DescriptorUtils::isEnumEntry)
+                .plus(constructors.filter { nameFilter(it.name) })
     }
 
     private inline fun <T, K> equalBy(first: T, second: T, selector: (T) -> K): Boolean =

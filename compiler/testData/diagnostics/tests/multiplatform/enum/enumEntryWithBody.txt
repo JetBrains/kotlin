@@ -1,11 +1,11 @@
 package
 
 public final header enum class En : kotlin.Enum<En> {
-    enum entry E1
+    header enum entry E1
 
-    enum entry E2
+    header enum entry E2
 
-    enum entry E3
+    header enum entry E3
 
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int

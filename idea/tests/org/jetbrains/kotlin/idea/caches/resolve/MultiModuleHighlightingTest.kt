@@ -284,5 +284,9 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
                 }
             })
         }
+
+        fun testNestedClassWithoutImpl() {
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        }
     }
 }
