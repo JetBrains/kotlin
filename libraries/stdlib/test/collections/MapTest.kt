@@ -97,6 +97,18 @@ class MapTest {
         assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
     }
 
+    @Test fun iterateAndMutate() {
+        val map = mutableMapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
+        val it = map.iterator()
+        for (e in it) {
+            when (e.key) {
+                "beverage" -> e.setValue("juice")
+                "location" -> it.remove()
+            }
+        }
+        assertEquals(mapOf("beverage" to "juice", "name" to "James"), map)
+    }
+
 
     @Test
     fun onEach() {
