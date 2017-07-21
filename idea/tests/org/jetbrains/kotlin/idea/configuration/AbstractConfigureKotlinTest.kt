@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathMacros
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.PlatformTestCase
@@ -148,19 +146,9 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
             val project = modules.iterator().next().project
             val collector = createConfigureKotlinNotificationCollector(project)
 
+            val pathToJar = getPathToJar(runtimeState, jarFromDist, jarFromTemp)
             for (module in modules) {
-                var library = configurator.getKotlinLibrary(module)
-                if (library == null) {
-                    library = configurator.createNewLibrary(project, collector)
-                }
-                val pathToJar = getPathToJar(runtimeState, jarFromDist, jarFromTemp)
-                val sdk = ModuleRootManager.getInstance(module).sdk
-                val model = library.modifiableModel
-                for (descriptor in configurator.getLibraryJarDescriptors(sdk)) {
-                    configurator.configureLibraryJar(model, runtimeState, pathToJar, descriptor, collector)
-                }
-                ApplicationManager.getApplication().runWriteAction { model.commit() }
-                configurator.addLibraryToModuleIfNeeded(module, library, collector)
+                configurator.configureModuleWithLibrary(module, pathToJar, pathToJar, collector, runtimeState)
             }
             collector.showNotification()
         }
