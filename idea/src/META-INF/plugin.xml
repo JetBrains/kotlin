@@ -2305,7 +2305,7 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NullableBooleanElvisInspection"
-                     displayName="Equality check can be used instead of elvis"
+                     displayName="Equality check can be used instead of elvis for nullable boolean check"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
