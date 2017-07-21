@@ -186,7 +186,8 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
         }
 
         for (kind in diff) {
-            when (kind!!) {
+            @Suppress("UNUSED_VARIABLE") // To make this 'when' exhaustive
+            val unused: Any = when (kind!!) {
                 ProtoBufClassKind.COMPANION_OBJECT_NAME -> {
                     if (oldProto.hasCompanionObjectName()) oldProto.companionObjectName.oldToNames()
                     if (newProto.hasCompanionObjectName()) newProto.companionObjectName.newToNames()
@@ -203,10 +204,7 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                 }
                 ProtoBufClassKind.CONSTRUCTOR_LIST -> {
                     val differentNonPrivateConstructors = calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getConstructorList)
-
-                    if (differentNonPrivateConstructors.isNotEmpty()) {
-                        isClassAffected = true
-                    }
+                    isClassAffected = isClassAffected || differentNonPrivateConstructors.isNotEmpty()
                 }
                 ProtoBufClassKind.FUNCTION_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getFunctionList))
@@ -238,6 +236,9 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                 ProtoBufClassKind.CLASS_MODULE_NAME -> {
                     // TODO
                 }
+                ProtoBufClassKind.CLASS_LOCAL_VARIABLE_LIST -> {
+                    // Not affected, local variables are not accessible outside of a file
+                }
             }
         }
 
@@ -267,7 +268,8 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
         }
 
         for (kind in diff) {
-            when (kind!!) {
+            @Suppress("UNUSED_VARIABLE") // To make this 'when' exhaustive
+            val unused: Any = when (kind!!) {
                 ProtoBufPackageKind.FUNCTION_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getFunctionList))
                 ProtoBufPackageKind.PROPERTY_LIST ->
@@ -279,7 +281,9 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
                 ProtoBufPackageKind.PACKAGE_MODULE_NAME -> {
                     // TODO
                 }
-                else -> throw IllegalArgumentException("Unsupported kind: $kind")
+                ProtoBufPackageKind.PACKAGE_LOCAL_VARIABLE_LIST -> {
+                    // Not affected, local variables are not accessible outside of a file
+                }
             }
         }
 
