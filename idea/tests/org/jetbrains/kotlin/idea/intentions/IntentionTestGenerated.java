@@ -7814,6 +7814,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("classProperty.kt")
+        public void testClassProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringVariables/classProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noInitializer.kt")
         public void testNoInitializer() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringVariables/noInitializer.kt");
@@ -7823,6 +7829,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringVariables/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toplevel.kt")
+        public void testToplevel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringVariables/toplevel.kt");
             doTest(fileName);
         }
 
