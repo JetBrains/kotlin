@@ -1588,6 +1588,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/CallWithBrackets.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("notFirstArgument.kt")
+        public void testNotFirstArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/notFirstArgument.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/idea-completion/testData/smart/propertyDelegate")

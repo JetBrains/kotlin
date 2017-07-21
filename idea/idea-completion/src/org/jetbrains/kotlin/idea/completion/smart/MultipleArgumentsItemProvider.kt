@@ -58,8 +58,8 @@ class MultipleArgumentsItemProvider(
         val added = HashSet<String>()
         for (expectedInfo in expectedInfos) {
             val additionalData = expectedInfo.additionalData
-            if (additionalData is ArgumentPositionData.Positional && additionalData.argumentIndex == 0) {
-                val parameters = additionalData.function.valueParameters
+            if (additionalData is ArgumentPositionData.Positional) {
+                val parameters = additionalData.function.valueParameters.drop(additionalData.argumentIndex)
                 if (parameters.size > 1) {
                     val tail = when (additionalData.callType) {
                         Call.CallType.ARRAY_GET_METHOD, Call.CallType.ARRAY_SET_METHOD -> Tail.RBRACKET
