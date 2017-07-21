@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleProductionSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -32,6 +30,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
@@ -47,50 +46,36 @@ val ModuleDescriptor.sourceKind: SourceKind
 enum class SourceKind { OTHER, PRODUCTION, TEST }
 
 val ModuleDescriptor.allImplementingCompatibleModules
-    get() = allImplementingModules.filter {
-        sourceKind == SourceKind.OTHER ||
-        it.sourceKind == SourceKind.OTHER ||
-        it.sourceKind == sourceKind
+    get() = allImplementingModules.filter { other ->
+        this.sourceKind == SourceKind.OTHER ||
+        other.sourceKind == SourceKind.OTHER ||
+        other.sourceKind == this.sourceKind
     }
 
 class PlatformHeaderAnnotator : Annotator {
-
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         val declaration = element as? KtDeclaration ?: return
         if (!declaration.hasModifier(KtTokens.HEADER_KEYWORD)) return
 
         if (TargetPlatformDetector.getPlatform(declaration.containingKtFile) !is TargetPlatform.Default) return
 
-        val defaultModuleDescriptor = declaration.findModuleDescriptor()
-        val dependentDescriptors = defaultModuleDescriptor.allImplementingCompatibleModules
-        if (dependentDescriptors.isEmpty()) return
+        val implementingModules = declaration.findModuleDescriptor().allImplementingCompatibleModules
+        if (implementingModules.isEmpty()) return
 
-        val diagnostics = validate(declaration, dependentDescriptors)
-        KotlinPsiChecker().annotateElement(declaration, holder, diagnostics)
-    }
+        val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
+        if (!descriptor.isHeader) return
 
-    fun validate(declaration: KtDeclaration, modulesToCheck: Collection<ModuleDescriptor>): Diagnostics {
-        val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return Diagnostics.EMPTY
-        if (!descriptor.isHeader) return Diagnostics.EMPTY
-
-        val diagnosticList = mutableListOf<Diagnostic>()
-        val diagnosticSink = object : DiagnosticSink {
-            override fun report(diagnostic: Diagnostic) {
-                diagnosticList += diagnostic
-            }
-
-            override fun wantsDiagnostics() = true
-        }
-        for (module in modulesToCheck) {
-            HeaderImplDeclarationChecker.checkHeaderDeclarationHasImplementation(
-                    declaration, descriptor, diagnosticSink, module, checkImpl = false
-            )
+        val trace = BindingTraceContext()
+        for (module in implementingModules) {
+            HeaderImplDeclarationChecker.checkHeaderDeclarationHasImplementation(declaration, descriptor, trace, module, checkImpl = false)
         }
 
         val suppressionCache = KotlinCacheService.getInstance(declaration.project).getSuppressionCache()
-        val filteredList = diagnosticList.filter {
-            !suppressionCache.isSuppressed(declaration, it.factory.name, it.severity)
+        val filteredList = trace.bindingContext.diagnostics.filter { diagnostic ->
+            !suppressionCache.isSuppressed(declaration, diagnostic.factory.name, diagnostic.severity)
         }
-        return if (filteredList.isNotEmpty()) SimpleDiagnostics(filteredList) else Diagnostics.EMPTY
+        if (filteredList.isEmpty()) return
+
+        KotlinPsiChecker().annotateElement(declaration, holder, SimpleDiagnostics(filteredList))
     }
 }
