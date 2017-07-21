@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.RootPolicy;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
@@ -119,6 +122,11 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
 
     public void testJsLibraryWithoutPaths_doNotCopyJar() {
         doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
+    }
+
+    public void testJsLibraryWrongKind() {
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
+        assertEquals(1, ModuleRootManager.getInstance(getModule()).orderEntries().process(new LibraryCountingRootPolicy(), 0).intValue());
     }
 
     public void testProjectWithoutFacetWithRuntime106WithoutLanguageLevel() {
@@ -260,5 +268,12 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
 
     public void testProjectWithoutFacetWithJvmTarget18() {
         assertEquals(TargetPlatformKind.Jvm.Companion.get(JvmTarget.JVM_1_8), PlatformKt.getTargetPlatform(getModule()));
+    }
+
+    private static class LibraryCountingRootPolicy extends RootPolicy<Integer> {
+        @Override
+        public Integer visitLibraryOrderEntry(LibraryOrderEntry libraryOrderEntry, Integer value) {
+            return value + 1;
+        }
     }
 }
