@@ -4022,6 +4022,10 @@ public final class kotlin/text/StringsKt {
 	public static final fun takeLastWhile (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
 	public static final fun takeWhile (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/CharSequence;
 	public static final fun takeWhile (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
+	public static final fun toBigDecimalOrNull (Ljava/lang/String;)Ljava/math/BigDecimal;
+	public static final fun toBigDecimalOrNull (Ljava/lang/String;Ljava/math/MathContext;)Ljava/math/BigDecimal;
+	public static final fun toBigIntegerOrNull (Ljava/lang/String;)Ljava/math/BigInteger;
+	public static final fun toBigIntegerOrNull (Ljava/lang/String;I)Ljava/math/BigInteger;
 	public static final fun toByteOrNull (Ljava/lang/String;)Ljava/lang/Byte;
 	public static final fun toByteOrNull (Ljava/lang/String;I)Ljava/lang/Byte;
 	public static final fun toCollection (Ljava/lang/CharSequence;Ljava/util/Collection;)Ljava/util/Collection;
