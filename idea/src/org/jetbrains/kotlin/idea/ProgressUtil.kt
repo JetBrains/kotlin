@@ -22,27 +22,19 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils
 import com.intellij.openapi.project.Project
 
-fun <T : Any> runInReadActionWithWriteActionPriority(f: () -> T): T? {
+fun <T : Any> runInReadActionWithWriteActionPriorityWithPCE(f: () -> T): T {
     var r: T? = null
     if (!with(ApplicationManager.getApplication()) { isDispatchThread && isUnitTestMode }) {
-        ProgressIndicatorUtils.runInReadActionWithWriteActionPriority {
+        val complete = ProgressIndicatorUtils.runInReadActionWithWriteActionPriority {
             r = f()
         }
+
+        // There is a write action in progress or pending, so no point in counting the result
+        if (!complete) throw ProcessCanceledException()
     }
     else {
         r = f()
     }
-    return r
-}
-
-fun <T : Any> runInReadActionWithWriteActionPriorityWithPCE(f: () -> T): T {
-    var r: T? = null
-    val complete = ProgressIndicatorUtils.runInReadActionWithWriteActionPriority {
-        r = f()
-    }
-
-    // There is a write action in progress or pending, so no point in counting the result
-    if (!complete) throw ProcessCanceledException()
 
     return r!!
 }
