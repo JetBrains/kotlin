@@ -1,0 +1,4 @@
+// "Remove variable 'i'" "true"
+
+fun foo() {
+}
