@@ -200,19 +200,25 @@ fun getCanBeConfiguredModulesWithKotlinFiles(project: Project, excludeModules: C
 
 fun hasAnyKotlinRuntimeInScope(module: Module): Boolean {
     val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
-    return getKotlinJvmRuntimeMarkerClass(module.project, scope) != null ||
-           hasKotlinJsKjsmFile(module.project, scope) ||
-           hasKotlinCommonRuntimeInScope(scope)
+    return runReadAction {
+        getKotlinJvmRuntimeMarkerClass(module.project, scope) != null ||
+        hasKotlinJsKjsmFile(module.project, scope) ||
+        hasKotlinCommonRuntimeInScope(scope)
+    }
 }
 
 fun hasKotlinJvmRuntimeInScope(module: Module): Boolean {
-    val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
-    return getKotlinJvmRuntimeMarkerClass(module.project, scope) != null
+    return runReadAction {
+        val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
+        getKotlinJvmRuntimeMarkerClass(module.project, scope) != null
+    }
 }
 
 fun hasKotlinJsRuntimeInScope(module: Module): Boolean {
-    val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
-    return hasKotlinJsKjsmFile(module.project, scope)
+    return runReadAction {
+        val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
+        hasKotlinJsKjsmFile(module.project, scope)
+    }
 }
 
 fun hasKotlinCommonRuntimeInScope(scope: GlobalSearchScope): Boolean {
