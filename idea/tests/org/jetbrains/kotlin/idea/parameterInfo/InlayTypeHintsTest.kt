@@ -32,6 +32,11 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         check("""fun foo() { val a<hint text=": List<String>" /> = listOf("a") }""")
     }
 
+    fun testDestructuringType() {
+        HintType.LOCAL_VARIABLE_HINT.option.set(true)
+        check("""fun foo() { val (i<hint text=": Int" />, s<hint text=": String" />) = 1 to "" }""")
+    }
+
     fun testPropertyType() {
         HintType.PROPERTY_HINT.option.set(true)
         check("""val a<hint text=": List<String>" /> = listOf("a")""")
