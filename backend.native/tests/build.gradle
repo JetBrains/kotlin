@@ -357,6 +357,11 @@ task codegen_controlflow_for_loops_coroutines(type: RunKonanTest) {
             "Got: 0 2 4 6\n"
 }
 
+task codegen_controlflow_for_loops_call_order(type: RunKonanTest) {
+    source = "codegen/controlflow/for_loops_call_order.kt"
+    goldValue = "1234\n1234\n2134\n"
+}
+
 task local_variable(type: RunKonanTest) {
     source = "codegen/basics/local_variable.kt"
 }

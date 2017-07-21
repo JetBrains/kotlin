@@ -81,7 +81,7 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
 
     val checkProgressionStep = context.getInternalFunctions("checkProgressionStep")
             .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
-    val getProgressionBound = context.getInternalFunctions("getProgressionBound")
+    val getProgressionLast = context.getInternalFunctions("getProgressionLast")
             .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
 
     val defaultConstructorMarker = symbolTable.referenceClass(context.getInternalClass("DefaultConstructorMarker"))

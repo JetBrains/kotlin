@@ -38,10 +38,8 @@ import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -185,11 +183,11 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         } to true
     }
 
-    private fun irGetProgressionBound(progressionType: ProgressionType,
-                                      first: IrVariableSymbol,
-                                      lastExpression: IrExpression,
-                                      step: IrVariableSymbol): IrExpression {
-        val symbol = symbols.getProgressionBound[progressionType.elementType]
+    private fun irGetProgressionLast(progressionType: ProgressionType,
+                                     first: IrVariableSymbol,
+                                     lastExpression: IrExpression,
+                                     step: IrVariableSymbol): IrExpression {
+        val symbol = symbols.getProgressionLast[progressionType.elementType]
                 ?: throw IllegalArgumentException("Unknown progression element type: ${lastExpression.type}")
         val startOffset = lastExpression.startOffset
         val endOffset = lastExpression.endOffset
@@ -204,7 +202,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
     //region Util classes ==============================================================================================
     // TODO: Replace with a cast when such support is added in the boxing lowering.
     private data class ProgressionType(val elementType: KotlinType,
-                                       val numberCastFunctionName: Name) {
+                                          val numberCastFunctionName: Name) {
         fun isIntProgression()  = KotlinBuiltIns.isInt(elementType)
         fun isLongProgression() = KotlinBuiltIns.isLong(elementType)
         fun isCharProgression() = KotlinBuiltIns.isChar(elementType)
@@ -213,16 +211,18 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
     private data class ProgressionInfo(
             val progressionType: ProgressionType,
             val first: IrExpression,
-            val last: IrExpression,
+            val bound: IrExpression,
             val step: IrExpression? = null,
             val increasing: Boolean = true,
-            var needBoundCalculation: Boolean = false)
+            var needLastCalculation: Boolean = false,
+            val closed: Boolean = true)
 
     /** Contains information about variables used in the loop. */
     private data class ForLoopInfo(
             val progressionInfo: ProgressionInfo,
             val inductionVariable: IrVariableSymbol,
             val bound: IrVariableSymbol,
+            val last: IrVariableSymbol,
             val step: IrVariableSymbol,
             var loopVariable: IrVariableSymbol? = null)
 
@@ -233,17 +233,15 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         val CHAR_PROGRESSION = ProgressionType(context.builtIns.charType, Name.identifier("toChar"))
 
         private fun buildRangeTo(expression: IrCall, progressionType: ProgressionType) =
-                ProgressionInfo(progressionType, expression.dispatchReceiver!!, expression.getValueArgument(0)!!)
+                ProgressionInfo(progressionType,
+                        expression.dispatchReceiver!!,
+                        expression.getValueArgument(0)!!)
 
-        private fun buildUntil(expression: IrCall, progressionType: ProgressionType): ProgressionInfo {
-            val firstExpression = expression.extensionReceiver!!
-            val lastExpression = expression.getValueArgument(0)!!
-            val decrementSymbol = symbols.getUnaryOperator(OperatorNameConventions.DEC, lastExpression.type)
-            val decrementCall = IrCallImpl(expression.startOffset, expression.endOffset, decrementSymbol).apply {
-                dispatchReceiver = lastExpression
-            }
-            return ProgressionInfo(progressionType, firstExpression, decrementCall)
-        }
+        private fun buildUntil(expression: IrCall, progressionType: ProgressionType): ProgressionInfo =
+                ProgressionInfo(progressionType,
+                        expression.extensionReceiver!!,
+                        expression.getValueArgument(0)!!,
+                        closed = false)
 
         private fun buildDownTo(expression: IrCall, progressionType: ProgressionType) =
                 ProgressionInfo(progressionType, expression.extensionReceiver!!, expression.getValueArgument(0)!!, increasing = false)
@@ -264,7 +262,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                             statements.add(newStepCheck)
                         }
                     }
-                    ProgressionInfo(progressionType, it.first, it.last, step, it.increasing, needBoundCalculation)
+                    ProgressionInfo(progressionType, it.first, it.bound, step, it.increasing, needBoundCalculation, it.closed)
                 }
 
         override fun visitElement(element: IrElement, data: Nothing?): ProgressionInfo? = null
@@ -307,28 +305,58 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
             with(progressionInfo) {
                 val statements = mutableListOf<IrStatement>()
 
-
+                /**
+                 * For this loop:
+                 * `for (i in a() .. b() step c() step d())`
+                 * We need to call functions in the following order: a, b, c, d.
+                 * So we call b() before step calculations and then call last element calculation function (if necessary).
+                 */
                 val inductionVariable = scope.createTemporaryVariable(first.castIfNecessary(progressionType),
                         "inductionVariable",
-                        true)
-                statements.add(inductionVariable)
+                        true).also {
+                    statements.add(it)
+                }
+
+                val boundValue = scope.createTemporaryVariable(bound.castIfNecessary(progressionType),"bound")
+                        .also { statements.add(it) }
+
 
                 val stepExpression = (if (increasing) step else step?.unaryMinus()) ?: defaultStep(startOffset, endOffset)
-                val stepValue = scope.createTemporaryVariable(stepExpression, "step")
-                statements.add(stepValue)
-
-                // Don't call progression bound calculation if the step is 1.
-                val boundExpression = if (needBoundCalculation) {
-                    irGetProgressionBound(progressionType, inductionVariable.symbol, last, stepValue.symbol)
-                } else {
-                    last.castIfNecessary(progressionType)
+                val stepValue = scope.createTemporaryVariable(stepExpression, "step").also {
+                    statements.add(it)
                 }
-                val boundValue = scope.createTemporaryVariable(boundExpression, "bound")
-                statements.add(boundValue)
+
+                // Calculate the last element of the progression
+                // The last element can be:
+                //    boundValue, if step is 1 and the range is closed.
+                //    boundValue - 1, if step is 1 and the range is open.
+                //    getProgressionLast(inductionVariable, boundValue, step), if step != 1 and the range is closed.
+                //    getProgressionLast(inductionVariable, boundValue - 1, step), if step != 1 and the range is open.
+                var lastExpression: IrExpression? = null
+                if (!closed) {
+                    val decrementSymbol = symbols.getUnaryOperator(OperatorNameConventions.DEC, boundValue.descriptor.type)
+                    lastExpression = irCall(decrementSymbol).apply {
+                        dispatchReceiver = irGet(boundValue.symbol)
+                    }
+                }
+                if (needLastCalculation) {
+                    lastExpression = irGetProgressionLast(progressionType,
+                            inductionVariable.symbol,
+                            lastExpression ?: irGet(boundValue.symbol),
+                            stepValue.symbol)
+                }
+                val lastValue = if (lastExpression != null) {
+                    scope.createTemporaryVariable(lastExpression, "last").also {
+                        statements.add(it)
+                    }
+                } else {
+                    boundValue
+                }
 
                 iteratorToLoopInfo[symbol] = ForLoopInfo(progressionInfo,
                         inductionVariable.symbol,
                         boundValue.symbol,
+                        lastValue.symbol,
                         stepValue.symbol)
 
                 return IrCompositeImpl(startOffset, endOffset, context.builtIns.unitType, null, statements)
@@ -362,18 +390,49 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         }
     }
 
+    private fun DeclarationIrBuilder.buildMinValueCondition(forLoopInfo: ForLoopInfo): IrExpression {
+        // Condition for a corner case: for (i in a until Int.MIN_VALUE) {}.
+        // Check if forLoopInfo.bound > MIN_VALUE.
+        val progressionType = forLoopInfo.progressionInfo.progressionType
+        return irCall(context.irBuiltIns.gt0Symbol).apply {
+            val minConst = when {
+                progressionType.isIntProgression() -> IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, Int.MIN_VALUE)
+                progressionType.isCharProgression() -> IrConstImpl.char(startOffset, endOffset, context.builtIns.charType, 0.toChar())
+                progressionType.isLongProgression() -> IrConstImpl.long(startOffset, endOffset, context.builtIns.longType, Long.MIN_VALUE)
+                else -> throw IllegalArgumentException("Unknown progression type")
+            }
+            val compareToCall = irCall(symbols.getBinaryOperator(OperatorNameConventions.COMPARE_TO,
+                    forLoopInfo.bound.descriptor.type,
+                    minConst.type)).apply {
+                dispatchReceiver = irGet(forLoopInfo.bound)
+                putValueArgument(0, minConst)
+            }
+            putValueArgument(0, compareToCall)
+        }
+    }
+
+    // TODO: Eliminate the loop if we can prove that it will not be executed.
     private fun DeclarationIrBuilder.buildEmptyCheck(loop: IrLoop, forLoopInfo: ForLoopInfo): IrExpression {
         val increasing = forLoopInfo.progressionInfo.increasing
         val comparingBuiltIn = if (increasing) context.irBuiltIns.lteq0Symbol else context.irBuiltIns.gteq0Symbol
 
+        // Check if inductionVariable <= last.
         val compareTo = symbols.getBinaryOperator(OperatorNameConventions.COMPARE_TO,
                 forLoopInfo.inductionVariable.descriptor.type,
-                forLoopInfo.bound.descriptor.type)
+                forLoopInfo.last.descriptor.type)
 
-        val check = irCall(comparingBuiltIn).apply {
-            putValueArgument(0, irCallOp(compareTo, irGet(forLoopInfo.inductionVariable), irGet(forLoopInfo.bound)))
+        val check: IrExpression = irCall(comparingBuiltIn).apply {
+            putValueArgument(0, irCallOp(compareTo, irGet(forLoopInfo.inductionVariable), irGet(forLoopInfo.last)))
         }
-        return irIfThen(check, loop)
+
+        // Process closed and opened ranges in different manners.
+        return if (forLoopInfo.progressionInfo.closed) {
+            irIfThen(check, loop)   // if (inductionVariable <= last) { loop }
+        } else {
+            // Take into account a corner case: for (i in a until Int.MIN_VALUE) {}.
+            // if (inductionVariable <= last && bound > MIN_VALUE) { loop }
+            return irIfThen(check, irIfThen(buildMinValueCondition(forLoopInfo), loop))
+        }
     }
 
     private fun DeclarationIrBuilder.buildNewCondition(oldCondition: IrExpression): Pair<IrExpression, ForLoopInfo>? {
@@ -389,7 +448,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         return irCall(context.irBuiltIns.booleanNotSymbol).apply {
             val eqeqCall = irCall(context.irBuiltIns.eqeqSymbol).apply {
                 putValueArgument(0, irGet(forLoopInfo.loopVariable!!))
-                putValueArgument(1, irGet(forLoopInfo.bound))
+                putValueArgument(1, irGet(forLoopInfo.last))
             }
             putValueArgument(0, eqeqCall)
         } to forLoopInfo
@@ -418,6 +477,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
      *     } while (i != last)
      * }
      */
+    // TODO:  Lower `for (i in a until b)` to loop with precondition: for (i = a; i < b; a++);
     override fun visitWhileLoop(loop: IrWhileLoop): IrExpression {
         if (loop.origin != IrStatementOrigin.FOR_LOOP_INNER_WHILE) {
             return super.visitWhileLoop(loop)
