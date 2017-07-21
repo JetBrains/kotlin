@@ -102,14 +102,6 @@ abstract class DeprecatedSymbolUsageFixBase(
         fun extractDataFromDiagnostic(deprecatedDiagnostic: Diagnostic): Data? {
             val psiElement = deprecatedDiagnostic.psiElement
 
-            //TODO: compiler crash here
-            /*
-                        val nameExpression: JetSimpleNameExpression = when (psiElement) {
-                            is JetSimpleNameExpression -> psiElement
-                            is JetConstructorCalleeExpression -> psiElement.constructorReferenceExpression
-                            else -> null
-                        } ?: return null
-            */
             val nameExpression: KtSimpleNameExpression = when (psiElement) {
                 is KtSimpleNameExpression -> psiElement
                 is KtConstructorCalleeExpression -> psiElement.constructorReferenceExpression
