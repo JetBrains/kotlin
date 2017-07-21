@@ -93,8 +93,11 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var additionalJavaModules: Array<String>? by FreezableVar(null)
 
-    @Argument(value = "-Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
+    @Argument(value = "-Xno-call-assertions", description = "Don't generate not-null assertions for arguments of platform types")
     var noCallAssertions: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xno-receiver-assertions", description = "Don't generate not-null assertion for extension receiver arguments of platform types")
+    var noReceiverAssertions: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xno-param-assertions", description = "Don't generate not-null assertions on parameters of methods accessible from Java")
     var noParamAssertions: Boolean by FreezableVar(false)

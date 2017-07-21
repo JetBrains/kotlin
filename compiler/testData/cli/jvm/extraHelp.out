@@ -13,9 +13,10 @@ where advanced options include:
                              Specify global behavior for JSR-305 nullability annotations: ignore, treat as other supported nullability annotations, or report a warning
   -Xload-builtins-from-dependencies
                              Load definitions of built-in declarations from module dependencies, instead of from the compiler
-  -Xno-call-assertions       Don't generate not-null assertion after each invocation of method returning not-null
+  -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types
   -Xno-optimize              Disable optimizations
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
+  -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
   -Xreport-perf              Report detailed performance statistics
   -Xscript-resolver-environment=<key=value[,]>
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)

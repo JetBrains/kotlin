@@ -53,7 +53,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 UnsupportedSyntheticCallableReferenceChecker(),
                 SuperCallWithDefaultArgumentsChecker(),
                 ProtectedSyntheticExtensionCallChecker,
-                ReifiedTypeParameterSubstitutionChecker()
+                ReifiedTypeParameterSubstitutionChecker(),
+                RuntimeAssertionsOnExtensionReceiverCallChecker
         ),
 
         additionalTypeCheckers = listOf(

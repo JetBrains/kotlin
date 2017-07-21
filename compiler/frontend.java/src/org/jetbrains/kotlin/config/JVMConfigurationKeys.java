@@ -50,6 +50,8 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> DISABLE_CALL_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null call assertions");
+    public static final CompilerConfigurationKey<Boolean> DISABLE_RECEIVER_ASSERTIONS =
+            CompilerConfigurationKey.create("disable not-null call receiver assertions");
     public static final CompilerConfigurationKey<Boolean> DISABLE_PARAM_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null parameter assertions");
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =

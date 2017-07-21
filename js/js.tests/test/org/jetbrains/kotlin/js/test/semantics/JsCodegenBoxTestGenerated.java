@@ -12954,6 +12954,15 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/nullabilityAssertions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class NullabilityAssertions extends AbstractJsCodegenBoxTest {
+        public void testAllFilesPresentInNullabilityAssertions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/nullabilityAssertions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

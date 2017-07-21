@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
 import org.jetbrains.kotlin.config.ApiVersion;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -2466,7 +2467,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return generateExtensionReceiver(((ExtensionReceiver) receiverValue).getDeclarationDescriptor());
         }
         else if (receiverValue instanceof ExpressionReceiver) {
-            return gen(((ExpressionReceiver) receiverValue).getExpression());
+            ExpressionReceiver expressionReceiver = (ExpressionReceiver) receiverValue;
+            StackValue stackValue = gen(expressionReceiver.getExpression());
+            if (!state.isReceiverAssertionsDisabled()) {
+                RuntimeAssertionInfo runtimeAssertionInfo =
+                        bindingContext.get(JvmBindingContextSlices.RECEIVER_RUNTIME_ASSERTION_INFO, expressionReceiver);
+                stackValue = genNotNullAssertions(state, stackValue, runtimeAssertionInfo);
+            }
+            return stackValue;
         }
         else {
             throw new UnsupportedOperationException("Unsupported receiver value: " + receiverValue);

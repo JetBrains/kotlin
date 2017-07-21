@@ -156,7 +156,12 @@ class GenerationState @JvmOverloads constructor(
         var hasResult: Boolean = false
     }
 
+    val languageVersionSettings = configuration.languageVersionSettings
+
     val isCallAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
+    val isReceiverAssertionsDisabled: Boolean =
+            configuration.getBoolean(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS) ||
+            !languageVersionSettings.supportsFeature(LanguageFeature.NullabilityAssertionOnExtensionReceiver)
     val isParamAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS)
     val isInlineDisabled: Boolean = configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE)
     val useTypeTableInSerializer: Boolean = configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE)
@@ -168,7 +173,7 @@ class GenerationState @JvmOverloads constructor(
 
     val generateParametersMetadata: Boolean = configuration.getBoolean(JVMConfigurationKeys.PARAMETERS_METADATA)
 
-    val languageVersionSettings = configuration.languageVersionSettings
+
     val shouldInlineConstVals = languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
 
     init {

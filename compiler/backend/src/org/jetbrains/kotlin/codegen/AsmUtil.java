@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.codegen.serialization.JvmStringTable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -660,8 +661,23 @@ public class AsmUtil {
         // currently when resuming a suspend function we pass default values instead of real arguments (i.e. nulls for references)
         if (descriptor.isSuspend()) return;
 
-        // Private method is not accessible from other classes, no assertions needed
-        if (getVisibilityAccessFlag(descriptor) == ACC_PRIVATE) return;
+        if (getVisibilityAccessFlag(descriptor) == ACC_PRIVATE) {
+            // Private method is not accessible from other classes, no assertions needed,
+            // unless we have a private operator function, in which we should generate a parameter assertion for an extension receiver.
+
+            // HACK: this provides "fail fast" behavior for operator functions.
+            // Such functions can be invoked in operator conventions desugaring,
+            // which is currently done on ad hoc basis in ExpressionCodegen.
+
+            if (state.isReceiverAssertionsDisabled()) return;
+            if (descriptor.isOperator()) {
+                ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
+                if (receiverParameter != null) {
+                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, "$receiver");
+                }
+            }
+            return;
+        }
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
@@ -677,18 +693,19 @@ public class AsmUtil {
             @NotNull InstructionAdapter v,
             @NotNull KotlinTypeMapper typeMapper,
             @NotNull FrameMap frameMap,
-            @NotNull CallableDescriptor parameter,
+            @NotNull ParameterDescriptor parameter,
             @NotNull String name
     ) {
-        KotlinType type = parameter.getReturnType();
-        if (type == null || isNullableType(type)) return;
+        KotlinType type = parameter.getType();
+        if (isNullableType(type)) return;
 
         int index = frameMap.getIndex(parameter);
         Type asmType = typeMapper.mapType(type);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
             v.load(index, asmType);
             v.visitLdcInsn(name);
-            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkParameterIsNotNull",
+            String checkMethod = "checkParameterIsNotNull";
+            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, checkMethod,
                            "(Ljava/lang/Object;Ljava/lang/String;)V", false);
         }
     }
