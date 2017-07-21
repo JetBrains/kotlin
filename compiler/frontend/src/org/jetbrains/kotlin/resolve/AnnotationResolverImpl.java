@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -141,17 +142,6 @@ public class AnnotationResolverImpl extends AnnotationResolver {
         }
     }
 
-    @Nullable
-    private static <T extends PsiElement> T findAncestorOfType(@NotNull PsiElement element, Class<T> ancestorType) {
-        PsiElement parent = element.getParent();
-        while (parent != null) {
-            if (ancestorType.isInstance(parent)) return (T) parent;
-            parent = parent.getParent();
-        }
-
-        return null;
-    }
-
     @Override
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveAnnotationCall(
@@ -159,7 +149,7 @@ public class AnnotationResolverImpl extends AnnotationResolver {
             @NotNull LexicalScope scope,
             @NotNull BindingTrace trace
     ) {
-        if (findAncestorOfType(annotationEntry, KtAnnotationEntry.class) != null) {
+        if (PsiTreeUtil.getParentOfType(annotationEntry, KtAnnotationEntry.class) != null) {
             trace.report(ANNOTATION_USED_AS_ANNOTATION_ARGUMENT.on(annotationEntry));
         }
 
