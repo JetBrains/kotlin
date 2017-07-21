@@ -28,7 +28,12 @@ object KotlinTypeFactory {
         val descriptor = constructor.declarationDescriptor
         return when (descriptor) {
             is TypeParameterDescriptor -> descriptor.getDefaultType().memberScope
-            is ClassDescriptor ->  descriptor.getMemberScope(TypeConstructorSubstitution.create(constructor, arguments))
+            is ClassDescriptor -> {
+                if (arguments.isEmpty())
+                    descriptor.defaultType.memberScope
+                else
+                    descriptor.getMemberScope(TypeConstructorSubstitution.create(constructor, arguments))
+            }
             is TypeAliasDescriptor -> ErrorUtils.createErrorScope("Scope for abbreviation: ${descriptor.name}", true)
             else -> throw IllegalStateException("Unsupported classifier: $descriptor for constructor: $constructor")
         }
