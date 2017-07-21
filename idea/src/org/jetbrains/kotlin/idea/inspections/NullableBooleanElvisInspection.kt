@@ -54,7 +54,7 @@ class NullableBooleanElvisInspection : AbstractKotlinInspection(), CleanupLocalI
                                 if (condition != null && condition in expression.parentsWithSelf) GENERIC_ERROR_OR_WARNING else INFORMATION
 
                         holder.registerProblem(expression,
-                                               "Equality check can be used instead of elvis",
+                                               "Equality check can be used instead of elvis for nullable boolean check",
                                                highlightType,
                                                ReplaceWithEqualityCheckFix())
                     }
