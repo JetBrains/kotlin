@@ -40,7 +40,7 @@ private inline fun <reified T> arrayOf(vararg elements: T): Array<T> = elements 
 
 private inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
     val result = arrayOfNulls<T>(size)
-    for (i in 0..size - 1) {
+    for (i in result.indices) {
         result[i] = init(i)
     }
     return result as Array<T>
@@ -48,7 +48,7 @@ private inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
 
 private inline fun DoubleArray(size: Int, init: (Int) -> Double): DoubleArray {
     val result = DoubleArray(size)
-    for (i in 0..size - 1) {
+    for (i in result.indices) {
         result[i] = init(i)
     }
     return result
@@ -56,7 +56,7 @@ private inline fun DoubleArray(size: Int, init: (Int) -> Double): DoubleArray {
 
 private inline fun FloatArray(size: Int, init: (Int) -> Float): FloatArray {
     val result = FloatArray(size)
-    for (i in 0..size - 1) {
+    for (i in result.indices) {
         result[i] = init(i)
     }
     return result
@@ -64,7 +64,7 @@ private inline fun FloatArray(size: Int, init: (Int) -> Float): FloatArray {
 
 private inline fun LongArray(size: Int, init: (Int) -> Long): LongArray {
     val result = LongArray(size)
-    for (i in 0..size - 1) {
+    for (i in result.indices) {
         result[i] = init(i)
     }
     return result
@@ -72,7 +72,7 @@ private inline fun LongArray(size: Int, init: (Int) -> Long): LongArray {
 
 private inline fun IntArray(size: Int, init: (Int) -> Int): IntArray {
     val result = IntArray(size)
-    for (i in 0..size - 1) {
+    for (i in result.indices) {
         result[i] = init(i)
     }
     return result
@@ -80,7 +80,7 @@ private inline fun IntArray(size: Int, init: (Int) -> Int): IntArray {
 
 private inline fun CharArray(size: Int, init: (Int) -> Char): CharArray {
     val result = CharArray(size)
-    for (i in 0..size - 1) {
+    for (i in result.indices) {
         result[i] = init(i)
     }
     return result
@@ -88,7 +88,7 @@ private inline fun CharArray(size: Int, init: (Int) -> Char): CharArray {
 
 private inline fun ShortArray(size: Int, init: (Int) -> Short): ShortArray {
     val result = ShortArray(size)
-    for (i in 0..size - 1) {
+    for (i in result.indices) {
         result[i] = init(i)
     }
     return result
@@ -96,7 +96,7 @@ private inline fun ShortArray(size: Int, init: (Int) -> Short): ShortArray {
 
 private inline fun ByteArray(size: Int, init: (Int) -> Byte): ByteArray {
     val result = ByteArray(size)
-    for (i in 0..size - 1) {
+    for (i in result.indices) {
         result[i] = init(i)
     }
     return result
@@ -104,7 +104,7 @@ private inline fun ByteArray(size: Int, init: (Int) -> Byte): ByteArray {
 
 private inline fun BooleanArray(size: Int, init: (Int) -> Boolean): BooleanArray {
     val result = BooleanArray(size)
-    for (i in 0..size - 1) {
+    for (i in result.indices) {
         result[i] = init(i)
     }
     return result
