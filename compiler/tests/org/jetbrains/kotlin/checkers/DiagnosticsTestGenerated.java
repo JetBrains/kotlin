@@ -12621,6 +12621,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("fakeOverrideFunctionForStaticSam.kt")
+                public void testFakeOverrideFunctionForStaticSam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/fakeOverrideFunctionForStaticSam.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inheritedStaticSam.kt")
                 public void testInheritedStaticSam() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/inheritedStaticSam.kt");
