@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
@@ -36,11 +37,12 @@ fun checkSimpleArgument(
         csBuilder: ConstraintSystemBuilder,
         argument: SimpleKotlinCallArgument,
         expectedType: UnwrappedType,
-        isReceiver: Boolean = false
+        isReceiver: Boolean = false,
+        parameterName: Name? = null
 ): KotlinCallDiagnostic? {
     return when (argument) {
-        is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, argument, expectedType, isReceiver)
-        is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, argument, expectedType, isReceiver)
+        is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, argument, expectedType, isReceiver, parameterName)
+        is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, argument, expectedType, isReceiver, parameterName)
         else -> unexpectedArgument(argument)
     }
 }
@@ -49,7 +51,8 @@ private fun checkExpressionArgument(
         csBuilder: ConstraintSystemBuilder,
         expressionArgument: ExpressionKotlinCallArgument,
         expectedType: UnwrappedType,
-        isReceiver: Boolean
+        isReceiver: Boolean,
+        parameterName: Name?
 ): KotlinCallDiagnostic? {
     // todo run this approximation only once for call
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(expressionArgument.receiver.stableType, expectedType)
@@ -67,7 +70,7 @@ private fun checkExpressionArgument(
     }
 
     val expectedNullableType = expectedType.makeNullableAsSpecified(true)
-    val position = if (isReceiver) ReceiverConstraintPosition(expressionArgument) else ArgumentConstraintPosition(expressionArgument)
+    val position = if (isReceiver) ReceiverConstraintPosition(expressionArgument) else ArgumentConstraintPosition(expressionArgument, parameterName)
     if (expressionArgument.isSafeCall) {
         if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedNullableType, position)) {
             return unstableSmartCastOrSubtypeError(expressionArgument.receiver.unstableType, expectedNullableType, position)?.let { return it }
@@ -132,11 +135,12 @@ private fun checkSubCallArgument(
         csBuilder: ConstraintSystemBuilder,
         subCallArgument: SubKotlinCallArgument,
         expectedType: UnwrappedType,
-        isReceiver: Boolean
+        isReceiver: Boolean,
+        parameterName: Name?
 ): KotlinCallDiagnostic? {
     val resolvedCall = subCallArgument.resolvedCall
     val expectedNullableType = expectedType.makeNullableAsSpecified(true)
-    val position = ArgumentConstraintPosition(subCallArgument)
+    val position = ArgumentConstraintPosition(subCallArgument, parameterName)
 
     csBuilder.addInnerCall(resolvedCall)
 

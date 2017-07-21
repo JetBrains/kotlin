@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
+import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.CaptureStatus
 import org.jetbrains.kotlin.types.checker.NewCapturedType
@@ -38,7 +41,7 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
 
         fun getConstraintsForVariable(typeVariable: NewTypeVariable): Collection<Constraint>
 
-        fun addNewIncorporatedConstraint(lowerType: UnwrappedType, upperType: UnwrappedType)
+        fun addNewIncorporatedConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, typeVariable: NewTypeVariable?)
     }
 
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
@@ -57,7 +60,7 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
         if (constraint.kind != ConstraintKind.LOWER) {
             c.getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.UPPER) {
-                    c.addNewIncorporatedConstraint(it.type, constraint.type)
+                    c.addNewIncorporatedConstraint(it.type, constraint.type, typeVariable)
                 }
             }
         }
@@ -66,7 +69,7 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
         if (constraint.kind != ConstraintKind.UPPER) {
             c.getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.LOWER) {
-                    c.addNewIncorporatedConstraint(constraint.type, it.type)
+                    c.addNewIncorporatedConstraint(constraint.type, it.type, typeVariable)
                 }
             }
         }
@@ -131,10 +134,10 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
         }
 
         if (baseConstraint.kind != ConstraintKind.UPPER) {
-            c.addNewIncorporatedConstraint(approximateCapturedTypes(typeForApproximation, toSuper = false), targetVariable.defaultType)
+            c.addNewIncorporatedConstraint(approximateCapturedTypes(typeForApproximation, toSuper = false), targetVariable.defaultType, targetVariable)
         }
         if (baseConstraint.kind != ConstraintKind.LOWER) {
-            c.addNewIncorporatedConstraint(targetVariable.defaultType, approximateCapturedTypes(typeForApproximation, toSuper = true))
+            c.addNewIncorporatedConstraint(targetVariable.defaultType, approximateCapturedTypes(typeForApproximation, toSuper = true), targetVariable)
         }
     }
 

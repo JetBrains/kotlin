@@ -986,6 +986,24 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/diagnosticsMessage"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("capturedTypesAsSimpleTypes.kt")
+        public void testCapturedTypesAsSimpleTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/capturedTypesAsSimpleTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("contradictorySpecialCallsDiagnostic.kt")
+        public void testContradictorySpecialCallsDiagnostic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/contradictorySpecialCallsDiagnostic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dependentTypeVariablesDiagnostic.kt")
+        public void testDependentTypeVariablesDiagnostic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/dependentTypeVariablesDiagnostic.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fullPackageFQNameOnVisiblityError.kt")
         public void testFullPackageFQNameOnVisiblityError() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/fullPackageFQNameOnVisiblityError.kt");
@@ -1019,6 +1037,42 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("operatorCallDiagnosticsOnInOperator.kt")
         public void testOperatorCallDiagnosticsOnInOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/operatorCallDiagnosticsOnInOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superConstructorCallDiagnostic.kt")
+        public void testSuperConstructorCallDiagnostic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/superConstructorCallDiagnostic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongBoundsFromLambda.kt")
+        public void testWrongBoundsFromLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/wrongBoundsFromLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongExtraConstraints.kt")
+        public void testWrongExtraConstraints() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/wrongExtraConstraints.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongLambdaWithExpectedType.kt")
+        public void testWrongLambdaWithExpectedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/wrongLambdaWithExpectedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongTypeArgument.kt")
+        public void testWrongTypeArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/wrongTypeArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongUpperBoundVariable.kt")
+        public void testWrongUpperBoundVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/wrongUpperBoundVariable.kt");
             doTest(fileName);
         }
     }

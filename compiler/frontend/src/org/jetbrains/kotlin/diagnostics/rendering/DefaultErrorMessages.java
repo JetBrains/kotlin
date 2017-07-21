@@ -584,6 +584,14 @@ public class DefaultErrorMessages {
         MAP.put(NEW_INFERENCE_ERROR, "New inference error [{0}]", STRING);
         MAP.put(NEW_INFERENCE_DIAGNOSTIC, "New inference [{0}]", STRING);
 
+        MAP.put(CONTRADICTION_IN_CONSTRAINT_SYSTEM,
+                "Contradictory requirements for type variable ''{0}'':\n{1}",
+                NEW_TYPE_VARIABLE_RENDERER, SORTED_CONSTRAINTS_RENDERER);
+
+        MAP.put(CONTRADICTION_FOR_SPECIAL_CALL,
+                "Result type for ''{1}'' expression cannot be inferred:\n{0}",
+                SORTED_CONSTRAINTS_FOR_SPECIAL_CALL_RENDERER, SPECIAL_VARIABLE_KIND_RENDERER);
+
         MAP.put(UNSUPPORTED_FEATURE, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED));
         MAP.put(EXPERIMENTAL_FEATURE_WARNING, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.WARNING));
         MAP.put(EXPERIMENTAL_FEATURE_ERROR, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.ERROR));

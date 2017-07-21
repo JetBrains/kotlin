@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.calls.components.SortedConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
@@ -44,6 +45,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_B
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.getValidityConstraintForConstituentType
+import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
+import org.jetbrains.kotlin.resolve.calls.inference.model.SpecialTypeVariableKind
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import org.jetbrains.kotlin.types.*
@@ -187,6 +192,41 @@ object Renderers {
 
     @JvmField val TYPE_INFERENCE_CANNOT_CAPTURE_TYPES_RENDERER = Renderer<InferenceErrorData> {
         renderCannotCaptureTypeParameterError(it, TabledDescriptorRenderer.create()).toString()
+    }
+
+    @JvmField val NEW_TYPE_VARIABLE_RENDERER = Renderer<NewTypeVariable> {
+        val typeConstructor = it.freshTypeConstructor
+        if (typeConstructor is TypeVariableTypeConstructor) typeConstructor.debugName else typeConstructor.toString()
+    }
+
+    @JvmField val SPECIAL_VARIABLE_KIND_RENDERER = Renderer<SpecialTypeVariableKind> {
+        it.expressionName
+    }
+
+    @JvmField val SORTED_CONSTRAINTS_RENDERER = Renderer<SortedConstraints> {
+        buildString {
+            appendIfNotEmpty(it.upper, "should be a subtype of: ")
+            appendIfNotEmpty(it.equality, "should be equal to: ")
+            appendIfNotEmpty(it.lower, "should be a supertype of: ", false)
+        }
+    }
+
+    @JvmField val SORTED_CONSTRAINTS_FOR_SPECIAL_CALL_RENDERER = Renderer<SortedConstraints> {
+        buildString {
+            appendIfNotEmpty(it.upper, "should be conformed to: ")
+            appendIfNotEmpty(it.equality, "should be equal to: ")
+            appendIfNotEmpty(it.lower, "should be a supertype of: ", false)
+        }
+    }
+
+    private fun StringBuilder.appendIfNotEmpty(constraints: List<Constraint>, prefix: String, newLine: Boolean = true) {
+        if (constraints.isEmpty()) return
+        append(prefix)
+        append(constraints.joinToString {
+            val from = it.position.from.message?.let { " ($it)" } ?: ""
+            "${it.type}$from"
+        }) // Render properly
+        if (newLine) append("\n")
     }
 
     @JvmStatic fun renderConflictingSubstitutionsInferenceError(

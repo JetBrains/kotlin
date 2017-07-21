@@ -175,6 +175,20 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.report(NEW_INFERENCE_ERROR.on(expression, "Capture type from subtyping ${capturedError.constraintType} for variable ${capturedError.typeVariable}"))
                 }
             }
+            AggregatedConstraintError::class.java -> {
+                val constraintError = diagnostic as AggregatedConstraintError
+                val position = constraintError.constraintPosition
+                (position as? ArgumentConstraintPosition)?.let {
+                    val expression = it.argument.psiExpression ?: return
+                    val specialTypeVariableKind = constraintError.specialTypeVariableKind
+                    if (specialTypeVariableKind != null) {
+                        trace.report(CONTRADICTION_FOR_SPECIAL_CALL.on(expression, constraintError.sortedConstraints, specialTypeVariableKind))
+                    }
+                    else {
+                        trace.report(CONTRADICTION_IN_CONSTRAINT_SYSTEM.on(expression, constraintError.typeVariable, constraintError.sortedConstraints))
+                    }
+                }
+            }
         }
     }
 

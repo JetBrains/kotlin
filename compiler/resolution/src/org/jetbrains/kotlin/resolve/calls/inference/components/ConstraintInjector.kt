@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,11 +115,11 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
             val possibleNewConstraints: MutableList<Pair<NewTypeVariable, Constraint>>
     ) : TypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context {
 
-        fun runIsSubtypeOf(lowerType: UnwrappedType, upperType: UnwrappedType) {
+        fun runIsSubtypeOf(lowerType: UnwrappedType, upperType: UnwrappedType, typeVariable: NewTypeVariable? = null) {
             with(NewKotlinTypeChecker) {
                 if (!this@TypeCheckerContext.isSubtypeOf(lowerType, upperType)) {
                     // todo improve error reporting -- add information about base types
-                    c.addError(NewConstraintError(lowerType, upperType, position))
+                    c.addError(NewConstraintError(lowerType, upperType, position, typeVariable))
                 }
             }
         }
@@ -171,9 +171,9 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
         }
 
         // from ConstraintIncorporator.Context
-        override fun addNewIncorporatedConstraint(lowerType: UnwrappedType, upperType: UnwrappedType) {
+        override fun addNewIncorporatedConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, typeVariable: NewTypeVariable?) {
             if (c.isAllowedType(lowerType) && c.isAllowedType(upperType)) {
-                runIsSubtypeOf(lowerType, upperType)
+                runIsSubtypeOf(lowerType, upperType, typeVariable)
             }
         }
 

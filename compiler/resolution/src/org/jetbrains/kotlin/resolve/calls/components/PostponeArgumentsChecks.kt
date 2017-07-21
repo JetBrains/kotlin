@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
@@ -33,7 +34,7 @@ fun createPostponedArgumentAndPerformInitialChecks(
 ): KotlinCallDiagnostic? {
     val expectedType = argument.getExpectedType(parameterDescriptor)
     val (postponedArgument, diagnostic) =  when (argument) {
-        is LambdaKotlinCallArgument -> preprocessLambdaArgument(kotlinCall, csBuilder, argument, expectedType)
+        is LambdaKotlinCallArgument -> preprocessLambdaArgument(kotlinCall, csBuilder, argument, expectedType, parameterDescriptor.name)
         is CallableReferenceKotlinCallArgument -> preprocessCallableReference(csBuilder, argument, expectedType)
         is CollectionLiteralKotlinCallArgument -> preprocessCollectionLiteralArgument(csBuilder, argument, expectedType)
         else -> unexpectedArgument(argument)
@@ -48,7 +49,8 @@ private fun preprocessLambdaArgument(
         kotlinCall: KotlinCall,
         csBuilder: ConstraintSystemBuilder,
         argument: LambdaKotlinCallArgument,
-        expectedType: UnwrappedType
+        expectedType: UnwrappedType,
+        parameterName: Name? = null
 ): Pair<PostponedLambdaArgument, KotlinCallDiagnostic?> {
     val builtIns = expectedType.builtIns
     val isSuspend = expectedType.isSuspendFunctionType
@@ -86,7 +88,7 @@ private fun preprocessLambdaArgument(
 
     val resolvedArgument = PostponedLambdaArgument(kotlinCall, argument, isSuspend, receiverType, parameters, returnType)
 
-    csBuilder.addSubtypeConstraint(resolvedArgument.type, expectedType, ArgumentConstraintPosition(argument))
+    csBuilder.addSubtypeConstraint(resolvedArgument.type, expectedType, ArgumentConstraintPosition(argument, parameterName))
 
     return resolvedArgument to null
 }

@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.components.SortedConstraints
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE
@@ -25,18 +27,27 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
 
-sealed class ConstraintPosition
+sealed class ConstraintPosition {
+    open val message: String?
+        get() = toString()
+}
 
 class ExplicitTypeParameterConstraintPosition(val typeArgument: SimpleTypeArgument) : ConstraintPosition() {
     override fun toString() = "TypeParameter $typeArgument"
 }
 class ExpectedTypeConstraintPosition(val topLevelCall: KotlinCall) : ConstraintPosition() {
+    override val message: String?
+        get() = "expected type for '${topLevelCall.name.asString()}'"
+
     override fun toString() = "ExpectedType for call $topLevelCall"
 }
 class DeclaredUpperBoundConstraintPosition(val typeParameterDescriptor: TypeParameterDescriptor) : ConstraintPosition() {
+    override val message get() = "declared upper bound ${typeParameterDescriptor.name}"
     override fun toString() = "DeclaredUpperBound ${typeParameterDescriptor.name} from ${typeParameterDescriptor.containingDeclaration}"
 }
-class ArgumentConstraintPosition(val argument: KotlinCallArgument) : ConstraintPosition() {
+class ArgumentConstraintPosition(val argument: KotlinCallArgument, val parameterName: Name? = null) : ConstraintPosition() {
+    override val message
+        get() = if (parameterName != null) "for parameter '$parameterName'" else null
     override fun toString() = "Argument $argument"
 }
 
@@ -70,7 +81,8 @@ abstract class ConstraintSystemCallDiagnostic(applicability: ResolutionCandidate
 class NewConstraintError(
         val lowerType: UnwrappedType,
         val upperType: UnwrappedType,
-        val position: IncorporationConstraintPosition
+        val position: IncorporationConstraintPosition,
+        val typeVariable: NewTypeVariable? = null
 ) : ConstraintSystemCallDiagnostic(if (position.from is ReceiverConstraintPosition) INAPPLICABLE_WRONG_RECEIVER else INAPPLICABLE)
 
 class CapturedTypeFromSubtyping(
@@ -80,3 +92,14 @@ class CapturedTypeFromSubtyping(
 ) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
 
 class NotEnoughInformationForTypeParameter(val typeVariable: NewTypeVariable) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+
+class AggregatedConstraintError(
+        val constraintPosition: ConstraintPosition,
+        val typeVariable: NewTypeVariable,
+        val specialTypeVariableKind: SpecialTypeVariableKind?,
+        val sortedConstraints: SortedConstraints
+) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+
+enum class SpecialTypeVariableKind(val expressionName: String) {
+    IF("if"), ELVIS("elvis"), WHEN("when")
+}

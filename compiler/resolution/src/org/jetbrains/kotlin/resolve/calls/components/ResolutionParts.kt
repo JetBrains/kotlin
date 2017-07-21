@@ -232,11 +232,12 @@ internal object CheckArguments : ResolutionPart {
         for (parameterDescriptor in descriptorWithFreshTypes.valueParameters) {
             // error was reported in ArgumentsToParametersMapper
             val resolvedCallArgument = argumentMappingByOriginal[parameterDescriptor.original] ?: continue
+            val parameterName = parameterDescriptor.name
             for (argument in resolvedCallArgument.arguments) {
 
                 val diagnostic = when (argument) {
                     is SimpleKotlinCallArgument ->
-                        checkSimpleArgument(csBuilder, argument, argument.getExpectedType(parameterDescriptor))
+                        checkSimpleArgument(csBuilder, argument, argument.getExpectedType(parameterDescriptor), parameterName = parameterName)
                     is PostponableKotlinCallArgument ->
                         createPostponedArgumentAndPerformInitialChecks(kotlinCall, csBuilder, argument, parameterDescriptor)
                     else -> unexpectedArgument(argument)
