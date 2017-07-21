@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
+import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -60,7 +61,7 @@ object BranchedFoldingUtils {
         fun collectAssignmentsAndCheck(e: KtExpression?): Boolean = when (e) {
             is KtWhenExpression -> {
                 val entries = e.entries
-                KtPsiUtil.checkWhenExpressionHasSingleElse(e) &&
+                !e.hasMissingCases() &&
                 entries.isNotEmpty() &&
                 entries.all { entry ->
                     val assignment = getFoldableBranchedAssignment(entry.expression)?.run { assignments.add(this) }
@@ -128,7 +129,7 @@ object BranchedFoldingUtils {
         is KtWhenExpression -> {
             val entries = expression.entries
             when {
-                !KtPsiUtil.checkWhenExpressionHasSingleElse(expression) -> null
+                expression.hasMissingCases() -> null
                 entries.isEmpty() -> null
                 else -> getFoldableReturns(entries.map { it.expression })
             }
@@ -210,5 +211,8 @@ object BranchedFoldingUtils {
     }
 
     private fun KtTryExpression.tryBlockAndCatchBodies(): List<KtExpression?> = listOf(tryBlock) + catchClauses.map { it.catchBody }
+
+    private fun KtWhenExpression.hasMissingCases(): Boolean =
+            !KtPsiUtil.checkWhenExpressionHasSingleElse(this) && WhenChecker.getMissingCases(this, this.analyze()).isNotEmpty()
 
 }
