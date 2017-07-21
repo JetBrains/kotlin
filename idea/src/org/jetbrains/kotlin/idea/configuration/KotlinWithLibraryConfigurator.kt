@@ -122,6 +122,19 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
             pathFromDialog: String?,
             collector: NotificationMessageCollector
     ) {
+        val classesPath =  getPathToCopyFileTo(module.project, OrderRootType.CLASSES, defaultPath, pathFromDialog)
+        val sourcesPath =  getPathToCopyFileTo(module.project, OrderRootType.SOURCES, defaultPath, pathFromDialog)
+        configureModuleWithLibrary(module, classesPath, sourcesPath, collector, useBundled = pathFromDialog == null)
+    }
+
+     fun configureModuleWithLibrary(
+            module: Module,
+            classesPath: String,
+            sourcesPath: String,
+            collector: NotificationMessageCollector,
+            forceJarState: FileState? = null,
+            useBundled: Boolean = false
+    ) {
         val project = module.project
 
         val library = getKotlinLibrary(module)
@@ -132,10 +145,14 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         val model = library.modifiableModel
 
         for (descriptor in getLibraryJarDescriptors(sdk)) {
-            val dirToCopyJar = getPathToCopyFileTo(project, descriptor.orderRootType, defaultPath, pathFromDialog)
-            val runtimeState = getJarState(project,
-                                           File(dirToCopyJar, descriptor.jarName),
-                                           descriptor.orderRootType, pathFromDialog == null)
+            val dirToCopyJar = if (descriptor.orderRootType == OrderRootType.SOURCES)
+                sourcesPath
+            else
+                classesPath
+
+            val runtimeState = forceJarState ?: getJarState(project,
+                                                            File(dirToCopyJar, descriptor.jarName),
+                                                            descriptor.orderRootType, useBundled)
 
             configureLibraryJar(model, runtimeState, dirToCopyJar, descriptor, collector)
         }
