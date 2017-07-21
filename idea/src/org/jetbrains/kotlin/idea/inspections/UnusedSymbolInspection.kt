@@ -145,6 +145,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                     is KtSecondaryConstructor -> "Constructor is never used"
                     is KtProperty, is KtParameter -> "Property ''$name'' is never used"
                     is KtTypeParameter -> "Type parameter ''$name'' is never used"
+                    is KtTypeAlias -> "Type alias ''$name'' is never used"
                     else -> return
                 }
 
