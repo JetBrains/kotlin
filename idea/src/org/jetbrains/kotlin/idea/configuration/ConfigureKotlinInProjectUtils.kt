@@ -22,12 +22,19 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
+import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
@@ -202,7 +209,7 @@ fun hasAnyKotlinRuntimeInScope(module: Module): Boolean {
     val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
     return runReadAction {
         getKotlinJvmRuntimeMarkerClass(module.project, scope) != null ||
-        hasKotlinJsKjsmFile(module.project, scope) ||
+        hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind) ) ||
         hasKotlinCommonRuntimeInScope(scope)
     }
 }
@@ -217,7 +224,7 @@ fun hasKotlinJvmRuntimeInScope(module: Module): Boolean {
 fun hasKotlinJsRuntimeInScope(module: Module): Boolean {
     return runReadAction {
         val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
-        hasKotlinJsKjsmFile(module.project, scope)
+        hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind))
     }
 }
 
@@ -244,4 +251,18 @@ fun isEap(version: String): Boolean {
 fun useEapRepository(minorKotlinVersion: Int, version: String): Boolean {
     return Regex("1\\.$minorKotlinVersion(\\.\\d)?-[A-Za-z][A-Za-z0-9-]*").matches(version) &&
            !version.startsWith("1.$minorKotlinVersion.0-dev")
+}
+
+private class LibraryKindSearchScope(val module: Module,
+                                     val baseScope: GlobalSearchScope,
+                                     val libraryKind: PersistentLibraryKind<*>
+) : DelegatingGlobalSearchScope(baseScope) {
+    override fun contains(file: VirtualFile): Boolean {
+        if (!super.contains(file)) return false
+        val orderEntry = ModuleRootManager.getInstance(module).fileIndex.getOrderEntryForFile(file)
+        if (orderEntry is LibraryOrderEntry) {
+            return (orderEntry.library as LibraryEx).kind == libraryKind
+        }
+        return true
+    }
 }

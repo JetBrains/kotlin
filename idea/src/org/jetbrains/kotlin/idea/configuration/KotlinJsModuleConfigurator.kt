@@ -18,11 +18,17 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.DummyLibraryProperties
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryType
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
 import org.jetbrains.kotlin.idea.framework.JSLibraryType
+import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.isKotlinJsRuntime
 import org.jetbrains.kotlin.js.JavaScript
@@ -64,5 +70,33 @@ open class KotlinJsModuleConfigurator : KotlinWithLibraryConfigurator() {
 
     companion object {
         const val NAME = JavaScript.LOWER_NAME
+    }
+
+    /**
+     * Migrate pre-1.1.3 projects which didn't have explicitly specified kind for JS libraries.
+     */
+    override fun findAndFixBrokenKotlinLibrary(module: Module, collector: NotificationMessageCollector): Library? {
+        val allLibraries = mutableListOf<LibraryEx>()
+        var brokenStdlib: Library? = null
+        for (orderEntry in ModuleRootManager.getInstance(module).orderEntries) {
+            val library = (orderEntry as? LibraryOrderEntry)?.library as? LibraryEx ?: continue
+            allLibraries.add(library)
+            if (JsLibraryStdDetectionUtil.hasJsStdlibJar(library, ignoreKind = true) && library.kind == null) {
+                brokenStdlib = library
+            }
+        }
+
+        if (brokenStdlib != null) {
+            runWriteAction {
+                for (library in allLibraries.filter { it.kind == null }) {
+                    library.modifiableModel.apply {
+                        kind = JSLibraryKind
+                        commit()
+                    }
+                }
+            }
+            collector.addMessage("Updated JavaScript libraries in module ${module.name}")
+        }
+        return brokenStdlib
     }
 }

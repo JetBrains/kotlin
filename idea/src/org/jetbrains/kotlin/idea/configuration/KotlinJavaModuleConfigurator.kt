@@ -22,6 +22,9 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.JvmTarget
@@ -30,6 +33,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgume
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
+import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
@@ -38,6 +42,9 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibraryConfigurator() {
+    override fun isApplicable(module: Module): Boolean {
+        return super.isApplicable(module) && !hasBrokenJsRuntime(module)
+    }
 
     override fun isConfigured(module: Module): Boolean {
         return hasKotlinJvmRuntimeInScope(module)
@@ -112,5 +119,13 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
 
         val instance: KotlinJavaModuleConfigurator
             get() = Extensions.findExtension(KotlinProjectConfigurator.EP_NAME, KotlinJavaModuleConfigurator::class.java)
+    }
+
+    private fun hasBrokenJsRuntime(module: Module): Boolean {
+        for (orderEntry in ModuleRootManager.getInstance(module).orderEntries) {
+            val library = (orderEntry as? LibraryOrderEntry)?.library as? LibraryEx ?: continue
+            if (JsLibraryStdDetectionUtil.hasJsStdlibJar(library, ignoreKind = true)) return true
+        }
+        return false
     }
 }

@@ -176,24 +176,24 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         }
 
         private val pathToNonexistentRuntimeJar: String
-        get() {
-            val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.KOTLIN_JAVA_RUNTIME_JAR
-            PlatformTestCase.myFilesToDelete.add(File(pathToTempKotlinRuntimeJar))
-            return pathToTempKotlinRuntimeJar
-        }
+            get() {
+                val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.KOTLIN_JAVA_RUNTIME_JAR
+                PlatformTestCase.myFilesToDelete.add(File(pathToTempKotlinRuntimeJar))
+                return pathToTempKotlinRuntimeJar
+            }
 
         private val pathToNonexistentJsJar: String
-        get() {
-            val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.JS_LIB_JAR_NAME
-            PlatformTestCase.myFilesToDelete.add(File(pathToTempKotlinRuntimeJar))
-            return pathToTempKotlinRuntimeJar
-        }
+            get() {
+                val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.JS_LIB_JAR_NAME
+                PlatformTestCase.myFilesToDelete.add(File(pathToTempKotlinRuntimeJar))
+                return pathToTempKotlinRuntimeJar
+            }
 
         private val pathToExistentRuntimeJar: String
-        get() = PathUtil.getKotlinPathsForDistDirectory().stdlibPath.parent
+            get() = PathUtil.getKotlinPathsForDistDirectory().stdlibPath.parent
 
         private val pathToExistentJsJar: String
-        get() = PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath.parent
+            get() = PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath.parent
 
         protected fun assertNotConfigured(module: Module, configurator: KotlinWithLibraryConfigurator) {
             TestCase.assertFalse(
