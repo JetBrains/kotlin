@@ -89,7 +89,8 @@ private fun isUnclearType(type: KotlinType, element: KtCallableDeclaration): Boo
             val bindingContext = element.analyze()
             val resolvedCall = initializer.getResolvedCall(bindingContext)
             val constructorDescriptor = resolvedCall?.candidateDescriptor as? ConstructorDescriptor
-            if (constructorDescriptor != null && constructorDescriptor.constructedClass.declaredTypeParameters.isEmpty()) {
+            if (constructorDescriptor != null &&
+                (constructorDescriptor.constructedClass.declaredTypeParameters.isEmpty() || initializer.typeArgumentList != null)) {
                 return false
             }
         }

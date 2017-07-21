@@ -57,6 +57,16 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         check("""val a = Any()""")
     }
 
+    fun testConstructorWithExplicitTypeParametersType() {
+        HintType.PROPERTY_HINT.option.set(true)
+        check("""class Bar<T>; val a = Bar<String>()""")
+    }
+
+    fun testConstructorWithoutExplicitTypeParametersType() {
+        HintType.PROPERTY_HINT.option.set(true)
+        check("""class Bar<T>(val t: T); val a<hint text=": Bar<String>" /> = Bar(<hint text="t:" />"")""")
+    }
+
     fun testLoopParameter() {
         HintType.LOCAL_VARIABLE_HINT.option.set(true)
         check("""fun foo() { for (x<hint text=": String" /> in listOf("a")) { } }""")
