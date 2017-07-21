@@ -84,6 +84,7 @@ private fun isUnclearType(type: KotlinType, element: KtCallableDeclaration): Boo
     if (element is KtProperty) {
         val initializer = element.initializer ?: return true
         if (initializer is KtConstantExpression || initializer is KtStringTemplateExpression) return false
+        if (initializer is KtUnaryExpression && initializer.baseExpression is KtConstantExpression) return false
         if (initializer is KtCallExpression) {
             val bindingContext = element.analyze()
             val resolvedCall = initializer.getResolvedCall(bindingContext)

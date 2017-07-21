@@ -42,6 +42,11 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         check("""val a = 1""")
     }
 
+    fun testUnaryConstInitializerType() {
+        HintType.PROPERTY_HINT.option.set(true)
+        check("""val a = -1; val b = +1""")
+    }
+
     fun testConstructorWithoutTypeParametersType() {
         HintType.PROPERTY_HINT.option.set(true)
         check("""val a = Any()""")
