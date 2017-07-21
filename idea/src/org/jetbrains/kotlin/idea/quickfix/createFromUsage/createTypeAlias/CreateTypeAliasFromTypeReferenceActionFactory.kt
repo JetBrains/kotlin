@@ -40,7 +40,7 @@ object CreateTypeAliasFromTypeReferenceActionFactory : KotlinSingleIntentionActi
         if (!element.languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)) return null
 
         val classInfo = CreateClassFromTypeReferenceActionFactory.extractFixData(element, diagnostic) ?: return null
-        val targetParent = classInfo.targetParents.singleOrNull { it !is KtDeclaration && it !is PsiPackage } ?: return null
+        val targetParent = classInfo.applicableParents.singleOrNull { it !is KtDeclaration && it !is PsiPackage } ?: return null
 
         val expectedType = getTypeConstraintInfo(element)?.upperBound
         if (expectedType != null && expectedType.containsError()) return null

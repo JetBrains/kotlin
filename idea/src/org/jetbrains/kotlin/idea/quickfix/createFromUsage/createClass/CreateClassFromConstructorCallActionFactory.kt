@@ -42,9 +42,8 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
         val inAnnotationEntry = diagnostic.psiElement.getNonStrictParentOfType<KtAnnotationEntry>() != null
 
         val (context, moduleDescriptor) = element.analyzeFullyAndGetResult()
-        val file = element.containingFile as? KtFile ?: return emptyList()
         val call = element.getCall(context) ?: return emptyList()
-        val targetParents = getTargetParentsByCall(call, file, context).ifEmpty { return emptyList() }
+        val targetParents = getTargetParentsByCall(call, context).ifEmpty { return emptyList() }
 
         val classKind = if (inAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS
         val fullCallExpr = element.getQualifiedExpressionForSelectorOrThis()
@@ -72,12 +71,10 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
         val fullCallExpr =
                 if (callParent is KtQualifiedExpression && callParent.selectorExpression == callExpr) callParent else callExpr
 
-        val file = fullCallExpr.containingFile as? KtFile ?: return null
-
         val (context, moduleDescriptor) = callExpr.analyzeFullyAndGetResult()
 
         val call = callExpr.getCall(context) ?: return null
-        val targetParents = getTargetParentsByCall(call, file, context).ifEmpty { return null }
+        val targetParents = getTargetParentsByCall(call, context).ifEmpty { return null }
         val inner = isInnerClassExpected(call)
 
         val valueArguments = callExpr.valueArguments

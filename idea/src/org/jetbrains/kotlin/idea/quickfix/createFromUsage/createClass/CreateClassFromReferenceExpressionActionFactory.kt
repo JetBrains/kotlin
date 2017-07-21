@@ -57,8 +57,6 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
             }
         }
 
-        val file = element.containingFile as? KtFile ?: return Collections.emptyList()
-
         val name = element.getReferencedName()
 
         val (context, moduleDescriptor) = element.analyzeFullyAndGetResult()
@@ -70,11 +68,8 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
             val receiverSelector = (fullCallExpr as? KtQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? KtReferenceExpression
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
-            val targetParents = getTargetParentsByQualifier(
-                    element.containingKtFile,
-                    receiverSelector != null,
-                    qualifierDescriptor
-            ).ifEmpty { return emptyList() }
+            val targetParents = getTargetParentsByQualifier(element, receiverSelector != null, qualifierDescriptor)
+                    .ifEmpty { return emptyList() }
 
             targetParents.forEach {
                 if (element.getCreatePackageFixIfApplicable(it) != null) return emptyList()
@@ -100,7 +95,7 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
         if (fullCallExpr.getAssignmentByLHS() != null) return Collections.emptyList()
 
         val call = element.getCall(context) ?: return Collections.emptyList()
-        val targetParents = getTargetParentsByCall(call, file, context).ifEmpty { return emptyList() }
+        val targetParents = getTargetParentsByCall(call, context).ifEmpty { return emptyList() }
         if (isInnerClassExpected(call)) return Collections.emptyList()
 
         val allKinds = Arrays.asList(ClassKind.OBJECT, ClassKind.ENUM_ENTRY)
@@ -119,8 +114,6 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
     }
 
     override fun extractFixData(element: KtSimpleNameExpression, diagnostic: Diagnostic): ClassInfo? {
-        val file = element.containingFile as? KtFile ?: return null
-
         val name = element.getReferencedName()
 
         val (context, moduleDescriptor) = element.analyzeFullyAndGetResult()
@@ -131,11 +124,8 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
             val receiverSelector = (fullCallExpr as? KtQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? KtReferenceExpression
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
-            val targetParents = getTargetParentsByQualifier(
-                    element.containingKtFile,
-                    receiverSelector != null,
-                    qualifierDescriptor
-            ).ifEmpty { return null }
+            val targetParents = getTargetParentsByQualifier(element, receiverSelector != null, qualifierDescriptor)
+                    .ifEmpty { return null }
 
             return ClassInfo(
                     name = name,
@@ -145,7 +135,7 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
         }
 
         val call = element.getCall(context) ?: return null
-        val targetParents = getTargetParentsByCall(call, file, context).ifEmpty { return null }
+        val targetParents = getTargetParentsByCall(call, context).ifEmpty { return null }
 
         val expectedTypeInfo = fullCallExpr.guessTypeForClass(context, moduleDescriptor)?.toClassTypeInfo() ?: TypeInfo.Empty
 
