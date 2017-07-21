@@ -20,10 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
@@ -137,15 +134,19 @@ abstract class DeprecatedSymbolUsageFixBase(
                     return CallableUsageReplacementStrategy(replacement)
                 }
 
-                is ClassDescriptor -> {
-                    val replacementType = ReplaceWithAnnotationAnalyzer.analyzeClassReplacement(replaceWith, target, resolutionFacade)
-                    if (replacementType != null) { //TODO: check that it's really resolved and is not an object otherwise it can be expression as well
-                        return ClassUsageReplacementStrategy(replacementType, null, element.project)
-                    }
-                    else {
-                        val constructor = target.unsubstitutedPrimaryConstructor ?: return null
-                        val replacementExpression = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(replaceWith, constructor, resolutionFacade) ?: return null
-                        return ClassUsageReplacementStrategy(null, replacementExpression, element.project)
+                is ClassifierDescriptorWithTypeParameters -> {
+                    val replacementType = ReplaceWithAnnotationAnalyzer.analyzeClassifierReplacement(replaceWith, target, resolutionFacade)
+                    return when {
+                        replacementType != null -> {
+                            //TODO: check that it's really resolved and is not an object otherwise it can be expression as well
+                            ClassUsageReplacementStrategy(replacementType, null, element.project)
+                        }
+                        target is ClassDescriptor -> {
+                            val constructor = target.unsubstitutedPrimaryConstructor ?: return null
+                            val replacementExpression = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(replaceWith, constructor, resolutionFacade) ?: return null
+                            ClassUsageReplacementStrategy(null, replacementExpression, element.project)
+                        }
+                        else -> null
                     }
                 }
 
