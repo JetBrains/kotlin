@@ -24,9 +24,9 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.TaskDependency
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -132,6 +132,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         assert((variantData != null) xor (javaSourceSet != null))
 
         val kaptClasspath = arrayListOf<File>()
+        val buildDependencies = arrayListOf<TaskDependency>()
 
         fun handleSourceSet(sourceSetName: String) {
             val kaptConfiguration = project.findKaptConfiguration(sourceSetName)
@@ -139,9 +140,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 it.group != getGroupName() || it.name != getArtifactName()
             } ?: emptyList()
 
-            if (kaptConfiguration != null && filteredDependencies.isNotEmpty()) {
-                javaCompile.dependsOn(kaptConfiguration.buildDependencies)
-                kaptClasspath.addAll(kaptConfiguration.resolve())
+            if (kaptConfiguration != null) {
+                buildDependencies += kaptConfiguration.buildDependencies
+
+                if (filteredDependencies.isNotEmpty()) {
+                    kaptClasspath.addAll(kaptConfiguration.resolve())
+                }
             }
         }
 
@@ -168,6 +172,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val kaptGenerateStubsTask = context.createKaptGenerateStubsTask()
         val kaptTask = context.createKaptKotlinTask()
+
+        kaptTask.dependsOn(*buildDependencies.toTypedArray())
 
         kaptGenerateStubsTask.dependsOn(*kotlinCompile.dependsOn.toTypedArray())
         kaptTask.dependsOn(kaptGenerateStubsTask)
