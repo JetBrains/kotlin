@@ -16,6 +16,8 @@
 
 package kotlin.internal
 
+import kotlin.reflect.KClass
+
 /**
  * Specifies that the corresponding type should be ignored during type inference.
  */
@@ -65,3 +67,91 @@ internal annotation class InlineOnly
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class DynamicExtension
+
+/**
+ * Specifies effect: annotated function returns specific value when condition provided
+ * by other annotations is true.*
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class Returns(val value: ConstantValue = ConstantValue.UNKNOWN)
+
+/**
+ * Specifies effect: annotated function throws 'exception' when condition is true
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class Throws
+
+/**
+ * Specifies effect: annotated callable value parameter will be called 'count' amount of times in-place.
+ * "In-place" means that enclosing function guarantees that this callable parameter won't be called after
+ * function finished.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class CalledInPlace(val count: InvocationCount = InvocationCount.UNKNOWN)
+
+
+/**
+ * Specifies how atomic conditions for annotated function should be merged into single condition
+ * that will be used to determine if the effect was fired.
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class JoinConditions(val strategy: JoiningStrategy = JoiningStrategy.ALL)
+internal enum class JoiningStrategy {
+    /** At least one of the atomic conditions should be true, i.e. atomic conditions are joined with logic OR */
+    ANY,
+
+    /** None of the atomic conditions should be true, i.e. atomic conditions
+     * are joined with OR and then whole logic expression is negated
+     */
+    NONE,
+
+    /** All of the atomic conditions should be true, i.e. atomic conditions are joined with AND */
+    ALL
+}
+
+/**
+ * Adds atomic condition of form 'target == value'
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class Equals(val value: ConstantValue)
+
+/**
+ * Adds atomic condition of form 'target is klass'
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class IsInstance(val klass: KClass<*>)
+
+/**
+ * Inverts ALL atomic conditions on target
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class Not
+
+enum class ConstantValue {
+    TRUE,
+    FALSE,
+    NULL,
+    NOT_NULL,
+    UNKNOWN
+}
+
+enum class InvocationCount {
+    /** Guaranteed to be invoked either 0 or 1 time */
+    AT_MOST_ONCE,
+
+    /** Guaranteed to be invoked exactly 1 time */
+    EXACTLY_ONCE,
+
+    /** Guaranteed to be invoked once, but may be invoked more */
+    AT_LEAST_ONCE,
+
+    /** Exact number of invocations is unknown */
+    UNKNOWN
+}
