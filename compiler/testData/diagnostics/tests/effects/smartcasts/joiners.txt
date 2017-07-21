@@ -1,0 +1,8 @@
+package
+
+@kotlin.internal.Returns(value = ConstantValue.TRUE) @kotlin.internal.JoinConditions(strategy = JoiningStrategy.ALL) public fun allIsString(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?, /*1*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) y: kotlin.Any?, /*2*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) z: kotlin.Any?): kotlin.Boolean
+@kotlin.internal.Returns(value = ConstantValue.TRUE) @kotlin.internal.JoinConditions(strategy = JoiningStrategy.ANY) public fun anyIsString(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?): kotlin.Boolean
+@kotlin.internal.Returns(value = ConstantValue.TRUE) @kotlin.internal.JoinConditions(strategy = JoiningStrategy.NONE) public fun noneIsNotString(/*0*/ @kotlin.internal.Not @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?, /*1*/ @kotlin.internal.Not @kotlin.internal.IsInstance(klass = kotlin.String::class) y: kotlin.Any?, /*2*/ @kotlin.internal.Not @kotlin.internal.IsInstance(klass = kotlin.String::class) z: kotlin.Any?): kotlin.Boolean
+public fun testAllJoiner(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?, /*2*/ z: kotlin.Any?): kotlin.Unit
+public fun testNoneJoiner(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testNoneJoiner(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?, /*2*/ z: kotlin.Any?): kotlin.Unit

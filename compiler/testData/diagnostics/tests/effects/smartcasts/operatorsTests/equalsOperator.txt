@@ -1,0 +1,6 @@
+package
+
+@kotlin.internal.Returns(value = ConstantValue.TRUE) public fun myEqualsNotNull(/*0*/ @kotlin.internal.Equals(value = ConstantValue.NOT_NULL) x: kotlin.Int?): kotlin.Boolean
+@kotlin.internal.Returns(value = ConstantValue.FALSE) public fun myEqualsNull(/*0*/ @kotlin.internal.Equals(value = ConstantValue.NOT_NULL) x: kotlin.Int?): kotlin.Boolean
+public fun testBasicEquals(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun testBasicNotEquals(/*0*/ x: kotlin.Int?): kotlin.Unit

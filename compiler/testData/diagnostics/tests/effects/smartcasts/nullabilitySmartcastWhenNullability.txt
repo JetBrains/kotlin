@@ -1,0 +1,6 @@
+package
+
+@kotlin.internal.Returns(value = ConstantValue.NULL) public fun notNullWhenNotNull(/*0*/ @kotlin.internal.Equals(value = ConstantValue.NULL) x: kotlin.Int?): kotlin.Int?
+@kotlin.internal.Returns(value = ConstantValue.NOT_NULL) public fun nullWhenNull(/*0*/ @kotlin.internal.Equals(value = ConstantValue.NOT_NULL) x: kotlin.Int?): kotlin.Int?
+public fun testNotNullWhenNotNull(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun testNullWhenNull(/*0*/ x: kotlin.Int?): kotlin.Unit

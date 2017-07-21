@@ -1,0 +1,10 @@
+package
+
+package o {
+    @kotlin.internal.Returns(value = ConstantValue.TRUE) public fun isString(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?): kotlin.Boolean
+    @kotlin.internal.Returns(value = ConstantValue.FALSE) public fun notIsString(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?): kotlin.Boolean
+    public fun testInversion(/*0*/ x: kotlin.Any?): kotlin.Unit
+    public fun testInversionSpilling(/*0*/ x: kotlin.Any?): kotlin.Unit
+    public fun testSimple(/*0*/ x: kotlin.Any?): kotlin.Unit
+    public fun testSpilling(/*0*/ x: kotlin.Any?): kotlin.Unit
+}

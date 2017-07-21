@@ -7241,6 +7241,78 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/effects")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Effects extends AbstractDiagnosticsTest {
+            public void testAllFilesPresentInEffects() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/effects/smartcasts")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Smartcasts extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInSmartcasts() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/smartcasts"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("basicEquals.kt")
+                public void testBasicEquals() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/basicEquals.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("basicIsInstance.kt")
+                public void testBasicIsInstance() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/basicIsInstance.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("compositions.kt")
+                public void testCompositions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/compositions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("intersectionTypes.kt")
+                public void testIntersectionTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/intersectionTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("joiners.kt")
+                public void testJoiners() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/joiners.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nullabilitySmartcastWhenNullability.kt")
+                public void testNullabilitySmartcastWhenNullability() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/nullabilitySmartcastWhenNullability.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("partiallyIncorrect.kt")
+                public void testPartiallyIncorrect() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/partiallyIncorrect.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeSmartcastWhenNullability.kt")
+                public void testTypeSmartcastWhenNullability() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/typeSmartcastWhenNullability.kt");
+                    doTest(fileName);
+                }
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/enum")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
