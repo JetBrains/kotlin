@@ -148,9 +148,64 @@ class DoubleMathTest {
     }
 
     @Test fun rounding() {
-        TODO()
+        for (value in listOf(Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0, 1.0, -10.0)) {
+            assertEquals(value, ceil(value))
+            assertEquals(value, floor(value))
+            assertEquals(value, truncate(value))
+            assertEquals(value, round(value))
+        }
+        val data = arrayOf( //   v floor trunc round  ceil
+                doubleArrayOf( 1.3,  1.0,  1.0,  1.0,  2.0),
+                doubleArrayOf(-1.3, -2.0, -1.0, -1.0, -1.0),
+                doubleArrayOf( 1.5,  1.0,  1.0,  2.0,  2.0),
+                doubleArrayOf(-1.5, -2.0, -1.0, -2.0, -1.0),
+                doubleArrayOf( 1.8,  1.0,  1.0,  2.0,  2.0),
+                doubleArrayOf(-1.8, -2.0, -1.0, -2.0, -1.0),
+
+                doubleArrayOf( 2.3,  2.0,  2.0,  2.0,  3.0),
+                doubleArrayOf(-2.3, -3.0, -2.0, -2.0, -2.0),
+                doubleArrayOf( 2.5,  2.0,  2.0,  2.0,  3.0),
+                doubleArrayOf(-2.5, -3.0, -2.0, -2.0, -2.0),
+                doubleArrayOf( 2.8,  2.0,  2.0,  3.0,  3.0),
+                doubleArrayOf(-2.8, -3.0, -2.0, -3.0, -2.0)
+        )
+        for ((v, f, t, r, c) in data) {
+            assertEquals(f, floor(v), "floor($v)")
+            assertEquals(t, truncate(v), "truncate($v)")
+            assertEquals(r, round(v), "round($v)")
+            assertEquals(c, ceil(v), "ceil($v)")
+        }
     }
 
+    @Test fun roundingConversion() {
+        assertEquals(1L, 1.0.roundToLong())
+        assertEquals(1L, 1.1.roundToLong())
+        assertEquals(2L, 1.5.roundToLong())
+        assertEquals(3L, 2.5.roundToLong())
+        assertEquals(-2L, (-2.5).roundToLong())
+        assertEquals(-3L, (-2.6).roundToLong())
+        assertEquals(9223372036854774784, (9223372036854774800.0).roundToLong())
+        assertEquals(Long.MAX_VALUE, Double.MAX_VALUE.roundToLong())
+        assertEquals(Long.MIN_VALUE, (-Double.MAX_VALUE).roundToLong())
+        assertEquals(Long.MAX_VALUE, Double.POSITIVE_INFINITY.roundToLong())
+        assertEquals(Long.MIN_VALUE, Double.NEGATIVE_INFINITY.roundToLong())
+
+        assertFails { Double.NaN.roundToLong() }
+
+        assertEquals(1, 1.0.roundToInt())
+        assertEquals(1, 1.1.roundToInt())
+        assertEquals(2, 1.5.roundToInt())
+        assertEquals(3, 2.5.roundToInt())
+        assertEquals(-2, (-2.5).roundToInt())
+        assertEquals(-3, (-2.6).roundToInt())
+        assertEquals(2123456789, (2123456789.0).roundToInt())
+        assertEquals(Int.MAX_VALUE, Double.MAX_VALUE.roundToInt())
+        assertEquals(Int.MIN_VALUE, (-Double.MAX_VALUE).roundToInt())
+        assertEquals(Int.MAX_VALUE, Double.POSITIVE_INFINITY.roundToInt())
+        assertEquals(Int.MIN_VALUE, Double.NEGATIVE_INFINITY.roundToInt())
+
+        assertFails { Double.NaN.roundToInt() }
+    }
 
 }
 
