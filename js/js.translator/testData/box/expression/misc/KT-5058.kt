@@ -7,7 +7,7 @@ fun test():Any {
             if (true) {
                 when {
                     false -> "1"
-                    ((a as? String)?.size ?: 0 > 0) -> a
+                    ((a as? String)?.length ?: 0 > 0) -> a
                     else -> "2"
                 }
             }
