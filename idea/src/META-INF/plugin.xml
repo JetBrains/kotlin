@@ -146,6 +146,10 @@
                 text="Local scenario"/>
       </group>
 
+      <action id="CompletionBindingContextCachingToggleAction"
+              class="org.jetbrains.kotlin.idea.actions.internal.CompletionBindingContextCachingToggleAction"
+              text="Enable completion binding context caching"/>
+
       <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
               text="Check Component Functions Usage Search"/>
 
