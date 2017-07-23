@@ -58,6 +58,8 @@ class CompletionBindingContextProvider(project: Project) {
     companion object {
         fun getInstance(project: Project): CompletionBindingContextProvider
                 = project.getComponent(CompletionBindingContextProvider::class.java)
+
+        var ENABLED = false
     }
 
     private class CompletionData(
@@ -86,6 +88,15 @@ class CompletionBindingContextProvider(project: Project) {
 
 
     fun getBindingContext(position: PsiElement, resolutionFacade: ResolutionFacade): BindingContext {
+        return if (ENABLED) {
+            _getBindingContext(position, resolutionFacade)
+        }
+        else {
+            resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<KtElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
+        }
+    }
+
+    private fun _getBindingContext(position: PsiElement, resolutionFacade: ResolutionFacade): BindingContext {
         assert(!position.isPhysical) // position is in synthetic file
 
         val inStatement = position.findStatementInBlock()
