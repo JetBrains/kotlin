@@ -25,7 +25,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
@@ -88,9 +88,7 @@ fun Project.getLanguageVersionSettings(contextModule: Module? = null): LanguageV
             compilerSettings,
             null
     )
-    return LanguageVersionSettingsImpl(languageVersion, apiVersion, extraLanguageFeatures).apply {
-        switchFlag(AnalysisFlags.skipMetadataVersionCheck, arguments.skipMetadataVersionCheck)
-    }
+    return LanguageVersionSettingsImpl(languageVersion, apiVersion, arguments.configureAnalysisFlags(), extraLanguageFeatures)
 }
 
 val Module.languageVersionSettings: LanguageVersionSettings
@@ -109,9 +107,19 @@ val Module.languageVersionSettings: LanguageVersionSettings
                 this
         )
 
-        return LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures).apply {
-            switchFlag(AnalysisFlags.skipMetadataVersionCheck, facetSettings.skipMetadataVersionCheck)
+        val arguments = facetSettings.compilerArguments
+        if (arguments != null) {
+            facetSettings.compilerSettings?.let { compilerSettings ->
+                parseCommandLineArguments(compilerSettings.additionalArgumentsAsList, arguments)
+            }
         }
+
+        return LanguageVersionSettingsImpl(
+                languageVersion,
+                ApiVersion.createByLanguageVersion(apiVersion),
+                arguments?.configureAnalysisFlags().orEmpty(),
+                extraLanguageFeatures
+        )
     }
 
 val Module.targetPlatform: TargetPlatformKind<*>?

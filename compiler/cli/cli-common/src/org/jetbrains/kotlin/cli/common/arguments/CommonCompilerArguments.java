@@ -16,6 +16,13 @@
 
 package org.jetbrains.kotlin.cli.common.arguments;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.config.AnalysisFlag;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@SuppressWarnings("WeakerAccess")
 public abstract class CommonCompilerArguments extends CommonToolArguments {
     public static final long serialVersionUID = 0L;
 
@@ -88,6 +95,14 @@ public abstract class CommonCompilerArguments extends CommonToolArguments {
     public static final String WARN = "warn";
     public static final String ERROR = "error";
     public static final String ENABLE = "enable";
+
+    @NotNull
+    public Map<AnalysisFlag<?>, Object> configureAnalysisFlags() {
+        Map<AnalysisFlag<?>, Object> result = new HashMap<>();
+        result.put(AnalysisFlag.getSkipMetadataVersionCheck(), skipMetadataVersionCheck);
+        result.put(AnalysisFlag.getMultiPlatformDoNotCheckImpl(), noCheckImpl);
+        return result;
+    }
 
     // Used only for serialize and deserialize settings. Don't use in other places!
     public static final class DummyImpl extends CommonCompilerArguments {}
