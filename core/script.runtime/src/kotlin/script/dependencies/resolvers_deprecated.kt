@@ -21,6 +21,7 @@ package kotlin.script.dependencies
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
+// nothing to discuss, for compatibility with previous version
 @Deprecated("Use DependenciesResolver interface")
 interface ScriptDependenciesResolver {
 

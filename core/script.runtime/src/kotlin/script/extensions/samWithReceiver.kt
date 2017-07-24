@@ -16,6 +16,11 @@
 
 package kotlin.script.extensions
 
+// discuss
+
+// Is this an appropriate place to put this class?
+// Used like this: https://github.com/gradle/kotlin-dsl/blob/cb44112374e36b41732ab390531b8bc29e8de327/provider/src/main/kotlin/org/gradle/kotlin/dsl/KotlinBuildScript.kt#L35
+// Provides access to some specific compiler extension in scripts.
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class SamWithReceiverAnnotations(vararg val annotations: String)

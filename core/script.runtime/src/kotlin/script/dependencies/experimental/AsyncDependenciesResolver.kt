@@ -23,6 +23,9 @@ import kotlin.script.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
 
+// discuss
+
+// provides updates is async manner (IDE takes advantage of it being asynchronous, compiler just calls `runBlocking { resolveAsync (...) }`)
 interface AsyncDependenciesResolver : DependenciesResolver {
     suspend fun resolveAsync(
             scriptContents: ScriptContents, environment: Environment

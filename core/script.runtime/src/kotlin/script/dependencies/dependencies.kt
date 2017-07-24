@@ -20,6 +20,15 @@ package kotlin.script.dependencies
 
 import java.io.File
 
+// discuss
+
+// Currently File is used to disambiguate between plain strings and paths
+// One of the ideas is to use java.nio.Path but this requires JDK 7
+// that means that script templates would require higher JDK (but since script are run by calling koltinc it seems ok to me after consideration)
+// Andrey expressed the idea that File (or Path) does not support other protocols, should we use URL/URI? (is it viable to support non-file protocols in compiler and IDE?)
+//
+// Explicitly references javaHome, what if it's not a jvm targeted script?
+// Currently it's convenient for IDE code and for the user because including jdk classes in classpath is a mess
 data class ScriptDependencies(
         val javaHome: File? = null,
         val classpath: List<File> = emptyList(),
