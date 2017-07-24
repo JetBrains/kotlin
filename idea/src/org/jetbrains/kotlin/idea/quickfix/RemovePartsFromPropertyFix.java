@@ -24,6 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
@@ -135,4 +136,23 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty>
             }
         };
     }
+
+    public static KotlinSingleIntentionActionFactory createLateInitFactory() {
+        return new KotlinSingleIntentionActionFactory() {
+            @Override
+            public KotlinQuickFixAction<KtProperty> createAction(@NotNull Diagnostic diagnostic) {
+                PsiElement element = Errors.INAPPLICABLE_LATEINIT_MODIFIER.cast(diagnostic).getPsiElement();
+                KtProperty property = PsiTreeUtil.getParentOfType(element, KtProperty.class);
+                if (property == null) return null;
+
+                boolean hasInitializer = property.hasInitializer();
+                boolean hasGetter = property.getGetter() != null && property.getGetter().getBodyExpression() != null;
+                boolean hasSetter = property.getSetter() != null && property.getSetter().getBodyExpression() != null;
+                if (!hasInitializer && !hasGetter && !hasSetter) return null;
+
+                return new RemovePartsFromPropertyFix(property, hasInitializer, hasGetter, hasSetter);
+            }
+        };
+    }
+
 }
