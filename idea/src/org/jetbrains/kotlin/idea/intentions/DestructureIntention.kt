@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,7 +156,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                         else -> null
                     }
                 }
-                is KtVariableDeclaration -> parent
+                is KtProperty -> parent.takeIf { isLocal }
                 is KtFunctionLiteral -> if (!hasParameterSpecification() && lambdaSupported) this else null
                 else -> null
             }
