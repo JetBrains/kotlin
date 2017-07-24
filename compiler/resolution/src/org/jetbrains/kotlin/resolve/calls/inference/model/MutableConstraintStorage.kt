@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.inference.trimToSize
-import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
+import org.jetbrains.kotlin.resolve.calls.model.PostponedKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import java.util.*
@@ -28,8 +30,15 @@ class MutableVariableWithConstraints(
         override val typeVariable: NewTypeVariable,
         constraints: Collection<Constraint> = emptyList()
 ) : VariableWithConstraints {
-    override val constraints: List<Constraint> get() = mutableConstraints
+    override val constraints: List<Constraint> get() {
+        if (simplifiedConstraints == null) {
+            simplifiedConstraints = simplifyConstraints()
+        }
+        return simplifiedConstraints!!
+    }
     private val mutableConstraints = ArrayList(constraints)
+
+    private var simplifiedConstraints: List<Constraint>? = null
 
     // return new actual constraint, if this constraint is new
     fun addConstraint(constraint: Constraint): Constraint? {
@@ -47,6 +56,7 @@ class MutableVariableWithConstraints(
             constraint
         }
         mutableConstraints.add(actualConstraint)
+        simplifiedConstraints = null
         return actualConstraint
     }
 
@@ -54,11 +64,13 @@ class MutableVariableWithConstraints(
     // shouldRemove should give true only for tail elements
     internal fun removeLastConstraints(shouldRemove: (Constraint) -> Boolean) {
         mutableConstraints.trimToSize(mutableConstraints.indexOfLast { !shouldRemove(it) } + 1)
+        simplifiedConstraints = null
     }
 
     // This method should be used only when constraint system has state COMPLETION
     internal fun removeConstrains(shouldRemove: (Constraint) -> Boolean) {
         mutableConstraints.removeAll(shouldRemove)
+        simplifiedConstraints = null
     }
 
     private fun newConstraintIsUseless(oldKind: ConstraintKind, newKind: ConstraintKind) =
@@ -67,6 +79,18 @@ class MutableVariableWithConstraints(
                 ConstraintKind.LOWER -> newKind == ConstraintKind.LOWER
                 ConstraintKind.UPPER -> newKind == ConstraintKind.UPPER
             }
+
+    private fun simplifyConstraints(): List<Constraint> {
+        val equalityConstraints = mutableConstraints
+                .filter { it.kind == ConstraintKind.EQUALITY }
+                .groupBy { it.typeHashCode }
+        return mutableConstraints.filter { isUsefulConstraint(it, equalityConstraints) }
+    }
+
+    private fun isUsefulConstraint(constraint: Constraint, equalityConstraints: Map<Int, List<Constraint>>): Boolean {
+        if (constraint.kind == ConstraintKind.EQUALITY) return true
+        return equalityConstraints[constraint.typeHashCode]?.none { it.type == constraint.type } ?: true
+    }
 
     override fun toString(): String {
         return "Constraints for $typeVariable"
