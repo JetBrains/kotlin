@@ -67,7 +67,7 @@ public final class TranslationUtils {
 
         if (DescriptorUtils.isExtension(descriptor) ||
             descriptor instanceof PropertyAccessorDescriptor &&
-            shouldAccessViaFunctions(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty())
+            JsDescriptorUtils.shouldAccessViaFunctions(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty())
         ) {
             return translateExtensionFunctionAsEcma5DataDescriptor(functionExpression, descriptor, context);
         }
@@ -317,27 +317,7 @@ public final class TranslationUtils {
     }
 
     private static boolean propertyAccessedByFunctionsInternally(@NotNull PropertyDescriptor p, @NotNull TranslationContext context) {
-        return !JsDescriptorUtils.isSimpleFinalProperty(p) && context.isFromCurrentModule(p) || shouldAccessViaFunctions(p);
-    }
-
-    public static boolean shouldAccessViaFunctions(@NotNull CallableDescriptor descriptor) {
-        if (descriptor instanceof PropertyDescriptor) {
-            return shouldAccessViaFunctions((PropertyDescriptor) descriptor);
-        }
-        else if (descriptor instanceof PropertyAccessorDescriptor) {
-            return shouldAccessViaFunctions(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
-        }
-        else {
-            return false;
-        }
-    }
-
-    private static boolean shouldAccessViaFunctions(@NotNull PropertyDescriptor property) {
-        if (AnnotationsUtils.hasJsNameInAccessors(property)) return true;
-        for (PropertyDescriptor overriddenProperty : property.getOverriddenDescriptors()) {
-            if (shouldAccessViaFunctions(overriddenProperty)) return true;
-        }
-        return false;
+        return !JsDescriptorUtils.isSimpleFinalProperty(p) && context.isFromCurrentModule(p) || JsDescriptorUtils.shouldAccessViaFunctions(p);
     }
 
     @NotNull
@@ -410,5 +390,15 @@ public final class TranslationUtils {
             return JsAstUtils.charToBoxedChar(e);
         }
         return e;
+    }
+
+    @NotNull
+    public static String getModuleName(@NotNull DeclarationDescriptor descriptor) {
+        ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(JsDescriptorUtils.findRealInlineDeclaration(descriptor));
+        if (DescriptorUtils.getContainingModule(descriptor) == moduleDescriptor.getBuiltIns().getBuiltInsModule()) {
+            return Namer.KOTLIN_LOWER_NAME;
+        }
+        String moduleName = moduleDescriptor.getName().asString();
+        return moduleName.substring(1, moduleName.length() - 1);
     }
 }

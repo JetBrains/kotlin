@@ -951,6 +951,10 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._int);
     }
 
+    public static boolean isIntOrNullableInt(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._int);
+    }
+
     public static boolean isByte(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._byte);
     }

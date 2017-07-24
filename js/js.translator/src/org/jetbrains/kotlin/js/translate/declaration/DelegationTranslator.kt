@@ -182,7 +182,7 @@ class DelegationTranslator(
         }
 
         // TODO: same logic as in AbstractDeclarationVisitor
-        if (descriptor.isExtensionProperty || TranslationUtils.shouldAccessViaFunctions(descriptor)) {
+        if (descriptor.isExtensionProperty || JsDescriptorUtils.shouldAccessViaFunctions(descriptor)) {
             val getter = descriptor.getter!!
             context().addDeclarationStatement(context().addFunctionToPrototype(
                     classDescriptor, getter, generateDelegateGetterFunction(getter)))

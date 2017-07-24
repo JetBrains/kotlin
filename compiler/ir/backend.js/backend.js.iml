@@ -7,14 +7,16 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="module" module-name="frontend" />
-    <orderEntry type="module" module-name="backend-common" />
-    <orderEntry type="module" module-name="js.ast" exported="" />
-    <orderEntry type="module" module-name="js.frontend" exported="" />
-    <orderEntry type="module" module-name="js.inliner" exported="" />
+    <orderEntry type="module" module-name="ir.tree" />
+    <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="backend.common" />
+    <orderEntry type="module" module-name="js.ast" />
+    <orderEntry type="module" module-name="js.inliner" />
     <orderEntry type="module" module-name="js.parser" />
     <orderEntry type="module" module-name="js.serializer" />
-    <orderEntry type="module" module-name="util" />
-    <orderEntry type="module" module-name="backend.js" />
+    <orderEntry type="module" module-name="js.frontend" />
+    <orderEntry type="module" module-name="ir.psi2ir" />
   </component>
 </module>

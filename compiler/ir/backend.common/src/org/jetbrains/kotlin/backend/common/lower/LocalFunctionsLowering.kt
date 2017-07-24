@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.AbstractClosureAnnotator
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.Closure
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.descriptors.*
@@ -25,11 +24,9 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.transformFlat
@@ -42,13 +39,18 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerLoweringPass {
+class LocalFunctionsLowering(val builtIns: IrBuiltIns): DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
-            if (memberDeclaration is IrFunction)
-                LocalFunctionsTransformer(memberDeclaration).lowerLocalFunctions()
-            else
-                null
+            val additionalDeclarations: List<IrDeclaration> = when (memberDeclaration) {
+                is IrFunction -> LocalFunctionsTransformer(memberDeclaration).lowerLocalFunctions()
+                is IrProperty -> {
+                    memberDeclaration.getter?.let { LocalFunctionsTransformer(it).lowerLocalFunctions() }.orEmpty() +
+                    memberDeclaration.setter?.let { LocalFunctionsTransformer(it).lowerLocalFunctions() }.orEmpty()
+                }
+                else -> emptyList()
+            }
+            listOf(memberDeclaration) + additionalDeclarations
         }
     }
 
@@ -71,9 +73,9 @@ class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerL
         val localFunctions: MutableMap<FunctionDescriptor, LocalFunctionContext> = LinkedHashMap()
         val new2old: MutableMap<ParameterDescriptor, ValueDescriptor> = HashMap()
 
-        fun lowerLocalFunctions(): List<IrDeclaration>? {
+        fun lowerLocalFunctions(): List<IrDeclaration> {
             collectLocalFunctions()
-            if (localFunctions.isEmpty()) return null
+            if (localFunctions.isEmpty()) return emptyList()
 
             collectClosures()
 
@@ -94,7 +96,9 @@ class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerL
                                 original.startOffset, original.endOffset, original.origin,
                                 it.transformedDescriptor,
                                 original.body
-                        )
+                        ).apply {
+                            valueParameters += original.valueParameters
+                        }
                     }
                 }
 
@@ -107,7 +111,7 @@ class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerL
 
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 // replace local function definition with an empty composite
-                return IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.builtIns.unitType)
+                return IrCompositeImpl(declaration.startOffset, declaration.endOffset, builtIns.unit)
             }
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {

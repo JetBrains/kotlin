@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -142,18 +141,8 @@ public final class JsDescriptorUtils {
         return !isExtension(propertyDescriptor) &&
                isDefaultAccessor(propertyDescriptor.getGetter()) &&
                isDefaultAccessor(propertyDescriptor.getSetter()) &&
-               !TranslationUtils.shouldAccessViaFunctions(propertyDescriptor) &&
+               !shouldAccessViaFunctions(propertyDescriptor) &&
                !ModalityKt.isOverridableOrOverrides(propertyDescriptor);
-    }
-
-    @NotNull
-    public static String getModuleName(@NotNull DeclarationDescriptor descriptor) {
-        ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(findRealInlineDeclaration(descriptor));
-        if (DescriptorUtils.getContainingModule(descriptor) == moduleDescriptor.getBuiltIns().getBuiltInsModule()) {
-            return Namer.KOTLIN_LOWER_NAME;
-        }
-        String moduleName = moduleDescriptor.getName().asString();
-        return moduleName.substring(1, moduleName.length() - 1);
     }
 
     @NotNull
@@ -191,5 +180,25 @@ public final class JsDescriptorUtils {
     public static boolean isExceptionClass(@NotNull ClassDescriptor descriptor) {
         ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
         return TypeUtilsKt.isSubtypeOf(descriptor.getDefaultType(), module.getBuiltIns().getThrowable().getDefaultType());
+    }
+
+    public static boolean shouldAccessViaFunctions(@NotNull CallableDescriptor descriptor) {
+        if (descriptor instanceof PropertyDescriptor) {
+            return shouldAccessViaFunctions((PropertyDescriptor) descriptor);
+        }
+        else if (descriptor instanceof PropertyAccessorDescriptor) {
+            return shouldAccessViaFunctions(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
+        }
+        else {
+            return false;
+        }
+    }
+
+    static boolean shouldAccessViaFunctions(@NotNull PropertyDescriptor property) {
+        if (AnnotationsUtils.hasJsNameInAccessors(property)) return true;
+        for (PropertyDescriptor overriddenProperty : property.getOverriddenDescriptors()) {
+            if (shouldAccessViaFunctions(overriddenProperty)) return true;
+        }
+        return false;
     }
 }

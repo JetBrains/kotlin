@@ -23,7 +23,6 @@ public class JsCatch extends SourceInfoAwareJsNode implements HasCondition {
     }
 
     public JsCatch(JsScope parent, @NotNull String ident) {
-        super();
         assert (parent != null);
         scope = new JsCatchScope(parent, ident);
         param = new JsParameter(scope.findName(ident));

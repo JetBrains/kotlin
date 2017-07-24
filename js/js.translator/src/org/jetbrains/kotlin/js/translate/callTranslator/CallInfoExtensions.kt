@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -68,8 +68,7 @@ fun VariableAccessInfo.getAccessDescriptor(): PropertyAccessorDescriptor {
 
 fun VariableAccessInfo.getAccessDescriptorIfNeeded(): CallableDescriptor {
     return if (variableDescriptor is PropertyDescriptor &&
-               (variableDescriptor.isExtension || TranslationUtils.shouldAccessViaFunctions(variableDescriptor))
-                   ) {
+               (variableDescriptor.isExtension || JsDescriptorUtils.shouldAccessViaFunctions(variableDescriptor))) {
         getAccessDescriptor()
     }
     else {

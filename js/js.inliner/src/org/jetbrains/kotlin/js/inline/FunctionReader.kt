@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.js.parser.OffsetToSourceMapping
 import org.jetbrains.kotlin.js.parser.parseFunction
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.getModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import org.jetbrains.kotlin.utils.JsLibraryUtils

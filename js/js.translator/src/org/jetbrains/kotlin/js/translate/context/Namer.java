@@ -48,7 +48,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
-import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName;
+import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.getModuleName;
 
 /**
  * Encapsulates different types of constants and naming conventions.

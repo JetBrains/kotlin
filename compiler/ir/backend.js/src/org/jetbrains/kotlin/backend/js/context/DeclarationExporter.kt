@@ -14,50 +14,57 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.translate.context
+package org.jetbrains.kotlin.backend.js.context
 
+import org.jetbrains.kotlin.backend.js.util.buildJs
+import org.jetbrains.kotlin.backend.js.util.definePackageAlias
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.exportedTag
 import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.translate.utils.*
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment
+import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.naming.NameSuggestion
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-internal class DeclarationExporter(val context: StaticContext) {
+class DeclarationExporter(
+        private val naming: NamingContext,
+        private val nameSuggestion: NameSuggestion,
+        private val fragment: JsProgramFragment,
+        private val config: JsConfig
+) {
     private val objectLikeKinds = setOf(ClassKind.OBJECT, ClassKind.ENUM_ENTRY)
     private val exportedDeclarations = mutableSetOf<MemberDescriptor>()
     private val localPackageNames = mutableMapOf<FqName, JsName>()
     private val statements: MutableList<JsStatement>
-        get() = context.fragment.exportBlock.statements
+        get() = fragment.exportBlock.statements
 
-    fun export(descriptor: MemberDescriptor, force: Boolean) {
+    fun export(descriptor: MemberDescriptor, force: Boolean = false) {
         if (exportedDeclarations.contains(descriptor)) return
         if (descriptor is ConstructorDescriptor && descriptor.isPrimary) return
-        if (isNativeObject(descriptor) || isLibraryObject(descriptor)) return
+        if (AnnotationsUtils.isNativeObject(descriptor) || AnnotationsUtils.isLibraryObject(descriptor)) return
         if (descriptor.isEffectivelyInlineOnly()) return
 
-        val suggestedName = context.nameSuggestion.suggest(descriptor) ?: return
+        val suggestedName = nameSuggestion.suggest(descriptor) ?: return
 
         val container = suggestedName.scope
         if (!descriptor.shouldBeExported(force)) return
-        exportedDeclarations.add(descriptor)
+        exportedDeclarations += descriptor
 
         val qualifier = when {
             container is PackageFragmentDescriptor -> {
                 getLocalPackageReference(container.fqName)
             }
             DescriptorUtils.isObject(container) -> {
-                JsAstUtils.prototypeOf(context.getInnerNameForDescriptor(container).makeRef())
+                buildJs { naming.innerNames[container].ref().dotPrototype() }
             }
             else -> {
-                context.getInnerNameForDescriptor(container).makeRef()
+                buildJs { naming.innerNames[container].ref() }
             }
         }
 
@@ -75,37 +82,36 @@ internal class DeclarationExporter(val context: StaticContext) {
     }
 
     private fun assign(descriptor: DeclarationDescriptor, qualifier: JsExpression) {
-        val exportedName = context.getInnerNameForDescriptor(descriptor)
+        val exportedName = naming.innerNames[descriptor]
         val expression = exportedName.makeRef()
-        val propertyName = context.getNameForDescriptor(descriptor)
+        val propertyName = naming.names[descriptor]
         if (propertyName.staticRef == null && exportedName != propertyName) {
             propertyName.staticRef = expression
         }
-        statements += assignment(JsNameRef(propertyName, qualifier), expression).exportStatement(descriptor)
+        statements += buildJs { qualifier.dot(propertyName).assign(expression) }.exportStatement(descriptor)
     }
 
     private fun exportObject(declaration: ClassDescriptor, qualifier: JsExpression) {
-        val name = context.getNameForDescriptor(declaration)
-        val expression = JsAstUtils.defineGetter(qualifier, name.ident,
-                                                 context.getNameForObjectInstance(declaration).makeRef())
+        val name = naming.names[declaration]
+        val expression = buildJs { qualifier.defineGetter(name.ident, naming.objectInnerNames[declaration].ref()) }
         statements += expression.exportStatement(declaration)
     }
 
     private fun exportProperty(declaration: PropertyDescriptor, qualifier: JsExpression) {
         val propertyLiteral = JsObjectLiteral(true)
 
-        val name = context.getNameForDescriptor(declaration).ident
+        val name = naming.names[declaration].ident
         val simpleProperty = JsDescriptorUtils.isSimpleFinalProperty(declaration) &&
                              !JsDescriptorUtils.shouldAccessViaFunctions(declaration)
 
         val exportedName: JsName
         val getterBody: JsExpression = if (simpleProperty) {
-            exportedName = context.getInnerNameForDescriptor(declaration)
+            exportedName = naming.innerNames[declaration]
             val accessToField = JsReturn(exportedName.makeRef())
-            JsFunction(context.fragment.scope, JsBlock(accessToField), "$declaration getter")
+            JsFunction(fragment.scope, JsBlock(accessToField), "$declaration getter")
         }
         else {
-            exportedName = context.getInnerNameForDescriptor(declaration.getter!!)
+            exportedName = naming.innerNames[declaration.getter!!]
             exportedName.makeRef()
         }
         propertyLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef("get"), getterBody)
@@ -113,43 +119,44 @@ internal class DeclarationExporter(val context: StaticContext) {
         if (declaration.isVar) {
             val setterBody: JsExpression = if (simpleProperty) {
                 val statements = mutableListOf<JsStatement>()
-                val function = JsFunction(context.fragment.scope, JsBlock(statements), "$declaration setter")
+                val function = JsFunction(fragment.scope, JsBlock(statements), "$declaration setter")
                 function.source = declaration.source.getPsi()
                 val valueName = JsScope.declareTemporaryName("value")
                 function.parameters += JsParameter(valueName)
-                statements += assignment(context.getInnerNameForDescriptor(declaration).makeRef(), valueName.makeRef()).makeStmt()
+                statements += buildJs { statement(naming.innerNames[declaration].ref().assign(valueName.ref())) }
                 function
             }
             else {
-                context.getInnerNameForDescriptor(declaration.setter!!).makeRef()
+                naming.innerNames[declaration.setter!!].makeRef()
             }
             propertyLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef("set"), setterBody)
         }
 
-        statements += JsAstUtils.defineProperty(qualifier, name, propertyLiteral).exportStatement(declaration)
+        statements += buildJs { qualifier.defineProperty(name, propertyLiteral) }.exportStatement(declaration)
     }
 
     private fun getLocalPackageReference(packageName: FqName): JsExpression {
         if (packageName.isRoot) {
-            return context.fragment.scope.declareName(Namer.getRootPackageName()).makeRef()
+            return fragment.scope.declareName("_").makeRef()
         }
-        var name = localPackageNames[packageName]
-        if (name == null) {
-            name = JsScope.declareTemporaryName("package$" + packageName.shortName().asString())
-            localPackageNames[packageName] = name
-            statements += definePackageAlias(packageName.shortName().asString(), name, packageName.asString(),
-                                             getLocalPackageReference(packageName.parent()))
+        val name = localPackageNames.getOrPut(packageName) {
+            JsScope.declareTemporaryName("package$" + packageName.shortName().asString()).also {
+                statements += buildJs {
+                    val packageRef = getLocalPackageReference(packageName.parent())
+                    definePackageAlias(packageName.shortName().asString(), it, packageName.asString(), packageRef)
+                }
+            }
         }
         return name.makeRef()
     }
 
     private fun JsExpression.exportStatement(declaration: DeclarationDescriptor) = JsExpressionStatement(this).also {
-        it.exportedTag = context.getTag(declaration)
+        it.exportedTag = naming.tags[declaration]
     }
 
     private fun EffectiveVisibility.publicOrInternal(): Boolean {
         if (publicApi) return true
-        if (context.config.configuration.getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)) return false
+        if (config.configuration.getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)) return false
         return toVisibility() == Visibilities.INTERNAL
     }
 

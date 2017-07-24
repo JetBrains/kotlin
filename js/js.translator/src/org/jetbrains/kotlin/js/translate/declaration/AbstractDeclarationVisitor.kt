@@ -77,7 +77,7 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
             null
         }
 
-        if (TranslationUtils.shouldAccessViaFunctions(descriptor) || descriptor.isExtensionProperty) {
+        if (JsDescriptorUtils.shouldAccessViaFunctions(descriptor) || descriptor.isExtensionProperty) {
             addFunction(descriptor.getter!!, getterExpr, expression.getter ?: expression)
             descriptor.setter?.let { addFunction(it, setterExpr!!, expression.setter ?: expression) }
         }

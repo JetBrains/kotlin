@@ -24,6 +24,10 @@ public class JsContinue extends SourceInfoAwareJsNode implements JsStatement {
         return label;
     }
 
+    public void setLabel(JsNameRef label) {
+        this.label = label;
+    }
+
     @Override
     public void accept(JsVisitor v) {
         v.visitContinue(this);

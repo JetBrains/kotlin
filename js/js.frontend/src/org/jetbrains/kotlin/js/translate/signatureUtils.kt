@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.translate.utils
+package org.jetbrains.kotlin.js.translate
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.naming.encodeSignature
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
