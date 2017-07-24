@@ -32,19 +32,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 
-class NativeAnalyzer(
-        val environment: KotlinCoreEnvironment, 
-        val  sources: Collection<KtFile>, 
-        val  konanConfig: KonanConfig) : AnalyzerWithCompilerReport.Analyzer {
-
-    override fun  analyze(): AnalysisResult {
-        return TopDownAnalyzerFacadeForKonan.analyzeFiles(sources, konanConfig);
-    }
-
-    override fun reportEnvironmentErrors() {
-    }
-}
-
 public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironment) {
 
     val config = konanConfig.configuration
@@ -69,8 +56,9 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
 
     phaser.phase(KonanPhase.FRONTEND) {
         // Build AST and binding info.
-        analyzerWithCompilerReport.analyzeAndReport(environment.getSourceFiles(),
-            NativeAnalyzer(environment, environment.getSourceFiles(), konanConfig))
+        analyzerWithCompilerReport.analyzeAndReport(environment.getSourceFiles()) {
+            TopDownAnalyzerFacadeForKonan.analyzeFiles(environment.getSourceFiles(), konanConfig)
+        }
         if (analyzerWithCompilerReport.hasErrors()) {
             throw KonanCompilationException()
         }
