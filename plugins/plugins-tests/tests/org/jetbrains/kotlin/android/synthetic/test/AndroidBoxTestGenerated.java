@@ -38,12 +38,6 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
-        @TestMetadata("androidEntity")
-        public void testAndroidEntity() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntity/");
-            doCompileAgainstAndroidSdkTest(fileName);
-        }
-
         @TestMetadata("fqNameInAttr")
         public void testFqNameInAttr() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fqNameInAttr/");
@@ -99,12 +93,6 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
     public static class Invoke extends AbstractAndroidBoxTest {
         public void testAllFilesPresentInInvoke() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
-        }
-
-        @TestMetadata("androidEntity")
-        public void testAndroidEntity() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntity/");
-            doFakeInvocationTest(fileName);
         }
 
         @TestMetadata("fqNameInAttr")

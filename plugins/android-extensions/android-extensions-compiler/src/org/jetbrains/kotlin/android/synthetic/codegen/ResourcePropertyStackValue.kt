@@ -76,12 +76,6 @@ class ResourcePropertyStackValue(
                     getResourceId(v)
                     v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
                 }
-                AndroidContainerType.LAYOUT_CONTAINER -> {
-                    receiver.put(Type.getType("L${containerType.internalClassName};"), v)
-                    v.invokevirtual(containerType.internalClassName, "getEntityView", "()Landroid/view/View;", false)
-                    getResourceId(v)
-                    v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
-                }
                 else -> throw IllegalStateException("Invalid Android class type: $containerType") // Should never occur
             }
         }
