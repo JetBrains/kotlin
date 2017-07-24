@@ -110,6 +110,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             val javaCompile: AbstractCompile,
             val kaptVariantData: KaptVariantData<*>?,
             val sourceSetName: String,
+            val javaSourceSet: SourceSet?,
             val kaptExtension: KaptExtension,
             val kaptClasspath: MutableList<File>) {
         val sourcesOutputDir = getKaptGeneratedDir(project, sourceSetName)
@@ -168,7 +169,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
 
         val context = Kapt3SubpluginContext(project, kotlinCompile, javaCompile,
-                kaptVariantData, sourceSetName, kaptExtension, kaptClasspath)
+                kaptVariantData, sourceSetName, javaSourceSet, kaptExtension, kaptClasspath)
 
         val kaptGenerateStubsTask = context.createKaptGenerateStubsTask()
         val kaptTask = context.createKaptKotlinTask()
@@ -282,6 +283,10 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.stubsDir = getKaptStubsDir()
         kaptTask.destinationDir = sourcesOutputDir
         kaptTask.classesDir = classesOutputDir
+
+        javaSourceSet?.output?.apply {
+            tryAddClassesDir { project.files(classesOutputDir).builtBy(kaptTask) }
+        }
 
         kotlinCompile.source(sourcesOutputDir, kotlinSourcesOutputDir)
 
