@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -201,8 +202,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
 
     //region Util classes ==============================================================================================
     // TODO: Replace with a cast when such support is added in the boxing lowering.
-    private data class ProgressionType(val elementType: KotlinType,
-                                          val numberCastFunctionName: Name) {
+    private data class ProgressionType(val elementType: KotlinType, val numberCastFunctionName: Name) {
         fun isIntProgression()  = KotlinBuiltIns.isInt(elementType)
         fun isLongProgression() = KotlinBuiltIns.isLong(elementType)
         fun isCharProgression() = KotlinBuiltIns.isChar(elementType)
@@ -291,6 +291,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
     //region Lowering ==================================================================================================
     // Lower a loop header.
     private fun processHeader(variable: IrVariable, initializer: IrCall): IrStatement? {
+        assert(variable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR)
         val symbol = variable.symbol
         if (!variable.descriptor.type.isSubtypeOf(iteratorType)) {
             return null
@@ -309,20 +310,25 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                  * For this loop:
                  * `for (i in a() .. b() step c() step d())`
                  * We need to call functions in the following order: a, b, c, d.
-                 * So we call b() before step calculations and then call last element calculation function (if necessary).
+                 * So we call b() before step calculations and then call last element calculation function (if required).
                  */
                 val inductionVariable = scope.createTemporaryVariable(first.castIfNecessary(progressionType),
-                        "inductionVariable",
-                        true).also {
+                        nameHint = "inductionVariable",
+                        isMutable = true,
+                        origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE).also {
                     statements.add(it)
                 }
 
-                val boundValue = scope.createTemporaryVariable(bound.castIfNecessary(progressionType),"bound")
+                val boundValue = scope.createTemporaryVariable(bound.castIfNecessary(progressionType),
+                        nameHint = "bound",
+                        origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE)
                         .also { statements.add(it) }
 
 
                 val stepExpression = (if (increasing) step else step?.unaryMinus()) ?: defaultStep(startOffset, endOffset)
-                val stepValue = scope.createTemporaryVariable(stepExpression, "step").also {
+                val stepValue = scope.createTemporaryVariable(stepExpression,
+                        nameHint = "step",
+                        origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE).also {
                     statements.add(it)
                 }
 
@@ -346,7 +352,9 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                             stepValue.symbol)
                 }
                 val lastValue = if (lastExpression != null) {
-                    scope.createTemporaryVariable(lastExpression, "last").also {
+                    scope.createTemporaryVariable(lastExpression,
+                            nameHint = "last",
+                            origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE).also {
                         statements.add(it)
                     }
                 } else {
@@ -364,9 +372,9 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         }
     }
 
-
     // Lower getting a next induction variable value.
     private fun processNext(variable: IrVariable, initializer: IrCall): IrExpression? {
+        assert(variable.origin == IrDeclarationOrigin.FOR_LOOP_VARIABLE)
         val irIteratorAccess = initializer.dispatchReceiver as? IrGetValue ?: throw AssertionError()
         val forLoopInfo = iteratorToLoopInfo[irIteratorAccess.symbol] ?: return null  // If we didn't lower a corresponding header.
         val builder = context.createIrBuilder(scopeOwnerSymbol, initializer.startOffset, initializer.endOffset)
