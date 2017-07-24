@@ -5026,6 +5026,42 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("inAliasSimple.kt")
+            public void testInAliasSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/inAliasSimple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inAliasWithOwnReplaceForConstructorForAliasArguments.kt")
+            public void testInAliasWithOwnReplaceForConstructorForAliasArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/inAliasWithOwnReplaceForConstructorForAliasArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inAliasWithOwnReplaceForConstructorUnused.kt")
+            public void testInAliasWithOwnReplaceForConstructorUnused() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/inAliasWithOwnReplaceForConstructorUnused.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inAliasWithOwnReplaceForConstructorUsed.kt")
+            public void testInAliasWithOwnReplaceForConstructorUsed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/inAliasWithOwnReplaceForConstructorUsed.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inAliasWithOwnReplaceForSecondaryConstructorUnused.kt")
+            public void testInAliasWithOwnReplaceForSecondaryConstructorUnused() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/inAliasWithOwnReplaceForSecondaryConstructorUnused.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inAliasWithOwnReplaceForSecondaryConstructorUsed.kt")
+            public void testInAliasWithOwnReplaceForSecondaryConstructorUsed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/inAliasWithOwnReplaceForSecondaryConstructorUsed.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inTypeArgument.kt")
             public void testInTypeArgument() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/inTypeArgument.kt");
