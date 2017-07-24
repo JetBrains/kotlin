@@ -139,7 +139,6 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
 
         val containerOptions = ContainerOptionsProxy.create(container)
         if (containerOptions.getCacheOrDefault(targetClass) == NO_CACHE) return
-
         val context = SyntheticPartsGenerateContext(classBuilder, codegen.state, container, targetClass, containerOptions)
         context.generateCachedFindViewByIdFunction()
         context.generateClearCacheFunction()
