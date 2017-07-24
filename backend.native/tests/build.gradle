@@ -1516,9 +1516,20 @@ task main_exception(type: RunKonanTest) {
     source = "runtime/basic/main_exception.kt"
 }
 
-task failed_assert(type: RunKonanTest) {
+task runtime_basic_assert_failed(type: RunKonanTest) {
     expectedExitStatus = 1
-    source = "runtime/basic/failed_assert.kt"
+    source = "runtime/basic/assert_failed.kt"
+}
+
+task runtime_basic_assert_passed(type: RunKonanTest) {
+    expectedExitStatus = 0
+    source = "runtime/basic/assert_passed.kt"
+}
+
+task runtime_basic_assert_disabled(type: RunKonanTest) {
+    expectedExitStatus = 0
+    enableKonanAssertions = false
+    source = "runtime/basic/assert_failed.kt"
 }
 
 task initializers0(type: RunKonanTest) {

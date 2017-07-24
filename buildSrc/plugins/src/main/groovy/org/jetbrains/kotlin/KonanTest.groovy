@@ -38,6 +38,7 @@ abstract class KonanTest extends JavaExec {
     def konanc = new File("${dist.canonicalPath}/bin/$konancDriver").absolutePath
     def mainC = 'main.c'
     def outputSourceSetName = "testOutputLocal"
+    def enableKonanAssertions = true
     String outputDirectory = null
     String goldValue = null
     String testData = null
@@ -97,12 +98,14 @@ abstract class KonanTest extends JavaExec {
             classpath = project.configurations.cli_bc
             enableAssertions = true
             args = ["-output", output,
-                    "-ea",
                     *filesToCompile,
                     *moreArgs,
                     *project.globalTestArgs]
             if (project.testTarget) {
                 args "-target", project.testTarget
+            }
+            if (enableKonanAssertions) {
+                args "-ea"
             }
             standardOutput = log
             errorOutput = log
@@ -282,12 +285,14 @@ class RunDriverKonanTest extends KonanTest {
         project.exec {
             commandLine konanc
             args = ["-output", output,
-                    "-ea",
                     *filesToCompile,
                     *moreArgs,
                     *project.globalTestArgs]
             if (project.testTarget) {
                 args "-target", project.testTarget
+            }
+            if (enableKonanAssertions) {
+                args "-ea"
             }
             standardOutput = log
             errorOutput = log
