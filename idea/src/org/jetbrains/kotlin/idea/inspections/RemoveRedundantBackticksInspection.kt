@@ -17,23 +17,59 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
-            override fun visitCallExpression(expression: KtCallExpression) {
-                super.visitCallExpression(expression)
-                val calleeExpression = expression.calleeExpression ?: return
-                if (calleeExpression.text.contains("^`.+`$".toRegex())) {
-                    holder.registerProblem(expression,
-                                           "Remove redundant backticks",
-                                           ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                           RemoveRedundantBackticksQuickFix())
+            override fun visitProperty(property: KtProperty) {
+                super.visitProperty(property)
+                val nameIdentifier = property.nameIdentifier ?: return
+                if (isRedundantBackticks(nameIdentifier)) {
+                    registerProblem(holder, nameIdentifier)
+                }
+            }
+
+            override fun visitNamedFunction(function: KtNamedFunction) {
+                super.visitNamedFunction(function)
+                function.valueParameters.map {
+                    val nameIdentifier = it.nameIdentifier ?: return@map
+                    if (isRedundantBackticks(nameIdentifier)) {
+                        registerProblem(holder, nameIdentifier)
+                    }
+                }
+            }
+
+            override fun visitReferenceExpression(expression: KtReferenceExpression) {
+                super.visitReferenceExpression(expression)
+                val bindingContext = expression.analyze()
+                expression.getResolvedCall(bindingContext) ?: return
+                if (isRedundantBackticks(expression)) {
+                    registerProblem(holder, expression)
                 }
             }
         }
+    }
+
+    private fun isKeyword(text: String): Boolean {
+        return (KtTokens.KEYWORDS.types + KtTokens.SOFT_KEYWORDS.types).any { it.toString() == text }
+    }
+
+    private fun isRedundantBackticks(element: PsiElement): Boolean {
+        return (element.text.contains("^`.+`$".toRegex()) &&
+                !isKeyword(element.text.removePrefix("`").removeSuffix("`")))
+    }
+
+    private fun registerProblem(holder: ProblemsHolder, element: PsiElement) {
+        holder.registerProblem(element,
+                               "Remove redundant backticks",
+                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                               RemoveRedundantBackticksQuickFix())
     }
 }
 
@@ -42,9 +78,8 @@ class RemoveRedundantBackticksQuickFix : LocalQuickFix {
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val callExpression = descriptor.psiElement as? KtCallExpression ?: return
-        val calleeExpression = callExpression.calleeExpression ?: return
+        val element = descriptor.psiElement
         val factory = KtPsiFactory(project)
-        calleeExpression.replace(factory.createExpression(calleeExpression.text.removePrefix("`").removeSuffix("`")))
+        element.replace(factory.createExpression(element.text.removePrefix("`").removeSuffix("`")))
     }
 }
