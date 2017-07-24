@@ -189,15 +189,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             extraLanguageFeatures.put(LanguageFeature.Coroutines, coroutinesState);
         }
 
-        LanguageVersionSettingsImpl settings =
-                new LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures);
-        settings.switchFlag(AnalysisFlags.getSkipMetadataVersionCheck(), arguments.skipMetadataVersionCheck);
-        settings.switchFlag(AnalysisFlags.getMultiPlatformDoNotCheckImpl(), arguments.noCheckImpl);
-        configureAnalysisFlags(settings, arguments);
-        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, settings);
-    }
-
-    protected void configureAnalysisFlags(@NotNull LanguageVersionSettingsImpl settings, @NotNull A arguments) {
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
+                languageVersion,
+                ApiVersion.createByLanguageVersion(apiVersion),
+                arguments.configureAnalysisFlags(),
+                extraLanguageFeatures
+        ));
     }
 
     @Nullable
