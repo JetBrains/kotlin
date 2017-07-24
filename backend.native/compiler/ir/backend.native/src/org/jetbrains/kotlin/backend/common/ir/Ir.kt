@@ -67,6 +67,10 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
                     Name.identifier("Iterator"), NoLookupLocation.FROM_BACKEND
             ) as ClassDescriptor)
 
+    val asserts = builtInsPackage("kotlin")
+            .getContributedFunctions(Name.identifier("assert"), NoLookupLocation.FROM_BACKEND)
+            .map { symbolTable.referenceFunction(it) }
+
     private fun progression(name: String) = symbolTable.referenceClass(
             builtInsPackage("kotlin", "ranges").getContributedClassifier(
                     Name.identifier(name), NoLookupLocation.FROM_BACKEND
