@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.android.synthetic.codegen
 import kotlinx.android.extensions.CacheImplementation
 import kotlinx.android.extensions.CacheImplementation.NO_CACHE
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
-import org.jetbrains.kotlin.android.synthetic.codegen.AndroidContainerType.LAYOUT_CONTAINER
 import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackageFragmentDescriptor
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFunction
@@ -141,10 +140,6 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         val containerOptions = ContainerOptionsProxy.create(container)
         if (containerOptions.getCacheOrDefault(targetClass) == NO_CACHE) return
 
-        if (containerOptions.containerType == LAYOUT_CONTAINER && !isExperimental(targetClass)) {
-            return
-        }
-
         val context = SyntheticPartsGenerateContext(classBuilder, codegen.state, container, targetClass, containerOptions)
         context.generateCachedFindViewByIdFunction()
         context.generateClearCacheFunction()
@@ -252,12 +247,8 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
                 loadId()
                 iv.invokevirtual(containerType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
             }
-            AndroidContainerType.FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT, LAYOUT_CONTAINER -> {
-                if (containerType == LAYOUT_CONTAINER) {
-                    iv.invokeinterface(containerType.internalClassName, "getContainerView", "()Landroid/view/View;")
-                } else {
-                    iv.invokevirtual(containerType.internalClassName, "getView", "()Landroid/view/View;", false)
-                }
+            AndroidContainerType.FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT -> {
+                iv.invokevirtual(containerType.internalClassName, "getView", "()Landroid/view/View;", false)
 
                 iv.dup()
                 val lgetViewNotNull = Label()

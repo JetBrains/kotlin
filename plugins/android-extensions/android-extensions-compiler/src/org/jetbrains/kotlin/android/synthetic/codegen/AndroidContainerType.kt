@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.android.synthetic.codegen
 
-import kotlinx.android.extensions.LayoutContainer
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -28,14 +27,11 @@ enum class AndroidContainerType(className: String, val doesSupportCache: Boolean
     SUPPORT_FRAGMENT_ACTIVITY(AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME, doesSupportCache = true),
     SUPPORT_FRAGMENT(AndroidConst.SUPPORT_FRAGMENT_FQNAME, doesSupportCache = true, isFragment = true),
     VIEW(AndroidConst.VIEW_FQNAME, doesSupportCache = true),
-    LAYOUT_CONTAINER(LayoutContainer::class.java.canonicalName, doesSupportCache = true),
     UNKNOWN("");
 
     val internalClassName: String = className.replace('.', '/')
 
     companion object {
-        private val LAYOUT_CONTAINER_FQNAME = LayoutContainer::class.java.canonicalName
-
         fun get(descriptor: ClassifierDescriptor): AndroidContainerType {
             fun getContainerTypeInternal(name: String): AndroidContainerType? = when (name) {
                 AndroidConst.ACTIVITY_FQNAME -> AndroidContainerType.ACTIVITY
@@ -44,7 +40,6 @@ enum class AndroidContainerType(className: String, val doesSupportCache: Boolean
                 AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME -> AndroidContainerType.SUPPORT_FRAGMENT_ACTIVITY
                 AndroidConst.SUPPORT_FRAGMENT_FQNAME -> AndroidContainerType.SUPPORT_FRAGMENT
                 AndroidConst.VIEW_FQNAME -> AndroidContainerType.VIEW
-                LAYOUT_CONTAINER_FQNAME -> AndroidContainerType.LAYOUT_CONTAINER
                 else -> null
             }
 
