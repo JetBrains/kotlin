@@ -19,23 +19,20 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.ENABLE_ASSERTIONS
-import org.jetbrains.kotlin.backend.konan.isStdlib
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.ir.util.type
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 /**
  * This lowering pass lowers some calls to [IrBuiltinOperatorDescriptor]s.
@@ -54,19 +51,10 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
 
     private val builtIns = context.builtIns
     private val irBuiltins = context.irModule!!.irBuiltins
-    private val enableAssertions = context.config.configuration.getBoolean(ENABLE_ASSERTIONS)
-
-    private val assertSymbols = context.ir.symbols.asserts
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
         val descriptor = expression.descriptor
-
-        // Replace assert() call with an empty composite if assertions are not enabled.
-        if (!enableAssertions && expression.symbol in assertSymbols) {
-            assert(expression.type.isUnit())
-            return IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type)
-        }
 
         if (descriptor is IrBuiltinOperatorDescriptor) {
             return transformBuiltinOperator(expression)

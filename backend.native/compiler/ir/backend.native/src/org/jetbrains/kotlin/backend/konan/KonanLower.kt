@@ -40,6 +40,10 @@ internal class KonanLower(val context: Context) {
     fun lowerModule(irModule: IrModuleFragment) {
         val phaser = PhaseManager(context)
 
+        phaser.phase(KonanPhase.LOWER_SPECIAL_CALLS) {
+            irModule.files.forEach(SpecialCallsLowering(context)::lower)
+        }
+
         phaser.phase(KonanPhase.LOWER_INLINE_CONSTRUCTORS) {
             InlineConstructorsTransformation(context).lower(irModule)
         }
