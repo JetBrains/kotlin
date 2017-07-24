@@ -21,6 +21,7 @@ public external class Date() {
     public fun getHours(): Int = definedExternally
     public fun getMilliseconds(): Int = definedExternally
     public fun getMinutes(): Int = definedExternally
+    public fun getMonth(): Int = definedExternally
     public fun getSeconds(): Int = definedExternally
     public fun getTime(): Long = definedExternally
 
