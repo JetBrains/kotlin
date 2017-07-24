@@ -469,6 +469,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(ChangeVariableMutabilityFix.LATEINIT_VAL_FACTORY)
         INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(RemoveNullableFix.LATEINIT_FACTORY)
+        INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(RemovePartsFromPropertyFix.createLateInitFactory())
 
         OVERLOADS_ABSTRACT.registerFactory(RemoveAnnotationFix.JvmOverloads)
         OVERLOADS_INTERFACE.registerFactory(RemoveAnnotationFix.JvmOverloads)
