@@ -193,7 +193,7 @@ internal class Kotlin2JvmSourceSetProcessor(
     }
 }
 
-private fun SourceSetOutput.tryAddClassesDir(
+internal fun SourceSetOutput.tryAddClassesDir(
         classesDirProvider: () -> FileCollection
 ): Boolean {
     val getClassesDirs = ReflectionUtil.findMethod(
