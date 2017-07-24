@@ -51,11 +51,13 @@ object ConfigLibraryUtil {
         return editor
     }
 
+    @JvmStatic
     fun configureKotlinRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
         configureKotlinRuntime(module)
     }
 
+    @JvmStatic
     fun configureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
         addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_JS_STDLIB_NAME,
@@ -63,21 +65,25 @@ object ConfigLibraryUtil {
                    JSLibraryKind)
     }
 
+    @JvmStatic
     fun configureKotlinRuntime(module: Module) {
         addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, PathUtil.kotlinPathsForDistDirectory.stdlibPath), module)
         addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, PathUtil.kotlinPathsForDistDirectory.kotlinTestPath), module)
     }
 
+    @JvmStatic
     fun unConfigureKotlinRuntime(module: Module) {
         removeLibrary(module, DEFAULT_JAVA_RUNTIME_LIB_NAME)
         removeLibrary(module, DEFAULT_KOTLIN_TEST_LIB_NAME)
     }
 
+    @JvmStatic
     fun unConfigureKotlinRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
         unConfigureKotlinRuntime(module)
     }
 
+    @JvmStatic
     fun unConfigureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
         removeLibrary(module, DEFAULT_KOTLIN_JS_STDLIB_NAME)
@@ -194,6 +200,7 @@ object ConfigLibraryUtil {
         configureLibraries(module, rootPath, InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: "))
     }
 
+    @JvmStatic
     fun unconfigureLibrariesByDirective(module: Module, fileText: String) {
         val libraryNames = ArrayList<String>()
         for (libInfo in InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: ")) {

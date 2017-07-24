@@ -35,5 +35,5 @@ object CommonLibraryType : LibraryType<DummyLibraryProperties>(CommonLibraryKind
                                   contextDirectory: VirtualFile?,
                                   project: Project): NewLibraryConfiguration? = null
 
-    override fun getIcon(properties: LibraryProperties<*>?) = KotlinIcons.SMALL_LOGO
+    override fun getIcon(properties: LibraryProperties<Any>?) = KotlinIcons.SMALL_LOGO
 }
