@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -223,7 +224,9 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
                     stubsOutputDir == null -> "Stubs output directory"
                     else -> throw IllegalStateException()
                 }
-                logger.warn("$nonExistentOptionName is not specified, skipping annotation processing")
+                val moduleName = configuration.get(CommonConfigurationKeys.MODULE_NAME)
+                                 ?: configuration.get(JVMConfigurationKeys.MODULES).orEmpty().joinToString()
+                logger.warn("$nonExistentOptionName is not specified for $moduleName, skipping annotation processing")
                 AnalysisHandlerExtension.registerExtension(project, AbortAnalysisHandlerExtension())
             }
             return
