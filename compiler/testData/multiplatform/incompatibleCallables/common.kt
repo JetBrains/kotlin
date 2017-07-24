@@ -1,5 +1,3 @@
-import kotlin.coroutines.experimental.*
-
 header fun f1()
 
 header fun f2(name: String)
@@ -21,7 +19,7 @@ public header fun f10()
 
 header fun <T : Number> f11()
 header fun <U : MutableList<String>> f12()
-header fun <A, B : Continuation<A>> f13()
+header fun <A, B : Comparable<A>> f13()
 
 header inline fun <X> f14()
 header inline fun <reified Y> f15()
@@ -30,9 +28,7 @@ header fun f16(s: String)
 
 header fun f17(vararg s: String)
 header fun f18(s: Array<out String>)
-header inline fun f19(crossinline s: () -> Unit)
+header inline fun f19(s: () -> Unit)
 header inline fun f20(s: () -> Unit)
-header inline fun f21(noinline s: () -> Unit)
-header inline fun f22(s: () -> Unit)
-header fun f23(c: suspend Unit.() -> Unit)
-header fun f24(c: Unit.() -> Unit)
+header fun f21(c: suspend Unit.() -> Unit)
+header fun f22(c: Unit.() -> Unit)

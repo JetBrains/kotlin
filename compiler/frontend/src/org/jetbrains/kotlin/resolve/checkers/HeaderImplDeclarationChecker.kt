@@ -292,7 +292,9 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             object TypeParameterNames : Incompatible("names of type parameters are different")
 
             object ValueParameterHasDefault : Incompatible("some parameters have default values")
-            object ValueParameterModifiers : Incompatible("parameter modifiers are different (vararg, coroutine, crossinline, noinline)")
+            object ValueParameterVararg : Incompatible("some value parameter is vararg in one declaration and non-vararg in the other")
+            object ValueParameterNoinline : Incompatible("some value parameter is noinline in one declaration and not noinline in the other")
+            object ValueParameterCrossinline : Incompatible("some value parameter is crossinline in one declaration and not crossinline in the other")
 
             // Functions
 
@@ -376,7 +378,13 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         areCompatibleTypeParameters(aTypeParams, bTypeParams, platformModule, substitutor).let { if (it != Compatible) return it }
 
         if (!equalsBy(aParams, bParams, ValueParameterDescriptor::declaresDefaultValue)) return Incompatible.ValueParameterHasDefault
-        if (!equalsBy(aParams, bParams, { p -> listOf(p.varargElementType != null, p.isCrossinline, p.isNoinline) })) return Incompatible.ValueParameterModifiers
+        if (!equalsBy(aParams, bParams, { p -> listOf(p.varargElementType != null) })) return Incompatible.ValueParameterVararg
+
+        // Adding noinline/crossinline to parameters is disallowed, except if the header declaration was not inline at all
+        if (a is FunctionDescriptor && a.isInline) {
+            if (aParams.indices.any { i -> !aParams[i].isNoinline && bParams[i].isNoinline }) return Incompatible.ValueParameterNoinline
+            if (aParams.indices.any { i -> !aParams[i].isCrossinline && bParams[i].isCrossinline }) return Incompatible.ValueParameterCrossinline
+        }
 
         when {
             a is FunctionDescriptor && b is FunctionDescriptor -> areCompatibleFunctions(a, b).let { if (it != Compatible) return it }
@@ -443,7 +451,9 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         if (!areCompatibleTypeLists(a.map { substitutor(it.defaultType) }, b.map { it.defaultType }, platformModule))
             return Incompatible.TypeParameterUpperBounds
         if (!equalsBy(a, b, TypeParameterDescriptor::getVariance)) return Incompatible.TypeParameterVariance
-        if (!equalsBy(a, b, TypeParameterDescriptor::isReified)) return Incompatible.TypeParameterReified
+
+        // Removing "reified" from a header function's type parameter is fine
+        if (a.indices.any { i -> !a[i].isReified && b[i].isReified }) return Incompatible.TypeParameterReified
 
         return Compatible
     }
