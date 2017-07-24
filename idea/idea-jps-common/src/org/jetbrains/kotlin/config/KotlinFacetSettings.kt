@@ -124,12 +124,6 @@ class KotlinFacetSettings {
                 LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> CommonCompilerArguments.ERROR
             }
         }
-
-    var skipMetadataVersionCheck: Boolean
-        get() = compilerArguments?.skipMetadataVersionCheck == true
-        set(value) {
-            compilerArguments!!.skipMetadataVersionCheck = value
-        }
 }
 
 fun TargetPlatformKind<*>.createCompilerArguments(init: CommonCompilerArguments.() -> Unit = {}): CommonCompilerArguments {

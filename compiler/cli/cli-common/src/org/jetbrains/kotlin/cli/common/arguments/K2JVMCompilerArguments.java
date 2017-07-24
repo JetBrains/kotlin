@@ -16,8 +16,13 @@
 
 package org.jetbrains.kotlin.cli.common.arguments;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.config.AnalysisFlag;
 import org.jetbrains.kotlin.config.JvmTarget;
 
+import java.util.Map;
+
+@SuppressWarnings("WeakerAccess")
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public static final long serialVersionUID = 0L;
 
@@ -162,4 +167,12 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
 
     // Paths to output directories for friend modules.
     public String[] friendPaths;
+
+    @Override
+    @NotNull
+    public Map<AnalysisFlag<?>, Object> configureAnalysisFlags() {
+        Map<AnalysisFlag<?>, Object> result = super.configureAnalysisFlags();
+        result.put(AnalysisFlag.getLoadJsr305Annotations(), loadJsr305annotations);
+        return result;
+    }
 }
