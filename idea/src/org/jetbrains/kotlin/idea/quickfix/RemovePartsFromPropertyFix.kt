@@ -14,145 +14,111 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.KotlinTypeKt;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isError
 
-public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty> {
-    private final boolean removeInitializer;
-    private final boolean removeGetter;
-    private final boolean removeSetter;
+class RemovePartsFromPropertyFix(
+        element: KtProperty,
+        private val removeInitializer: Boolean,
+        private val removeGetter: Boolean,
+        private val removeSetter: Boolean
+) : KotlinQuickFixAction<KtProperty>(element) {
 
-    private RemovePartsFromPropertyFix(@NotNull KtProperty element, boolean removeInitializer, boolean removeGetter, boolean removeSetter) {
-        super(element);
-        this.removeInitializer = removeInitializer;
-        this.removeGetter = removeGetter;
-        this.removeSetter = removeSetter;
+    private constructor(element: KtProperty) : this(
+            element,
+            element.hasInitializer(),
+            element.getter?.bodyExpression != null,
+            element.setter?.bodyExpression != null
+    )
+
+    override fun getText(): String =
+            KotlinBundle.message("remove.parts.from.property", partsToRemove(removeGetter, removeSetter, removeInitializer))
+
+    override fun getFamilyName(): String = KotlinBundle.message("remove.parts.from.property.family")
+
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        if (!super.isAvailable(project, editor, file)) return false
+        val type = QuickFixUtil.getDeclarationReturnType(element) ?: return false
+        return !type.isError
     }
 
-    private RemovePartsFromPropertyFix(@NotNull KtProperty element) {
-        this(element, element.hasInitializer(),
-             element.getGetter() != null && element.getGetter().getBodyExpression() != null,
-             element.getSetter() != null && element.getSetter().getBodyExpression() != null);
+    public override operator fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val newElement = element?.copy() as? KtProperty ?: return
+
+        val getter = newElement.getter
+        if (removeGetter && getter != null) {
+            newElement.deleteChildInternal(getter.node)
+        }
+
+        val setter = newElement.setter
+        if (removeSetter && setter != null) {
+            newElement.deleteChildInternal(setter.node)
+        }
+
+        val initializer = newElement.initializer
+        var typeToAdd: KotlinType? = null
+        if (removeInitializer && initializer != null) {
+            val nextSibling = newElement.nameIdentifier?.nextSibling
+            if (nextSibling != null) {
+                newElement.deleteChildRange(nextSibling, initializer)
+                val type = QuickFixUtil.getDeclarationReturnType(element)
+                if (newElement.typeReference == null && type != null) {
+                    typeToAdd = type
+                }
+            }
+        }
+        val replaceElement = element?.replace(newElement) as? KtProperty
+        if (replaceElement != null && typeToAdd != null) {
+            SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, replaceElement, typeToAdd)
+        }
     }
 
-    private static String partsToRemove(boolean getter, boolean setter, boolean initializer) {
-        StringBuilder sb = new StringBuilder();
+    private fun partsToRemove(getter: Boolean, setter: Boolean, initializer: Boolean): String = buildString {
         if (getter) {
-            sb.append("getter");
-            if (setter && initializer) {
-                sb.append(", ");
-            }
-            else if (setter || initializer) {
-                sb.append(" and ");
-            }
+            append("getter")
+            if (setter && initializer)
+                append(", ")
+            else if (setter || initializer)
+                append(" and ")
         }
         if (setter) {
-            sb.append("setter");
-            if (initializer) {
-                sb.append(" and ");
-            }
+            append("setter")
+            if (initializer) append(" and ")
         }
-        if (initializer) {
-            sb.append("initializer");
-        }
-        return sb.toString();
+        if (initializer) append("initializer")
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("remove.parts.from.property", partsToRemove(removeGetter, removeSetter, removeInitializer));
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("remove.parts.from.property.family");
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        if (!super.isAvailable(project, editor, file)) return false;
-
-        KotlinType type = QuickFixUtil.getDeclarationReturnType(getElement());
-        return type != null && !KotlinTypeKt.isError(type);
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        KotlinType type = QuickFixUtil.getDeclarationReturnType(getElement());
-        KtProperty newElement = (KtProperty) getElement().copy();
-        KtPropertyAccessor getter = newElement.getGetter();
-        if (removeGetter && getter != null) {
-            newElement.deleteChildInternal(getter.getNode());
-        }
-        KtPropertyAccessor setter = newElement.getSetter();
-        if (removeSetter && setter != null) {
-            newElement.deleteChildInternal(setter.getNode());
-        }
-        KtExpression initializer = newElement.getInitializer();
-        KotlinType typeToAdd = null;
-        if (removeInitializer && initializer != null) {
-            PsiElement nameIdentifier = newElement.getNameIdentifier();
-            assert nameIdentifier != null;
-            PsiElement nextSibling = nameIdentifier.getNextSibling();
-            assert nextSibling != null;
-            newElement.deleteChildRange(nextSibling, initializer);
-
-            if (newElement.getTypeReference() == null && type != null) {
-                typeToAdd = type;
-            }
-        }
-        newElement = (KtProperty) getElement().replace(newElement);
-        if (typeToAdd != null) {
-            SpecifyTypeExplicitlyIntention.Companion.addTypeAnnotation(editor, newElement, typeToAdd);
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtProperty>? {
+            val element = diagnostic.psiElement
+            val property = PsiTreeUtil.getParentOfType(element, KtProperty::class.java) ?: return null
+            return RemovePartsFromPropertyFix(property)
         }
     }
 
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public KotlinQuickFixAction<KtProperty> createAction(@NotNull Diagnostic diagnostic) {
-                PsiElement element = diagnostic.getPsiElement();
-                assert element instanceof KtElement;
-                KtProperty property = PsiTreeUtil.getParentOfType(element, KtProperty.class);
-                if (property == null) return null;
-                return new RemovePartsFromPropertyFix(property);
-            }
-        };
-    }
-
-    public static KotlinSingleIntentionActionFactory createLateInitFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public KotlinQuickFixAction<KtProperty> createAction(@NotNull Diagnostic diagnostic) {
-                PsiElement element = Errors.INAPPLICABLE_LATEINIT_MODIFIER.cast(diagnostic).getPsiElement();
-                KtProperty property = PsiTreeUtil.getParentOfType(element, KtProperty.class);
-                if (property == null) return null;
-
-                boolean hasInitializer = property.hasInitializer();
-                boolean hasGetter = property.getGetter() != null && property.getGetter().getBodyExpression() != null;
-                boolean hasSetter = property.getSetter() != null && property.getSetter().getBodyExpression() != null;
-                if (!hasInitializer && !hasGetter && !hasSetter) return null;
-
-                return new RemovePartsFromPropertyFix(property, hasInitializer, hasGetter, hasSetter);
-            }
-        };
+    object LateInitFactory : KotlinSingleIntentionActionFactory() {
+        public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtProperty>? {
+            val element = Errors.INAPPLICABLE_LATEINIT_MODIFIER.cast(diagnostic).psiElement
+            val property = PsiTreeUtil.getParentOfType(element, KtProperty::class.java) ?: return null
+            val hasInitializer = property.hasInitializer()
+            val hasGetter = property.getter?.bodyExpression != null
+            val hasSetter = property.setter?.bodyExpression != null
+            if (!hasInitializer && !hasGetter && !hasSetter) return null
+            return RemovePartsFromPropertyFix(property, hasInitializer, hasGetter, hasSetter)
+        }
     }
 
 }
