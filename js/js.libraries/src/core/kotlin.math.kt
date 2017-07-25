@@ -313,10 +313,30 @@ public fun round(a: Double): Double {
     return if (floor % 2 == 0.0) floor else ceil(a)
 }
 
-// also as extension val [absoluteValue]
-inline fun abs(a: Double): Double = nativeMath.abs(a)
-// also as extension val [sign]
-inline fun sgn(a: Double): Double = nativeMath.sign(a)
+/**
+ * Returns the absolute value of the given value [a].
+ *
+ * Special cases:
+ *     - `abs(NaN)` is `NaN`
+ *
+ * @see absoluteValue extension property for [Double]
+ */
+@InlineOnly
+public inline fun abs(a: Double): Double = nativeMath.abs(a)
+
+/**
+ * Returns the sign of the given value [a]:
+ *     - `-1.0` if the value is negative,
+ *     - zero if the value is zero,
+ *     - `1.0` if the value is positive
+ *
+ * Special case:
+ *     - `sign(NaN)` is `NaN`
+ */
+@InlineOnly
+public inline fun sign(a: Double): Double = nativeMath.sign(a)
+
+
 /**
  * Returns the smaller of two values.
  *
@@ -337,12 +357,45 @@ public inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b)
 inline fun Double.pow(other: Double): Double = nativeMath.pow(this, other)
 inline fun Double.pow(other: Int): Double = nativeMath.pow(this, other.toDouble())
 
-inline val Double.absoluteValue: Double get() = nativeMath.abs(this)
-inline val Double.sign: Double get() = nativeMath.sign(this)
+/**
+ * Returns the absolute value of this value.
+ *
+ * Special cases:
+ *     - `NaN.absoluteValue` is `NaN`
+ *
+ * @see abs function
+ */
+@InlineOnly
+public inline val Double.absoluteValue: Double get() = nativeMath.abs(this)
 
-// TODO: Reimplement here
-fun Double.withSign(sign: Double): Double = this.absoluteValue * sign.sign
-inline fun Double.withSign(sign: Int): Double = this.withSign(sign.toDouble())
+/**
+ * Returns the sign of this value:
+ *     - `-1.0` if the value is negative,
+ *     - zero if the value is zero,
+ *     - `1.0` if the value is positive
+ *
+ * Special case:
+ *     - `NaN.sign` is `NaN`
+ */
+@InlineOnly
+public inline val Double.sign: Double get() = nativeMath.sign(this)
+
+/**
+ * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * If [sign] is `NaN` the sign of the result is undefined.
+ */
+public fun Double.withSign(sign: Double): Double =
+        this.absoluteValue * when(sign) {
+            0.0 -> sign(1 / sign)
+            else -> sign(sign)
+        }
+
+/**
+ * Returns this value with the sign bit same as of the [sign] value.
+ */
+@InlineOnly
+public inline fun Double.withSign(sign: Int): Double = this.withSign(sign.toDouble())
 
 /**
  * Rounds this [Double] value to the nearest integer and converts the result to [Int].
