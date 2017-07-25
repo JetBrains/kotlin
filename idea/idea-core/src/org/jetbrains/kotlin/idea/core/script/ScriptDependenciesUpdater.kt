@@ -80,8 +80,11 @@ internal class ScriptDependenciesUpdater(
 
     private fun tryLoadingFromDisk(file: VirtualFile) {
         ScriptDependenciesFileAttribute.read(file)?.let { deserialized ->
+            val rootsChanged = cache.hasNotCachedRoots(deserialized)
             cache.save(file, deserialized)
-            onChange()
+            if (rootsChanged) {
+                notifyRootsChanged()
+            }
         }
     }
 
@@ -186,8 +189,8 @@ internal class ScriptDependenciesUpdater(
             }
             ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
             val resultingDependencies = (result.dependencies ?: ScriptDependencies.Empty).adjustByDefinition(scriptDef)
-            if (cache(resultingDependencies, file)) {
-                onChange()
+            if (saveNewDependencies(resultingDependencies, file)) {
+                notifyRootsChanged()
             }
         }
     }
@@ -195,26 +198,21 @@ internal class ScriptDependenciesUpdater(
 
     fun updateSync(file: VirtualFile, scriptDef: KotlinScriptDefinition): Boolean {
         val newDeps = contentLoader.loadContentsAndResolveDependencies(scriptDef, file) ?: ScriptDependencies.Empty
-        return cache(newDeps, file)
+        return saveNewDependencies(newDeps, file)
     }
 
-    private fun cache(
+    private fun saveNewDependencies(
             new: ScriptDependencies,
             file: VirtualFile
     ): Boolean {
-        val updated = cache.save(file, new)
-        if (updated) {
+        val rootsChanged = cache.hasNotCachedRoots(new)
+        if (cache.save(file, new)) {
             ScriptDependenciesFileAttribute.write(file, new)
         }
-        return updated
+        return rootsChanged
     }
 
-    fun onChange() {
-        cache.onChange()
-        notifyRootsChanged()
-    }
-
-    private fun notifyRootsChanged() {
+    fun notifyRootsChanged() {
         val rootsChangesRunnable = {
             runWriteAction {
                 if (project.isDisposed) return@runWriteAction
@@ -248,7 +246,7 @@ internal class ScriptDependenciesUpdater(
                         (application.isUnitTestMode || projectFileIndex.isInContent(it)) && !ProjectUtil.isProjectOrWorkspaceFile(it)
                     }
                 })) {
-                    onChange()
+                    notifyRootsChanged()
                 }
             }
         })
