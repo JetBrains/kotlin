@@ -26,8 +26,7 @@ enum class JvmTarget(override val description: String) : TargetPlatformVersion {
     val bytecodeVersion: Int by lazy {
         when (this) {
             JVM_1_6 -> Opcodes.V1_6
-            JVM_1_8 ->
-                if (java.lang.Boolean.valueOf(System.getProperty("kotlin.test.substitute.bytecode.1.8.to.1.9"))) Opcodes.V1_9 else Opcodes.V1_8
+            JVM_1_8 -> Opcodes.V1_8
         }
     }
 
@@ -42,7 +41,7 @@ enum class JvmTarget(override val description: String) : TargetPlatformVersion {
             val platformDescription = values().find { it.bytecodeVersion == bytecodeVersion }?.description ?:
                    when (bytecodeVersion) {
                        Opcodes.V1_7 -> "1.7"
-                       Opcodes.V1_9 -> "1.9"
+                       Opcodes.V1_8 + 1 -> "1.9"
                        else -> null
                    }
 
