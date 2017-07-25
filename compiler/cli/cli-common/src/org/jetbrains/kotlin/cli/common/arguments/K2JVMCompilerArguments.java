@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.common.arguments;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.config.AnalysisFlag;
+import org.jetbrains.kotlin.config.Jsr305State;
 import org.jetbrains.kotlin.config.JvmTarget;
 
 import java.util.Map;
@@ -162,8 +163,12 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
             description = "Java compiler arguments")
     public String[] javacArguments;
 
-    @Argument(value = "-Xload-jsr305-annotations", description = "Load JSR-305 nullability annotations")
-    public boolean loadJsr305annotations;
+    @Argument(
+            value = "-Xjsr305-annotations",
+            valueDescription = "{ignore|enable}",
+            description = "Specify global behavior for JSR-305 nullability annotations: ignore, or treat as other supported nullability annotations"
+    )
+    public String jsr305GlobalReportLevel = Jsr305State.DEFAULT.getDescription();
 
     // Paths to output directories for friend modules.
     public String[] friendPaths;
@@ -172,7 +177,12 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @NotNull
     public Map<AnalysisFlag<?>, Object> configureAnalysisFlags() {
         Map<AnalysisFlag<?>, Object> result = super.configureAnalysisFlags();
-        result.put(AnalysisFlag.getLoadJsr305Annotations(), loadJsr305annotations);
+        for (Jsr305State state : Jsr305State.values()) {
+            if (state.getDescription().equals(jsr305GlobalReportLevel)) {
+                result.put(AnalysisFlag.getLoadJsr305Annotations(), state);
+                break;
+            }
+        }
         return result;
     }
 }

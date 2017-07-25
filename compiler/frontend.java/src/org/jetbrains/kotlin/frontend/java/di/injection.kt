@@ -103,7 +103,7 @@ fun createContainerForLazyResolveWithJava(
 
     useInstance(languageVersionSettings)
 
-    if (languageVersionSettings.getFlag(AnalysisFlag.loadJsr305Annotations)) {
+    if (languageVersionSettings.getFlag(AnalysisFlag.loadJsr305Annotations).shouldReportError) {
         useImpl<AnnotationTypeQualifierResolverImpl>()
     }
     else {
