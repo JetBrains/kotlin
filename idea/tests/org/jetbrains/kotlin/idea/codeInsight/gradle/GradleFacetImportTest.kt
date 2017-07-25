@@ -695,6 +695,48 @@ compileTestKotlin {
     }
 
     @Test
+    fun testCommonImportByPlatformPlugin_SingleModule() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    jcenter()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                }
+            }
+
+            apply plugin: 'kotlin-platform-common'
+
+            repositories {
+                    mavenCentral()
+                    jcenter()
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
+            }
+
+        """)
+        importProjectUsingSingeModulePerGradleProject()
+
+        with (facetSettings("project")) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals(TargetPlatformKind.Common, targetPlatformKind)
+        }
+
+        val rootManager = ModuleRootManager.getInstance(getModule("project"))
+        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().mapTo(HashSet()) { it.library }.single()
+        assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
+    }
+
+    @Test
     fun testJvmImportByKotlinPlugin() {
         createProjectSubFile("build.gradle", """
             group 'Again'

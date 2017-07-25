@@ -123,6 +123,7 @@ private fun findOwnerModule(libraryData: LibraryData,
                             projectDataNode: DataNode<ProjectData>): DataNode<ModuleData>? {
     return projectDataNode.children.firstOrNull { dataNode ->
         if (dataNode.data !is ModuleData) return@firstOrNull false
+        if (dataNode.hasDependency(libraryData)) return@firstOrNull true
         val sourceSetDataNodes = dataNode.children.filter { it.data is GradleSourceSetData }
         sourceSetDataNodes.any { it.hasDependency(libraryData) }
     } as DataNode<ModuleData>?
