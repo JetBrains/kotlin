@@ -95,7 +95,7 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
                 listOf(File(TEST_DATA_PATH))
         ).apply {
             languageVersionSettings = LanguageVersionSettingsImpl(
-                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.loadJsr305Annotations to true)
+                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.loadJsr305Annotations to Jsr305State.ENABLE)
             )
         }
 

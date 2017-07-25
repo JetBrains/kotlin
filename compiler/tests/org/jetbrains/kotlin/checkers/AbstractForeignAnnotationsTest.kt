@@ -31,5 +31,5 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsWithFullJdkTe
 
     override fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings =
             LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE,
-                                        mapOf(AnalysisFlag.loadJsr305Annotations to true))
+                                        mapOf(AnalysisFlag.loadJsr305Annotations to Jsr305State.ENABLE))
 }
