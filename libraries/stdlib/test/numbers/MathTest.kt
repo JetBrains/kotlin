@@ -89,15 +89,15 @@ class DoubleMathTest {
         assertEquals(Double.POSITIVE_INFINITY, hypot(Double.NaN, Double.POSITIVE_INFINITY))
         assertTrue(hypot(Double.NaN, 0.0).isNaN())
 
-        assertEquals(1.0, pow(Double.NaN, 0.0))
+        assertEquals(1.0, Double.NaN.pow(0.0))
         assertEquals(1.0, Double.POSITIVE_INFINITY.pow(0))
-        assertEquals(49.0, pow(7.0, 2))
-        assertEquals(0.25, pow(2.0, -2))
-        assertTrue(pow(0.0, Double.NaN).isNaN())
-        assertTrue(pow(Double.NaN, -1).isNaN())
-        assertTrue(pow(-7.0, 1/3.0).isNaN())
-        assertTrue(pow(1.0, Double.POSITIVE_INFINITY).isNaN())
-        assertTrue(pow(-1.0, Double.NEGATIVE_INFINITY).isNaN())
+        assertEquals(49.0, 7.0.pow(2))
+        assertEquals(0.25, 2.0.pow(-2))
+        assertTrue(0.0.pow(Double.NaN).isNaN())
+        assertTrue(Double.NaN.pow(-1).isNaN())
+        assertTrue((-7.0).pow(1/3.0).isNaN())
+        assertTrue(1.0.pow(Double.POSITIVE_INFINITY).isNaN())
+        assertTrue((-1.0).pow(Double.NEGATIVE_INFINITY).isNaN())
 
         assertEquals(5.0, sqrt(9.0 + 16.0))
         assertTrue(sqrt(-1.0).isNaN())
@@ -129,11 +129,11 @@ class DoubleMathTest {
         assertEquals(Double.NEGATIVE_INFINITY, log(0.0, 2.0))
         assertEquals(Double.POSITIVE_INFINITY, log(0.0, 0.25))
 
-        assertTrue(log(Double.NaN).isNaN())
-        assertTrue(log(-1.0).isNaN())
-        assertEquals(1.0, log(E))
-        assertEquals(Double.NEGATIVE_INFINITY, log(0.0))
-        assertEquals(Double.POSITIVE_INFINITY, log(Double.POSITIVE_INFINITY))
+        assertTrue(ln(Double.NaN).isNaN())
+        assertTrue(ln(-1.0).isNaN())
+        assertEquals(1.0, ln(E))
+        assertEquals(Double.NEGATIVE_INFINITY, ln(0.0))
+        assertEquals(Double.POSITIVE_INFINITY, ln(Double.POSITIVE_INFINITY))
 
         assertEquals(1.0, log10(10.0))
         assertAlmostEquals(-1.0, log10(0.1))
@@ -141,10 +141,10 @@ class DoubleMathTest {
         assertAlmostEquals(3.0, log2(8.0))
         assertEquals(-1.0, log2(0.5))
 
-        assertTrue(log1p(Double.NaN).isNaN())
-        assertTrue(log1p(-1.1).isNaN())
-        assertEquals(0.0, log1p(0.0))
-        assertEquals(Double.NEGATIVE_INFINITY, log1p(-1.0))
+        assertTrue(ln1p(Double.NaN).isNaN())
+        assertTrue(ln1p(-1.1).isNaN())
+        assertEquals(0.0, ln1p(0.0))
+        assertEquals(Double.NEGATIVE_INFINITY, ln1p(-1.0))
     }
 
     @Test fun rounding() {
