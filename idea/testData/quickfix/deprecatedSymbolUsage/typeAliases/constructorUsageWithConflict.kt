@@ -1,6 +1,7 @@
 // "Replace with 'New'" "false"
 // ACTION: Convert to block body
 // ACTION: Introduce local variable
+// ACTION: Replace usages of '<init>(): Old /* = OldClass */' in whole project
 // ACTION: Replace with 'NewClass(12)'
 
 @Deprecated("Use NewClass", replaceWith = ReplaceWith("NewClass"))
