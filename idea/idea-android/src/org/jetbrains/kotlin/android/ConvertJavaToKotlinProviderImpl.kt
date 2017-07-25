@@ -22,18 +22,14 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.android.configure.KotlinAndroidGradleModuleConfigurator
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
-import org.jetbrains.kotlin.idea.configuration.excludeSourceRootModules
-import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.idea.configuration.getCanBeConfiguredModules
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
 class ConvertJavaToKotlinProviderImpl : ConvertJavaToKotlinProvider {
     override fun configureKotlin(project: Project) {
         val configurator = KotlinProjectConfigurator.EP_NAME.findExtension(KotlinAndroidGradleModuleConfigurator::class.java)
-        val nonConfiguredModules = project.allModules().excludeSourceRootModules().filter {
-            configurator.getStatus(it) == ConfigureKotlinStatus.CAN_BE_CONFIGURED
-        }
+        val nonConfiguredModules = getCanBeConfiguredModules(project, configurator)
         configurator.configureSilently(project, nonConfiguredModules, bundledRuntimeVersion())
     }
 
