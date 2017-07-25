@@ -358,7 +358,19 @@ public inline fun Double.pow(other: Double): Double = nativeMath.pow(this, other
 @InlineOnly
 public inline fun Double.pow(other: Int): Double = nativeMath.pow(this, other.toDouble())
 
-
+/**
+ * Computes the remainder of division of this value by the [other] value according to the IEEE 754 standard.
+ *
+ * The result is computed as `r = this - (q * other)` where `q` is the quotient of division rounded to the nearest integer,
+ * `q = round(this / other)`.
+ *
+ * Special cases:
+ *    - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
+ *    - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
+ *
+ * @see round
+ */
+@InlineOnly
 public inline fun Double.IEEErem(other: Double): Double = nativeMath.IEEEremainder(this, other)
 
 /**
@@ -397,9 +409,39 @@ public inline fun Double.withSign(sign: Double): Double = nativeMath.copySign(th
 @InlineOnly
 public inline fun Double.withSign(sign: Int): Double = nativeMath.copySign(this, sign.toDouble())
 
+/**
+ * Returns the ulp of this value.
+ *
+ * An ulp is a positive distance between this value and the next nearest [Double] value larger in magnitude.
+ *
+ * Special Cases:
+ *     - `NaN.ulp` is `NaN`
+ *     - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
+ *     - `0.0.ulp` is `Double.NIN_VALUE`
+ */
+@InlineOnly
 public inline val Double.ulp: Double get() = nativeMath.ulp(this)
+
+/**
+ * Returns the [Double] value nearest to this value in direction of positive infinity.
+ */
+@InlineOnly
 public inline fun Double.nextUp(): Double = nativeMath.nextUp(this)
+/**
+ * Returns the [Double] value nearest to this value in direction of negative infinity.
+ */
+@InlineOnly
 public inline fun Double.nextDown(): Double = nativeMath.nextAfter(this, Double.NEGATIVE_INFINITY)
+
+/**
+ * Returns the [Double] value nearest to this value in direction from this value towards the value [to].
+ *
+ * Special cases:
+ *     - `x.nextTowards(y)` is `NaN` if either `x` or `y` are `NaN`
+ *     - `x.nextTowards(x) == x`
+ *
+ */
+@InlineOnly
 public inline fun Double.nextTowards(to: Double): Double = nativeMath.nextAfter(this, to)
 
 /**
