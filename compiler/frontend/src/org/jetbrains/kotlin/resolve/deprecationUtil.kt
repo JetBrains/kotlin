@@ -131,6 +131,20 @@ private data class DeprecatedBySinceKotlinInfo(
         get() = sinceKotlinInfo.version
 }
 
+private data class DeprecatedTypealiasByAnnotation(
+        val typeAliasTarget: TypeAliasDescriptor,
+        val nested: DeprecatedByAnnotation
+) : Deprecation {
+    override val target get() = typeAliasTarget
+    override val deprecationLevel get() = nested.deprecationLevel
+    override val message get() = nested.message
+}
+
+private fun Deprecation.wrapInTypeAliasExpansion(typeAliasDescriptor: TypeAliasDescriptor) = when {
+    this is DeprecatedByAnnotation -> DeprecatedTypealiasByAnnotation(typeAliasDescriptor, this)
+    else -> this
+}
+
 fun DeclarationDescriptor.getDeprecations(languageVersionSettings: LanguageVersionSettings): List<Deprecation> {
     val deprecations = this.getOwnDeprecations(languageVersionSettings)
     if (deprecations.isNotEmpty()) {
@@ -201,7 +215,12 @@ private fun DeclarationDescriptor.getOwnDeprecations(languageVersionSettings: La
         val annotation = target.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated)
                          ?: target.annotations.findAnnotation(JAVA_DEPRECATED)
         if (annotation != null) {
-            result.add(DeprecatedByAnnotation(annotation, target))
+            val deprecatedByAnnotation = DeprecatedByAnnotation(annotation, target)
+            val deprecation = when (target) {
+                is TypeAliasConstructorDescriptor -> DeprecatedTypealiasByAnnotation(target.typeAliasDescriptor, deprecatedByAnnotation)
+                else -> deprecatedByAnnotation
+            }
+            result.add(deprecation)
         }
 
         val sinceKotlinInfo =
@@ -232,7 +251,7 @@ private fun DeclarationDescriptor.getOwnDeprecations(languageVersionSettings: La
 
     when (this) {
         is TypeAliasDescriptor -> {
-            result.addAll(expandedType.deprecationsByConstituentTypes(languageVersionSettings))
+            expandedType.deprecationsByConstituentTypes(languageVersionSettings).mapTo(result) { it.wrapInTypeAliasExpansion(this) }
         }
         is TypeAliasConstructorDescriptor -> {
             result.addAll(typeAliasDescriptor.getOwnDeprecations(languageVersionSettings))
@@ -257,20 +276,32 @@ internal fun createDeprecationDiagnostic(
         element: PsiElement, deprecation: Deprecation, languageVersionSettings: LanguageVersionSettings
 ): Diagnostic {
     val targetOriginal = deprecation.target.original
-    if (deprecation is DeprecatedBySinceKotlinInfo) {
-        val factory = when (deprecation.deprecationLevel) {
-            WARNING -> Errors.SINCE_KOTLIN_INFO_DEPRECATION
-            ERROR, HIDDEN -> Errors.SINCE_KOTLIN_INFO_DEPRECATION_ERROR
+    return when (deprecation) {
+        is DeprecatedBySinceKotlinInfo -> {
+            val factory = when (deprecation.deprecationLevel) {
+                WARNING -> Errors.SINCE_KOTLIN_INFO_DEPRECATION
+                ERROR, HIDDEN -> Errors.SINCE_KOTLIN_INFO_DEPRECATION_ERROR
+            }
+            factory.on(element, targetOriginal, deprecation.sinceKotlinVersion,
+                       languageVersionSettings.languageVersion to deprecation.message)
         }
-        return factory.on(element, targetOriginal, deprecation.sinceKotlinVersion,
-                          languageVersionSettings.languageVersion to deprecation.message)
-    }
 
-    val factory = when (deprecation.deprecationLevel) {
-        WARNING -> Errors.DEPRECATION
-        ERROR, HIDDEN -> Errors.DEPRECATION_ERROR
+        is DeprecatedTypealiasByAnnotation -> {
+            val factory = when (deprecation.deprecationLevel) {
+                WARNING -> Errors.TYPEALIAS_EXPANSION_DEPRECATION
+                ERROR, HIDDEN -> Errors.TYPEALIAS_EXPANSION_DEPRECATION_ERROR
+            }
+            factory.on(element, deprecation.typeAliasTarget.original, deprecation.nested.target.original, deprecation.nested.message ?: "")
+        }
+
+        else -> {
+            val factory = when (deprecation.deprecationLevel) {
+                WARNING -> Errors.DEPRECATION
+                ERROR, HIDDEN -> Errors.DEPRECATION_ERROR
+            }
+            factory.on(element, targetOriginal, deprecation.message ?: "")
+        }
     }
-    return factory.on(element, targetOriginal, deprecation.message ?: "")
 }
 
 // values from kotlin.DeprecationLevel
