@@ -154,6 +154,11 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
     return "build.gradle";
   }
 
+  protected void importProjectUsingSingeModulePerGradleProject() {
+    getCurrentExternalProjectSettings().setResolveModulePerSourceSet(false);
+    importProject();
+  }
+
   @Override
   protected void importProject() {
     ExternalSystemApiUtil.subscribe(myProject, GradleConstants.SYSTEM_ID, new ExternalSystemSettingsListenerAdapter() {
