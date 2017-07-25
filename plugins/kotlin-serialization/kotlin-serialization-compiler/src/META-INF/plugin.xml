@@ -1,0 +1,13 @@
+<idea-plugin>
+    <name>Kotlin-serialization</name>
+    <id>org.jetbrains.kotlinx.serialization</id>
+    <version>0.1-SNAPSHOT</version>
+
+    <depends>org.jetbrains.kotlin</depends>
+    <idea-version since-build="172"/>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <expressionCodegenExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationCodegenExtension"/>
+        <syntheticResolveExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationResolveExtension"/>
+    </extensions>
+</idea-plugin>
