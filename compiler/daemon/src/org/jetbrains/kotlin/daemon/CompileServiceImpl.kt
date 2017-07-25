@@ -366,7 +366,7 @@ class CompileServiceImpl(
         } as CLICompiler<CommonCompilerArguments>
 
         val k2PlatformArgs = compiler.createArguments()
-        parseCommandLineArguments(compilerArguments, k2PlatformArgs)
+        parseCommandLineArguments(compilerArguments.asList(), k2PlatformArgs)
         val argumentParseError = validateArguments(k2PlatformArgs.errors)
         if (argumentParseError != null) {
             messageCollector.report(CompilerMessageSeverity.ERROR, argumentParseError)

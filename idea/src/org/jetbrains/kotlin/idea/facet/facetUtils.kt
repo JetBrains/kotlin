@@ -200,16 +200,14 @@ fun parseCompilerArgumentsToFacet(
         kotlinFacet: KotlinFacet,
         modelsProvider: IdeModifiableModelsProvider
 ) {
-    val argumentArray = arguments.toTypedArray()
-
     with(kotlinFacet.configuration.settings) {
         val compilerArguments = this.compilerArguments ?: return
 
         val defaultCompilerArguments = compilerArguments::class.java.newInstance()
-        parseCommandLineArguments(defaultArguments.toTypedArray(), defaultCompilerArguments)
+        parseCommandLineArguments(defaultArguments, defaultCompilerArguments)
         defaultCompilerArguments.convertPathsToSystemIndependent()
 
-        parseCommandLineArguments(argumentArray, compilerArguments)
+        parseCommandLineArguments(arguments, compilerArguments)
 
         compilerArguments.convertPathsToSystemIndependent()
 

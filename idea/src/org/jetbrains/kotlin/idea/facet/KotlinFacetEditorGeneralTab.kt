@@ -26,7 +26,10 @@ import com.intellij.ui.HoverHyperlinkLabel
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.ThreeStateCheckBox
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.config.createCompilerArguments
+import org.jetbrains.kotlin.config.splitArgumentString
 import org.jetbrains.kotlin.idea.compiler.configuration.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.awt.BorderLayout
@@ -160,9 +163,7 @@ class KotlinFacetEditorGeneralTab(
             }
             val argumentClass = primaryArguments.javaClass
             val additionalArguments = argumentClass.newInstance().apply {
-                parseCommandLineArguments(
-                        splitArgumentString(editor.compilerConfigurable.additionalArgsOptionsField.text).toTypedArray(), this
-                )
+                parseCommandLineArguments(splitArgumentString(editor.compilerConfigurable.additionalArgsOptionsField.text), this)
                 validateArguments(errors)?.let { message -> return ValidationResult(message) }
             }
             val emptyArguments = argumentClass.newInstance()

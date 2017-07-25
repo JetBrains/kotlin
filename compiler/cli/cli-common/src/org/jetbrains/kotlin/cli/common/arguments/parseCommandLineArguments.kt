@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.SmartList
 import java.lang.reflect.Field
-import java.util.*
 
 annotation class Argument(
         val value: String,
@@ -54,7 +53,7 @@ data class ArgumentParseErrors(
 )
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
-fun <A : CommonToolArguments> parseCommandLineArguments(args: Array<out String>, result: A) {
+fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A) {
     data class ArgumentField(val field: Field, val argument: Argument)
 
     val fields = result::class.java.fields.mapNotNull { field ->

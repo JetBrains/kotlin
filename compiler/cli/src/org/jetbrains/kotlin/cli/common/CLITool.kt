@@ -45,7 +45,7 @@ abstract class CLITool<A : CommonToolArguments> {
         K2JVMCompiler.resetInitStartTime()
 
         val arguments = createArguments()
-        parseCommandLineArguments(args, arguments)
+        parseCommandLineArguments(args.asList(), arguments)
         val collector = PrintingMessageCollector(errStream, messageRenderer, arguments.verbose)
 
         try {
@@ -99,7 +99,7 @@ abstract class CLITool<A : CommonToolArguments> {
 
     // Used in kotlin-maven-plugin (KotlinCompileMojoBase) and in kotlin-gradle-plugin (KotlinJvmOptionsImpl, KotlinJsOptionsImpl)
     fun parseArguments(args: Array<out String>, arguments: A) {
-        parseCommandLineArguments(args, arguments)
+        parseCommandLineArguments(args.asList(), arguments)
         val message = validateArguments(arguments.errors)
         if (message != null) {
             throw IllegalArgumentException(message)
