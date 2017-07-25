@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClass
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClassifierType
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedPackage
 import org.jetbrains.kotlin.javac.wrappers.trees.*
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
@@ -156,6 +157,14 @@ class JavacWrapper(
             }
             .associateBy(TreeBasedPackage::fqName)
 
+    private val packageSourceAnnotations = compilationUnits
+            .filter {
+                it.sourceFile.isNameCompatible("package-info", JavaFileObject.Kind.SOURCE) &&
+                it.packageName != null
+            }.associateBy({ FqName(it.packageName!!.toString()) }) { compilationUnit ->
+        compilationUnit.packageAnnotations.map { TreeBasedAnnotation(it, getTreePath(it, compilationUnit), this) }
+    }
+
     val classifierResolver = ClassifierResolver(this)
     private val kotlinClassifiersCache = KotlinClassifiersCache(if (javaFiles.isNotEmpty()) kotlinFiles else emptyList(), this)
     private val symbolBasedPackagesCache = hashMapOf<String, SymbolBasedPackage?>()
@@ -225,6 +234,9 @@ class JavacWrapper(
             javaPackages
                     .filterKeys { it.isSubpackageOf(fqName) && it != fqName }
                     .map { it.value }
+
+    fun getPackageAnnotationsFromSources(fqName: FqName): List<JavaAnnotation> =
+            packageSourceAnnotations[fqName] ?: emptyList()
 
     fun findClassesFromPackage(fqName: FqName): List<JavaClass> =
             javaClassDeclarations
