@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import java.util.*;
 
 import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt.isCoroutineLambda;
+import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt.shouldBeExported;
 import static org.jetbrains.kotlin.js.translate.context.UsageTrackerKt.getNameForCapturedDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForElement;
@@ -730,7 +731,7 @@ public class TranslationContext {
         DeclarationDescriptor descriptor = declarationDescriptor;
         while (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor function = (FunctionDescriptor) descriptor;
-            if (function.isInline() && DescriptorUtilsKt.isEffectivelyPublicApi(function)) {
+            if (function.isInline() && shouldBeExported(function, getConfig())) {
                 return true;
             }
             descriptor = descriptor.getContainingDeclaration();
