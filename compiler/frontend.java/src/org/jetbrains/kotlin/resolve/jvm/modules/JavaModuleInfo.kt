@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.resolve.jvm.modules
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiJavaModule
+//import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.ModuleVisitor
+//import org.jetbrains.org.objectweb.asm.ModuleVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_TRANSITIVE
+//import org.jetbrains.org.objectweb.asm.Opcodes.ACC_TRANSITIVE
 import java.io.IOException
 
 class JavaModuleInfo(
@@ -41,7 +41,7 @@ class JavaModuleInfo(
             "Module $moduleName (${requires.size} requires, ${exports.size} exports)"
 
     companion object {
-        fun create(psiJavaModule: PsiJavaModule): JavaModuleInfo {
+        /*fun create(psiJavaModule: PsiJavaModule): JavaModuleInfo {
             return JavaModuleInfo(
                     psiJavaModule.name,
                     psiJavaModule.requires.mapNotNull { statement ->
@@ -55,9 +55,9 @@ class JavaModuleInfo(
                         }
                     }
             )
-        }
+        }*/
 
-        fun read(file: VirtualFile): JavaModuleInfo? {
+        /*fun read(file: VirtualFile): JavaModuleInfo? {
             val contents = try { file.contentsToByteArray() } catch (e: IOException) { return null }
 
             var moduleName: String? = null
@@ -84,6 +84,6 @@ class JavaModuleInfo(
             return if (moduleName != null)
                 JavaModuleInfo(moduleName!!, requires.compact(), exports.compact())
             else null
-        }
+        }*/
     }
 }
