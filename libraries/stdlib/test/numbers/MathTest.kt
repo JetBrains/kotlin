@@ -27,6 +27,13 @@ fun assertAlmostEquals(expected: Double, actual: Double, tolerance: Double? = nu
     }
 }
 
+fun assertAlmostEquals(expected: Float, actual: Float, tolerance: Double? = null) {
+    val tolerance_ = tolerance?.let { abs(it) } ?: 0.0000001
+    if (abs(expected - actual) > tolerance_) {
+        assertEquals(expected, actual)
+    }
+}
+
 class DoubleMathTest {
 
     @Test fun trigonometric() {
@@ -260,6 +267,250 @@ class DoubleMathTest {
 
             val ri = a.withSign(-1)
             assertEquals(-1.0, ri.sign)
+            assertEquals(a.absoluteValue, ri.absoluteValue)
+        }
+    }
+
+}
+
+class FloatMathTest {
+
+    companion object {
+        const val PI = kotlin.math.PI.toFloat()
+        const val E = kotlin.math.E.toFloat()
+    }
+
+    @Test fun trigonometric() {
+        assertEquals(0.0F, sin(0.0F))
+        assertAlmostEquals(0.0F, sin(PI))
+
+        assertEquals(0.0F, asin(0.0F))
+        assertAlmostEquals(PI / 2, asin(1.0F))
+
+        assertEquals(1.0F, cos(0.0F))
+        assertAlmostEquals(-1.0F, cos(PI))
+
+        assertEquals(0.0F, acos(1.0F))
+        assertAlmostEquals(PI / 2, acos(0.0F))
+
+        assertEquals(0.0F, tan(0.0F))
+        assertAlmostEquals(1.0F, tan(PI / 4))
+
+        assertAlmostEquals(0.0F, atan(0.0F))
+        assertAlmostEquals(PI / 4, atan(1.0F))
+
+        assertAlmostEquals(PI / 4, atan2(10.0F, 10.0F))
+        assertAlmostEquals(-PI / 4, atan2(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY))
+        assertAlmostEquals(0.0F, atan2(0.0F, 0.0F))
+        assertAlmostEquals(0.0F, atan2(0.0F, 10.0F))
+        assertAlmostEquals(PI / 2, atan2(2.0F, 0.0F))
+
+        for (angle in listOf(Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY)) {
+            assertTrue(sin(angle).isNaN(), "sin($angle)")
+            assertTrue(cos(angle).isNaN(), "cos($angle)")
+            assertTrue(tan(angle).isNaN(), "tan($angle)")
+        }
+
+        for (value in listOf(Float.NaN, 1.2F, -1.1F)) {
+            assertTrue(asin(value).isNaN())
+            assertTrue(acos(value).isNaN())
+        }
+        assertTrue(atan(Float.NaN).isNaN())
+        assertTrue(atan2(Float.NaN, 0.0F).isNaN())
+        assertTrue(atan2(0.0F, Float.NaN).isNaN())
+    }
+
+    @Test fun hyperbolic() {
+        assertEquals(Float.POSITIVE_INFINITY, sinh(Float.POSITIVE_INFINITY))
+        assertEquals(Float.NEGATIVE_INFINITY, sinh(Float.NEGATIVE_INFINITY))
+        assertTrue(sinh(Float.NaN).isNaN())
+
+        assertEquals(Float.POSITIVE_INFINITY, cosh(Float.POSITIVE_INFINITY))
+        assertEquals(Float.POSITIVE_INFINITY, cosh(Float.NEGATIVE_INFINITY))
+        assertTrue(cosh(Float.NaN).isNaN())
+
+        assertAlmostEquals(1.0F, tanh(Float.POSITIVE_INFINITY))
+        assertAlmostEquals(-1.0F, tanh(Float.NEGATIVE_INFINITY))
+        assertTrue(tanh(Float.NaN).isNaN())
+    }
+
+    @Test fun powers() {
+        assertEquals(5.0F, hypot(3.0F, 4.0F))
+        assertEquals(Float.POSITIVE_INFINITY, hypot(Float.NEGATIVE_INFINITY, Float.NaN))
+        assertEquals(Float.POSITIVE_INFINITY, hypot(Float.NaN, Float.POSITIVE_INFINITY))
+        assertTrue(hypot(Float.NaN, 0.0F).isNaN())
+
+        assertEquals(1.0F, Float.NaN.pow(0.0F))
+        assertEquals(1.0F, Float.POSITIVE_INFINITY.pow(0))
+        assertEquals(49.0F, 7.0F.pow(2))
+        assertEquals(0.25F, 2.0F.pow(-2))
+        assertTrue(0.0F.pow(Float.NaN).isNaN())
+        assertTrue(Float.NaN.pow(-1).isNaN())
+        assertTrue((-7.0F).pow(1/3.0F).isNaN())
+        assertTrue(1.0F.pow(Float.POSITIVE_INFINITY).isNaN())
+        assertTrue((-1.0F).pow(Float.NEGATIVE_INFINITY).isNaN())
+
+        assertEquals(5.0F, sqrt(9.0F + 16.0F))
+        assertTrue(sqrt(-1.0F).isNaN())
+        assertTrue(sqrt(Float.NaN).isNaN())
+
+        assertTrue(exp(Float.NaN).isNaN())
+        assertAlmostEquals(E, exp(1.0F))
+        assertEquals(1.0F, exp(0.0F))
+        assertEquals(0.0F, exp(Float.NEGATIVE_INFINITY))
+        assertEquals(Float.POSITIVE_INFINITY, exp(Float.POSITIVE_INFINITY))
+
+        assertEquals(0.0F, expm1(0.0F))
+        assertEquals(-1.0F, expm1(Float.NEGATIVE_INFINITY))
+        assertEquals(Float.POSITIVE_INFINITY, expm1(Float.POSITIVE_INFINITY))
+    }
+
+    @Test fun logarithms() {
+        assertTrue(log(1.0F, Float.NaN).isNaN())
+        assertTrue(log(Float.NaN, 1.0F).isNaN())
+        assertTrue(log(-1.0F, 2.0F).isNaN())
+        assertTrue(log(2.0F, -1.0F).isNaN())
+        assertTrue(log(2.0F, 0.0F).isNaN())
+        assertTrue(log(2.0F, 1.0F).isNaN())
+        assertTrue(log(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY).isNaN())
+        assertEquals(-2.0F, log(0.25F, 2.0F))
+        assertEquals(-0.5F, log(2.0F, 0.25F))
+        assertEquals(Float.NEGATIVE_INFINITY, log(Float.POSITIVE_INFINITY, 0.25F))
+        assertEquals(Float.POSITIVE_INFINITY, log(Float.POSITIVE_INFINITY, 2.0F))
+        assertEquals(Float.NEGATIVE_INFINITY, log(0.0F, 2.0F))
+        assertEquals(Float.POSITIVE_INFINITY, log(0.0F, 0.25F))
+
+        assertTrue(ln(Float.NaN).isNaN())
+        assertTrue(ln(-1.0F).isNaN())
+        assertAlmostEquals(1.0F, ln(E))
+        assertEquals(Float.NEGATIVE_INFINITY, ln(0.0F))
+        assertEquals(Float.POSITIVE_INFINITY, ln(Float.POSITIVE_INFINITY))
+
+        assertEquals(1.0F, log10(10.0F))
+        assertAlmostEquals(-1.0F, log10(0.1F))
+
+        assertAlmostEquals(3.0F, log2(8.0F))
+        assertEquals(-1.0F, log2(0.5F))
+
+        assertTrue(ln1p(Float.NaN).isNaN())
+        assertTrue(ln1p(-1.1F).isNaN())
+        assertEquals(0.0F, ln1p(0.0F))
+        assertEquals(Float.NEGATIVE_INFINITY, ln1p(-1.0F))
+    }
+
+    @Test fun rounding() {
+        for (value in listOf(Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 0.0F, 1.0F, -10.0F)) {
+            assertEquals(value, ceil(value))
+            assertEquals(value, floor(value))
+            assertEquals(value, truncate(value))
+            assertEquals(value, round(value))
+        }
+        val data = arrayOf( //   v floor trunc round  ceil
+                floatArrayOf( 1.3F,  1.0F,  1.0F,  1.0F,  2.0F),
+                floatArrayOf(-1.3F, -2.0F, -1.0F, -1.0F, -1.0F),
+                floatArrayOf( 1.5F,  1.0F,  1.0F,  2.0F,  2.0F),
+                floatArrayOf(-1.5F, -2.0F, -1.0F, -2.0F, -1.0F),
+                floatArrayOf( 1.8F,  1.0F,  1.0F,  2.0F,  2.0F),
+                floatArrayOf(-1.8F, -2.0F, -1.0F, -2.0F, -1.0F),
+
+                floatArrayOf( 2.3F,  2.0F,  2.0F,  2.0F,  3.0F),
+                floatArrayOf(-2.3F, -3.0F, -2.0F, -2.0F, -2.0F),
+                floatArrayOf( 2.5F,  2.0F,  2.0F,  2.0F,  3.0F),
+                floatArrayOf(-2.5F, -3.0F, -2.0F, -2.0F, -2.0F),
+                floatArrayOf( 2.8F,  2.0F,  2.0F,  3.0F,  3.0F),
+                floatArrayOf(-2.8F, -3.0F, -2.0F, -3.0F, -2.0F)
+        )
+        for ((v, f, t, r, c) in data) {
+            assertEquals(f, floor(v), "floor($v)")
+            assertEquals(t, truncate(v), "truncate($v)")
+            assertEquals(r, round(v), "round($v)")
+            assertEquals(c, ceil(v), "ceil($v)")
+        }
+    }
+
+    @Test fun roundingConversion() {
+        assertEquals(1L, 1.0F.roundToLong())
+        assertEquals(1L, 1.1F.roundToLong())
+        assertEquals(2L, 1.5F.roundToLong())
+        assertEquals(3L, 2.5F.roundToLong())
+        assertEquals(-2L, (-2.5F).roundToLong())
+        assertEquals(-3L, (-2.6F).roundToLong())
+        // assertEquals(9223372036854774784, (9223372036854774800.0F).roundToLong()) // platform-specific
+        assertEquals(Long.MAX_VALUE, Float.MAX_VALUE.roundToLong())
+        assertEquals(Long.MIN_VALUE, (-Float.MAX_VALUE).roundToLong())
+        assertEquals(Long.MAX_VALUE, Float.POSITIVE_INFINITY.roundToLong())
+        assertEquals(Long.MIN_VALUE, Float.NEGATIVE_INFINITY.roundToLong())
+
+        assertFails { Float.NaN.roundToLong() }
+
+        assertEquals(1, 1.0F.roundToInt())
+        assertEquals(1, 1.1F.roundToInt())
+        assertEquals(2, 1.5F.roundToInt())
+        assertEquals(3, 2.5F.roundToInt())
+        assertEquals(-2, (-2.5F).roundToInt())
+        assertEquals(-3, (-2.6F).roundToInt())
+        assertEquals(16777218, (16777218F).roundToInt())
+        assertEquals(Int.MAX_VALUE, Float.MAX_VALUE.roundToInt())
+        assertEquals(Int.MIN_VALUE, (-Float.MAX_VALUE).roundToInt())
+        assertEquals(Int.MAX_VALUE, Float.POSITIVE_INFINITY.roundToInt())
+        assertEquals(Int.MIN_VALUE, Float.NEGATIVE_INFINITY.roundToInt())
+
+        assertFails { Float.NaN.roundToInt() }
+    }
+
+    @Test fun absoluteValue() {
+        assertTrue(abs(Float.NaN).isNaN())
+        assertTrue(Float.NaN.absoluteValue.isNaN())
+
+        for (value in listOf(0.0F, Float.MIN_VALUE, 0.1F, 1.0F, 1000.0F, Float.MAX_VALUE, Float.POSITIVE_INFINITY)) {
+            assertEquals(value, value.absoluteValue)
+            assertEquals(value, (-value).absoluteValue)
+            assertEquals(value, abs(value))
+            assertEquals(value, abs(-value))
+        }
+    }
+
+    @Test fun signs() {
+        assertTrue(sign(Float.NaN).isNaN())
+        assertTrue(Float.NaN.sign.isNaN())
+
+        val negatives = listOf(Float.NEGATIVE_INFINITY, -Float.MAX_VALUE, -1.0F, -Float.MIN_VALUE)
+        for (value in negatives) {
+            assertEquals(-1.0F, sign(value))
+            assertEquals(-1.0F, value.sign)
+        }
+
+        val zeroes = listOf(0.0F, -0.0F)
+        for (value in zeroes) {
+            assertEquals(value, sign(value))
+            assertEquals(value, value.sign)
+        }
+
+
+        val positives = listOf(Float.POSITIVE_INFINITY, Float.MAX_VALUE, 1.0F, Float.MIN_VALUE)
+        for (value in positives) {
+            assertEquals(1.0F, sign(value))
+            assertEquals(1.0F, value.sign)
+        }
+
+        val allValues = negatives + positives
+        for (a in allValues) {
+            for (b in allValues) {
+                val r = a.withSign(b)
+                assertEquals(a.absoluteValue, r.absoluteValue)
+                assertEquals(b.sign, r.sign)
+            }
+
+            val rp0 = a.withSign(0.0F)
+            assertEquals(1.0F, rp0.sign)
+            assertEquals(a.absoluteValue, rp0.absoluteValue)
+
+            val rm0 = a.withSign(-0.0F)
+            assertEquals(-1.0F, rm0.sign)
+            assertEquals(a.absoluteValue, rm0.absoluteValue)
+
+            val ri = a.withSign(-1)
+            assertEquals(-1.0F, ri.sign)
             assertEquals(a.absoluteValue, ri.absoluteValue)
         }
     }
