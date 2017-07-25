@@ -244,7 +244,10 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                         closed = false)
 
         private fun buildDownTo(expression: IrCall, progressionType: ProgressionType) =
-                ProgressionInfo(progressionType, expression.extensionReceiver!!, expression.getValueArgument(0)!!, increasing = false)
+                ProgressionInfo(progressionType,
+                        expression.extensionReceiver!!,
+                        expression.getValueArgument(0)!!,
+                        increasing = false)
 
         private fun buildStep(expression: IrCall, progressionType: ProgressionType) =
                 expression.extensionReceiver!!.accept(this, null)?.let {
@@ -374,7 +377,8 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
 
     // Lower getting a next induction variable value.
     private fun processNext(variable: IrVariable, initializer: IrCall): IrExpression? {
-        assert(variable.origin == IrDeclarationOrigin.FOR_LOOP_VARIABLE)
+        assert(variable.origin == IrDeclarationOrigin.FOR_LOOP_VARIABLE
+                || variable.origin == IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE)
         val irIteratorAccess = initializer.dispatchReceiver as? IrGetValue ?: throw AssertionError()
         val forLoopInfo = iteratorToLoopInfo[irIteratorAccess.symbol] ?: return null  // If we didn't lower a corresponding header.
         val builder = context.createIrBuilder(scopeOwnerSymbol, initializer.startOffset, initializer.endOffset)
@@ -404,9 +408,12 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         val progressionType = forLoopInfo.progressionInfo.progressionType
         return irCall(context.irBuiltIns.gt0Symbol).apply {
             val minConst = when {
-                progressionType.isIntProgression() -> IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, Int.MIN_VALUE)
-                progressionType.isCharProgression() -> IrConstImpl.char(startOffset, endOffset, context.builtIns.charType, 0.toChar())
-                progressionType.isLongProgression() -> IrConstImpl.long(startOffset, endOffset, context.builtIns.longType, Long.MIN_VALUE)
+                progressionType.isIntProgression() -> IrConstImpl
+                        .int(startOffset,endOffset, context.builtIns.intType, Int.MIN_VALUE)
+                progressionType.isCharProgression() -> IrConstImpl
+                        .char(startOffset, endOffset, context.builtIns.charType, 0.toChar())
+                progressionType.isLongProgression() -> IrConstImpl
+                        .long(startOffset, endOffset, context.builtIns.longType, Long.MIN_VALUE)
                 else -> throw IllegalArgumentException("Unknown progression type")
             }
             val compareToCall = irCall(symbols.getBinaryOperator(OperatorNameConventions.COMPARE_TO,
@@ -433,7 +440,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
             putValueArgument(0, irCallOp(compareTo, irGet(forLoopInfo.inductionVariable), irGet(forLoopInfo.last)))
         }
 
-        // Process closed and opened ranges in different manners.
+        // Process closed and open ranges in different manners.
         return if (forLoopInfo.progressionInfo.closed) {
             irIfThen(check, loop)   // if (inductionVariable <= last) { loop }
         } else {
