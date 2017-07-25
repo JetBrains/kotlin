@@ -207,5 +207,62 @@ class DoubleMathTest {
         assertFails { Double.NaN.roundToInt() }
     }
 
+    @Test fun absoluteValue() {
+        assertTrue(abs(Double.NaN).isNaN())
+        assertTrue(Double.NaN.absoluteValue.isNaN())
+
+        for (value in listOf(0.0, Double.MIN_VALUE, 0.1, 1.0, 1000.0, Double.MAX_VALUE, Double.POSITIVE_INFINITY)) {
+            assertEquals(value, value.absoluteValue)
+            assertEquals(value, (-value).absoluteValue)
+            assertEquals(value, abs(value))
+            assertEquals(value, abs(-value))
+        }
+    }
+
+    @Test fun signs() {
+        assertTrue(sign(Double.NaN).isNaN())
+        assertTrue(Double.NaN.sign.isNaN())
+
+        val negatives = listOf(Double.NEGATIVE_INFINITY, -Double.MAX_VALUE, -1.0, -Double.MIN_VALUE)
+        for (value in negatives) {
+            assertEquals(-1.0, sign(value))
+            assertEquals(-1.0, value.sign)
+        }
+
+        val zeroes = listOf(0.0, -0.0)
+        for (value in zeroes) {
+            assertEquals(value, sign(value))
+            assertEquals(value, value.sign)
+        }
+
+
+        val positives = listOf(Double.POSITIVE_INFINITY, Double.MAX_VALUE, 1.0, Double.MIN_VALUE)
+        for (value in positives) {
+            assertEquals(1.0, sign(value))
+            assertEquals(1.0, value.sign)
+        }
+
+        val allValues = negatives + positives
+        for (a in allValues) {
+            for (b in allValues) {
+                val r = a.withSign(b)
+                assertEquals(a.absoluteValue, r.absoluteValue)
+                assertEquals(b.sign, r.sign)
+            }
+
+            val rp0 = a.withSign(0.0)
+            assertEquals(1.0, rp0.sign)
+            assertEquals(a.absoluteValue, rp0.absoluteValue)
+
+            val rm0 = a.withSign(-0.0)
+            assertEquals(-1.0, rm0.sign)
+            assertEquals(a.absoluteValue, rm0.absoluteValue)
+
+            val ri = a.withSign(-1)
+            assertEquals(-1.0, ri.sign)
+            assertEquals(a.absoluteValue, ri.absoluteValue)
+        }
+    }
+
 }
 
