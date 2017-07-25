@@ -609,7 +609,7 @@ class CompileServiceImpl(
 
         if (state.delayedShutdownQueued.get()) return
 
-        val anyDead = state.sessions.cleanDead() && state.cleanDeadClients()
+        val anyDead = state.sessions.cleanDead() || state.cleanDeadClients()
 
         ifAliveUnit(minAliveness = Aliveness.LastSession) {
             when {
