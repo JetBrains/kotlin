@@ -22,6 +22,7 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.android.facet.AndroidFacet
+import org.jetbrains.android.sdk.AndroidSdkData
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.AndroidDexer
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
 import java.io.File
@@ -56,7 +57,7 @@ class AndroidDexerImpl(val project: Project) : AndroidDexer {
     private fun doGetAndroidDexFile(): File? {
         for (module in ModuleManager.getInstance(project).modules) {
             val androidFacet = AndroidFacet.getInstance(module) ?: continue
-            val sdkData = androidFacet.sdkData ?: continue
+            val sdkData = AndroidSdkData.getSdkData(androidFacet) ?: continue
             val latestBuildTool = sdkData.getLatestBuildTool(/* allowPreview = */ false)
                                   ?: sdkData.getLatestBuildTool(/* allowPreview = */ true)
                                   ?: continue
