@@ -159,8 +159,8 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             }
         }
 
-        val additionalArgs = configuration?.getChild("args")?.getChildren("arg")?.mapNotNull { it.text } ?: emptyList()
-        parseCommandLineArguments(additionalArgs.toTypedArray(), arguments)
+        val additionalArgs = configuration?.getChild("args")?.getChildren("arg")?.mapNotNull { it.text }.orEmpty()
+        parseCommandLineArguments(additionalArgs, arguments)
 
         return ArgumentUtils.convertArgumentsToStringList(arguments)
     }
