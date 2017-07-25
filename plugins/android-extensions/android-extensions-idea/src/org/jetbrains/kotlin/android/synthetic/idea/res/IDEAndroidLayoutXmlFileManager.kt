@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.android.synthetic.idea.res
 
 import com.android.builder.model.SourceProvider
-import com.android.tools.idea.gradle.AndroidGradleModel
 import com.android.tools.idea.gradle.project.model.AndroidModuleModel
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ProjectRootModificationTracker
@@ -115,8 +114,8 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
 
         val variants = mutableListOf(androidFacet.mainSourceProvider.toVariant())
 
-        AndroidGradleModel.get(androidFacet.module)?.let { androidGradleModel ->
-            androidGradleModel.activeSourceProviders.filter { it.name != "main" }.forEach { sourceProvider ->
+        AndroidModuleModel.get(androidFacet.module)?.let { androidModuleModel ->
+            androidModuleModel.activeSourceProviders.filter { it.name != "main" }.forEach { sourceProvider ->
                 variants += sourceProvider.toVariant()
             }
         }
