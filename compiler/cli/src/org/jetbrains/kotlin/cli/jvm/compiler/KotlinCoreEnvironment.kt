@@ -205,7 +205,8 @@ class KotlinCoreEnvironment private constructor(
                 messageCollector,
                 configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
                 this::contentRootToVirtualFile,
-                javaModuleFinder
+                javaModuleFinder,
+                !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
         )
 
         val (initialRoots, javaModules) =
