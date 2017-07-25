@@ -198,7 +198,7 @@ class BasicCompletionSession(
                 // no auto-popup on typing after "val", "var" and "fun" because it's likely the name of the declaration which is being typed by user
                 if (parameters.invocationCount == 0) {
                     val suppressOtherCompletion = when (declaration) {
-                        is KtNamedFunction -> prefixMatcher.prefix.let { it.isEmpty() || it[0].isLowerCase() /* function name usually starts with lower case letter */ }
+                        is KtNamedFunction, is KtProperty -> prefixMatcher.prefix.let { it.isEmpty() || it[0].isLowerCase() /* function name usually starts with lower case letter */ }
                         else -> true
                     }
                     if (suppressOtherCompletion) return
