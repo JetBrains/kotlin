@@ -19,7 +19,7 @@
 !org/mozilla/javascript/xml/impl/xmlbeans/**,
 !net/sf/cglib/**,
 !META-INF/maven**,
-**.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,
+**.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,**.txt,**.caps,
 META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
 messages/**)
 
