@@ -191,10 +191,10 @@
              dest="${dependencies}/jflex/idea-flex.skeleton" usetimestamp="true"/>
 
         <!-- jline -->
-        <get-maven-library prefix="org/jline" lib="jline" version="3.3.1" target.jar.name.base="jline3"/>
+        <get-maven-library prefix="jline" lib="jline" version="2.12.1" target.jar.name.base="jline"/>
 
         <!-- jansi -->
-        <get-maven-library prefix="org/fusesource/jansi" lib="jansi" version="1.16" target.jar.name.base="jansi"/>
+        <get-maven-library prefix="org/fusesource/jansi" lib="jansi" version="1.11" target.jar.name.base="jansi"/>
 
         <!-- Guava 19 sources-->
         <get-maven-library prefix="com/google/guava" lib="guava" version="19.0" bin="false"/>

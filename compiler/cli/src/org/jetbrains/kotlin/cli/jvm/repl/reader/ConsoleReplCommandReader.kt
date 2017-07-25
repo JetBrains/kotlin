@@ -16,38 +16,22 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl.reader
 
+import jline.console.ConsoleReader
+import jline.console.history.FileHistory
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
-import org.jline.reader.EndOfFileException
-import org.jline.reader.LineReader
-import org.jline.reader.LineReaderBuilder
-import org.jline.reader.UserInterruptException
-import org.jline.terminal.TerminalBuilder
 import java.io.File
 
 class ConsoleReplCommandReader : ReplCommandReader {
-    private val lineReader = LineReaderBuilder.builder()
-            .appName("kotlin")
-            .terminal(TerminalBuilder.terminal())
-            .variable(LineReader.HISTORY_FILE, File(File(System.getProperty("user.home")), ".kotlinc_history").absolutePath)
-            .build()
-            .apply {
-                setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION)
-            }
+    private val consoleReader = ConsoleReader("kotlin", System.`in`, System.`out`, null).apply {
+        isHistoryEnabled = true
+        expandEvents = false
+        history = FileHistory(File(File(System.getProperty("user.home")), ".kotlin_history"))
+    }
 
     override fun readLine(next: ReplFromTerminal.WhatNextAfterOneLine): String? {
         val prompt = if (next == ReplFromTerminal.WhatNextAfterOneLine.INCOMPLETE) "... " else ">>> "
-        try {
-            return lineReader.readLine(prompt)
-        }
-        catch (e: UserInterruptException) {
-            println("<interrupted>")
-            System.out.flush()
-            return ""
-        }
-        catch (e: EndOfFileException) {
-            return null
-        }
+        return consoleReader.readLine(prompt)
     }
 
-    override fun flushHistory() = lineReader.history.save()
+    override fun flushHistory() = (consoleReader.history as FileHistory).flush()
 }
