@@ -28,7 +28,7 @@ public const val PI: Double = nativeMath.PI
 /** Base of the natural logarithms, approximately 2.71828. */
 public const val E: Double = nativeMath.E
 /** Natural logarithm of 2.0, used to compute [log2] function */
-private val LN2: Double = log(2.0)
+private val LN2: Double = ln(2.0)
 
 // Double
 
@@ -154,28 +154,6 @@ public inline fun tanh(a: Double): Double = nativeMath.tanh(a)
 public inline fun hypot(x: Double, y: Double): Double = nativeMath.hypot(x, y)
 
 /**
- * Raises the first argument [a] to the power of the second argument [b].
- *
- * Special cases:
- *     - `pow(x, 0.0)` is `1.0`
- *     - `pow(x, 1.0) == x`
- *     - `pow(x, NaN)` is `NaN`
- *     - `pow(NaN, x)` is `NaN` for `x != 0.0`
- *     - `pow(x, Inf)` is `NaN` for `abs(x) == 1.0`
- *     - `pow(x, y)` is `NaN` for `x < 0` and `y` is finite and not an integer
- */
-@InlineOnly
-public inline fun pow(a: Double, b: Double): Double = nativeMath.pow(a, b)
-
-/**
- * Raises the first argument [a] to the integer power of the second argument [b].
- *
- * See the other overload of [pow] for details.
- */
-@InlineOnly
-public inline fun pow(a: Double, b: Int): Double = nativeMath.pow(a, b.toDouble())
-
-/**
  * Computes the positive square root of the value [a].
  *
  * Special cases:
@@ -229,18 +207,18 @@ public fun log(a: Double, base: Double): Double {
  * Computes the natural logarithm (base `E`) of the [a] value.
  *
  * Special cases:
- *     - `log(NaN)` is `NaN`
- *     - `log(x)` is `NaN` when `x < 0.0`
- *     - `log(+Inf)` is `+Inf`
- *     - `log(0.0)` is `-Inf`
+ *     - `ln(NaN)` is `NaN`
+ *     - `ln(x)` is `NaN` when `x < 0.0`
+ *     - `ln(+Inf)` is `+Inf`
+ *     - `ln(0.0)` is `-Inf`
  */
 @InlineOnly
-public inline fun log(a: Double): Double = nativeMath.log(a)
+public inline fun ln(a: Double): Double = nativeMath.log(a)
 
 /**
  * Computes the decimal logarithm (base 10) of the [a] value.
  *
- * @see [log] function for special cases.
+ * @see [ln] function for special cases.
  */
 @InlineOnly
 public inline fun log10(a: Double): Double = nativeMath.log10(a)
@@ -248,7 +226,7 @@ public inline fun log10(a: Double): Double = nativeMath.log10(a)
 /**
  * Computes the binary logarithm (base 2) of the [a] value.
  *
- * @see [log] function for special cases.
+ * @see [ln] function for special cases.
  */
 public fun log2(a: Double): Double = nativeMath.log(a) / LN2
 
@@ -263,10 +241,11 @@ public fun log2(a: Double): Double = nativeMath.log(a) / LN2
  *     - `log1p(-1.0)` is `-Inf`
  *     - `log1p(+Inf)` is `+Inf`
  *
- * @see [log] function.
+ * @see [ln] function
+ * @see [expm1] function
  */
 @InlineOnly
-public inline fun log1p(a: Double): Double = nativeMath.log1p(a)
+public inline fun ln1p(a: Double): Double = nativeMath.log1p(a)
 
 /**
  * Rounds the given value [a] to an integer towards positive infinity.
@@ -356,22 +335,27 @@ public inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b)
 
 // extensions
 
+
 /**
  * Raises this value to the power [other].
  *
- * See the [pow] top-level function for details.
+ * Special cases:
+ *     - `x.pow(0.0)` is `1.0`
+ *     - `x.pow(1.0) == x`
+ *     - `x.pow(NaN)` is `NaN`
+ *     - `NaN.pow(x)` is `NaN` for `x != 0.0`
+ *     - `x.pow(Inf)` is `NaN` for `abs(x) == 1.0`
+ *     - `x.pow(y)` is `NaN` for `x < 0` and `y` is finite and not an integer
  */
 @InlineOnly
-@JvmName("power")
 public inline fun Double.pow(other: Double): Double = nativeMath.pow(this, other)
 
 /**
  * Raises this value to the integer power [other].
  *
- * See the [pow] top-level function for details.
+ * See the other overload of [pow] for details.
  */
 @InlineOnly
-@JvmName("power")
 public inline fun Double.pow(other: Int): Double = nativeMath.pow(this, other.toDouble())
 
 
