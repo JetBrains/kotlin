@@ -18,10 +18,11 @@ package org.jetbrains.kotlin.js.descriptorUtils
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -52,3 +53,14 @@ fun ClassDescriptor.hasPrimaryConstructor(): Boolean = unsubstitutedPrimaryConst
 
 val DeclarationDescriptor.isCoroutineLambda: Boolean
     get() = this is AnonymousFunctionDescriptor && isSuspend
+
+
+fun DeclarationDescriptor.shouldBeExported(config: JsConfig): Boolean =
+        this !is DeclarationDescriptorWithVisibility || effectiveVisibility(visibility, true).shouldBeExported(config) ||
+        AnnotationsUtils.getJsNameAnnotation(this) != null
+
+private fun EffectiveVisibility.shouldBeExported(config: JsConfig): Boolean {
+    if (publicApi) return true
+    if (config.configuration.getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)) return false
+    return toVisibility() == Visibilities.INTERNAL
+}

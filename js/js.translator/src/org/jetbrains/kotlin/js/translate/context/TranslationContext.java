@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import java.util.*;
 
 import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt.isCoroutineLambda;
+import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt.shouldBeExported;
 import static org.jetbrains.kotlin.js.translate.context.UsageTrackerKt.getNameForCapturedDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForElement;
@@ -285,7 +286,7 @@ public class TranslationContext {
     @NotNull
     public JsName getInlineableInnerNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         JsName name;
-        if (inlineFunctionContext == null || !isPublicInlineFunction() ||
+        if (inlineFunctionContext == null || !isPublicInlineFunction() || !shouldBeExported(descriptor, getConfig()) ||
             DescriptorUtils.isAncestor(inlineFunctionContext.getDescriptor(), descriptor, false)) {
             name = getInnerNameForDescriptor(descriptor);
         }
@@ -802,8 +803,7 @@ public class TranslationContext {
     public boolean isPublicInlineFunction() {
         if (inlineFunctionContext == null) return false;
 
-        CallableDescriptor function = inlineFunctionContext.getDescriptor();
-        return function.getVisibility().effectiveVisibility(function, true).getPublicApi();
+        return shouldBeExported(inlineFunctionContext.getDescriptor(), getConfig());
     }
 
     @Nullable

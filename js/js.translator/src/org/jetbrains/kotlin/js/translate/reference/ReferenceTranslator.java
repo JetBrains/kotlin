@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsName;
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
+import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
@@ -109,7 +110,8 @@ public final class ReferenceTranslator {
     }
 
     private static boolean isLocallyAvailableDeclaration(@NotNull TranslationContext context, @NotNull DeclarationDescriptor descriptor) {
-        return context.isFromCurrentModule(descriptor) && !context.isPublicInlineFunction();
+        return context.isFromCurrentModule(descriptor) && !(context.isPublicInlineFunction() &&
+               DescriptorUtilsKt.shouldBeExported(descriptor, context.getConfig()));
     }
 
     @NotNull
