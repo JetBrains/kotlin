@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -56,6 +57,14 @@ open class AddModifierFix(
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         element?.addModifier(modifier)
+
+        if (modifier == KtTokens.ABSTRACT_KEYWORD && (element is KtProperty || element is KtNamedFunction)) {
+            element?.containingClass()?.run {
+                if (!hasModifier(KtTokens.ABSTRACT_KEYWORD) && !hasModifier(KtTokens.SEALED_KEYWORD)) {
+                    addModifier(KtTokens.ABSTRACT_KEYWORD)
+                }
+            }
+        }
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {

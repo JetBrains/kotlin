@@ -182,6 +182,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mustBeInitializedOrBeAbstractInFinalClass.kt")
+        public void testMustBeInitializedOrBeAbstractInFinalClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/mustBeInitializedOrBeAbstractInFinalClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mustBeInitializedOrBeAbstractInOpenClass.kt")
+        public void testMustBeInitializedOrBeAbstractInOpenClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/mustBeInitializedOrBeAbstractInOpenClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mustBeInitializedOrBeAbstractInSealedClass.kt")
+        public void testMustBeInitializedOrBeAbstractInSealedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/mustBeInitializedOrBeAbstractInSealedClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nonAbstractFunctionWithNoBody.kt")
         public void testNonAbstractFunctionWithNoBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/nonAbstractFunctionWithNoBody.kt");
