@@ -194,7 +194,7 @@ public fun String.padStart(length: Int, padChar: Char = ' '): String
  *
  * @param length the desired string length.
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
- * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
+ * @returns Returns a string, of length at least [length], consisting of string appended with [padChar] as many times.
  * as are necessary to reach that length.
  */
 public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): CharSequence {
@@ -215,7 +215,7 @@ public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): CharSequence {
  *
  * @param length the desired string length.
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
- * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
+ * @returns Returns a string, of length at least [length], consisting of string appended with [padChar] as many times.
  * as are necessary to reach that length.
  */
 public fun String.padEnd(length: Int, padChar: Char = ' '): String
