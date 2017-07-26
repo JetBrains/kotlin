@@ -28,6 +28,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
+import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
@@ -375,25 +376,3 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 }
 
-internal fun globalResolveSessionProvider(
-        debugName: String,
-        project: Project,
-        globalContext: GlobalContextImpl,
-        settings: PlatformAnalysisSettings,
-        dependencies: Collection<Any>,
-        moduleFilter: (IdeaModuleInfo) -> Boolean,
-        reuseDataFrom: ProjectResolutionFacade? = null,
-        syntheticFiles: Collection<KtFile> = listOf(),
-        allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
-): ModuleResolverProvider {
-    val delegateResolverProvider = reuseDataFrom?.moduleResolverProvider
-    val delegateResolverForProject = delegateResolverProvider?.resolverForProject ?: EmptyResolverForProject()
-
-    return createModuleResolverProvider(
-            debugName, project, globalContext, settings,
-            syntheticFiles, delegateResolverForProject, moduleFilter,
-            allModules,
-            delegateResolverProvider?.builtIns,
-            dependencies
-    )
-}
