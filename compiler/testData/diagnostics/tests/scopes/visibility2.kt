@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-
+// JAVAC_SKIP
 //FILE:a.kt
 package a
 

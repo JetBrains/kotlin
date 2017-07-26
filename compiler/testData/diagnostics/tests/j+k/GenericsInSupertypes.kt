@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: p/G.java
 
 package p;

@@ -33,20 +33,11 @@ abstract class AbstractDiagnosticsUsingJavacTest : AbstractDiagnosticsTest() {
         }
         val groupedByModule = files.groupBy(TestFile::module)
         val allKtFiles = groupedByModule.values.flatMap { getKtFiles(it, true) }
+        val mockJdk = listOf(File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar"))
 
-        val jdk6 = System.getenv("JDK_16")
-        val jdkClassesRootsFromJre = PathUtil.getJdkClassesRootsFromJre(getJreHome(jdk6))
-        val mockJdk = listOf(File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar"),
-                             jdkClassesRootsFromJre.find { it.name == "classes.jar" })
-                .filterNotNull()
         environment.registerJavac(kotlinFiles = allKtFiles, bootClasspath = mockJdk)
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         super.analyzeAndCheck(testDataFile, files)
-    }
-
-    private fun getJreHome(jdkHome: String): String {
-        val jre = File(jdkHome, "jre")
-        return if (jre.isDirectory) jre.path else jdkHome
     }
 
     private fun getHomeDirectory(): String {

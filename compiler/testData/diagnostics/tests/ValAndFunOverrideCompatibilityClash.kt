@@ -1,4 +1,4 @@
-
+// JAVAC_SKIP
 class Foo1() : java.util.ArrayList<Int>()
 
 open class Bar() {

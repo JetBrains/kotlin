@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 interface I2 {
     val size: Int
 }

@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: A.java
 abstract public class A extends B {
     public Integer removeAt(int x) { }

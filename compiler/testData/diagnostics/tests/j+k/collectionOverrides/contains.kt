@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -PARAMETER_NAME_CHANGED_ON_OVERRIDE
+// JAVAC_SKIP
 // FILE: A.java
 
 abstract public class A<T> implements java.util.Collection<T> {

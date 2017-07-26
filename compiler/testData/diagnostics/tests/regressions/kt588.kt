@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // KT-588 Unresolved static method
 
 class Test() : Thread("Test") {

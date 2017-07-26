@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: MyMap.java
 
 import java.util.AbstractMap;

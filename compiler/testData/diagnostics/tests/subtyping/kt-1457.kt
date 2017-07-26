@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// JAVAC_SKIP
 
 import java.util.ArrayList
 

@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // See also KT-10735
 fun test() {
     var a: Int?

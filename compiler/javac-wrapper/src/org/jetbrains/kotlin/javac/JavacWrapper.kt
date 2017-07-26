@@ -66,6 +66,7 @@ class JavacWrapper(
         arguments: Array<String>?,
         jvmClasspathRoots: List<File>,
         bootClasspath: List<File>?,
+        sourcePath: List<File>?,
         private val compileJava: Boolean,
         private val outputDirectory: File?,
         private val context: Context
@@ -112,8 +113,14 @@ class JavacWrapper(
         javac.keepComments = true
         // use rt.jar instead of lib/ct.sym
         fileManager.setSymbolFileEnabled(false)
-        fileManager.setLocation(StandardLocation.CLASS_PATH, jvmClasspathRoots)
-        bootClasspath?.let { fileManager.setLocation(StandardLocation.PLATFORM_CLASS_PATH, it) }
+        bootClasspath?.let {
+            val cp = fileManager.getLocation(StandardLocation.PLATFORM_CLASS_PATH) + jvmClasspathRoots
+            fileManager.setLocation(StandardLocation.PLATFORM_CLASS_PATH, it)
+            fileManager.setLocation(StandardLocation.CLASS_PATH, cp)
+        } ?: fileManager.setLocation(StandardLocation.CLASS_PATH, jvmClasspathRoots)
+        sourcePath?.let {
+            fileManager.setLocation(StandardLocation.SOURCE_PATH, sourcePath)
+        }
     }
 
     private val names = Names.instance(context)

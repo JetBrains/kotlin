@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // KT-498 Very strange error in the type checker
 
 class IdUnavailableException() : Exception() {}

@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: A.java
 @missing.Ann(x = "")
 public class A {

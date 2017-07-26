@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: foo/A.java
 package foo;
 
