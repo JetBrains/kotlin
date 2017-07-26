@@ -11,7 +11,7 @@ object Obj1 {
     object Obj2
 }
 
-@MagicParcel
+@Parcelize
 data class Test(val o1: Obj1, val o2: Obj1.Obj2, val com: Com) : Parcelable {
     companion object Com {
 

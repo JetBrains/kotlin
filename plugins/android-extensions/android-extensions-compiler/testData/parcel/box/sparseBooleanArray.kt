@@ -8,7 +8,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.util.SparseBooleanArray
 
-@MagicParcel
+@Parcelize
 data class User(val a: SparseBooleanArray) : Parcelable
 
 fun box() = parcelTest { parcel ->

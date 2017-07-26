@@ -11,7 +11,7 @@ enum class Color {
     BLACK, WHITE
 }
 
-@MagicParcel
+@Parcelize
 data class Test(val name: String, val color: Color) : Parcelable
 
 fun box() = parcelTest { parcel ->

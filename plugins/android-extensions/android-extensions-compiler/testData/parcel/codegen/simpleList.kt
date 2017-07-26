@@ -2,5 +2,5 @@
 
 import kotlinx.android.parcel.*
 
-@MagicParcel
+@Parcelize
 class Test(val names: List<String>)

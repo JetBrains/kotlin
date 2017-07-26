@@ -9,7 +9,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.util.*
 
-@MagicParcel
+@Parcelize
 data class Test(
         val a: List<String>,
         val b: MutableList<String>,

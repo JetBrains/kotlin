@@ -3,8 +3,8 @@
 import android.util.Size
 import kotlinx.android.parcel.*
 
-@MagicParcel
+@Parcelize
 class TestNullable(val a: Size?)
 
-@MagicParcel
+@Parcelize
 class TestNotNull(val a: Size)

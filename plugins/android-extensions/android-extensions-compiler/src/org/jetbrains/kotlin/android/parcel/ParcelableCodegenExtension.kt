@@ -64,7 +64,7 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
 
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {
         val parcelableClass = codegen.descriptor
-        if (!parcelableClass.isMagicParcelable) return
+        if (!parcelableClass.isParcelize) return
 
         val sourceElement = (codegen.myClass as? KtClassOrObject) ?: return
         if (!isExperimental(sourceElement)) return

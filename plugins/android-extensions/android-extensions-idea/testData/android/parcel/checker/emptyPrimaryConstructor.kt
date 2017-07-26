@@ -1,10 +1,10 @@
 package test
 
-import kotlinx.android.parcel.MagicParcel
+import kotlinx.android.parcel.Parcelize
 import android.os.Parcelable
 
-@MagicParcel
+@Parcelize
 class User : Parcelable
 
-@MagicParcel
+@Parcelize
 class <warning descr="[PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY] The primary constructor is empty, no data will be serialized to 'Parcel'">User2</warning>() : Parcelable

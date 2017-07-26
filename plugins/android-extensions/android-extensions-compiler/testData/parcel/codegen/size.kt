@@ -5,8 +5,8 @@ import android.os.Parcelable
 import android.util.Size
 import android.util.SizeF
 
-@MagicParcel
+@Parcelize
 data class Test(val size: Size, val nullable: Size?) : Parcelable
 
-@MagicParcel
+@Parcelize
 data class TestF(val size: SizeF, val nullable: SizeF?) : Parcelable

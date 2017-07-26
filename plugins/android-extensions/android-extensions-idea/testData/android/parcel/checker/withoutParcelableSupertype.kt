@@ -1,20 +1,20 @@
 package test
 
-import kotlinx.android.parcel.MagicParcel
+import kotlinx.android.parcel.Parcelize
 import android.os.Parcelable
 
-@MagicParcel
+@Parcelize
 class <error descr="[NO_PARCELABLE_SUPERTYPE] No 'Parcelable' supertype">Without</error>(val firstName: String, val secondName: String, val age: Int)
 
-@MagicParcel
+@Parcelize
 class With(val firstName: String, val secondName: String, val age: Int) : Parcelable
 
 interface MyParcelableIntf : Parcelable
 
 abstract class MyParcelableCl : Parcelable
 
-@MagicParcel
+@Parcelize
 class WithIntfSubtype(val firstName: String, val secondName: String, val age: Int) : MyParcelableIntf
 
-@MagicParcel
+@Parcelize
 class WithClSubtype(val firstName: String, val secondName: String, val age: Int) : MyParcelableCl()

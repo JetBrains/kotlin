@@ -1,26 +1,26 @@
 package test
 
-import kotlinx.android.parcel.MagicParcel
+import kotlinx.android.parcel.Parcelize
 import android.os.Parcelable
 
-@MagicParcel
+@Parcelize
 class A : Parcelable
 
-@MagicParcel
+@Parcelize
 class B(val firstName: String, val secondName: String) : Parcelable
 
-@MagicParcel
+@Parcelize
 class C(val firstName: String, <error descr="[PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR] 'Parcelable' constructor parameter should be 'val' or 'var'">secondName</error>: String) : Parcelable
 
-@MagicParcel
+@Parcelize
 class D(val firstName: String, vararg val secondName: String) : Parcelable
 
-@MagicParcel
+@Parcelize
 class E(val firstName: String, val secondName: String) : Parcelable {
     constructor() : this("", "")
 }
 
-@MagicParcel
+@Parcelize
 class <error descr="[PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR] 'Parcelable' should have a primary constructor">F</error> : Parcelable {
     constructor(a: String) {
         println(a)
