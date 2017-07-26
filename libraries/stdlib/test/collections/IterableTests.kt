@@ -119,21 +119,21 @@ abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out
 
 
     @Test
-    fun pairwise() {
+    fun zipWithNext() {
         val data = createFrom("", "a", "xyz")
-        val lengthDeltas = data.pairwise { a, b -> b.length - a.length }
+        val lengthDeltas = data.zipWithNext { a: String, b: String -> b.length - a.length }
         assertEquals(listOf(1, 2), lengthDeltas)
 
-        assertTrue(empty.pairwise { a, b -> a + b }.isEmpty())
-        assertTrue(createFrom("foo").pairwise { a, b -> a + b }.isEmpty())
+        assertTrue(empty.zipWithNext { a: String, b: String -> a + b }.isEmpty())
+        assertTrue(createFrom("foo").zipWithNext { a: String, b: String -> a + b }.isEmpty())
     }
 
     @Test
-    fun pairwisePairs() {
-        assertTrue(empty.pairwise().isEmpty())
-        assertTrue(createFrom("foo").pairwise().isEmpty())
-        assertEquals(listOf("a" to "b"), createFrom("a", "b").pairwise())
-        assertEquals(listOf("a" to "b", "b" to "c"), createFrom("a", "b", "c").pairwise())
+    fun zipWithNextPairs() {
+        assertTrue(empty.zipWithNext().isEmpty())
+        assertTrue(createFrom("foo").zipWithNext().isEmpty())
+        assertEquals(listOf("a" to "b"), createFrom("a", "b").zipWithNext())
+        assertEquals(listOf("a" to "b", "b" to "c"), createFrom("a", "b", "c").zipWithNext())
     }
 
     @Test

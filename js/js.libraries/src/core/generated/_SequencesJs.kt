@@ -1428,42 +1428,16 @@ public inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T> {
     return minus(element)
 }
 
-/**
- * Returns a sequence of pairs of each two adjacent elements in this sequence.
- * 
- * The returned sequence is empty if this sequence contains less than two elements.
- * 
- * @sample samples.collections.Collections.Transformations.pairwise
- *
- * The operation is _intermediate_ and _stateless_.
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext()"))
 @SinceKotlin("1.2")
 public fun <T> Sequence<T>.pairwise(): Sequence<Pair<T, T>> {
-    return pairwise { a, b -> a to b }
+    return zipWithNext { a, b -> a to b }
 }
 
-/**
- * Returns a sequence containing the results of applying the given [transform] function
- * to an each pair of two adjacent elements in this sequence.
- * 
- * The returned sequence is empty if this sequence contains less than two elements.
- * 
- * @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
- *
- * The operation is _intermediate_ and _stateless_.
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext(transform)"))
 @SinceKotlin("1.2")
 public fun <T, R> Sequence<T>.pairwise(transform: (a: T, b: T) -> R): Sequence<R> {
-    return buildSequence result@ {
-        val iterator = iterator()
-        if (!iterator.hasNext()) return@result
-        var current = iterator.next()
-        while (iterator.hasNext()) {
-            val next = iterator.next()
-            yield(transform(current, next))
-            current = next
-        }
-    }
+    return zipWithNext(transform)
 }
 
 /**
@@ -1596,6 +1570,44 @@ public infix fun <T, R> Sequence<T>.zip(other: Sequence<R>): Sequence<Pair<T, R>
  */
 public fun <T, R, V> Sequence<T>.zip(other: Sequence<R>, transform: (a: T, b: R) -> V): Sequence<V> {
     return MergingSequence(this, other, transform)
+}
+
+/**
+ * Returns a sequence of pairs of each two adjacent elements in this sequence.
+ * 
+ * The returned sequence is empty if this sequence contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
+@SinceKotlin("1.2")
+public fun <T> Sequence<T>.zipWithNext(): Sequence<Pair<T, T>> {
+    return zipWithNext { a, b -> a to b }
+}
+
+/**
+ * Returns a sequence containing the results of applying the given [transform] function
+ * to an each pair of two adjacent elements in this sequence.
+ * 
+ * The returned sequence is empty if this sequence contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
+@SinceKotlin("1.2")
+public fun <T, R> Sequence<T>.zipWithNext(transform: (a: T, b: T) -> R): Sequence<R> {
+    return buildSequence result@ {
+        val iterator = iterator()
+        if (!iterator.hasNext()) return@result
+        var current = iterator.next()
+        while (iterator.hasNext()) {
+            val next = iterator.next()
+            yield(transform(current, next))
+            current = next
+        }
+    }
 }
 
 /**
