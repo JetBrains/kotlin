@@ -559,7 +559,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("windowed(size: Int, step: Int, transform: (List<T>) -> R)") {
+    templates add f("windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R)") {
         since("1.2")
         only(Iterables, Sequences, CharSequences)
         doc { f ->
@@ -574,7 +574,9 @@ fun generators(): List<GenericFunction> {
 
             Both [size] and [step] must be positive and can be greater than the number of elements in this ${f.collection}.
             @param size the number of elements to take in each window
-            @param step the number of elements to move the window forward by on an each step
+            @param step the number of elements to move the window forward by on an each step, by default 1
+            @param partialWindows controls whether or not to keep partial windows in the end if any,
+            by default `false` which means partial windows won't be preserved
 
             @sample samples.collections.Sequences.Transformations.averageWindows
             """
@@ -593,20 +595,21 @@ fun generators(): List<GenericFunction> {
                 var index = 0
                 while (index < thisSize) {
                     window.move(index, (index + size).coerceAtMost(thisSize))
+                    if (!partialWindows && window.size < size) break
                     result.add(transform(window))
                     index += step
                 }
                 return result
             }
             val result = ArrayList<R>()
-            windowedIterator(iterator(), size, step, dropTrailing = false, reuseBuffer = true).forEach {
+            windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = true).forEach {
                 result.add(transform(it))
             }
             return result
             """
         }
 
-        customSignature(CharSequences) { "windowed(size: Int, step: Int, transform: (CharSequence) -> R)" }
+        customSignature(CharSequences) { "windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R)" }
         body(CharSequences) {
             """
             checkWindowSizeStep(size, step)
@@ -614,7 +617,9 @@ fun generators(): List<GenericFunction> {
             val result = ArrayList<R>((thisSize + step - 1) / step)
             var index = 0
             while (index < thisSize) {
-                result.add(transform(subSequence(index, (index + size).coerceAtMost(thisSize))))
+                val end = index + size
+                val coercedEnd = if (end > thisSize) { if (partialWindows) thisSize else break } else end
+                result.add(transform(subSequence(index, coercedEnd)))
                 index += step
             }
             return result
@@ -624,12 +629,12 @@ fun generators(): List<GenericFunction> {
         returns(Sequences) { "Sequence<R>" }
         body(Sequences) {
             """
-            return windowedSequence(size, step, dropTrailing = false, reuseBuffer = true).map(transform)
+            return windowedSequence(size, step, partialWindows, reuseBuffer = true).map(transform)
             """
         }
     }
 
-    templates add f("windowed(size: Int, step: Int)") {
+    templates add f("windowed(size: Int, step: Int = 1, partialWindows: Boolean = false)") {
         since("1.2")
         only(Iterables, Sequences, CharSequences)
         returns(Iterables) { "List<List<T>>" }
@@ -646,7 +651,9 @@ fun generators(): List<GenericFunction> {
 
             Both [size] and [step] must be positive and can be greater than the number of elements in this ${f.collection}.
             @param size the number of elements to take in each window
-            @param step the number of elements to move the window forward by on an each step
+            @param step the number of elements to move the window forward by on an each step, by default 1
+            @param partialWindows controls whether or not to keep partial windows in the end if any,
+            by default `false` which means partial windows won't be preserved
 
             @sample samples.collections.Sequences.Transformations.takeWindows
             """
@@ -660,27 +667,29 @@ fun generators(): List<GenericFunction> {
                 val result = ArrayList<List<T>>((thisSize + step - 1) / step)
                 var index = 0
                 while (index < thisSize) {
-                    result.add(List(size.coerceAtMost(thisSize - index)) { this[it + index] })
+                    val windowSize = size.coerceAtMost(thisSize - index)
+                    if (windowSize < size && !partialWindows) break
+                    result.add(List(windowSize) { this[it + index] })
                     index += step
                 }
                 return result
             }
             val result = ArrayList<List<T>>()
-            windowedIterator(iterator(), size, step, dropTrailing = false, reuseBuffer = false).forEach {
+            windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = false).forEach {
                 result.add(it)
             }
             return result
             """
         }
-        body(CharSequences) { "return windowed(size, step) { it.toString() }" }
+        body(CharSequences) { "return windowed(size, step, partialWindows) { it.toString() }" }
         body(Sequences) {
             """
-            return windowedSequence(size, step, dropTrailing = false, reuseBuffer = false)
+            return windowedSequence(size, step, partialWindows, reuseBuffer = false)
             """
         }
     }
 
-    templates add f("windowedSequence(size: Int, step: Int, transform: (CharSequence) -> R)") {
+    templates add f("windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R)") {
         since("1.2")
         only(CharSequences)
         doc { f ->
@@ -695,7 +704,9 @@ fun generators(): List<GenericFunction> {
 
             Both [size] and [step] must be positive and can be greater than the number of elements in this ${f.collection}.
             @param size the number of elements to take in each window
-            @param step the number of elements to move the window forward by on an each step
+            @param step the number of elements to move the window forward by on an each step, by default 1
+            @param partialWindows controls whether or not to keep partial windows in the end if any,
+            by default `false` which means partial windows won't be preserved
 
             @sample samples.collections.Sequences.Transformations.averageWindows
             """
@@ -706,12 +717,13 @@ fun generators(): List<GenericFunction> {
         body {
             """
             checkWindowSizeStep(size, step)
-            return (indices step step).asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
+            val windows = (if (partialWindows) indices else 0 until length - size + 1) step step
+            return windows.asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
             """
         }
     }
 
-    templates add f("windowedSequence(size: Int, step: Int)") {
+    templates add f("windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false)") {
         since("1.2")
         only(CharSequences)
         doc { f ->
@@ -724,14 +736,16 @@ fun generators(): List<GenericFunction> {
 
             Both [size] and [step] must be positive and can be greater than the number of elements in this ${f.collection}.
             @param size the number of elements to take in each window
-            @param step the number of elements to move the window forward by on an each step
+            @param step the number of elements to move the window forward by on an each step, by default 1
+            @param partialWindows controls whether or not to keep partial windows in the end if any,
+            by default `false` which means partial windows won't be preserved
 
             @sample samples.collections.Sequences.Transformations.takeWindows
             """
         }
         returns { "Sequence<String> "}
 
-        body(CharSequences) { "return windowedSequence(size, step) { it.toString() }" }
+        body(CharSequences) { "return windowedSequence(size, step, partialWindows) { it.toString() }" }
     }
 
     templates add f("chunked(size: Int, transform: (List<T>) -> R)") {
@@ -761,7 +775,7 @@ fun generators(): List<GenericFunction> {
 
         sequenceClassification(intermediate, stateful)
         returns(Sequences) { "Sequence<R>" }
-        body { "return windowed(size, size, transform)" }
+        body { "return windowed(size, size, partialWindows = true, transform = transform)" }
     }
 
     templates add f("chunked(size: Int)") {
@@ -784,7 +798,7 @@ fun generators(): List<GenericFunction> {
 
         sequenceClassification(intermediate, stateful)
 
-        body { "return windowed(size, size)" }
+        body { "return windowed(size, size, partialWindows = true)" }
     }
 
     templates add f("chunkedSequence(size: Int, transform: (CharSequence) -> R)") {
@@ -812,7 +826,7 @@ fun generators(): List<GenericFunction> {
 
         body {
             """
-            return windowedSequence(size, size, transform)
+            return windowedSequence(size, size, partialWindows = true, transform = transform)
             """
         }
     }

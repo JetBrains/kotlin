@@ -1029,12 +1029,33 @@ public header inline fun <T> Collection<T>.plusElement(element: T): List<T>
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.takeWindows
  */
 @SinceKotlin("1.2")
-public header fun <T> Iterable<T>.windowed(size: Int, step: Int): List<List<T>>
+public fun <T> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): List<List<T>> {
+    checkWindowSizeStep(size, step)
+    if (this is RandomAccess && this is List) {
+        val thisSize = this.size
+        val result = ArrayList<List<T>>((thisSize + step - 1) / step)
+        var index = 0
+        while (index < thisSize) {
+            val windowSize = size.coerceAtMost(thisSize - index)
+            if (windowSize < size && !partialWindows) break
+            result.add(List(windowSize) { this[it + index] })
+            index += step
+        }
+        return result
+    }
+    val result = ArrayList<List<T>>()
+    windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = false).forEach {
+        result.add(it)
+    }
+    return result
+}
 
 /**
  * Returns a list of results of applying the given [transform] function to
@@ -1047,12 +1068,34 @@ public header fun <T> Iterable<T>.windowed(size: Int, step: Int): List<List<T>>
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.averageWindows
  */
 @SinceKotlin("1.2")
-public header fun <T, R> Iterable<T>.windowed(size: Int, step: Int, transform: (List<T>) -> R): List<R>
+public fun <T, R> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R): List<R> {
+    checkWindowSizeStep(size, step)
+    if (this is RandomAccess && this is List) {
+        val thisSize = this.size
+        val result = ArrayList<R>((thisSize + step - 1) / step)
+        val window = MovingSubList(this)
+        var index = 0
+        while (index < thisSize) {
+            window.move(index, (index + size).coerceAtMost(thisSize))
+            if (!partialWindows && window.size < size) break
+            result.add(transform(window))
+            index += step
+        }
+        return result
+    }
+    val result = ArrayList<R>()
+    windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = true).forEach {
+        result.add(transform(it))
+    }
+    return result
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.

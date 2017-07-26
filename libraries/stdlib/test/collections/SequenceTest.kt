@@ -261,21 +261,34 @@ public class SequenceTest {
         val result1 = seq.windowed(4, 2)
         assertEquals(listOf(
                 listOf(0, 1, 2, 3),
+                listOf(2, 3, 4, 5)
+        ), result1.toList())
+
+        val result1partial = seq.windowed(4, 2, partialWindows = true)
+        assertEquals(listOf(
+                listOf(0, 1, 2, 3),
                 listOf(2, 3, 4, 5),
                 listOf(4, 5, 6),
                 listOf(6)
-        ), result1.toList())
+        ), result1partial.toList())
 
         val result2 = seq.windowed(2, 3) { it.joinToString("") }
-        assertEquals(listOf("01", "34", "6"), result2.toList())
+        assertEquals(listOf("01", "34"), result2.toList())
 
-        assertEquals(seq.chunked(2).toList(), seq.windowed(2, 2).toList())
+        val result2partial = seq.windowed(2, 3, partialWindows = true) { it.joinToString("") }
+        assertEquals(listOf("01", "34", "6"), result2partial.toList())
+
+        assertEquals(seq.chunked(2).toList(), seq.windowed(2, 2, partialWindows = true).toList())
 
         assertEquals(seq.take(2).toList(), seq.windowed(2, size).single())
         assertEquals(seq.take(3).toList(), seq.windowed(3, size + 3).single())
 
-        val result3 = seq.windowed(size, 1)
-        result3.forEachIndexed { index, window ->
+
+        assertEquals(seq.toList(), seq.windowed(size, 1).single())
+        assertTrue(seq.windowed(size + 1, 1).none())
+
+        val result3partial = seq.windowed(size, 1, partialWindows = true)
+        result3partial.forEachIndexed { index, window ->
             assertEquals(size - index, window.size, "size of window#$index")
         }
 

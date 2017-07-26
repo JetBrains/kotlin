@@ -169,21 +169,34 @@ abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out
         val result = data.windowed(4, 2)
         assertEquals(listOf(
                 listOf("0", "1", "2", "3"),
+                listOf("2", "3", "4", "5")
+        ), result)
+
+        val resultPartial = data.windowed(4, 2, partialWindows = true)
+        assertEquals(listOf(
+                listOf("0", "1", "2", "3"),
                 listOf("2", "3", "4", "5"),
                 listOf("4", "5", "6"),
                 listOf("6")
-        ), result)
+        ), resultPartial)
+
 
         val result2 = data.windowed(2, 3) { it.joinToString("") }
-        assertEquals(listOf("01", "34", "6"), result2)
+        assertEquals(listOf("01", "34"), result2)
 
-        assertEquals(data.chunked(2), data.windowed(2, 2))
+        val result2partial = data.windowed(2, 3, partialWindows = true) { it.joinToString("") }
+        assertEquals(listOf("01", "34", "6"), result2partial)
+
+        assertEquals(data.chunked(2), data.windowed(2, 2, partialWindows = true))
 
         assertEquals(data.take(2), data.windowed(2, size).single())
         assertEquals(data.take(3), data.windowed(3, size + 3).single())
 
-        val result3 = data.windowed(size, 1)
-        result3.forEachIndexed { index, window ->
+        assertEquals(data.toList(), data.windowed(size, 1).single())
+        assertTrue(data.windowed(size + 1, 1).isEmpty())
+
+        val result3partial = data.windowed(size, 1, partialWindows = true)
+        result3partial.forEachIndexed { index, window ->
             assertEquals(size - index, window.size, "size of window#$index")
         }
 

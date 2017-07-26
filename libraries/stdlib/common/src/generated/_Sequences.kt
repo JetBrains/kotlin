@@ -952,12 +952,16 @@ public header inline fun <T> Sequence<T>.plusElement(element: T): Sequence<T>
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.takeWindows
  */
 @SinceKotlin("1.2")
-public header fun <T> Sequence<T>.windowed(size: Int, step: Int): Sequence<List<T>>
+public fun <T> Sequence<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<List<T>> {
+    return windowedSequence(size, step, partialWindows, reuseBuffer = false)
+}
 
 /**
  * Returns a sequence of results of applying the given [transform] function to
@@ -970,12 +974,16 @@ public header fun <T> Sequence<T>.windowed(size: Int, step: Int): Sequence<List<
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.averageWindows
  */
 @SinceKotlin("1.2")
-public header fun <T, R> Sequence<T>.windowed(size: Int, step: Int, transform: (List<T>) -> R): Sequence<R>
+public fun <T, R> Sequence<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R): Sequence<R> {
+    return windowedSequence(size, step, partialWindows, reuseBuffer = true).map(transform)
+}
 
 /**
  * Returns a sequence of pairs built from elements of both sequences with same indexes.

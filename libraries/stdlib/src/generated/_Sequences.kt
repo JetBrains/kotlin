@@ -1344,7 +1344,7 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
  */
 @SinceKotlin("1.2")
 public fun <T> Sequence<T>.chunked(size: Int): Sequence<List<T>> {
-    return windowed(size, size)
+    return windowed(size, size, partialWindows = true)
 }
 
 /**
@@ -1365,7 +1365,7 @@ public fun <T> Sequence<T>.chunked(size: Int): Sequence<List<T>> {
  */
 @SinceKotlin("1.2")
 public fun <T, R> Sequence<T>.chunked(size: Int, transform: (List<T>) -> R): Sequence<R> {
-    return windowed(size, size, transform)
+    return windowed(size, size, partialWindows = true, transform = transform)
 }
 
 /**
@@ -1546,13 +1546,15 @@ public inline fun <T> Sequence<T>.plusElement(element: T): Sequence<T> {
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.takeWindows
  */
 @SinceKotlin("1.2")
-public fun <T> Sequence<T>.windowed(size: Int, step: Int): Sequence<List<T>> {
-    return windowedSequence(size, step, dropTrailing = false, reuseBuffer = false)
+public fun <T> Sequence<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<List<T>> {
+    return windowedSequence(size, step, partialWindows, reuseBuffer = false)
 }
 
 /**
@@ -1566,13 +1568,15 @@ public fun <T> Sequence<T>.windowed(size: Int, step: Int): Sequence<List<T>> {
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.averageWindows
  */
 @SinceKotlin("1.2")
-public fun <T, R> Sequence<T>.windowed(size: Int, step: Int, transform: (List<T>) -> R): Sequence<R> {
-    return windowedSequence(size, step, dropTrailing = false, reuseBuffer = true).map(transform)
+public fun <T, R> Sequence<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R): Sequence<R> {
+    return windowedSequence(size, step, partialWindows, reuseBuffer = true).map(transform)
 }
 
 /**

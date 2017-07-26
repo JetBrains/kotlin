@@ -727,12 +727,16 @@ public header inline fun String.partition(predicate: (Char) -> Boolean): Pair<St
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.takeWindows
  */
 @SinceKotlin("1.2")
-public header fun CharSequence.windowed(size: Int, step: Int): List<String>
+public fun CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): List<String> {
+    return windowed(size, step, partialWindows) { it.toString() }
+}
 
 /**
  * Returns a list of results of applying the given [transform] function to
@@ -745,12 +749,26 @@ public header fun CharSequence.windowed(size: Int, step: Int): List<String>
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.averageWindows
  */
 @SinceKotlin("1.2")
-public header fun <R> CharSequence.windowed(size: Int, step: Int, transform: (CharSequence) -> R): List<R>
+public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): List<R> {
+    checkWindowSizeStep(size, step)
+    val thisSize = this.length
+    val result = ArrayList<R>((thisSize + step - 1) / step)
+    var index = 0
+    while (index < thisSize) {
+        val end = index + size
+        val coercedEnd = if (end > thisSize) { if (partialWindows) thisSize else break } else end
+        result.add(transform(subSequence(index, coercedEnd)))
+        index += step
+    }
+    return result
+}
 
 /**
  * Returns a sequence of snapshots of the window of the given [size]
@@ -761,12 +779,16 @@ public header fun <R> CharSequence.windowed(size: Int, step: Int, transform: (Ch
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.takeWindows
  */
 @SinceKotlin("1.2")
-public header fun CharSequence.windowedSequence(size: Int, step: Int): Sequence<String> 
+public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<String>  {
+    return windowedSequence(size, step, partialWindows) { it.toString() }
+}
 
 /**
  * Returns a sequence of results of applying the given [transform] function to
@@ -779,12 +801,18 @@ public header fun CharSequence.windowedSequence(size: Int, step: Int): Sequence<
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.averageWindows
  */
 @SinceKotlin("1.2")
-public header fun <R> CharSequence.windowedSequence(size: Int, step: Int, transform: (CharSequence) -> R): Sequence<R> 
+public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): Sequence<R>  {
+    checkWindowSizeStep(size, step)
+    val windows = (if (partialWindows) indices else 0 until length - size + 1) step step
+    return windows.asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
+}
 
 /**
  * Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.

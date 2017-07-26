@@ -27,12 +27,12 @@ internal fun checkWindowSizeStep(size: Int, step: Int) {
     }
 }
 
-internal fun <T> Sequence<T>.windowedSequence(size: Int, step: Int, dropTrailing: Boolean, reuseBuffer: Boolean): Sequence<List<T>> {
+internal fun <T> Sequence<T>.windowedSequence(size: Int, step: Int, partialWindows: Boolean, reuseBuffer: Boolean): Sequence<List<T>> {
     checkWindowSizeStep(size, step)
-    return Sequence { windowedIterator(iterator(), size, step, dropTrailing, reuseBuffer) }
+    return Sequence { windowedIterator(iterator(), size, step, partialWindows, reuseBuffer) }
 }
 
-internal fun <T> windowedIterator(iterator: Iterator<T>, size: Int, step: Int, dropTrailing: Boolean, reuseBuffer: Boolean): Iterator<List<T>> {
+internal fun <T> windowedIterator(iterator: Iterator<T>, size: Int, step: Int, partialWindows: Boolean, reuseBuffer: Boolean): Iterator<List<T>> {
     if (!iterator.hasNext()) return EmptyIterator
     return buildIterator<List<T>> {
         val gap = step - size
@@ -49,7 +49,7 @@ internal fun <T> windowedIterator(iterator: Iterator<T>, size: Int, step: Int, d
                 }
             }
             if (buffer.isNotEmpty()) {
-                if (!dropTrailing || buffer.size == size) yield(buffer)
+                if (partialWindows || buffer.size == size) yield(buffer)
             }
         } else {
             val buffer = RingBuffer<T>(size)
@@ -60,7 +60,7 @@ internal fun <T> windowedIterator(iterator: Iterator<T>, size: Int, step: Int, d
                     buffer.removeFirst(step)
                 }
             }
-            if (!dropTrailing) {
+            if (partialWindows) {
                 while (buffer.size > step) {
                     yield(if (reuseBuffer) buffer else ArrayList(buffer))
                     buffer.removeFirst(step)

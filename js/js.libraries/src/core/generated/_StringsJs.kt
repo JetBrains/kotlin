@@ -1113,7 +1113,7 @@ public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
  */
 @SinceKotlin("1.2")
 public fun CharSequence.chunked(size: Int): List<String> {
-    return windowed(size, size)
+    return windowed(size, size, partialWindows = true)
 }
 
 /**
@@ -1132,7 +1132,7 @@ public fun CharSequence.chunked(size: Int): List<String> {
  */
 @SinceKotlin("1.2")
 public fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): List<R> {
-    return windowed(size, size, transform)
+    return windowed(size, size, partialWindows = true, transform = transform)
 }
 
 /**
@@ -1165,7 +1165,7 @@ public fun CharSequence.chunkedSequence(size: Int): Sequence<String>  {
  */
 @SinceKotlin("1.2")
 public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R>  {
-    return windowedSequence(size, size, transform)
+    return windowedSequence(size, size, partialWindows = true, transform = transform)
 }
 
 @Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext()"))
@@ -1225,13 +1225,15 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.takeWindows
  */
 @SinceKotlin("1.2")
-public fun CharSequence.windowed(size: Int, step: Int): List<String> {
-    return windowed(size, step) { it.toString() }
+public fun CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): List<String> {
+    return windowed(size, step, partialWindows) { it.toString() }
 }
 
 /**
@@ -1245,18 +1247,22 @@ public fun CharSequence.windowed(size: Int, step: Int): List<String> {
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.averageWindows
  */
 @SinceKotlin("1.2")
-public fun <R> CharSequence.windowed(size: Int, step: Int, transform: (CharSequence) -> R): List<R> {
+public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): List<R> {
     checkWindowSizeStep(size, step)
     val thisSize = this.length
     val result = ArrayList<R>((thisSize + step - 1) / step)
     var index = 0
     while (index < thisSize) {
-        result.add(transform(subSequence(index, (index + size).coerceAtMost(thisSize))))
+        val end = index + size
+        val coercedEnd = if (end > thisSize) { if (partialWindows) thisSize else break } else end
+        result.add(transform(subSequence(index, coercedEnd)))
         index += step
     }
     return result
@@ -1271,13 +1277,15 @@ public fun <R> CharSequence.windowed(size: Int, step: Int, transform: (CharSeque
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.takeWindows
  */
 @SinceKotlin("1.2")
-public fun CharSequence.windowedSequence(size: Int, step: Int): Sequence<String>  {
-    return windowedSequence(size, step) { it.toString() }
+public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<String>  {
+    return windowedSequence(size, step, partialWindows) { it.toString() }
 }
 
 /**
@@ -1291,14 +1299,17 @@ public fun CharSequence.windowedSequence(size: Int, step: Int): Sequence<String>
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
- * @param step the number of elements to move the window forward by on an each step
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
  * 
  * @sample samples.collections.Sequences.Transformations.averageWindows
  */
 @SinceKotlin("1.2")
-public fun <R> CharSequence.windowedSequence(size: Int, step: Int, transform: (CharSequence) -> R): Sequence<R>  {
+public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): Sequence<R>  {
     checkWindowSizeStep(size, step)
-    return (indices step step).asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
+    val windows = (if (partialWindows) indices else 0 until length - size + 1) step step
+    return windows.asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
 }
 
 /**
