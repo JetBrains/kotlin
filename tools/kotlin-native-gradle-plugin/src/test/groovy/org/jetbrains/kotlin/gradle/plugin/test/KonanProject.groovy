@@ -22,7 +22,9 @@ class KonanProject {
     List<String> getBuildingTasks() { return compilationTasks }
     List<String> getKonanTasks()    { return getBuildingTasks() + downloadTask }
 
-    GradleRunner createRunner() { return GradleRunner.create().withProjectDir(projectDirRoot).withPluginClasspath() }
+    GradleRunner createRunner(boolean withDebug = true) {
+        return GradleRunner.create().withProjectDir(projectDirRoot).withPluginClasspath().withDebug(withDebug)
+    }
 
     protected KonanProject(TemporaryFolder projectDir) {
         this.projectDir = projectDir
