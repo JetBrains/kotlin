@@ -866,7 +866,7 @@ compileTestKotlin {
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional",
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async",
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable"),
-                    compilerArguments!!.pluginOptions.toList()
+                    compilerArguments!!.pluginOptions!!.toList()
             )
         }
     }

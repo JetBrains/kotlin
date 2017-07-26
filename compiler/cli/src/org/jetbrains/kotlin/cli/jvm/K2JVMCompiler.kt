@@ -122,7 +122,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         if (arguments.jvmTarget != null) {
-            val jvmTarget = JvmTarget.fromString(arguments.jvmTarget)
+            val jvmTarget = JvmTarget.fromString(arguments.jvmTarget!!)
             if (jvmTarget != null) {
                 configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
             }
@@ -487,7 +487,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val envParseRe = """(\w+)=(?:"([^"\\]*(\\.[^"\\]*)*)"|([^\s]*))""".toRegex()
             val unescapeRe = """\\(["\\])""".toRegex()
             if (arguments.scriptResolverEnvironment != null) {
-                for (envParam in arguments.scriptResolverEnvironment) {
+                for (envParam in arguments.scriptResolverEnvironment!!) {
                     val match = envParseRe.matchEntire(envParam)
                     if (match == null || match.groupValues.size < 4 || match.groupValues[1].isBlank()) {
                         messageCollector.report(ERROR, "Unable to parse script-resolver-environment argument $envParam")

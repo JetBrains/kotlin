@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.arguments;
+package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.utils.SmartList;
+import org.jetbrains.kotlin.utils.SmartList
+import java.io.Serializable
 
-import java.io.Serializable;
-import java.util.List;
+abstract class CommonToolArguments : Serializable {
+    companion object {
+        @JvmStatic private val serialVersionUID = 0L
+    }
 
-public abstract class CommonToolArguments implements Serializable {
-    private static final long serialVersionUID = 0L;
+    var freeArgs: MutableList<String> = SmartList()
 
-    public List<String> freeArgs = new SmartList<>();
-
-    public transient ArgumentParseErrors errors = new ArgumentParseErrors();
+    @Transient var errors: ArgumentParseErrors = ArgumentParseErrors()
 
     @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options")
-    public boolean help;
+    var help: Boolean = false
 
     @Argument(value = "-X", description = "Print a synopsis of advanced options")
-    public boolean extraHelp;
+    var extraHelp: Boolean = false
 
     @Argument(value = "-version", description = "Display compiler version")
-    public boolean version;
+    var version: Boolean = false
 
-    @GradleOption(DefaultValues.BooleanFalseDefault.class)
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-verbose", description = "Enable verbose logging output")
-    public boolean verbose;
+    var verbose: Boolean = false
 
-    @GradleOption(DefaultValues.BooleanFalseDefault.class)
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-nowarn", description = "Generate no warnings")
-    public boolean suppressWarnings;
+    var suppressWarnings: Boolean = false
 }

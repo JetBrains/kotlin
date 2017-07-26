@@ -32,14 +32,14 @@ public class Usage {
     public static <A extends CommonToolArguments> String render(@NotNull CLITool<A> tool, @NotNull A arguments) {
         StringBuilder sb = new StringBuilder();
         appendln(sb, "Usage: " + tool.executableScriptFileName() + " <options> <source files>");
-        appendln(sb, "where " + (arguments.extraHelp ? "advanced" : "possible") + " options include:");
+        appendln(sb, "where " + (arguments.getExtraHelp() ? "advanced" : "possible") + " options include:");
         for (Class<?> clazz = arguments.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
             for (Field field : clazz.getDeclaredFields()) {
-                fieldUsage(sb, field, arguments.extraHelp);
+                fieldUsage(sb, field, arguments.getExtraHelp());
             }
         }
 
-        if (arguments.extraHelp) {
+        if (arguments.getExtraHelp()) {
             appendln(sb, "");
             appendln(sb, "Advanced options are non-standard and may be changed or removed without any notice.");
         }

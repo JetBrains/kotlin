@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.arguments;
+package org.jetbrains.kotlin.cli.common.arguments
 
-public class K2MetadataCompilerArguments extends CommonCompilerArguments {
-    public static final long serialVersionUID = 0L;
+class K2MetadataCompilerArguments : CommonCompilerArguments() {
+    companion object {
+        @JvmStatic private val serialVersionUID = 0L
+    }
 
     @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated .kotlin_metadata files")
-    public String destination;
+    var destination: String? = null
 
     @Argument(
             value = "-classpath",
@@ -28,5 +30,5 @@ public class K2MetadataCompilerArguments extends CommonCompilerArguments {
             valueDescription = "<path>",
             description = "Paths where to find library .kotlin_metadata files"
     )
-    public String classpath;
+    var classpath: String? = null
 }

@@ -109,8 +109,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
-        if (arguments.freeArgs.isEmpty()) {
-            if (arguments.version) {
+        if (arguments.getFreeArgs().isEmpty()) {
+            if (arguments.getVersion()) {
                 return OK;
             }
             messageCollector.report(ERROR, "Specify at least one source file or directory", null);
@@ -119,18 +119,18 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         configuration.put(JSConfigurationKeys.LIBRARIES, configureLibraries(arguments, paths, messageCollector));
 
-        ContentRootsKt.addKotlinSourceRoots(configuration, arguments.freeArgs);
+        ContentRootsKt.addKotlinSourceRoots(configuration, arguments.getFreeArgs());
         KotlinCoreEnvironment environmentForJS =
                 KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES);
 
         Project project = environmentForJS.getProject();
         List<KtFile> sourcesFiles = environmentForJS.getSourceFiles();
 
-        environmentForJS.getConfiguration().put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage);
+        environmentForJS.getConfiguration().put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.getAllowKotlinPackage());
 
         if (!checkKotlinPackageUsage(environmentForJS, sourcesFiles)) return ExitCode.COMPILATION_ERROR;
 
-        if (arguments.outputFile == null) {
+        if (arguments.getOutputFile() == null) {
             messageCollector.report(ERROR, "Specify output file via -output", null);
             return ExitCode.COMPILATION_ERROR;
         }
@@ -144,11 +144,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        if (arguments.verbose) {
+        if (arguments.getVerbose()) {
             reportCompiledSourcesList(messageCollector, sourcesFiles);
         }
 
-        File outputFile = new File(arguments.outputFile);
+        File outputFile = new File(arguments.getOutputFile());
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, FileUtil.getNameWithoutExtension(outputFile));
 
@@ -181,19 +181,19 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         JsAnalysisResult jsAnalysisResult = (JsAnalysisResult) analysisResult;
 
         File outputPrefixFile = null;
-        if (arguments.outputPrefix != null) {
-            outputPrefixFile = new File(arguments.outputPrefix);
+        if (arguments.getOutputPrefix() != null) {
+            outputPrefixFile = new File(arguments.getOutputPrefix());
             if (!outputPrefixFile.exists()) {
-                messageCollector.report(ERROR, "Output prefix file '" + arguments.outputPrefix + "' not found", null);
+                messageCollector.report(ERROR, "Output prefix file '" + arguments.getOutputPrefix() + "' not found", null);
                 return ExitCode.COMPILATION_ERROR;
             }
         }
 
         File outputPostfixFile = null;
-        if (arguments.outputPostfix != null) {
-            outputPostfixFile = new File(arguments.outputPostfix);
+        if (arguments.getOutputPrefix() != null) {
+            outputPostfixFile = new File(arguments.getOutputPrefix());
             if (!outputPostfixFile.exists()) {
-                messageCollector.report(ERROR, "Output postfix file '" + arguments.outputPostfix + "' not found", null);
+                messageCollector.report(ERROR, "Output postfix file '" + arguments.getOutputPostfix() + "' not found", null);
                 return ExitCode.COMPILATION_ERROR;
             }
         }
@@ -202,7 +202,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             checkDuplicateSourceFileNames(messageCollector, sourcesFiles, config.getSourceMapRoots());
         }
 
-        MainCallParameters mainCallParameters = createMainCallParameters(arguments.main);
+        MainCallParameters mainCallParameters = createMainCallParameters(arguments.getMain());
         TranslationResult translationResult;
 
         K2JSTranslator translator = new K2JSTranslator(config);
@@ -294,47 +294,47 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
-        if (arguments.target != null) {
-            assert arguments.target == "v5" : "Unsupported ECMA version: " + arguments.target;
+        if (arguments.getTarget() != null) {
+            assert arguments.getTarget() == "v5" : "Unsupported ECMA version: " + arguments.getTarget();
         }
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.defaultVersion());
 
-        if (arguments.sourceMap) {
+        if (arguments.getSourceMap()) {
             configuration.put(JSConfigurationKeys.SOURCE_MAP, true);
-            if (arguments.sourceMapPrefix != null) {
-                configuration.put(JSConfigurationKeys.SOURCE_MAP_PREFIX, arguments.sourceMapPrefix);
+            if (arguments.getSourceMapPrefix() != null) {
+                configuration.put(JSConfigurationKeys.SOURCE_MAP_PREFIX, arguments.getSourceMapPrefix());
             }
 
-            String sourceMapSourceRoots = arguments.sourceMapSourceRoots != null ?
-                                          arguments.sourceMapSourceRoots :
+            String sourceMapSourceRoots = arguments.getSourceMapSourceRoots() != null ?
+                                          arguments.getSourceMapSourceRoots() :
                                           calculateSourceMapSourceRoot(messageCollector, arguments);
             List<String> sourceMapSourceRootList = StringUtil.split(sourceMapSourceRoots, File.pathSeparator);
             configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceMapSourceRootList);
         }
         else {
-            if (arguments.sourceMapPrefix != null) {
+            if (arguments.getSourceMapPrefix() != null) {
                 messageCollector.report(WARNING, "source-map-prefix argument has no effect without source map", null);
             }
-            if (arguments.sourceMapSourceRoots != null) {
+            if (arguments.getSourceMapSourceRoots() != null) {
                 messageCollector.report(WARNING, "source-map-source-root argument has no effect without source map", null);
             }
         }
-        if (arguments.metaInfo) {
+        if (arguments.getMetaInfo()) {
             configuration.put(JSConfigurationKeys.META_INFO, true);
         }
 
-        if (arguments.typedArrays) {
+        if (arguments.getTypedArrays()) {
             configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true);
         }
 
-        configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.friendModulesDisabled);
+        configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.getFriendModulesDisabled());
 
-        if (!arguments.friendModulesDisabled && arguments.friendModules != null) {
-            List<String> friendPaths = ArraysKt.filterNot(arguments.friendModules.split(File.pathSeparator), String::isEmpty);
+        if (!arguments.getFriendModulesDisabled() && arguments.getFriendModules() != null) {
+            List<String> friendPaths = ArraysKt.filterNot(arguments.getFriendModules().split(File.pathSeparator), String::isEmpty);
             configuration.put(JSConfigurationKeys.FRIEND_PATHS, friendPaths);
         }
 
-        String moduleKindName = arguments.moduleKind;
+        String moduleKindName = arguments.getModuleKind();
         ModuleKind moduleKind = moduleKindName != null ? moduleKindMap.get(moduleKindName) : ModuleKind.PLAIN;
         if (moduleKind == null) {
             messageCollector.report(
@@ -344,7 +344,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
         configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind);
 
-        String sourceMapEmbedContentString = arguments.sourceMapEmbedSources;
+        String sourceMapEmbedContentString = arguments.getSourceMapEmbedSources();
         SourceMapSourceEmbedding sourceMapContentEmbedding = sourceMapEmbedContentString != null ?
                                                              sourceMapContentEmbeddingMap.get(sourceMapEmbedContentString) :
                                                              SourceMapSourceEmbedding.INLINING;
@@ -356,7 +356,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, sourceMapContentEmbedding);
 
-        if (!arguments.sourceMap && sourceMapEmbedContentString != null) {
+        if (!arguments.getSourceMap() && sourceMapEmbedContentString != null) {
             messageCollector.report(WARNING, "source-map-embed-sources argument has no effect without source map", null);
         }
     }
@@ -368,7 +368,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull MessageCollector messageCollector
     ) {
         List<String> libraries = new SmartList<>();
-        if (!arguments.noStdlib) {
+        if (!arguments.getNoStdlib()) {
             File stdlibJar = getLibraryFromHome(
                     paths, KotlinPaths::getJsStdLibJarPath, PathUtil.JS_LIB_JAR_NAME, messageCollector, "'-no-stdlib'");
             if (stdlibJar != null) {
@@ -376,8 +376,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             }
         }
 
-        if (arguments.libraries != null) {
-            libraries.addAll(ArraysKt.filterNot(arguments.libraries.split(File.pathSeparator), String::isEmpty));
+        if (arguments.getLibraries() != null) {
+            libraries.addAll(ArraysKt.filterNot(arguments.getLibraries().split(File.pathSeparator), String::isEmpty));
         }
         return libraries;
     }
@@ -392,7 +392,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         Map<File, Integer> pathToRootIndexes = new HashMap<>();
 
         try {
-            for (String path : arguments.freeArgs) {
+            for (String path : arguments.getFreeArgs()) {
                 File file = new File(path).getCanonicalFile();
                 if (commonPath == null) {
                     commonPath = file;

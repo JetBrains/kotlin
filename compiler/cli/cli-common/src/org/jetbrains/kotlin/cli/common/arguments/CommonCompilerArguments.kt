@@ -14,50 +14,53 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.arguments;
+package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.config.AnalysisFlag;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.jetbrains.kotlin.config.AnalysisFlag
+import java.util.*
 
 @SuppressWarnings("WeakerAccess")
-public abstract class CommonCompilerArguments extends CommonToolArguments {
-    public static final long serialVersionUID = 0L;
+abstract class CommonCompilerArguments : CommonToolArguments() {
+    companion object {
+        @JvmStatic private val serialVersionUID = 0L
 
-    public static final String PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>";
+        const val PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>"
 
-    @GradleOption(DefaultValues.LanguageVersions.class)
+        const val WARN = "warn"
+        const val ERROR = "error"
+        const val ENABLE = "enable"
+    }
+
+    @GradleOption(DefaultValues.LanguageVersions::class)
     @Argument(
             value = "-language-version",
             valueDescription = "<version>",
             description = "Provide source compatibility with specified language version"
     )
-    public String languageVersion;
+    var languageVersion: String? = null
 
-    @GradleOption(DefaultValues.LanguageVersions.class)
+    @GradleOption(DefaultValues.LanguageVersions::class)
     @Argument(
             value = "-api-version",
             valueDescription = "<version>",
             description = "Allow to use declarations only from the specified version of bundled libraries"
     )
-    public String apiVersion;
+    var apiVersion: String? = null
 
     @Argument(
             value = "-kotlin-home",
             valueDescription = "<path>",
             description = "Path to Kotlin compiler home directory, used for runtime libraries discovery"
     )
-    public String kotlinHome;
+    var kotlinHome: String? = null
 
     @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
-    public String[] pluginOptions;
+    var pluginOptions: Array<String>? = null
 
     // Advanced options
 
     @Argument(value = "-Xno-inline", description = "Disable method inlining")
-    public boolean noInline;
+    var noInline: Boolean = false
 
     // TODO Remove in 1.0
     @Argument(
@@ -65,52 +68,50 @@ public abstract class CommonCompilerArguments extends CommonToolArguments {
             valueDescription = "<count>",
             description = "Repeat compilation (for performance analysis)"
     )
-    public String repeat;
+    var repeat: String? = null
 
-    @Argument(value = "-Xskip-metadata-version-check", description = "Load classes with bad metadata version anyway (incl. pre-release classes)")
-    public boolean skipMetadataVersionCheck;
+    @Argument(
+            value = "-Xskip-metadata-version-check",
+            description = "Load classes with bad metadata version anyway (incl. pre-release classes)"
+    )
+    var skipMetadataVersionCheck: Boolean = false
 
     @Argument(value = "-Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin'")
-    public boolean allowKotlinPackage;
+    var allowKotlinPackage: Boolean = false
 
     @Argument(value = "-Xreport-output-files", description = "Report source to output files mapping")
-    public boolean reportOutputFiles;
+    var reportOutputFiles: Boolean = false
 
     @Argument(value = "-Xplugin", valueDescription = "<path>", description = "Load plugins from the given classpath")
-    public String[] pluginClasspaths;
+    var pluginClasspaths: Array<String>? = null
 
     @Argument(value = "-Xmulti-platform", description = "Enable experimental language support for multi-platform projects")
-    public boolean multiPlatform;
+    var multiPlatform: Boolean = false
 
     @Argument(value = "-Xno-check-impl", description = "Do not check presence of 'impl' modifier in multi-platform projects")
-    public boolean noCheckImpl;
+    var noCheckImpl: Boolean = false
 
     @Argument(
             value = "-Xintellij-plugin-root",
             valueDescription = "<path>",
             description = "Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found"
     )
-    public String intellijPluginRoot;
+    var intellijPluginRoot: String? = null
 
     @Argument(
             value = "-Xcoroutines",
             valueDescription = "{enable|warn|error}",
             description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
     )
-    public String coroutinesState = WARN;
+    var coroutinesState: String? = WARN
 
-    public static final String WARN = "warn";
-    public static final String ERROR = "error";
-    public static final String ENABLE = "enable";
-
-    @NotNull
-    public Map<AnalysisFlag<?>, Object> configureAnalysisFlags() {
-        Map<AnalysisFlag<?>, Object> result = new HashMap<>();
-        result.put(AnalysisFlag.getSkipMetadataVersionCheck(), skipMetadataVersionCheck);
-        result.put(AnalysisFlag.getMultiPlatformDoNotCheckImpl(), noCheckImpl);
-        return result;
+    open fun configureAnalysisFlags(): MutableMap<AnalysisFlag<*>, Any> {
+        return HashMap<AnalysisFlag<*>, Any>().apply {
+            put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
+            put(AnalysisFlag.multiPlatformDoNotCheckImpl, noCheckImpl)
+        }
     }
 
     // Used only for serialize and deserialize settings. Don't use in other places!
-    public static final class DummyImpl extends CommonCompilerArguments {}
+    class DummyImpl : CommonCompilerArguments()
 }

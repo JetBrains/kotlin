@@ -36,7 +36,7 @@ public class ArgumentUtils {
             throws InstantiationException, IllegalAccessException {
         List<String> result = new ArrayList<>();
         convertArgumentsToStringList(arguments, arguments.getClass().newInstance(), arguments.getClass(), result);
-        result.addAll(arguments.freeArgs);
+        result.addAll(arguments.getFreeArgs());
         return result;
     }
 

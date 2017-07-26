@@ -57,7 +57,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             configuration.addKotlinSourceRoot(arg)
         }
         if (arguments.classpath != null) {
-            configuration.addJvmClasspathRoots(arguments.classpath.split(File.pathSeparatorChar).map(::File))
+            configuration.addJvmClasspathRoots(arguments.classpath!!.split(File.pathSeparatorChar).map(::File))
         }
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME)

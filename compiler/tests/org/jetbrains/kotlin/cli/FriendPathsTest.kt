@@ -56,7 +56,7 @@ class FriendPathsTest : TestCaseWithTmpdir() {
         return K2JVMCompiler().exec(ThrowingMessageCollector(), Services.EMPTY, K2JVMCompilerArguments().apply {
             destination = tmpdir.path
             classpath = libraryPath
-            freeArgs = listOf(File(getTestDataDirectory(), "usage.kt").path)
+            freeArgs = arrayListOf(File(getTestDataDirectory(), "usage.kt").path)
 
             friendPaths = arrayOf(libraryPath)
         })
