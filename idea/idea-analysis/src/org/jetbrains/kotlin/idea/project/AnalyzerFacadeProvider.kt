@@ -22,13 +22,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.JsAnalyzerFacade
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
-import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 object AnalyzerFacadeProvider {
     //NOTE: it's convenient that JS backend doesn't have platform parameters (for now)
     // otherwise we would be forced to add casts on the call site of setupResolverForProject
-    fun getAnalyzerFacade(targetPlatform: TargetPlatform): AnalyzerFacade<JvmPlatformParameters> {
+    fun getAnalyzerFacade(targetPlatform: TargetPlatform): AnalyzerFacade {
         return when (targetPlatform) {
             JvmPlatform -> JvmAnalyzerFacade
             JsPlatform -> JsAnalyzerFacade

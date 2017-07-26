@@ -75,6 +75,12 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
 }
 
 class ResolverForProjectImpl<M : ModuleInfo>(
+        val projectContext: ProjectContext,
+        analyzerFacade: (M) -> AnalyzerFacade,
+        modulesContent: (M) -> ModuleContent,
+        platformParameters: PlatformAnalysisParameters,
+        targetEnvironment: TargetEnvironment,
+        packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider,
         private val debugName: String,
         private val descriptorByModule: Map<M, ModuleDescriptorImpl>,
         private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject()
@@ -86,7 +92,17 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         return resolverForModuleDescriptor(doGetDescriptorForModule(moduleInfo))
     }
 
-    internal val resolverByModuleDescriptor: MutableMap<ModuleDescriptor, NotNullLazyValue<ResolverForModule>> = HashMap()
+    internal val resolverByModuleDescriptor: Map<ModuleDescriptor, NotNullLazyValue<ResolverForModule>> = descriptorByModule.map { (module, descriptor) ->
+        descriptor to projectContext.storageManager.createLazyValue {
+            ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
+
+            analyzerFacade(module).createResolverForModule(
+                    module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
+                    platformParameters, targetEnvironment, this@ResolverForProjectImpl,
+                    packagePartProviderFactory(module, modulesContent(module))
+            )
+        }
+    }.toMap()
 
     override val allModules: Collection<M> by lazy {
         (descriptorByModule.keys + delegateResolver.allModules).toSet()
@@ -156,15 +172,15 @@ interface ModuleInfo {
     }
 }
 
-abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
+abstract class AnalyzerFacade {
     companion object {
-        fun <P : PlatformAnalysisParameters, M : ModuleInfo> setupResolverForProject(
+        fun <M : ModuleInfo> setupResolverForProject(
                 debugName: String,
                 projectContext: ProjectContext,
                 modules: Collection<M>,
-                analyzerFacade: (M) -> AnalyzerFacade<P>,
+                analyzerFacade: (M) -> AnalyzerFacade,
                 modulesContent: (M) -> ModuleContent,
-                platformParameters: P,
+                platformParameters: PlatformAnalysisParameters,
                 languageSettingsProvider: LanguageSettingsProvider = LanguageSettingsProvider.Default,
                 targetEnvironment: TargetEnvironment = CompilerEnvironment,
                 builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
@@ -176,9 +192,17 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
         ): ResolverForProject<M> {
             val storageManager = projectContext.storageManager
 
-            val resolverForProject = ResolverForProjectImpl(debugName, modules.keysToMap { module ->
-                ModuleDescriptorImpl(module.name, storageManager, builtIns, modulePlatforms(module), module.capabilities)
-            }, delegateResolver)
+            val resolverForProject = ResolverForProjectImpl(
+                    projectContext,
+                    analyzerFacade,
+                    modulesContent,
+                    platformParameters,
+                    targetEnvironment,
+                    packagePartProviderFactory,
+                    debugName,
+                    modules.keysToMap { module ->
+                        ModuleDescriptorImpl(module.name, storageManager, builtIns, modulePlatforms(module), module.capabilities)
+                    }, delegateResolver)
 
             for (module in modules) {
                 val moduleDescriptor = resolverForProject.descriptorForModule(module)
@@ -188,37 +212,23 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
                         modulePlatforms,
                         firstDependency,
                         resolverForProject))
-            }
 
-            for (module in modules) {
-                val descriptor = resolverForProject.descriptorForModule(module)
                 val content = modulesContent(module)
-                val computeResolverForModule = storageManager.createLazyValue {
-                    ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
-
-                    analyzerFacade(module).createResolverForModule(
-                            module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
-                            platformParameters, targetEnvironment, resolverForProject, languageSettingsProvider,
-                            packagePartProviderFactory(module, content)
-                    )
-                }
-
-                descriptor.initialize(
-                        DelegatingPackageFragmentProvider(content, packageOracleFactory.createOracle(module), computeResolverForModule))
-
-                resolverForProject.resolverByModuleDescriptor[descriptor] = computeResolverForModule
+                moduleDescriptor.initialize(
+                        DelegatingPackageFragmentProvider(resolverForProject, moduleDescriptor, content,
+                                                          packageOracleFactory.createOracle(module)))
             }
 
             return resolverForProject
         }
     }
 
-    protected abstract fun <M : ModuleInfo> createResolverForModule(
+    abstract fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
             moduleDescriptor: ModuleDescriptorImpl,
             moduleContext: ModuleContext,
             moduleContent: ModuleContent,
-            platformParameters: P,
+            platformParameters: PlatformAnalysisParameters,
             targetEnvironment: TargetEnvironment,
             resolverForProject: ResolverForProject<M>,
             languageSettingsProvider: LanguageSettingsProvider,
@@ -272,27 +282,31 @@ class LazyModuleDependencies<M: ModuleInfo>(
 }
 
 
-private class DelegatingPackageFragmentProvider(
+private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
+        private val resolverForProject: ResolverForProjectImpl<M>,
+        private val module: ModuleDescriptor,
         moduleContent: ModuleContent,
-        private val packageOracle: PackageOracle,
-        private val resolverForModule: NotNullLazyValue<ResolverForModule>
+        private val packageOracle: PackageOracle
 ) : PackageFragmentProvider {
     private val syntheticFilePackages = moduleContent.syntheticFiles.map { it.packageFqName }.toSet()
 
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
         if (certainlyDoesNotExist(fqName)) return emptyList()
 
-        return resolverForModule().packageFragmentProvider.getPackageFragments(fqName)
+        return resolverForModuleCachedValue().packageFragmentProvider.getPackageFragments(fqName)
     }
+
+    private val resolverForModuleCachedValue
+            get() = resolverForProject.resolverByModuleDescriptor[module]!!
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         if (certainlyDoesNotExist(fqName)) return emptyList()
 
-        return resolverForModule().packageFragmentProvider.getSubPackagesOf(fqName, nameFilter)
+        return resolverForModuleCachedValue().packageFragmentProvider.getSubPackagesOf(fqName, nameFilter)
     }
 
     private fun certainlyDoesNotExist(fqName: FqName): Boolean {
-        if (resolverForModule.isComputed()) return false // let this request get cached inside delegate
+        if (resolverForModuleCachedValue.isComputed()) return false // let this request get cached inside delegate
 
         return !packageOracle.packageExists(fqName) && fqName !in syntheticFilePackages
     }
