@@ -18,18 +18,17 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 abstract class ReplaceMathMethodsWithKotlinNativeMethodsIntention(
-        text: String, val replacedMethodName: String, val mathMethodName: String
+        text: String, private val replacedMethodName: String, private val mathMethodName: String
 ) : SelfTargetingOffsetIndependentIntention<KtCallExpression>(KtCallExpression::class.java, text) {
 
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
-        val target = element.getStrictParentOfType<KtDotQualifiedExpression>() ?: element
+        val target = element.getStrictParentOfType<KtDotQualifiedExpression>()?.takeIf {
+            (it.receiverExpression as? KtNameReferenceExpression)?.getReferencedName() == "Math"
+        } ?: element
         val valueArguments = element.valueArguments
         val methodName = replacedMethodName
         val newExpression = KtPsiFactory(element).createExpressionByPattern("$0.$methodName($1)",
