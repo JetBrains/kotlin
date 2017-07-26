@@ -87,10 +87,22 @@ fun aggregates(): List<GenericFunction> {
     }
 
     templates add f("count()") {
+        val progressionCount = "(this.last - this.first) / this.step + 1"
+
         doc { f -> "Returns the number of ${f.element.pluralize()} in this ${f.collection}." }
         returns("Int")
-        body {
+        body { f ->
             """
+            ${if (f == Iterables) {
+            """
+            when (this) {
+                is CharProgression -> return $progressionCount
+                is IntProgression -> return $progressionCount
+                is LongProgression -> return $progressionCount
+            }
+            """
+            } else ""}
+
             var count = 0
             for (element in this) count++
             return count
@@ -141,6 +153,7 @@ fun aggregates(): List<GenericFunction> {
 
     templates addAll listOf("min", "max").flatMap { op ->
         val genericSpecializations = PrimitiveType.numericPrimitives.filterNot { it.isIntegral() } + listOf(null)
+        val progressionResult = if (op == "max") "this.last" else "this.first"
 
         listOf(
             Iterables to genericSpecializations,
@@ -185,6 +198,15 @@ fun aggregates(): List<GenericFunction> {
                         """
                         val iterator = iterator()
                         if (!iterator.hasNext()) return null
+                        ${if (f == Iterables && !isFloat) {
+                        """
+                        when (this) {
+                            is CharProgression -> return $progressionResult
+                            is IntProgression -> return $progressionResult
+                            is LongProgression -> return $progressionResult
+                        }
+                        """
+                        } else ""}
                         var $op = iterator.next()
                         ${if (isFloat) "if ($op.isNaN()) return $op" else "\\"}
 

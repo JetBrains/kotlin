@@ -1385,6 +1385,11 @@ public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
  * Returns the number of elements in this collection.
  */
 public fun <T> Iterable<T>.count(): Int {
+    when (this) {
+        is CharProgression -> return (this.last - this.first) / this.step + 1
+        is IntProgression -> return (this.last - this.first) / this.step + 1
+        is LongProgression -> return (this.last - this.first) / this.step + 1
+    }
     var count = 0
     for (element in this) count++
     return count
@@ -1523,6 +1528,11 @@ public fun Iterable<Float>.max(): Float? {
 public fun <T : Comparable<T>> Iterable<T>.max(): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
+    when (this) {
+        is CharProgression -> return this.last
+        is IntProgression -> return this.last
+        is LongProgression -> return this.last
+    }
     var max = iterator.next()
     while (iterator.hasNext()) {
         val e = iterator.next()
@@ -1608,6 +1618,11 @@ public fun Iterable<Float>.min(): Float? {
 public fun <T : Comparable<T>> Iterable<T>.min(): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
+    when (this) {
+        is CharProgression -> return this.first
+        is IntProgression -> return this.first
+        is LongProgression -> return this.first
+    }
     var min = iterator.next()
     while (iterator.hasNext()) {
         val e = iterator.next()
@@ -2153,6 +2168,9 @@ public fun Iterable<Short>.sum(): Int {
  */
 @kotlin.jvm.JvmName("sumOfInt")
 public fun Iterable<Int>.sum(): Int {
+    if (this is IntProgression) {
+        return (this.first + this.last) * (this.count() / 2)
+    }
     var sum: Int = 0
     for (element in this) {
         sum += element
@@ -2165,6 +2183,9 @@ public fun Iterable<Int>.sum(): Int {
  */
 @kotlin.jvm.JvmName("sumOfLong")
 public fun Iterable<Long>.sum(): Long {
+    if (this is LongProgression) {
+        return (this.first + this.last) * (this.count() / 2)
+    }
     var sum: Long = 0L
     for (element in this) {
         sum += element
