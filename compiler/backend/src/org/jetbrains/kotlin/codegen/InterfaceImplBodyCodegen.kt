@@ -60,14 +60,7 @@ class InterfaceImplBodyCodegen(
 
     override fun classForInnerClassRecord(): ClassDescriptor? {
         if (!isAnythingGenerated) return null
-        if (DescriptorUtils.isLocal(descriptor)) return null
-        val classDescriptorImpl = ClassDescriptorImpl(
-                descriptor, Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME),
-                Modality.FINAL, ClassKind.CLASS, Collections.emptyList(), SourceElement.NO_SOURCE,
-                /* isExternal = */ false)
-
-        classDescriptorImpl.initialize(MemberScope.Empty, emptySet(), null)
-        return classDescriptorImpl
+        return InnerClassConsumer.classForInnerClassRecord(descriptor, true)
     }
 
     override fun generateSyntheticPartsAfterBody() {

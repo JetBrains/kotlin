@@ -89,12 +89,13 @@ private const val INLINE_MARKER_FINALLY_START = "finallyStart"
 private const val INLINE_MARKER_FINALLY_END = "finallyEnd"
 private const val INLINE_MARKER_BEFORE_SUSPEND_ID = 0
 private const val INLINE_MARKER_AFTER_SUSPEND_ID = 1
+private val INTRINSIC_ARRAY_CONSTRUCTOR_TYPE = AsmUtil.asmTypeByClassId(classId)
 
 internal fun getMethodNode(
         classData: ByteArray,
         methodName: String,
         methodDescriptor: String,
-        classInternalName: String
+        classType: Type
 ): SMAPAndMethodNode? {
     val cr = ClassReader(classData)
     var node: MethodNode? = null
@@ -136,12 +137,12 @@ internal fun getMethodNode(
         return null
     }
 
-    if (classId.asString() == classInternalName) {
+    if (INTRINSIC_ARRAY_CONSTRUCTOR_TYPE == classType) {
         // Don't load source map for intrinsic array constructors
         debugInfo[0] = null
     }
 
-    val smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classInternalName, lines[0], lines[1])
+    val smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classType.internalName, lines[0], lines[1])
     return SMAPAndMethodNode(node!!, smap)
 }
 

@@ -192,6 +192,6 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     @Nullable
     @Override
     protected ClassDescriptor classForInnerClassRecord() {
-        return DescriptorUtils.isTopLevelDeclaration(descriptor) ? null : descriptor;
+        return InnerClassConsumer.Companion.classForInnerClassRecord(descriptor, false);
     }
 }
