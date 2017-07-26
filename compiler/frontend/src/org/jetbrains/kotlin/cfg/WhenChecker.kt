@@ -38,13 +38,12 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
-interface WhenMissingCase {
-
-    val branchConditionText: String
+sealed class WhenMissingCase {
+    abstract val branchConditionText: String
 }
 
 // Always must be first in the list
-private object UnknownMissingCase : WhenMissingCase {
+object UnknownMissingCase : WhenMissingCase() {
     override fun toString() = "unknown"
 
     override val branchConditionText = "else"
@@ -64,7 +63,7 @@ private interface WhenExhaustivenessChecker {
     fun isApplicable(subjectType: KotlinType): Boolean = false
 }
 
-private object NullMissingCase : WhenMissingCase {
+object NullMissingCase : WhenMissingCase() {
     override fun toString() = branchConditionText
 
     override val branchConditionText = "null"
@@ -92,7 +91,7 @@ private object WhenOnNullableExhaustivenessChecker /* : WhenExhaustivenessChecke
     }
 }
 
-private class BooleanMissingCase(val b: Boolean) : WhenMissingCase {
+class BooleanMissingCase(val b: Boolean) : WhenMissingCase() {
     override fun toString() = branchConditionText
 
     override val branchConditionText = b.toString()
@@ -127,12 +126,14 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker {
     }
 }
 
-private class ClassMissingCase(val descriptor: ClassDescriptor): WhenMissingCase {
-    override fun toString() = descriptor.name.identifier.let { if (descriptor.kind.isSingleton) it else "is $it" }
+class ClassMissingCase(val descriptor: ClassDescriptor): WhenMissingCase() {
+    val classIsSingleton get() = descriptor.kind.isSingleton
 
-    override val branchConditionText = DescriptorUtils.getFqNameFromTopLevelClass(descriptor).asString().let {
-        if (descriptor.kind.isSingleton) it else "is $it"
-    }
+    val classFqName get() = DescriptorUtils.getFqNameFromTopLevelClass(descriptor)
+
+    override fun toString() = descriptor.name.identifier.let { if (classIsSingleton) it else "is $it" }
+
+    override val branchConditionText = classFqName.asString().let { if (classIsSingleton) it else "is $it" }
 }
 
 internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChecker {
