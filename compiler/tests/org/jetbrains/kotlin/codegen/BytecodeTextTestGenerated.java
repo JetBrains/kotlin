@@ -132,6 +132,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("doNotStoreNullForTmpInDestructuring.kt")
+    public void testDoNotStoreNullForTmpInDestructuring() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/doNotStoreNullForTmpInDestructuring.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("doNotStoreNullsForCapturedVars.kt")
     public void testDoNotStoreNullsForCapturedVars() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/doNotStoreNullsForCapturedVars.kt");
