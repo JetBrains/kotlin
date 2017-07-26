@@ -1,9 +1,9 @@
 package test
 
-import kotlinx.android.parcel.MagicParcel
+import kotlinx.android.parcel.Parcelize
 import android.os.Parcelable
 
-@MagicParcel
+@Parcelize
 class A(val firstName: String) : Parcelable {
     val <warning descr="[PROPERTY_WONT_BE_SERIALIZED] Property would not be serialized into a 'Parcel'. Add '@Transient' annotation to it">secondName</warning>: String = ""
 

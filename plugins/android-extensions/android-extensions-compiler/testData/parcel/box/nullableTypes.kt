@@ -7,7 +7,7 @@ import kotlinx.android.parcel.*
 import android.os.Parcel
 import android.os.Parcelable
 
-@MagicParcel
+@Parcelize
 data class Test(
     val str1: String,
     val str2: String?,

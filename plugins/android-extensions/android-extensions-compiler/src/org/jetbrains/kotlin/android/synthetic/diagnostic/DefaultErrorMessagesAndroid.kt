@@ -80,7 +80,7 @@ class DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
                     "'CREATOR' definition is not allowed. Use 'Parceler' companion object instead.")
 
             MAP.put(ErrorsAndroid.PARCELABLE_TYPE_NOT_SUPPORTED,
-                    "Type is not directly supported by 'MagicParcelable'. " +
+                    "Type is not directly supported by 'Parcelize'. " +
                     "Annotate the parameter type with '@RawValue' if you want it to be serialized using 'writeValue()'")
         }
     }

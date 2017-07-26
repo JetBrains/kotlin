@@ -7,7 +7,7 @@ import kotlinx.android.parcel.*
 import android.os.Parcel
 import android.os.Parcelable
 
-@MagicParcel
+@Parcelize
 data class PrimitiveTypes(
         val boo: Boolean,
         val c: Char,

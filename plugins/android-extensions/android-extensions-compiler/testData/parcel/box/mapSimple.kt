@@ -7,7 +7,7 @@ import kotlinx.android.parcel.*
 import android.os.Parcel
 import android.os.Parcelable
 
-@MagicParcel
+@Parcelize
 data class Test(val a: Map<String, String>) : Parcelable
 
 fun box() = parcelTest { parcel ->

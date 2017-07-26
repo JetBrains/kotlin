@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.android.parcel
 
-import kotlinx.android.parcel.MagicParcel
+import kotlinx.android.parcel.Parcelize
 import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.ComponentKind.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -90,13 +90,13 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
         }
 
         if (name.asString() == DESCRIBE_CONTENTS.methodName
-                && clazz.isMagicParcelable
+                && clazz.isParcelize
                 && isExperimental()
                 && result.none { it.isDescribeContents() }
         ) {
             result += createMethod(clazz, DESCRIBE_CONTENTS, clazz.builtIns.intType)
         } else if (name.asString() == WRITE_TO_PARCEL.methodName
-                && clazz.isMagicParcelable
+                && clazz.isParcelize
                 && isExperimental()
                 && result.none { it.isWriteToParcel() }
         ) {
@@ -133,7 +133,7 @@ interface ParcelableSyntheticComponent {
     }
 }
 
-private val MAGIC_PARCEL_CLASS_FQNAME = FqName(MagicParcel::class.java.canonicalName)
+private val PARCELIZE_CLASS_FQNAME = FqName(Parcelize::class.java.canonicalName)
 
-internal val ClassDescriptor.isMagicParcelable: Boolean
-    get() = this.annotations.hasAnnotation(MAGIC_PARCEL_CLASS_FQNAME)
+internal val ClassDescriptor.isParcelize: Boolean
+    get() = this.annotations.hasAnnotation(PARCELIZE_CLASS_FQNAME)

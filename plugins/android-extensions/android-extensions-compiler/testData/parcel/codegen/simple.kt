@@ -3,5 +3,5 @@
 import kotlinx.android.parcel.*
 import android.os.Parcelable
 
-@MagicParcel
+@Parcelize
 class User(val firstName: String, val lastName: String, val age: Int, val isProUser: Boolean) : Parcelable

@@ -1,10 +1,10 @@
 package test
 
-import kotlinx.android.parcel.MagicParcel
+import kotlinx.android.parcel.Parcelize
 import android.os.Parcelable
 import android.os.Parcel
 
-@MagicParcel
+@Parcelize
 class A(val a: String) : Parcelable {
     companion object {
         @JvmField

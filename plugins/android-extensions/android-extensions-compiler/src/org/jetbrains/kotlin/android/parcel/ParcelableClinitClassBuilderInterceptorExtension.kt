@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.android.synthetic.codegen
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.android.parcel.isMagicParcelable
+import org.jetbrains.kotlin.android.parcel.isParcelize
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
@@ -97,7 +97,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
         override fun done() {
             if (!isClinitGenerated && currentClass != null && currentClassName != null) {
                 val descriptor = bindingContext[BindingContext.CLASS, currentClass]
-                if (descriptor != null && descriptor.isMagicParcelable) {
+                if (descriptor != null && descriptor.isParcelize) {
                     val baseVisitor = super.newMethod(JvmDeclarationOrigin.NO_ORIGIN, ACC_STATIC, "<clinit>", "()V", null, null)
                     val visitor = ClinitAwareMethodVisitor(currentClassName!!, baseVisitor)
 
@@ -122,7 +122,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
                 isClinitGenerated = true
 
                 val descriptor = bindingContext[BindingContext.CLASS, currentClass]
-                if (descriptor != null && descriptor.isMagicParcelable) {
+                if (descriptor != null && descriptor.isParcelize) {
                     return ClinitAwareMethodVisitor(
                             currentClassName!!,
                             super.newMethod(origin, access, name, desc, signature, exceptions))

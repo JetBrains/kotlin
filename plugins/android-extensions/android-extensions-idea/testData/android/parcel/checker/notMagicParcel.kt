@@ -1,6 +1,6 @@
 package test
 
-import kotlinx.android.parcel.MagicParcel
+import kotlinx.android.parcel.Parcelize
 import android.os.Parcel
 import android.os.Parcelable
 

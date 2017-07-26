@@ -8,7 +8,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.text.SpannableString
 
-@MagicParcel
+@Parcelize
 data class Test(val simple: CharSequence, val spanned: CharSequence) : Parcelable
 
 fun box() = parcelTest { parcel ->

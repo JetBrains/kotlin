@@ -5,7 +5,7 @@ import kotlinx.android.parcel.*
 import android.os.Parcelable
 import kotlin.jvm.JvmStatic
 
-@MagicParcel
+@Parcelize
 class User(val firstName: String) : Parcelable {
     companion object {
         @JvmStatic

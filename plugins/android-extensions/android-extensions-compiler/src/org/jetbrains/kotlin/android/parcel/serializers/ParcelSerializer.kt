@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.android.parcel.serializers
 
-import org.jetbrains.kotlin.android.parcel.isMagicParcelable
+import org.jetbrains.kotlin.android.parcel.isParcelize
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -181,7 +181,7 @@ interface ParcelSerializer {
 
                         val creatorAsmType = when {
                             creatorVar != null -> typeMapper.mapTypeSafe(creatorVar.type)
-                            clazz.isMagicParcelable -> Type.getObjectType(asmType.internalName + "\$Creator")
+                            clazz.isParcelize -> Type.getObjectType(asmType.internalName + "\$Creator")
                             else -> null
                         }
 

@@ -7,7 +7,7 @@ import kotlinx.android.parcel.*
 import android.os.Parcel
 import android.os.Parcelable
 
-@MagicParcel
+@Parcelize
 data class User(val firstName: String, val secondName: String, val age: Int) : Parcelable
 
 fun box() = parcelTest { parcel ->

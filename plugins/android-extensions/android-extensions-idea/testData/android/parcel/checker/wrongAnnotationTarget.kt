@@ -1,25 +1,25 @@
 package test
 
-import kotlinx.android.parcel.MagicParcel
+import kotlinx.android.parcel.Parcelize
 import android.os.Parcelable
 
-@MagicParcel
+@Parcelize
 interface <error descr="[PARCELABLE_SHOULD_BE_CLASS] 'Parcelable' should be a class">Intf</error> : Parcelable
 
-@MagicParcel
+@Parcelize
 object <error descr="[PARCELABLE_SHOULD_BE_CLASS] 'Parcelable' should be a class">Obj</error>
 
 class A {
-    @MagicParcel
+    @Parcelize
     companion <error descr="[PARCELABLE_SHOULD_BE_CLASS] 'Parcelable' should be a class">object</error> {
         fun foo() {}
     }
 }
 
-@MagicParcel
+@Parcelize
 enum class <error descr="[PARCELABLE_SHOULD_BE_CLASS] 'Parcelable' should be a class">Enum</error> {
     WHITE, BLACK
 }
 
-@MagicParcel
+@Parcelize
 annotation class <error descr="[PARCELABLE_SHOULD_BE_CLASS] 'Parcelable' should be a class">Anno</error>
