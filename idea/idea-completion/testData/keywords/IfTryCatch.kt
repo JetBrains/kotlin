@@ -1,33 +1,33 @@
-fun some() {
-
-    if (true) {
-
-    } else {
-
-    }
-
-    <caret>
+fun foo(p: Int) {
+    if (p > 0)
+        try {
+        }
+        catch (e: Exception) {
+        }
+        <caret>
 }
 
-
-// EXIST: do
+// EXIST: catch
+// EXIST: finally
+// EXIST: else
 // EXIST: class
+// EXIST: do
 // EXIST: false
 // EXIST: for
 // EXIST: fun
 // EXIST: if
-// EXIST: interface
 // EXIST: null
 // EXIST: object
 // EXIST: return
 // EXIST: super
 // EXIST: throw
+// EXIST: interface
 // EXIST: true
 // EXIST: try
-// EXIST: typealias
 // EXIST: val
 // EXIST: var
 // EXIST: when
 // EXIST: while
-
+// EXIST: typealias
+// EXIST: as
 // NOTHING_ELSE

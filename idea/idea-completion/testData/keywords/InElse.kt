@@ -10,9 +10,7 @@ fun some() {
 
 
 // EXIST: do
-// EXIST: as
 // EXIST: class
-// EXIST: else
 // EXIST: false
 // EXIST: for
 // EXIST: fun
