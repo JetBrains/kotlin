@@ -248,8 +248,6 @@
 
         <!-- Uast -->
         <property name="uast.server" value="http://dl.bintray.com/kotlin/uast"/>
-        <get-maven-library prefix="org/jetbrains/uast" lib="uast-common" version="${uast.version}" target.jar.name.base="uast-common" server="${uast.server}"/>
-        <get-maven-library prefix="org/jetbrains/uast" lib="uast-java" version="${uast.version}" target.jar.name.base="uast-java" server="${uast.server}"/>
         <get-maven-library prefix="org/jetbrains/uast" lib="uast-tests" version="${uast.version}" target.jar.name.base="uast-tests" server="${uast.server}"/>
 
         <get-maven-library-with-dependencies
