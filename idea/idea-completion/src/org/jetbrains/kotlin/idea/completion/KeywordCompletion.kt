@@ -21,15 +21,13 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import com.intellij.psi.filters.*
 import com.intellij.psi.filters.position.LeftNeighbour
 import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -206,18 +204,35 @@ object KeywordCompletion {
                 is KtBlockExpression -> {
                     var prefixText = "fun foo() { "
                     if (prevParent is KtExpression) {
-                        // check that we are right after a try-expression without finally-block
+                        // check that we are right after a try-expression without finally-block or after if-expression without else
                         val prevLeaf = prevParent.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment && it !is PsiErrorElement }
-                        if (prevLeaf?.node?.elementType == KtTokens.RBRACE) {
-                            val blockParent = (prevLeaf?.parent as? KtBlockExpression)?.parent
-                            when (blockParent) {
-                                is KtTryExpression -> prefixText += "try {}\n"
-                                is KtCatchClause -> prefixText += "try {} catch (e: E) {}\n"
-                            }
-                        }
+                        if (prevLeaf != null) {
+                            val isAfterThen = prevLeaf.goUpWhileIsLastChild().any { it.node.elementType == KtNodeTypes.THEN }
 
-                        if (prevLeaf?.getParentOfType<KtIfExpression>(strict = false) != null) {
-                            prefixText += "if(true){}\n"
+                            var isAfterTry = false
+                            var isAfterCatch = false
+                            if (prevLeaf.node.elementType == KtTokens.RBRACE) {
+                                val blockParent = (prevLeaf.parent as? KtBlockExpression)?.parent
+                                when (blockParent) {
+                                    is KtTryExpression -> isAfterTry = true
+                                    is KtCatchClause -> { isAfterTry = true; isAfterCatch = true }
+                                }
+                            }
+
+                            if (isAfterThen) {
+                                if (isAfterTry) {
+                                    prefixText += "if (a)\n"
+                                }
+                                else {
+                                    prefixText += "if (a) {}\n"
+                                }
+                            }
+                            if (isAfterTry) {
+                                prefixText += "try {}\n"
+                            }
+                            if (isAfterCatch) {
+                                prefixText += "catch (e: E) {}\n"
+                            }
                         }
 
                         return buildFilterWithContext(prefixText, prevParent, position)
@@ -459,5 +474,16 @@ object KeywordCompletion {
     private fun PsiElement.getStartOffsetInAncestor(ancestor: PsiElement): Int {
         if (ancestor == this) return 0
         return parent!!.getStartOffsetInAncestor(ancestor) + startOffsetInParent
+    }
+
+    private fun PsiElement.goUpWhileIsLastChild(): Sequence<PsiElement> {
+        return generateSequence(this) {
+            if (it is PsiFile)
+                null
+            else if (it != it.parent.lastChild)
+                null
+            else
+                it.parent
+        }
     }
 }
