@@ -1,0 +1,12 @@
+class IntrospectorImpl(model: ModuleImpl) : Introspector<ModuleImpl>(model) {
+    private inner class SchemaRetriever(transaction: Any) : Introspector<ModuleImpl>.SchemaRetriever(transaction) {
+        internal fun retrieve() {
+            inSchema { schema -> println(schema) }
+        }
+    }
+}
+
+class ModuleImpl : Model {
+    override fun modify(modifier: ModelModifier) {}
+}
+
