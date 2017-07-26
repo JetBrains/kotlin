@@ -139,8 +139,23 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     protected val friendTask: AbstractKotlinCompile<T>?
             get() = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractKotlinCompile<T>
 
+    /** Classes directories that are not produced by this task but should be consumed by
+     * other tasks that have this one as a [friendTask]. */
+    private val attachedClassesDirs: MutableList<Lazy<File?>> = mutableListOf()
+
+    /** Registers the directory provided by the [provider] as attached, meaning that the directory should
+     * be consumed as a friend classes directory by other tasks that have this task as a [friendTask]. */
+    fun attachClassesDir(provider: () -> File?) {
+        attachedClassesDirs += lazy(provider)
+    }
+
     var friendPaths: Lazy<Array<String>?> = lazy {
-        friendTask?.run { arrayOf((javaOutputDir ?: destinationDir).absolutePath) }
+        friendTask?.let { friendTask ->
+            mutableListOf<String>().apply {
+                add((friendTask.javaOutputDir ?: friendTask.destinationDir).absolutePath)
+                addAll(friendTask.attachedClassesDirs.mapNotNull { it.value?.absolutePath })
+            }.toTypedArray()
+        }
     }
 
     override fun compile() {
