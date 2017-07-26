@@ -54,9 +54,9 @@ open class KonanInteropTask: KonanTargetableTask() {
     }
 
     internal val INTEROP_JVM_ARGS: List<String>
-        get() = listOf("-Dkonan.home=${project.konanHome}", "-Djava.library.path=${project.konanHome}/konan/nativelib")
+        @Internal get() = listOf("-Dkonan.home=${project.konanHome}", "-Djava.library.path=${project.konanHome}/konan/nativelib")
     internal val INTEROP_CLASSPATH: String
-        get() = "${project.konanHome}/konan/lib/"
+        @Internal get() = "${project.konanHome}/konan/lib/"
 
     // Output directories -----------------------------------------------------
 

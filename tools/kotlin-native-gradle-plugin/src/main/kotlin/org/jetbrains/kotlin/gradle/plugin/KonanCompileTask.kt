@@ -73,31 +73,32 @@ open class KonanCompileTask: KonanTargetableTask() {
     }
 
     val COMPILER_JVM_ARGS: List<String>
-        get() = listOf("-Dkonan.home=${project.konanHome}", "-Djava.library.path=${project.konanHome}/konan/nativelib")
+        @Internal get() = listOf("-Dkonan.home=${project.konanHome}", "-Djava.library.path=${project.konanHome}/konan/nativelib")
     val COMPILER_CLASSPATH: String
-        get() = "${project.konanHome}/konan/lib/"
+        @Internal get() = "${project.konanHome}/konan/lib/"
 
     // Output artifact --------------------------------------------------------
 
     internal lateinit var artifactName: String
+        @Internal get
 
-    lateinit var outputDir: File
+    @Internal lateinit var outputDir: File
         internal set
 
     internal fun init(artifactName: String) {
         dependsOn(project.konanCompilerDownloadTask)
         this.artifactName = artifactName
-        outputDir = project.file("${project.konanCompilerOutputDir}")
+        outputDir = project.file(project.konanCompilerOutputDir)
     }
 
     val artifactNamePath: String
-        get() = "${outputDir.absolutePath}/$artifactName"
+        @Internal get() = "${outputDir.absolutePath}/$artifactName"
 
     val artifactSuffix: String
-        get() = produceSuffix(produce)
+        @Internal get() = produceSuffix(produce)
 
     val artifactPath: String
-        get() = "$artifactNamePath$artifactSuffix"
+        @Internal get() = "$artifactNamePath$artifactSuffix"
 
     val artifact: File
         @OutputFile get() = project.file(artifactPath)
