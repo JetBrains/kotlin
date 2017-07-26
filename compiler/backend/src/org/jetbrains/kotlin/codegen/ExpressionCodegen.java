@@ -3457,10 +3457,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         initializeDestructuringDeclarationVariables(multiDeclaration, initializerAsReceiver, local, asProperty);
 
-        if (initializerAsmType.getSort() == Type.OBJECT || initializerAsmType.getSort() == Type.ARRAY) {
-            v.aconst(null);
-            v.store(tempVarIndex, initializerAsmType);
-        }
         myFrameMap.leaveTemp(initializerAsmType);
 
         return StackValue.none();
