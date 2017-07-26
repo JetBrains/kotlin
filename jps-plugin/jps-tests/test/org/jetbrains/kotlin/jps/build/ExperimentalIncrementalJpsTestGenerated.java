@@ -1466,6 +1466,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("innerClassNotGeneratedWhenRebuilding")
+        public void testInnerClassNotGeneratedWhenRebuilding() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/innerClassNotGeneratedWhenRebuilding/");
+            doTest(fileName);
+        }
+
         @TestMetadata("jvmNameChanged")
         public void testJvmNameChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/jvmNameChanged/");

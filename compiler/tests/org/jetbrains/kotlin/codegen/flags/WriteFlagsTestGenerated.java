@@ -609,6 +609,33 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         }
     }
 
+    @TestMetadata("compiler/testData/writeFlags/inline")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inline extends AbstractWriteFlagsTest {
+        public void testAllFilesPresentInInline() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("lostInnerClass.kt")
+        public void testLostInnerClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/inline/lostInnerClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lostInnerClass2.kt")
+        public void testLostInnerClass2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/inline/lostInnerClass2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lostInnerClass3.kt")
+        public void testLostInnerClass3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/inline/lostInnerClass3.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/writeFlags/innerClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
