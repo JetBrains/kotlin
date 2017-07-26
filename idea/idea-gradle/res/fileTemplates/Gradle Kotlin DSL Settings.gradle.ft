@@ -14,4 +14,7 @@ include '${MODULE_PATH}'
 findProject(':${MODULE_PATH}')?.name = '${MODULE_NAME}'
 #end
 #end
+#if (${BUILD_FILE_NAME} && ${BUILD_FILE_NAME} != "")
+rootProject.buildFileName = '${BUILD_FILE_NAME}'
+#end
 

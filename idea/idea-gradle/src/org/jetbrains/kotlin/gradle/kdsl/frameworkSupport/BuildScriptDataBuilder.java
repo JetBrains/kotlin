@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.plugins.gradle.frameworkSupport;
+package org.jetbrains.kotlin.gradle.kdsl.frameworkSupport;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -24,10 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Vladislav.Soroka
- * @since 4/24/2015
- */
 public class BuildScriptDataBuilder {
   @NotNull private final VirtualFile myBuildScriptFile;
   private final Set<String> plugins = ContainerUtil.newTreeSet();

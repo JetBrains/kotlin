@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.plugins.gradle.frameworkSupport;
+package org.jetbrains.kotlin.gradle.kdsl.frameworkSupport;
 
 import com.intellij.framework.FrameworkTypeEx;
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider;
@@ -25,10 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * @author Vladislav.Soroka
- * @since 4/24/2015
- */
 public class GradleGroovyFrameworkSupportProvider extends GradleFrameworkSupportProvider {
 
   public static final String ID = "groovy";
@@ -63,9 +59,9 @@ public class GradleGroovyFrameworkSupportProvider extends GradleFrameworkSupport
                          @NotNull ModifiableModelsProvider modifiableModelsProvider,
                          @NotNull BuildScriptDataBuilder buildScriptData) {
     buildScriptData
-      .addPluginDefinition("apply plugin: 'groovy'")
+      .addPluginDefinition("plugin(\"groovy\")")
       .addRepositoriesDefinition("mavenCentral()")
-      .addDependencyNotation("compile 'org.codehaus.groovy:groovy-all:2.3.11'")
-      .addDependencyNotation("testCompile group: 'junit', name: 'junit', version: '4.12'");
+      .addDependencyNotation("compile(\"org.codehaus.groovy:groovy-all:2.3.11\")")
+      .addDependencyNotation("testCompile(\"junit\", \"junit\", \"4.12\")");
   }
 }

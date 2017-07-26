@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.kotlin.gradle
+package org.jetbrains.kotlin.gradle.kdsl
 
 import com.intellij.openapi.externalSystem.service.project.wizard.AbstractExternalProjectImportProvider
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleProjectImportBuilder
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-class GradleKotlinDSLProjectImportProvider(builder: GradleProjectImportBuilder)
+class GradleProjectImportProvider(builder: GradleProjectImportBuilder)
     : AbstractExternalProjectImportProvider(builder, GradleConstants.SYSTEM_ID) {
 
     override fun canImportFromFile(file: VirtualFile): Boolean = file.name.endsWith(".${GradleConstants.EXTENSION}.kts")

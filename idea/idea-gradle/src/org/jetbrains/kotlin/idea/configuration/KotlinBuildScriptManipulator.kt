@@ -125,15 +125,6 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
     private fun KtCallExpression.getBlock(): KtBlockExpression? =
             (valueArguments.singleOrNull()?.getArgumentExpression() as? KtLambdaExpression)?.bodyExpression
 
-    private fun getCompileDependencySnippet(groupId: String, artifactId: String, compileScope: String = "compile", version: String? = null): String =
-            if (groupId == KOTLIN_GROUP_ID)
-                "$compileScope(${getKotlinModuleDependencySnippet(artifactId, version)})"
-            else
-                "$compileScope(\"$groupId:$artifactId:$version\")"
-
-    private fun getKotlinModuleDependencySnippet(artifactId: String, version: String? = null): String =
-            "kotlinModule(\"${artifactId.removePrefix("kotlin-")}\", ${version?.let { "\"$it\"" } ?: GSK_KOTLIN_VERSION_PROPERTY_NAME})"
-
     private fun KtFile.getKotlinStdlibVersion(): String? {
         return findScriptInitializer("dependencies")?.getBlock()?.let {
             val expression = it.findCompileStdLib()?.valueArguments?.firstOrNull()?.getArgumentExpression()
@@ -233,8 +224,7 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
     }
 
     private fun KtBlockExpression.addPluginToClassPathIfMissing(): KtCallExpression? =
-            addExpressionIfMissing("classpath(${getKotlinModuleDependencySnippet("gradle-plugin")})") as? KtCallExpression
-
+            addExpressionIfMissing(getKotlinGradlePluginClassPathSnippet()) as? KtCallExpression
 
     private fun KtBlockExpression.addBlock(name: String): KtBlockExpression? {
         return add(psiFactory.createExpression("$name {\n}"))
@@ -313,6 +303,17 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
 
     companion object {
         private val STDLIB_ARTIFACT_PREFIX = "org.jetbrains.kotlin:kotlin-stdlib"
-        private val GSK_KOTLIN_VERSION_PROPERTY_NAME = "kotlin_version"
+        val GSK_KOTLIN_VERSION_PROPERTY_NAME = "kotlin_version"
+
+        fun getKotlinGradlePluginClassPathSnippet(): String = "classpath(${getKotlinModuleDependencySnippet("gradle-plugin")})"
+
+        fun getKotlinModuleDependencySnippet(artifactId: String, version: String? = null): String =
+                "kotlinModule(\"${artifactId.removePrefix("kotlin-")}\", ${version?.let { "\"$it\"" } ?: GSK_KOTLIN_VERSION_PROPERTY_NAME})"
+
+        fun getCompileDependencySnippet(groupId: String, artifactId: String, compileScope: String = "compile", version: String? = null): String =
+                if (groupId == KOTLIN_GROUP_ID)
+                    "$compileScope(${Companion.getKotlinModuleDependencySnippet(artifactId, version)})"
+                else
+                    "$compileScope(\"$groupId:$artifactId:$version\")"
     }
 }

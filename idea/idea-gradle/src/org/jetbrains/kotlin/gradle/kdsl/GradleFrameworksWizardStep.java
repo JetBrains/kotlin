@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.plugins.gradle.service.project.wizard;
+package org.jetbrains.kotlin.gradle.kdsl;
 
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider;
 import com.intellij.ide.util.newProjectWizard.AddSupportForFrameworksPanel;
@@ -32,18 +32,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider;
-import org.jetbrains.plugins.gradle.frameworkSupport.GradleJavaFrameworkSupportProvider;
+import org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleFrameworkSupportProvider;
+import org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleJavaFrameworkSupportProvider;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Vladislav.Soroka
- * @since 4/20/2015
- */
 public class GradleFrameworksWizardStep extends ModuleWizardStep implements Disposable {
 
   private JPanel myPanel;
@@ -52,7 +48,7 @@ public class GradleFrameworksWizardStep extends ModuleWizardStep implements Disp
   private JPanel myOptionsPanel;
   @SuppressWarnings("unused") private JBLabel myFrameworksLabel;
 
-  public GradleFrameworksWizardStep(WizardContext context, final GradleModuleBuilder builder) {
+  public GradleFrameworksWizardStep(WizardContext context, final ModuleBuilder builder) {
 
     Project project = context.getProject();
     final LibrariesContainer container = LibrariesContainerFactory.createContainer(context.getProject());

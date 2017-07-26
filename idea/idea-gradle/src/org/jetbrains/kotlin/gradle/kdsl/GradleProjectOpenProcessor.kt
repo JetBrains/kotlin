@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle
+package org.jetbrains.kotlin.gradle.kdsl
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleProjectImportBuilder
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleProjectOpenProcessor
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-class GradleKotlinDSLProjectOpenProcessor(builder: GradleProjectImportBuilder) : GradleProjectOpenProcessor(builder) {
+class GradleProjectOpenProcessor(builder: GradleProjectImportBuilder) : GradleProjectOpenProcessor(builder) {
     override fun canOpenProject(file: VirtualFile): Boolean = when {
         !file.isDirectory -> file.name.endsWith(".gradle.kts")
         supportedExtensions.any { file.findChild(it) != null } -> true

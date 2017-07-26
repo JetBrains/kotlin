@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.plugins.gradle.frameworkSupport;
+package org.jetbrains.kotlin.gradle.kdsl.frameworkSupport;
 
 import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable;
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider;
@@ -28,16 +28,12 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder.getBuildScriptData;
+import static org.jetbrains.kotlin.gradle.kdsl.GradleModuleBuilder.getBuildScriptData;
 
-/**
- * @author Vladislav.Soroka
- * @since 4/23/2015
- */
 public abstract class GradleFrameworkSupportProvider extends FrameworkSupportInModuleProvider {
 
   public static final ExtensionPointName<GradleFrameworkSupportProvider> EP_NAME =
-    ExtensionPointName.create("org.jetbrains.plugins.gradle.frameworkSupport");
+    ExtensionPointName.create("org.jetbrains.kotlin.gradleFrameworkSupport");
 
   public abstract void addSupport(@NotNull Module module, @NotNull ModifiableRootModel rootModel,
                                   @NotNull ModifiableModelsProvider modifiableModelsProvider,
