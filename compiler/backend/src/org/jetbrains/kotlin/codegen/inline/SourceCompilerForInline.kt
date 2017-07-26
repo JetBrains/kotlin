@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -93,6 +94,8 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
     override val state = codegen.state
 
     private var context by Delegates.notNull<CodegenContext<*>>()
+
+    private var additionalInnerClasses = mutableListOf<ClassDescriptor>()
 
     override val lookupLocation = KotlinLookupLocation(callElement)
 
@@ -164,7 +167,9 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 if (isLambda)
                     codegen.parentCodegen.className
                 else
-                    state.typeMapper.mapImplementationOwner(descriptor).internalName
+                    state.typeMapper.mapImplementationOwner(descriptor).internalName,
+                if (isLambda) emptyList() else additionalInnerClasses,
+                isLambda
         )
 
         val strategy = when (expression) {
@@ -222,7 +227,9 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             internal val delegate: MemberCodegen<*>,
             declaration: KtElement,
             codegenContext: FieldOwnerContext<*>,
-            private val className: String
+            private val className: String,
+            private val parentAsInnerClasses: List<ClassDescriptor>,
+            private val isInlineLambdaCodegen: Boolean
     ) : MemberCodegen<KtPureElement>(delegate as MemberCodegen<KtPureElement>, declaration, codegenContext) {
 
         override fun generateDeclaration() {
@@ -246,6 +253,14 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             return className
         }
 
+        override fun addParentsToInnerClassesIfNeeded(innerClasses: MutableCollection<ClassDescriptor>) {
+            if (isInlineLambdaCodegen) {
+                super.addParentsToInnerClassesIfNeeded(innerClasses)
+            }
+            else {
+                innerClasses.addAll(parentAsInnerClasses)
+            }
+        }
     }
 
     override fun doCreateMethodNodeFromSource(
@@ -278,7 +293,9 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             val implementationOwner = state.typeMapper.mapImplementationOwner(callableDescriptor)
             val parentCodegen = FakeMemberCodegen(
                     codegen.parentCodegen, inliningFunction!!, methodContext.parentContext as FieldOwnerContext<*>,
-                    implementationOwner.internalName
+                    implementationOwner.internalName,
+                    additionalInnerClasses,
+                    false
             )
             if (element !is KtNamedFunction) {
                 throw IllegalStateException("Property accessors with default parameters not supported " + callableDescriptor)
@@ -389,22 +406,25 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
     }
 
     override fun initializeInlineFunctionContext(functionDescriptor: FunctionDescriptor) {
-        context = getContext(functionDescriptor, state, DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)?.containingFile as? KtFile)
+        context = getContext(functionDescriptor, functionDescriptor, state, DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)?.containingFile as? KtFile, additionalInnerClasses)
     }
 
     companion object {
         fun getContext(
-                descriptor: DeclarationDescriptor, state: GenerationState, sourceFile: KtFile?
+                descriptor: DeclarationDescriptor, innerDescriptor: DeclarationDescriptor, state: GenerationState, sourceFile: KtFile?, additionalInners: MutableList<ClassDescriptor>
         ): CodegenContext<*> {
             if (descriptor is PackageFragmentDescriptor) {
+                //no inners
                 return PackageContext(descriptor, state.rootContext, null, sourceFile)
             }
 
             val container = descriptor.containingDeclaration ?: error("No container for descriptor: " + descriptor)
             val parent = getContext(
                     container,
+                    descriptor,
                     state,
-                    sourceFile
+                    sourceFile,
+                    additionalInners
             )
 
             return when (descriptor) {
@@ -417,7 +437,14 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                     )
                 }
                 is ClassDescriptor -> {
-                    val kind = if (DescriptorUtils.isInterface(descriptor)) OwnerKind.DEFAULT_IMPLS else OwnerKind.IMPLEMENTATION
+                    val kind =
+                            if (DescriptorUtils.isInterface(descriptor) && innerDescriptor !is ClassDescriptor)
+                                OwnerKind.DEFAULT_IMPLS
+                            else OwnerKind.IMPLEMENTATION
+
+                    additionalInners.addIfNotNull(
+                            InnerClassConsumer.classForInnerClassRecord(descriptor, kind == OwnerKind.DEFAULT_IMPLS)
+                    )
                     parent.intoClass(descriptor, kind, state)
                 }
                 is FunctionDescriptor -> {

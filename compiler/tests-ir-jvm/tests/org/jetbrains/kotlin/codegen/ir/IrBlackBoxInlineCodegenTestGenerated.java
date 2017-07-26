@@ -2755,6 +2755,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/anonymous"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("kt19175.kt")
+            public void testKt19175() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/kt19175.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lambda.kt")
             public void testLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/lambda.kt");
