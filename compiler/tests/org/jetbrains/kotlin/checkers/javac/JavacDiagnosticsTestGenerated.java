@@ -38,6 +38,12 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("ConstantValues.kt")
+        public void testConstantValues() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/diagnostics/tests/ConstantValues.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compiler/testData/javac/diagnostics/tests/imports")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -408,6 +414,12 @@ public class JavacDiagnosticsTestGenerated extends AbstractJavacDiagnosticsTest 
     public static class TestsWithoutJavac extends AbstractJavacDiagnosticsTest {
         public void testAllFilesPresentInTestsWithoutJavac() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/diagnostics/tests"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("ConstantValues.kt")
+        public void testConstantValues() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/diagnostics/tests/ConstantValues.kt");
+            doTestWithoutJavacWrapper(fileName);
         }
 
         @TestMetadata("compiler/testData/javac/diagnostics/tests/imports")

@@ -1,0 +1,47 @@
+package
+
+package a {
+    public val v1: kotlin.String = "STR"
+    public val v2: kotlin.String = "STRSTR"
+    public val v3: kotlin.Int = 6
+    public val v4: kotlin.Int = 2147483647
+    public val v5: kotlin.Int = -2
+    public val v6: kotlin.Double = 10.0.toDouble()
+    public val v7: kotlin.String!
+    public val v8: kotlin.Int = 0
+
+    public open class x {
+        public constructor x()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public const final val B: kotlin.Byte = 5.toByte()
+        public const final val B1: kotlin.Byte = 20.toByte()
+        public const final val B2: kotlin.Byte = 0.toByte()
+        public const final val B3: kotlin.Byte = 1.toByte()
+        public const final val B4: kotlin.Byte = -2.toByte()
+        public const final val B5: kotlin.Byte = 0.toByte()
+        public const final val B6: kotlin.Byte = 2.toByte()
+        public const final val D: kotlin.Double = 10.0.toDouble()
+        public const final val I: kotlin.Int = 6
+        public const final val I2: kotlin.Int = -2
+        public const final val IMAX: kotlin.Int = 2147483647
+        public const final val NULL: kotlin.String!
+        public const final val STR: kotlin.String = "STR"
+        public const final val STR2: kotlin.String = "STRSTR"
+        public const final val VAL: kotlin.Int = 0
+        public const final val VAL1: kotlin.Boolean = false
+        public const final val VAL10: kotlin.Boolean = true
+        public const final val VAL11: kotlin.Boolean
+        public const final val VAL2: kotlin.Boolean = false
+        public const final val VAL3: kotlin.Boolean = false
+        public const final val VAL4: kotlin.Boolean = true
+        public const final val VAL5: kotlin.Boolean = false
+        public const final val VAL6: kotlin.Boolean = true
+        public const final val VAL7: kotlin.Boolean = false
+        public const final val VAL8: kotlin.Boolean = true
+        public const final val VAL9: kotlin.Boolean = false
+    }
+}
