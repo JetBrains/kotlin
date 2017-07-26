@@ -619,7 +619,7 @@ class CompileServiceImpl(
                     shutdownWithDelay()
                     return
                 }
-                state.aliveClientsCount == 0 && compilationsCounter.get() > 0 -> {
+                state.aliveClientsCount == 0 -> {
                     log.info("No more clients left")
                     shutdownWithDelay()
                     return
