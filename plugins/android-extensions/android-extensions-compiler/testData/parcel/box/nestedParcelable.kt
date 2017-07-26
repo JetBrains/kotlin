@@ -10,15 +10,15 @@ import android.os.Parcelable
 // Starts with A, should be loaded before other classes
 abstract class AParcelable : Parcelable
 
-@MagicParcel
+@Parcelize
 data class P1(val a: String) : AParcelable()
 
 sealed class Sealed : AParcelable()
 
-@MagicParcel
+@Parcelize
 data class Sealed1(val a: Int) : Sealed()
 
-@MagicParcel
+@Parcelize
 data class Test(val a: P1, val b: AParcelable, val c: Sealed, val d: Sealed1) : Parcelable
 
 fun box() = parcelTest { parcel ->

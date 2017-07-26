@@ -8,7 +8,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.util.Arrays
 
-@MagicParcel
+@Parcelize
 data class Test(val a: Array<String>) : Parcelable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

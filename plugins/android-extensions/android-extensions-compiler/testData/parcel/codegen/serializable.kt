@@ -6,5 +6,5 @@ import java.io.Serializable
 
 class SerializableSimple(val a: String, val b: String) : Serializable
 
-@MagicParcel
+@Parcelize
 class User(val notNull: SerializableSimple, val nullable: SerializableSimple) : Parcelable

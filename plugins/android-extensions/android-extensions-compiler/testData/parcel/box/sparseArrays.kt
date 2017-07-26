@@ -8,10 +8,10 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.util.*
 
-@MagicParcel
+@Parcelize
 data class Data(val a: String, val b: String) : Parcelable
 
-@MagicParcel
+@Parcelize
 data class User(val a: SparseIntArray, val b: SparseLongArray, val c: SparseArray<Data>) : Parcelable
 
 fun box() = parcelTest { parcel ->

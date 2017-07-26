@@ -8,7 +8,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.os.Bundle
 
-@MagicParcel
+@Parcelize
 data class User(val a: Bundle) : Parcelable
 
 fun box() = parcelTest { parcel ->

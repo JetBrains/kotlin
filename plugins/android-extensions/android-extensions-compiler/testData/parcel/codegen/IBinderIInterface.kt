@@ -5,5 +5,5 @@ import android.os.Parcelable
 import android.os.IBinder
 import android.os.IInterface
 
-@MagicParcel
+@Parcelize
 class User(val binder: IBinder, val intf: IInterface?) : Parcelable

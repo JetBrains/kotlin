@@ -78,7 +78,7 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             declaration: KtFunction,
             diagnosticHolder: DiagnosticSink
     ) {
-        if (!containingClass.isMagicParcelable) return
+        if (!containingClass.isParcelize) return
 
         if (method.isWriteToParcel() && declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
             val reportElement = declaration.modifierList?.getModifier(KtTokens.OVERRIDE_KEYWORD) ?: declaration.nameIdentifier ?: declaration
@@ -93,7 +93,7 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (containingClass.isMagicParcelable
+        if (containingClass.isParcelize
                 && (declaration.hasDelegate() || bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property] == true)
                 && !property.annotations.hasAnnotation(TRANSIENT_FQNAME)
         ) {
@@ -103,7 +103,7 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
         // @JvmName is not applicable to property so we can check just the descriptor name
         if (property.name.asString() == "CREATOR" && property.findJvmFieldAnnotation() != null && containingClass.isCompanionObject) {
             val outerClass = containingClass.containingDeclaration as? ClassDescriptor
-            if (outerClass != null && outerClass.isMagicParcelable) {
+            if (outerClass != null && outerClass.isParcelize) {
                 diagnosticHolder.report(ErrorsAndroid.CREATOR_DEFINITION_IS_NOT_ALLOWED.on(declaration.nameIdentifier ?: declaration))
             }
         }
@@ -115,7 +115,7 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (!descriptor.isMagicParcelable) return
+        if (!descriptor.isParcelize) return
 
         if (declaration !is KtClass || (declaration.isAnnotation() || declaration.isInterface())) {
             val reportElement = (declaration as? KtClassOrObject)?.nameIdentifier ?: declaration
