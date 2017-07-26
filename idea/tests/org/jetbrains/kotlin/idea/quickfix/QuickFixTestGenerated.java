@@ -11527,6 +11527,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addRemainingBranchesEnumBackTicks.kt")
+        public void testAddRemainingBranchesEnumBackTicks() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesEnumBackTicks.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("addRemainingBranchesEnumStatement.kt")
         public void testAddRemainingBranchesEnumStatement() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesEnumStatement.kt");
@@ -11542,6 +11548,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("addRemainingBranchesSealed.kt")
         public void testAddRemainingBranchesSealed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesSealed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addRemainingBranchesSealedBackTicks.kt")
+        public void testAddRemainingBranchesSealedBackTicks() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesSealedBackTicks.kt");
             doTest(fileName);
         }
 
