@@ -73,7 +73,7 @@ object DefaultAnalyzerFacade : AnalyzerFacade() {
         }
 
         @Suppress("NAME_SHADOWING")
-        val resolver = setupResolverForProject(
+        val resolver = ResolverForProjectImpl   (
                 "sources for metadata serializer",
                 ProjectContext(project), listOf(moduleInfo), { DefaultAnalyzerFacade },
                 { ModuleContent(files, GlobalSearchScope.allScope(project)) },
