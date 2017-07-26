@@ -69,8 +69,7 @@ fun createModuleResolverProvider(
             ModuleContent(syntheticFilesByModule[module] ?: listOf(), module.contentScope())
         }
 
-        val jvmPlatformParameters = JvmPlatformParameters {
-            javaClass: JavaClass ->
+        val jvmPlatformParameters = JvmPlatformParameters { javaClass: JavaClass ->
             val psiClass = (javaClass as JavaClassImpl).psi
             psiClass.getNullableModuleInfo()
         }

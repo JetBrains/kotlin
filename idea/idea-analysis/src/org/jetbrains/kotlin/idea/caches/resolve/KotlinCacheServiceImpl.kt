@@ -98,22 +98,18 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val sdkFacade = GlobalFacade(facadeKey).facadeForSdk
         val globalContext = sdkFacade.globalContext.contextWithNewLockAndCompositeExceptionTracker()
         return ProjectResolutionFacade(
-                "facadeForScriptDependencies",
-                project, globalContext,
-                globalResolveSessionProvider(
-                        "dependencies of scripts",
-                        facadeKey,
-                        reuseDataFrom = sdkFacade,
-                        allModules = dependenciesModuleInfo.dependencies(),
-                        //TODO: provide correct trackers
-                        dependencies = listOf(
-                                LibraryModificationTracker.getInstance(project),
-                                ProjectRootModificationTracker.getInstance(project),
-                                ScriptDependenciesModificationTracker.getInstance(project)
-                        ),
-                        moduleFilter = { it == dependenciesModuleInfo },
-                        syntheticFiles = syntheticFiles
-                )
+                "facadeForScriptDependencies", "dependencies of scripts",
+                project, globalContext, facadeKey,
+                reuseDataFrom = sdkFacade,
+                allModules = dependenciesModuleInfo.dependencies(),
+                //TODO: provide correct trackers
+                dependencies = listOf(
+                        LibraryModificationTracker.getInstance(project),
+                        ProjectRootModificationTracker.getInstance(project),
+                        ScriptDependenciesModificationTracker.getInstance(project)
+                ),
+                moduleFilter = { it == dependenciesModuleInfo },
+                syntheticFiles = syntheticFiles
         )
     }
 
@@ -121,45 +117,35 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private inner class GlobalFacade(settings: PlatformAnalysisSettings) {
         private val sdkContext = GlobalContext()
         val facadeForSdk = ProjectResolutionFacade(
-                "facadeForSdk",
-                project, sdkContext,
-                globalResolveSessionProvider(
-                        "sdk ${settings.sdk}",
-                        settings,
-                        moduleFilter = { it is SdkInfo },
-                        dependencies = listOf(
-                                LibraryModificationTracker.getInstance(project),
-                                ProjectRootModificationTracker.getInstance(project)
-                        )
-                ))
+                "facadeForSdk", "sdk ${settings.sdk}",
+                project, sdkContext, settings,
+                moduleFilter = { it is SdkInfo },
+                dependencies = listOf(
+                       LibraryModificationTracker.getInstance(project),
+                       ProjectRootModificationTracker.getInstance(project)
+                ),
+                reuseDataFrom = null
+        )
 
         private val librariesContext = sdkContext.contextWithNewLockAndCompositeExceptionTracker()
         val facadeForLibraries = ProjectResolutionFacade(
-                "facadeForLibraries",
-                project, librariesContext,
-                globalResolveSessionProvider(
-                        "project libraries for platform ${settings.sdk}",
-                        settings,
-                        reuseDataFrom = facadeForSdk,
-                        moduleFilter = { it is LibraryInfo },
-                        dependencies = listOf(
-                                LibraryModificationTracker.getInstance(project),
-                                ProjectRootModificationTracker.getInstance(project)
-                        )
+                "facadeForLibraries", "project libraries for platform ${settings.sdk}",
+                project, librariesContext, settings,
+                reuseDataFrom = facadeForSdk,
+                moduleFilter = { it is LibraryInfo },
+                dependencies = listOf(
+                        LibraryModificationTracker.getInstance(project),
+                        ProjectRootModificationTracker.getInstance(project)
                 )
         )
 
-
         private val modulesContext = librariesContext.contextWithNewLockAndCompositeExceptionTracker()
         val facadeForModules = ProjectResolutionFacade(
-                "facadeForModules",
-                project, modulesContext,
-                globalResolveSessionProvider(
-                        "project source roots and libraries for platform ${settings.platform}",
-                        settings,
-                        reuseDataFrom = facadeForLibraries,
-                        moduleFilter = { !it.isLibraryClasses() },
-                        dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT))
+                "facadeForModules", "project source roots and libraries for platform ${settings.platform}",
+                project, modulesContext, settings,
+                reuseDataFrom = facadeForLibraries,
+                moduleFilter = { !it.isLibraryClasses() },
+                dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
         )
     }
 
@@ -209,14 +195,19 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             }
         }
         val dependenciesForSyntheticFileCache = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT, filesModificationTracker)
-        val debugName = "completion/highlighting in $syntheticFileModule for files ${files.joinToString { it.name }} for platform $targetPlatform"
+        val resolverDebugName = "completion/highlighting in $syntheticFileModule for files ${files.joinToString { it.name }} for platform $targetPlatform"
 
-        fun makeGlobalResolveSessionProvider(reuseDataFrom: ProjectResolutionFacade? = null,
-                                             moduleFilter: (IdeaModuleInfo) -> Boolean = { true },
-                                             allModules: Collection<IdeaModuleInfo>? = null
-        ): (GlobalContextImpl, Project) -> ModuleResolverProvider {
-            return globalResolveSessionProvider(
+        fun makeProjectResolutionFacade(debugName: String,
+                                        globalContext: GlobalContextImpl,
+                                        reuseDataFrom: ProjectResolutionFacade? = null,
+                                        moduleFilter: (IdeaModuleInfo) -> Boolean = { true },
+                                        allModules: Collection<IdeaModuleInfo>? = null
+        ): ProjectResolutionFacade {
+            return ProjectResolutionFacade(
                     debugName,
+                    resolverDebugName,
+                    project,
+                    globalContext,
                     settings,
                     syntheticFiles = files,
                     reuseDataFrom = reuseDataFrom,
@@ -231,26 +222,23 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 val dependentModules = syntheticFileModule.getDependentModules()
                 val modulesFacade = globalFacade(settings)
                 val globalContext = modulesFacade.globalContext.contextWithNewLockAndCompositeExceptionTracker()
-                ProjectResolutionFacade(
+                makeProjectResolutionFacade(
                         "facadeForSynthetic in ModuleSourceInfo",
-                        project, globalContext,
-                        makeGlobalResolveSessionProvider(
-                                reuseDataFrom = modulesFacade,
-                                moduleFilter = { it in dependentModules })
+                        globalContext,
+                        reuseDataFrom = modulesFacade,
+                        moduleFilter = { it in dependentModules }
                 )
             }
 
             syntheticFileModule is ScriptModuleInfo -> {
                 val facadeForScriptDependencies = getFacadeForScriptDependencies(syntheticFileModule)
                 val globalContext = facadeForScriptDependencies.globalContext.contextWithNewLockAndCompositeExceptionTracker()
-                ProjectResolutionFacade(
+                makeProjectResolutionFacade(
                         "facadeForSynthetic in ScriptModuleInfo",
-                        project, globalContext,
-                        makeGlobalResolveSessionProvider(
-                                reuseDataFrom = facadeForScriptDependencies,
-                                allModules = syntheticFileModule.dependencies(),
-                                moduleFilter = { it == syntheticFileModule }
-                        )
+                        globalContext,
+                        reuseDataFrom = facadeForScriptDependencies,
+                        allModules = syntheticFileModule.dependencies(),
+                        moduleFilter = { it == syntheticFileModule }
                 )
             }
             syntheticFileModule is ScriptDependenciesModuleInfo -> {
@@ -260,27 +248,23 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 // TODO: can be optimized by caching facadeForScriptDependencies
                 val facadeForScriptDependencies = createFacadeForScriptDependencies(syntheticFileModule.binariesModuleInfo, files)
                 val globalContext = facadeForScriptDependencies.globalContext.contextWithNewLockAndCompositeExceptionTracker()
-                ProjectResolutionFacade(
+                makeProjectResolutionFacade(
                         "facadeForSynthetic in ScriptDependenciesSourceModuleInfo",
-                        project, globalContext,
-                        makeGlobalResolveSessionProvider(
-                                reuseDataFrom = facadeForScriptDependencies,
-                                allModules = syntheticFileModule.dependencies(),
-                                moduleFilter = { it == syntheticFileModule }
-                        )
+                        globalContext,
+                        reuseDataFrom = facadeForScriptDependencies,
+                        allModules = syntheticFileModule.dependencies(),
+                        moduleFilter = { it == syntheticFileModule }
                 )
             }
 
             syntheticFileModule is LibrarySourceInfo || syntheticFileModule is NotUnderContentRootModuleInfo -> {
                 val librariesFacade = librariesFacade(settings)
                 val globalContext = librariesFacade.globalContext.contextWithNewLockAndCompositeExceptionTracker()
-                ProjectResolutionFacade(
+                makeProjectResolutionFacade(
                         "facadeForSynthetic in LibrarySourceInfo or NotUnderContentRootModuleInfo",
-                        project, globalContext,
-                        makeGlobalResolveSessionProvider(
-                                reuseDataFrom = librariesFacade,
-                                moduleFilter = { it == syntheticFileModule }
-                        )
+                        globalContext,
+                        reuseDataFrom = librariesFacade,
+                        moduleFilter = { it == syntheticFileModule }
                 )
             }
 
@@ -290,10 +274,9 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 // (file under both classes and sources root)
                 LOG.warn("Creating cache with synthetic files ($files) in classes of library $syntheticFileModule")
                 val globalContext = GlobalContext()
-                ProjectResolutionFacade(
+                makeProjectResolutionFacade(
                         "facadeForSynthetic for file under both classes and root",
-                        project, globalContext,
-                        makeGlobalResolveSessionProvider()
+                        globalContext
                 )
             }
 
@@ -392,19 +375,21 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 }
 
-private fun globalResolveSessionProvider(
+internal fun globalResolveSessionProvider(
         debugName: String,
+        project: Project,
+        globalContext: GlobalContextImpl,
         settings: PlatformAnalysisSettings,
         dependencies: Collection<Any>,
         moduleFilter: (IdeaModuleInfo) -> Boolean,
         reuseDataFrom: ProjectResolutionFacade? = null,
         syntheticFiles: Collection<KtFile> = listOf(),
         allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
-): (GlobalContextImpl, Project) -> ModuleResolverProvider = { globalContext, project ->
+): ModuleResolverProvider {
     val delegateResolverProvider = reuseDataFrom?.moduleResolverProvider
     val delegateResolverForProject = delegateResolverProvider?.resolverForProject ?: EmptyResolverForProject()
 
-    createModuleResolverProvider(
+    return createModuleResolverProvider(
             debugName, project, globalContext, settings,
             syntheticFiles, delegateResolverForProject, moduleFilter,
             allModules,
