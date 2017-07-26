@@ -49,8 +49,8 @@ class TreeBasedLiteralAnnotationArgument(name: Name,
                                          javac: JavacWrapper) : TreeBasedAnnotationArgument(name, javac), JavaLiteralAnnotationArgument
 
 class TreeBasedReferenceAnnotationArgument(name: Name,
-                                           val treePath: TreePath,
-                                           val field: JCTree.JCFieldAccess,
+                                           private val treePath: TreePath,
+                                           private val field: JCTree.JCFieldAccess,
                                            javac: JavacWrapper) : TreeBasedAnnotationArgument(name, javac), JavaEnumValueAnnotationArgument {
 
     override fun resolve(): JavaField? {
@@ -70,6 +70,25 @@ class TreeBasedArrayAnnotationArgument(val args: List<JavaAnnotationArgument>,
 
 }
 
+class TreeBasedJavaClassObjectAnnotationArgument(private val type: JCTree.JCExpression,
+                                                 name: Name,
+                                                 private val treePath: TreePath,
+                                                 javac: JavacWrapper): TreeBasedAnnotationArgument(name, javac), JavaClassObjectAnnotationArgument {
+
+    override fun getReferencedType(): JavaType =
+        TreeBasedType.create(type, javac.getTreePath(type, treePath.compilationUnit), javac)
+
+}
+
+class TreeBasedAnnotationAsAnnotationArgument(private val annotation: JCTree.JCAnnotation,
+                                              name: Name,
+                                              private val treePath: TreePath,
+                                              javac: JavacWrapper): TreeBasedAnnotationArgument(name, javac), JavaAnnotationAsAnnotationArgument {
+    override fun getAnnotation(): JavaAnnotation =
+        TreeBasedAnnotation(annotation, javac.getTreePath(annotation, treePath.compilationUnit), javac )
+
+}
+
 private fun createAnnotationArguments(annotation: TreeBasedAnnotation,
                                       javac: JavacWrapper): Collection<JavaAnnotationArgument> {
     val arguments = annotation.annotation.arguments
@@ -79,30 +98,62 @@ private fun createAnnotationArguments(annotation: TreeBasedAnnotation,
     if (arguments.size != methods.size) return emptyList()
 
     return methods.mapIndexedNotNull { index, it ->
-        createAnnotationArgument(arguments[index], it.name, annotation.treePath, javac)
+        createAnnotationArgument(arguments[index], it.name, annotation.treePath, javac, annotation)
     }
 }
 
 private fun createAnnotationArgument(argument: JCTree.JCExpression,
                                      name: Name,
                                      treePath: TreePath,
-                                     javac: JavacWrapper): JavaAnnotationArgument? =
+                                     javac: JavacWrapper,
+                                     annotation: TreeBasedAnnotation): JavaAnnotationArgument? =
         when (argument) {
             is JCTree.JCLiteral -> TreeBasedLiteralAnnotationArgument(name, argument.value, javac)
-            is JCTree.JCFieldAccess -> TreeBasedReferenceAnnotationArgument(name, treePath, argument, javac)
-            is JCTree.JCNewArray -> arrayAnnotationArguments(argument.elems, name, treePath, javac)
+            is JCTree.JCFieldAccess -> {
+                if (argument.name.contentEquals("class")) {
+                    TreeBasedJavaClassObjectAnnotationArgument(argument.selected, name, treePath, javac)
+                } else {
+                    TreeBasedReferenceAnnotationArgument(name, treePath, argument, javac)
+                }
+            }
+            is JCTree.JCAssign -> {
+                if (argument.rhs is JCTree.JCNewArray) {
+                    createAnnotationArgument(argument.rhs, name, treePath, javac, annotation)
+                }
+                else {
+                    resolveArgumentValue(argument.rhs, annotation, name, treePath, javac)
+                }
+            }
+            is JCTree.JCNewArray -> arrayAnnotationArguments(argument.elems, name, treePath, javac, annotation)
+            is JCTree.JCAnnotation -> TreeBasedAnnotationAsAnnotationArgument(argument, name, treePath, javac)
+            is JCTree.JCParens -> createAnnotationArgument(argument.expr, name, treePath, javac, annotation)
+            is JCTree.JCBinary -> resolveArgumentValue(argument, annotation, name, treePath, javac)
+            is JCTree.JCUnary -> resolveArgumentValue(argument, annotation, name, treePath, javac)
             else -> null
         }
+
+private fun resolveArgumentValue(argument: JCTree.JCExpression,
+                                 annotation: TreeBasedAnnotation,
+                                 name: Name,
+                                 treePath: TreePath,
+                                 javac: JavacWrapper): JavaAnnotationArgument? {
+    val containingAnnotation = annotation.resolve()
+    val type = containingAnnotation?.methods?.find { it.name == name }?.returnType ?: return null
+    val calculator = ValueCalculator(containingAnnotation, javac, treePath, type)
+
+    return calculator.getValue(argument)?.let { TreeBasedLiteralAnnotationArgument(name, it, javac) }
+}
 
 private fun arrayAnnotationArguments(values: List<JCTree.JCExpression>,
                                      name: Name,
                                      treePath: TreePath,
-                                     javac: JavacWrapper): JavaArrayAnnotationArgument =
+                                     javac: JavacWrapper,
+                                     annotation: TreeBasedAnnotation): JavaArrayAnnotationArgument =
         values.mapNotNull {
             if (it is JCTree.JCNewArray) {
-                arrayAnnotationArguments(it.elems, name, treePath, javac)
+                arrayAnnotationArguments(it.elems, name, treePath, javac, annotation)
             }
             else {
-                createAnnotationArgument(it, name, treePath, javac)
+                createAnnotationArgument(it, name, treePath, javac, annotation)
             }
         }.let { TreeBasedArrayAnnotationArgument(it, name, javac) }

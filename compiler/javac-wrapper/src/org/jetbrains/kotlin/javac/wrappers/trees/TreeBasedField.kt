@@ -60,7 +60,7 @@ class TreeBasedField(
 
     override val initializerValue: Any?
         get() = tree.init?.let { initExpr ->
-            if (hasConstantNotNullInitializer) getValue(initExpr) else null
+            if (hasConstantNotNullInitializer) ValueCalculator(containingClass, javac, treePath, type).getValue(initExpr) else null
         }
 
     override val hasConstantNotNullInitializer: Boolean
@@ -73,7 +73,13 @@ class TreeBasedField(
                          type.classifierQualifiedName == "java.lang.String"))
         } ?: false
 
-    private fun getValue(expr: JCTree.JCExpression): Any? {
+}
+
+class ValueCalculator(private val containingClass: JavaClass,
+                      private val javac: JavacWrapper,
+                      private val treePath: TreePath,
+                      private val type: JavaType) {
+    fun getValue(expr: JCTree.JCExpression): Any? {
         return when (expr) {
             is JCTree.JCLiteral -> {
                 if (expr.typetag == TypeTag.BOOLEAN) {
@@ -167,5 +173,4 @@ class TreeBasedField(
             else -> null
         }
     }
-
 }
