@@ -18,18 +18,18 @@ package org.jetbrains.kotlin.idea.actions.internal
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
-import org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider
+import org.jetbrains.kotlin.storage.CacheResetOnProcessCanceled
 
-class CompletionBindingContextCachingToggleAction : ToggleAction() {
-    override fun isSelected(e: AnActionEvent?): Boolean =
-            CompletionBindingContextProvider.ENABLED
+class CacheResetOnProcessCanceledToggleAction : ToggleAction() {
+    override fun isSelected(e: AnActionEvent): Boolean =
+            CacheResetOnProcessCanceled.enabled
 
-
-    override fun setSelected(e: AnActionEvent?, state: Boolean) {
-        CompletionBindingContextProvider.ENABLED = state
+    override fun setSelected(e: AnActionEvent, state: Boolean) {
+        CacheResetOnProcessCanceled.enabled = state
     }
 
     override fun update(e: AnActionEvent) {
+        super.update(e)
         e.presentation.isEnabledAndVisible = KotlinInternalMode.enabled
     }
 }
