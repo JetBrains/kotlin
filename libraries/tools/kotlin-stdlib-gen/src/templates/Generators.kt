@@ -837,6 +837,22 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("pairwise(transform: (a: T, b: T) -> R)") {
+        deprecate(Deprecation("Use zipWithNext instead", "zipWithNext(transform)"))
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        typeParam("R")
+        returns("List<R>")
+        inline(true)
+        body {
+            """
+            return zipWithNext(transform)
+            """
+        }
+        inline(false, Sequences)
+        returns(Sequences) { "Sequence<R>" }
+    }
+
+    templates add f("zipWithNext(transform: (a: T, b: T) -> R)") {
         since("1.2")
         only(Iterables, Sequences, CharSequences)
         typeParam("R")
@@ -847,7 +863,7 @@ fun generators(): List<GenericFunction> {
 
             The returned ${f.mapResult} is empty if this ${f.collection} contains less than two ${f.element.pluralize()}.
 
-            @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
+            @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
             """
         }
         returns("List<R>")
@@ -898,6 +914,17 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("pairwise()") {
+        deprecate(Deprecation("Use zipWithNext instead", "zipWithNext()"))
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        returns("List<Pair<T, T>>")
+        returns(Sequences) { "Sequence<Pair<T, T>>" }
+        body {
+            "return zipWithNext { a, b -> a to b }"
+        }
+    }
+
+    templates add f("zipWithNext()") {
         since("1.2")
         only(Iterables, Sequences, CharSequences)
         returns("List<Pair<T, T>>")
@@ -907,13 +934,13 @@ fun generators(): List<GenericFunction> {
 
             The returned ${f.mapResult} is empty if this ${f.collection} contains less than two ${f.element.pluralize()}.
 
-            @sample samples.collections.Collections.Transformations.pairwise
+            @sample samples.collections.Collections.Transformations.zipWithNext
             """
         }
         sequenceClassification(intermediate, stateless)
         returns(Sequences) { "Sequence<Pair<T, T>>" }
         body {
-            "return pairwise { a, b -> a to b }"
+            "return zipWithNext { a, b -> a to b }"
         }
     }
 

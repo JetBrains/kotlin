@@ -1867,38 +1867,16 @@ public inline fun <T> Iterable<T>.minusElement(element: T): List<T> {
     return minus(element)
 }
 
-/**
- * Returns a list of pairs of each two adjacent elements in this collection.
- * 
- * The returned list is empty if this collection contains less than two elements.
- * 
- * @sample samples.collections.Collections.Transformations.pairwise
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext()"))
 @SinceKotlin("1.2")
 public fun <T> Iterable<T>.pairwise(): List<Pair<T, T>> {
-    return pairwise { a, b -> a to b }
+    return zipWithNext { a, b -> a to b }
 }
 
-/**
- * Returns a list containing the results of applying the given [transform] function
- * to an each pair of two adjacent elements in this collection.
- * 
- * The returned list is empty if this collection contains less than two elements.
- * 
- * @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext(transform)"))
 @SinceKotlin("1.2")
 public inline fun <T, R> Iterable<T>.pairwise(transform: (a: T, b: T) -> R): List<R> {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return emptyList()
-    val result = mutableListOf<R>()
-    var current = iterator.next()
-    while (iterator.hasNext()) {
-        val next = iterator.next()
-        result.add(transform(current, next))
-        current = next
-    }
-    return result
+    return zipWithNext(transform)
 }
 
 /**
@@ -2133,6 +2111,40 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T
         list.add(transform(first.next(), second.next()))
     }
     return list
+}
+
+/**
+ * Returns a list of pairs of each two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.zipWithNext(): List<Pair<T, T>> {
+    return zipWithNext { a, b -> a to b }
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ */
+@SinceKotlin("1.2")
+public inline fun <T, R> Iterable<T>.zipWithNext(transform: (a: T, b: T) -> R): List<R> {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return emptyList()
+    val result = mutableListOf<R>()
+    var current = iterator.next()
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+        result.add(transform(current, next))
+        current = next
+    }
+    return result
 }
 
 /**

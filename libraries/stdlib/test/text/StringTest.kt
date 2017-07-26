@@ -839,16 +839,16 @@ class StringTest {
         assertContentEquals("abc", pair.second, "pair.second")
     }
 
-    @Test fun pairwise() = withOneCharSequenceArg { arg1 ->
-        assertEquals(listOf("ab", "bc"), arg1("abc").pairwise { a, b -> a.toString() + b })
-        assertTrue(arg1("").pairwise { a, b -> a.toString() + b }.isEmpty())
-        assertTrue(arg1("a").pairwise { a, b -> a.toString() + b }.isEmpty())
+    @Test fun zipWithNext() = withOneCharSequenceArg { arg1 ->
+        assertEquals(listOf("ab", "bc"), arg1("abc").zipWithNext { a: Char, b: Char -> a.toString() + b })
+        assertTrue(arg1("").zipWithNext { a: Char, b: Char -> a.toString() + b }.isEmpty())
+        assertTrue(arg1("a").zipWithNext { a: Char, b: Char -> a.toString() + b }.isEmpty())
     }
 
-    @Test fun pairwisePairs() = withOneCharSequenceArg { arg1 ->
-        assertEquals(listOf('a' to 'b', 'b' to 'c'), arg1("abc").pairwise())
-        assertTrue(arg1("").pairwise().isEmpty())
-        assertTrue(arg1("a").pairwise().isEmpty())
+    @Test fun zipWithNextPairs() = withOneCharSequenceArg { arg1 ->
+        assertEquals(listOf('a' to 'b', 'b' to 'c'), arg1("abc").zipWithNext())
+        assertTrue(arg1("").zipWithNext().isEmpty())
+        assertTrue(arg1("a").zipWithNext().isEmpty())
     }
 
 

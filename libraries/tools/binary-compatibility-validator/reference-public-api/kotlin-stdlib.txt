@@ -1616,6 +1616,8 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun zip (Ljava/lang/Iterable;Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun zip (Ljava/lang/Iterable;[Ljava/lang/Object;)Ljava/util/List;
 	public static final fun zip (Ljava/lang/Iterable;[Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun zipWithNext (Ljava/lang/Iterable;)Ljava/util/List;
+	public static final fun zipWithNext (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 }
 
 public abstract interface class kotlin/collections/Grouping {
@@ -2300,6 +2302,8 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun withIndex (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
 	public static final fun zip (Lkotlin/sequences/Sequence;Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
 	public static final fun zip (Lkotlin/sequences/Sequence;Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
+	public static final fun zipWithNext (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
+	public static final fun zipWithNext (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 }
 
 public final class kotlin/system/TimingKt {
@@ -2780,6 +2784,8 @@ public final class kotlin/text/StringsKt {
 	public static final fun withIndex (Ljava/lang/CharSequence;)Ljava/lang/Iterable;
 	public static final fun zip (Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/util/List;
 	public static final fun zip (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun zipWithNext (Ljava/lang/CharSequence;)Ljava/util/List;
+	public static final fun zipWithNext (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 }
 
 public final class kotlin/text/Typography {

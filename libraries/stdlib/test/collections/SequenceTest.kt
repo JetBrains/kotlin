@@ -197,23 +197,23 @@ public class SequenceTest {
         assertEquals("", sequenceOf(1).dropWhile { it < 200 }.joinToString(limit = 10))
     }
 
-    @Test fun pairwise() {
-        val deltas = fibonacci().pairwise { a, b -> b - a }
+    @Test fun zipWithNext() {
+        val deltas = fibonacci().zipWithNext { a: Int, b: Int -> b - a }
         // deltas of 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, ...
         // is the same sequence prepended by 1
         assertEquals(listOf(1) + fibonacci().take(9), deltas.take(10).toList())
 
-        ensureIsIntermediate(source = sequenceOf(1, 2)) { it.pairwise { a, b -> b - a } }
+        ensureIsIntermediate(source = sequenceOf(1, 2)) { it.zipWithNext { a: Int, b: Int -> b - a } }
     }
 
-    @Test fun pairwisePairs() {
-        val pairs: Sequence<Pair<String, String>> = sequenceOf("a", "b", "c", "d").pairwise()
+    @Test fun zipWithNextPairs() {
+        val pairs: Sequence<Pair<String, String>> = sequenceOf("a", "b", "c", "d").zipWithNext()
         assertEquals(listOf("a" to "b", "b" to "c", "c" to "d"), pairs.toList())
 
-        assertTrue(emptySequence<String>().pairwise().toList().isEmpty())
-        assertTrue(sequenceOf(1).pairwise().toList().isEmpty())
+        assertTrue(emptySequence<String>().zipWithNext().toList().isEmpty())
+        assertTrue(sequenceOf(1).zipWithNext().toList().isEmpty())
 
-        ensureIsIntermediate(source = sequenceOf(1, 2)) { it.pairwise() }
+        ensureIsIntermediate(source = sequenceOf(1, 2)) { it.zipWithNext() }
     }
 
     @Test

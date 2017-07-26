@@ -696,24 +696,11 @@ public header fun CharSequence.chunkedSequence(size: Int): Sequence<String>
 @SinceKotlin("1.2")
 public header fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R> 
 
-/**
- * Returns a list of pairs of each two adjacent characters in this char sequence.
- * 
- * The returned list is empty if this char sequence contains less than two characters.
- * 
- * @sample samples.collections.Collections.Transformations.pairwise
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext()"))
 @SinceKotlin("1.2")
 public header fun CharSequence.pairwise(): List<Pair<Char, Char>>
 
-/**
- * Returns a list containing the results of applying the given [transform] function
- * to an each pair of two adjacent characters in this char sequence.
- * 
- * The returned list is empty if this char sequence contains less than two characters.
- * 
- * @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext(transform)"))
 @SinceKotlin("1.2")
 public header inline fun <R> CharSequence.pairwise(transform: (a: Char, b: Char) -> R): List<R>
 
@@ -808,6 +795,27 @@ public header infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, C
  * Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
  */
 public header inline fun <V> CharSequence.zip(other: CharSequence, transform: (a: Char, b: Char) -> V): List<V>
+
+/**
+ * Returns a list of pairs of each two adjacent characters in this char sequence.
+ * 
+ * The returned list is empty if this char sequence contains less than two characters.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ */
+@SinceKotlin("1.2")
+public header fun CharSequence.zipWithNext(): List<Pair<Char, Char>>
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent characters in this char sequence.
+ * 
+ * The returned list is empty if this char sequence contains less than two characters.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ */
+@SinceKotlin("1.2")
+public header inline fun <R> CharSequence.zipWithNext(transform: (a: Char, b: Char) -> R): List<R>
 
 /**
  * Creates an [Iterable] instance that wraps the original char sequence returning its characters when being iterated.

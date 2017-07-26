@@ -1176,35 +1176,16 @@ public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence)
     return windowedSequence(size, size, transform)
 }
 
-/**
- * Returns a list of pairs of each two adjacent characters in this char sequence.
- * 
- * The returned list is empty if this char sequence contains less than two characters.
- * 
- * @sample samples.collections.Collections.Transformations.pairwise
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext()"))
 @SinceKotlin("1.2")
 public fun CharSequence.pairwise(): List<Pair<Char, Char>> {
-    return pairwise { a, b -> a to b }
+    return zipWithNext { a, b -> a to b }
 }
 
-/**
- * Returns a list containing the results of applying the given [transform] function
- * to an each pair of two adjacent characters in this char sequence.
- * 
- * The returned list is empty if this char sequence contains less than two characters.
- * 
- * @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext(transform)"))
 @SinceKotlin("1.2")
 public inline fun <R> CharSequence.pairwise(transform: (a: Char, b: Char) -> R): List<R> {
-    val size = length - 1
-    if (size < 1) return emptyList()
-    val result = ArrayList<R>(size)
-    for (index in 0..size - 1) {
-        result.add(transform(this[index], this[index + 1]))
-    }
-    return result
+    return zipWithNext(transform)
 }
 
 /**
@@ -1345,6 +1326,37 @@ public inline fun <V> CharSequence.zip(other: CharSequence, transform: (a: Char,
         list.add(transform(this[i], other[i]))
     }
     return list
+}
+
+/**
+ * Returns a list of pairs of each two adjacent characters in this char sequence.
+ * 
+ * The returned list is empty if this char sequence contains less than two characters.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ */
+@SinceKotlin("1.2")
+public fun CharSequence.zipWithNext(): List<Pair<Char, Char>> {
+    return zipWithNext { a, b -> a to b }
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent characters in this char sequence.
+ * 
+ * The returned list is empty if this char sequence contains less than two characters.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ */
+@SinceKotlin("1.2")
+public inline fun <R> CharSequence.zipWithNext(transform: (a: Char, b: Char) -> R): List<R> {
+    val size = length - 1
+    if (size < 1) return emptyList()
+    val result = ArrayList<R>(size)
+    for (index in 0..size - 1) {
+        result.add(transform(this[index], this[index + 1]))
+    }
+    return result
 }
 
 /**

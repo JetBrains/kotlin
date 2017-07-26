@@ -881,28 +881,11 @@ public header operator fun <T> Sequence<T>.minus(elements: Sequence<T>): Sequenc
 @kotlin.internal.InlineOnly
 public header inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T>
 
-/**
- * Returns a sequence of pairs of each two adjacent elements in this sequence.
- * 
- * The returned sequence is empty if this sequence contains less than two elements.
- * 
- * @sample samples.collections.Collections.Transformations.pairwise
- *
- * The operation is _intermediate_ and _stateless_.
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext()"))
 @SinceKotlin("1.2")
 public header fun <T> Sequence<T>.pairwise(): Sequence<Pair<T, T>>
 
-/**
- * Returns a sequence containing the results of applying the given [transform] function
- * to an each pair of two adjacent elements in this sequence.
- * 
- * The returned sequence is empty if this sequence contains less than two elements.
- * 
- * @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
- *
- * The operation is _intermediate_ and _stateless_.
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext(transform)"))
 @SinceKotlin("1.2")
 public header fun <T, R> Sequence<T>.pairwise(transform: (a: T, b: T) -> R): Sequence<R>
 
@@ -1008,6 +991,31 @@ public header infix fun <T, R> Sequence<T>.zip(other: Sequence<R>): Sequence<Pai
  * The operation is _intermediate_ and _stateless_.
  */
 public header fun <T, R, V> Sequence<T>.zip(other: Sequence<R>, transform: (a: T, b: R) -> V): Sequence<V>
+
+/**
+ * Returns a sequence of pairs of each two adjacent elements in this sequence.
+ * 
+ * The returned sequence is empty if this sequence contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
+@SinceKotlin("1.2")
+public header fun <T> Sequence<T>.zipWithNext(): Sequence<Pair<T, T>>
+
+/**
+ * Returns a sequence containing the results of applying the given [transform] function
+ * to an each pair of two adjacent elements in this sequence.
+ * 
+ * The returned sequence is empty if this sequence contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
+@SinceKotlin("1.2")
+public header fun <T, R> Sequence<T>.zipWithNext(transform: (a: T, b: T) -> R): Sequence<R>
 
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.

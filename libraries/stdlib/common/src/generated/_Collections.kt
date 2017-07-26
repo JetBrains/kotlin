@@ -953,24 +953,11 @@ public header operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T>
 @kotlin.internal.InlineOnly
 public header inline fun <T> Iterable<T>.minusElement(element: T): List<T>
 
-/**
- * Returns a list of pairs of each two adjacent elements in this collection.
- * 
- * The returned list is empty if this collection contains less than two elements.
- * 
- * @sample samples.collections.Collections.Transformations.pairwise
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext()"))
 @SinceKotlin("1.2")
 public header fun <T> Iterable<T>.pairwise(): List<Pair<T, T>>
 
-/**
- * Returns a list containing the results of applying the given [transform] function
- * to an each pair of two adjacent elements in this collection.
- * 
- * The returned list is empty if this collection contains less than two elements.
- * 
- * @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
- */
+@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext(transform)"))
 @SinceKotlin("1.2")
 public header inline fun <T, R> Iterable<T>.pairwise(transform: (a: T, b: T) -> R): List<R>
 
@@ -1086,6 +1073,27 @@ public header infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T,
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public header inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): List<V>
+
+/**
+ * Returns a list of pairs of each two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ */
+@SinceKotlin("1.2")
+public header fun <T> Iterable<T>.zipWithNext(): List<Pair<T, T>>
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ */
+@SinceKotlin("1.2")
+public header inline fun <T, R> Iterable<T>.zipWithNext(transform: (a: T, b: T) -> R): List<R>
 
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.

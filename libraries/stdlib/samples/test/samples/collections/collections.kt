@@ -81,18 +81,18 @@ class Collections {
 
 
         @Sample
-        fun pairwise() {
+        fun zipWithNext() {
             val letters = ('a'..'f').toList()
-            val pairs = letters.pairwise()
+            val pairs = letters.zipWithNext()
 
             assertPrints(letters, "[a, b, c, d, e, f]")
             assertPrints(pairs, "[(a, b), (b, c), (c, d), (d, e), (e, f)]")
         }
 
         @Sample
-        fun pairwiseToFindDeltas() {
+        fun zipWithNextToFindDeltas() {
             val values = listOf(1, 4, 9, 16, 25, 36)
-            val deltas = values.pairwise { a, b -> b - a }
+            val deltas = values.zipWithNext { a, b -> b - a }
 
             assertPrints(deltas, "[3, 5, 7, 9, 11]")
         }
