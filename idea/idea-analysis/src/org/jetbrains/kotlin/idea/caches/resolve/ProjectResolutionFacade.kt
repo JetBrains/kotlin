@@ -22,6 +22,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtElement
@@ -49,16 +50,18 @@ internal class ProjectResolutionFacade(
     )
 
     private fun computeModuleResolverProvider(): ModuleResolverProvider {
-        return globalResolveSessionProvider(
+        val delegateResolverProvider = reuseDataFrom?.moduleResolverProvider
+        val delegateResolverForProject = delegateResolverProvider?.resolverForProject ?: EmptyResolverForProject()
+        return createModuleResolverProvider(
                 resolverDebugName,
                 project,
                 globalContext,
                 settings,
-                moduleFilter = moduleFilter,
-                dependencies = dependencies,
-                reuseDataFrom = reuseDataFrom,
+                syntheticFiles = syntheticFiles,
+                delegateResolver = delegateResolverForProject, moduleFilter = moduleFilter,
                 allModules = allModules,
-                syntheticFiles = syntheticFiles
+                providedBuiltIns = delegateResolverProvider?.builtIns,
+                dependencies = dependencies
         )
     }
 

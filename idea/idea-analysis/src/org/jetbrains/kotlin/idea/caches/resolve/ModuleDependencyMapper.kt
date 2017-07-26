@@ -64,37 +64,33 @@ fun createModuleResolverProvider(
 
     val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)
 
-    fun createResolverForProject(): ResolverForProject<IdeaModuleInfo> {
-        val modulesContent = { module: IdeaModuleInfo ->
-            ModuleContent(syntheticFilesByModule[module] ?: listOf(), module.contentScope())
-        }
-
-        val jvmPlatformParameters = JvmPlatformParameters { javaClass: JavaClass ->
-            val psiClass = (javaClass as JavaClassImpl).psi
-            psiClass.getNullableModuleInfo()
-        }
-
-        return AnalyzerFacade.setupResolverForProject(
-                debugName, globalContext.withProject(project), modulesToCreateResolversFor,
-                { module -> AnalyzerFacadeProvider.getAnalyzerFacade(module.platform ?: analysisSettings.platform) },
-                modulesContent, jvmPlatformParameters,
-                IDELanguageSettingsProvider,
-                IdeaEnvironment, builtIns,
-                delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
-                analysisSettings.sdk?.let { SdkInfo(project, it) },
-                modulePlatforms = { module -> module.platform?.multiTargetPlatform },
-                packageOracleFactory = project.service<IdePackageOracleFactory>()
-        )
+    val modulesContent = { module: IdeaModuleInfo ->
+        ModuleContent(syntheticFilesByModule[module] ?: listOf(), module.contentScope())
     }
 
-    val resolverForProject = createResolverForProject()
+    val jvmPlatformParameters = JvmPlatformParameters { javaClass: JavaClass ->
+        val psiClass = (javaClass as JavaClassImpl).psi
+        psiClass.getNullableModuleInfo()
+    }
+
+    val resolverForProject = AnalyzerFacade.setupResolverForProject(
+            debugName, globalContext.withProject(project), modulesToCreateResolversFor,
+            { module -> AnalyzerFacadeProvider.getAnalyzerFacade(module.platform ?: analysisSettings.platform) },
+            modulesContent, jvmPlatformParameters,
+                IDELanguageSettingsProvider,
+                IdeaEnvironment, builtIns,
+            delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
+            analysisSettings.sdk?.let { SdkInfo(project, it) },
+            modulePlatforms = { module -> module.platform?.multiTargetPlatform },
+            packageOracleFactory = project.service<IdePackageOracleFactory>()
+    )
 
     if (providedBuiltIns == null && builtIns is JvmBuiltIns) {
         val sdkModuleDescriptor = analysisSettings.sdk!!.let { resolverForProject.descriptorForModule(SdkInfo(project, it)) }
         builtIns.initialize(sdkModuleDescriptor, analysisSettings.isAdditionalBuiltInFeaturesSupported)
     }
 
-    return ModuleResolverProviderImpl(
+    return ModuleResolverProvider(
             resolverForProject,
             builtIns,
             dependencies + listOf(globalContext.exceptionTracker)
@@ -137,14 +133,8 @@ fun getAllProjectSdks(): Collection<Sdk> {
 }
 
 
-interface ModuleResolverProvider {
-    val resolverForProject: ResolverForProject<IdeaModuleInfo>
-    val builtIns: KotlinBuiltIns
-    val cacheDependencies: Collection<Any>
-}
-
-class ModuleResolverProviderImpl(
-        override val resolverForProject: ResolverForProject<IdeaModuleInfo>,
-        override val builtIns: KotlinBuiltIns,
-        override val cacheDependencies: Collection<Any>
-) : ModuleResolverProvider
+class ModuleResolverProvider(
+        val resolverForProject: ResolverForProject<IdeaModuleInfo>,
+        val builtIns: KotlinBuiltIns,
+        val cacheDependencies: Collection<Any>
+)
