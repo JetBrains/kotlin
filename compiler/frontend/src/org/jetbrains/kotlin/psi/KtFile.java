@@ -43,7 +43,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnnotated, KtElement, PsiClassOwner, PsiNamedElement {
+public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnnotated, KtElement, PsiClassOwner, PsiNamedElement, PsiModifiableCodeBlock {
 
     private final boolean isCompiled;
     private Boolean isScript = null;
@@ -293,5 +293,11 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
     @Override
     public KtElement getPsiOrParent() {
         return this;
+    }
+
+    @Override
+    public boolean shouldChangeModificationCount(PsiElement place) {
+        // Modification count for Kotlin files is tracked entirely by KotlinCodeBlockModificationListener
+        return false;
     }
 }
