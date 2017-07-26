@@ -1,15 +1,15 @@
 <component name="libraryTable">
   <library name="uast-java">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/uast-common.jar!/" />
-      <root url="jar://$PROJECT_DIR$/dependencies/uast-java.jar!/" />
       <root url="jar://$PROJECT_DIR$/dependencies/uast-tests.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/idea.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/openapi.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/dependencies/uast-common-sources.jar!/" />
-      <root url="jar://$PROJECT_DIR$/dependencies/uast-java-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/dependencies/uast-tests-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
     </SOURCES>
   </library>
 </component>
