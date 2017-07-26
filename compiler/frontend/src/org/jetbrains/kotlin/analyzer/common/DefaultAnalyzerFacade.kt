@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmen
  * A facade that is used to analyze common (platform-independent) modules in multi-platform projects.
  * See [TargetPlatform.Default]
  */
-object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
+object DefaultAnalyzerFacade : AnalyzerFacade() {
     private class SourceModuleInfo(
             override val name: Name,
             override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
