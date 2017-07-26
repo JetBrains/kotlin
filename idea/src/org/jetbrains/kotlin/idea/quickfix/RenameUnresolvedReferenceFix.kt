@@ -82,8 +82,6 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
                && element.getStrictParentOfType<KtTypeReference>() == null
     }
 
-    private fun KtExpression.isCallee() = getParentOfTypeAndBranch<KtCallElement> { calleeExpression } != null
-
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         if (editor == null) return

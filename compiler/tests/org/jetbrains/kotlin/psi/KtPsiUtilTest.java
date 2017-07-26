@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
@@ -107,6 +109,10 @@ public class KtPsiUtilTest extends KotlinTestWithEnvironment {
         checkIsSelectorInQualified();
     }
 
+    public void testIsCallee() {
+        checkExpression(KtPsiUtilKt::isCallee);
+    }
+
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
         return KotlinCoreEnvironment.createForTests(
@@ -124,6 +130,10 @@ public class KtPsiUtilTest extends KotlinTestWithEnvironment {
     }
 
     private void checkIsSelectorInQualified() {
+        checkExpression(KtPsiUtil::isSelectorInQualified);
+    }
+
+    private void checkExpression(Function1<KtSimpleNameExpression, Boolean> checkedFunction) {
         String trueResultString = "/*true*/";
         String falseResultString = "/*false*/";
 
@@ -144,7 +154,7 @@ public class KtPsiUtilTest extends KotlinTestWithEnvironment {
 
             Assert.assertNotNull("Can't find expression in text:\n" + modifiedWithOffset, expression);
             Assert.assertSame(expected + " result was expected at\n" + modifiedWithOffset,
-                              expected, KtPsiUtil.isSelectorInQualified(expression));
+                              expected, checkedFunction.invoke(expression));
         }
     }
 }
