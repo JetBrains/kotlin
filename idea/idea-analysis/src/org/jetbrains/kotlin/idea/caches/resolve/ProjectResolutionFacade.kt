@@ -30,17 +30,37 @@ import org.jetbrains.kotlin.resolve.CompositeBindingContext
 
 internal class ProjectResolutionFacade(
         val debugString: String,
+        val resolverDebugName: String,
         val project: Project,
         val globalContext: GlobalContextImpl,
-        computeModuleResolverProvider: (GlobalContextImpl, Project) -> ModuleResolverProvider
+        val settings: PlatformAnalysisSettings,
+        val reuseDataFrom: ProjectResolutionFacade?,
+        val moduleFilter: (IdeaModuleInfo) -> Boolean,
+        val dependencies: List<Any>,
+        val syntheticFiles: Collection<KtFile> = listOf(),
+        val allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
 ) {
     private val cachedValue = CachedValuesManager.getManager(project).createCachedValue(
             {
-                val resolverProvider = computeModuleResolverProvider(globalContext, project)
+                val resolverProvider = computeModuleResolverProvider()
                 CachedValueProvider.Result.create(resolverProvider, resolverProvider.cacheDependencies)
             },
             /* trackValue = */ false
     )
+
+    private fun computeModuleResolverProvider(): ModuleResolverProvider {
+        return globalResolveSessionProvider(
+                resolverDebugName,
+                project,
+                globalContext,
+                settings,
+                moduleFilter = moduleFilter,
+                dependencies = dependencies,
+                reuseDataFrom = reuseDataFrom,
+                allModules = allModules,
+                syntheticFiles = syntheticFiles
+        )
+    }
 
     val moduleResolverProvider: ModuleResolverProvider
         get() = globalContext.storageManager.compute { cachedValue.value }
