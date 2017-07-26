@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
-import org.jetbrains.kotlin.descriptors.impl.LazyModuleDependencies
+import org.jetbrains.kotlin.descriptors.impl.ModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.NotNullLazyValue
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 import kotlin.coroutines.experimental.buildSequence
@@ -183,34 +184,10 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
                 val moduleDescriptor = resolverForProject.descriptorForModule(module)
                 moduleDescriptor.setDependencies(LazyModuleDependencies(
                         storageManager,
-                        computeDependencies = {
-                            buildSequence {
-                                if (firstDependency != null) {
-                                    yield(resolverForProject.descriptorForModule(firstDependency))
-                                }
-                                if (module.dependencyOnBuiltIns() == ModuleInfo.DependencyOnBuiltIns.AFTER_SDK) {
-                                    yield(moduleDescriptor.builtIns.builtInsModule)
-                                }
-                                for (dependency in module.dependencies()) {
-                                    yield(resolverForProject.descriptorForModule(dependency as M))
-                                }
-                                if (module.dependencyOnBuiltIns() == ModuleInfo.DependencyOnBuiltIns.LAST) {
-                                    yield(moduleDescriptor.builtIns.builtInsModule)
-                                }
-                            }.toList()
-                        },
-                        computeModulesWhoseInternalsAreVisible = {
-                            module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
-                                resolverForProject.descriptorForModule(it as M)
-                            }
-                        },
-                        computeImplementingModules = {
-                            if (modulePlatforms(module) != MultiTargetPlatform.Common) emptySet()
-                            else modules
-                                    .filter { modulePlatforms(it) != MultiTargetPlatform.Common && module in it.dependencies() }
-                                    .mapTo(mutableSetOf(), resolverForProject::descriptorForModule)
-                        }
-                ))
+                        module,
+                        modulePlatforms,
+                        firstDependency,
+                        resolverForProject))
             }
 
             for (module in modules) {
@@ -250,6 +227,50 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
 
     abstract val targetPlatform: TargetPlatform
 }
+
+class LazyModuleDependencies<M: ModuleInfo>(
+        storageManager: StorageManager,
+        module: M,
+        modulePlatforms: (M) -> MultiTargetPlatform?,
+        firstDependency: M? = null,
+        resolverForProject: ResolverForProjectImpl<M>
+) : ModuleDependencies {
+    private val dependencies = storageManager.createLazyValue {
+        val moduleDescriptor = resolverForProject.descriptorForModule(module)
+        buildSequence {
+            if (firstDependency != null) {
+                yield(resolverForProject.descriptorForModule(firstDependency))
+            }
+            if (module.dependencyOnBuiltIns() == ModuleInfo.DependencyOnBuiltIns.AFTER_SDK) {
+                yield(moduleDescriptor.builtIns.builtInsModule)
+            }
+            for (dependency in module.dependencies()) {
+                yield(resolverForProject.descriptorForModule(dependency as M))
+            }
+            if (module.dependencyOnBuiltIns() == ModuleInfo.DependencyOnBuiltIns.LAST) {
+                yield(moduleDescriptor.builtIns.builtInsModule)
+            }
+        }.toList()
+    }
+
+    private val visibleInternals = storageManager.createLazyValue {
+        module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
+            resolverForProject.descriptorForModule(it as M)
+        }
+    }
+
+    private val implementingModules = storageManager.createLazyValue {
+        if (modulePlatforms(module) != MultiTargetPlatform.Common) emptySet<ModuleDescriptorImpl>()
+        else resolverForProject.descriptorByModule.keys
+                .filter { modulePlatforms(it) != MultiTargetPlatform.Common && module in it.dependencies() }
+                .mapTo(mutableSetOf(), resolverForProject::descriptorForModule)
+    }
+
+    override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
+    override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl> get() = visibleInternals()
+    override val allImplementingModules: Set<ModuleDescriptorImpl> get() = implementingModules()
+}
+
 
 private class DelegatingPackageFragmentProvider(
         moduleContent: ModuleContent,

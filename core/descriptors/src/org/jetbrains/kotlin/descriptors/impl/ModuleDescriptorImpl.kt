@@ -135,18 +135,3 @@ class ModuleDependenciesImpl(
 ) : ModuleDependencies {
     override val allImplementingModules: Set<ModuleDescriptorImpl> = emptySet()
 }
-
-class LazyModuleDependencies(
-        storageManager: StorageManager,
-        computeDependencies: () -> List<ModuleDescriptorImpl>,
-        computeModulesWhoseInternalsAreVisible: () -> Set<ModuleDescriptorImpl>,
-        computeImplementingModules: () -> Set<ModuleDescriptorImpl>
-) : ModuleDependencies {
-    private val dependencies = storageManager.createLazyValue(computeDependencies)
-    private val visibleInternals = storageManager.createLazyValue(computeModulesWhoseInternalsAreVisible)
-    private val implementingModules = storageManager.createLazyValue(computeImplementingModules)
-
-    override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
-    override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl> get() = visibleInternals()
-    override val allImplementingModules: Set<ModuleDescriptorImpl> get() = implementingModules()
-}
