@@ -884,18 +884,27 @@ class StringTest {
         val size = 7
         val data = arg1("abcdefg")
         val result = data.windowed(4, 2)
-        assertEquals(listOf("abcd", "cdef", "efg", "g"), result)
+        assertEquals(listOf("abcd", "cdef"), result)
+
+        val resultPartial = data.windowed(4, 2, partialWindows = true)
+        assertEquals(listOf("abcd", "cdef", "efg", "g"), resultPartial)
 
         val result2 = data.windowed(2, 3) { it.reversed().toString() }
-        assertEquals(listOf("ba", "ed", "g"), result2)
+        assertEquals(listOf("ba", "ed"), result2)
+        val result2partial = data.windowed(2, 3, partialWindows = true) { it.reversed().toString() }
+        assertEquals(listOf("ba", "ed", "g"), result2partial)
 
-        assertEquals(data.chunked(2), data.windowed(2, 2))
+        assertEquals(data.chunked(2), data.windowed(2, 2, partialWindows = true))
 
         assertEquals(data.take(2), data.windowed(2, size).single())
         assertEquals(data.take(3), data.windowed(3, size + 3).single())
 
-        val result3 = data.windowed(size, 1)
-        result3.forEachIndexed { index, window ->
+
+        assertEquals(data.toString(), data.windowed(size, 1).single())
+        assertTrue(data.windowed(size + 1, 1).isEmpty())
+
+        val result3partial = data.windowed(size, 1, partialWindows = true)
+        result3partial.forEachIndexed { index, window ->
             assertEquals(size - index, window.length, "size of window#$index")
         }
 
@@ -907,8 +916,11 @@ class StringTest {
         }
 
         for (window in 1..size + 1) {
-            for (step in 1..size + 1)
-            compare(data.windowed(window, step).iterator(), data.windowedSequence(window, step).iterator()) { iteratorBehavior() }
+            for (step in 1..size + 1) {
+                compare(data.windowed(window, step).iterator(), data.windowedSequence(window, step).iterator()) { iteratorBehavior() }
+                compare(data.windowed(window, step, partialWindows = true).iterator(),
+                        data.windowedSequence(window, step, partialWindows = true).iterator()) { iteratorBehavior() }
+            }
         }
     }
 
