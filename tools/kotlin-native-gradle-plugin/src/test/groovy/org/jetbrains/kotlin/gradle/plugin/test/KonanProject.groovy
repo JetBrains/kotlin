@@ -164,7 +164,6 @@ class KonanInteropProject extends KonanProject {
     File generateDefFile(String fileName) {
         return generateDefFile(fileName, """
             headers = stdio.h stdlib.h string.h
-            excludeDependentModules.osx = true
             """.stripIndent()
         )
     }
