@@ -137,7 +137,7 @@ fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
 }
 
 fun CommonCompilerArguments.convertPathsToSystemIndependent() {
-    pluginClasspaths?.forEachIndexed { index, s -> pluginClasspaths[index] = PathUtil.toSystemIndependentName(s) }
+    pluginClasspaths?.forEachIndexed { index, s -> pluginClasspaths!![index] = PathUtil.toSystemIndependentName(s) }
 
     when (this) {
         is K2JVMCompilerArguments -> {
@@ -145,7 +145,7 @@ fun CommonCompilerArguments.convertPathsToSystemIndependent() {
             classpath = PathUtil.toSystemIndependentName(classpath)
             jdkHome = PathUtil.toSystemIndependentName(jdkHome)
             kotlinHome = PathUtil.toSystemIndependentName(kotlinHome)
-            friendPaths?.forEachIndexed { index, s -> friendPaths[index] = PathUtil.toSystemIndependentName(s) }
+            friendPaths?.forEachIndexed { index, s -> friendPaths!![index] = PathUtil.toSystemIndependentName(s) }
             declarationsOutputPath = PathUtil.toSystemIndependentName(declarationsOutputPath)
         }
 
