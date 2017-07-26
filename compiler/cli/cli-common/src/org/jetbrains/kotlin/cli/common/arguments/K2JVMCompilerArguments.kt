@@ -14,78 +14,76 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.arguments;
+package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.config.AnalysisFlag;
-import org.jetbrains.kotlin.config.Jsr305State;
-import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.Jsr305State
+import org.jetbrains.kotlin.config.JvmTarget
 
-import java.util.Map;
-
-@SuppressWarnings("WeakerAccess")
-public class K2JVMCompilerArguments extends CommonCompilerArguments {
-    public static final long serialVersionUID = 0L;
+class K2JVMCompilerArguments : CommonCompilerArguments() {
+    companion object {
+        @JvmStatic private val serialVersionUID = 0L
+    }
 
     @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated class files")
-    public String destination;
+    var destination: String? = null
 
     @Argument(value = "-classpath", shortName = "-cp", valueDescription = "<path>", description = "Paths where to find user class files")
-    public String classpath;
+    var classpath: String? = null
 
-    @GradleOption(DefaultValues.BooleanFalseDefault.class)
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-include-runtime", description = "Include Kotlin runtime in to resulting .jar")
-    public boolean includeRuntime;
+    var includeRuntime: Boolean = false
 
-    @GradleOption(DefaultValues.StringNullDefault.class)
+    @GradleOption(DefaultValues.StringNullDefault::class)
     @Argument(
             value = "-jdk-home",
             valueDescription = "<path>",
             description = "Path to JDK home directory to include into classpath, if differs from default JAVA_HOME"
     )
-    public String jdkHome;
+    var jdkHome: String? = null
 
-    @GradleOption(DefaultValues.BooleanFalseDefault.class)
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-no-jdk", description = "Don't include Java runtime into classpath")
-    public boolean noJdk;
+    var noJdk: Boolean = false
 
-    @GradleOption(DefaultValues.BooleanTrueDefault.class)
+    @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-no-stdlib", description = "Don't include Kotlin runtime into classpath")
-    public boolean noStdlib;
+    var noStdlib: Boolean = false
 
-    @GradleOption(DefaultValues.BooleanTrueDefault.class)
+    @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-no-reflect", description = "Don't include Kotlin reflection implementation into classpath")
-    public boolean noReflect;
+    var noReflect: Boolean = false
 
     @Argument(value = "-script", description = "Evaluate the script file")
-    public boolean script;
+    var script: Boolean = false
 
     @Argument(
             value = "-script-templates",
             valueDescription = "<fully qualified class name[,]>",
             description = "Script definition template classes"
     )
-    public String[] scriptTemplates;
+    var scriptTemplates: Array<String>? = null
 
     @Argument(value = "-module-name", description = "Module name")
-    public String moduleName;
+    var moduleName: String? = null
 
-    @GradleOption(DefaultValues.JvmTargetVersions.class)
+    @GradleOption(DefaultValues.JvmTargetVersions::class)
     @Argument(
             value = "-jvm-target",
             valueDescription = "<version>",
             description = "Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6"
     )
-    public String jvmTarget = JvmTarget.DEFAULT.getDescription();
+    var jvmTarget: String? = JvmTarget.DEFAULT.description
 
-    @GradleOption(DefaultValues.BooleanFalseDefault.class)
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-java-parameters", description = "Generate metadata for Java 1.8 reflection on method parameters")
-    public boolean javaParameters;
+    var javaParameters: Boolean = false
 
     // Advanced options
 
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
-    public String javaModulePath;
+    var javaModulePath: String? = null
 
     @Argument(
             value = "-Xadd-modules",
@@ -93,89 +91,84 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
             description = "Root modules to resolve in addition to the initial modules,\n" +
                           "or all modules on the module path if <module> is ALL-MODULE-PATH"
     )
-    public String[] additionalJavaModules;
+    var additionalJavaModules: Array<String>? = null
 
     @Argument(value = "-Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
-    public boolean noCallAssertions;
+    var noCallAssertions: Boolean = false
 
     @Argument(value = "-Xno-param-assertions", description = "Don't generate not-null assertions on parameters of methods accessible from Java")
-    public boolean noParamAssertions;
+    var noParamAssertions: Boolean = false
 
     @Argument(value = "-Xno-optimize", description = "Disable optimizations")
-    public boolean noOptimize;
+    var noOptimize: Boolean = false
 
     @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
-    public boolean reportPerf;
+    var reportPerf: Boolean = false
 
     @Argument(value = "-Xbuild-file", deprecatedName = "-module", valueDescription = "<path>", description = "Path to the .xml build file to compile")
-    public String buildFile;
+    var buildFile: String? = null
 
     @Argument(value = "-Xmultifile-parts-inherit", description = "Compile multifile classes as a hierarchy of parts and facade")
-    public boolean inheritMultifileParts;
+    var inheritMultifileParts: Boolean = false
 
     @Argument(value = "-Xskip-runtime-version-check", description = "Allow Kotlin runtime libraries of incompatible versions in the classpath")
-    public boolean skipRuntimeVersionCheck;
+    var skipRuntimeVersionCheck: Boolean = false
 
     @Argument(
             value = "-Xuse-old-class-files-reading",
             description = "Use old class files reading implementation " +
                           "(may slow down the build and should be used in case of problems with the new implementation)"
     )
-    public boolean useOldClassFilesReading;
+    var useOldClassFilesReading: Boolean = false
 
     @Argument(
             value = "-Xdump-declarations-to",
             valueDescription = "<path>",
             description = "Path to JSON file to dump Java to Kotlin declaration mappings"
     )
-    public String declarationsOutputPath;
+    var declarationsOutputPath: String? = null
 
     @Argument(value = "-Xsingle-module", description = "Combine modules for source files and binary dependencies into a single module")
-    public boolean singleModule;
+    var singleModule: Boolean = false
 
     @Argument(value = "-Xadd-compiler-builtins", description = "Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)")
-    public boolean addCompilerBuiltIns;
+    var addCompilerBuiltIns: Boolean = false
 
     @Argument(value = "-Xload-builtins-from-dependencies", description = "Load definitions of built-in declarations from module dependencies, instead of from the compiler")
-    public boolean loadBuiltInsFromDependencies;
+    var loadBuiltInsFromDependencies: Boolean = false
 
     @Argument(
             value = "-Xscript-resolver-environment",
             valueDescription = "<key=value[,]>",
             description = "Script resolver environment in key-value pairs (the value could be quoted and escaped)"
     )
-    public String[] scriptResolverEnvironment;
+    var scriptResolverEnvironment: Array<String>? = null
 
     // Javac options
     @Argument(value = "-Xuse-javac", description = "Use javac for Java source and class files analysis")
-    public boolean useJavac;
+    var useJavac: Boolean = false
 
     @Argument(
             value = "-Xjavac-arguments",
             valueDescription = "<option[,]>",
             description = "Java compiler arguments")
-    public String[] javacArguments;
+    var javacArguments: Array<String>? = null
 
     @Argument(
             value = "-Xjsr305-annotations",
             valueDescription = "{ignore|enable}",
             description = "Specify global behavior for JSR-305 nullability annotations: ignore, or treat as other supported nullability annotations"
     )
-    public String jsr305GlobalReportLevel = Jsr305State.DEFAULT.getDescription();
+    var jsr305GlobalReportLevel: String? = Jsr305State.DEFAULT.description
 
     // Paths to output directories for friend modules.
-    public String[] friendPaths;
+    var friendPaths: Array<String>? = null
 
-    @Override
-    @NotNull
-    public Map<AnalysisFlag<?>, Object> configureAnalysisFlags() {
-        Map<AnalysisFlag<?>, Object> result = super.configureAnalysisFlags();
-        for (Jsr305State state : Jsr305State.values()) {
-            if (state.getDescription().equals(jsr305GlobalReportLevel)) {
-                result.put(AnalysisFlag.getLoadJsr305Annotations(), state);
-                break;
-            }
+    override fun configureAnalysisFlags(): MutableMap<AnalysisFlag<*>, Any> {
+        val result = super.configureAnalysisFlags()
+        Jsr305State.values().firstOrNull { it.description == jsr305GlobalReportLevel }?.let {
+            result.put(AnalysisFlag.loadJsr305Annotations, it)
         }
-        return result;
+        return result
     }
 }

@@ -14,28 +14,30 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.arguments;
+package org.jetbrains.kotlin.cli.common.arguments
 
-public class K2JSDceArguments extends CommonToolArguments {
-    private static final long serialVersionUID = 0;
+class K2JSDceArguments : CommonToolArguments() {
+    companion object {
+        @JvmStatic private val serialVersionUID = 0L
+    }
 
     @Argument(
             value = "-output-dir",
             valueDescription = "<path>",
             description = "Output directory"
     )
-    public String outputDirectory;
+    var outputDirectory: String? = null
 
     @Argument(
             value = "-keep",
             valueDescription = "<fully.qualified.name[,]>",
             description = "List of fully-qualified names of declarations that shouldn't be eliminated"
     )
-    public String[] declarationsToKeep;
+    var declarationsToKeep: Array<String>? = null
 
     @Argument(
             value = "-Xprint-reachability-info",
             description = "Print declarations marked as reachable"
     )
-    public boolean printReachabilityInfo;
+    var printReachabilityInfo: Boolean = false
 }
