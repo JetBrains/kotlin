@@ -62,7 +62,7 @@ class CodeToInlineBuilder(
 
         bindingContext = insertExplicitTypeArguments(codeToInline, bindingContext, analyze)
 
-        insertExplicitReceivers(codeToInline, bindingContext)
+        processReferences(codeToInline, bindingContext)
 
         // NB: we must check in codeToInline, otherwise we get AE from addPostInsertionAction
         if (mainExpression != null && mainExpression in codeToInline) {
@@ -135,7 +135,7 @@ class CodeToInlineBuilder(
         return analyze()
     }
 
-    private fun insertExplicitReceivers(codeToInline: MutableCodeToInline, bindingContext: BindingContext) {
+    private fun processReferences(codeToInline: MutableCodeToInline, bindingContext: BindingContext) {
         val receiversToAdd = ArrayList<Pair<KtExpression, KtExpression>>()
 
         codeToInline.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
