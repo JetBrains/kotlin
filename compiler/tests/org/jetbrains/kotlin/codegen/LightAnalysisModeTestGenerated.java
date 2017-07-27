@@ -17266,6 +17266,18 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("kt19251.kt")
+            public void testKt19251() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/constructors/kt19251.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt19251_child.kt")
+            public void testKt19251_child() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/constructors/kt19251_child.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nonLiteralComparator.kt")
             public void testNonLiteralComparator() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/constructors/nonLiteralComparator.kt");

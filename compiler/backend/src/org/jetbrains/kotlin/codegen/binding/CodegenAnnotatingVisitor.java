@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
@@ -559,6 +560,9 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (valueArguments == null) return;
 
         for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
+            ValueParameterDescriptor adaptedParameter = descriptor.getValueParameters().get(valueParameter.getIndex());
+            if (KotlinTypeChecker.DEFAULT.equalTypes(adaptedParameter.getType(), valueParameter.getType())) continue;
+
             SamType samType = SamType.create(TypeMapperUtilsKt.removeExternalProjections(valueParameter.getType()));
             if (samType == null) continue;
 
