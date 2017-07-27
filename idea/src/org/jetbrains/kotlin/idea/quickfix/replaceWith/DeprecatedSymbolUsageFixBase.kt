@@ -116,7 +116,16 @@ abstract class DeprecatedSymbolUsageFixBase(
                 else -> null
             } ?: return null
 
-            val descriptor = DiagnosticFactory.cast(deprecatedDiagnostic, Errors.DEPRECATION, Errors.DEPRECATION_ERROR).a
+            val descriptor = when (deprecatedDiagnostic.factory) {
+                Errors.DEPRECATION -> DiagnosticFactory.cast(deprecatedDiagnostic, Errors.DEPRECATION).a
+                Errors.DEPRECATION_ERROR -> DiagnosticFactory.cast(deprecatedDiagnostic, Errors.DEPRECATION_ERROR).a
+                Errors.TYPEALIAS_EXPANSION_DEPRECATION ->
+                    DiagnosticFactory.cast(deprecatedDiagnostic, Errors.TYPEALIAS_EXPANSION_DEPRECATION).b
+                Errors.TYPEALIAS_EXPANSION_DEPRECATION_ERROR ->
+                    DiagnosticFactory.cast(deprecatedDiagnostic, Errors.TYPEALIAS_EXPANSION_DEPRECATION_ERROR).b
+                else -> throw IllegalStateException("Bad QuickFixRegistrar configuration")
+            }
+
             val replacement = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(descriptor, nameExpression.project) ?: return null
             return Data(nameExpression, replacement, descriptor)
         }
