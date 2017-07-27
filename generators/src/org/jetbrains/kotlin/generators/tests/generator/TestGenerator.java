@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.generators.tests.generator;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.containers.ContainerUtil;
-import junit.framework.TestCase;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil;
@@ -32,15 +30,12 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import static kotlin.collections.CollectionsKt.single;
 
 public class TestGenerator {
-    private static final Set<String> GENERATED_FILES = ContainerUtil.newHashSet();
+    private static final Set<String> GENERATED_FILES = new HashSet<>();
     private static final Class RUNNER = JUnit3RunnerWithInners.class;
 
     private final String baseTestClassPackage;
@@ -52,16 +47,15 @@ public class TestGenerator {
 
     public TestGenerator(
             @NotNull String baseDir,
-            @NotNull String suiteClassPackage,
-            @NotNull String suiteClassName,
-            @NotNull Class<? extends TestCase> baseTestClass,
+            @NotNull String suiteTestClassFqName,
+            @NotNull String baseTestClassFqName,
             @NotNull Collection<? extends TestClassModel> testClassModels
     ) {
-        this.suiteClassPackage = suiteClassPackage;
-        this.suiteClassName = suiteClassName;
-        this.baseTestClassPackage = baseTestClass.getPackage().getName();
-        this.baseTestClassName = baseTestClass.getSimpleName();
-        this.testClassModels = Lists.newArrayList(testClassModels);
+        this.baseTestClassPackage = StringsKt.substringBeforeLast(baseTestClassFqName, '.', "");
+        this.baseTestClassName = StringsKt.substringAfterLast(baseTestClassFqName, '.', baseTestClassFqName);
+        this.suiteClassPackage = StringsKt.substringBeforeLast(suiteTestClassFqName, '.', baseTestClassPackage);
+        this.suiteClassName = StringsKt.substringAfterLast(suiteTestClassFqName, '.', suiteTestClassFqName);
+        this.testClassModels = new ArrayList<>(testClassModels);
 
         this.testSourceFilePath = baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java";
 
@@ -163,9 +157,7 @@ public class TestGenerator {
 
         boolean first = true;
 
-        for (Iterator<MethodModel> iterator = testMethods.iterator(); iterator.hasNext(); ) {
-            MethodModel methodModel = iterator.next();
-
+        for (MethodModel methodModel : testMethods) {
             if (!methodModel.shouldBeGenerated()) continue;
 
             if (first) {
@@ -178,8 +170,7 @@ public class TestGenerator {
             generateTestMethod(p, methodModel);
         }
 
-        for (Iterator<TestClassModel> iterator = innerTestClasses.iterator(); iterator.hasNext(); ) {
-            TestClassModel innerTestClass = iterator.next();
+        for (TestClassModel innerTestClass : innerTestClasses) {
             if (!innerTestClass.isEmpty()) {
                 if (first) {
                     first = false;
