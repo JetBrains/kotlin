@@ -23,6 +23,7 @@ import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.SettingConstants
+import kotlin.reflect.KClass
 
 abstract class BaseKotlinCompilerSettings<T : Any> protected constructor() : PersistentStateComponent<Element>, Cloneable {
     @Suppress("LeakingThis")
@@ -40,9 +41,10 @@ abstract class BaseKotlinCompilerSettings<T : Any> protected constructor() : Per
     }
 
     protected fun validateInheritedFieldsUnchanged(settings: T) {
-        val inheritedFields = collectFieldsToCopy(settings.javaClass, true)
+        @Suppress("UNCHECKED_CAST")
+        val inheritedProperties = collectProperties<T>(settings::class as KClass<T>, true)
         val defaultInstance = createSettings()
-        val invalidFields = inheritedFields.filter { it.get(settings) != it.get(defaultInstance) }
+        val invalidFields = inheritedProperties.filter { it.get(settings) != it.get(defaultInstance) }
         if (invalidFields.isNotEmpty()) {
             throw IllegalArgumentException("Following fields are expected to be left unchanged in ${settings.javaClass}: ${invalidFields.joinToString { it.name }}")
         }

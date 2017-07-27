@@ -16,29 +16,47 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import java.lang.reflect.Field
-import java.lang.reflect.Modifier
 import java.util.*
+import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KProperty1
+import kotlin.reflect.KVisibility
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.memberProperties
 
-fun <T : Any> copyBean(bean: T) = copyFields(bean, bean::class.java.newInstance(), true, collectFieldsToCopy(bean::class.java, false))
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> copyBean(bean: T) =
+        copyProperties(bean, bean::class.java.newInstance()!!, true, collectProperties(bean::class as KClass<T>, false))
 
 fun <From : Any, To : From> mergeBeans(from: From, to: To): To {
     // TODO: rewrite when updated version of com.intellij.util.xmlb is available on TeamCity
-    return copyFields(from, to, false, collectFieldsToCopy(from::class.java, false))
+    @Suppress("UNCHECKED_CAST")
+    return copyProperties(from, to, false, collectProperties(from::class as KClass<From>, false))
 }
 
-fun <From : Any, To : Any> copyInheritedFields(from: From, to: To) = copyFields(from, to, true, collectFieldsToCopy(from::class.java, true))
+@Suppress("UNCHECKED_CAST")
+fun <From : Any, To : Any> copyInheritedFields(from: From, to: To) =
+        copyProperties(from, to, true, collectProperties(from::class as KClass<From>, true))
 
-fun <From : Any, To : Any> copyFieldsSatisfying(from: From, to: To, predicate: (Field) -> Boolean) =
-        copyFields(from, to, true, collectFieldsToCopy(from::class.java, false).filter(predicate))
+@Suppress("UNCHECKED_CAST")
+fun <From : Any, To : Any> copyFieldsSatisfying(from: From, to: To, predicate: (KProperty1<From, Any?>) -> Boolean) =
+        copyProperties(from, to, true, collectProperties(from::class as KClass<From>, false).filter(predicate))
 
-private fun <From : Any, To : Any> copyFields(from: From, to: To, deepCopyWhenNeeded: Boolean, fieldsToCopy: List<Field>): To {
+private fun <From : Any, To : Any> copyProperties(
+        from: From,
+        to: To,
+        deepCopyWhenNeeded: Boolean,
+        propertiesToCopy: List<KProperty1<From, Any?>>
+): To {
     if (from == to) return to
 
-    for (fromField in fieldsToCopy) {
-        val toField = to::class.java.getField(fromField.name)
-        val fromValue = fromField.get(from)
-        toField.set(to, if (deepCopyWhenNeeded) fromValue?.copyValueIfNeeded() else fromValue)
+    for (fromProperty in propertiesToCopy) {
+        @Suppress("UNCHECKED_CAST")
+        val toProperty = to::class.memberProperties.firstOrNull { it.name == fromProperty.name } as? KMutableProperty1<To, Any?>
+                         ?: continue
+        val fromValue = fromProperty.get(from)
+        toProperty.set(to, if (deepCopyWhenNeeded) fromValue?.copyValueIfNeeded() else fromValue)
     }
     return to
 }
@@ -72,19 +90,12 @@ private fun Any.copyValueIfNeeded(): Any {
     }
 }
 
-fun collectFieldsToCopy(clazz: Class<*>, inheritedOnly: Boolean): List<Field> {
-    val fromFields = ArrayList<Field>()
-
-    var currentClass: Class<*>? = if (inheritedOnly) clazz.superclass else clazz
-    while (currentClass != null) {
-        for (field in currentClass.declaredFields) {
-            val modifiers = field.modifiers
-            if (!Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers) && !Modifier.isTransient(modifiers)) {
-                fromFields.add(field)
-            }
-        }
-        currentClass = currentClass.superclass
+fun <T : Any> collectProperties(kClass: KClass<T>, inheritedOnly: Boolean): List<KProperty1<T, Any?>> {
+    val properties = ArrayList(kClass.memberProperties)
+    if (inheritedOnly) {
+        properties.removeAll(kClass.declaredMemberProperties)
     }
-
-    return fromFields
+    return properties.filter {
+        it.visibility == KVisibility.PUBLIC && it.findAnnotation<Transient>() == null
+    }
 }
