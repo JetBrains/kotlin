@@ -21,48 +21,6 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
     }
 
     @Test
-    fun testKt19179() {
-        val project = Project("kt19179", gradleVersion, directoryPrefix = "kapt2")
-
-        project.build("build") {
-            assertSuccessful()
-            assertFileExists("processor/build/tmp/kapt3/classes/main/META-INF/services/javax.annotation.processing.Processor")
-
-            val processorJar = fileInWorkingDir("processor/build/libs/processor.jar")
-            assert(processorJar.exists())
-
-            ZipFile(processorJar).use { zip ->
-                assert(zip.getEntry("META-INF/services/javax.annotation.processing.Processor") != null)
-            }
-
-            assertTasksExecuted(listOf(
-                    ":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin",
-                    ":app:kaptGenerateStubsKotlin", ":app:kaptKotlin"))
-        }
-
-        project.projectDir.getFileByName("Test.kt").modify { text ->
-            assert("SomeClass()" in text)
-            text.replace("SomeClass()", "SomeClass(); val a = 5")
-        }
-
-        project.build("build") {
-            assertSuccessful()
-            assertTasksUpToDate(listOf(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin", ":app:kaptKotlin"))
-            assertTasksExecuted(listOf(":app:kaptGenerateStubsKotlin"))
-        }
-
-        project.projectDir.getFileByName("Test.kt").modify { text ->
-            text + "\n\nfun t() {}"
-        }
-
-        project.build("build") {
-            assertSuccessful()
-            assertTasksUpToDate(listOf(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin"))
-            assertTasksExecuted(listOf(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin"))
-        }
-    }
-
-    @Test
     fun testJavaIcCompatibility() {
         val version = gradleVersion.split(".").map(String::toInt)
         val expectIncrementalCompilation = version.let { (major, minor) -> major > 2 || major == 2 && minor >= 14 }
