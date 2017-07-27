@@ -30,14 +30,15 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 
 internal class ProjectResolutionFacade(
-        val debugString: String,
-        val resolverDebugName: String,
+        private val debugString: String,
+        private val resolverDebugName: String,
         val project: Project,
         val globalContext: GlobalContextImpl,
         val settings: PlatformAnalysisSettings,
         val reuseDataFrom: ProjectResolutionFacade?,
         val moduleFilter: (IdeaModuleInfo) -> Boolean,
         val dependencies: List<Any>,
+        private val invalidateOnOOCB: Boolean = true,
         val syntheticFiles: Collection<KtFile> = listOf(),
         val allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
 ) {
@@ -61,11 +62,12 @@ internal class ProjectResolutionFacade(
                 delegateResolver = delegateResolverForProject, moduleFilter = moduleFilter,
                 allModules = allModules,
                 providedBuiltIns = delegateResolverProvider?.builtIns,
-                dependencies = dependencies
+                dependencies = dependencies,
+                invalidateOnOOCB = invalidateOnOOCB
         )
     }
 
-    val moduleResolverProvider: ModuleResolverProvider
+    private val moduleResolverProvider: ModuleResolverProvider
         get() = globalContext.storageManager.compute { cachedValue.value }
 
     fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = moduleResolverProvider.resolverForProject.resolverForModule(moduleInfo)

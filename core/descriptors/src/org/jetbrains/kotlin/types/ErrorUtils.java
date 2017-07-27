@@ -122,6 +122,11 @@ public class ErrorUtils {
             public KotlinBuiltIns getBuiltIns() {
                 return DefaultBuiltIns.getInstance();
             }
+
+            @Override
+            public boolean isValid() {
+                return false;
+            }
         };
     }
 

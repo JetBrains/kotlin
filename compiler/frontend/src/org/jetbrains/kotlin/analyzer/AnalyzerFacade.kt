@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.analyzer
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -85,9 +87,17 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         private val packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { _, _ -> PackagePartProvider.Empty },
         private val firstDependency: M? = null,
         private val modulePlatforms: (M) -> MultiTargetPlatform?,
-        private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory
+        private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
+        private val invalidateOnOOCB: Boolean = true
 ) : ResolverForProject<M>() {
-    private val descriptorByModule = mutableMapOf<M, ModuleDescriptorImpl>()
+
+    private class ModuleData(
+            val moduleDescriptor: ModuleDescriptorImpl,
+            val modificationTracker: ModificationTracker?,
+            val modificationCount: Long?
+    )
+
+    private val descriptorByModule = mutableMapOf<M, ModuleData>()
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
     val modules = modules.toSet()
 
@@ -156,17 +166,41 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private fun doGetDescriptorForModule(module: M): ModuleDescriptorImpl {
         if (module in modules) {
             return projectContext.storageManager.compute {
-                descriptorByModule.getOrPut(module) {
-                    ModuleDescriptorImpl(module.name,
-                                         projectContext.storageManager, builtIns, modulePlatforms(module), module.capabilities).apply {
-                        moduleInfoByDescriptor[this] = module
-                        setupModuleDescriptor(module, this)
-                    }
+                var moduleData = descriptorByModule.getOrPut(module) {
+                    createModuleDescriptor(module)
                 }
+                val currentModCount = moduleData.modificationTracker?.modificationCount
+                if (currentModCount != null && currentModCount > moduleData.modificationCount!!) {
+                    moduleData = recreateModuleDescriptor(module)
+                }
+                moduleData.moduleDescriptor
             }
         }
 
         return delegateResolver.descriptorForModule(module) as ModuleDescriptorImpl
+    }
+
+    private fun recreateModuleDescriptor(module: M): ModuleData {
+        val oldDescriptor = descriptorByModule[module]?.moduleDescriptor
+        if (oldDescriptor != null) {
+            oldDescriptor.isValid = false
+            moduleInfoByDescriptor.remove(oldDescriptor)
+            resolverByModuleDescriptor.remove(oldDescriptor)
+        }
+
+        val moduleData = createModuleDescriptor(module)
+        descriptorByModule[module] = moduleData
+        return moduleData
+    }
+
+    private fun createModuleDescriptor(module: M): ModuleData {
+        val moduleDescriptor = ModuleDescriptorImpl(module.name,
+                                                    projectContext.storageManager, builtIns, modulePlatforms(module), module.capabilities)
+        moduleInfoByDescriptor[moduleDescriptor] = module
+        setupModuleDescriptor(module, moduleDescriptor)
+        val modificationTracker = (module as? TrackableModuleInfo)?.createModificationTracker() ?:
+                                  (PsiModificationTracker.SERVICE.getInstance(projectContext.project).outOfCodeBlockModificationTracker.takeIf { invalidateOnOOCB })
+        return ModuleData(moduleDescriptor, modificationTracker, modificationTracker?.modificationCount)
     }
 }
 
@@ -205,6 +239,10 @@ interface ModuleInfo {
     companion object {
         val Capability = ModuleDescriptor.Capability<ModuleInfo>("ModuleInfo")
     }
+}
+
+interface TrackableModuleInfo : ModuleInfo {
+    fun createModificationTracker(): ModificationTracker
 }
 
 abstract class AnalyzerFacade {

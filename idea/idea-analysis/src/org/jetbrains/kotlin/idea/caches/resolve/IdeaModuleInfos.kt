@@ -23,6 +23,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
@@ -30,9 +31,11 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
 import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
+import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
@@ -97,7 +100,7 @@ private fun ideaModelDependencies(module: Module, productionOnly: Boolean): List
     return result.toList()
 }
 
-interface ModuleSourceInfo : IdeaModuleInfo {
+interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
     val module: Module
 
     override val displayedName get() = module.name
@@ -107,6 +110,9 @@ interface ModuleSourceInfo : IdeaModuleInfo {
 
     override val platform: TargetPlatform
         get() = TargetPlatformDetector.getPlatform(module)
+
+    override fun createModificationTracker(): ModificationTracker =
+            KotlinModuleModificationTracker(module)
 }
 
 data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourceInfo {
