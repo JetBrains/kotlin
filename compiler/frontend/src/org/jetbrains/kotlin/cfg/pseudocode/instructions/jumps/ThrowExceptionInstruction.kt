@@ -28,7 +28,7 @@ class ThrowExceptionInstruction(
         expression: KtThrowExpression,
         blockScope: BlockScope,
         errorLabel: Label,
-        val thrownValue: PseudoValue
+        private val thrownValue: PseudoValue
 ) : AbstractJumpInstruction(expression, errorLabel, blockScope) {
     override val inputValues: List<PseudoValue> get() = Collections.singletonList(thrownValue)
 

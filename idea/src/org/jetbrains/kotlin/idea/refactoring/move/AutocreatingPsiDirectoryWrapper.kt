@@ -21,12 +21,12 @@ import com.intellij.refactoring.MoveDestination
 import org.jetbrains.kotlin.idea.core.getPackage
 
 sealed class AutocreatingPsiDirectoryWrapper {
-    class ByPsiDirectory(val psiDirectory: PsiDirectory) : AutocreatingPsiDirectoryWrapper() {
+    class ByPsiDirectory(private val psiDirectory: PsiDirectory) : AutocreatingPsiDirectoryWrapper() {
         override fun getPackageName(): String = psiDirectory.getPackage()?.qualifiedName ?: ""
         override fun getOrCreateDirectory(source: PsiDirectory) = psiDirectory
     }
 
-    class ByMoveDestination(val moveDestination: MoveDestination) : AutocreatingPsiDirectoryWrapper() {
+    class ByMoveDestination(private val moveDestination: MoveDestination) : AutocreatingPsiDirectoryWrapper() {
         override fun getPackageName() = moveDestination.targetPackage.qualifiedName
         override fun getOrCreateDirectory(source: PsiDirectory) = moveDestination.getTargetDirectory(source)
     }

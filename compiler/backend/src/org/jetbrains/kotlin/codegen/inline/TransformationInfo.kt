@@ -40,7 +40,7 @@ interface TransformationInfo {
 class WhenMappingTransformationInfo(
         override val oldClassName: String,
         parentNameGenerator: NameGenerator,
-        val alreadyRegenerated: Boolean,
+        private val alreadyRegenerated: Boolean,
         val fieldNode: FieldInsnNode
 ) : TransformationInfo {
 

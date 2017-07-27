@@ -24,7 +24,7 @@ class InlinedLambdaRemapper(
         originalLambdaInternalName: String,
         parent: FieldRemapper,
         methodParams: Parameters,
-        val isDefaultBoundCallableReference: Boolean
+        private val isDefaultBoundCallableReference: Boolean
 ) : FieldRemapper(originalLambdaInternalName, parent, methodParams) {
 
     public override fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean) =

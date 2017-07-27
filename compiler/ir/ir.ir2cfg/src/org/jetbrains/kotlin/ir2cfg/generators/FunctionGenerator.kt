@@ -45,7 +45,7 @@ class FunctionGenerator(val function: IrFunction) {
 
     inner class FunctionVisitor : IrElementVisitor<IrStatement?, Boolean> {
 
-        inline fun <reified IE : IrElement> IE.process(includeSelf: Boolean = true) = this.accept(this@FunctionVisitor, includeSelf)
+        private inline fun <reified IE : IrElement> IE.process(includeSelf: Boolean = true) = this.accept(this@FunctionVisitor, includeSelf)
 
         override fun visitFunction(declaration: IrFunction, data: Boolean): IrStatement? {
             if (data) {

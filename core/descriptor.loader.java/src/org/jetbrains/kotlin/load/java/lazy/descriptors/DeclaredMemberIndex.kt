@@ -39,7 +39,10 @@ interface DeclaredMemberIndex {
     }
 }
 
-open class ClassDeclaredMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember) -> Boolean) : DeclaredMemberIndex {
+open class ClassDeclaredMemberIndex(
+        val jClass: JavaClass,
+        private val memberFilter: (JavaMember) -> Boolean
+) : DeclaredMemberIndex {
     private val methodFilter = {
         m: JavaMethod ->
         memberFilter(m) && !DescriptorResolverUtils.isObjectMethodInInterface(m)

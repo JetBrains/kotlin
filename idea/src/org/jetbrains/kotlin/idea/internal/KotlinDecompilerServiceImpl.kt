@@ -60,7 +60,7 @@ class KotlinDecompilerServiceImpl : KotlinDecompilerService {
         return resultSaver.resultText
     }
 
-    fun bytecodeMapForExistingClassfile(file: VirtualFile): Map<File, () -> ByteArray> {
+    private fun bytecodeMapForExistingClassfile(file: VirtualFile): Map<File, () -> ByteArray> {
         val mask = "${file.nameWithoutExtension}$"
         val files =
                 mapOf(file.path to file) +
@@ -73,7 +73,7 @@ class KotlinDecompilerServiceImpl : KotlinDecompilerService {
         }
     }
 
-    fun bytecodeMapForSourceFile(file: KtFile): Map<File, () -> ByteArray> {
+    private fun bytecodeMapForSourceFile(file: KtFile): Map<File, () -> ByteArray> {
         val configuration = CompilerConfiguration().apply {
             languageVersionSettings = file.languageVersionSettings
         }

@@ -93,7 +93,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         }
     }
 
-    val samWithReceiverAnnotations: List<String>? by lazy {
+    private val samWithReceiverAnnotations: List<String>? by lazy {
         takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.extensions.SamWithReceiverAnnotations>()?.annotations?.toList() }
         ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.SamWithReceiverAnnotations>()?.annotations?.toList() }
     }

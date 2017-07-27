@@ -284,7 +284,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         }
     }
 
-    class PropertyMethodWrapper(val propertyMethod: PsiMethod) : PsiNamedElement by propertyMethod, NavigationItem by propertyMethod {
+    class PropertyMethodWrapper(private val propertyMethod: PsiMethod) : PsiNamedElement by propertyMethod, NavigationItem by propertyMethod {
         override fun getName() = propertyMethod.name
         override fun setName(name: String) = this
         override fun copy() = this

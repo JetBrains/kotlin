@@ -66,13 +66,13 @@ fun runChangeSignature(project: Project,
     return KotlinChangeSignature(project, callableDescriptor, configuration, defaultValueContext, commandName).run()
 }
 
-class KotlinChangeSignature(project: Project,
-                                   callableDescriptor: CallableDescriptor,
-                                   val configuration: KotlinChangeSignatureConfiguration,
-                                   val defaultValueContext: PsiElement,
-                                   commandName: String?): CallableRefactoring<CallableDescriptor>(project,
-                                                                                               callableDescriptor,
-                                                                                               commandName ?: ChangeSignatureHandler.REFACTORING_NAME) {
+class KotlinChangeSignature(
+        project: Project,
+        callableDescriptor: CallableDescriptor,
+        val configuration: KotlinChangeSignatureConfiguration,
+        val defaultValueContext: PsiElement,
+        commandName: String?
+): CallableRefactoring<CallableDescriptor>(project, callableDescriptor, commandName ?: ChangeSignatureHandler.REFACTORING_NAME) {
 
     private val LOG = Logger.getInstance(KotlinChangeSignature::class.java)
 

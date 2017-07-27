@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFixAction<KtParameter>(element) {
-    val typeNameShort : String?
+    private val typeNameShort : String?
     val typeName: String?
 
     init {

@@ -108,7 +108,7 @@ class BridgeLowering(val state: GenerationState) : ClassLoweringPass {
     }
 
 
-    fun generateBridges(descriptor: FunctionDescriptor, irClass: IrClass) {
+    private fun generateBridges(descriptor: FunctionDescriptor, irClass: IrClass) {
         // equals(Any?), hashCode(), toString() never need bridges
         if (isMethodOfAny(descriptor)) {
             return

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 
 object BranchedFoldingUtils {
-    fun getFoldableBranchedAssignment(branch: KtExpression?): KtBinaryExpression? {
+    private fun getFoldableBranchedAssignment(branch: KtExpression?): KtBinaryExpression? {
         fun checkAssignment(expression: KtBinaryExpression): Boolean {
             if (expression.operationToken !in KtTokens.ALL_ASSIGNMENTS) return false
 
@@ -52,7 +52,7 @@ object BranchedFoldingUtils {
                 it.getTargetLabel() == null
             }
 
-    fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean =
+    private fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean =
             a1.left?.text == a2.left?.text && a1.operationToken == a2.operationToken
 
     internal fun getFoldableAssignmentNumber(expression: KtExpression?): Int {

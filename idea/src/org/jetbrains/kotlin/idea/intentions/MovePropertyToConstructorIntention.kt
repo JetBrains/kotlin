@@ -132,7 +132,7 @@ class MovePropertyToConstructorIntention :
         return parameterDescriptor.source.getPsi() as? KtParameter
     }
 
-    fun KtAnnotationEntry.isApplicableToConstructorParameter(): Boolean {
+    private fun KtAnnotationEntry.isApplicableToConstructorParameter(): Boolean {
         val context = analyze(BodyResolveMode.PARTIAL)
         val descriptor = context[BindingContext.ANNOTATION, this] ?: return false
         val applicableTargets = AnnotationChecker.applicableTargetSet(descriptor)

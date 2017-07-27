@@ -230,7 +230,7 @@ class KotlinFieldBreakpoint(
         }
     }
 
-    inline fun <reified T : EventRequest> findRequest(debugProcess: DebugProcessImpl, requestClass: Class<T>, requestor: Requestor): T? {
+    inline private fun <reified T : EventRequest> findRequest(debugProcess: DebugProcessImpl, requestClass: Class<T>, requestor: Requestor): T? {
         val requests = debugProcess.requestsManager.findRequests(requestor)
         for (eventRequest in requests) {
             if (eventRequest::class.java == requestClass) {

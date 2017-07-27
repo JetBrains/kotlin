@@ -225,7 +225,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
         Ambiguity(UNSURE)
     }
 
-    fun Result.changeTo(newResult: Result): Result {
+    private fun Result.changeTo(newResult: Result): Result {
         if (this == Result.NothingFound || this.returnValue == newResult.returnValue) {
             return newResult
         }

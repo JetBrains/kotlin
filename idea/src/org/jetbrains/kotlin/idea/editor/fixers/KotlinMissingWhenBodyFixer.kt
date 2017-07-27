@@ -39,7 +39,7 @@ class KotlinMissingWhenBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSma
         }
     }
 
-    fun KtWhenExpression.insertOpenBraceAfter(): PsiElement? = when {
+    private fun KtWhenExpression.insertOpenBraceAfter(): PsiElement? = when {
         rightParenthesis != null -> rightParenthesis
         subjectExpression != null -> null
         leftParenthesis != null -> null

@@ -290,15 +290,13 @@ object KeywordCompletion {
         return buildFilterWithReducedContext("", null, position)
     }
 
-    fun computeKeywordApplications(prefixText: String, keyword: KtKeywordToken): Sequence<String> {
-        return when (keyword) {
-            SUSPEND_KEYWORD -> sequenceOf("suspend () -> Unit>", "suspend X")
-            else -> {
-                if (prefixText.endsWith("@"))
-                    sequenceOf(keyword.value + ":X Y.Z")
-                else
-                    sequenceOf(keyword.value + " X")
-            }
+    private fun computeKeywordApplications(prefixText: String, keyword: KtKeywordToken): Sequence<String> = when (keyword) {
+        SUSPEND_KEYWORD -> sequenceOf("suspend () -> Unit>", "suspend X")
+        else -> {
+            if (prefixText.endsWith("@"))
+                sequenceOf(keyword.value + ":X Y.Z")
+            else
+                sequenceOf(keyword.value + " X")
         }
     }
 

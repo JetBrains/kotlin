@@ -20,8 +20,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-open class AggregatedReplStateHistory<T1, T2>(val history1: IReplStageHistory<T1>, val history2: IReplStageHistory<T2>, override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock())
-    : IReplStageHistory<Pair<T1, T2>>, AbstractList<ReplHistoryRecord<Pair<T1, T2>>>()
+open class AggregatedReplStateHistory<T1, T2>(
+        private val history1: IReplStageHistory<T1>,
+        private val history2: IReplStageHistory<T2>,
+        override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+) : IReplStageHistory<Pair<T1, T2>>, AbstractList<ReplHistoryRecord<Pair<T1, T2>>>()
 {
     override val size: Int
         get() = minOf(history1.size, history2.size)

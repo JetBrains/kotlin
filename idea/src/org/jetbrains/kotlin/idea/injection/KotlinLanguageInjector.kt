@@ -50,7 +50,8 @@ import kotlin.collections.ArrayList
 class KotlinLanguageInjector(
         val configuration: Configuration,
         val project: Project,
-        val temporaryPlacesRegistry: TemporaryPlacesRegistry) : MultiHostInjector {
+        val temporaryPlacesRegistry: TemporaryPlacesRegistry
+) : MultiHostInjector {
     companion object {
         private val STRING_LITERALS_REGEXP = "\"([^\"]*)\"".toRegex()
         private val ABSENT_KOTLIN_INJECTION = BaseInjection("ABSENT_KOTLIN_BASE_INJECTION")

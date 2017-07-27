@@ -53,7 +53,7 @@ abstract class ObjectTransformer<out T : TransformationInfo>(@JvmField val trans
 
 class WhenMappingTransformer(
         whenObjectRegenerationInfo: WhenMappingTransformationInfo,
-        val inliningContext: InliningContext
+        private val inliningContext: InliningContext
 ) : ObjectTransformer<WhenMappingTransformationInfo>(whenObjectRegenerationInfo, inliningContext.state) {
 
     override fun doTransform(parentRemapper: FieldRemapper): InlineResult {

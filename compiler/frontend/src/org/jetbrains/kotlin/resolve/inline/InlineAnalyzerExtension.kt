@@ -166,7 +166,7 @@ class InlineAnalyzerExtension(
         trace.report(Errors.NOTHING_TO_INLINE.on(reportOn, functionDescriptor))
     }
 
-    fun checkInlinableParameter(
+    private fun checkInlinableParameter(
             parameter: ParameterDescriptor,
             expression: KtElement,
             functionDescriptor: CallableDescriptor,

@@ -22,10 +22,11 @@ import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 
-open class GenericReplEvaluator(val baseClasspath: Iterable<File>,
-                                val baseClassloader: ClassLoader? = Thread.currentThread().contextClassLoader,
-                                protected val fallbackScriptArgs: ScriptArgsWithTypes? = null,
-                                protected val repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT
+open class GenericReplEvaluator(
+        val baseClasspath: Iterable<File>,
+        val baseClassloader: ClassLoader? = Thread.currentThread().contextClassLoader,
+        protected val fallbackScriptArgs: ScriptArgsWithTypes? = null,
+        protected val repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT
 ) : ReplEvaluator {
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = GenericReplEvaluatorState(baseClasspath, baseClassloader, lock)

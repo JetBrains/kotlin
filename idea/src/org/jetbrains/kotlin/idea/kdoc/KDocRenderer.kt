@@ -179,7 +179,7 @@ object KDocRenderer {
         fun child(type: IElementType): MarkdownNode? = children.firstOrNull { it.type == type }
     }
 
-    fun MarkdownNode.visit(action: (MarkdownNode, () -> Unit) -> Unit) {
+    private fun MarkdownNode.visit(action: (MarkdownNode, () -> Unit) -> Unit) {
         action(this) {
             for (child in children) {
                 child.visit(action)
@@ -187,7 +187,7 @@ object KDocRenderer {
         }
     }
 
-    fun MarkdownNode.toHtml(): String {
+    private fun MarkdownNode.toHtml(): String {
         if (node.type == MarkdownTokenTypes.WHITE_SPACE) {
             return text   // do not trim trailing whitespace
         }
@@ -311,11 +311,11 @@ object KDocRenderer {
         return sb.toString().trimEnd()
     }
 
-    fun StringBuilder.trimEnd() {
+    private fun StringBuilder.trimEnd() {
         while (length > 0 && this[length - 1] == ' ') {
             deleteCharAt(length - 1)
         }
     }
 
-    fun String.htmlEscape(): String = replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    private fun String.htmlEscape(): String = replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 }

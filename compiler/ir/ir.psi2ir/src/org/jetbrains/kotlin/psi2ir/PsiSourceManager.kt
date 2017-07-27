@@ -63,7 +63,7 @@ class PsiSourceManager : SourceManager {
                         endColumnNumber = getColumnNumber(endOffset)
                 )
 
-        fun getRecognizableName(): String = psiFileName
+        private fun getRecognizableName(): String = psiFileName
 
         override val name: String get() = getRecognizableName()
 
@@ -74,7 +74,7 @@ class PsiSourceManager : SourceManager {
     private val fileEntriesByIrFile = HashMap<IrFile, PsiFileEntry>()
     private val ktFileByFileEntry = HashMap<PsiFileEntry, KtFile>()
 
-    fun createFileEntry(ktFile: KtFile): PsiFileEntry {
+    private fun createFileEntry(ktFile: KtFile): PsiFileEntry {
         if (ktFile in fileEntriesByKtFile) error("PsiFileEntry is already created for $ktFile")
         val newEntry = PsiFileEntry(ktFile)
         fileEntriesByKtFile[ktFile] = newEntry

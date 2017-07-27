@@ -262,7 +262,7 @@ enum class RelationToType(val description: String) {
     override fun toString() = description
 }
 
-data class DescriptorWithRelation(val descriptor: ClassifierDescriptor, val relation: RelationToType) {
+data class DescriptorWithRelation(val descriptor: ClassifierDescriptor, private val relation: RelationToType) {
     fun effectiveVisibility() =
             (descriptor as? ClassDescriptor)?.visibility?.effectiveVisibility(descriptor, false) ?: Public
 

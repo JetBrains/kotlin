@@ -103,7 +103,7 @@ class SyntheticAccessorLowering(val state: GenerationState) : FileLoweringPass, 
     private val IrClassContext.codegenContext: CodegenContext<*>
         get() = contextAnnotator.context2Codegen[this]!!
 
-    var contextAnnotator by Delegates.notNull<ContextAnnotator>()
+    private lateinit var contextAnnotator: ContextAnnotator
 
     private val ClassDescriptor.codegenContext: CodegenContext<*>
         get() = contextAnnotator.class2Codegen[this]!!

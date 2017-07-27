@@ -41,7 +41,7 @@ private val LOG = Logger.getInstance(KotlinClassWithDelegatedPropertyRenderer::c
 private fun notPreparedClassMessage(referenceType: ReferenceType) =
     "$referenceType ${referenceType.isPrepared} ${referenceType.sourceName()}"
 
-class KotlinClassWithDelegatedPropertyRenderer(val rendererSettings: NodeRendererSettings) : ClassRenderer() {
+class KotlinClassWithDelegatedPropertyRenderer(private val rendererSettings: NodeRendererSettings) : ClassRenderer() {
     override fun isApplicable(jdiType: Type?): Boolean {
         if (!super.isApplicable(jdiType)) return false
 

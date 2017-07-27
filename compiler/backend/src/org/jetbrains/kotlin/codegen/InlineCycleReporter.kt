@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-class InlineCycleReporter(val diagnostics: DiagnosticSink) {
+class InlineCycleReporter(private val diagnostics: DiagnosticSink) {
 
-    val processingFunctions = linkedMapOf<PsiElement, CallableDescriptor>()
+    private val processingFunctions = linkedMapOf<PsiElement, CallableDescriptor>()
 
     fun enterIntoInlining(call: ResolvedCall<*>?): Boolean {
         //null call for default method inlining

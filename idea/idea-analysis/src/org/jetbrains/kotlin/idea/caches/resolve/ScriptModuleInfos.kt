@@ -37,8 +37,11 @@ class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSear
     override fun hashCode() = scriptFile.hashCode() * 73 * super.hashCode()
 }
 
-data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
-                            val scriptDefinition: KotlinScriptDefinition) : IdeaModuleInfo {
+data class ScriptModuleInfo(
+        val project: Project,
+        val scriptFile: VirtualFile,
+        val scriptDefinition: KotlinScriptDefinition
+) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 

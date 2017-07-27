@@ -252,7 +252,7 @@ class KotlinFunctionCallUsage(
             val resolvedArgument: ResolvedValueArgument?,
             val receiverValue: ReceiverValue?
     ) {
-        val mainValueArgument: ValueArgument?
+        private val mainValueArgument: ValueArgument?
             get() = resolvedArgument?.arguments?.firstOrNull()
 
         val wasNamed: Boolean

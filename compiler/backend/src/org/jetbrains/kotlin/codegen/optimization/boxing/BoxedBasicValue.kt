@@ -45,7 +45,7 @@ class CleanBoxedValue(
 }
 
 
-class TaintedBoxedValue(val boxedBasicValue: CleanBoxedValue) : BoxedBasicValue(boxedBasicValue.type) {
+class TaintedBoxedValue(private val boxedBasicValue: CleanBoxedValue) : BoxedBasicValue(boxedBasicValue.type) {
     override val descriptor get() = boxedBasicValue.descriptor
 
     override fun taint(): BoxedBasicValue = this
@@ -53,7 +53,7 @@ class TaintedBoxedValue(val boxedBasicValue: CleanBoxedValue) : BoxedBasicValue(
 
 
 class BoxedValueDescriptor(
-        val boxedType: Type,
+        private val boxedType: Type,
         val boxingInsn: AbstractInsnNode,
         val progressionIterator: ProgressionIteratorBasicValue?
 ) {

@@ -73,7 +73,7 @@ class KotlinJsr223JvmScriptEngine4Idea(
     override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? =
             getScriptArgs(getContext(), scriptArgsTypes)
 
-    val localEvaluator: ReplFullEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader) }
+    private val localEvaluator: ReplFullEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader) }
 
     override val replEvaluator: ReplFullEvaluator get() = localEvaluator
 

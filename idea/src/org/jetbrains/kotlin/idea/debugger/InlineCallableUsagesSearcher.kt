@@ -37,7 +37,10 @@ import org.jetbrains.kotlin.idea.debugger.DebuggerClassNameProvider.Companion.ge
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames
 
-class InlineCallableUsagesSearcher(val myDebugProcess: DebugProcess, val scopes: List<GlobalSearchScope>) {
+class InlineCallableUsagesSearcher(
+        private val myDebugProcess: DebugProcess,
+        val scopes: List<GlobalSearchScope>
+) {
     fun findInlinedCalls(
             declaration: KtDeclaration,
             bindingContext: BindingContext = KotlinDebuggerCaches.getOrCreateTypeMapper(declaration).bindingContext,

@@ -25,8 +25,8 @@ class InlineLambdaContext(
         contextKind: OwnerKind,
         parentContext: CodegenContext<*>,
         closure: MutableClosure?,
-        val isCrossInline: Boolean,
-        val isPropertyReference: Boolean
+        private val isCrossInline: Boolean,
+        private val isPropertyReference: Boolean
 ) : MethodContext(functionDescriptor, contextKind, parentContext, closure, false) {
 
     override fun getFirstCrossInlineOrNonInlineContext(): CodegenContext<*> {

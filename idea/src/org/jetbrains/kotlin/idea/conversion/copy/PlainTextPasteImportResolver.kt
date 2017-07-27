@@ -50,9 +50,9 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
     private val shortNameCache = PsiShortNamesCache.getInstance(project)
     private val scope = file.resolveScope
 
-    val failedToResolveReferenceNames = HashSet<String>()
-    var ambiguityInResolution = false
-    var couldNotResolve = false
+    private val failedToResolveReferenceNames = HashSet<String>()
+    private var ambiguityInResolution = false
+    private var couldNotResolve = false
 
     val addedImports = ArrayList<PsiImportStatementBase>()
 
