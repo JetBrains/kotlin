@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -76,7 +77,68 @@ import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
 
-class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
+class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
+    var isICEnabledBackup: Boolean = false
+
+    override fun setUp() {
+        super.setUp()
+        isICEnabledBackup = IncrementalCompilation.isEnabled()
+        IncrementalCompilation.setIsEnabled(true)
+    }
+
+    override fun tearDown() {
+        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
+        super.tearDown()
+    }
+
+    fun testManyFiles() {
+        doTest()
+
+        val module = myProject.modules.get(0)
+        assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
+
+        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar")))
+
+        checkWhen(del("src/main.kt"),
+                  pathsToCompile = null,
+                  pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
+        assertFilesNotExistInOutput(module, "foo/MainKt.class")
+
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar")))
+    }
+
+    fun testManyFilesForPackage() {
+        doTest()
+
+        val module = myProject.modules.get(0)
+        assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
+
+        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(touch("src/Bar.kt"),
+                  arrayOf("src/Bar.kt"),
+                  arrayOf(klass("kotlinProject", "foo.Bar"),
+                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
+                          module("kotlinProject")))
+
+        checkWhen(del("src/main.kt"),
+                  pathsToCompile = null,
+                  pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
+
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(touch("src/Bar.kt"), null,
+                  arrayOf(klass("kotlinProject", "foo.Bar"),
+                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
+                          module("kotlinProject")))
+    }
+}
+
+open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     companion object {
         private val PROJECT_NAME = "kotlinProject"
         private val ADDITIONAL_MODULE_NAME = "module2"
@@ -156,7 +218,8 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             return result
         }
 
-        private fun assertFilesExistInOutput(module: JpsModule, vararg relativePaths: String) {
+        @JvmStatic
+        protected fun assertFilesExistInOutput(module: JpsModule, vararg relativePaths: String) {
             for (path in relativePaths) {
                 val outputFile = findFileInOutputDir(module, path)
                 assertTrue("Output not written: " + outputFile.absolutePath + "\n Directory contents: \n" + dirContents(outputFile.parentFile), outputFile.exists())
@@ -171,7 +234,8 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         }
 
 
-        private fun assertFilesNotExistInOutput(module: JpsModule, vararg relativePaths: String) {
+        @JvmStatic
+        protected fun assertFilesNotExistInOutput(module: JpsModule, vararg relativePaths: String) {
             val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
             assertNotNull(outputUrl)
             val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
@@ -190,21 +254,15 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             return builder.toString()
         }
 
-        private fun klass(moduleName: String, classFqName: String): String {
+        @JvmStatic
+        protected fun klass(moduleName: String, classFqName: String): String {
             val outputDirPrefix = "out/production/$moduleName/"
             return outputDirPrefix + classFqName.replace('.', '/') + ".class"
         }
 
-        private fun module(moduleName: String): String {
+        @JvmStatic
+        protected fun module(moduleName: String): String {
             return "out/production/$moduleName/${JvmCodegenUtil.getMappingFileName(moduleName)}"
-        }
-
-        fun mergeArrays(vararg stringArrays: Array<String>): Array<String> {
-            val result = HashSet<String>()
-            for (array in stringArrays) {
-                result.addAll(Arrays.asList(*array))
-            }
-            return ArrayUtil.toStringArray(result)
         }
     }
 
@@ -484,52 +542,6 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(touch("src/exclude/YetAnotherExcluded.kt"), null, NOTHING)
         checkWhen(touch("src/exclude/subdir/Excluded.kt"), null, NOTHING)
         checkWhen(touch("src/exclude/subdir/YetAnotherExcluded.kt"), null, NOTHING)
-    }
-
-    fun testManyFiles() {
-        doTest()
-
-        val module = myProject.modules.get(0)
-        assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
-
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar")))
-
-        checkWhen(del("src/main.kt"),
-                pathsToCompile = null,
-                pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
-        assertFilesNotExistInOutput(module, "foo/MainKt.class")
-
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar")))
-    }
-
-    fun testManyFilesForPackage() {
-        doTest()
-
-        val module = myProject.modules.get(0)
-        assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
-
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"),
-                arrayOf("src/Bar.kt"),
-                arrayOf(klass("kotlinProject", "foo.Bar"),
-                        packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
-                        module("kotlinProject")))
-
-        checkWhen(del("src/main.kt"),
-                  pathsToCompile = null,
-                  pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
-
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), null,
-                arrayOf(klass("kotlinProject", "foo.Bar"),
-                        packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
-                        module("kotlinProject")))
     }
 
     fun testKotlinProjectTwoFilesInOnePackage() {
@@ -1025,11 +1037,11 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         throw IllegalStateException("Couldn't find module $name")
     }
 
-    private fun checkWhen(action: Action, pathsToCompile: Array<String>?, pathsToDelete: Array<String>?) {
+    protected fun checkWhen(action: Action, pathsToCompile: Array<String>?, pathsToDelete: Array<String>?) {
         checkWhen(arrayOf(action), pathsToCompile, pathsToDelete)
     }
 
-    private fun checkWhen(actions: Array<Action>, pathsToCompile: Array<String>?, pathsToDelete: Array<String>?) {
+    protected fun checkWhen(actions: Array<Action>, pathsToCompile: Array<String>?, pathsToDelete: Array<String>?) {
         for (action in actions) {
             action.apply()
         }
@@ -1045,11 +1057,11 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         }
     }
 
-    private fun packageClasses(moduleName: String, fileName: String, packageClassFqName: String): Array<String> {
+    protected fun packageClasses(moduleName: String, fileName: String, packageClassFqName: String): Array<String> {
         return arrayOf(module(moduleName), packagePartClass(moduleName, fileName, packageClassFqName))
     }
 
-    private fun packagePartClass(moduleName: String, fileName: String, packageClassFqName: String): String {
+    protected fun packagePartClass(moduleName: String, fileName: String, packageClassFqName: String): String {
         val path = FileUtilRt.toSystemIndependentName(File(workDir, fileName).absolutePath)
         val fakeVirtualFile = object : LightVirtualFile(path.substringAfterLast('/')) {
             override fun getPath(): String {
@@ -1062,19 +1074,19 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         return klass(moduleName, AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName))
     }
 
-    private enum class Operation {
+    protected enum class Operation {
         CHANGE,
         DELETE
     }
 
-    private fun touch(path: String): Action = Action(Operation.CHANGE, path)
+    protected fun touch(path: String): Action = Action(Operation.CHANGE, path)
 
-    private fun del(path: String): Action = Action(Operation.DELETE, path)
+    protected fun del(path: String): Action = Action(Operation.DELETE, path)
 
     // TODO inline after KT-3974 will be fixed
-    private fun touch(file: File): Unit = JpsBuildTestCase.change(file.absolutePath)
+    protected fun touch(file: File): Unit = JpsBuildTestCase.change(file.absolutePath)
 
-    private inner class Action constructor(private val operation: Operation, private val path: String) {
+    protected inner class Action constructor(private val operation: Operation, private val path: String) {
         fun apply() {
             val file = File(workDir, path)
             when (operation) {
