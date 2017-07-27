@@ -55,8 +55,13 @@ internal val Module.androidExtensionsIsEnabled: Boolean
 internal val ModuleInfo.androidExtensionsIsExperimental: Boolean
     get() {
         val module = (this as? ModuleSourceInfo)?.module ?: return false
-        if (isTestMode(module)) return true
-        return module.getOptionValueInFacet(EXPERIMENTAL_OPTION) == "true"
+        return module.androidExtensionsIsExperimental
+    }
+
+internal val Module.androidExtensionsIsExperimental: Boolean
+    get() {
+        if (isTestMode(this)) return true
+        return getOptionValueInFacet(EXPERIMENTAL_OPTION) == "true"
     }
 
 val ModuleInfo.androidExtensionsGlobalCacheImpl: CacheImplementation
