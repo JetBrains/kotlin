@@ -517,3 +517,32 @@ class FloatMathTest {
 
 }
 
+class IntegerMathTest {
+
+    @Test fun intSigns() {
+        val negatives = listOf(Int.MIN_VALUE, -65536, -1)
+        val positives = listOf(1, 100, 256, Int.MAX_VALUE)
+        negatives.forEach { assertEquals(-1, it.sign) }
+        positives.forEach { assertEquals(1, it.sign) }
+        assertEquals(0, 0.sign)
+
+        (negatives - Int.MIN_VALUE).forEach { assertEquals(-it, it.absoluteValue) }
+        assertEquals(Int.MIN_VALUE, Int.MIN_VALUE.absoluteValue)
+
+        positives.forEach { assertEquals(it, it.absoluteValue) }
+    }
+
+
+    @Test fun longSigns() {
+        val negatives = listOf(Long.MIN_VALUE, -65536L, -1L)
+        val positives = listOf(1L, 100L, 256L, Long.MAX_VALUE)
+        negatives.forEach { assertEquals(-1, it.sign) }
+        positives.forEach { assertEquals(1, it.sign) }
+        assertEquals(0, 0L.sign)
+
+        (negatives - Long.MIN_VALUE).forEach { assertEquals(-it, it.absoluteValue) }
+        assertEquals(Long.MIN_VALUE, Long.MIN_VALUE.absoluteValue)
+
+        positives.forEach { assertEquals(it, it.absoluteValue) }
+    }
+}
