@@ -104,7 +104,7 @@ public class KannotatorJpsTest extends AbstractKotlinJpsBuildTestCase {
     private void initProject() {
         addJdk(JDK_NAME);
         loadProject(workDir.getAbsolutePath());
-        addKotlinRuntimeDependency();
+        addKotlinStdlibDependency();
     }
 
     @Override

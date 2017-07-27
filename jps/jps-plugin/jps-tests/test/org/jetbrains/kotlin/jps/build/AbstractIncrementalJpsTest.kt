@@ -419,8 +419,8 @@ abstract class AbstractIncrementalJpsTest(
 
             moduleNames = nameToModule.keys
         }
-        AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject)
-        AbstractKotlinJpsBuildTestCase.addKotlinTestRuntimeDependency(myProject)
+        AbstractKotlinJpsBuildTestCase.addKotlinStdlibDependency(myProject)
+        AbstractKotlinJpsBuildTestCase.addKotlinTestDependency(myProject)
         return moduleNames
     }
 
