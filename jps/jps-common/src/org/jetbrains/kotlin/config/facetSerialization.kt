@@ -17,11 +17,18 @@
 package org.jetbrains.kotlin.config
 
 import com.intellij.util.PathUtil
+import com.intellij.util.xmlb.SerializationFilter
 import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.DataConversionException
 import org.jdom.Element
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
+import org.jetbrains.kotlin.name.Name
+import java.lang.reflect.Modifier
+import kotlin.reflect.KClass
+import kotlin.reflect.full.superclasses
 
 fun Element.getOption(name: String) = getChildren("option").firstOrNull { it.getAttribute("name").value == name }
 
@@ -166,6 +173,50 @@ fun CompilerSettings.convertPathsToSystemIndependent() {
     outputDirectoryForJsLibraryFiles = PathUtil.toSystemIndependentName(outputDirectoryForJsLibraryFiles)
 }
 
+private fun KClass<*>.superClass() = superclasses.firstOrNull { !it.java.isInterface }
+
+private fun Class<*>.computeNormalPropertyOrdering(): Map<String, Int> {
+    val result = LinkedHashMap<String, Int>()
+    var count = 0
+    generateSequence(this) { it.superclass }.forEach { clazz ->
+        for (method in clazz.declaredMethods) {
+            if (method.modifiers and Modifier.STATIC != 0) continue
+
+            val name = method.name
+            if (!JvmAbi.isGetterName(name)) continue
+
+            val propertyName = propertyNameByGetMethodName(Name.identifier(name))?.asString() ?: continue
+
+            result[propertyName] = count++
+        }
+    }
+    return result
+}
+
+private val allNormalOrderings = HashMap<Class<*>, Map<String, Int>>()
+
+private val Class<*>.normalOrdering
+    get() = allNormalOrderings.getOrPut(this) { computeNormalPropertyOrdering() }
+
+// Replacing fields with delegated properties leads to unexpected reordering of entries in facet configuration XML
+// It happens due to XmlSerializer using different orderings for field- and method-based accessors
+// This code restores the original ordering
+private fun Element.restoreNormalOrdering(bean: Any) {
+    val normalOrdering = bean.javaClass.normalOrdering
+    val elementsToReorder = this.getContent<Element> { it is Element && it.getAttribute("name")?.value in normalOrdering }
+    elementsToReorder
+            .sortedBy { normalOrdering[it.getAttribute("name")?.value!!] }
+            .forEachIndexed { index, element -> elementsToReorder[index] = element.clone() }
+}
+
+private fun buildChildElement(element: Element, tag: String, bean: Any, filter: SerializationFilter) {
+    Element(tag).apply {
+        XmlSerializer.serializeInto(bean, this, filter)
+        restoreNormalOrdering(bean)
+        element.addContent(this)
+    }
+}
+
 private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     val filter = SkipDefaultsSerializationFilter()
 
@@ -177,17 +228,11 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
     compilerSettings?.let { copyBean(it) }?.let {
         it.convertPathsToSystemIndependent()
-        Element("compilerSettings").apply {
-            XmlSerializer.serializeInto(it, this, filter)
-            element.addContent(this)
-        }
+        buildChildElement(element, "compilerSettings", it, filter)
     }
     compilerArguments?.let { copyBean(it) }?.let {
         it.convertPathsToSystemIndependent()
-        Element("compilerArguments").apply {
-            XmlSerializer.serializeInto(it, this, filter)
-            element.addContent(this)
-        }
+        buildChildElement(element, "compilerArguments", it, filter)
     }
 }
 
