@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.google.common.collect.Lists
-import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.util.io.FileUtilRt
@@ -26,7 +25,6 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ArrayUtil
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.jps.ModuleChunk
@@ -244,7 +242,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         when (libraryDependency) {
             NONE -> {}
             JVM_MOCK_RUNTIME -> addKotlinMockRuntimeDependency()
-            JVM_FULL_RUNTIME -> addKotlinRuntimeDependency()
+            JVM_FULL_RUNTIME -> addKotlinStdlibDependency()
             JS_STDLIB -> addKotlinJavaScriptStdlibDependency()
         }
     }
@@ -262,7 +260,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     fun doTestWithKotlinJavaScriptLibrary() {
         initProject(JS_STDLIB)
         createKotlinJavaScriptLibraryArchive()
-        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
+        addDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
         buildAllModules().assertSuccessful()
     }
 
@@ -326,7 +324,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     fun testKotlinJavaScriptProjectWithTwoModulesAndWithLibrary() {
         initProject()
         createKotlinJavaScriptLibraryArchive()
-        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
+        addDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
         addKotlinJavaScriptStdlibDependency()
         buildAllModules().assertSuccessful()
     }
@@ -342,7 +340,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             throw IllegalStateException(ex.message)
         }
 
-        addKotlinJavaScriptDependency("KotlinJavaScript", jslibDir)
+        addDependency("KotlinJavaScript", jslibDir)
         buildAllModules().assertSuccessful()
 
         assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
@@ -351,7 +349,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     fun testKotlinJavaScriptProjectWithDirectoryAsLibrary() {
         initProject(JS_STDLIB)
-        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY))
+        addDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY))
         buildAllModules().assertSuccessful()
 
         assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR, contentOfOutputDir(PROJECT_NAME))
@@ -382,7 +380,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     fun testKotlinJavaScriptProjectWithLibraryAndErrors() {
         initProject(JS_STDLIB)
         createKotlinJavaScriptLibraryArchive()
-        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
+        addDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
         buildAllModules().assertFailed()
 
         assertEquals(Collections.EMPTY_SET, contentOfOutputDir(PROJECT_NAME))
@@ -673,7 +671,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "module-lib", libraryJar)
 
-        addKotlinRuntimeDependency()
+        addKotlinStdlibDependency()
 
         val result = buildAllModules()
         result.assertSuccessful()
@@ -717,11 +715,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     fun testReexportedDependency() {
         initProject()
-        AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(JpsJavaDependencyScope.COMPILE, ContainerUtil.filter(myProject.modules, object : Condition<JpsModule> {
-            override fun value(module: JpsModule): Boolean {
-                return module.name == "module2"
-            }
-        }), true)
+        AbstractKotlinJpsBuildTestCase.addKotlinStdlibDependency(myProject.modules.filter { module -> module.name == "module2" }, true)
         buildAllModules().assertSuccessful()
     }
 
@@ -948,14 +942,14 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + path + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
 
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
-        addKotlinRuntimeDependency()
+        addKotlinStdlibDependency()
 
         buildAllModules().assertSuccessful()
     }
 
     fun testCustomDestination() {
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
-        addKotlinRuntimeDependency()
+        addKotlinStdlibDependency()
         buildAllModules().apply {
             assertSuccessful()
 
