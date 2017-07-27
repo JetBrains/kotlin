@@ -116,14 +116,7 @@ private fun createAnnotationArgument(argument: JCTree.JCExpression,
                     TreeBasedReferenceAnnotationArgument(name, treePath, argument, javac)
                 }
             }
-            is JCTree.JCAssign -> {
-                if (argument.rhs is JCTree.JCNewArray) {
-                    createAnnotationArgument(argument.rhs, name, treePath, javac, annotation)
-                }
-                else {
-                    resolveArgumentValue(argument.rhs, annotation, name, treePath, javac)
-                }
-            }
+            is JCTree.JCAssign -> createAnnotationArgument(argument.rhs, name, treePath, javac, annotation)
             is JCTree.JCNewArray -> arrayAnnotationArguments(argument.elems, name, treePath, javac, annotation)
             is JCTree.JCAnnotation -> TreeBasedAnnotationAsAnnotationArgument(argument, name, treePath, javac)
             is JCTree.JCParens -> createAnnotationArgument(argument.expr, name, treePath, javac, annotation)
