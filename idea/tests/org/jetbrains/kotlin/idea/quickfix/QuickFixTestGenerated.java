@@ -5630,12 +5630,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
-        @TestMetadata("removeUselessIsCheckInWhenNegateMultiple.kt")
-        public void testRemoveUselessIsCheckInWhenNegateMultiple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/removeUselessIsCheckInWhenNegateMultiple.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("removeUselessIsCheckNegate.kt")
         public void testRemoveUselessIsCheckNegate() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/removeUselessIsCheckNegate.kt");

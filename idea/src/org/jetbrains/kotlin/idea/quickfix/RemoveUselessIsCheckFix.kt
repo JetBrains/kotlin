@@ -18,15 +18,13 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtIsExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-class RemoveUselessIsCheckFixForIf(element: KtIsExpression) : KotlinQuickFixAction<KtIsExpression>(element) {
+class RemoveUselessIsCheckFix(element: KtIsExpression) : KotlinQuickFixAction<KtIsExpression>(element) {
     override fun getFamilyName() = "Remove useless is check"
 
     override fun getText(): String = familyName
@@ -42,7 +40,7 @@ class RemoveUselessIsCheckFixForIf(element: KtIsExpression) : KotlinQuickFixActi
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtIsExpression>? {
             val expression = diagnostic.psiElement.getNonStrictParentOfType<KtIsExpression>() ?: return null
-            return RemoveUselessIsCheckFixForIf(expression)
+            return RemoveUselessIsCheckFix(expression)
         }
     }
 }

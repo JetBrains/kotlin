@@ -1,6 +1,12 @@
 // "Remove useless is check" "true"
-fun foo(a: String) {
-    when {
-        1 <caret>is Int -> 0
+
+interface Base
+interface Derived: Base
+
+fun foo(bar: Base):Int {
+    return when {
+        bar is Derived -> 0
+        bar <caret>is Base -> 42
+        else -> 1
     }
 }

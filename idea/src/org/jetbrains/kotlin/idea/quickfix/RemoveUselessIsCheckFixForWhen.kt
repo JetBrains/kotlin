@@ -36,7 +36,7 @@ class RemoveUselessIsCheckFixForWhen(element: KtWhenConditionIsPattern) : Kotlin
         if (condition.isNegated) {
             condition.parent.delete()
         } else {
-            whenExpression.entries.forEach { it.delete() }
+            whenExpression.entries.dropWhile { it != whenEntry }.forEach { it.delete() }
             val newEntry = KtPsiFactory(project).createWhenEntry("else -> ${whenEntry.expression!!.text}")
             whenExpression.addBefore(newEntry, whenExpression.closeBrace)
         }
