@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
 import kotlin.coroutines.experimental.buildSequence
@@ -77,29 +76,20 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         private val debugName: String,
         private val projectContext: ProjectContext,
         modules: Collection<M>,
-        analyzerFacade: (M) -> AnalyzerFacade,
+        private val analyzerFacade: (M) -> AnalyzerFacade,
         private val modulesContent: (M) -> ModuleContent,
-        platformParameters: PlatformAnalysisParameters,
-        targetEnvironment: TargetEnvironment = CompilerEnvironment,
-        builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
-        val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-        packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { _, _ -> PackagePartProvider.Empty },
+        private val platformParameters: PlatformAnalysisParameters,
+        private val targetEnvironment: TargetEnvironment = CompilerEnvironment,
+        private val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
+        private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
+        private val packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { _, _ -> PackagePartProvider.Empty },
         private val firstDependency: M? = null,
         private val modulePlatforms: (M) -> MultiTargetPlatform?,
         private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory
 ) : ResolverForProject<M>() {
-    val descriptorByModule = mutableMapOf<M, ModuleDescriptorImpl>()
-
-    init {
-        for (module in modules) {
-            descriptorByModule[module] = ModuleDescriptorImpl(module.name,
-                 projectContext.storageManager, builtIns, modulePlatforms(module), module.capabilities)
-        }
-
-        for ((module, moduleDescriptor) in descriptorByModule) {
-            setupModuleDescriptor(module, moduleDescriptor)
-        }
-    }
+    private val descriptorByModule = mutableMapOf<M, ModuleDescriptorImpl>()
+    private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
+    val modules = modules.toSet()
 
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
         if (!isCorrectModuleInfo(moduleInfo)) {
@@ -121,20 +111,11 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 DelegatingPackageFragmentProvider(this, moduleDescriptor, content,
                                                   packageOracleFactory.createOracle(module)))
     }
-    internal val resolverByModuleDescriptor: Map<ModuleDescriptor, NotNullLazyValue<ResolverForModule>> = descriptorByModule.map { (module, descriptor) ->
-        descriptor to projectContext.storageManager.createLazyValue {
-            ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
 
-            analyzerFacade(module).createResolverForModule(
-                    module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
-                    platformParameters, targetEnvironment, this@ResolverForProjectImpl,
-                    packagePartProviderFactory(module, modulesContent(module))
-            )
-        }
-    }.toMap()
+    private val resolverByModuleDescriptor = mutableMapOf<ModuleDescriptor, ResolverForModule>()
 
     override val allModules: Collection<M> by lazy {
-        (descriptorByModule.keys + delegateResolver.allModules).toSet()
+        this.modules + delegateResolver.allModules
     }
 
     override val name: String
@@ -143,14 +124,27 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private fun isCorrectModuleInfo(moduleInfo: M) = moduleInfo in allModules
 
     override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): ResolverForModule {
-        val computation = resolverByModuleDescriptor[descriptor] ?: run {
-            if (delegateResolver is EmptyResolverForProject<*>) {
-                throw IllegalStateException("$descriptor is not contained in resolver $name")
+        return projectContext.storageManager.compute {
+            val module = moduleInfoByDescriptor[descriptor]
+            if (module == null) {
+                if (delegateResolver is EmptyResolverForProject<*>) {
+                    throw IllegalStateException("$descriptor is not contained in resolver $name")
+                }
+                return@compute delegateResolver.resolverForModuleDescriptor(descriptor)
             }
-            return delegateResolver.resolverForModuleDescriptor(descriptor)
+            resolverByModuleDescriptor.getOrPut(descriptor) {
+                ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
+
+                analyzerFacade(module).createResolverForModule(
+                        module, descriptor as ModuleDescriptorImpl, projectContext.withModule(descriptor), modulesContent(module),
+                        platformParameters, targetEnvironment, this@ResolverForProjectImpl,
+                        packagePartProviderFactory(module, modulesContent(module)))
+            }
         }
-        return computation()
     }
+
+    internal fun isResolverForModuleDescriptorComputed(descriptor: ModuleDescriptor) =
+            descriptor in resolverByModuleDescriptor
 
     override fun descriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
         if (!isCorrectModuleInfo(moduleInfo)) {
@@ -159,8 +153,20 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         return doGetDescriptorForModule(moduleInfo)
     }
 
-    private fun doGetDescriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
-        return descriptorByModule[moduleInfo] ?: delegateResolver.descriptorForModule(moduleInfo) as ModuleDescriptorImpl
+    private fun doGetDescriptorForModule(module: M): ModuleDescriptorImpl {
+        if (module in modules) {
+            return projectContext.storageManager.compute {
+                descriptorByModule.getOrPut(module) {
+                    ModuleDescriptorImpl(module.name,
+                                         projectContext.storageManager, builtIns, modulePlatforms(module), module.capabilities).apply {
+                        moduleInfoByDescriptor[this] = module
+                        setupModuleDescriptor(module, this)
+                    }
+                }
+            }
+        }
+
+        return delegateResolver.descriptorForModule(module) as ModuleDescriptorImpl
     }
 }
 
@@ -250,7 +256,7 @@ class LazyModuleDependencies<M: ModuleInfo>(
 
     private val implementingModules = storageManager.createLazyValue {
         if (modulePlatforms(module) != MultiTargetPlatform.Common) emptySet<ModuleDescriptorImpl>()
-        else resolverForProject.descriptorByModule.keys
+        else resolverForProject.modules
                 .filter { modulePlatforms(it) != MultiTargetPlatform.Common && module in it.dependencies() }
                 .mapTo(mutableSetOf(), resolverForProject::descriptorForModule)
     }
@@ -272,20 +278,17 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
         if (certainlyDoesNotExist(fqName)) return emptyList()
 
-        return resolverForModuleCachedValue().packageFragmentProvider.getPackageFragments(fqName)
+        return resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.getPackageFragments(fqName)
     }
-
-    private val resolverForModuleCachedValue
-            get() = resolverForProject.resolverByModuleDescriptor[module]!!
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         if (certainlyDoesNotExist(fqName)) return emptyList()
 
-        return resolverForModuleCachedValue().packageFragmentProvider.getSubPackagesOf(fqName, nameFilter)
+        return resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.getSubPackagesOf(fqName, nameFilter)
     }
 
     private fun certainlyDoesNotExist(fqName: FqName): Boolean {
-        if (resolverForModuleCachedValue.isComputed()) return false // let this request get cached inside delegate
+        if (resolverForProject.isResolverForModuleDescriptorComputed(module)) return false // let this request get cached inside delegate
 
         return !packageOracle.packageExists(fqName) && fqName !in syntheticFilePackages
     }
