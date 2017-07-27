@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.utils.SmartList
 import java.io.Serializable
 
-abstract class CommonToolArguments : Serializable {
+abstract class CommonToolArguments : Freezable(), Serializable {
     companion object {
         @JvmStatic private val serialVersionUID = 0L
     }
@@ -29,19 +29,19 @@ abstract class CommonToolArguments : Serializable {
     @Transient var errors: ArgumentParseErrors = ArgumentParseErrors()
 
     @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options")
-    var help: Boolean = false
+    var help: Boolean by FreezableVar(false)
 
     @Argument(value = "-X", description = "Print a synopsis of advanced options")
-    var extraHelp: Boolean = false
+    var extraHelp: Boolean by FreezableVar(false)
 
     @Argument(value = "-version", description = "Display compiler version")
-    var version: Boolean = false
+    var version: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-verbose", description = "Enable verbose logging output")
-    var verbose: Boolean = false
+    var verbose: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-nowarn", description = "Generate no warnings")
-    var suppressWarnings: Boolean = false
+    var suppressWarnings: Boolean by FreezableVar(false)
 }

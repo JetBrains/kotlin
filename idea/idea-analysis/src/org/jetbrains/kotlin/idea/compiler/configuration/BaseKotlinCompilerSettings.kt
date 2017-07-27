@@ -25,19 +25,24 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.SettingConstants
 import kotlin.reflect.KClass
 
-abstract class BaseKotlinCompilerSettings<T : Any> protected constructor() : PersistentStateComponent<Element>, Cloneable {
-    @Suppress("LeakingThis")
-    private var _settings: T = createSettings()
+abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor() : PersistentStateComponent<Element>, Cloneable {
+    @Suppress("LeakingThis", "UNCHECKED_CAST")
+    private var _settings: T = createSettings().frozen() as T
+        private set(value) {
+            field = value.frozen() as T
+        }
 
     var settings: T
-        get() = copyBean(_settings)
+        get() = _settings
         set(value) {
             validateNewSettings(value)
-            _settings = copyBean(value)
+            @Suppress("UNCHECKED_CAST")
+            _settings = value
         }
 
     fun update(changer: T.() -> Unit) {
-        settings = settings.apply { changer() }
+        @Suppress("UNCHECKED_CAST")
+        settings = (settings.unfrozen() as T).apply { changer() }
     }
 
     protected fun validateInheritedFieldsUnchanged(settings: T) {

@@ -22,7 +22,7 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
     }
 
     @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated .kotlin_metadata files")
-    var destination: String? = null
+    var destination: String? by FreezableVar(null)
 
     @Argument(
             value = "-classpath",
@@ -30,5 +30,5 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
             valueDescription = "<path>",
             description = "Paths where to find library .kotlin_metadata files"
     )
-    var classpath: String? = null
+    var classpath: String? by FreezableVar(null)
 }
