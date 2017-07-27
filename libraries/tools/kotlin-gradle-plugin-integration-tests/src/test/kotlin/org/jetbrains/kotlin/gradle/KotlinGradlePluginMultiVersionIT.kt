@@ -31,8 +31,12 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
             val processorJar = fileInWorkingDir("processor/build/libs/processor.jar")
             assert(processorJar.exists())
 
-            ZipFile(processorJar).use { zip ->
+            val zip = ZipFile(processorJar)
+            @Suppress("ConvertTryFinallyToUseCall")
+            try {
                 assert(zip.getEntry("META-INF/services/javax.annotation.processing.Processor") != null)
+            } finally {
+                zip.close()
             }
 
             assertTasksExecuted(listOf(
