@@ -17,13 +17,14 @@
 package org.jetbrains.kotlin.config
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.cli.common.arguments.Freezable
 
-class CompilerSettings {
-    @JvmField var additionalArguments: String = DEFAULT_ADDITIONAL_ARGUMENTS
-    @JvmField var scriptTemplates: String = ""
-    @JvmField var scriptTemplatesClasspath: String = ""
-    @JvmField var copyJsLibraryFiles: Boolean = true
-    @JvmField var outputDirectoryForJsLibraryFiles: String = DEFAULT_OUTPUT_DIRECTORY
+class CompilerSettings : Freezable() {
+    var additionalArguments: String by FreezableVar(DEFAULT_ADDITIONAL_ARGUMENTS)
+    var scriptTemplates: String by FreezableVar("")
+    var scriptTemplatesClasspath: String by FreezableVar("")
+    var copyJsLibraryFiles: Boolean by FreezableVar(true)
+    var outputDirectoryForJsLibraryFiles: String by FreezableVar(DEFAULT_OUTPUT_DIRECTORY)
 
     companion object {
         val DEFAULT_ADDITIONAL_ARGUMENTS = "-version"

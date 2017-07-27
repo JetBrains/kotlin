@@ -432,11 +432,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                !getSelectedLanguageVersion().equals(getLanguageVersionOrDefault(commonCompilerArguments.getLanguageVersion())) ||
                !getSelectedAPIVersion().equals(getApiVersionOrDefault(commonCompilerArguments.getApiVersion())) ||
                !coroutineSupportComboBox.getSelectedItem().equals(CoroutineSupport.byCompilerArguments(commonCompilerArguments)) ||
-               ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.additionalArguments) ||
-               ComparingUtils.isModified(scriptTemplatesField, compilerSettings.scriptTemplates) ||
-               ComparingUtils.isModified(scriptTemplatesClasspathField, compilerSettings.scriptTemplatesClasspath) ||
-               ComparingUtils.isModified(copyRuntimeFilesCheckBox, compilerSettings.copyJsLibraryFiles) ||
-               isModified(outputDirectory, compilerSettings.outputDirectoryForJsLibraryFiles) ||
+               ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.getAdditionalArguments()) ||
+               ComparingUtils.isModified(scriptTemplatesField, compilerSettings.getScriptTemplates()) ||
+               ComparingUtils.isModified(scriptTemplatesClasspathField, compilerSettings.getScriptTemplatesClasspath()) ||
+               ComparingUtils.isModified(copyRuntimeFilesCheckBox, compilerSettings.getCopyJsLibraryFiles()) ||
+               isModified(outputDirectory, compilerSettings.getOutputDirectoryForJsLibraryFiles()) ||
 
                (compilerWorkspaceSettings != null &&
                 (ComparingUtils.isModified(enablePreciseIncrementalCheckBox, compilerWorkspaceSettings.getPreciseIncrementalEnabled()) ||
@@ -520,11 +520,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                 break;
         }
 
-        compilerSettings.additionalArguments = additionalArgsOptionsField.getText();
-        compilerSettings.scriptTemplates = scriptTemplatesField.getText();
-        compilerSettings.scriptTemplatesClasspath = scriptTemplatesClasspathField.getText();
-        compilerSettings.copyJsLibraryFiles = copyRuntimeFilesCheckBox.isSelected();
-        compilerSettings.outputDirectoryForJsLibraryFiles = outputDirectory.getText();
+        compilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
+        compilerSettings.setScriptTemplates(scriptTemplatesField.getText());
+        compilerSettings.setScriptTemplatesClasspath(scriptTemplatesClasspathField.getText());
+        compilerSettings.setCopyJsLibraryFiles(copyRuntimeFilesCheckBox.isSelected());
+        compilerSettings.setOutputDirectoryForJsLibraryFiles(outputDirectory.getText());
 
         if (compilerWorkspaceSettings != null) {
             compilerWorkspaceSettings.setPreciseIncrementalEnabled(enablePreciseIncrementalCheckBox.isSelected());
@@ -568,11 +568,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         apiVersionComboBox.setSelectedItem(getApiVersionOrDefault(commonCompilerArguments.getApiVersion()));
         restrictAPIVersions(getSelectedLanguageVersion());
         coroutineSupportComboBox.setSelectedItem(CoroutineSupport.byCompilerArguments(commonCompilerArguments));
-        additionalArgsOptionsField.setText(compilerSettings.additionalArguments);
-        scriptTemplatesField.setText(compilerSettings.scriptTemplates);
-        scriptTemplatesClasspathField.setText(compilerSettings.scriptTemplatesClasspath);
-        copyRuntimeFilesCheckBox.setSelected(compilerSettings.copyJsLibraryFiles);
-        outputDirectory.setText(compilerSettings.outputDirectoryForJsLibraryFiles);
+        additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
+        scriptTemplatesField.setText(compilerSettings.getScriptTemplates());
+        scriptTemplatesClasspathField.setText(compilerSettings.getScriptTemplatesClasspath());
+        copyRuntimeFilesCheckBox.setSelected(compilerSettings.getCopyJsLibraryFiles());
+        outputDirectory.setText(compilerSettings.getOutputDirectoryForJsLibraryFiles());
 
         if (compilerWorkspaceSettings != null) {
             enablePreciseIncrementalCheckBox.setSelected(compilerWorkspaceSettings.getPreciseIncrementalEnabled());

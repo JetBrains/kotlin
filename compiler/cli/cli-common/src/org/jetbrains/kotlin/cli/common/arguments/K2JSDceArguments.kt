@@ -26,18 +26,18 @@ class K2JSDceArguments : CommonToolArguments() {
             valueDescription = "<path>",
             description = "Output directory"
     )
-    var outputDirectory: String? = null
+    var outputDirectory: String? by FreezableVar(null)
 
     @Argument(
             value = "-keep",
             valueDescription = "<fully.qualified.name[,]>",
             description = "List of fully-qualified names of declarations that shouldn't be eliminated"
     )
-    var declarationsToKeep: Array<String>? = null
+    var declarationsToKeep: Array<String>? by FreezableVar(null)
 
     @Argument(
             value = "-Xprint-reachability-info",
             description = "Print declarations marked as reachable"
     )
-    var printReachabilityInfo: Boolean = false
+    var printReachabilityInfo: Boolean by FreezableVar(false)
 }

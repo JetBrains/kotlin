@@ -37,7 +37,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             valueDescription = "<version>",
             description = "Provide source compatibility with specified language version"
     )
-    var languageVersion: String? = null
+    var languageVersion: String? by FreezableVar(null)
 
     @GradleOption(DefaultValues.LanguageVersions::class)
     @Argument(
@@ -45,22 +45,22 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             valueDescription = "<version>",
             description = "Allow to use declarations only from the specified version of bundled libraries"
     )
-    var apiVersion: String? = null
+    var apiVersion: String? by FreezableVar(null)
 
     @Argument(
             value = "-kotlin-home",
             valueDescription = "<path>",
             description = "Path to Kotlin compiler home directory, used for runtime libraries discovery"
     )
-    var kotlinHome: String? = null
+    var kotlinHome: String? by FreezableVar(null)
 
     @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
-    var pluginOptions: Array<String>? = null
+    var pluginOptions: Array<String>? by FreezableVar(null)
 
     // Advanced options
 
     @Argument(value = "-Xno-inline", description = "Disable method inlining")
-    var noInline: Boolean = false
+    var noInline: Boolean by FreezableVar(false)
 
     // TODO Remove in 1.0
     @Argument(
@@ -68,42 +68,42 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             valueDescription = "<count>",
             description = "Repeat compilation (for performance analysis)"
     )
-    var repeat: String? = null
+    var repeat: String? by FreezableVar(null)
 
     @Argument(
             value = "-Xskip-metadata-version-check",
             description = "Load classes with bad metadata version anyway (incl. pre-release classes)"
     )
-    var skipMetadataVersionCheck: Boolean = false
+    var skipMetadataVersionCheck: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin'")
-    var allowKotlinPackage: Boolean = false
+    var allowKotlinPackage: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xreport-output-files", description = "Report source to output files mapping")
-    var reportOutputFiles: Boolean = false
+    var reportOutputFiles: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xplugin", valueDescription = "<path>", description = "Load plugins from the given classpath")
-    var pluginClasspaths: Array<String>? = null
+    var pluginClasspaths: Array<String>? by FreezableVar(null)
 
     @Argument(value = "-Xmulti-platform", description = "Enable experimental language support for multi-platform projects")
-    var multiPlatform: Boolean = false
+    var multiPlatform: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xno-check-impl", description = "Do not check presence of 'impl' modifier in multi-platform projects")
-    var noCheckImpl: Boolean = false
+    var noCheckImpl: Boolean by FreezableVar(false)
 
     @Argument(
             value = "-Xintellij-plugin-root",
             valueDescription = "<path>",
             description = "Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found"
     )
-    var intellijPluginRoot: String? = null
+    var intellijPluginRoot: String? by FreezableVar(null)
 
     @Argument(
             value = "-Xcoroutines",
             valueDescription = "{enable|warn|error}",
             description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
     )
-    var coroutinesState: String? = WARN
+    var coroutinesState: String? by FreezableVar(WARN)
 
     open fun configureAnalysisFlags(): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {

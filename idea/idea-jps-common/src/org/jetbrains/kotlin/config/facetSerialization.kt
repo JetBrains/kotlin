@@ -196,7 +196,7 @@ private fun Class<*>.computeNormalPropertyOrdering(): Map<String, Int> {
 private val allNormalOrderings = HashMap<Class<*>, Map<String, Int>>()
 
 private val Class<*>.normalOrdering
-    get() = allNormalOrderings.getOrPut(this) { computeNormalPropertyOrdering() }
+    get() = synchronized(allNormalOrderings) { allNormalOrderings.getOrPut(this) { computeNormalPropertyOrdering() } }
 
 // Replacing fields with delegated properties leads to unexpected reordering of entries in facet configuration XML
 // It happens due to XmlSerializer using different orderings for field- and method-based accessors

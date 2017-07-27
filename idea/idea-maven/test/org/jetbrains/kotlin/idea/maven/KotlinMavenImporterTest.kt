@@ -588,7 +588,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                 Assert.assertEquals(true, sourceMap)
                 Assert.assertEquals("commonjs", moduleKind)
             }
-            Assert.assertEquals("-output test.js -meta-info -Xmulti-platform",
+            Assert.assertEquals("-meta-info -output test.js -Xmulti-platform",
                                 compilerSettings!!.additionalArguments)
         }
 
@@ -1645,7 +1645,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.0", apiLevel!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
-                    listOf("-kotlin-home", "temp2", "-java-parameters", "-Xdump-declarations-to=dumpDir"),
+                    listOf("-Xdump-declarations-to=dumpDir", "-java-parameters", "-kotlin-home", "temp2"),
                     compilerSettings!!.additionalArgumentsAsList
             )
         }

@@ -84,7 +84,13 @@ class KotlinFacetSettings {
     var useProjectSettings: Boolean = true
 
     var compilerArguments: CommonCompilerArguments? = null
+        set(value) {
+            field = value?.unfrozen() as CommonCompilerArguments?
+        }
     var compilerSettings: CompilerSettings? = null
+        set(value) {
+            field = value?.unfrozen() as CompilerSettings?
+        }
 
     var languageLevel: LanguageVersion?
         get() = compilerArguments?.languageVersion?.let { LanguageVersion.fromFullVersionString(it) }
