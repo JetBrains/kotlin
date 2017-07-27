@@ -34,13 +34,13 @@ fun t2() = d.d().test2()
 fun test(a_b: a.b) {
     a_b.a_b()
 
-    val ab_c: a.b.c = t2()
-    ab_c.ab_c()
-    ab_c.<!UNRESOLVED_REFERENCE!>a_bc<!>()
+    val ab_c = t2()
+    ab_c.<!UNRESOLVED_REFERENCE!>ab_c<!>()
+    ab_c.a_bc()
 
     val ab_c2: a.b.c = t2()
-    ab_c2.ab_c()
-    ab_c2.<!UNRESOLVED_REFERENCE!>a_bc<!>()    
+    ab_c2.<!UNRESOLVED_REFERENCE!>ab_c<!>()
+    ab_c2.a_bc()
 }
 
 fun test2() = t().a_b()

@@ -164,6 +164,25 @@ internal abstract class Scope(protected val parent: Scope?,
 
     protected fun findByFqName(pathSegments: List<String>): JavaClass? {
         pathSegments.forEachIndexed { index, _ ->
+            if (index != 0) {
+                val packageFqName = pathSegments.take(index).joinToString(separator = ".")
+                findPackage(packageFqName)?.let { pack ->
+                    val className = pathSegments.drop(index)
+                    findJavaOrKotlinClass(ClassId(pack, Name.identifier(className.first())))?.let { javaClass ->
+                        return getJavaClassFromPathSegments(javaClass, className)
+                    }
+                }
+            }
+        }
+
+        // try to find in <root>
+        return findJavaOrKotlinClass(classId("", pathSegments.first()))?.let { javaClass ->
+            getJavaClassFromPathSegments(javaClass, pathSegments)
+        }
+    }
+
+    protected fun findImport(pathSegments: List<String>): JavaClass? {
+        pathSegments.forEachIndexed { index, _ ->
             if (index == pathSegments.lastIndex) return null
             val packageFqName = pathSegments.dropLast(index + 1).joinToString(separator = ".")
             findPackage(packageFqName)?.let { pack ->
@@ -212,7 +231,7 @@ internal abstract class Scope(protected val parent: Scope?,
             }
 
     private fun findPackage(packageName: String): FqName? {
-        val fqName = FqName(packageName)
+        val fqName = if (packageName.isNotBlank()) FqName(packageName) else FqName.ROOT
         javac.hasKotlinPackage(fqName)?.let { return it }
 
         return javac.findPackage(fqName)?.fqName
@@ -243,7 +262,7 @@ private class ImportOnDemandScope(javac: JavacWrapper,
 
     override fun findClass(name: String, pathSegments: List<String>): JavaClassifier? {
         asteriskImports()
-                .mapNotNullTo(hashSetOf()) { findByFqName("$it$name".split(".")) }
+                .mapNotNullTo(hashSetOf()) { findImport("$it$name".split(".")) }
                 .takeIf { it.isNotEmpty() }
                 ?.let {
                     return it.singleOrNull()?.let { javaClass ->
@@ -280,7 +299,7 @@ private class SingleTypeImportScope(javac: JavacWrapper,
 
         imports.singleOrNull() ?: return null
 
-        return findByFqName(imports.first().split("."))
+        return findImport(imports.first().split("."))
                 ?.let { javaClass -> getJavaClassFromPathSegments(javaClass, pathSegments) }
     }
 
