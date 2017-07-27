@@ -1516,6 +1516,10 @@ task main_exception(type: RunKonanTest) {
     source = "runtime/basic/main_exception.kt"
 }
 
+task runtime_basic_standard(type: RunKonanTest) {
+    source = "runtime/basic/standard.kt"
+}
+
 task runtime_basic_assert_failed(type: RunKonanTest) {
     expectedExitStatus = 1
     source = "runtime/basic/assert_failed.kt"
