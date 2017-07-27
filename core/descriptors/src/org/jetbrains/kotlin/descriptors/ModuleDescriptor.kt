@@ -48,4 +48,6 @@ interface ModuleDescriptor : DeclarationDescriptor {
     class Capability<T>(val name: String) {
         override fun toString() = name
     }
+
+    val isValid: Boolean
 }

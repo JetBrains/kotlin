@@ -16,8 +16,12 @@
 
 package org.jetbrains.kotlin.idea.project
 
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.pom.PomManager
 import com.intellij.pom.PomModelAspect
 import com.intellij.pom.event.PomModelEvent
@@ -28,6 +32,7 @@ import com.intellij.psi.PsiCodeFragment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.CommonProcessors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -41,10 +46,27 @@ class KotlinCodeBlockModificationListener(
         project: Project,
         private val treeAspect: TreeAspect
 ) {
+    private val perModuleModCount = mutableMapOf<Module, Long>()
+    private val modificationTrackerImpl = modificationTracker as PsiModificationTrackerImpl
+
+    private var lastAffectedModule: Module? = null
+    private var lastAffectedModuleModCount = -1L
+
+    // All modifications since that count are known to be single-module modifications reflected in
+    // perModuleModCount map
+    private var perModuleChangesHighwatermark: Long? = null
+
+    fun getModificationCount(module: Module): Long {
+        return perModuleModCount[module] ?:
+               perModuleChangesHighwatermark ?:
+               modificationTrackerImpl.outOfCodeBlockModificationCount
+    }
+
+    fun hasPerModuleModificationCounts() = perModuleChangesHighwatermark != null
+
     init {
         val model = PomManager.getModel(project)
-        @Suppress("NAME_SHADOWING")
-        val modificationTracker = modificationTracker as PsiModificationTrackerImpl
+        val messageBusConnection = project.messageBus.connect()
         model.addModelListener(object: PomModelListener {
             override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean {
                 return aspect == treeAspect
@@ -58,11 +80,29 @@ class KotlinCodeBlockModificationListener(
                 // contents to be replaced, which is represented in a POM event as an empty list of changed elements
                 if (changedElements.any { getInsideCodeBlockModificationScope(it.psi) == null } ||
                     (file is PsiCodeFragment && changedElements.isEmpty())) {
+                    messageBusConnection.deliverImmediately()
                     if (file.isPhysical) {
-                        modificationTracker.incCounter()
+                        lastAffectedModule = ModuleUtil.findModuleForPsiElement(file)
+                        lastAffectedModuleModCount = modificationTrackerImpl.outOfCodeBlockModificationCount
+                        modificationTrackerImpl.incCounter()
                     }
                     incOutOfBlockModificationCount(file)
                 }
+            }
+        })
+
+        messageBusConnection.subscribe(PsiModificationTracker.TOPIC, PsiModificationTracker.Listener {
+            val newModCount = modificationTrackerImpl.outOfCodeBlockModificationCount
+            val affectedModule = lastAffectedModule
+            if (affectedModule != null && newModCount == lastAffectedModuleModCount + 1) {
+                if (perModuleChangesHighwatermark== null) {
+                    perModuleChangesHighwatermark = lastAffectedModuleModCount
+                }
+                perModuleModCount[affectedModule] = newModCount
+            }
+            else {
+                perModuleChangesHighwatermark = null
+                perModuleModCount.clear()
             }
         })
     }
@@ -117,6 +157,8 @@ class KotlinCodeBlockModificationListener(
                 KtProperty::class.java,
                 KtNamedFunction::class.java
         )
+
+        fun getInstance(project: Project) = project.getComponent(KotlinCodeBlockModificationListener::class.java)
     }
 }
 
@@ -124,3 +166,31 @@ private val FILE_OUT_OF_BLOCK_MODIFICATION_COUNT = Key<Long>("FILE_OUT_OF_BLOCK_
 
 val KtFile.outOfBlockModificationCount: Long
     get() = getUserData(FILE_OUT_OF_BLOCK_MODIFICATION_COUNT) ?: 0
+
+class KotlinModuleModificationTracker(val module: Module): ModificationTracker {
+    private val kotlinModCountListener = KotlinCodeBlockModificationListener.getInstance(module.project)
+    private val psiModificationTracker = PsiModificationTracker.SERVICE.getInstance(module.project)
+    private val dependencies by lazy {
+        HashSet<Module>().apply {
+            ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule(
+                    CommonProcessors.CollectProcessor(this))
+        }
+    }
+
+    override fun getModificationCount(): Long {
+        val currentGlobalCount = psiModificationTracker.outOfCodeBlockModificationCount
+
+        if (kotlinModCountListener.hasPerModuleModificationCounts()) {
+            val selfCount = kotlinModCountListener.getModificationCount(module)
+            if (selfCount == currentGlobalCount) return selfCount
+            var maxCount = selfCount
+            for (dependency in dependencies) {
+                val depCount = kotlinModCountListener.getModificationCount(dependency)
+                if (depCount == currentGlobalCount) return currentGlobalCount
+                if (depCount > maxCount) maxCount = depCount
+            }
+            return maxCount
+        }
+        return currentGlobalCount
+    }
+}
