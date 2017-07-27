@@ -22,7 +22,7 @@ public class IncrementalCompilation {
     private static final String INCREMENTAL_COMPILATION_PROPERTY = "kotlin.incremental.compilation";
 
     public static boolean isEnabled() {
-        return !"false".equals(System.getProperty(INCREMENTAL_COMPILATION_PROPERTY));
+        return "true".equals(System.getProperty(INCREMENTAL_COMPILATION_PROPERTY));
     }
 
     @TestOnly
