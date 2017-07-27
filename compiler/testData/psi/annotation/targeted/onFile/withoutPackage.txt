@@ -35,9 +35,9 @@ KtFile: withoutPackage.kt
       PsiWhiteSpace('\n')
       ANNOTATION
         PsiElement(AT)('@')
-        PsiErrorElement:@file annotations are only allowed before package declaration
+        ANNOTATION_TARGET
           PsiElement(file)('file')
-          PsiElement(COLON)(':')
+        PsiElement(COLON)(':')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE

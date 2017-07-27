@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 
 object AnnotationUseSiteTargetChecker {
@@ -54,14 +58,17 @@ object AnnotationUseSiteTargetChecker {
                     annotationEntry()?.let { report(INAPPLICABLE_TARGET_ON_PROPERTY.on(it, target.renderName)) }
                 }
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> annotationEntry()?.let { report(INAPPLICABLE_PARAM_TARGET.on(it)) }
-                AnnotationUseSiteTarget.FILE -> throw IllegalArgumentException("@file annotations are not allowed here")
+                AnnotationUseSiteTarget.FILE -> {
+                    annotationEntry()?.useSiteTarget?.let { reportDiagnosticOnce(INAPPLICABLE_FILE_TARGET.on(it)) }
+                }
             }
         }
     }
 
     private fun BindingTrace.checkDeclaration(annotated: KtAnnotated, descriptor: DeclarationDescriptor) {
         for (annotation in annotated.annotationEntries) {
-            val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
+            val useSiteTarget = annotation.useSiteTarget
+            val target = useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
 
             when (target) {
                 AnnotationUseSiteTarget.FIELD -> checkIfHasBackingField(annotated, descriptor, annotation)
@@ -84,7 +91,7 @@ object AnnotationUseSiteTargetChecker {
                     }
                 }
                 AnnotationUseSiteTarget.SETTER_PARAMETER -> checkIfMutableProperty(annotated, annotation)
-                AnnotationUseSiteTarget.FILE -> throw IllegalArgumentException("@file annotations are not allowed here")
+                AnnotationUseSiteTarget.FILE -> reportDiagnosticOnce(INAPPLICABLE_FILE_TARGET.on(useSiteTarget))
                 AnnotationUseSiteTarget.RECEIVER -> report(INAPPLICABLE_RECEIVER_TARGET.on(annotation))
             }
         }

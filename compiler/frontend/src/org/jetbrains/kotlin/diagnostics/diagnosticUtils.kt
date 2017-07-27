@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
     return true
 }
 
-private fun BindingTrace.reportDiagnosticOnce(diagnostic: Diagnostic) {
+fun BindingTrace.reportDiagnosticOnce(diagnostic: Diagnostic) {
     if (bindingContext.diagnostics.forElement(diagnostic.psiElement).any { it.factory == diagnostic.factory }) return
 
     report(diagnostic)

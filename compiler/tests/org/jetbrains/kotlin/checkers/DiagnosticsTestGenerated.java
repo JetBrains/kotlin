@@ -1581,9 +1581,33 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("diagnosticFileAnnotationInWrongPlace.kt")
+                public void testDiagnosticFileAnnotationInWrongPlace() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/diagnosticFileAnnotationInWrongPlace.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("diagnosticWithoutPackage.kt")
+                public void testDiagnosticWithoutPackage() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/diagnosticWithoutPackage.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("diagnosticWithoutPackageWithSimpleAnnotation.kt")
+                public void testDiagnosticWithoutPackageWithSimpleAnnotation() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/diagnosticWithoutPackageWithSimpleAnnotation.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("FieldAnnotations.kt")
                 public void testFieldAnnotations() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/FieldAnnotations.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("fileAnnotationWithoutColon.kt")
+                public void testFileAnnotationWithoutColon() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/fileAnnotationWithoutColon.kt");
                     doTest(fileName);
                 }
 
