@@ -28,11 +28,31 @@
     enum class En { Entry1, @a @b(E.E2) Entry2, @a @c Entry3 }
 
     fun types(param: @a @b(E.E1) LongRange): @a @b(E.E2) Unit {}
+
+    fun @receiver:a Int.foo() {}
+    val @receiver:a Int.receiverField: String? get() = null
+
+    @get: a
+    val getterField : String? = null
+
+    @set: a
+    var setterField : String? = null
+
+    @field: a
+    val ownField : String? = null
+
+    @setparam:a
+    var setParam: String? = null
+
+    @delegate:a
+    val deleage by lazy { 12 }
+
+    class ClassWithConstructor(@param: a val b: Int)
 }
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION,
         AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER,
-        AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.TYPE_PARAMETER)
+        AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.FIELD)
 annotation class a
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS,
