@@ -1,5 +1,5 @@
 // !CHECK_TYPE
-// JAVAC_SKIP
+// JAVAC_EXPECTED_FILE
 
 import java.util.ArrayList
 

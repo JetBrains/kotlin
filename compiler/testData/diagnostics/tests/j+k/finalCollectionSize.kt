@@ -1,4 +1,4 @@
-// JAVAC_SKIP
+// JAVAC_EXPECTED_FILE
 // FILE: A.java
 
 abstract public class A extends java.util.ArrayList<String> {

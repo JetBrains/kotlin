@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VALUE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
-// JAVAC_SKIP
+// JAVAC_EXPECTED_FILE
 // FILE: MyMap.java
 
 abstract public class MyMap extends java.util.AbstractMap<Double, CharSequence> {

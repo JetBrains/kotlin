@@ -1,4 +1,4 @@
-// JAVAC_SKIP
+// JAVAC_EXPECTED_FILE
 interface MyTrait: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN, INTERFACE_WITH_SUPERCLASS!>Object<!> {
     override fun toString(): String
     public override fun finalize()

@@ -1,4 +1,4 @@
-// JAVAC_SKIP
+// JAVAC_EXPECTED_FILE
 // KT-588 Unresolved static method
 
 class Test() : Thread("Test") {

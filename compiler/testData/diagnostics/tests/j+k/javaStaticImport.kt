@@ -1,4 +1,4 @@
-// JAVAC_SKIP
+// JAVAC_EXPECTED_FILE
 // FILE: backend/asmutil/AsmUtil.java
 package backend.asmutil;
 
