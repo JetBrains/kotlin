@@ -92,7 +92,7 @@ class IncrementalJvmCompilerRunner(
         private val artifactChangesProvider: ArtifactChangesProvider? = null,
         private val changesRegistry: ChangesRegistry? = null
 ) {
-    var anyClassesCompiled: Boolean = false
+    private var anyClassesCompiled: Boolean = false
             private set
     private val cacheDirectory = File(workingDir, CACHES_DIR_NAME)
     private val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)

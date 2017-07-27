@@ -39,7 +39,7 @@ class BinaryJavaClass(
         override val outerClass: JavaClass?,
         classContent: ByteArray? = null
 ) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), VirtualFileBoundJavaClass, BinaryJavaModifierListOwner, MapBasedJavaAnnotationOwner {
-    lateinit var myInternalName: String
+    private lateinit var myInternalName: String
 
     override val annotations: MutableCollection<JavaAnnotation> = ContainerUtil.newSmartList()
     override lateinit var typeParameters: List<JavaTypeParameter>

@@ -219,7 +219,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         generateValueParameterDeclarations(irFunction, null, null, withDefaultValues = false)
     }
 
-    fun generateValueParameterDeclarations(
+    private fun generateValueParameterDeclarations(
             irFunction: IrFunction,
             ktParameterOwner: KtElement?,
             ktReceiverParameterElement: KtElement?,

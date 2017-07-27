@@ -28,12 +28,10 @@ class DefaultImplsClassContext(
         contextKind: OwnerKind,
         parentContext: CodegenContext<*>?,
         localLookup: ((DeclarationDescriptor) -> Boolean)?,
-        val interfaceContext: ClassContext
+        private val interfaceContext: ClassContext
 ) : ClassContext(typeMapper, contextDescriptor, contextKind, parentContext, localLookup) {
 
-    override fun getCompanionObjectContext(): CodegenContext<*>? {
-        return interfaceContext.companionObjectContext
-    }
+    override fun getCompanionObjectContext(): CodegenContext<*>? = interfaceContext.companionObjectContext
 
     override fun getAccessors(): Collection<AccessorForCallableDescriptor<*>> {
         val accessors = super.getAccessors()

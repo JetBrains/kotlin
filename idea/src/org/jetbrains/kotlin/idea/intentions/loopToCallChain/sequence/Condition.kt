@@ -57,7 +57,7 @@ interface Condition {
     }
 }
 
-class AtomicCondition(val expression: KtExpression, val isNegated: Boolean = false) : Condition {
+class AtomicCondition(val expression: KtExpression, private val isNegated: Boolean = false) : Condition {
     init {
         assert(expression.isPhysical)
     }

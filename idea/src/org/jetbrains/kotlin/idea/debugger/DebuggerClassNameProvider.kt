@@ -72,7 +72,7 @@ class DebuggerClassNameProvider(
         }
     }
 
-    val inlineUsagesSearcher = InlineCallableUsagesSearcher(debugProcess, scopes)
+    private val inlineUsagesSearcher = InlineCallableUsagesSearcher(debugProcess, scopes)
 
     /**
      * Returns classes in which the given line number *is* present.

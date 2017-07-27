@@ -48,7 +48,7 @@ class CreateExtensionCallableFromUsageFix<E : KtElement>(
 
 abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         originalExpression: E,
-        val callableInfos: List<CallableInfo>,
+        private val callableInfos: List<CallableInfo>,
         val isExtension: Boolean
 ) : CreateFromUsageFixBase<E>(originalExpression) {
     init {

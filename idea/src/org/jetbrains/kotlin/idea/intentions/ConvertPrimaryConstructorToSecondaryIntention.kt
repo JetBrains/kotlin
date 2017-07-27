@@ -143,7 +143,7 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
         element.delete()
     }
 
-    fun convertValueParametersToProperties(
+    private fun convertValueParametersToProperties(
             element: KtPrimaryConstructor, klass: KtClass, factory: KtPsiFactory, anchorBefore: PsiElement?
     ) {
         for (valueParameter in element.valueParameters.reversed()) {

@@ -27,7 +27,7 @@ object JavaToKotlinTranslator {
         return PsiFileFactory.getInstance(project).createFileFromText("test.java", JavaLanguage.INSTANCE, text)
     }
 
-    fun prettify(code: String?): String {
+    private fun prettify(code: String?): String {
         if (code == null) {
             return ""
         }

@@ -36,7 +36,7 @@ class NondeterministicJumpInstruction(
     private val _resolvedTargets: MutableMap<Label, Instruction> = linkedMapOf()
 
     val targetLabels: List<Label> = ArrayList(targetLabels)
-    val resolvedTargets: Map<Label, Instruction>
+    private val resolvedTargets: Map<Label, Instruction>
             get() = _resolvedTargets
 
     fun setResolvedTarget(label: Label, resolvedTarget: Instruction) {

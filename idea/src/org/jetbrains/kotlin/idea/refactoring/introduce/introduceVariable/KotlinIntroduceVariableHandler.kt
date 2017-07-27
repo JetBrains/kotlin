@@ -449,7 +449,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         }
     }
 
-    fun doRefactoring(
+    private fun doRefactoring(
             project: Project,
             editor: Editor?,
             expression: KtExpression,

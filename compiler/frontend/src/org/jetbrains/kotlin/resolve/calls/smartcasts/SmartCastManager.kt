@@ -37,12 +37,11 @@ import java.util.*
 
 class SmartCastManager {
 
-    fun getSmartCastVariants(
+    private fun getSmartCastVariants(
             receiverToCast: ReceiverValue,
             context: ResolutionContext<*>
-    ): List<KotlinType> {
-        return getSmartCastVariants(receiverToCast, context.trace.bindingContext, context.scope.ownerDescriptor, context.dataFlowInfo)
-    }
+    ): List<KotlinType> =
+            getSmartCastVariants(receiverToCast, context.trace.bindingContext, context.scope.ownerDescriptor, context.dataFlowInfo)
 
     fun getSmartCastVariants(
             receiverToCast: ReceiverValue,
@@ -73,7 +72,7 @@ class SmartCastManager {
     /**
      * @return variants @param receiverToCast may be cast to according to @param dataFlowInfo, @param receiverToCast itself is NOT included
      */
-    fun getSmartCastVariantsExcludingReceiver(
+    private fun getSmartCastVariantsExcludingReceiver(
             bindingContext: BindingContext,
             containingDeclarationOrModule: DeclarationDescriptor,
             dataFlowInfo: DataFlowInfo,

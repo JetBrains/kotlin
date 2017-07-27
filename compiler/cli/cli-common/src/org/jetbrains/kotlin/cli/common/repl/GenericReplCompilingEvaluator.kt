@@ -26,7 +26,7 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
                                     private val fallbackScriptArgs: ScriptArgsWithTypes? = null,
                                     repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT
 ) : ReplFullEvaluator {
-    val evaluator = GenericReplEvaluator(baseClasspath, baseClassloader, fallbackScriptArgs, repeatingMode)
+    private val evaluator = GenericReplEvaluator(baseClasspath, baseClassloader, fallbackScriptArgs, repeatingMode)
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = AggregatedReplStageState(compiler.createState(lock), evaluator.createState(lock), lock)
 

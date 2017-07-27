@@ -71,7 +71,7 @@ class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(KtP
         if (hasVararg) element.addModifier(KtTokens.VARARG_KEYWORD)
     }
 
-    fun KtAnnotationEntry.isAppliedToProperty(): Boolean {
+    private fun KtAnnotationEntry.isAppliedToProperty(): Boolean {
         useSiteTarget?.getAnnotationUseSiteTarget()?.let {
             return it == AnnotationUseSiteTarget.FIELD
                    || it == AnnotationUseSiteTarget.PROPERTY
@@ -83,7 +83,7 @@ class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(KtP
         return !isApplicableToConstructorParameter()
     }
 
-    fun KtAnnotationEntry.isAppliedToConstructorParameter(): Boolean {
+    private fun KtAnnotationEntry.isAppliedToConstructorParameter(): Boolean {
         useSiteTarget?.getAnnotationUseSiteTarget()?.let {
             return it == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
         }
@@ -91,19 +91,19 @@ class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(KtP
         return isApplicableToConstructorParameter()
     }
 
-    fun KtAnnotationEntry.isApplicableToConstructorParameter(): Boolean {
+    private fun KtAnnotationEntry.isApplicableToConstructorParameter(): Boolean {
         val context = analyze(BodyResolveMode.PARTIAL)
         val descriptor = context[BindingContext.ANNOTATION, this] ?: return false
         val applicableTargets = AnnotationChecker.applicableTargetSet(descriptor)
         return applicableTargets.contains(KotlinTarget.VALUE_PARAMETER)
     }
 
-    fun KtAnnotationEntry.textWithoutUseSite() = "@" + typeReference?.text.orEmpty() + valueArgumentList?.text.orEmpty()
+    private fun KtAnnotationEntry.textWithoutUseSite() = "@" + typeReference?.text.orEmpty() + valueArgumentList?.text.orEmpty()
 
-    fun KtAnnotationUseSiteTarget.removeWithColon() {
+    private fun KtAnnotationUseSiteTarget.removeWithColon() {
         nextSibling?.delete() // ':' symbol after use site
         delete()
     }
 
-    fun KtPrimaryConstructor.isNotContainedInAnnotation() = !getContainingClassOrObject().isAnnotation()
+    private fun KtPrimaryConstructor.isNotContainedInAnnotation() = !getContainingClassOrObject().isAnnotation()
 }

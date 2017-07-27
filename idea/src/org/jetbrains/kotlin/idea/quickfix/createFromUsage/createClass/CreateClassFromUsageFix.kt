@@ -64,7 +64,10 @@ data class ClassInfo(
         val parameterInfos: List<ParameterInfo> = Collections.emptyList()
 )
 
-open class CreateClassFromUsageFix<E : KtElement> protected constructor (element: E, val classInfo: ClassInfo): CreateFromUsageFixBase<E>(element) {
+open class CreateClassFromUsageFix<E : KtElement> protected constructor (
+        element: E,
+        private val classInfo: ClassInfo
+): CreateFromUsageFixBase<E>(element) {
     override fun getText() = "Create ${classInfo.kind.description} '${classInfo.name}'"
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {

@@ -118,7 +118,7 @@ protected constructor(
         return propertyDescriptors(name)
     }
 
-    fun doGetProperties(name: Name): Collection<PropertyDescriptor> {
+    private fun doGetProperties(name: Name): Collection<PropertyDescriptor> {
         val result = LinkedHashSet<PropertyDescriptor>()
 
         val declarations = declarationProvider.getPropertyDeclarations(name)

@@ -51,7 +51,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
         return doBuildFileStub(file, content.content)
     }
 
-    fun doBuildFileStub(file: VirtualFile, fileContent: ByteArray): PsiFileStub<KtFile>? {
+    private fun doBuildFileStub(file: VirtualFile, fileContent: ByteArray): PsiFileStub<KtFile>? {
         val kotlinClass = IDEKotlinBinaryClassCache.getKotlinBinaryClass(file, fileContent) ?: error("Can't find binary class for Kotlin file: $file")
         val header = kotlinClass.classHeader
         val classId = kotlinClass.classId

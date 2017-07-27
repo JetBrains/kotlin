@@ -56,20 +56,16 @@ class ToFromOriginalFileMapper private constructor(
         shift = syntheticLength - originalLength
     }
 
-    fun toOriginalFile(offset: Int): Int? {
-        return when {
-            offset <= completionOffset -> offset
-            offset >= syntheticLength - tailLength -> offset - shift
-            else -> null
-        }
+    private fun toOriginalFile(offset: Int): Int? = when {
+        offset <= completionOffset -> offset
+        offset >= syntheticLength - tailLength -> offset - shift
+        else -> null
     }
 
-    fun toSyntheticFile(offset: Int): Int? {
-        return when {
-            offset <= completionOffset -> offset
-            offset >= originalLength - tailLength -> offset + shift
-            else -> null
-        }
+    private fun toSyntheticFile(offset: Int): Int? = when {
+        offset <= completionOffset -> offset
+        offset >= originalLength - tailLength -> offset + shift
+        else -> null
     }
 
     fun <TElement : PsiElement> toOriginalFile(element: TElement): TElement? {

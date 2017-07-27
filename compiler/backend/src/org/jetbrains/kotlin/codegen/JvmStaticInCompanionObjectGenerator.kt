@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 class JvmStaticInCompanionObjectGenerator(
-        val descriptor: FunctionDescriptor,
-        val declarationOrigin: JvmDeclarationOrigin,
-        val state: GenerationState,
+        private val descriptor: FunctionDescriptor,
+        private val declarationOrigin: JvmDeclarationOrigin,
+        private val state: GenerationState,
         parentBodyCodegen: ImplementationBodyCodegen
 ) : Function2<ImplementationBodyCodegen, ClassBuilder, Unit> {
     private val typeMapper = state.typeMapper

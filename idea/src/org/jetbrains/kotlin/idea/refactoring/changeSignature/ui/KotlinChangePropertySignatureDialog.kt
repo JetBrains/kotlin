@@ -47,9 +47,9 @@ class KotlinChangePropertySignatureDialog(
     private val nameField = EditorTextField(methodDescriptor.name)
     private var returnTypeField: EditorTextField by Delegates.notNull()
     private var receiverTypeCheckBox: JCheckBox? = null
-    var receiverTypeLabel: JLabel by Delegates.notNull()
+    private var receiverTypeLabel: JLabel by Delegates.notNull()
     private var receiverTypeField: EditorTextField by Delegates.notNull()
-    var receiverDefaultValueLabel: JLabel? = null
+    private var receiverDefaultValueLabel: JLabel? = null
     private var receiverDefaultValueField: EditorTextField? = null
 
     init {

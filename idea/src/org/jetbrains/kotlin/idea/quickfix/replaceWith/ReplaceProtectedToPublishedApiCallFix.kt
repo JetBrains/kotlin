@@ -83,7 +83,7 @@ class ReplaceProtectedToPublishedApiCallFix(
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
-        val signatureRenderer = IdeDescriptorRenderers.SOURCE_CODE.withOptions {
+        private val signatureRenderer = IdeDescriptorRenderers.SOURCE_CODE.withOptions {
             defaultParameterValueRenderer = null
             startFromDeclarationKeyword = true
             withoutReturnType = true

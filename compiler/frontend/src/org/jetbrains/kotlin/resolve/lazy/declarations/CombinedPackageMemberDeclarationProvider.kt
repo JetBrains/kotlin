@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
-class CombinedPackageMemberDeclarationProvider(val providers: Collection<PackageMemberDeclarationProvider>) : PackageMemberDeclarationProvider {
+class CombinedPackageMemberDeclarationProvider(
+        val providers: Collection<PackageMemberDeclarationProvider>
+) : PackageMemberDeclarationProvider {
     override fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean) = providers.flatMap { it.getAllDeclaredSubPackages(nameFilter) }
 
     override fun getPackageFiles() = providers.flatMap { it.getPackageFiles() }

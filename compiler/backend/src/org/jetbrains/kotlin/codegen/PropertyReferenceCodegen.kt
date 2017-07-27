@@ -62,7 +62,7 @@ class PropertyReferenceCodegen(
 
     private val isLocalDelegatedProperty = target is LocalVariableDescriptor
 
-    val getFunction =
+    private val getFunction =
             if (isLocalDelegatedProperty)
                 (localVariableDescriptorForReference as VariableDescriptorWithAccessors).getter!!
             else
@@ -250,13 +250,13 @@ class PropertyReferenceCodegen(
 
     class PropertyReferenceGenerationStrategy(
             val isGetter: Boolean,
-            val originalFunctionDesc: FunctionDescriptor,
+            private val originalFunctionDesc: FunctionDescriptor,
             val target: VariableDescriptor,
             val asmType: Type,
             val receiverType: Type?,
             val expression: KtElement,
             state: GenerationState,
-            val isInliningStrategy: Boolean
+            private val isInliningStrategy: Boolean
     ) :
             FunctionGenerationStrategy.CodegenBased(state) {
         override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {

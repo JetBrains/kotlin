@@ -64,7 +64,7 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
 
     override fun canRename() = true
 
-    fun renameByPropertyName(newName: String): PsiElement? {
+    private fun renameByPropertyName(newName: String): PsiElement? {
         val nameIdentifier = KtPsiFactory(expression).createNameIdentifier(newName)
         expression.getReferencedNameElement().replace(nameIdentifier)
         return expression

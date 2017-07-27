@@ -60,7 +60,7 @@ class KotlinPullUpData(val sourceClass: KtClassOrObject,
 
     val targetClassSuperResolvedCall = superEntryForTargetClass.getResolvedCall(sourceClassContext)
 
-    val typeParametersInSourceClassContext by lazy {
+    private val typeParametersInSourceClassContext by lazy {
         sourceClassDescriptor.declaredTypeParameters +
         sourceClass.getResolutionScope(sourceClassContext, resolutionFacade)
                 .collectDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)

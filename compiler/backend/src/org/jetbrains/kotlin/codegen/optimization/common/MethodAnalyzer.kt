@@ -67,7 +67,7 @@ open class MethodAnalyzer<V : Value>(
         protected val interpreter: Interpreter<V>
 ) {
     val instructions: InsnList = method.instructions
-    val nInsns: Int = instructions.size()
+    private val nInsns: Int = instructions.size()
 
     val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
 

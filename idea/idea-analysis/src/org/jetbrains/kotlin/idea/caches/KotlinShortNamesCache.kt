@@ -106,7 +106,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         return getMethodSequenceByName(name, scope).toList().toTypedArray()
     }
 
-    fun getMethodSequenceByName(name: String, scope: GlobalSearchScope): Sequence<PsiMethod> {
+    private fun getMethodSequenceByName(name: String, scope: GlobalSearchScope): Sequence<PsiMethod> {
         val propertiesIndex = KotlinPropertyShortNameIndex.getInstance()
         val functionIndex = KotlinFunctionShortNameIndex.getInstance()
 
@@ -160,7 +160,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         set.addAll(allMethodNames)
     }
 
-    fun getFieldSequenceByName(name: String, scope: GlobalSearchScope): Sequence<PsiField> {
+    private fun getFieldSequenceByName(name: String, scope: GlobalSearchScope): Sequence<PsiField> {
         return KotlinPropertyShortNameIndex.getInstance().get(name, project, scope).asSequence()
                 .map { LightClassUtil.getLightClassBackingField(it) }
                 .filterNotNull()

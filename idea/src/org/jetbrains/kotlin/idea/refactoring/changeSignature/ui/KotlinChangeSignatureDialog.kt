@@ -393,7 +393,7 @@ class KotlinChangeSignatureDialog(
         return KotlinChangeSignatureProcessor(myProject, changeInfo, commandName ?: title)
     }
 
-    fun getMethodDescriptor(): KotlinMethodDescriptor = myMethod
+    private fun getMethodDescriptor(): KotlinMethodDescriptor = myMethod
 
     override fun getSelectedIdx(): Int {
         return myMethod.parameters.withIndex().firstOrNull { it.value.isNewParameter }?.index

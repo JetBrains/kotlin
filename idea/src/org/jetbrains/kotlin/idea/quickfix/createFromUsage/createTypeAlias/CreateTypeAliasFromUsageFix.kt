@@ -41,7 +41,7 @@ class TypeAliasInfo(
 
 class CreateTypeAliasFromUsageFix<E : KtElement>(
         element: E,
-        val aliasInfo: TypeAliasInfo
+        private val aliasInfo: TypeAliasInfo
 ) : CreateFromUsageFixBase<E>(element), LowPriorityAction {
     override fun getText() = "Create type alias '${aliasInfo.name}'"
 

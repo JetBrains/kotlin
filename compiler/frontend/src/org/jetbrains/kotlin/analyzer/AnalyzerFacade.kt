@@ -75,8 +75,8 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
 
 class ResolverForProjectImpl<M : ModuleInfo>(
         private val debugName: String,
-        val descriptorByModule: Map<M, ModuleDescriptorImpl>,
-        val delegateResolver: ResolverForProject<M> = EmptyResolverForProject()
+        private val descriptorByModule: Map<M, ModuleDescriptorImpl>,
+        private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject()
 ) : ResolverForProject<M>() {
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
         if (!isCorrectModuleInfo(moduleInfo)) {

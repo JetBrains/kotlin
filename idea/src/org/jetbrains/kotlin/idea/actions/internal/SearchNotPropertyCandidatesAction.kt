@@ -64,7 +64,7 @@ class SearchNotPropertyCandidatesAction : AnAction() {
     }
 
 
-    fun processAllDescriptors(desc: DeclarationDescriptor, project: Project) {
+    private fun processAllDescriptors(desc: DeclarationDescriptor, project: Project) {
         val processed = mutableSetOf<DeclarationDescriptor>()
         var pFunctions = 0
         val matchedDescriptors = mutableSetOf<FunctionDescriptor>()

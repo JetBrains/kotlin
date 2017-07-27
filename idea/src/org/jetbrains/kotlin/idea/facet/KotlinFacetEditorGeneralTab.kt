@@ -48,10 +48,10 @@ class KotlinFacetEditorGeneralTab(
     ) : JPanel(BorderLayout()) {
         private val isMultiEditor = configuration == null
 
-        var editableCommonArguments: CommonCompilerArguments
-        var editableJvmArguments: K2JVMCompilerArguments
-        var editableJsArguments: K2JSCompilerArguments
-        var editableCompilerSettings: CompilerSettings
+        private var editableCommonArguments: CommonCompilerArguments
+        private var editableJvmArguments: K2JVMCompilerArguments
+        private var editableJsArguments: K2JSCompilerArguments
+        private var editableCompilerSettings: CompilerSettings
 
         val compilerConfigurable: KotlinCompilerConfigurableTab
 
@@ -146,7 +146,7 @@ class KotlinFacetEditorGeneralTab(
             compilerConfigurable.reset()
         }
 
-        val chosenPlatform: TargetPlatformKind<*>?
+        private val chosenPlatform: TargetPlatformKind<*>?
             get() = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
     }
 

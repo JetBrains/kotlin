@@ -33,8 +33,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
 class SpecialDescriptorsFactory(
-        val psiSourceManager: PsiSourceManager,
-        val builtIns: KotlinBuiltIns
+        private val psiSourceManager: PsiSourceManager,
+        private val builtIns: KotlinBuiltIns
 ) {
     private val singletonFieldDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
     private val outerThisDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()

@@ -84,7 +84,7 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
 
 class DefaultLambda(
         override val lambdaClassType: Type,
-        val capturedArgs: Array<Type>,
+        private val capturedArgs: Array<Type>,
         val parameterDescriptor: ValueParameterDescriptor,
         val offset: Int,
         val needReification: Boolean
