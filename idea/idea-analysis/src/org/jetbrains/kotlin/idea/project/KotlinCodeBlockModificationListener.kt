@@ -24,6 +24,7 @@ import com.intellij.pom.event.PomModelEvent
 import com.intellij.pom.event.PomModelListener
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.pom.tree.events.TreeChangeEvent
+import com.intellij.psi.PsiCodeFragment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiModificationTracker
@@ -52,7 +53,11 @@ class KotlinCodeBlockModificationListener(
             override fun modelChanged(event: PomModelEvent) {
                 val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
                 val file = changeSet.rootElement.psi.containingFile as? KtFile ?: return
-                if (changeSet.changedElements.any { getInsideCodeBlockModificationScope(it.psi) == null }) {
+                val changedElements = changeSet.changedElements
+                // When a code fragment is reparsed, IntelliJ doesn't do an AST diff and considers the entire
+                // contents to be replaced, which is represented in a POM event as an empty list of changed elements
+                if (changedElements.any { getInsideCodeBlockModificationScope(it.psi) == null } ||
+                    (file is PsiCodeFragment && changedElements.isEmpty())) {
                     if (file.isPhysical) {
                         modificationTracker.incCounter()
                     }
