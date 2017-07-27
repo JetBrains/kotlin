@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -104,11 +105,13 @@ abstract class CallableClsStubBuilder(
     }
 
     abstract val receiverType: ProtoBuf.Type?
+    abstract val receiverAnnotations: List<ClassIdWithTarget>
+
     abstract val returnType: ProtoBuf.Type?
 
     private fun createReceiverTypeReferenceStub() {
         receiverType?.let {
-            typeStubBuilder.createTypeReferenceStub(callableStub, it)
+            typeStubBuilder.createTypeReferenceStub(callableStub, it, this::receiverAnnotations)
         }
     }
 
@@ -133,6 +136,13 @@ private class FunctionClsStubBuilder(
 ) : CallableClsStubBuilder(parent, outerContext, protoContainer, functionProto.typeParameterList) {
     override val receiverType: ProtoBuf.Type?
         get() = functionProto.receiverType(c.typeTable)
+
+    override val receiverAnnotations: List<ClassIdWithTarget>
+        get() {
+            return c.components.annotationLoader
+                    .loadExtensionReceiverParameterAnnotations(protoContainer, functionProto, AnnotatedCallableKind.FUNCTION)
+                    .map { ClassIdWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
+        }
 
     override val returnType: ProtoBuf.Type?
         get() = functionProto.returnType(c.typeTable)
@@ -181,6 +191,13 @@ private class PropertyClsStubBuilder(
     override val receiverType: ProtoBuf.Type?
         get() = propertyProto.receiverType(c.typeTable)
 
+    override val receiverAnnotations: List<ClassIdWithTarget>
+        get() {
+            return c.components.annotationLoader
+                    .loadExtensionReceiverParameterAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY_GETTER)
+                    .map { ClassIdWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
+        }
+
     override val returnType: ProtoBuf.Type?
         get() = propertyProto.returnType(c.typeTable)
 
@@ -228,6 +245,9 @@ private class ConstructorClsStubBuilder(
 ) : CallableClsStubBuilder(parent, outerContext, protoContainer, emptyList()) {
     override val receiverType: ProtoBuf.Type?
         get() = null
+
+    override val receiverAnnotations: List<ClassIdWithTarget>
+        get() = emptyList()
 
     override val returnType: ProtoBuf.Type?
         get() = null

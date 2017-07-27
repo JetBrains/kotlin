@@ -20,9 +20,11 @@ public class AnnotationsOnNullableTypes {
     val lambdaReceiver: (@A C?).() -> C = null!!
 
     val lambdaTypeWithNullableReceiver: @A C?.() -> C = null!!
+
+    fun @receiver:A C?.functionWithAnnotatedReceiver() {}
 }
 
-@Target(AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER)
+@Target(AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.VALUE_PARAMETER)
 annotation class A
 
 interface B<T>

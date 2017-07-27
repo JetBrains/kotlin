@@ -183,6 +183,25 @@ PsiJetFileStubImpl[package=]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=C]
+      FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, name=functionWithAnnotatedReceiver]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+              ANNOTATION_TARGET[useSiteTarget=RECEIVER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=A]
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=C]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]
       FUN[fqName=AnnotationsOnNullableTypes.receiverArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, name=receiverArgument]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
