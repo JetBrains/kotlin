@@ -31,11 +31,11 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.config.createCompilerArguments
 import org.jetbrains.kotlin.config.splitArgumentString
 import org.jetbrains.kotlin.idea.compiler.configuration.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.awt.BorderLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 import javax.swing.event.DocumentEvent
+import kotlin.reflect.full.findAnnotation
 
 class KotlinFacetEditorGeneralTab(
         private val configuration: KotlinFacetConfiguration,
@@ -172,14 +172,15 @@ class KotlinFacetEditorGeneralTab(
                 is TargetPlatformKind.JavaScript -> jsUIExposedFields
                 else -> commonUIExposedFields
             }
-            val fieldsToCheck = collectFieldsToCopy(argumentClass, false).filter { it.name in fieldNamesToCheck }
+
+            val propertiesToCheck = collectProperties(argumentClass.kotlin, false).filter { it.name in fieldNamesToCheck }
             val overridingArguments = ArrayList<String>()
             val redundantArguments = ArrayList<String>()
-            for (field in fieldsToCheck) {
-                val additionalValue = field[additionalArguments]
-                if (additionalValue != field[emptyArguments]) {
-                    val argumentInfo = field.annotations.firstIsInstanceOrNull<Argument>() ?: continue
-                    val addTo = if (additionalValue != field[primaryArguments]) overridingArguments else redundantArguments
+            for (property in propertiesToCheck) {
+                val additionalValue = property.get(additionalArguments)
+                if (additionalValue != property.get(emptyArguments)) {
+                    val argumentInfo = property.findAnnotation<Argument>() ?: continue
+                    val addTo = if (additionalValue != property.get(primaryArguments)) overridingArguments else redundantArguments
                     addTo += "<strong>" + argumentInfo.value.first() + "</strong>"
                 }
             }
