@@ -17,8 +17,11 @@
 @file:Suppress("unused")
 package kotlinx.android.parcel
 
-import android.os.Parcel
-import android.os.Parcelable
+//import android.os.Parcel
+//import android.os.Parcelable
+
+interface Parcelable
+interface Parcel
 
 interface Parceler<P: Parcelable> {
     /**
