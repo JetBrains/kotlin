@@ -20,10 +20,13 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CodeCompletionHandlerBase;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.completion.test.CompletionTestUtilKt;
@@ -32,6 +35,7 @@ import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
+import java.util.List;
 
 public class KotlinConfidenceTest extends LightCompletionTestCase {
     private static final String TYPE_DIRECTIVE_PREFIX = "// TYPE:";
@@ -60,6 +64,18 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
         doTest();
     }
 
+    public void testAutoPopupInStringTemplate() {
+        doTest();
+    }
+
+    public void testNoAutoPopupInStringTemplateAfterSpace() {
+        doTest();
+    }
+
+    public void testNoAutoPopupInRawStringTemplateAfterNewLine() {
+        doTest();
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -83,23 +99,31 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
 
         try {
             configureByFile(getBeforeFileName());
-            String typeText = getTypeTextFromFile();
-            if (typeText != null) {
-                type(typeText);
-                checkResultByFile(getAfterFileName());
+            String text = getEditor().getDocument().getText();
+            String typeText = getTypeText(text);
+            List<String> expectedElements = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// ELEMENT:");
+            boolean noLookup = InTextDirectivesUtils.isDirectiveDefined(text, "// NO_LOOKUP");
+
+            assertFalse("Can't both expect lookup elements and no lookup", !expectedElements.isEmpty() && noLookup);
+
+            if (noLookup) {
+                assertNull("Expected no lookup", getLookup());
+                return;
             }
-            else {
-                LookupImpl lookup = getLookup();
-                assertNull("No completion auto-popup expected", lookup);
+            else if (!expectedElements.isEmpty()) {
+                assertContainsItems(ArrayUtil.toStringArray(expectedElements));
+                return;
             }
+            assertNotNull("You must type something, use // TYPE:", typeText);
+            type(typeText);
+            checkResultByFile(getAfterFileName());
         }
         finally {
             CodeInsightSettings.getInstance().SELECT_AUTOPOPUP_SUGGESTIONS_BY_CHARS = completeByChars;
         }
     }
 
-    protected static String getTypeTextFromFile() {
-        String text = getEditor().getDocument().getText();
+    protected static String getTypeText(String text) {
 
         String[] directives = InTextDirectivesUtils.findArrayWithPrefixes(text, TYPE_DIRECTIVE_PREFIX);
         if (directives.length == 0) return null;
@@ -131,5 +155,9 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
     protected void complete() {
         new CodeCompletionHandlerBase(CompletionType.BASIC, false, true, true).invokeCompletion(
                 getProject(), getEditor(), 0, false, false);
+
+        LookupImpl lookup = (LookupImpl) LookupManager.getActiveLookup(myEditor);
+        myItems = lookup == null ? null : lookup.getItems().toArray(LookupElement.EMPTY_ARRAY);
+        myPrefix = lookup == null ? null : lookup.itemPattern(lookup.getItems().get(0));
     }
 }
