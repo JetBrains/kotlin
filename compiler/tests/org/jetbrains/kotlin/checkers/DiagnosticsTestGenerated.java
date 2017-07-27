@@ -10060,6 +10060,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("fixationOrderForProperConstraints.kt")
+            public void testFixationOrderForProperConstraints() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/fixationOrderForProperConstraints.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("flexibleTypesAsUpperBound.kt")
             public void testFlexibleTypesAsUpperBound() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/flexibleTypesAsUpperBound.kt");
@@ -10147,6 +10153,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("kt619.kt")
             public void testKt619() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/kt619.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaInValInitializerWithAnonymousFunctions.kt")
+            public void testLambdaInValInitializerWithAnonymousFunctions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/lambdaInValInitializerWithAnonymousFunctions.kt");
                 doTest(fileName);
             }
 

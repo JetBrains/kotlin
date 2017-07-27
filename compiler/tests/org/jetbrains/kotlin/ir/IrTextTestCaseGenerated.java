@@ -1104,12 +1104,6 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/regressions/newInference/fixationOrder1.kt");
                 doTest(fileName);
             }
-
-            @TestMetadata("fixationOrder2.kt")
-            public void testFixationOrder2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/regressions/newInference/fixationOrder2.kt");
-                doTest(fileName);
-            }
         }
     }
 
