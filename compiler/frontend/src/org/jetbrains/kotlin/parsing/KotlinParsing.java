@@ -700,21 +700,16 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         if (targetKeyword == null && mode.isFileAnnotationParsingMode) {
-            parseAnnotationTarget(mode, FILE_KEYWORD);
+            parseAnnotationTarget(FILE_KEYWORD);
         }
         else if (targetKeyword != null) {
-            parseAnnotationTarget(mode, targetKeyword);
+            parseAnnotationTarget(targetKeyword);
         }
 
         return true;
     }
 
-    private void parseAnnotationTarget(AnnotationParsingMode mode, KtKeywordToken keyword) {
-        if (keyword == FILE_KEYWORD && !mode.isFileAnnotationParsingMode && at(keyword) && lookahead(1) == COLON) {
-            errorAndAdvance(AT.getValue() + keyword.getValue() + " annotations are only allowed before package declaration", 2);
-            return;
-        }
-
+    private void parseAnnotationTarget(KtKeywordToken keyword) {
         String message = "Expecting \"" + keyword.getValue() + COLON.getValue() + "\" prefix for " + keyword.getValue() + " annotations";
 
         PsiBuilder.Marker marker = mark();

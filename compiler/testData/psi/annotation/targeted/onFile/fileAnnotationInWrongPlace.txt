@@ -11,9 +11,9 @@ KtFile: fileAnnotationInWrongPlace.kt
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
-        PsiErrorElement:@file annotations are only allowed before package declaration
+        ANNOTATION_TARGET
           PsiElement(file)('file')
-          PsiElement(COLON)(':')
+        PsiElement(COLON)(':')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -28,9 +28,9 @@ KtFile: fileAnnotationInWrongPlace.kt
     MODIFIER_LIST
       ANNOTATION
         PsiElement(AT)('@')
-        PsiErrorElement:@file annotations are only allowed before package declaration
+        ANNOTATION_TARGET
           PsiElement(file)('file')
-          PsiElement(COLON)(':')
+        PsiElement(COLON)(':')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -62,9 +62,9 @@ KtFile: fileAnnotationInWrongPlace.kt
     MODIFIER_LIST
       ANNOTATION
         PsiElement(AT)('@')
-        PsiErrorElement:@file annotations are only allowed before package declaration
+        ANNOTATION_TARGET
           PsiElement(file)('file')
-          PsiElement(COLON)(':')
+        PsiElement(COLON)(':')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -93,9 +93,9 @@ KtFile: fileAnnotationInWrongPlace.kt
     MODIFIER_LIST
       ANNOTATION
         PsiElement(AT)('@')
-        PsiErrorElement:@file annotations are only allowed before package declaration
+        ANNOTATION_TARGET
           PsiElement(file)('file')
-          PsiElement(COLON)(':')
+        PsiElement(COLON)(':')
         PsiElement(LBRACKET)('[')
         PsiErrorElement:Expecting a list of annotations
           <empty list>
