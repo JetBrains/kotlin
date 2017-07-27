@@ -5,7 +5,7 @@ interface Derived: Base
 fun foo(bar: Base):Int {
     return when (bar) {
         is Derived -> 0
-        <caret>is Base -> 42
+        <caret>!is Base -> 42
         else -> 1
     }
 }
