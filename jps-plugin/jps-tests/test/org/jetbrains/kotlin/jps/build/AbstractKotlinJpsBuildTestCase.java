@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.jps.build;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.builders.JpsBuildTestCase;
 import org.jetbrains.jps.model.JpsDummyElement;
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil;
 import org.jetbrains.jps.model.JpsProject;
@@ -65,39 +64,35 @@ public abstract class AbstractKotlinJpsBuildTestCase extends BaseKotlinJpsBuildT
     }
 
     protected JpsLibrary addKotlinMockRuntimeDependency() {
-        return addDependency(JpsJavaDependencyScope.COMPILE, myProject.getModules(), false, "kotlin-mock-runtime", ForTestCompileRuntime.mockRuntimeJarForTests());
+        return addDependency("kotlin-mock-runtime", ForTestCompileRuntime.mockRuntimeJarForTests());
     }
 
-    protected JpsLibrary addKotlinRuntimeDependency() {
-       return addKotlinRuntimeDependency(myProject);
+    protected JpsLibrary addKotlinStdlibDependency() {
+       return addKotlinStdlibDependency(myProject);
     }
 
     protected JpsLibrary addKotlinJavaScriptStdlibDependency() {
-        return addKotlinJavaScriptStdlibDependency(myProject);
+        return addDependency("KotlinJavaScript", PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath());
     }
 
-    protected JpsLibrary addKotlinJavaScriptDependency(String libraryName, File libraryFile) {
-        return addDependency(JpsJavaDependencyScope.COMPILE, myProject.getModules(), false, libraryName, libraryFile);
+    static JpsLibrary addKotlinStdlibDependency(@NotNull JpsProject project) {
+       return addKotlinStdlibDependency(project.getModules(), false);
     }
 
-    static JpsLibrary addKotlinRuntimeDependency(@NotNull JpsProject project) {
-       return addKotlinRuntimeDependency(JpsJavaDependencyScope.COMPILE, project.getModules(), false);
+    static JpsLibrary addKotlinTestDependency(@NotNull JpsProject project) {
+        return addDependency(project, "kotlin-test", PathUtil.getKotlinPathsForDistDirectory().getKotlinTestPath());
     }
 
-    static JpsLibrary addKotlinTestRuntimeDependency(@NotNull JpsProject project) {
-        return addDependency(JpsJavaDependencyScope.COMPILE, project.getModules(), false, "kotlin-test", PathUtil.getKotlinPathsForDistDirectory().getKotlinTestPath());
+    protected static JpsLibrary addKotlinStdlibDependency(@NotNull Collection<JpsModule> modules, boolean exported) {
+        return addDependency(JpsJavaDependencyScope.COMPILE, modules, exported, "kotlin-stdlib", PathUtil.getKotlinPathsForDistDirectory().getStdlibPath());
     }
 
-    static JpsLibrary addKotlinJavaScriptStdlibDependency(@NotNull JpsProject project) {
-        return addKotlinJavaScriptStdlibDependency(JpsJavaDependencyScope.COMPILE, project.getModules(), false);
+    protected JpsLibrary addDependency(@NotNull String libraryName, @NotNull File libraryFile) {
+        return addDependency(myProject, libraryName, libraryFile);
     }
 
-    protected static JpsLibrary addKotlinRuntimeDependency(JpsJavaDependencyScope type, Collection<JpsModule> modules, boolean exported) {
-        return addDependency(type, modules, exported, "kotlin-runtime", PathUtil.getKotlinPathsForDistDirectory().getRuntimePath());
-    }
-
-    protected static JpsLibrary addKotlinJavaScriptStdlibDependency(JpsJavaDependencyScope type, Collection<JpsModule> modules, boolean exported) {
-        return addDependency(type, modules, exported, "KotlinJavaScript", PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath());
+    private static JpsLibrary addDependency(@NotNull JpsProject project, @NotNull String libraryName, @NotNull File libraryFile) {
+        return addDependency(JpsJavaDependencyScope.COMPILE, project.getModules(), false, libraryName, libraryFile);
     }
 
     protected static JpsLibrary addDependency(JpsJavaDependencyScope type, Collection<JpsModule> modules, boolean exported, String libraryName, File... file) {
