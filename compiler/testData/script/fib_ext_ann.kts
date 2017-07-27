@@ -1,7 +1,7 @@
 
 // this script expected parameter num : Int
 
-@file:DependsOn("@{runtime}")
+@file:DependsOn("@{kotlin-stdlib}")
 
 fun fib(n: Int): Int {
     val v = if(n < 2) 1 else fib(n-1) + fib(n-2)

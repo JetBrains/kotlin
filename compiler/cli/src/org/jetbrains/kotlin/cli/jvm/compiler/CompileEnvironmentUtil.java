@@ -118,16 +118,11 @@ public class CompileEnvironmentUtil {
     }
 
     private static void writeRuntimeToJar(JarOutputStream stream) throws IOException {
-        File runtimePath = PathUtil.getKotlinPathsForCompiler().getRuntimePath();
-        if (!runtimePath.exists()) {
-            throw new CompileEnvironmentException("Couldn't find runtime library");
+        File stdlibPath = PathUtil.getKotlinPathsForCompiler().getStdlibPath();
+        if (!stdlibPath.exists()) {
+            throw new CompileEnvironmentException("Couldn't find kotlin-stdlib at " + stdlibPath);
         }
-        File scriptRuntimePath = PathUtil.getKotlinPathsForCompiler().getScriptRuntimePath();
-        if (!scriptRuntimePath.exists()) {
-            throw new CompileEnvironmentException("Couldn't find script runtime library");
-        }
-
-        copyJarImpl(stream, runtimePath);
+        copyJarImpl(stream, stdlibPath);
     }
 
     private static void copyJarImpl(JarOutputStream stream, File jarPath) throws IOException {

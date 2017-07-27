@@ -32,7 +32,7 @@ import java.io.File
  */
 class ClasspathOrderTest : TestCaseWithTmpdir() {
     companion object {
-        val sourceDir = File(KotlinTestUtils.getTestDataPathBase() + "/classpathOrder").absoluteFile
+        private val sourceDir = File(KotlinTestUtils.getTestDataPathBase() + "/classpathOrder").absoluteFile
     }
 
     fun testClasspathOrderForCLI() {
@@ -45,7 +45,7 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
                 File(tmpdir, "output").absolutePath,
                 listOf(sourceDir),
                 listOf(JvmSourceRoot(sourceDir)),
-                listOf(PathUtil.kotlinPathsForDistDirectory.runtimePath),
+                listOf(PathUtil.kotlinPathsForDistDirectory.stdlibPath),
                 null,
                 JavaModuleBuildTargetType.PRODUCTION.typeId,
                 JavaModuleBuildTargetType.PRODUCTION.isTests,
