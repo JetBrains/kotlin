@@ -915,21 +915,99 @@ public fun Float.roundToLong(): Long = toDouble().roundToLong()
 
 
 
-// Int
-// also as extension val [absoluteValue]
+// ================== Integer math functions =====================================
+
+/**
+ * Returns the absolute value of the given value [a].
+ *
+ * Special cases:
+ *     - `abs(Int.MIN_VALUE)` is `Int.MIN_VALUE` due to an overflow
+ *
+ * @see absoluteValue extension property for [Int]
+ */
+@InlineOnly
 public inline fun abs(a: Int): Int = nativeMath.abs(a)
 
+/**
+ * Returns the smaller of two values.
+ */
+@InlineOnly
 public inline fun min(a: Int, b: Int): Int = nativeMath.min(a, b)
+
+/**
+ * Returns the greater of two values.
+ */
+@InlineOnly
 public inline fun max(a: Int, b: Int): Int = nativeMath.max(a, b)
 
+/**
+ * Returns the absolute value of this value.
+ *
+ * Special cases:
+ *     - `Int.MIN_VALUE.absoluteValue` is `Int.MIN_VALUE` due to an overflow
+ *
+ * @see abs function
+ */
+@InlineOnly
 public inline val Int.absoluteValue: Int get() = nativeMath.abs(this)
 
+/**
+ * Returns the sign of this value:
+ *     - `-1` if the value is negative,
+ *     - `0` if the value is zero,
+ *     - `1` if the value is positive
+ */
+public val Int.sign: Int get() = when {
+    this < 0 -> -1
+    this > 0 -> 1
+    else -> 0
+}
 
-// Long
-// also as extension val [absoluteValue]
+
+
+/**
+ * Returns the absolute value of the given value [a].
+ *
+ * Special cases:
+ *     - `abs(Long.MIN_VALUE)` is `Long.MIN_VALUE` due to an overflow
+ *
+ * @see absoluteValue extension property for [Long]
+ */
+@InlineOnly
 public inline fun abs(a: Long): Long = nativeMath.abs(a)
 
+/**
+ * Returns the smaller of two values.
+ */
+@InlineOnly
 public inline fun min(a: Long, b: Long): Long = nativeMath.min(a, b)
+
+/**
+ * Returns the greater of two values.
+ */
+@InlineOnly
 public inline fun max(a: Long, b: Long): Long = nativeMath.max(a, b)
 
+/**
+ * Returns the absolute value of this value.
+ *
+ * Special cases:
+ *     - `Long.MIN_VALUE.absoluteValue` is `Long.MIN_VALUE` due to an overflow
+ *
+ * @see abs function
+ */
+@InlineOnly
 public inline val Long.absoluteValue: Long get() = nativeMath.abs(this)
+
+/**
+ * Returns the sign of this value:
+ *     - `-1` if the value is negative,
+ *     - `0` if the value is zero,
+ *     - `1` if the value is positive
+ */
+public val Long.sign: Int get() = when {
+    this < 0 -> -1
+    this > 0 -> 1
+    else -> 0
+}
+
