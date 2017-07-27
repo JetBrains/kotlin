@@ -69,7 +69,7 @@ class SpringKotlinAutowiringInspection : AbstractKotlinInspection() {
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val modifierListOwner = elementPointer.element ?: return
-            if(!FileModificationService.getInstance().preparePsiElementForWrite(modifierListOwner)) return
+            if (!FileModificationService.getInstance().preparePsiElementForWrite(modifierListOwner)) return
             if (beanPointers.isEmpty()) return
 
             val defaultBeanName = with(beanPointers.first().name) { if (isNullOrBlank()) "Unknown" else this }
@@ -129,13 +129,13 @@ class SpringKotlinAutowiringInspection : AbstractKotlinInspection() {
                                             ?: return@registerWithElementsUnwrapped qf
                     AddQualifierFix(modifierListOwner, beanPointers, annotationFqName)
                 }
-                catch(e: Exception) {
+                catch (e: Exception) {
                     return@registerWithElementsUnwrapped null
                 }
             }
         }
 
-        private fun <T: PsiMember> T.processLightMember(
+        private fun <T : PsiMember> T.processLightMember(
                 action: T.(holder: ProblemsHolder, model: CommonSpringModel, required: Boolean) -> Unit
         ) {
             val model = SpringAutowireUtil.getProcessingSpringModel(containingClass) ?: return
@@ -166,12 +166,13 @@ class SpringKotlinAutowiringInspection : AbstractKotlinInspection() {
         }
 
         override fun visitProperty(property: KtProperty) {
-            for (lightElement in property.toLightElements()) {
-                when (lightElement) {
-                    is KtLightMethod -> lightElement.processLightMethod()
-                    is KtLightField -> lightElement.processLightField()
+            if (property.name != null) // It is here because `lightElement.name` returns `<no name provided>` instead of `null` suddenly
+                for (lightElement in property.toLightElements()) {
+                    when (lightElement) {
+                        is KtLightMethod -> lightElement.processLightMethod()
+                        is KtLightField -> lightElement.processLightField()
+                    }
                 }
-            }
         }
 
         override fun visitClassOrObject(classOrObject: KtClassOrObject) {
