@@ -20,8 +20,6 @@ import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
-import com.intellij.testFramework.IdeaTestUtil
-import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -49,6 +47,8 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
 
     }
 
+    protected open val forceUsePackageFolder: Boolean = false //workaround for IDEA-176033
+
     protected fun doTest(path: String) {
         val optionsFile = File(path)
         val options = FileUtil.loadFile(optionsFile, true)
@@ -74,7 +74,17 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                                     text
                                 else
                                     "package ${file.nameWithoutExtension};$text"
-                        configureByText(file.name, fileText)!!
+                        if (forceUsePackageFolder) {
+                            val packageName = fileText.substring(
+                                    "package".length,
+                                    fileText.indexOfAny(charArrayOf(';', '\n'))
+                            ).trim()
+                            val projectFileName = packageName.replace('.', '/') + "/" + file.name
+                            addFileToProject(projectFileName, fileText)
+                        }
+                        else {
+                            configureByText(file.name, fileText)!!
+                        }
                     }
                     file.extension == "gradle" -> {
                         val text = FileUtil.loadFile(file, true)
