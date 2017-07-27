@@ -821,21 +821,98 @@ public inline fun Float.roundToLong(): Long = toDouble().roundToLong()
 
 
 
-// Int
-// also as extension val [absoluteValue]
-fun abs(a: Int): Int = if (a < 0) -a else a
 
-inline fun min(a: Int, b: Int): Int = minOf(a, b)
-inline fun max(a: Int, b: Int): Int = maxOf(a, b)
+/**
+ * Returns the absolute value of the given value [a].
+ *
+ * Special cases:
+ *     - `abs(Int.MIN_VALUE)` is `Int.MIN_VALUE` due to an overflow
+ *
+ * @see absoluteValue extension property for [Int]
+ */
+// TODO: remove manual 'or' when KT-19290 is fixed
+public fun abs(a: Int): Int = if (a < 0) (-a or 0) else a
 
-inline val Int.absoluteValue: Int get() = abs(this)
+/**
+ * Returns the smaller of two values.
+ */
+@InlineOnly
+public inline fun min(a: Int, b: Int): Int = minOf(a, b)
+
+/**
+ * Returns the greater of two values.
+ */
+@InlineOnly
+public inline fun max(a: Int, b: Int): Int = maxOf(a, b)
+
+/**
+ * Returns the absolute value of this value.
+ *
+ * Special cases:
+ *     - `Int.MIN_VALUE.absoluteValue` is `Int.MIN_VALUE` due to an overflow
+ *
+ * @see abs function
+ */
+@InlineOnly
+public inline val Int.absoluteValue: Int get() = abs(this)
+
+/**
+ * Returns the sign of this value:
+ *     - `-1` if the value is negative,
+ *     - `0` if the value is zero,
+ *     - `1` if the value is positive
+ */
+public val Int.sign: Int get() = when {
+    this < 0 -> -1
+    this > 0 -> 1
+    else -> 0
+}
 
 
-// Long
-// also as extension val [absoluteValue]
-fun abs(a: Long): Long = if (a < 0) -a else a
 
-inline fun min(a: Long, b: Long): Long = minOf(a, b)
-inline fun max(a: Long, b: Long): Long = maxOf(a, b)
+/**
+ * Returns the absolute value of the given value [a].
+ *
+ * Special cases:
+ *     - `abs(Long.MIN_VALUE)` is `Long.MIN_VALUE` due to an overflow
+ *
+ * @see absoluteValue extension property for [Long]
+ */
+public fun abs(a: Long): Long = if (a < 0) -a else a
 
-inline val Long.absoluteValue: Long get() = abs(this)
+/**
+ * Returns the smaller of two values.
+ */
+@InlineOnly
+public inline fun min(a: Long, b: Long): Long = minOf(a, b)
+
+/**
+ * Returns the greater of two values.
+ */
+@InlineOnly
+public inline fun max(a: Long, b: Long): Long = maxOf(a, b)
+
+/**
+ * Returns the absolute value of this value.
+ *
+ * Special cases:
+ *     - `Long.MIN_VALUE.absoluteValue` is `Long.MIN_VALUE` due to an overflow
+ *
+ * @see abs function
+ */
+@InlineOnly
+public inline val Long.absoluteValue: Long get() = abs(this)
+
+/**
+ * Returns the sign of this value:
+ *     - `-1` if the value is negative,
+ *     - `0` if the value is zero,
+ *     - `1` if the value is positive
+ */
+public val Long.sign: Int get() = when {
+    this < 0 -> -1
+    this > 0 -> 1
+    else -> 0
+}
+
+
