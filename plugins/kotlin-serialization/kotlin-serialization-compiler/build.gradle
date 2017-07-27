@@ -1,23 +1,26 @@
-group 'org.jetbrains.kotlinx'
-version '0.1'
-
 buildscript {
     ext {
         kotlin_root = "$rootDir/../../../"
         distDir = file("$kotlin_root/dist")
         bootstrapCompilerFile = file("$distDir/kotlin-compiler-for-maven.jar")
-        kotlin_version = findProperty("deployVersion") ?: "1.1-SNAPSHOT"
-        kotlin_language_version = "1.1"
-        kotlin_gradle_plugin_version = "1.1.3"
+        kotlin_version = "1.1.3"
     }
 
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_gradle_plugin_version}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
     }
 }
+
+plugins {
+    id "org.jetbrains.intellij" version "0.2.15"
+}
+
+group 'org.jetbrains.kotlinx'
+version '0.1-SNAPSHOT'
+
 
 apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
@@ -26,19 +29,9 @@ repositories {
     mavenCentral()
 }
 
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-}
-
-
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_gradle_plugin_version}"
-    compile files(bootstrapCompilerFile.toString())
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"
+    compileOnly files(bootstrapCompilerFile.toString())
 }
 
 sourceSets {
@@ -56,5 +49,15 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile) {
 jar {
     from ('./src') {
         include 'META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar'
+        include 'META-INF/plugin.xml'
     }
+}
+
+
+apply plugin: 'org.jetbrains.intellij'
+
+intellij {
+    localPath "$kotlin_root/ideaSDK"
+    pluginName 'Kotlin-serialization'
+    downloadSources false
 }

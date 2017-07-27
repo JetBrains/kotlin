@@ -64,9 +64,17 @@ mvn install
 When it is installed in local maven repository, you can add it as a dependency in buildscript classpath and apply it:
 
 ```
-dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-SNAPSHOT"
-    classpath "org.jetbrains.kotlinx:kotlinx-serialization:1.1-SNAPSHOT"
+buildscript {
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-SNAPSHOT"
+        classpath "org.jetbrains.kotlinx:kotlinx-serialization:1.1-SNAPSHOT"
+    }
 }
 
 apply plugin: 'kotlin'
