@@ -16,10 +16,12 @@
 
 @file:Suppress("unused")
 
-package kotlin.script.dependencies
+package kotlin.script.experimental.dependencies
 
 import java.io.File
-import kotlin.script.dependencies.DependenciesResolver.ResolveResult
+import kotlin.script.dependencies.Environment
+import kotlin.script.dependencies.ScriptDependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 
 interface DependenciesResolver : ScriptDependenciesResolver {
     fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult
