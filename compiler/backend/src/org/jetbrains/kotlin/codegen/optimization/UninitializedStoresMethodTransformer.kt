@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.optimization.transformer
+package org.jetbrains.kotlin.codegen.optimization
 
+import org.jetbrains.kotlin.codegen.coroutines.UninitializedStoresProcessor
+import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-open class CompositeMethodTransformer(private val transformers: List<MethodTransformer>) : MethodTransformer() {
-    constructor(vararg transformers: MethodTransformer?) : this(transformers.filterNotNull())
-
+class UninitializedStoresMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        transformers.forEach { it.transform(internalClassName, methodNode) }
-    }
-
-    companion object {
-        inline fun build(builder: MutableList<MethodTransformer>.() -> Unit) =
-                CompositeMethodTransformer(ArrayList<MethodTransformer>().apply { builder() })
+        UninitializedStoresProcessor(methodNode, forCoroutines = false).run()
     }
 }

@@ -4275,6 +4275,45 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/constructorCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConstructorCall extends AbstractLightAnalysisModeTest {
+        public void testAllFilesPresentInConstructorCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/constructorCall"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("inlineFunInConstructorCallEvaluationOrder.kt")
+        public void testInlineFunInConstructorCallEvaluationOrder() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/inlineFunInConstructorCallEvaluationOrder.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineFunInInnerClassConstructorCall.kt")
+        public void testInlineFunInInnerClassConstructorCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/inlineFunInInnerClassConstructorCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineFunInLocalClassConstructorCall.kt")
+        public void testInlineFunInLocalClassConstructorCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/inlineFunInLocalClassConstructorCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("regularConstructorCallEvaluationOrder.kt")
+        public void testRegularConstructorCallEvaluationOrder() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/regularConstructorCallEvaluationOrder.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("tryCatchInConstructorCallEvaluationOrder.kt")
+        public void testTryCatchInConstructorCallEvaluationOrder() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/tryCatchInConstructorCallEvaluationOrder.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/controlStructures")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
