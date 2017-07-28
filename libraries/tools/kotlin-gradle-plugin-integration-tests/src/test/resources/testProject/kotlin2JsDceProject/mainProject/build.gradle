@@ -12,6 +12,7 @@ apply plugin: "kotlin-dce-js"
 
 repositories {
     mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
