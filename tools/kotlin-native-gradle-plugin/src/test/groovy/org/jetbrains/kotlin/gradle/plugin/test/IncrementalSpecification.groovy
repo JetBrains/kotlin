@@ -98,7 +98,7 @@ class IncrementalSpecification extends Specification {
     def 'Parameter changes should cause only recompilaton'() {
         when:
         def results = buildTwiceEmpty { KonanInteropProject project ->
-            project.buildFile.append("konanArtifacts['main'].$appending")
+            project.addCompilationSetting("main", parameter, value)
         }
 
         then:
@@ -106,16 +106,16 @@ class IncrementalSpecification extends Specification {
 
 
         where:
-        parameter            | appending
-        "outputDir"          | "outputDir 'build/new/outputDir'"
-        "produce"            | "produce 'library'"
-        "enableOptimization" | "enableOptimization()"
-        "linkerOpts"         | "linkerOpts '--help'"
-        "languageVersion"    | "languageVersion '1.2'"
-        "apiVersion"         | "apiVersion '1.0'"
-        "enableAssertions"   | "enableAssertions()"
-        "enableDebug"        | "enableDebug true"
-        "outputName"         | "outputName 'foo'"
+        parameter            | value
+        "outputDir"          | "'build/new/outputDir'"
+        "produce"            | "'library'"
+        "enableOptimization" | "()"
+        "linkerOpts"         | "'--help'"
+        "languageVersion"    | "'1.2'"
+        "apiVersion"         | "'1.0'"
+        "enableAssertions"   | "()"
+        "enableDebug"        | "true"
+        "outputName"         | "'foo'"
     }
 
     def 'inputFiles change for a compilation task should cause only recompilation'() {
@@ -128,7 +128,7 @@ class IncrementalSpecification extends Specification {
             """.stripIndent())
         }
         def results = buildTwice(project) { KonanInteropProject it ->
-            it.buildFile.append('konanArtifacts[\'main\'].inputFiles project.fileTree(\'src/foo/kotlin\')')
+            it.addCompilationSetting("main", "inputFiles", "project.fileTree('src/foo/kotlin')")
         }
 
         then:
@@ -152,7 +152,7 @@ class IncrementalSpecification extends Specification {
             """.stripIndent())
         }
         def results = buildTwice(project) { KonanInteropProject it ->
-            it.buildFile.append("konanArtifacts['main'].$parameter konanArtifacts[\'lib\'].compilationTask.artifactPath")
+            it.addCompilationSetting("main", parameter, "konanArtifacts['lib'].compilationTask.artifactPath")
         }
 
         then:
@@ -171,7 +171,7 @@ class IncrementalSpecification extends Specification {
             it.buildFile.append("konanInterop { foo {} }\n")
         }
         def results = buildTwice(project) { KonanInteropProject it ->
-            it.buildFile.append('konanArtifacts[\'main\'].useInterop "foo"\n')
+            it.addCompilationSetting("main", "useInterop", "'foo'")
         }
 
         then:
@@ -185,7 +185,7 @@ class IncrementalSpecification extends Specification {
         }
         def results = buildTwice(project) { KonanInteropProject it ->
             def manifest = it.generateSrcFile('manifest', "#some manifest file")
-            it.buildFile.append("konanArtifacts['main'].manifest '${manifest.canonicalPath.replace('\\', '\\\\')}'")
+            it.addCompilationSetting("main", "manifest", manifest)
         }
 
         then:
@@ -198,7 +198,7 @@ class IncrementalSpecification extends Specification {
         def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
             manifest = it.generateSrcFile('manifest', "#some manifest file\n")
-            it.buildFile.append("konanArtifacts['main'].manifest '${manifest.canonicalPath.replace('\\', '\\\\')}'")
+            it.addCompilationSetting("main", "manifest", manifest)
         }
         def results = buildTwice(project) { KonanInteropProject it ->
             manifest.append("#something else\n")
@@ -212,18 +212,18 @@ class IncrementalSpecification extends Specification {
     def 'Parameter change for an interop task should cause recompilation and interop reprocessing'() {
         when:
         def results = buildTwiceEmpty { KonanInteropProject project ->
-            project.buildFile.append("konanInterop['stdio'].$appending")
+            project.addInteropSetting("stdio", parameter, value)
         }
 
         then:
         recompilationAndInteropProcessingHappened(*results)
 
         where:
-        parameter            | appending
-        "pkg"                | "pkg 'org.sample'"
-        "compilerOpts"       | "compilerOpts '-g'"
-        "linkerOpts"         | "linkerOpts '--help'"
-        "includeDirs"        | "includeDirs 'src'"
+        parameter            | value
+        "pkg"                | "'org.sample'"
+        "compilerOpts"       | "'-g'"
+        "linkerOpts"         | "'--help'"
+        "includeDirs"        | "'src'"
     }
 
     def 'defFile change for an interop task should cause recompilation and interop reprocessing'() {
@@ -232,7 +232,7 @@ class IncrementalSpecification extends Specification {
         project.generateSrcFile('main.kt')
         def defFile = project.generateDefFile("foo.def", "#some content")
         def results = buildTwice(project) { KonanInteropProject it ->
-            it.buildFile.append("konanInterop['stdio'].defFile file('${defFile.canonicalPath.replace('\\', '\\\\')}')\n")
+            it.addInteropSetting("stdio", "defFile", defFile)
         }
 
         then:
@@ -245,7 +245,7 @@ class IncrementalSpecification extends Specification {
         project.generateSrcFile('main.kt')
         def header = project.generateSrcFile('header.h', "#define CONST 1")
         def results = buildTwice(project) { KonanInteropProject it ->
-            it.buildFile.append("konanInterop['stdio'].headers '${header.canonicalPath.replace('\\', '\\\\')}'\n")
+            it.addInteropSetting("stdio", "headers", header)
         }
 
         then:
@@ -269,10 +269,8 @@ class IncrementalSpecification extends Specification {
             """.stripIndent())
         }
         def results = buildTwice(project) { KonanInteropProject it ->
-            it.buildFile.append("""
-                konanInterop['stdio'].generateStubsTask.dependsOn(konanArtifacts['lib'].compilationTask)
-                konanInterop['stdio'].link files(konanArtifacts['lib'].compilationTask.artifactPath)
-            """.stripIndent())
+            it.addInteropSetting("stdio", "generateStubsTask.dependsOn", "konanArtifacts['lib'].compilationTask")
+            it.addInteropSetting("stdio", "link", "files(konanArtifacts['lib'].compilationTask.artifactPath)")
         }
 
         then:
@@ -312,8 +310,8 @@ class IncrementalSpecification extends Specification {
 
 
         def results = buildTwice(project) { KonanInteropProject it ->
-            project.buildFile.append("konanArtifacts['main'].target '$newTarget'\n")
-            project.buildFile.append("konanInterop['stdio'].target '$newTarget'\n")
+            project.addCompilationSetting("main", "target", "'$newTarget'")
+            project.addInteropSetting("stdio", "target", "'$newTarget'")
         }
 
         then:

@@ -91,6 +91,22 @@ class KonanProject {
 
     File newFolder(String... path) { return projectDir.newFolder(path) }
 
+    protected void addSetting(String container, String section, String parameter, String value) {
+        buildFile.append("$container['$section'].$parameter $value\n")
+    }
+
+    protected void addSetting(String container, String section, String parameter, File value) {
+        addSetting(container, section, parameter, "'${value.canonicalPath.replace('\\', '\\\\')}'")
+    }
+
+    void addCompilationSetting(String artifactName, String parameter, String value) {
+        addSetting("konanArtifacts", artifactName, parameter, value)
+    }
+
+    void addCompilationSetting(String artifactName, String parameter, File value) {
+        addSetting("konanArtifacts", artifactName, parameter, value)
+    }
+
     static KonanProject create(TemporaryFolder projectDir) {
         return createEmpty(projectDir) {
             it.generateSrcFile("main.kt")
@@ -166,6 +182,14 @@ class KonanInteropProject extends KonanProject {
             headers = stdio.h stdlib.h string.h
             """.stripIndent()
         )
+    }
+
+    void addInteropSetting(String interopName, String parameter, String value) {
+        addSetting("konanInterop", interopName, parameter, value)
+    }
+
+    void addInteropSetting(String interopName, String parameter, File value) {
+        addSetting("konanInterop", interopName, parameter, value)
     }
 
     static KonanInteropProject create(TemporaryFolder projectDir) {
