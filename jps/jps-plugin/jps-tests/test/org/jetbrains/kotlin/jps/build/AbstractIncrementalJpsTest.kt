@@ -75,6 +75,7 @@ abstract class AbstractIncrementalJpsTest(
     protected lateinit var workDir: File
     protected lateinit var projectDescriptor: ProjectDescriptor
     protected lateinit var lookupsDuringTest: MutableSet<LookupSymbol>
+    private var isICEnabledBackup: Boolean = false
 
     protected var mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
 
@@ -110,6 +111,7 @@ abstract class AbstractIncrementalJpsTest(
     override fun setUp() {
         super.setUp()
         lookupsDuringTest = hashSetOf()
+        isICEnabledBackup = IncrementalCompilation.isEnabled()
         IncrementalCompilation.setIsEnabled(true)
 
         if (DEBUG_LOGGING_ENABLED) {
@@ -123,6 +125,7 @@ abstract class AbstractIncrementalJpsTest(
         (AbstractIncrementalJpsTest::projectDescriptor).javaField!![this] = null
         (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
         lookupsDuringTest.clear()
+        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
         super.tearDown()
     }
 
