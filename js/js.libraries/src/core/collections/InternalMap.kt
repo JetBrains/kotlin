@@ -29,9 +29,9 @@ internal interface InternalMap<K, V> : MutableIterable<MutableMap.MutableEntry<K
     fun remove(key: K): V?
     fun clear(): Unit
 
-    fun createJsMap() {
+    fun createJsMap(): dynamic {
         val result = js("Object.create(null)")
-        // V8 trick to force the map to be a HashMap
+        // force to switch object representation to dictionary mode
         result["foo"] = 1;
         deleteProperty(result, "foo")
         return result
