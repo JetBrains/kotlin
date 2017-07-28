@@ -443,9 +443,11 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             testFiles: List<TestFile>,
             modules: Collection<ModuleDescriptor>
     ): RecursiveDescriptorComparator.Configuration {
-        val packagesNames = testFiles
-                .map { getJavaFilePackage(it) }
-                .toSet()
+        val packagesNames = (
+                testFiles.filter { it.ktFile == null }
+                        .map { getJavaFilePackage(it) } +
+                getTopLevelPackagesFromFileList(getKtFiles(testFiles, false))
+                            ).toSet()
 
         val stepIntoFilter = Predicate<DeclarationDescriptor> { descriptor ->
             val module = DescriptorUtils.getContainingModuleOrNull(descriptor)
