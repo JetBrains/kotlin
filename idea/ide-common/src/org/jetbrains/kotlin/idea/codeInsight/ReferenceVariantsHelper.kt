@@ -204,7 +204,7 @@ class ReferenceVariantsHelper(
             descriptors.processAll(implicitReceiverTypes, implicitReceiverTypes, resolutionScope, callType, kindFilter, nameFilter)
 
             // add non-instance members
-            descriptors.addAll(resolutionScope.collectDescriptorsFiltered(filterWithoutExtensions, nameFilter))
+            descriptors.addAll(resolutionScope.collectDescriptorsFiltered(filterWithoutExtensions, nameFilter, changeNamesForAliased = true))
             descriptors.addAll(resolutionScope.collectAllFromMeAndParent { scope ->
                 scope.collectSyntheticStaticMembersAndConstructors(resolutionFacade, kindFilter, nameFilter)
             })
@@ -231,7 +231,7 @@ class ReferenceVariantsHelper(
         }
         else {
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-            return scope.collectDescriptorsFiltered(kindFilter, nameFilter)
+            return scope.collectDescriptorsFiltered(kindFilter, nameFilter, changeNamesForAliased = true)
         }
     }
 
@@ -346,7 +346,7 @@ class ReferenceVariantsHelper(
             filterToUse = filterToUse.withKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)
         }
 
-        for (descriptor in scope.collectDescriptorsFiltered(filterToUse, nameFilter)) {
+        for (descriptor in scope.collectDescriptorsFiltered(filterToUse, nameFilter, changeNamesForAliased = true)) {
             if (descriptor is ClassDescriptor) {
                 if (descriptor.modality == Modality.ABSTRACT || descriptor.modality == Modality.SEALED) continue
                 if (!constructorFilter(descriptor)) continue
@@ -379,7 +379,7 @@ class ReferenceVariantsHelper(
             }
         }
 
-        for (descriptor in scope.collectDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.NonExtensions, nameFilter)) {
+        for (descriptor in scope.collectDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.NonExtensions, nameFilter, changeNamesForAliased = true)) {
             // todo: sometimes resolution scope here is LazyJavaClassMemberScope. see ea.jetbrains.com/browser/ea_problems/72572
             process(descriptor as CallableDescriptor)
         }

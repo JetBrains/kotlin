@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.TypeSubstitution;
 
 import java.util.Collection;
@@ -82,6 +83,12 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
 
         @NotNull
         CopyBuilder<D> setCopyOverrides(boolean copyOverrides);
+
+        @NotNull
+        CopyBuilder<D> setName(@NotNull Name name);
+
+        @NotNull
+        CopyBuilder<D> setOriginal(@Nullable CallableMemberDescriptor original);
 
         @Nullable
         D build();

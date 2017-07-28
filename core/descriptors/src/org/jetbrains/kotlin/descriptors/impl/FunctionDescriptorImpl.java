@@ -474,8 +474,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         @Override
         @NotNull
-        public CopyConfiguration setOriginal(@Nullable FunctionDescriptor original) {
-            this.original = original;
+        public CopyConfiguration setOriginal(@Nullable CallableMemberDescriptor original) {
+            this.original = (FunctionDescriptor) original;
             return this;
         }
 

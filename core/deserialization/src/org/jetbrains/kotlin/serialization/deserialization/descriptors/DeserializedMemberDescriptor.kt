@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
@@ -119,10 +121,11 @@ class DeserializedPropertyDescriptor(
             newModality: Modality,
             newVisibility: Visibility,
             original: PropertyDescriptor?,
-            kind: CallableMemberDescriptor.Kind
+            kind: CallableMemberDescriptor.Kind,
+            newName: Name
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
-                newOwner, original, annotations, newModality, newVisibility, isVar, name, kind, isLateInit, isConst, isExternal,
+                newOwner, original, annotations, newModality, newVisibility, isVar, newName, kind, isLateInit, isConst, isExternal,
                 @Suppress("DEPRECATION") isDelegated, isHeader, proto, nameResolver, typeTable, sinceKotlinInfoTable, containerSource
         )
     }

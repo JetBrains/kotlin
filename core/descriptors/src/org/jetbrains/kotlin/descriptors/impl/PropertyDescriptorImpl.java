@@ -251,6 +251,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         private boolean copyOverrides = true;
         private ReceiverParameterDescriptor dispatchReceiverParameter = PropertyDescriptorImpl.this.dispatchReceiverParameter;
         private List<TypeParameterDescriptor> newTypeParameters = null;
+        private Name name = getName();
 
         @NotNull
         @Override
@@ -260,8 +261,9 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         }
 
         @NotNull
-        public CopyConfiguration setOriginal(@Nullable PropertyDescriptor original) {
-            this.original = original;
+        @Override
+        public CopyConfiguration setOriginal(@Nullable CallableMemberDescriptor original) {
+            this.original = (PropertyDescriptor) original;
             return this;
         }
 
@@ -314,6 +316,13 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             return this;
         }
 
+        @NotNull
+        @Override
+        public CopyBuilder<PropertyDescriptor> setName(@NotNull Name name) {
+            this.name = name;
+            return this;
+        }
+
         @Nullable
         @Override
         public PropertyDescriptor build() {
@@ -331,7 +340,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     protected PropertyDescriptor doSubstitute(@NotNull CopyConfiguration copyConfiguration) {
         PropertyDescriptorImpl substitutedDescriptor = createSubstitutedCopy(
                 copyConfiguration.owner, copyConfiguration.modality, copyConfiguration.visibility,
-                copyConfiguration.original, copyConfiguration.kind);
+                copyConfiguration.original, copyConfiguration.kind, copyConfiguration.name);
 
         List<TypeParameterDescriptor> originalTypeParameters =
                 copyConfiguration.newTypeParameters == null ? getTypeParameters() : copyConfiguration.newTypeParameters;
@@ -444,10 +453,11 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @NotNull Modality newModality,
             @NotNull Visibility newVisibility,
             @Nullable PropertyDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @NotNull Name newName
     ) {
         return new PropertyDescriptorImpl(
-                newOwner, original, getAnnotations(), newModality, newVisibility, isVar(), getName(), kind, SourceElement.NO_SOURCE,
+                newOwner, original, getAnnotations(), newModality, newVisibility, isVar(), newName, kind, SourceElement.NO_SOURCE,
                 isLateInit(), isConst(), isHeader(), isImpl(), isExternal(), isDelegated()
         );
     }

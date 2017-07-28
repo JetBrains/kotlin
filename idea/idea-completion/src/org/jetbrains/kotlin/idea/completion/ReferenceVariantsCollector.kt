@@ -53,7 +53,7 @@ class ReferenceVariantsCollector(
         private val runtimeReceiver: ExpressionReceiver? = null
 ) {
 
-    data class FilterConfiguration internal constructor(val descriptorKindFilter: DescriptorKindFilter,
+    private data class FilterConfiguration internal constructor(val descriptorKindFilter: DescriptorKindFilter,
                                                         val additionalPropertyNameFilter: ((String) -> Boolean)?,
                                                         val shadowedDeclarationsFilter: ShadowedDeclarationsFilter?,
                                                         val completeExtensionsFromIndices: Boolean)
@@ -78,7 +78,7 @@ class ReferenceVariantsCollector(
 
     fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter): ReferenceVariants {
         assert(!isCollectingFinished)
-        val config = configure(descriptorKindFilter)
+        val config = configuration(descriptorKindFilter)
 
         val basic = collectBasicVariants(config)
         return basic + collectExtensionVariants(config, basic)
@@ -86,7 +86,7 @@ class ReferenceVariantsCollector(
 
     fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter, consumer: (ReferenceVariants) -> Unit) {
         assert(!isCollectingFinished)
-        val config = configure(descriptorKindFilter)
+        val config = configuration(descriptorKindFilter)
 
         val basic = collectBasicVariants(config)
         consumer(basic)
@@ -107,8 +107,7 @@ class ReferenceVariantsCollector(
         return variants
     }
 
-
-    fun configure(descriptorKindFilter: DescriptorKindFilter): FilterConfiguration {
+    private fun configuration(descriptorKindFilter: DescriptorKindFilter): FilterConfiguration {
         val completeExtensionsFromIndices = descriptorKindFilter.kindMask.and(DescriptorKindFilter.CALLABLES_MASK) != 0
                                             && DescriptorKindExclude.Extensions !in descriptorKindFilter.excludes
                                             && callTypeAndReceiver !is CallTypeAndReceiver.IMPORT_DIRECTIVE
@@ -129,7 +128,6 @@ class ReferenceVariantsCollector(
 
         return ReferenceVariantsCollector.FilterConfiguration(descriptorKindFilter, additionalPropertyNameFilter, shadowedDeclarationsFilter, completeExtensionsFromIndices)
     }
-
 
     private fun doCollectBasicVariants(filterConfiguration: FilterConfiguration): ReferenceVariants {
         fun getReferenceVariants(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
@@ -207,6 +205,7 @@ class ReferenceVariantsCollector(
             if (descriptor !is CallableMemberDescriptor) return false
             if (descriptor.extensionReceiverParameter == null) return false
             if (descriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) return false /* do not filter out synthetic extensions */
+            if (descriptor.isArtificialImportAliasedDescriptor) return false // do not exclude aliased descriptors - they cannot be completed via indices
             val containingPackage = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
             if (containingPackage.fqName.asString().startsWith("kotlinx.android.synthetic.")) return false // TODO: temporary solution for Android synthetic extensions
             return true

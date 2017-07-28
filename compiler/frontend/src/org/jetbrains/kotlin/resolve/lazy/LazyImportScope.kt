@@ -238,7 +238,11 @@ class LazyImportScope(
         return importResolver.collectFromImports(name) { scope, name -> scope.getContributedFunctions(name, location) }
     }
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean,
+            changeNamesForAliased: Boolean
+    ): Collection<DeclarationDescriptor> {
         // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
 
@@ -248,7 +252,7 @@ class LazyImportScope(
                 val importPath = directive.importPath ?: continue
                 val importedName = importPath.importedName
                 if (importedName == null || nameFilter(importedName)) {
-                    descriptors.addAll(importResolver.getImportScope(directive).getContributedDescriptors(kindFilter, nameFilter))
+                    descriptors.addAll(importResolver.getImportScope(directive).getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased))
                 }
             }
             descriptors

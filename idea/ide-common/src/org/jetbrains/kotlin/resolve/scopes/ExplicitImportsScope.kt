@@ -35,7 +35,7 @@ class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescri
     override fun getContributedFunctions(name: Name, location: LookupLocation)
             = descriptors.filter { it.name == name }.filterIsInstance<FunctionDescriptor>()
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean, changeNamesForAliased: Boolean)
             = descriptors
 
     override fun printStructure(p: Printer) {

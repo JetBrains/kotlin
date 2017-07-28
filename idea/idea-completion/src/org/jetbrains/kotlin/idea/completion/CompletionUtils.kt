@@ -422,3 +422,6 @@ fun OffsetMap.tryGetOffset(key: OffsetKey): Int? {
 }
 
 var KtCodeFragment.extraCompletionFilter: ((LookupElement) -> Boolean)? by CopyableUserDataProperty(Key.create("EXTRA_COMPLETION_FILTER"))
+
+val DeclarationDescriptor.isArtificialImportAliasedDescriptor: Boolean
+    get() = original.name != name

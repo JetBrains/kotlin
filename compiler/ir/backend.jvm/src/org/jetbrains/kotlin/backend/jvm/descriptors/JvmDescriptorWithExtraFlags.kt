@@ -51,10 +51,11 @@ class JvmPropertyDescriptorImpl private constructor(
             newModality: Modality,
             newVisibility: Visibility,
             original: PropertyDescriptor?,
-            kind: CallableMemberDescriptor.Kind
+            kind: CallableMemberDescriptor.Kind,
+            newName: Name
     ): PropertyDescriptorImpl =
             JvmPropertyDescriptorImpl(
-                    newOwner, original, annotations, newModality, newVisibility, extraFlags, isVar, name, kind,
+                    newOwner, original, annotations, newModality, newVisibility, extraFlags, isVar, newName, kind,
                     SourceElement.NO_SOURCE, isLateInit, isConst, isHeader, isImpl
             )
 

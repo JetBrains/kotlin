@@ -57,11 +57,46 @@ class LazyExplicitImportScope(
         return collectCallableMemberDescriptors(location, MemberScope::getContributedVariables)
     }
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean,
+            changeNamesForAliased: Boolean
+    ): Collection<DeclarationDescriptor> {
         val descriptors = SmartList<DeclarationDescriptor>()
+
         descriptors.addIfNotNull(getContributedClassifier(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS))
         descriptors.addAll(getContributedFunctions(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS))
         descriptors.addAll(getContributedVariables(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS))
+
+        if (changeNamesForAliased && aliasName != declaredName) {
+            for (i in descriptors.indices) {
+                val descriptor = descriptors[i]
+                val newDescriptor: DeclarationDescriptor = when (descriptor) {
+                    is ClassDescriptor -> {
+                        object : ClassDescriptor by descriptor {
+                            override fun getName() = aliasName
+                        }
+                    }
+
+                    is TypeAliasDescriptor -> {
+                        object : TypeAliasDescriptor by descriptor {
+                            override fun getName() = aliasName
+                        }
+                    }
+
+                    is CallableMemberDescriptor -> {
+                        descriptor
+                                .newCopyBuilder()
+                                .setName(aliasName)
+                                .setOriginal(descriptor)
+                                .build()!!
+                    }
+
+                    else -> error("Unknown kind of descriptor in import alias: $descriptor")
+                }
+                descriptors[i] = newDescriptor
+            }
+        }
 
         return descriptors
     }

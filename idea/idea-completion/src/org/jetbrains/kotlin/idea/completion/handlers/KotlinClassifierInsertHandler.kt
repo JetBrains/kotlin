@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.completion.isAfterDot
+import org.jetbrains.kotlin.idea.completion.isArtificialImportAliasedDescriptor
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -50,11 +51,14 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                 val startOffset = context.startOffset
                 val document = context.document
 
-                val qualifiedName = qualifiedNameToInsert(item)
+                val lookupObject = item.`object` as DeclarationLookupObject
+                if (lookupObject.descriptor?.isArtificialImportAliasedDescriptor == true) return // never need to insert import or use qualified name for import-aliased class
+                
+                val qualifiedName = qualifiedName(lookupObject)
 
                 // first try to resolve short name for faster handling
-                val token = file.findElementAt(startOffset)
-                val nameRef = token!!.parent as? KtNameReferenceExpression
+                val token = file.findElementAt(startOffset)!!
+                val nameRef = token.parent as? KtNameReferenceExpression
                 if (nameRef != null) {
                     val bindingContext = nameRef.analyze(BodyResolveMode.PARTIAL)
                     val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, nameRef]
@@ -92,8 +96,7 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
         }
     }
 
-    private fun qualifiedNameToInsert(item: LookupElement): String {
-        val lookupObject = item.`object` as DeclarationLookupObject
+    private fun qualifiedName(lookupObject: DeclarationLookupObject): String {
         return if (lookupObject.descriptor != null) {
             IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(lookupObject.descriptor as ClassifierDescriptor)
         }

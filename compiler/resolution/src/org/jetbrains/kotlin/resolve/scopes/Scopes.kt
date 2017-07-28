@@ -109,6 +109,16 @@ interface ImportingScope : HierarchicalScope {
 
     fun getContributedPackage(name: Name): PackageViewDescriptor?
 
+    fun getContributedDescriptors(
+            kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
+            nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER,
+            changeNamesForAliased: Boolean
+    ): Collection<DeclarationDescriptor>
+
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        return getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased = false)
+    }
+
     object Empty : BaseImportingScope(null) {
         override fun printStructure(p: Printer) {
             p.println("ImportingScope.Empty")
@@ -131,4 +141,11 @@ abstract class BaseImportingScope(parent: ImportingScope?) : BaseHierarchicalSco
         get() = super.parent as ImportingScope?
 
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = null
+
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        return getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased = false)
+    }
+
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean, changeNamesForAliased: Boolean): Collection<DeclarationDescriptor>
+            = emptyList()
 }

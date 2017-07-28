@@ -50,13 +50,17 @@ fun LexicalScope.getDeclarationsByLabel(labelName: Name): Collection<Declaration
 // Result is guaranteed to be filtered by kind and name.
 fun HierarchicalScope.collectDescriptorsFiltered(
         kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
-        nameFilter: (Name) -> Boolean = { true }
+        nameFilter: (Name) -> Boolean = { true },
+        changeNamesForAliased: Boolean = false
 ): Collection<DeclarationDescriptor> {
     if (kindFilter.kindMask == 0) return listOf()
-    return collectAllFromMeAndParent { it.getContributedDescriptors(kindFilter, nameFilter) }
-            .filter { kindFilter.accepts(it) && nameFilter(it.name) }
+    return collectAllFromMeAndParent {
+        if (it is ImportingScope)
+            it.getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased)
+        else
+            it.getContributedDescriptors(kindFilter, nameFilter)
+    }.filter { kindFilter.accepts(it) && nameFilter(it.name) }
 }
-
 
 @Deprecated("Use getContributedProperties instead") fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
     return findFirstFromMeAndParent {
@@ -103,7 +107,7 @@ fun HierarchicalScope.takeSnapshot(): HierarchicalScope = if (this is LexicalWri
 private class MemberScopeToImportingScopeAdapter(override val parent: ImportingScope?, val memberScope: MemberScope) : ImportingScope {
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = null
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean, changeNamesForAliased: Boolean)
             = memberScope.getContributedDescriptors(kindFilter, nameFilter)
 
     override fun getContributedClassifier(name: Name, location: LookupLocation) = memberScope.getContributedClassifier(name, location)
