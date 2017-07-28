@@ -56,7 +56,7 @@ class TreeBasedField(
         get() = tree.modifiers.flags and Flags.ENUM.toLong() != 0L
 
     override val type: JavaType
-        get() = TreeBasedType.create(tree.getType(), treePath, javac)
+        get() = TreeBasedType.create(tree.getType(), treePath, javac, annotations)
 
     override val initializerValue: Any?
         get() = tree.init?.let { initExpr ->

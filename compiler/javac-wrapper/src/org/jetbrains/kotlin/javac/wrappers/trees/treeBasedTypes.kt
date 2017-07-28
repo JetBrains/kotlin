@@ -30,22 +30,30 @@ import javax.lang.model.type.TypeKind
 abstract class TreeBasedType<out T : JCTree>(
         val tree: T,
         val treePath: TreePath,
-        val javac: JavacWrapper
+        val javac: JavacWrapper,
+        override val annotations: Collection<JavaAnnotation>
 ) : JavaType, JavaAnnotationOwner {
 
     companion object {
-        fun <Type : JCTree> create(tree: Type, treePath: TreePath, javac: JavacWrapper) = when (tree) {
-            is JCTree.JCPrimitiveTypeTree -> TreeBasedPrimitiveType(tree, TreePath(treePath, tree), javac)
-            is JCTree.JCArrayTypeTree -> TreeBasedArrayType(tree, TreePath(treePath, tree), javac)
-            is JCTree.JCWildcard -> TreeBasedWildcardType(tree, TreePath(treePath, tree), javac)
-            is JCTree.JCTypeApply -> TreeBasedGenericClassifierType(tree, TreePath(treePath, tree), javac)
-            is JCTree.JCExpression -> TreeBasedNonGenericClassifierType(tree, TreePath(treePath, tree), javac)
-            else -> throw UnsupportedOperationException("Unsupported type: $tree")
+        fun create(tree: JCTree, treePath: TreePath,
+                   javac: JavacWrapper, annotations: Collection<JavaAnnotation>): JavaType {
+            val applicableAnnotations = annotations.filterTypeAnnotations()
+            return when (tree) {
+                is JCTree.JCPrimitiveTypeTree -> TreeBasedPrimitiveType(tree, TreePath(treePath, tree), javac, applicableAnnotations)
+                is JCTree.JCArrayTypeTree -> TreeBasedArrayType(tree, TreePath(treePath, tree), javac, applicableAnnotations)
+                is JCTree.JCWildcard -> TreeBasedWildcardType(tree, TreePath(treePath, tree), javac, applicableAnnotations)
+                is JCTree.JCTypeApply -> TreeBasedGenericClassifierType(tree, TreePath(treePath, tree), javac, applicableAnnotations)
+                is JCTree.JCAnnotatedType -> {
+                    val underlyingType = tree.underlyingType
+                    val newAnnotations = tree.annotations
+                            .map { TreeBasedAnnotation(it, javac.getTreePath(it, treePath.compilationUnit), javac) }
+                    create(underlyingType, javac.getTreePath(underlyingType, treePath.compilationUnit), javac, newAnnotations)
+                }
+                is JCTree.JCExpression -> TreeBasedNonGenericClassifierType(tree, TreePath(treePath, tree), javac, applicableAnnotations)
+                else -> throw UnsupportedOperationException("Unsupported type: $tree")
+            }
         }
     }
-
-    override val annotations: Collection<JavaAnnotation>
-        get() = emptyList()
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = false
@@ -63,8 +71,9 @@ abstract class TreeBasedType<out T : JCTree>(
 class TreeBasedPrimitiveType(
         tree: JCTree.JCPrimitiveTypeTree,
         treePath: TreePath,
-        javac: JavacWrapper
-) : TreeBasedType<JCTree.JCPrimitiveTypeTree>(tree, treePath, javac), JavaPrimitiveType {
+        javac: JavacWrapper,
+        annotations: Collection<JavaAnnotation>
+) : TreeBasedType<JCTree.JCPrimitiveTypeTree>(tree, treePath, javac, annotations), JavaPrimitiveType {
 
     override val type: PrimitiveType?
         get() = if (tree.primitiveTypeKind == TypeKind.VOID) {
@@ -79,22 +88,24 @@ class TreeBasedPrimitiveType(
 class TreeBasedArrayType(
         tree: JCTree.JCArrayTypeTree,
         treePath: TreePath,
-        javac: JavacWrapper
-) : TreeBasedType<JCTree.JCArrayTypeTree>(tree, treePath, javac), JavaArrayType {
+        javac: JavacWrapper,
+        annotations: Collection<JavaAnnotation>
+) : TreeBasedType<JCTree.JCArrayTypeTree>(tree, treePath, javac, annotations), JavaArrayType {
 
     override val componentType: JavaType
-        get() = create(tree.elemtype, treePath, javac)
+        get() = create(tree.elemtype, treePath, javac, annotations)
 
 }
 
 class TreeBasedWildcardType(
         tree: JCTree.JCWildcard,
         treePath: TreePath,
-        javac: JavacWrapper
-) : TreeBasedType<JCTree.JCWildcard>(tree, treePath, javac), JavaWildcardType {
+        javac: JavacWrapper,
+        annotations: Collection<JavaAnnotation>
+) : TreeBasedType<JCTree.JCWildcard>(tree, treePath, javac, annotations), JavaWildcardType {
 
     override val bound: JavaType?
-        get() = tree.bound?.let { create(it, treePath, javac) }
+        get() = tree.bound?.let { create(it, treePath, javac, annotations) }
 
     override val isExtends: Boolean
         get() = tree.kind.kind == BoundKind.EXTENDS
@@ -104,8 +115,9 @@ class TreeBasedWildcardType(
 sealed class TreeBasedClassifierType<out T : JCTree>(
         tree: T,
         treePath: TreePath,
-        javac: JavacWrapper
-) : TreeBasedType<T>(tree, treePath, javac), JavaClassifierType {
+        javac: JavacWrapper,
+        annotations: Collection<JavaAnnotation>
+) : TreeBasedType<T>(tree, treePath, javac, annotations), JavaClassifierType {
 
     override val classifier: JavaClassifier?
         get() = javac.resolve(treePath)
@@ -151,7 +163,7 @@ class TreeBasedTypeParameterType(override val classifier: JavaTypeParameter) : J
         get() = false
 
     override val annotations: Collection<JavaAnnotation>
-        get() = emptyList()
+        get() = classifier.annotations.filterTypeAnnotations()
 
     override val classifierQualifiedName: String
         get() = classifier.name.asString()
@@ -159,7 +171,7 @@ class TreeBasedTypeParameterType(override val classifier: JavaTypeParameter) : J
     override val presentableText: String
         get() = classifierQualifiedName
 
-    override fun findAnnotation(fqName: FqName) = null
+    override fun findAnnotation(fqName: FqName) = annotations.find { it.classId?.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = false
@@ -168,8 +180,9 @@ class TreeBasedTypeParameterType(override val classifier: JavaTypeParameter) : J
 class TreeBasedNonGenericClassifierType(
         tree: JCTree.JCExpression,
         treePath: TreePath,
-        javac: JavacWrapper
-) : TreeBasedClassifierType<JCTree.JCExpression>(tree, treePath, javac) {
+        javac: JavacWrapper,
+        annotations: Collection<JavaAnnotation>
+) : TreeBasedClassifierType<JCTree.JCExpression>(tree, treePath, javac, annotations) {
 
     override val isRaw: Boolean
         get() = (classifier as? MockKotlinClassifier)?.hasTypeParameters
@@ -181,12 +194,31 @@ class TreeBasedNonGenericClassifierType(
 class TreeBasedGenericClassifierType(
         tree: JCTree.JCTypeApply,
         treePath: TreePath,
-        javac: JavacWrapper
-) : TreeBasedClassifierType<JCTree.JCTypeApply>(tree, treePath, javac) {
+        javac: JavacWrapper,
+        annotations: Collection<JavaAnnotation>
+) : TreeBasedClassifierType<JCTree.JCTypeApply>(tree, treePath, javac, annotations) {
+
+    override val classifier: JavaClassifier?
+        get() {
+            val newTree = tree.clazz
+            return if (newTree is JCTree.JCAnnotatedType) {
+                javac.resolve(javac.getTreePath(newTree.underlyingType, treePath.compilationUnit))
+            }
+            else super.classifier
+        }
+
+    override val annotations: Collection<JavaAnnotation>
+        get() {
+            val newTree = tree.clazz
+            return (newTree as? JCTree.JCAnnotatedType)?.annotations?.map { TreeBasedAnnotation(it, javac.getTreePath(it, treePath.compilationUnit), javac) }
+                           ?.toMutableList<JavaAnnotation>()
+                           ?.apply { addAll(super.annotations) }
+                   ?: super.annotations
+        }
 
     override val typeArguments: List<JavaType>
-        get() = tree.arguments.map { create(it, treePath, javac) }
-                .toMutableList<JavaType>()
+        get() = tree.arguments.map { create(it, treePath, javac, emptyList()) }
+                .toMutableList()
                 .apply { addAll(super.typeArguments) }
 
     override val isRaw: Boolean
@@ -196,6 +228,5 @@ class TreeBasedGenericClassifierType(
                 else -> tree.arguments.size != (classifier as? JavaClass)?.typeParameters?.size
             }
         }
-
 
 }

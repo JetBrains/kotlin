@@ -46,7 +46,7 @@ class TreeBasedValueParameter(
         get() = Name.identifier(tree.name.toString())
 
     override val type: JavaType
-        get() = TreeBasedType.create(tree.getType(), treePath, javac)
+        get() = TreeBasedType.create(tree.getType(), treePath, javac, annotations)
 
     override val isVararg: Boolean
         get() = tree.modifiers.flags and Flags.VARARGS != 0L

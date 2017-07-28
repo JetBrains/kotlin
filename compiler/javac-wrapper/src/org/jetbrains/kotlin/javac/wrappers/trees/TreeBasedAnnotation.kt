@@ -76,7 +76,7 @@ class TreeBasedJavaClassObjectAnnotationArgument(private val type: JCTree.JCExpr
                                                  javac: JavacWrapper): TreeBasedAnnotationArgument(name, javac), JavaClassObjectAnnotationArgument {
 
     override fun getReferencedType(): JavaType =
-        TreeBasedType.create(type, javac.getTreePath(type, treePath.compilationUnit), javac)
+        TreeBasedType.create(type, javac.getTreePath(type, treePath.compilationUnit), javac, emptyList())
 
 }
 

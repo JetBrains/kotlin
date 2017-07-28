@@ -80,20 +80,19 @@ class TreeBasedClass(
 
     override val supertypes: Collection<JavaClassifierType>
         get() = arrayListOf<JavaClassifierType>().also { list ->
-            fun JCTree.mapToJavaClassifierType() = when {
-                this is JCTree.JCTypeApply -> TreeBasedGenericClassifierType(this, TreePath(treePath, this), javac)
-                this is JCTree.JCExpression -> TreeBasedNonGenericClassifierType(this, TreePath(treePath, this), javac)
-                else -> null
-            }
-
             if (isEnum) {
                 createEnumSupertype(this, javac).let { list.add(it) }
             } else if (isAnnotationType) {
                 javac.JAVA_LANG_ANNOTATION_ANNOTATION?.let { list.add(it) }
             }
 
-            tree.extending?.let { it.mapToJavaClassifierType()?.let { list.add(it) } }
-            tree.implementing?.mapNotNull { it.mapToJavaClassifierType() }?.let { list.addAll(it) }
+            tree.extending?.let {
+                (TreeBasedType.create(it, javac.getTreePath(it, treePath.compilationUnit), javac, emptyList()) as? JavaClassifierType)
+                        ?.let { list.add(it) }
+            }
+            tree.implementing?.mapNotNull {
+                TreeBasedType.create(it, javac.getTreePath(it, treePath.compilationUnit), javac, emptyList()) as? JavaClassifierType
+            }?.let { list.addAll(it) }
 
             if (list.isEmpty()) {
                 javac.JAVA_LANG_OBJECT?.let { list.add(it) }
