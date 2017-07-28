@@ -19,14 +19,11 @@ package org.jetbrains.kotlin.noarg.diagnostic
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 
-class DefaultErrorMessagesNoArg : DefaultErrorMessages.Extension {
-    private companion object {
-        val MAP = DiagnosticFactoryToRendererMap("AnnotationProcessing")
-
-        init {
-            MAP.put(ErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS, "Zero-argument constructor was not found in the superclass")
-        }
-    }
-
+object DefaultErrorMessagesNoArg : DefaultErrorMessages.Extension {
+    private val MAP = DiagnosticFactoryToRendererMap("AnnotationProcessing")
     override fun getMap() = MAP
+
+    init {
+        MAP.put(ErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS, "Zero-argument constructor was not found in the superclass")
+    }
 }

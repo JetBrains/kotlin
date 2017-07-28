@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.android.parcel
 
 import org.jetbrains.kotlin.android.parcel.serializers.ParcelSerializer
 import org.jetbrains.kotlin.android.parcel.serializers.isParcelable
+import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid
 import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -82,7 +84,7 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
 
         if (method.isWriteToParcel() && declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
             val reportElement = declaration.modifierList?.getModifier(KtTokens.OVERRIDE_KEYWORD) ?: declaration.nameIdentifier ?: declaration
-            diagnosticHolder.report(ErrorsAndroid.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED.on(reportElement))
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED.on(reportElement), DefaultErrorMessagesAndroid)
         }
     }
 
@@ -97,14 +99,16 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
                 && (declaration.hasDelegate() || bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property] == true)
                 && !property.annotations.hasAnnotation(TRANSIENT_FQNAME)
         ) {
-            diagnosticHolder.report(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED.on(declaration.nameIdentifier ?: declaration))
+            val reportElement = declaration.nameIdentifier ?: declaration
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED.on(reportElement), DefaultErrorMessagesAndroid)
         }
 
         // @JvmName is not applicable to property so we can check just the descriptor name
         if (property.name.asString() == "CREATOR" && property.findJvmFieldAnnotation() != null && containingClass.isCompanionObject) {
             val outerClass = containingClass.containingDeclaration as? ClassDescriptor
             if (outerClass != null && outerClass.isParcelize) {
-                diagnosticHolder.report(ErrorsAndroid.CREATOR_DEFINITION_IS_NOT_ALLOWED.on(declaration.nameIdentifier ?: declaration))
+                val reportElement = declaration.nameIdentifier ?: declaration
+                diagnosticHolder.reportFromPlugin(ErrorsAndroid.CREATOR_DEFINITION_IS_NOT_ALLOWED.on(reportElement), DefaultErrorMessagesAndroid)
             }
         }
     }
@@ -119,33 +123,35 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
 
         if (declaration !is KtClass || (declaration.isAnnotation() || declaration.isInterface())) {
             val reportElement = (declaration as? KtClassOrObject)?.nameIdentifier ?: declaration
-            diagnosticHolder.report(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement))
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
             return
         }
 
         if (declaration.isEnum()) {
             val reportElement = (declaration as? KtClass)?.nameIdentifier ?: declaration
-            diagnosticHolder.report(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement))
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
             return
         }
 
         val sealedOrAbstract = declaration.modifierList?.let { it.getModifier(KtTokens.ABSTRACT_KEYWORD) ?: it.getModifier(KtTokens.SEALED_KEYWORD) }
         if (sealedOrAbstract != null) {
-            diagnosticHolder.report(ErrorsAndroid.PARCELABLE_SHOULD_BE_INSTANTIABLE.on(sealedOrAbstract))
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_INSTANTIABLE.on(sealedOrAbstract), DefaultErrorMessagesAndroid)
         }
 
         if (declaration.isInner()) {
             val reportElement = declaration.modifierList?.getModifier(KtTokens.INNER_KEYWORD) ?: declaration.nameIdentifier ?: declaration
-            diagnosticHolder.report(ErrorsAndroid.PARCELABLE_CANT_BE_INNER_CLASS.on(reportElement))
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_CANT_BE_INNER_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
         }
 
         if (declaration.isLocal) {
-            diagnosticHolder.report(ErrorsAndroid.PARCELABLE_CANT_BE_LOCAL_CLASS.on(declaration.nameIdentifier ?: declaration))
+            val reportElement = declaration.nameIdentifier ?: declaration
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_CANT_BE_LOCAL_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
         }
 
         val superTypes = TypeUtils.getAllSupertypes(descriptor.defaultType)
         if (superTypes.none { it.constructor.declarationDescriptor?.fqNameSafe == ANDROID_PARCELABLE_CLASS_FQNAME }) {
-            diagnosticHolder.report(ErrorsAndroid.NO_PARCELABLE_SUPERTYPE.on(declaration.nameIdentifier ?: declaration))
+            val reportElement = declaration.nameIdentifier ?: declaration
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.NO_PARCELABLE_SUPERTYPE.on(reportElement), DefaultErrorMessagesAndroid)
         }
 
         for (supertypeEntry in declaration.superTypeListEntries) {
@@ -154,15 +160,17 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             val type = bindingContext[BindingContext.TYPE, supertypeEntry.typeReference] ?: continue
             if (type.isParcelable()) {
                 val reportElement = supertypeEntry.byKeywordNode?.psi ?: delegateExpression
-                diagnosticHolder.report(ErrorsAndroid.PARCELABLE_DELEGATE_IS_NOT_ALLOWED.on(reportElement))
+                diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_DELEGATE_IS_NOT_ALLOWED.on(reportElement), DefaultErrorMessagesAndroid)
             }
         }
 
         val primaryConstructor = declaration.primaryConstructor
         if (primaryConstructor == null && declaration.secondaryConstructors.isNotEmpty()) {
-            diagnosticHolder.report(ErrorsAndroid.PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR.on(declaration.nameIdentifier ?: declaration))
+            val reportElement = declaration.nameIdentifier ?: declaration
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR.on(reportElement), DefaultErrorMessagesAndroid)
         } else if (primaryConstructor != null && primaryConstructor.valueParameters.isEmpty()) {
-            diagnosticHolder.report(ErrorsAndroid.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY.on(declaration.nameIdentifier ?: declaration))
+            val reportElement = declaration.nameIdentifier ?: declaration
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY.on(reportElement), DefaultErrorMessagesAndroid)
         }
 
         val typeMapper = KotlinTypeMapper(
@@ -181,8 +189,9 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
 
     private fun checkParcelableClassProperty(parameter: KtParameter, diagnosticHolder: DiagnosticSink, typeMapper: KotlinTypeMapper) {
         if (!parameter.hasValOrVar()) {
-            diagnosticHolder.report(ErrorsAndroid.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR.on(
-                    parameter.nameIdentifier ?: parameter))
+            val reportElement = parameter.nameIdentifier ?: parameter
+            diagnosticHolder.reportFromPlugin(
+                    ErrorsAndroid.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR.on(reportElement), DefaultErrorMessagesAndroid)
         }
 
         val descriptor = typeMapper.bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter] ?: return
@@ -196,8 +205,8 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             }
             catch (e: IllegalArgumentException) {
                 // get() throws IllegalArgumentException on unknown types
-                diagnosticHolder.report(ErrorsAndroid.PARCELABLE_TYPE_NOT_SUPPORTED.on(
-                        parameter.typeReference ?: parameter.nameIdentifier ?: parameter))
+                val reportElement = parameter.typeReference ?: parameter.nameIdentifier ?: parameter
+                diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_TYPE_NOT_SUPPORTED.on(reportElement), DefaultErrorMessagesAndroid)
             }
         }
     }
