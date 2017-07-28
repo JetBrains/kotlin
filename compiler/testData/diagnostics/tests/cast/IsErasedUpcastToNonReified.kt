@@ -10,9 +10,9 @@ fun <T, S : T> test(x: T?, y: S, z: T) {
     <!USELESS_IS_CHECK!>z is T<!>
     <!USELESS_IS_CHECK!>z is T?<!>
 
-    <!UNCHECKED_CAST!>null as T<!>
+    null <!UNCHECKED_CAST!>as T<!>
     null <!USELESS_CAST!>as T?<!>
-    <!UNCHECKED_CAST!>null as S<!>
+    null <!UNCHECKED_CAST!>as S<!>
 }
 
 inline fun <reified T> test(x: T?) {

@@ -1,11 +1,11 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -SENSELESS_COMPARISON, -DEBUG_INFO_SMARTCAST
 
 fun <T: Any?> test1(t: Any?): Any {
-    return <!UNCHECKED_CAST!>t as T<!> ?: ""
+    return t <!UNCHECKED_CAST!>as T<!> ?: ""
 }
 
 fun <T: Any> test2(t: Any?): Any {
-    return <!UNCHECKED_CAST!>t as T<!> <!USELESS_ELVIS!>?: ""<!>
+    return t <!UNCHECKED_CAST!>as T<!> <!USELESS_ELVIS!>?: ""<!>
 }
 
 fun <T: Any?> test3(t: Any?): Any {
