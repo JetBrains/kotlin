@@ -48,13 +48,12 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 
-class KDocCompletionContributor() : CompletionContributor() {
+class KDocCompletionContributor : CompletionContributor() {
     init {
         extend(CompletionType.BASIC, psiElement().inside(KDocName::class.java),
                KDocNameCompletionProvider)
@@ -109,13 +108,13 @@ class KDocNameCompletionSession(
         }
     }
 
-    fun collectPackageViewDescriptors(qualifiedLink: List<String>, nameFilter: (Name) -> Boolean): Sequence<PackageViewDescriptor> {
-        val fqName = if (qualifiedLink.isEmpty()) FqName.ROOT else FqName.fromSegments(qualifiedLink)
+    private fun collectPackageViewDescriptors(qualifiedLink: List<String>, nameFilter: (Name) -> Boolean): Sequence<PackageViewDescriptor> {
+        val fqName = FqName.fromSegments(qualifiedLink)
         return moduleDescriptor.getSubPackagesOf(fqName, nameFilter).asSequence()
                 .map { moduleDescriptor.getPackage(it) }
     }
 
-    fun collectDescriptorsFromScope(scope: LexicalScope, nameFilter: (Name) -> Boolean, collectFormParentScopes: Boolean): Sequence<DeclarationDescriptor> {
+    private fun collectDescriptorsFromScope(scope: LexicalScope, nameFilter: (Name) -> Boolean, collectFromParentScopes: Boolean): Sequence<DeclarationDescriptor> {
         val implicitReceivers = scope.getImplicitReceiversHierarchy().map { it.value }
 
         fun isApplicable(descriptor: DeclarationDescriptor): Boolean {
@@ -130,21 +129,19 @@ class KDocNameCompletionSession(
             return true
         }
 
-        @Suppress("IfThenToElvis")
-        return (
-                if (collectFormParentScopes)
-                    scope.collectDescriptorsFiltered(nameFilter = nameFilter).asSequence()
-                else if (scope is LexicalScope.Base)
-                    scope.parent.getContributedDescriptors(nameFilter = nameFilter).asSequence()
-                else
-                    (scope.getContributedDescriptors(nameFilter = nameFilter).asSequence()
-                     + scope.parent.collectDescriptorsFiltered(nameFilter = nameFilter).asSequence()
-                             .filter { it.isExtension || it.isExtensionProperty })
-               ).filter(::isApplicable)
+        val sequence = when {
+            collectFromParentScopes -> scope.collectDescriptorsFiltered(nameFilter = nameFilter, changeNamesForAliased = true).asSequence()
+
+            scope is LexicalScope.Base -> scope.parent.getContributedDescriptors(nameFilter = nameFilter).asSequence()
+
+            else -> scope.getContributedDescriptors(nameFilter = nameFilter).asSequence() +
+                    scope.parent.collectDescriptorsFiltered(nameFilter = nameFilter).asSequence().filter { it.isExtension }
+        }
+        return sequence.filter(::isApplicable)
     }
 
 
-    fun collectDescriptorsForLinkCompletion(declarationDescriptor: DeclarationDescriptor, kDocLink: KDocLink): Sequence<DeclarationDescriptor> {
+    private fun collectDescriptorsForLinkCompletion(declarationDescriptor: DeclarationDescriptor, kDocLink: KDocLink): Sequence<DeclarationDescriptor> {
         val qualifiedLink = kDocLink.getLinkText().split('.').dropLast(1)
         val nameFilter = descriptorNameFilter.toNameFilter()
         return if (qualifiedLink.isNotEmpty()) {
@@ -184,7 +181,7 @@ object KDocTagCompletionProvider : CompletionProvider<CompletionParameters>() {
                 StandardPatterns.character().javaIdentifierPart() or singleCharPattern('@'),
                 StandardPatterns.character().javaIdentifierStart() or singleCharPattern('@'))
 
-        if (prefix.length > 0 && !prefix.startsWith('@')) {
+        if (prefix.isNotEmpty() && !prefix.startsWith('@')) {
             return
         }
         val kdocOwner = parameters.position.getNonStrictParentOfType<KDoc>()?.getOwner()

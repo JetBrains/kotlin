@@ -488,6 +488,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("KDoc.kt")
+        public void testKDoc() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/importAliases/KDoc.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TopLevelFun.kt")
         public void testTopLevelFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/importAliases/TopLevelFun.kt");

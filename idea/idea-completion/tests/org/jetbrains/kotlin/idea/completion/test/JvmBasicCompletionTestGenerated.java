@@ -3040,6 +3040,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("KDoc.kt")
+            public void testKDoc() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/importAliases/KDoc.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PrefixUsed.kt")
             public void testPrefixUsed() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/importAliases/PrefixUsed.kt");
