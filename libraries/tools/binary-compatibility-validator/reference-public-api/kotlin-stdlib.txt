@@ -2021,6 +2021,23 @@ public final class kotlin/io/TextStreamsKt {
 	public static final fun useLines (Ljava/io/Reader;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
+public final class kotlin/math/MathKt {
+	public static final field E D
+	public static final field PI D
+	public static final fun getSign (I)I
+	public static final fun getSign (J)I
+	public static final fun log (DD)D
+	public static final fun log (FF)F
+	public static final fun log2 (D)D
+	public static final fun log2 (F)F
+	public static final fun roundToInt (D)I
+	public static final fun roundToInt (F)I
+	public static final fun roundToLong (D)J
+	public static final fun roundToLong (F)J
+	public static final fun truncate (D)D
+	public static final fun truncate (F)F
+}
+
 public final class kotlin/properties/Delegates {
 	public static final field INSTANCE Lkotlin/properties/Delegates;
 	public final fun notNull ()Lkotlin/properties/ReadWriteProperty;

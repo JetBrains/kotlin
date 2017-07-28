@@ -2995,6 +2995,23 @@ public abstract interface class kotlin/jvm/internal/markers/KMutableMap$Entry : 
 public abstract interface class kotlin/jvm/internal/markers/KMutableSet : kotlin/jvm/internal/markers/KMutableCollection {
 }
 
+public final class kotlin/math/MathKt {
+	public static final field E D
+	public static final field PI D
+	public static final fun getSign (I)I
+	public static final fun getSign (J)I
+	public static final fun log (DD)D
+	public static final fun log (FF)F
+	public static final fun log2 (D)D
+	public static final fun log2 (F)F
+	public static final fun roundToInt (D)I
+	public static final fun roundToInt (F)I
+	public static final fun roundToLong (D)J
+	public static final fun roundToLong (F)J
+	public static final fun truncate (D)D
+	public static final fun truncate (F)F
+}
+
 public final class kotlin/properties/Delegates {
 	public static final field INSTANCE Lkotlin/properties/Delegates;
 	public final fun notNull ()Lkotlin/properties/ReadWriteProperty;
