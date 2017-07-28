@@ -68,7 +68,6 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
     }
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        AndroidComponentRegistrar.registerParcelExtensions(environment.project)
         addAndroidExtensionsRuntimeLibrary(environment)
         environment.updateClasspath(listOf(JvmClasspathRoot(File("ideaSDK/plugins/android/lib/layoutlib.jar"))))
     }
