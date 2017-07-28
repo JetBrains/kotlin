@@ -34,6 +34,19 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
     private val expectedCachesFileName: String
         get() = "expected-kotlin-caches.txt"
 
+    private var isICEnabledBackup: Boolean = false
+
+    override fun setUp() {
+        super.setUp()
+        isICEnabledBackup = IncrementalCompilation.isEnabled()
+        IncrementalCompilation.setIsEnabled(true)
+    }
+
+    override fun tearDown() {
+        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
+        super.tearDown()
+    }
+
     override fun doTest(testDataPath: String) {
         super.doTest(testDataPath)
 
