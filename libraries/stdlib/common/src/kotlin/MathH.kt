@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("DEPRECATION")
+
 package kotlin.math
 
 
-import kotlin.internal.InlineOnly
-import kotlin.js.Math as nativeMath
 
 // constants, can't use them from nativeMath as they are not constants there
 
@@ -38,8 +36,7 @@ public const val E: Double = 2.718281828459045
  *   - `sin(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun sin(a: Double): Double = nativeMath.sin(a)
+public header fun sin(a: Double): Double
 
 /** Computes the cosine of the angle [a] given in radians.
  *
@@ -48,8 +45,7 @@ public inline fun sin(a: Double): Double = nativeMath.sin(a)
  *   - `cos(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun cos(a: Double): Double = nativeMath.cos(a)
+public header fun cos(a: Double): Double
 
 /** Computes the tangent of the angle [a] given in radians.
  *
@@ -58,8 +54,7 @@ public inline fun cos(a: Double): Double = nativeMath.cos(a)
  *   - `tan(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun tan(a: Double): Double = nativeMath.tan(a)
+public header fun tan(a: Double): Double
 
 /**
  * Computes the arc sine of the value [a];
@@ -69,8 +64,7 @@ public inline fun tan(a: Double): Double = nativeMath.tan(a)
  *    - `asin(v)` is `NaN`, when `abs(v) > 1` or v is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun asin(a: Double): Double = nativeMath.asin(a)
+public header fun asin(a: Double): Double
 
 /**
  * Computes the arc cosine of the value [a];
@@ -80,8 +74,7 @@ public inline fun asin(a: Double): Double = nativeMath.asin(a)
  *    - `acos(v)` is `NaN`, when `abs(v) > 1` or v is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun acos(a: Double): Double = nativeMath.acos(a)
+public header fun acos(a: Double): Double
 
 /**
  * Computes the arc tangent of the value [a];
@@ -91,8 +84,7 @@ public inline fun acos(a: Double): Double = nativeMath.acos(a)
  *     - `atan(NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun atan(a: Double): Double = nativeMath.atan(a)
+public header fun atan(a: Double): Double
 
 /**
  * Returns the angle `theta` of the polar coordinates `(r, theta)` that correspond
@@ -111,8 +103,7 @@ public inline fun atan(a: Double): Double = nativeMath.atan(a)
  *     - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun atan2(y: Double, x: Double): Double = nativeMath.atan2(y, x)
+public header fun atan2(y: Double, x: Double): Double
 
 /**
  * Computes the hyperbolic sine of the value [a].
@@ -124,8 +115,7 @@ public inline fun atan2(y: Double, x: Double): Double = nativeMath.atan2(y, x)
  *     - `sinh(-Inf)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun sinh(a: Double): Double = nativeMath.sinh(a)
+public header fun sinh(a: Double): Double
 
 /**
  * Computes the hyperbolic cosine of the value [a].
@@ -136,8 +126,7 @@ public inline fun sinh(a: Double): Double = nativeMath.sinh(a)
  *     - `cosh(+Inf|-Inf)` is `+Inf`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun cosh(a: Double): Double = nativeMath.cosh(a)
+public header fun cosh(a: Double): Double
 
 /**
  * Computes the hyperbolic tangent of the value [a].
@@ -149,8 +138,7 @@ public inline fun cosh(a: Double): Double = nativeMath.cosh(a)
  *     - `tanh(-Inf)` is `-1.0`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun tanh(a: Double): Double = nativeMath.tanh(a)
+public header fun tanh(a: Double): Double
 
 /**
  * Computes `sqrt(x^2 + y^2)` without intermediate overflow or underflow.
@@ -160,8 +148,7 @@ public inline fun tanh(a: Double): Double = nativeMath.tanh(a)
  *     - returns `NaN` if any of arguments is `NaN` and the other is not infinite
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun hypot(x: Double, y: Double): Double = nativeMath.hypot(x, y)
+public header fun hypot(x: Double, y: Double): Double
 
 /**
  * Computes the positive square root of the value [a].
@@ -170,8 +157,7 @@ public inline fun hypot(x: Double, y: Double): Double = nativeMath.hypot(x, y)
  *     - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun sqrt(a: Double): Double = nativeMath.sqrt(a)
+public header fun sqrt(a: Double): Double
 
 /**
  * Computes Euler's number `e` raised to the power of the value [a].
@@ -182,8 +168,7 @@ public inline fun sqrt(a: Double): Double = nativeMath.sqrt(a)
  *     - `exp(-Inf)` is `0.0`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun exp(a: Double): Double = nativeMath.exp(a)
+public header fun exp(a: Double): Double
 
 /**
  * Computes `exp(a) - 1`.
@@ -198,8 +183,7 @@ public inline fun exp(a: Double): Double = nativeMath.exp(a)
  * @see [exp] function.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun expm1(a: Double): Double = nativeMath.expm1(a)
+public header fun expm1(a: Double): Double
 
 /**
  * Computes the logarithm in the given [base] of the [a] value.
@@ -212,10 +196,7 @@ public inline fun expm1(a: Double): Double = nativeMath.expm1(a)
  *     - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
  */
 @SinceKotlin("1.2")
-public fun log(a: Double, base: Double): Double {
-    if (base <= 0.0 || base == 1.0) return Double.NaN
-    return nativeMath.log(a) / nativeMath.log(base)
-}
+public header fun log(a: Double, base: Double): Double
 
 /**
  * Computes the natural logarithm (base `E`) of the [a] value.
@@ -227,8 +208,7 @@ public fun log(a: Double, base: Double): Double {
  *     - `ln(0.0)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun ln(a: Double): Double = nativeMath.log(a)
+public header fun ln(a: Double): Double
 
 /**
  * Computes the decimal logarithm (base 10) of the [a] value.
@@ -236,8 +216,7 @@ public inline fun ln(a: Double): Double = nativeMath.log(a)
  * @see [ln] function for special cases.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun log10(a: Double): Double = nativeMath.log10(a)
+public header fun log10(a: Double): Double
 
 /**
  * Computes the binary logarithm (base 2) of the [a] value.
@@ -245,8 +224,7 @@ public inline fun log10(a: Double): Double = nativeMath.log10(a)
  * @see [ln] function for special cases.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun log2(a: Double): Double = nativeMath.log2(a)
+public header fun log2(a: Double): Double
 
 /**
  * Computes `log(a + 1)`.
@@ -263,8 +241,7 @@ public inline fun log2(a: Double): Double = nativeMath.log2(a)
  * @see [expm1] function
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun ln1p(a: Double): Double = nativeMath.log1p(a)
+public header fun ln1p(a: Double): Double
 
 /**
  * Rounds the given value [a] to an integer towards positive infinity.
@@ -275,8 +252,7 @@ public inline fun ln1p(a: Double): Double = nativeMath.log1p(a)
  *     - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun ceil(a: Double): Double = nativeMath.ceil(a).unsafeCast<Double>() // TODO: Remove unsafe cast after removing public js.math
+public header fun ceil(a: Double): Double
 
 /**
  * Rounds the given value [a] to an integer towards negative infinity.
@@ -287,8 +263,7 @@ public inline fun ceil(a: Double): Double = nativeMath.ceil(a).unsafeCast<Double
  *     - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun floor(a: Double): Double = nativeMath.floor(a).unsafeCast<Double>()
+public header fun floor(a: Double): Double
 
 /**
  * Rounds the given value [a] to an integer towards zero.
@@ -299,8 +274,7 @@ public inline fun floor(a: Double): Double = nativeMath.floor(a).unsafeCast<Doub
  *     - `truncate(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun truncate(a: Double): Double = nativeMath.trunc(a)
+public header fun truncate(a: Double): Double
 
 /**
  * Rounds the given value [a] towards the closest integer with ties rounded towards even integer.
@@ -309,13 +283,7 @@ public inline fun truncate(a: Double): Double = nativeMath.trunc(a)
  *     - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-public fun round(a: Double): Double {
-    if (a % 0.5 != 0.0) {
-        return nativeMath.round(a).unsafeCast<Double>()
-    }
-    val floor = floor(a)
-    return if (floor % 2 == 0.0) floor else ceil(a)
-}
+public header fun round(a: Double): Double
 
 /**
  * Returns the absolute value of the given value [a].
@@ -326,8 +294,7 @@ public fun round(a: Double): Double {
  * @see absoluteValue extension property for [Double]
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun abs(a: Double): Double = nativeMath.abs(a)
+public header fun abs(a: Double): Double
 
 /**
  * Returns the sign of the given value [a]:
@@ -339,8 +306,7 @@ public inline fun abs(a: Double): Double = nativeMath.abs(a)
  *     - `sign(NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun sign(a: Double): Double = nativeMath.sign(a)
+public header fun sign(a: Double): Double
 
 
 /**
@@ -349,16 +315,14 @@ public inline fun sign(a: Double): Double = nativeMath.sign(a)
  * If either value is `NaN`, then the result is `NaN`.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun min(a: Double, b: Double): Double = nativeMath.min(a, b)
+public header fun min(a: Double, b: Double): Double
 /**
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b)
+public header fun max(a: Double, b: Double): Double
 
 // extensions
 
@@ -374,8 +338,7 @@ public inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b)
  *     - `x.pow(y)` is `NaN` for `x < 0` and `y` is finite and not an integer
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun Double.pow(other: Double): Double = nativeMath.pow(this, other)
+public header fun Double.pow(other: Double): Double
 
 /**
  * Raises this value to the integer power [other].
@@ -383,8 +346,7 @@ public inline fun Double.pow(other: Double): Double = nativeMath.pow(this, other
  * See the other overload of [pow] for details.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun Double.pow(other: Int): Double = nativeMath.pow(this, other.toDouble())
+public header fun Double.pow(other: Int): Double
 
 /**
  * Returns the absolute value of this value.
@@ -395,8 +357,7 @@ public inline fun Double.pow(other: Int): Double = nativeMath.pow(this, other.to
  * @see abs function
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline val Double.absoluteValue: Double get() = nativeMath.abs(this)
+public header val Double.absoluteValue: Double
 
 /**
  * Returns the sign of this value:
@@ -408,8 +369,7 @@ public inline val Double.absoluteValue: Double get() = nativeMath.abs(this)
  *     - `NaN.sign` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline val Double.sign: Double get() = nativeMath.sign(this)
+public header val Double.sign: Double
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
@@ -417,18 +377,13 @@ public inline val Double.sign: Double get() = nativeMath.sign(this)
  * If [sign] is `NaN` the sign of the result is undefined.
  */
 @SinceKotlin("1.2")
-public fun Double.withSign(sign: Double): Double =
-        this.absoluteValue * when(sign) {
-            0.0 -> sign(1 / sign)
-            else -> sign(sign)
-        }
+public header fun Double.withSign(sign: Double): Double
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun Double.withSign(sign: Int): Double = this.withSign(sign.toDouble())
+public header fun Double.withSign(sign: Int): Double
 
 /**
  * Rounds this [Double] value to the nearest integer and converts the result to [Int].
@@ -441,12 +396,7 @@ public inline fun Double.withSign(sign: Int): Double = this.withSign(sign.toDoub
  * @throws IllegalArgumentException when this value is `NaN`
  */
 @SinceKotlin("1.2")
-public fun Double.roundToInt(): Int = when {
-    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
-    this > Int.MAX_VALUE -> Int.MAX_VALUE
-    this < Int.MIN_VALUE -> Int.MIN_VALUE
-    else -> nativeMath.round(this).unsafeCast<Double>().toInt()
-}
+public header fun Double.roundToInt(): Int
 
 /**
  * Rounds this [Double] value to the nearest integer and converts the result to [Long].
@@ -459,12 +409,7 @@ public fun Double.roundToInt(): Int = when {
  * @throws IllegalArgumentException when this value is `NaN`
  */
 @SinceKotlin("1.2")
-public fun Double.roundToLong(): Long = when {
-    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
-    this > Long.MAX_VALUE -> Long.MAX_VALUE
-    this < Long.MIN_VALUE -> Long.MIN_VALUE
-    else -> nativeMath.round(this).unsafeCast<Double>().toLong()
-}
+public header fun Double.roundToLong(): Long
 
 
 
@@ -478,8 +423,7 @@ public fun Double.roundToLong(): Long = when {
  *   - `sin(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun sin(a: Float): Float = nativeMath.sin(a.toDouble()).toFloat()
+public header fun sin(a: Float): Float
 
 /** Computes the cosine of the angle [a] given in radians.
  *
@@ -488,8 +432,7 @@ public inline fun sin(a: Float): Float = nativeMath.sin(a.toDouble()).toFloat()
  *   - `cos(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun cos(a: Float): Float = nativeMath.cos(a.toDouble()).toFloat()
+public header fun cos(a: Float): Float
 
 /** Computes the tangent of the angle [a] given in radians.
  *
@@ -498,8 +441,7 @@ public inline fun cos(a: Float): Float = nativeMath.cos(a.toDouble()).toFloat()
  *   - `tan(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun tan(a: Float): Float = nativeMath.tan(a.toDouble()).toFloat()
+public header fun tan(a: Float): Float
 
 /**
  * Computes the arc sine of the value [a];
@@ -509,8 +451,7 @@ public inline fun tan(a: Float): Float = nativeMath.tan(a.toDouble()).toFloat()
  *    - `asin(v)` is `NaN`, when `abs(v) > 1` or v is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun asin(a: Float): Float = nativeMath.asin(a.toDouble()).toFloat()
+public header fun asin(a: Float): Float
 
 /**
  * Computes the arc cosine of the value [a];
@@ -520,8 +461,7 @@ public inline fun asin(a: Float): Float = nativeMath.asin(a.toDouble()).toFloat(
  *    - `acos(v)` is `NaN`, when `abs(v) > 1` or v is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun acos(a: Float): Float = nativeMath.acos(a.toDouble()).toFloat()
+public header fun acos(a: Float): Float
 
 /**
  * Computes the arc tangent of the value [a];
@@ -531,8 +471,7 @@ public inline fun acos(a: Float): Float = nativeMath.acos(a.toDouble()).toFloat(
  *     - `atan(NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun atan(a: Float): Float = nativeMath.atan(a.toDouble()).toFloat()
+public header fun atan(a: Float): Float
 
 /**
  * Returns the angle `theta` of the polar coordinates `(r, theta)` that correspond
@@ -551,8 +490,7 @@ public inline fun atan(a: Float): Float = nativeMath.atan(a.toDouble()).toFloat(
  *     - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun atan2(y: Float, x: Float): Float = nativeMath.atan2(y.toDouble(), x.toDouble()).toFloat()
+public header fun atan2(y: Float, x: Float): Float
 
 /**
  * Computes the hyperbolic sine of the value [a].
@@ -564,8 +502,7 @@ public inline fun atan2(y: Float, x: Float): Float = nativeMath.atan2(y.toDouble
  *     - `sinh(-Inf)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun sinh(a: Float): Float = nativeMath.sinh(a.toDouble()).toFloat()
+public header fun sinh(a: Float): Float
 
 /**
  * Computes the hyperbolic cosine of the value [a].
@@ -576,8 +513,7 @@ public inline fun sinh(a: Float): Float = nativeMath.sinh(a.toDouble()).toFloat(
  *     - `cosh(+Inf|-Inf)` is `+Inf`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun cosh(a: Float): Float = nativeMath.cosh(a.toDouble()).toFloat()
+public header fun cosh(a: Float): Float
 
 /**
  * Computes the hyperbolic tangent of the value [a].
@@ -589,8 +525,7 @@ public inline fun cosh(a: Float): Float = nativeMath.cosh(a.toDouble()).toFloat(
  *     - `tanh(-Inf)` is `-1.0`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun tanh(a: Float): Float = nativeMath.tanh(a.toDouble()).toFloat()
+public header fun tanh(a: Float): Float
 
 /**
  * Computes `sqrt(x^2 + y^2)` without intermediate overflow or underflow.
@@ -600,8 +535,7 @@ public inline fun tanh(a: Float): Float = nativeMath.tanh(a.toDouble()).toFloat(
  *     - returns `NaN` if any of arguments is `NaN` and the other is not infinite
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun hypot(x: Float, y: Float): Float = nativeMath.hypot(x.toDouble(), y.toDouble()).toFloat()
+public header fun hypot(x: Float, y: Float): Float
 
 /**
  * Computes the positive square root of the value [a].
@@ -610,8 +544,7 @@ public inline fun hypot(x: Float, y: Float): Float = nativeMath.hypot(x.toDouble
  *     - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun sqrt(a: Float): Float = nativeMath.sqrt(a.toDouble()).toFloat()
+public header fun sqrt(a: Float): Float
 
 /**
  * Computes Euler's number `e` raised to the power of the value [a].
@@ -622,8 +555,7 @@ public inline fun sqrt(a: Float): Float = nativeMath.sqrt(a.toDouble()).toFloat(
  *     - `exp(-Inf)` is `0.0`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun exp(a: Float): Float = nativeMath.exp(a.toDouble()).toFloat()
+public header fun exp(a: Float): Float
 
 /**
  * Computes `exp(a) - 1`.
@@ -638,8 +570,7 @@ public inline fun exp(a: Float): Float = nativeMath.exp(a.toDouble()).toFloat()
  * @see [exp] function.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun expm1(a: Float): Float = nativeMath.expm1(a.toDouble()).toFloat()
+public header fun expm1(a: Float): Float
 
 /**
  * Computes the logarithm in the given [base] of the [a] value.
@@ -652,8 +583,7 @@ public inline fun expm1(a: Float): Float = nativeMath.expm1(a.toDouble()).toFloa
  *     - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun log(a: Float, base: Float): Float = log(a.toDouble(), base.toDouble()).toFloat()
+public header fun log(a: Float, base: Float): Float
 
 /**
  * Computes the natural logarithm (base `E`) of the [a] value.
@@ -665,8 +595,7 @@ public inline fun log(a: Float, base: Float): Float = log(a.toDouble(), base.toD
  *     - `ln(0.0)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun ln(a: Float): Float = nativeMath.log(a.toDouble()).toFloat()
+public header fun ln(a: Float): Float
 
 /**
  * Computes the decimal logarithm (base 10) of the [a] value.
@@ -674,8 +603,7 @@ public inline fun ln(a: Float): Float = nativeMath.log(a.toDouble()).toFloat()
  * @see [ln] function for special cases.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun log10(a: Float): Float = nativeMath.log10(a.toDouble()).toFloat()
+public header fun log10(a: Float): Float
 
 /**
  * Computes the binary logarithm (base 2) of the [a] value.
@@ -683,8 +611,7 @@ public inline fun log10(a: Float): Float = nativeMath.log10(a.toDouble()).toFloa
  * @see [ln] function for special cases.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun log2(a: Float): Float = nativeMath.log2(a.toDouble()).toFloat()
+public header fun log2(a: Float): Float
 
 /**
  * Computes `log(a + 1)`.
@@ -701,8 +628,7 @@ public inline fun log2(a: Float): Float = nativeMath.log2(a.toDouble()).toFloat(
  * @see [expm1] function
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun ln1p(a: Float): Float = nativeMath.log1p(a.toDouble()).toFloat()
+public header fun ln1p(a: Float): Float
 
 /**
  * Rounds the given value [a] to an integer towards positive infinity.
@@ -713,8 +639,7 @@ public inline fun ln1p(a: Float): Float = nativeMath.log1p(a.toDouble()).toFloat
  *     - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun ceil(a: Float): Float = nativeMath.ceil(a.toDouble()).toFloat()
+public header fun ceil(a: Float): Float
 
 /**
  * Rounds the given value [a] to an integer towards negative infinity.
@@ -725,8 +650,7 @@ public inline fun ceil(a: Float): Float = nativeMath.ceil(a.toDouble()).toFloat(
  *     - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun floor(a: Float): Float = nativeMath.floor(a.toDouble()).toFloat()
+public header fun floor(a: Float): Float
 
 /**
  * Rounds the given value [a] to an integer towards zero.
@@ -737,8 +661,7 @@ public inline fun floor(a: Float): Float = nativeMath.floor(a.toDouble()).toFloa
  *     - `truncate(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun truncate(a: Float): Float = truncate(a.toDouble()).toFloat()
+public header fun truncate(a: Float): Float
 
 /**
  * Rounds the given value [a] towards the closest integer with ties rounded towards even integer.
@@ -747,8 +670,7 @@ public inline fun truncate(a: Float): Float = truncate(a.toDouble()).toFloat()
  *     - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun round(a: Float): Float = round(a.toDouble()).toFloat()
+public header fun round(a: Float): Float
 
 
 /**
@@ -760,8 +682,7 @@ public inline fun round(a: Float): Float = round(a.toDouble()).toFloat()
  * @see absoluteValue extension property for [Float]
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun abs(a: Float): Float = nativeMath.abs(a.toDouble()).toFloat()
+public header fun abs(a: Float): Float
 
 /**
  * Returns the sign of the given value [a]:
@@ -773,8 +694,7 @@ public inline fun abs(a: Float): Float = nativeMath.abs(a.toDouble()).toFloat()
  *     - `sign(NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun sign(a: Float): Float = nativeMath.sign(a.toDouble()).toFloat()
+public header fun sign(a: Float): Float
 
 
 
@@ -784,16 +704,14 @@ public inline fun sign(a: Float): Float = nativeMath.sign(a.toDouble()).toFloat(
  * If either value is `NaN`, then the result is `NaN`.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun min(a: Float, b: Float): Float = nativeMath.min(a, b)
+public header fun min(a: Float, b: Float): Float
 /**
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun max(a: Float, b: Float): Float = nativeMath.max(a, b)
+public header fun max(a: Float, b: Float): Float
 
 // extensions
 
@@ -810,8 +728,7 @@ public inline fun max(a: Float, b: Float): Float = nativeMath.max(a, b)
  *     - `x.pow(y)` is `NaN` for `x < 0` and `y` is finite and not an integer
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun Float.pow(other: Float): Float = nativeMath.pow(this.toDouble(), other.toDouble()).toFloat()
+public header fun Float.pow(other: Float): Float
 
 /**
  * Raises this value to the integer power [other].
@@ -819,8 +736,7 @@ public inline fun Float.pow(other: Float): Float = nativeMath.pow(this.toDouble(
  * See the other overload of [pow] for details.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun Float.pow(other: Int): Float = nativeMath.pow(this.toDouble(), other.toDouble()).toFloat()
+public header fun Float.pow(other: Int): Float
 
 /**
  * Returns the absolute value of this value.
@@ -831,8 +747,7 @@ public inline fun Float.pow(other: Int): Float = nativeMath.pow(this.toDouble(),
  * @see abs function
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline val Float.absoluteValue: Float get() = nativeMath.abs(this.toDouble()).toFloat()
+public header val Float.absoluteValue: Float
 
 /**
  * Returns the sign of this value:
@@ -844,8 +759,7 @@ public inline val Float.absoluteValue: Float get() = nativeMath.abs(this.toDoubl
  *     - `NaN.sign` is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline val Float.sign: Float get() = nativeMath.sign(this.toDouble()).toFloat()
+public header val Float.sign: Float
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
@@ -853,14 +767,12 @@ public inline val Float.sign: Float get() = nativeMath.sign(this.toDouble()).toF
  * If [sign] is `NaN` the sign of the result is undefined.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun Float.withSign(sign: Float): Float = this.toDouble().withSign(sign.toDouble()).toFloat()
+public header fun Float.withSign(sign: Float): Float
 /**
  * Returns this value with the sign bit same as of the [sign] value.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun Float.withSign(sign: Int): Float = this.toDouble().withSign(sign.toDouble()).toFloat()
+public header fun Float.withSign(sign: Int): Float
 
 
 /**
@@ -874,8 +786,7 @@ public inline fun Float.withSign(sign: Int): Float = this.toDouble().withSign(si
  * @throws IllegalArgumentException when this value is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun Float.roundToInt(): Int = toDouble().roundToInt()
+public header fun Float.roundToInt(): Int
 
 /**
  * Rounds this [Float] value to the nearest integer and converts the result to [Long].
@@ -888,8 +799,7 @@ public inline fun Float.roundToInt(): Int = toDouble().roundToInt()
  * @throws IllegalArgumentException when this value is `NaN`
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun Float.roundToLong(): Long = toDouble().roundToLong()
+public header fun Float.roundToLong(): Long
 
 
 
@@ -902,23 +812,20 @@ public inline fun Float.roundToLong(): Long = toDouble().roundToLong()
  *
  * @see absoluteValue extension property for [Int]
  */
-// TODO: remove manual 'or' when KT-19290 is fixed
 @SinceKotlin("1.2")
-public fun abs(a: Int): Int = if (a < 0) (-a or 0) else a
+public header fun abs(a: Int): Int
 
 /**
  * Returns the smaller of two values.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun min(a: Int, b: Int): Int = minOf(a, b)
+public header fun min(a: Int, b: Int): Int
 
 /**
  * Returns the greater of two values.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun max(a: Int, b: Int): Int = maxOf(a, b)
+public header fun max(a: Int, b: Int): Int
 
 /**
  * Returns the absolute value of this value.
@@ -929,8 +836,7 @@ public inline fun max(a: Int, b: Int): Int = maxOf(a, b)
  * @see abs function
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline val Int.absoluteValue: Int get() = abs(this)
+public header val Int.absoluteValue: Int
 
 /**
  * Returns the sign of this value:
@@ -939,11 +845,7 @@ public inline val Int.absoluteValue: Int get() = abs(this)
  *     - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public val Int.sign: Int get() = when {
-    this < 0 -> -1
-    this > 0 -> 1
-    else -> 0
-}
+public header val Int.sign: Int
 
 
 
@@ -956,21 +858,19 @@ public val Int.sign: Int get() = when {
  * @see absoluteValue extension property for [Long]
  */
 @SinceKotlin("1.2")
-public fun abs(a: Long): Long = if (a < 0) -a else a
+public header fun abs(a: Long): Long
 
 /**
  * Returns the smaller of two values.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun min(a: Long, b: Long): Long = minOf(a, b)
+public header fun min(a: Long, b: Long): Long
 
 /**
  * Returns the greater of two values.
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline fun max(a: Long, b: Long): Long = maxOf(a, b)
+public header fun max(a: Long, b: Long): Long
 
 /**
  * Returns the absolute value of this value.
@@ -981,8 +881,7 @@ public inline fun max(a: Long, b: Long): Long = maxOf(a, b)
  * @see abs function
  */
 @SinceKotlin("1.2")
-@InlineOnly
-public inline val Long.absoluteValue: Long get() = abs(this)
+public header val Long.absoluteValue: Long
 
 /**
  * Returns the sign of this value:
@@ -991,10 +890,8 @@ public inline val Long.absoluteValue: Long get() = abs(this)
  *     - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public val Long.sign: Int get() = when {
-    this < 0 -> -1
-    this > 0 -> 1
-    else -> 0
-}
+public header val Long.sign: Int
+
+
 
 
