@@ -23,7 +23,7 @@ import kotlin.script.dependencies.DependenciesResolver.ResolveResult
 
 typealias Environment = Map<String, Any?>
 
-interface DependenciesResolver : @Suppress("DEPRECATION") ScriptDependenciesResolver {
+interface DependenciesResolver : ScriptDependenciesResolver {
     fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult
 
     object NoDependencies : DependenciesResolver {
@@ -52,7 +52,6 @@ interface ScriptContents {
     val annotations: Iterable<Annotation>
     val text: CharSequence?
 
-    @Deprecated("Use DependenciesResolver interface")
     data class Position(val line: Int, val col: Int)
 }
 

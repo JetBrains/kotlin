@@ -21,7 +21,6 @@ package kotlin.script.dependencies
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
-@Deprecated("Use DependenciesResolver interface")
 interface ScriptDependenciesResolver {
 
     enum class ReportSeverity { ERROR, WARNING, INFO, DEBUG }
@@ -33,13 +32,10 @@ interface ScriptDependenciesResolver {
     ): Future<KotlinScriptExternalDependencies?> = PseudoFuture(null)
 }
 
-@Deprecated("Use DependenciesResolver interface")
 class BasicScriptDependenciesResolver : ScriptDependenciesResolver
 
-@Deprecated("Use DependenciesResolver interface")
 fun KotlinScriptExternalDependencies?.asFuture(): PseudoFuture<KotlinScriptExternalDependencies?> = PseudoFuture(this)
 
-@Deprecated("Use DependenciesResolver interface")
 class PseudoFuture<T>(private val value: T): Future<T> {
     override fun get(): T = value
     override fun get(p0: Long, p1: TimeUnit): T  = value
