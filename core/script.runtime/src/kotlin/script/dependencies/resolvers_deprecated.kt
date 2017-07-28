@@ -21,6 +21,8 @@ package kotlin.script.dependencies
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
+typealias Environment = Map<String, Any?>
+
 interface ScriptDependenciesResolver {
 
     enum class ReportSeverity { ERROR, WARNING, INFO, DEBUG }
