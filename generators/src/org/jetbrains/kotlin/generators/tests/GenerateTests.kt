@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDiagnosticsWithModifiedMockJdkTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.checkers.*
-import org.jetbrains.kotlin.checkers.javac.AbstractDiagnosticsUsingJavacTest
-import org.jetbrains.kotlin.checkers.javac.AbstractJavacDiagnosticsTest
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
@@ -160,8 +158,7 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
-import org.jetbrains.kotlin.checkers.javac.AbstractJavacForeignAnnotationsTest
-import org.jetbrains.kotlin.checkers.javac.AbstractJavacForeignJava8AnnotationsTest
+import org.jetbrains.kotlin.checkers.javac.*
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
@@ -216,6 +213,10 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractDiagnosticsTestWithStdLib> {
+            model("diagnostics/testsWithStdLib")
+        }
+
+        testClass<AbstractDiagnosticsTestWithStdLibUsingJavac> {
             model("diagnostics/testsWithStdLib")
         }
 
