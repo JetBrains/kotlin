@@ -74,46 +74,55 @@
 
     <problem>
         <file>test.kt</file>
-        <line>109</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="test.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Can have 'private' visibility</problem_class>
-        <description>Property 'a' can be private</description>
-    </problem>
-
-    <problem>
-        <file>test.kt</file>
-        <line>110</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="test.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Can have 'private' visibility</problem_class>
-        <description>Property 'b' can be private</description>
-    </problem>
-
-    <problem>
-        <file>test.kt</file>
-        <line>114</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="test.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Can have 'private' visibility</problem_class>
-        <description>Function 'f1' can be private</description>
-    </problem>
-
-    <problem>
-        <file>test.kt</file>
-        <line>115</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="test.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Can have 'private' visibility</problem_class>
-        <description>Function 'f2' can be private</description>
-    </problem>
-
-    <problem>
-        <file>test.kt</file>
         <line>135</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Can have 'private' visibility</problem_class>
         <description>Property 'bar' can be private</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>180</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class member can have 'private' visibility</problem_class>
+        <description>Property 'a' can be private</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>181</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class member can have 'private' visibility</problem_class>
+        <description>Property 'b' can be private</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>182</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class member can have 'private' visibility</problem_class>
+        <description>Function 'c' can be private</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>190</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class member can have 'private' visibility</problem_class>
+        <description>Property 'b' can be private</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>191</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class member can have 'private' visibility</problem_class>
+        <description>Function 'c' can be private</description>
     </problem>
 </problems>
