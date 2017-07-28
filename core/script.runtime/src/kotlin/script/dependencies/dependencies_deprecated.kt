@@ -20,7 +20,6 @@ package kotlin.script.dependencies
 
 import java.io.File
 
-@Deprecated("Deprecated API. Use ScriptDependencies class.")
 interface KotlinScriptExternalDependencies : Comparable<KotlinScriptExternalDependencies> {
     val javaHome: String? get() = null
     val classpath: Iterable<File> get() = emptyList()
