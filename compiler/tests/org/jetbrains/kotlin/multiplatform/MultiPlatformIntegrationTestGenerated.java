@@ -42,6 +42,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         doTest(fileName);
     }
 
+    @TestMetadata("compilerArguments")
+    public void testCompilerArguments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/compilerArguments/");
+        doTest(fileName);
+    }
+
     @TestMetadata("createImplClassInPlatformModule")
     public void testCreateImplClassInPlatformModule() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/createImplClassInPlatformModule/");
