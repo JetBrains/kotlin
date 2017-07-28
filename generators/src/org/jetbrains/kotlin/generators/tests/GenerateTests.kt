@@ -159,6 +159,7 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
+import org.jetbrains.kotlin.checkers.javac.*
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
@@ -202,7 +203,21 @@ fun main(args: Array<String>) {
             model("codegen/box/diagnostics")
         }
 
+        testClass<AbstractDiagnosticsUsingJavacTest> {
+            model("diagnostics/tests")
+            model("codegen/box/diagnostics")
+        }
+
+        testClass<AbstractJavacDiagnosticsTest> {
+            model("javac/diagnostics/tests")
+            model("javac/diagnostics/tests", testClassName = "TestsWithoutJavac", testMethod = "doTestWithoutJavacWrapper")
+        }
+
         testClass<AbstractDiagnosticsTestWithStdLib> {
+            model("diagnostics/testsWithStdLib")
+        }
+
+        testClass<AbstractDiagnosticsTestWithStdLibUsingJavac> {
             model("diagnostics/testsWithStdLib")
         }
 
@@ -227,6 +242,10 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractForeignAnnotationsTest> {
+            model("foreignAnnotations/tests")
+        }
+
+        testClass<AbstractJavacForeignAnnotationsTest> {
             model("foreignAnnotations/tests")
         }
 
@@ -462,6 +481,10 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractForeignJava8AnnotationsTest> {
+            model("foreignAnnotationsJava8/tests")
+        }
+
+        testClass<AbstractJavacForeignJava8AnnotationsTest> {
             model("foreignAnnotationsJava8/tests")
         }
 

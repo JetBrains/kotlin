@@ -1,3 +1,14 @@
 package
 
 public fun test(/*0*/ ls: kotlin.collections.List<kotlin.String>, /*1*/ mls: kotlin.collections.MutableList<kotlin.String>, /*2*/ lsn: kotlin.collections.List<kotlin.String?>, /*3*/ mlsn: kotlin.collections.MutableList<kotlin.String?>?): kotlin.Unit
+
+package p {
+
+    public open class J {
+        public constructor J()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun list(/*0*/ s: kotlin.collections.(Mutable)List<kotlin.String!>!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

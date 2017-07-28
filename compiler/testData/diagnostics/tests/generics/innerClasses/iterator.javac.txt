@@ -1,0 +1,34 @@
+package
+
+public fun </*0*/ E> commonSupertype(/*0*/ x: E, /*1*/ y: E): E
+public fun foo(): kotlin.Unit
+
+public final class A</*0*/ T> : java.util.AbstractCollection<T> {
+    public constructor A</*0*/ T>()
+    public open override /*1*/ val size: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun add(/*0*/ element: T!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<T!>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ element: T!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<T!>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ fun iterator(): A<T>.MyIt
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ element: T!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<T!>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<T!>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class MyIt /*captured type parameters: /*0*/ T*/ : kotlin.collections.MutableIterator<T> {
+        public constructor MyIt()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ fun hasNext(): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ fun next(): T
+        public open override /*1*/ fun remove(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

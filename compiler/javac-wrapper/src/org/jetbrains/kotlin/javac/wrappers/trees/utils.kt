@@ -19,9 +19,14 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedArrayAnnotationArgument
+import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedReferenceAnnotationArgument
 import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.Modifier
 
 internal val JCTree.JCModifiers.isAbstract: Boolean
@@ -59,3 +64,23 @@ internal fun JCTree.annotations(): Collection<JCTree.JCAnnotation> = when (this)
 
 fun JavaClass.computeClassId(): ClassId? =
         outerClass?.computeClassId()?.createNestedClassId(name) ?: fqName?.let { ClassId.topLevel(it) }
+
+fun Collection<JavaAnnotation>.filterTypeAnnotations(): Collection<JavaAnnotation> {
+    val filteredAnnotations = arrayListOf<JavaAnnotation>()
+    for (annotation in this) {
+        val annotationClass = annotation.resolve()
+        val targetAnnotation = annotationClass?.annotations?.find { it.classId == ClassId(FqName("java.lang.annotation"), Name.identifier("Target")) } ?: continue
+        val elementTypeArg = targetAnnotation.arguments.firstOrNull() ?: continue
+
+        if (elementTypeArg is SymbolBasedArrayAnnotationArgument) {
+            elementTypeArg.args.find { (it as? SymbolBasedReferenceAnnotationArgument)?.element?.simpleName?.contentEquals("TYPE_USE") ?: false }
+                    ?.let { filteredAnnotations.add(annotation) }
+        }
+        else if (elementTypeArg is SymbolBasedReferenceAnnotationArgument) {
+            elementTypeArg.element.simpleName.takeIf { it.contentEquals("TYPE_USE") }
+                    ?.let { filteredAnnotations.add(annotation) }
+        }
+    }
+
+    return filteredAnnotations
+}

@@ -19,6 +19,7 @@ where advanced options include:
   -Xscript-resolver-environment=<key=value[,]>
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)
   -Xuse-javac                Use javac for Java source and class files analysis
+  -Xcompile-java             Reuse javac analysis and compile Java source files
   -Xjavac-arguments=<option[,]> Java compiler arguments
   -Xjsr305-annotations={ignore|enable}
                              Specify global behavior for JSR-305 nullability annotations: ignore, or treat as other supported nullability annotations

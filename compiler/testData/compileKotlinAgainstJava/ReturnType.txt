@@ -1,10 +1,12 @@
 package test
 
 public fun getElement(): javax.lang.model.element.Element!
+public fun getJavaLangClass(): java.lang.Class<kotlin.String!>!
 
 public open class ReturnType {
     public constructor ReturnType()
 
     // Static members
     public open fun getElement(): javax.lang.model.element.Element!
+    public open fun getJavaLangClass(): java.lang.Class<kotlin.String!>!
 }

@@ -50,54 +50,52 @@ class TreeBasedClass(
             annotations.find { it.classId?.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc: Boolean
-        get() = false
+        get() = javac.isDeprecatedInJavaDoc(treePath)
 
     override val isAbstract: Boolean
-        get() = tree.modifiers.isAbstract || (isAnnotationType && methods.any { it.isAbstract })
+        get() = tree.modifiers.isAbstract || ((isAnnotationType || isEnum) && methods.any { it.isAbstract })
 
     override val isStatic: Boolean
-        get() = (outerClass?.isInterface ?: false) || tree.modifiers.isStatic
+        get() = isEnum || isInterface || (outerClass?.isInterface ?: false) || tree.modifiers.isStatic
 
     override val isFinal: Boolean
-        get() = tree.modifiers.isFinal
+        get() = isEnum || tree.modifiers.isFinal
 
     override val visibility: Visibility
-        get() = if (outerClass?.isInterface ?: false) PUBLIC else tree.modifiers.visibility
+        get() = if (outerClass?.isInterface == true) PUBLIC else tree.modifiers.visibility
 
     override val typeParameters: List<JavaTypeParameter>
         get() = tree.typeParameters.map { parameter ->
             TreeBasedTypeParameter(parameter, TreePath(treePath, parameter), javac)
         }
 
-    override val fqName: FqName =
-            treePath.reversed()
-                    .filterIsInstance<JCTree.JCClassDecl>()
-                    .joinToString(
-                            separator = ".",
-                            prefix = "${treePath.compilationUnit.packageName}.",
-                            transform = JCTree.JCClassDecl::name
-                    )
-                    .let(::FqName)
+    override val fqName: FqName
+        get() = treePath.reversed()
+                .filterIsInstance<JCTree.JCClassDecl>()
+                .joinToString(
+                        separator = ".",
+                        transform = JCTree.JCClassDecl::name
+                )
+                .let { treePath.compilationUnit.packageName?.let { packageName -> FqName("$packageName.$it") } ?: FqName.topLevel(Name.identifier(it))}
 
     override val supertypes: Collection<JavaClassifierType>
-        get() = arrayListOf<JavaClassifierType>().apply {
-            fun JCTree.mapToJavaClassifierType() = when {
-                this is JCTree.JCTypeApply -> TreeBasedGenericClassifierType(this, TreePath(treePath, this), javac)
-                this is JCTree.JCExpression -> TreeBasedNonGenericClassifierType(this, TreePath(treePath, this), javac)
-                else -> null
-            }
-
+        get() = arrayListOf<JavaClassifierType>().also { list ->
             if (isEnum) {
-                javac.JAVA_LANG_ENUM?.let(this::add)
+                createEnumSupertype(this, javac).let { list.add(it) }
             } else if (isAnnotationType) {
-                javac.JAVA_LANG_ANNOTATION_ANNOTATION?.let(this::add)
+                javac.JAVA_LANG_ANNOTATION_ANNOTATION?.let { list.add(it) }
             }
 
-            tree.implementing?.mapNotNull { it.mapToJavaClassifierType() }?.let(this::addAll)
-            tree.extending?.let { it.mapToJavaClassifierType()?.let(this::add) }
+            tree.extending?.let {
+                (TreeBasedType.create(it, javac.getTreePath(it, treePath.compilationUnit), javac, emptyList()) as? JavaClassifierType)
+                        ?.let { list.add(it) }
+            }
+            tree.implementing?.mapNotNull {
+                TreeBasedType.create(it, javac.getTreePath(it, treePath.compilationUnit), javac, emptyList()) as? JavaClassifierType
+            }?.let { list.addAll(it) }
 
-            if (isEmpty()) {
-                javac.JAVA_LANG_OBJECT?.let(this::add)
+            if (list.isEmpty()) {
+                javac.JAVA_LANG_OBJECT?.let { list.add(it) }
             }
         }
 
@@ -153,5 +151,46 @@ class TreeBasedClass(
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = true
 
     override fun findInnerClass(name: Name) = innerClasses[name]
+
+}
+
+private fun createEnumSupertype(javaClass: JavaClass,
+                                javac: JavacWrapper) = object : JavaClassifierType {
+    override val classifier: JavaClassifier?
+        get() = javac.JAVA_LANG_ENUM
+
+    override val typeArguments: List<JavaType>
+        get() = listOf(TypeArgument())
+
+    override val isRaw: Boolean
+        get() = false
+    override val annotations: Collection<JavaAnnotation>
+        get() = emptyList()
+    override val classifierQualifiedName: String
+        get() = (classifier as? JavaClass)?.fqName?.asString() ?: ""
+    override val presentableText: String
+        get() = classifierQualifiedName
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = false
+    override fun findAnnotation(fqName: FqName) = null
+
+    private inner class TypeArgument : JavaClassifierType {
+        override val classifier: JavaClassifier?
+            get() = javaClass
+        override val typeArguments: List<JavaType>
+            get() = emptyList()
+        override val isRaw: Boolean
+            get() = false
+        override val annotations: Collection<JavaAnnotation>
+            get() = emptyList()
+        override val classifierQualifiedName: String
+            get() = javaClass.fqName!!.asString()
+        override val presentableText: String
+            get() = classifierQualifiedName
+        override val isDeprecatedInJavaDoc: Boolean
+            get() = false
+        override fun findAnnotation(fqName: FqName) = null
+
+    }
 
 }

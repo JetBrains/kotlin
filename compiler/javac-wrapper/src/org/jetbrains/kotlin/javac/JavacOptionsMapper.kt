@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac
 
+import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.util.Options
 import java.util.regex.Pattern
 
@@ -24,6 +25,8 @@ object JavacOptionsMapper {
     fun map(options: Options, arguments: List<String>) {
         arguments.forEach { options.putOption(it) }
     }
+
+    fun setUTF8Encoding(options: Options) = options.put(Option.ENCODING, "UTF8")
 
     private val optionPattern = Pattern.compile("\\s+")
 

@@ -2,3 +2,19 @@ package
 
 public fun </*0*/ T, /*1*/ C : foo.Base<T>> convert(/*0*/ src: foo.HS<T>, /*1*/ dest: C): C
 public fun test(/*0*/ l: foo.HS<kotlin.Int>): kotlin.Unit
+
+package foo {
+
+    public interface Base</*0*/ T : kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class HS</*0*/ T : kotlin.Any!> : foo.Base<T!> {
+        public constructor HS</*0*/ T : kotlin.Any!>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

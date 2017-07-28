@@ -21,7 +21,5 @@ public final enum class Enum : kotlin.Enum<test.Enum!> {
 
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.Enum
-    public open fun valueOf(/*0*/ kotlin.String!): test.Enum!
-    public open fun values(): kotlin.Array<(out) test.Enum!>!
     public final /*synthesized*/ fun values(): kotlin.Array<test.Enum>
 }

@@ -1,0 +1,13 @@
+package
+
+package test {
+    public fun foo(/*0*/ u: test.Usage): kotlin.Unit
+
+    public open class Usage {
+        public constructor Usage()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public/*package*/ open fun foo(/*0*/ c: kotlin.collections.(Mutable)Collection<*>!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

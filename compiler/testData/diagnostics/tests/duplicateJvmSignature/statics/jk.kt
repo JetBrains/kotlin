@@ -3,7 +3,7 @@
 // FILE: A.java
 
 public class A {
-    public static int a = 1
+    public static int a = 1;
     public static void foo() {}
     public static void baz(String s) {}
 }

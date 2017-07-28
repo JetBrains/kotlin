@@ -1,6 +1,6 @@
 // FILE: A.java
 
-import org.checkerframework.checker.nullness.qual.*
+import org.checkerframework.checker.nullness.qual.*;
 
 public class A {
     @Nullable Base<@NonNull String> foo() { return null; }

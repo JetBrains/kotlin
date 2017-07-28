@@ -53,7 +53,7 @@ class TreeBasedMethod(
         get() = tree.parameters.map { TreeBasedValueParameter(it, TreePath(treePath, it), javac) }
 
     override val returnType: JavaType
-        get() = TreeBasedType.create(tree.returnType, treePath, javac)
+        get() = TreeBasedType.create(tree.returnType, treePath, javac, annotations)
 
     override val hasAnnotationParameterDefaultValue: Boolean
         get() = tree.defaultValue != null

@@ -16,3 +16,13 @@ public fun g5(): kotlin.reflect.KClass<out test.GenericSam<kotlin.String>>
 public fun g6(): kotlin.reflect.KFunction1<@kotlin.ParameterName(name = "t") kotlin.String!, kotlin.Unit>
 public fun g7(): kotlin.reflect.KClass<out test.GenericSam<kotlin.String>>
 public fun g8(): kotlin.reflect.KFunction1<@kotlin.ParameterName(name = "t") kotlin.String!, kotlin.Unit>
+
+package test {
+
+    public interface GenericSam</*0*/ T : kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract operator fun invoke(/*0*/ t: T!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -1,0 +1,65 @@
+package
+
+public fun bar(): kotlin.Unit
+public fun </*0*/ T : kotlin.Throwable> tryCatch(): kotlin.Unit
+public inline fun </*0*/ reified E : kotlin.Exception /* = java.lang.Exception */, /*1*/ R> tryCatch(/*0*/ lazy: () -> R, /*1*/ failure: (E) -> R): R
+
+public final class XException</*0*/ T> : kotlin.Throwable {
+    public constructor XException</*0*/ T>(/*0*/ p: T)
+    public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
+    public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+    public final val p: T
+    public final override /*1*/ /*fake_override*/ fun addSuppressed(/*0*/ p0: kotlin.Throwable!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun fillInStackTrace(): kotlin.Throwable!
+    public open override /*1*/ /*fake_override*/ fun getLocalizedMessage(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<(out) java.lang.StackTraceElement!>!
+    public final override /*1*/ /*fake_override*/ fun getSuppressed(): kotlin.Array<(out) kotlin.Throwable!>!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun initCause(/*0*/ p0: kotlin.Throwable!): kotlin.Throwable!
+    public open override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun printStackTrace(/*0*/ p0: java.io.PrintStream!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun printStackTrace(/*0*/ p0: java.io.PrintWriter!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setStackTrace(/*0*/ p0: kotlin.Array<(out) java.lang.StackTraceElement!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class YException</*0*/ T> : java.lang.RuntimeException {
+    public constructor YException</*0*/ T>(/*0*/ p: T)
+    public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
+    public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+    public final val p: T
+    public final override /*1*/ /*fake_override*/ fun addSuppressed(/*0*/ p0: kotlin.Throwable!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun fillInStackTrace(): kotlin.Throwable!
+    public open override /*1*/ /*fake_override*/ fun getLocalizedMessage(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<(out) java.lang.StackTraceElement!>!
+    public final override /*1*/ /*fake_override*/ fun getSuppressed(): kotlin.Array<(out) kotlin.Throwable!>!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun initCause(/*0*/ p0: kotlin.Throwable!): kotlin.Throwable!
+    public open override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun printStackTrace(/*0*/ p0: java.io.PrintStream!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun printStackTrace(/*0*/ p0: java.io.PrintWriter!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setStackTrace(/*0*/ p0: kotlin.Array<(out) java.lang.StackTraceElement!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ZException</*0*/ T> : kotlin.Exception /* = java.lang.Exception */ {
+    public constructor ZException</*0*/ T>(/*0*/ p: T)
+    public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
+    public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+    public final val p: T
+    public final override /*1*/ /*fake_override*/ fun addSuppressed(/*0*/ p0: kotlin.Throwable!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun fillInStackTrace(): kotlin.Throwable!
+    public open override /*1*/ /*fake_override*/ fun getLocalizedMessage(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<(out) java.lang.StackTraceElement!>!
+    public final override /*1*/ /*fake_override*/ fun getSuppressed(): kotlin.Array<(out) kotlin.Throwable!>!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun initCause(/*0*/ p0: kotlin.Throwable!): kotlin.Throwable!
+    public open override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun printStackTrace(/*0*/ p0: java.io.PrintStream!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun printStackTrace(/*0*/ p0: java.io.PrintWriter!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setStackTrace(/*0*/ p0: kotlin.Array<(out) java.lang.StackTraceElement!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

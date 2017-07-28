@@ -1,0 +1,29 @@
+package
+
+public fun bar(): kotlin.String?
+public fun foo(): kotlin.Unit
+
+@kotlin.jvm.PurelyImplements(value = "kotlin.collections.MutableCollection") public/*package*/ open class A</*0*/ T : kotlin.Any!> : java.util.AbstractCollection<T!>, kotlin.collections.MutableCollection<T> {
+    public/*package*/ constructor A</*0*/ T : kotlin.Any!>()
+    public open override /*2*/ val size: kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun add(/*0*/ element: T): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun clear(): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun contains(/*0*/ element: T): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    @java.lang.Override public open override /*2*/ fun iterator(): kotlin.collections.MutableIterator<T>
+    public open override /*2*/ /*fake_override*/ fun remove(/*0*/ element: T): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    invisible_fake const final override /*1*/ /*fake_override*/ val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
+    invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> finishToArray(/*0*/ p0: kotlin.Array<(out) T!>!, /*1*/ p1: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
+    invisible_fake open override /*1*/ /*fake_override*/ fun hugeCapacity(/*0*/ p0: kotlin.Int): kotlin.Int
+}
