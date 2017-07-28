@@ -73,6 +73,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("ImportAliasClass.kt")
+    public void testImportAliasClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ImportAliasClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ImportedClassReference.kt")
     public void testImportedClassReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ImportedClassReference.kt");

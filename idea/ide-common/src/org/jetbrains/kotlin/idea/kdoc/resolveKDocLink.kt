@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
@@ -34,9 +36,10 @@ import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
+import org.jetbrains.kotlin.resolve.scopes.utils.*
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun resolveKDocLink(context: BindingContext,
                     resolutionFacade: ResolutionFacade,
@@ -86,31 +89,27 @@ fun resolveKDocSampleLink(context: BindingContext,
     return resolveDefaultKDocLink(context, resolutionFacade, fromDescriptor, qualifiedName)
 }
 
-
-
-
-private fun resolveDefaultKDocLink(context: BindingContext,
-                                   resolutionFacade: ResolutionFacade,
-                                   fromDescriptor: DeclarationDescriptor,
-                                   qualifiedName: List<String>): Collection<DeclarationDescriptor> {
+private fun resolveDefaultKDocLink(
+        context: BindingContext,
+        resolutionFacade: ResolutionFacade,
+        fromDescriptor: DeclarationDescriptor,
+        qualifiedName: List<String>
+): Collection<DeclarationDescriptor> {
 
     val scope = getKDocLinkResolutionScope(resolutionFacade, fromDescriptor)
 
     if (qualifiedName.size == 1) {
-        val shortName = qualifiedName.single()
-        val descriptorsByName = scope.collectDescriptorsFiltered(nameFilter = { it.asString() == shortName })
-        // Try to find a matching local descriptor (parameter or type parameter) first.
+        val shortName = Name.identifier(qualifiedName.single())
+        val descriptorsByName = SmartList<DeclarationDescriptor>()
+        scope.collectAllByName(shortName, descriptorsByName)
+        
+        // Try to find a matching local descriptor (parameter or type parameter) first
         val localDescriptors = descriptorsByName.filter { it.containingDeclaration == fromDescriptor }
-
         if (localDescriptors.isNotEmpty()) return localDescriptors
 
-        val moduleDescriptor = fromDescriptor.module
+        descriptorsByName.addIfNotNull(fromDescriptor.module.getPackage(FqName.topLevel(shortName)))
 
-        val packagesByName = moduleDescriptor.getSubPackagesOf(FqName.ROOT, { true })
-                .filter { it.asString() == shortName }
-                .map { moduleDescriptor.getPackage(it) }
-
-        return descriptorsByName + packagesByName
+        return descriptorsByName
     }
 
     val moduleDescriptor = fromDescriptor.module
@@ -125,9 +124,17 @@ private fun resolveDefaultKDocLink(context: BindingContext,
     if (descriptor == null) return emptyList()
     if (memberName != null) {
         val memberScope = getKDocLinkResolutionScope(resolutionFacade, descriptor)
-        return memberScope.collectDescriptorsFiltered(nameFilter = { it == memberName })
+        return memberScope.collectAllByName(memberName)
     }
     return listOf(descriptor)
+}
+
+private fun LexicalScope.collectAllByName(shortName: Name, toCollection: MutableCollection<DeclarationDescriptor> = SmartList()): Collection<DeclarationDescriptor> {
+    toCollection.addIfNotNull(findClassifier(shortName, NoLookupLocation.FROM_IDE))
+    toCollection.addIfNotNull(findPackage(shortName))
+    toCollection.addAll(collectFunctions(shortName, NoLookupLocation.FROM_IDE))
+    toCollection.addAll(collectVariables(shortName, NoLookupLocation.FROM_IDE))
+    return toCollection
 }
 
 private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): MemberScope {
