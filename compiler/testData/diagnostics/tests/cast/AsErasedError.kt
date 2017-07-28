@@ -1,2 +1,2 @@
 
-fun ff(c: MutableCollection<String>) = <!UNCHECKED_CAST!>c as MutableList<Int><!>
+fun ff(c: MutableCollection<String>) = c <!UNCHECKED_CAST!>as MutableList<Int><!>
