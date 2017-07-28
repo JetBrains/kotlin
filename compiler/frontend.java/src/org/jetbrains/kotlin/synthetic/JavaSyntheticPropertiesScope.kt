@@ -358,8 +358,15 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
             }
         }
 
-        override fun createSubstitutedCopy(newOwner: DeclarationDescriptor, newModality: Modality, newVisibility: Visibility, original: PropertyDescriptor?, kind: CallableMemberDescriptor.Kind): PropertyDescriptorImpl {
-            return MyPropertyDescriptor(newOwner, this, annotations, newModality, newVisibility, isVar, name, kind, source).apply {
+        override fun createSubstitutedCopy(
+                newOwner: DeclarationDescriptor,
+                newModality: Modality,
+                newVisibility: Visibility,
+                original: PropertyDescriptor?,
+                kind: CallableMemberDescriptor.Kind,
+                newName: Name
+        ): PropertyDescriptorImpl {
+            return MyPropertyDescriptor(newOwner, this, annotations, newModality, newVisibility, isVar, newName, kind, source).apply {
                 getMethod = this@MyPropertyDescriptor.getMethod
                 setMethod = this@MyPropertyDescriptor.setMethod
             }

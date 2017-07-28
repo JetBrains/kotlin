@@ -1,0 +1,5 @@
+import java.util.Date as JavaDate
+
+fun foo(): JavaDate<caret>
+
+// ELEMENT: "JavaDate"

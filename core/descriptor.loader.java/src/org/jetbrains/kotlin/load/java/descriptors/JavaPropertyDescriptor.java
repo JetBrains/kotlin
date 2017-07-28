@@ -74,10 +74,11 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             @NotNull Modality newModality,
             @NotNull Visibility newVisibility,
             @Nullable PropertyDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @NotNull Name newName
     ) {
         return new JavaPropertyDescriptor(
-                newOwner, getAnnotations(), newModality, newVisibility, isVar(), getName(), SourceElement.NO_SOURCE, original,
+                newOwner, getAnnotations(), newModality, newVisibility, isVar(), newName, SourceElement.NO_SOURCE, original,
                 kind, isStaticFinal
         );
     }

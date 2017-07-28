@@ -49,7 +49,11 @@ class AllUnderImportScope(
         excludedImportNames.mapNotNull { if (it.parent() == fqName) it.shortName() else null }.toSet()
     }
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
+    override fun getContributedDescriptors(
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean,
+            changeNamesForAliased: Boolean
+    ): Collection<DeclarationDescriptor> {
         val nameFilterToUse = if (excludedNames.isEmpty()) { // optimization
             nameFilter
         }

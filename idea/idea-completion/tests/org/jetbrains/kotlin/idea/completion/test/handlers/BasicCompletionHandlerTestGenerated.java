@@ -462,6 +462,51 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @TestMetadata("idea/idea-completion/testData/handlers/basic/importAliases")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImportAliases extends AbstractBasicCompletionHandlerTest {
+        public void testAllFilesPresentInImportAliases() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/importAliases"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("CompanionObject.kt")
+        public void testCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/importAliases/CompanionObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionFun.kt")
+        public void testExtensionFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/importAliases/ExtensionFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionVal.kt")
+        public void testExtensionVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/importAliases/ExtensionVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TopLevelFun.kt")
+        public void testTopLevelFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/importAliases/TopLevelFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TopLevelVal.kt")
+        public void testTopLevelVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/importAliases/TopLevelVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Type.kt")
+        public void testType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/importAliases/Type.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/idea-completion/testData/handlers/basic/override")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

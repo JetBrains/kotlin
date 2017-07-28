@@ -146,7 +146,7 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
             @NotNull
             @Override
-            public CopyBuilder<SimpleFunctionDescriptor> setOriginal(@Nullable FunctionDescriptor original) {
+            public CopyBuilder<SimpleFunctionDescriptor> setOriginal(@Nullable CallableMemberDescriptor original) {
                 return this;
             }
 
