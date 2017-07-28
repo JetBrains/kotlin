@@ -137,15 +137,71 @@ class G(val bar: Int) {
 }
 
 private class H(val a: String = "",
-        var b: String = "",
-        internal val c: String = "",
-        protected val d: String = "",
-        private val e: String = "") {
+                var b: String = "",
+                internal val c: String = "",
+                protected val d: String = "",
+                private val e: String = "") {
+
+    var f: String = ""
+    fun g(): String = ""
+
     fun foo() {
         println(a)
         println(b)
         println(c)
         println(d)
         println(e)
+        println(f)
+        println(g())
     }
+}
+
+private class I {
+    class NestedCls(val a: String) {
+        var b: String = ""
+        fun c(): String = ""
+        fun foo() {
+            println(a)
+            println(b)
+            println(c())
+        }
+    }
+    object NestedObj {
+        var b: String = ""
+        fun c(): String = ""
+        fun foo() {
+            println(b)
+            println(c())
+        }
+    }
+}
+
+class J {
+    class NestedCls(val a: String) {
+        var b: String = ""
+        fun c(): String = ""
+        fun foo() {
+            println(a)
+            println(b)
+            println(c())
+        }
+    }
+    object NestedObj {
+        var b: String = ""
+        fun c(): String = ""
+        fun foo() {
+            println(b)
+            println(c())
+        }
+    }
+}
+
+fun withLocal(): Int {
+    class Local(val x: Int) {
+        val y = x
+        fun res() = x + y
+    }
+
+    val local = Local(42)
+    return local.res()
 }

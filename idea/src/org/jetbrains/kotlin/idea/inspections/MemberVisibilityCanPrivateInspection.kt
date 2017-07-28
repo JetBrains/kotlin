@@ -26,6 +26,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.effectiveVisibility
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
@@ -58,22 +61,27 @@ class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
 
             override fun visitParameter(parameter: KtParameter) {
                 super.visitParameter(parameter)
-                if (parameter.isConstructorDeclaredProperty()) {
-                    if ((parameter.ownerFunction?.parent as? KtClass)?.isPrivate() == true) return
-                    if (canBePrivate(parameter)) registerProblem(holder, parameter)
+                if (parameter.isConstructorDeclaredProperty() && canBePrivate(parameter)) {
+                    registerProblem(holder, parameter)
                 }
             }
         }
     }
 
-
     private fun canBePrivate(declaration: KtNamedDeclaration): Boolean {
         if (declaration.hasModifier(KtTokens.PRIVATE_KEYWORD) || declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
+
+        val descriptor = (declaration.toDescriptor() as? DeclarationDescriptorWithVisibility) ?: return false
+        when (descriptor.effectiveVisibility()) {
+            EffectiveVisibility.Private, EffectiveVisibility.Local -> return false
+        }
+
         val classOrObject = declaration.containingClassOrObject ?: return false
         val inheritable = classOrObject is KtClass && classOrObject.isInheritable()
         if (!inheritable && declaration.hasModifier(KtTokens.PROTECTED_KEYWORD)) return false //reported by ProtectedInFinalInspection
         if (declaration.isOverridable()) return false
-        if (declaration.toDescriptor()?.hasJvmFieldAnnotation() != false) return false
+
+        if (descriptor.hasJvmFieldAnnotation()) return false
 
         val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.project)
         val useScope = declaration.useScope
