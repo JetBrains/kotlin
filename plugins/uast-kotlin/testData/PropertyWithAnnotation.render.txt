@@ -1,0 +1,15 @@
+public final class PropertyWithAnnotationKt {
+    private static final var prop1: int = 0
+    private static var prop3: int = 0
+    public static final fun getProp1() : int = UastEmptyExpression
+    @TestAnnotation
+    public static final fun getProp2() : int = 0
+    public static final fun getProp3() : int = 0
+    @TestAnnotation
+    public static final fun setProp3(value: int) : void {
+        field = value
+    }
+}
+
+public abstract annotation TestAnnotation {
+}
