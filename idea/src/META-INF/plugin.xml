@@ -367,6 +367,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.ScriptBinariesScopeCache"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.ScriptBinariesScopeCache"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.util.ProjectJob"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.util.ProjectJob"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>
