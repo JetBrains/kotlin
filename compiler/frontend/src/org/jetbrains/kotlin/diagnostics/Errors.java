@@ -949,6 +949,9 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, CallableDescriptor> ILLEGAL_SUSPEND_FUNCTION_CALL = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory2<PsiElement, String, String> PLUGIN_ERROR = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, String, String> PLUGIN_WARNING = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, String, String> PLUGIN_INFO = DiagnosticFactory2.create(INFO);
 
     // Error sets
     ImmutableSet<? extends DiagnosticFactory<?>> UNRESOLVED_REFERENCE_DIAGNOSTICS = ImmutableSet.of(

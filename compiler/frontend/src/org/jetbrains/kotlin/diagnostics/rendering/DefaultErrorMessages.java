@@ -865,6 +865,10 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_SUSPEND_FUNCTION_CALL, "Suspend function ''{0}'' should be called only from a coroutine or another suspend function", NAME);
         MAP.put(ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL, "Restricted suspending functions can only invoke member or extension suspending functions on their restricted coroutine scope");
 
+        MAP.put(PLUGIN_ERROR, "{0}: {1}", TO_STRING, TO_STRING);
+        MAP.put(PLUGIN_WARNING, "{0}: {1}", TO_STRING, TO_STRING);
+        MAP.put(PLUGIN_INFO, "{0}: {1}", TO_STRING, TO_STRING);
+
         MAP.setImmutable();
 
         for (Field field : Errors.class.getFields()) {

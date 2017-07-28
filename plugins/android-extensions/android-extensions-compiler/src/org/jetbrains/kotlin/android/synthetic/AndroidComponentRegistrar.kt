@@ -117,7 +117,6 @@ class AndroidComponentRegistrar : ComponentRegistrar {
 
             ExpressionCodegenExtension.registerExtension(project, CliAndroidExtensionsExpressionCodegenExtension(isExperimental, globalCacheImpl))
             StorageComponentContainerContributor.registerExtension(project, AndroidExtensionPropertiesComponentContainerContributor())
-            Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesAndroid())
             ClassBuilderInterceptorExtension.registerExtension(project, CliAndroidOnDestroyClassBuilderInterceptorExtension(globalCacheImpl))
             PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension(isExperimental))
         }
