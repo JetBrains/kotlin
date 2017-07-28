@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
-import org.jetbrains.kotlin.js.translate.general.FileTranslationResult
 import org.jetbrains.kotlin.js.util.TextOutput
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
@@ -51,9 +50,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             diagnostics: Diagnostics,
             private val importedModules: List<String>,
             val moduleDescriptor: ModuleDescriptor,
-            val bindingContext: BindingContext,
-            val metadataHeader: ByteArray?,
-            val fileTranslationResults: Map<KtFile, FileTranslationResult>
+            val bindingContext: BindingContext
     ) : TranslationResult(diagnostics) {
         @Suppress("unused") // Used in kotlin-web-demo in WebDemoTranslatorFacade
         fun getCode(): String {

@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderImpl
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -52,7 +54,6 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
@@ -348,10 +349,14 @@ abstract class BasicBoxTest(
 
     private fun removeRecompiledSuffix(text: String): String = text.replace("-recompiled.js", ".js")
 
-    protected fun translateFiles(units: List<TranslationUnit>, outputFile: File, config: JsConfig,
+    protected fun translateFiles(
+            units: List<TranslationUnit>,
+            outputFile: File,
+            config: JsConfig,
             outputPrefixFile: File?,
             outputPostfixFile: File?,
-            mainCallParameters: MainCallParameters) {
+            mainCallParameters: MainCallParameters
+    ) {
         val translator = K2JSTranslator(config)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
 
@@ -382,25 +387,19 @@ abstract class BasicBoxTest(
             FileUtil.writeToFile(outputFile, wrappedContent)
         }
 
-        val incrementalDir = File(outputDir, "incremental/${outputFile.nameWithoutExtension}")
+        config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]?.let {
+            val incrementalService = it as IncrementalResultsConsumerImpl
 
-        for ((index, unit) in units.withIndex()) {
-            if (unit !is TranslationUnit.SourceFile) continue
-            val fileTranslationResult = translationResult.fileTranslationResults[unit.file]!!
-            val basePath = "$index."
-            val binaryAst = fileTranslationResult.binaryAst
-            val binaryMetadata = fileTranslationResult.metadata
+            val incrementalDir = File(outputDir, "incremental/${outputFile.nameWithoutExtension}")
 
-            if (binaryAst != null) {
-                FileUtil.writeToFile(File(incrementalDir, basePath + AST_EXTENSION), binaryAst)
+            for ((i, packagePart) in incrementalService.packageParts.withIndex()) {
+                FileUtil.writeToFile(File(incrementalDir, "$i.$AST_EXTENSION"), packagePart.binaryAst)
+                FileUtil.writeToFile(File(incrementalDir, "$i.$METADATA_EXTENSION"), packagePart.proto)
             }
-            if (binaryMetadata != null) {
-                FileUtil.writeToFile(File(incrementalDir, basePath + METADATA_EXTENSION), binaryMetadata)
-            }
-        }
 
-        translationResult.metadataHeader?.let {
-            FileUtil.writeToFile(File(incrementalDir, HEADER_FILE), it)
+            incrementalService.headerMetadata?.let {
+                FileUtil.writeToFile(File(incrementalDir, HEADER_FILE), it)
+            }
         }
 
         processJsProgram(translationResult.program, units.filterIsInstance<TranslationUnit.SourceFile>().map { it.file })
@@ -496,17 +495,18 @@ abstract class BasicBoxTest(
 
         val hasFilesToRecompile = module.hasFilesToRecompile
         configuration.put(JSConfigurationKeys.META_INFO, multiModule)
-        configuration.put(JSConfigurationKeys.SERIALIZE_FRAGMENTS, hasFilesToRecompile)
+        if (hasFilesToRecompile) {
+            if (additionalMetadata != null) {
+                val (headerFile, packagePartFiles) = additionalMetadata
+                configuration.put(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER,
+                                  IncrementalDataProviderImpl(headerFile.readBytes(), packagePartFiles.map { it.readBytes() }, emptyList()))
+            }
+
+            configuration.put(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, IncrementalResultsConsumerImpl())
+        }
         configuration.put(JSConfigurationKeys.SOURCE_MAP, hasFilesToRecompile || generateSourceMap)
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, module.sourceMapSourceEmbedding)
-
-        if (additionalMetadata != null) {
-            val metadata = PackagesWithHeaderMetadata(
-                    FileUtil.loadFileBytes(additionalMetadata.first),
-                    additionalMetadata.second.map { FileUtil.loadFileBytes(it) })
-            configuration.put(JSConfigurationKeys.FALLBACK_METADATA, metadata)
-        }
 
         if (typedArraysEnabled) {
             configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true)
