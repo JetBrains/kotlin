@@ -18,11 +18,7 @@ package org.jetbrains.kotlin.android.synthetic
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.Extensions
-import com.intellij.openapi.project.Project
 import kotlinx.android.extensions.CacheImplementation
-import org.jetbrains.kotlin.android.parcel.ParcelableCodegenExtension
-import org.jetbrains.kotlin.android.parcel.ParcelableDeclarationChecker
-import org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidExtensionsExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidOnDestroyClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.diagnostic.AndroidExtensionPropertiesCallChecker
@@ -46,8 +42,6 @@ import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.android.synthetic.codegen.ParcelableClinitClassBuilderInterceptorExtension
-import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 
 object AndroidConfigurationKeys {
     val VARIANT = CompilerConfigurationKey.create<List<String>>("Android build variant")
@@ -88,12 +82,6 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
 
 class AndroidComponentRegistrar : ComponentRegistrar {
     companion object {
-        fun registerParcelExtensions(project: Project) {
-            ExpressionCodegenExtension.registerExtension(project, ParcelableCodegenExtension())
-            SyntheticResolveExtension.registerExtension(project, ParcelableResolveExtension())
-            ClassBuilderInterceptorExtension.registerExtension(project, ParcelableClinitClassBuilderInterceptorExtension())
-        }
-
         fun parseCacheImplementationType(s: String?): CacheImplementation = when (s) {
             "sparseArray" -> CacheImplementation.SPARSE_ARRAY
             "none" -> CacheImplementation.NO_CACHE
@@ -106,10 +94,6 @@ class AndroidComponentRegistrar : ComponentRegistrar {
         val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.mapNotNull { parseVariant(it) } ?: emptyList()
         val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"
         val globalCacheImpl = parseCacheImplementationType(configuration.get(AndroidConfigurationKeys.DEFAULT_CACHE_IMPL))
-
-        if (isExperimental) {
-            registerParcelExtensions(project)
-        }
 
         if (variants.isNotEmpty() && !applicationPackage.isNullOrBlank()) {
             val layoutXmlFileManager = CliAndroidLayoutXmlFileManager(project, applicationPackage!!, variants)
@@ -134,7 +118,6 @@ class AndroidExtensionPropertiesComponentContainerContributor : StorageComponent
     override fun addDeclarations(container: StorageComponentContainer, platform: TargetPlatform) {
         if (platform is JvmPlatform) {
             container.useInstance(AndroidExtensionPropertiesCallChecker())
-            container.useInstance(ParcelableDeclarationChecker())
         }
     }
 }
