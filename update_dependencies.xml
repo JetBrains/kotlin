@@ -67,11 +67,6 @@
             idea.maven.version="${ideaVersion}"/>
     </target>
 
-    <target name="get-ivy-library">
-        <mkdir dir="${dependencies}/download"/>
-        <get-maven-library prefix="org/apache/ivy" lib="ivy" version="2.4.0" target.jar.name.base="ivy"/>
-    </target>
-
     <macrodef name="get-maven-library">
         <attribute name="prefix"/>
         <attribute name="lib"/>
@@ -95,34 +90,6 @@
                 <copy file="@{download}/@{jar.name.base}-sources.jar" tofile="@{dependencies}/@{target.jar.name.base}-sources.jar"
                       overwrite="true"/>
             </sequential>
-        </sequential>
-    </macrodef>
-
-    <!--
-    This doesn't download sources, see https://issues.apache.org/jira/browse/IVY-1003.
-    Please download sources manually if you need them.
-    -->
-    <macrodef name="get-maven-library-with-dependencies">
-        <attribute name="group"/>
-        <attribute name="artifact"/>
-        <attribute name="version"/>
-        <attribute name="target.dir" default="maven"/>
-
-        <sequential>
-            <mkdir dir="${dependencies}/@{target.dir}"/>
-
-            <java classname="org.apache.ivy.Main">
-                <arg value="-dependency"/>
-                <arg value="@{group}"/>
-                <arg value="@{artifact}"/>
-                <arg value="@{version}"/>
-                <arg value="-retrieve"/>
-                <arg value="${dependencies}/@{target.dir}/[artifact]-[revision](-[classifier]).[ext]"/>
-
-                <classpath>
-                    <pathelement location="${dependencies}/ivy.jar"/>
-                </classpath>
-            </java>
         </sequential>
     </macrodef>
 
@@ -187,7 +154,7 @@
         </jar>
     </target>
 
-    <target name="fetch-third-party" depends="get-ivy-library, make-dependency-dirs, make-native-platform-uberjar">
+    <target name="fetch-third-party" depends="make-dependency-dirs, make-native-platform-uberjar">
         <antcall target="override-version"/>
 
         <!-- ProGuard -->
@@ -252,11 +219,6 @@
         <get-maven-library prefix="org/jetbrains/uast" lib="uast-java" version="${uast.version}" target.jar.name.base="uast-java" server="${uast.server}"/>
         <get-maven-library prefix="org/jetbrains/uast" lib="uast-tests" version="${uast.version}" target.jar.name.base="uast-tests" server="${uast.server}"/>
 
-        <get-maven-library-with-dependencies
-            group="org.robolectric"
-            artifact="robolectric"
-            version="3.3.2"
-            target.dir="robolectric"/>
 
         <!-- kotlinx.coroutines -->
         <get-maven-library prefix="org/jetbrains/kotlinx" lib="kotlinx-coroutines-core" version="${kotlinx.coroutines.version}"
