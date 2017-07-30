@@ -26,7 +26,7 @@ import com.intellij.testFramework.TestDataFile;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
-import kotlin.script.dependencies.ScriptDependencies;
+import kotlin.script.experimental.dependencies.ScriptDependencies;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -34,7 +34,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.psi.KtFile
-import kotlin.script.dependencies.ScriptReport
+import kotlin.script.experimental.dependencies.ScriptReport
 
 class ScriptExternalHighlightingPass(
         private val file: KtFile,

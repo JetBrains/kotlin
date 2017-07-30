@@ -38,7 +38,8 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import kotlin.script.dependencies.*
-import kotlin.script.dependencies.DependenciesResolver.ResolveResult
+import kotlin.script.experimental.dependencies.*
+import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.test.fail
 

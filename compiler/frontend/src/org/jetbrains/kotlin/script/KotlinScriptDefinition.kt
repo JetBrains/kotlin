@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import kotlin.reflect.KClass
-import kotlin.script.dependencies.DependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 open class KotlinScriptDefinition(val template: KClass<out Any>) {

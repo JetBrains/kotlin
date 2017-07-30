@@ -28,9 +28,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.memberFunctions
-import kotlin.script.dependencies.DependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.dependencies.ScriptDependenciesResolver
-import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
+import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.templates.AcceptedAnnotations
 
 open class KotlinScriptDefinitionFromAnnotatedTemplate(
