@@ -1,6 +1,7 @@
 package custom.scriptDefinition
 
 import kotlin.script.dependencies.*
+import kotlin.script.experimental.dependencies.*
 import kotlin.script.templates.*
 import java.io.File
 
