@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
-import kotlin.script.dependencies.DependenciesResolver
-import kotlin.script.dependencies.ScriptDependencies
-import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.dependencies.ScriptDependencies
+import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 
 internal class ScriptDependenciesUpdater(
         private val project: Project,
