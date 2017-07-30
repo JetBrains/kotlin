@@ -18,6 +18,7 @@
 
 package kotlin.script.dependencies
 
+import java.io.File
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
@@ -44,4 +45,12 @@ class PseudoFuture<T>(private val value: T): Future<T> {
     override fun cancel(p0: Boolean): Boolean = false
     override fun isDone(): Boolean = true
     override fun isCancelled(): Boolean = false
+}
+
+interface ScriptContents {
+    val file: File?
+    val annotations: Iterable<Annotation>
+    val text: CharSequence?
+
+    data class Position(val line: Int, val col: Int)
 }
