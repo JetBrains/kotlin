@@ -1,18 +1,18 @@
 object A {
     @JvmStatic
     fun main(args: Array<String>) {
-        val ANDAND = true
+        val ANDAND = (true
                 && true
-                && true
-        val OROR = true
+                && true)
+        val OROR = (true
                 || true
-                || true
-        val PLUS = 1
-        +2
-        +3
-        val MINUS = 1
-        -2
-        -3
+                || true)
+        val PLUS = (1
+                + 2
+                + 3)
+        val MINUS = (1
+                - 2
+                - 3)
         val ASTERISK = 1 * 2 * 3
         val DIV = 1 / 2 / 3
         val PERC = 1 % 2 % 3

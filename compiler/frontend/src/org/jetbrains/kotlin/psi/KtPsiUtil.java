@@ -513,6 +513,16 @@ public class KtPsiUtil {
             return false;
         }
 
+        if (innerExpression instanceof KtBinaryExpression) {
+            PsiElement expr = innerExpression.getFirstChild();
+            while (expr != null) {
+                if (expr instanceof PsiWhiteSpace && (expr.textContains('\n') || expr.textContains('\r'))) {
+                    return true;
+                }
+                expr = expr.getNextSibling();
+            }
+        }
+
         int innerPriority = getPriority(innerExpression);
         int parentPriority = getPriority((KtExpression) parentElement);
 
