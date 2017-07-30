@@ -2,6 +2,7 @@ package custom.scriptDefinition
 
 import java.io.File
 import kotlin.script.dependencies.*
+import kotlin.script.experimental.dependencies.*
 import kotlin.script.templates.ScriptTemplateDefinition
 
 class TestDependenciesResolver : DependenciesResolver {
