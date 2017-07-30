@@ -18,8 +18,8 @@
 
 package kotlin.script.experimental.dependencies
 
-import java.io.File
 import kotlin.script.dependencies.Environment
+import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 
@@ -45,14 +45,6 @@ interface DependenciesResolver : ScriptDependenciesResolver {
             override val dependencies: ScriptDependencies? get() = null
         }
     }
-}
-
-interface ScriptContents {
-    val file: File?
-    val annotations: Iterable<Annotation>
-    val text: CharSequence?
-
-    data class Position(val line: Int, val col: Int)
 }
 
 data class ScriptReport(val message: String, val severity: Severity = Severity.ERROR, val position: Position? = null) {
