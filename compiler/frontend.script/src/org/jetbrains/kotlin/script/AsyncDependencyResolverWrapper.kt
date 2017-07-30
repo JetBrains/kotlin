@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.script
 
 import kotlinx.coroutines.experimental.runBlocking
-import kotlin.script.dependencies.DependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
-import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
+import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 
 // wraps AsyncDependenciesResolver to provide implementation for synchronous DependenciesResolver::resolve
 class AsyncDependencyResolverWrapper(

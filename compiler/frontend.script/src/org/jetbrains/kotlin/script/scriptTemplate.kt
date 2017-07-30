@@ -20,9 +20,6 @@ import java.io.File
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
-import kotlin.script.dependencies.DependenciesResolver.ResolveResult
-import kotlin.script.dependencies.ScriptDependencies
-import kotlin.script.dependencies.ScriptReport
 
 const val DEFAULT_SCRIPT_FILE_PATTERN = ".*\\.kts"
 

@@ -48,8 +48,9 @@ import java.net.URLClassLoader
 import java.util.concurrent.Future
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.*
-import kotlin.script.dependencies.DependenciesResolver.ResolveResult
-import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
+import kotlin.script.experimental.dependencies.*
+import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
+import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.templates.AcceptedAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.templates.standard.ScriptTemplateWithArgs

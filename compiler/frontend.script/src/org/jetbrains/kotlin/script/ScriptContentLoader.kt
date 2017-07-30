@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import kotlin.reflect.KClass
-import kotlin.script.dependencies.DependenciesResolver.ResolveResult.Failure
+import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult.Failure
 import kotlin.script.dependencies.ScriptContents
-import kotlin.script.dependencies.ScriptDependencies
-import kotlin.script.dependencies.ScriptReport
+import kotlin.script.experimental.dependencies.ScriptDependencies
+import kotlin.script.experimental.dependencies.ScriptReport
 
 class ScriptContentLoader(private val project: Project) {
     fun getScriptContents(scriptDefinition: KotlinScriptDefinition, file: VirtualFile)
