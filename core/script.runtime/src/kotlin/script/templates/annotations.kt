@@ -19,8 +19,8 @@
 package kotlin.script.templates
 
 import kotlin.reflect.KClass
-import kotlin.script.dependencies.DependenciesResolver.NoDependencies
 import kotlin.script.dependencies.ScriptDependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver.NoDependencies
 
 const val DEFAULT_SCRIPT_FILE_PATTERN = ".*\\.kts"
 
