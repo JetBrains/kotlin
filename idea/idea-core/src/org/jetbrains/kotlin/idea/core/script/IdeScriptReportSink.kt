@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.core.script
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.script.ScriptReportSink
-import kotlin.script.dependencies.ScriptReport
+import kotlin.script.experimental.dependencies.ScriptReport
 
 class IdeScriptReportSink : ScriptReportSink {
     override fun attachReports(scriptFile: VirtualFile, reports: List<ScriptReport>) {

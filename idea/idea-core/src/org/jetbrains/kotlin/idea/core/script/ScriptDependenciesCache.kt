@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.core.util.EDT
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
-import kotlin.script.dependencies.ScriptDependencies
+import kotlin.script.experimental.dependencies.ScriptDependencies
 
 internal class ScriptDependenciesCache(private val project: Project) {
     private val cacheLock = ReentrantReadWriteLock()

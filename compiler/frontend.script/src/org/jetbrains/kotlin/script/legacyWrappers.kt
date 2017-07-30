@@ -19,10 +19,10 @@
 package org.jetbrains.kotlin.script
 
 import java.io.File
-import kotlin.script.dependencies.DependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.dependencies.Environment
-import kotlin.script.dependencies.ScriptDependencies
-import kotlin.script.dependencies.ScriptReport
+import kotlin.script.experimental.dependencies.ScriptDependencies
+import kotlin.script.experimental.dependencies.ScriptReport
 
 interface LegacyResolverWrapper
 
@@ -30,7 +30,7 @@ interface LegacyResolverWrapper
 @Deprecated("Compatibility with deprecated API")
 internal class LegacyPackageDependencyResolverWrapper(
         val legacyResolver: ScriptDependenciesResolver
-) : kotlin.script.dependencies.DependenciesResolver, LegacyResolverWrapper {
+) : kotlin.script.experimental.dependencies.DependenciesResolver, LegacyResolverWrapper {
     override fun resolve(
             scriptContents: kotlin.script.dependencies.ScriptContents,
             environment: Environment
@@ -70,7 +70,7 @@ internal class LegacyPackageDependencyResolverWrapper(
 
 internal class ApiChangeDependencyResolverWrapper(
         override val delegate: kotlin.script.dependencies.ScriptDependenciesResolver
-) : kotlin.script.dependencies.DependenciesResolver,
+) : kotlin.script.experimental.dependencies.DependenciesResolver,
         DependencyResolverWrapper<kotlin.script.dependencies.ScriptDependenciesResolver>,
         LegacyResolverWrapper {
     override fun resolve(

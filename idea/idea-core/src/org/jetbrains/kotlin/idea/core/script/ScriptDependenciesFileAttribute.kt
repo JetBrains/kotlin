@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.caches.FileAttributeService
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
-import kotlin.script.dependencies.ScriptDependencies
+import kotlin.script.experimental.dependencies.ScriptDependencies
 
 object ScriptDependenciesFileAttribute {
     private val VERSION = 1
