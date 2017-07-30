@@ -19,6 +19,7 @@
 package kotlin.script.experimental.dependencies
 
 import kotlin.script.dependencies.Environment
+import kotlin.script.dependencies.ScriptContents
 
 interface AsyncDependenciesResolver : DependenciesResolver {
     suspend fun resolveAsync(
