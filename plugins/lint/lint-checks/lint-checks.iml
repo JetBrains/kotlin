@@ -14,5 +14,6 @@
     <orderEntry type="library" name="guava" level="project" />
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
+    <orderEntry type="module" module-name="android-extensions-runtime" />
   </component>
 </module>
