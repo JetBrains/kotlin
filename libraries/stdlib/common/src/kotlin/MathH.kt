@@ -186,7 +186,7 @@ public header fun exp(a: Double): Double
 public header fun expm1(a: Double): Double
 
 /**
- * Computes the logarithm in the given [base] of the [a] value.
+ * Computes the logarithm of the value [a] to the given [base].
  *
  * Special cases:
  *     - `log(a, b)` is `NaN` if either `a` or `b` are `NaN`
@@ -199,7 +199,7 @@ public header fun expm1(a: Double): Double
 public header fun log(a: Double, base: Double): Double
 
 /**
- * Computes the natural logarithm (base `E`) of the [a] value.
+ * Computes the natural logarithm (base `E`) of the value [a].
  *
  * Special cases:
  *     - `ln(NaN)` is `NaN`
@@ -211,7 +211,7 @@ public header fun log(a: Double, base: Double): Double
 public header fun ln(a: Double): Double
 
 /**
- * Computes the decimal logarithm (base 10) of the [a] value.
+ * Computes the common logarithm (base 10) of the value [a].
  *
  * @see [ln] function for special cases.
  */
@@ -219,7 +219,7 @@ public header fun ln(a: Double): Double
 public header fun log10(a: Double): Double
 
 /**
- * Computes the binary logarithm (base 2) of the [a] value.
+ * Computes the binary logarithm (base 2) of the value [a].
  *
  * @see [ln] function for special cases.
  */
@@ -227,17 +227,17 @@ public header fun log10(a: Double): Double
 public header fun log2(a: Double): Double
 
 /**
- * Computes `log(a + 1)`.
+ * Computes `ln(a + 1)`.
  *
  * This function can be implemented to produce more precise result for [a] near zero.
  *
  * Special cases:
- *     - `log1p(NaN)` is `NaN`
- *     - `log1p(x)` is `NaN` where `x < -1.0`
- *     - `log1p(-1.0)` is `-Inf`
- *     - `log1p(+Inf)` is `+Inf`
+ *     - `ln1p(NaN)` is `NaN`
+ *     - `ln1p(x)` is `NaN` where `x < -1.0`
+ *     - `ln1p(-1.0)` is `-Inf`
+ *     - `ln1p(+Inf)` is `+Inf`
  *
- * @see [ln] function.
+ * @see [ln] function
  * @see [expm1] function
  */
 @SinceKotlin("1.2")
@@ -573,7 +573,7 @@ public header fun exp(a: Float): Float
 public header fun expm1(a: Float): Float
 
 /**
- * Computes the logarithm in the given [base] of the [a] value.
+ * Computes the logarithm of the value [a] to the given [base].
  *
  * Special cases:
  *     - `log(a, b)` is `NaN` if either `a` or `b` are `NaN`
@@ -586,7 +586,7 @@ public header fun expm1(a: Float): Float
 public header fun log(a: Float, base: Float): Float
 
 /**
- * Computes the natural logarithm (base `E`) of the [a] value.
+ * Computes the natural logarithm (base `E`) of the value [a].
  *
  * Special cases:
  *     - `ln(NaN)` is `NaN`
@@ -598,7 +598,7 @@ public header fun log(a: Float, base: Float): Float
 public header fun ln(a: Float): Float
 
 /**
- * Computes the decimal logarithm (base 10) of the [a] value.
+ * Computes the common logarithm (base 10) of the value [a].
  *
  * @see [ln] function for special cases.
  */
@@ -606,7 +606,7 @@ public header fun ln(a: Float): Float
 public header fun log10(a: Float): Float
 
 /**
- * Computes the binary logarithm (base 2) of the [a] value.
+ * Computes the binary logarithm (base 2) of the value [a].
  *
  * @see [ln] function for special cases.
  */
@@ -614,15 +614,15 @@ public header fun log10(a: Float): Float
 public header fun log2(a: Float): Float
 
 /**
- * Computes `log(a + 1)`.
+ * Computes `ln(a + 1)`.
  *
  * This function can be implemented to produce more precise result for [a] near zero.
  *
  * Special cases:
- *     - `log1p(NaN)` is `NaN`
- *     - `log1p(x)` is `NaN` where `x < -1.0`
- *     - `log1p(-1.0)` is `-Inf`
- *     - `log1p(+Inf)` is `+Inf`
+ *     - `ln1p(NaN)` is `NaN`
+ *     - `ln1p(x)` is `NaN` where `x < -1.0`
+ *     - `ln1p(-1.0)` is `-Inf`
+ *     - `ln1p(+Inf)` is `+Inf`
  *
  * @see [ln] function
  * @see [expm1] function
