@@ -1,0 +1,16 @@
+==== INITIAL BUILD ====
+Compiling files:
+  src/comparison.kt
+  src/declarations.kt
+  src/delegateProperty.kt
+  src/mathematicalLike.kt
+  src/other.kt
+Exit code: OK
+
+==== STEP 1 ====
+Compiling files:
+  src/comparison.kt
+  src/delegateProperty.kt
+  src/mathematicalLike.kt
+  src/other.kt
+Exit code: OK

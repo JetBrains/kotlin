@@ -1,0 +1,13 @@
+==== INITIAL BUILD ====
+Compiling files:
+  src/KotlinClass.kt
+  src/usages.kt
+Exit code: COMPILATION_ERROR
+  Unresolved reference: setFoo
+  Val cannot be reassigned
+  Unresolved reference: bazBaz
+  Unresolved reference: bazBaz
+  Unresolved reference: boo
+  Unresolved reference: bazBaz
+  Unresolved reference: bazBaz
+  Unresolved reference: boo

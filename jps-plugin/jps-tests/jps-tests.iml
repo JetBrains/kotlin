@@ -24,5 +24,6 @@
     <orderEntry type="module" module-name="js.translator" scope="TEST" />
     <orderEntry type="module" module-name="preloader" scope="TEST" />
     <orderEntry type="library" scope="PROVIDED" name="native-platform-uberjar" level="project" />
+    <orderEntry type="module" module-name="compiler-runner" scope="TEST" />
   </component>
 </module>

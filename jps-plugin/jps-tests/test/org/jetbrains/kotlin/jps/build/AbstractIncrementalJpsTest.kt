@@ -74,6 +74,7 @@ abstract class AbstractIncrementalJpsTest(
     protected lateinit var testDataDir: File
     protected lateinit var workDir: File
     protected lateinit var projectDescriptor: ProjectDescriptor
+    // is used to compare lookup dumps in a human readable way (lookup symbols are hashed in an actual lookup storage)
     protected lateinit var lookupsDuringTest: MutableSet<LookupSymbol>
     private var isICEnabledBackup: Boolean = false
 
@@ -132,17 +133,12 @@ abstract class AbstractIncrementalJpsTest(
     protected open val mockConstantSearch: Callbacks.ConstantAffectionResolver?
         get() = null
 
-    private fun createLookupTracker(): TestLookupTracker = TestLookupTracker()
-
-    protected open fun checkLookups(@Suppress("UNUSED_PARAMETER") lookupTracker: LookupTracker, compiledFiles: Set<File>) {
-    }
-
-    private fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules(), checkLookups: Boolean = true): MakeResult {
+    private fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules()): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.absolutePath)
         val logger = MyLogger(workDirPath)
         projectDescriptor = createProjectDescriptor(BuildLoggingManager(logger))
 
-        val lookupTracker = createLookupTracker()
+        val lookupTracker = TestLookupTracker()
         projectDescriptor.project.setTestingContext(TestingContext(lookupTracker, logger))
 
         try {
@@ -151,12 +147,7 @@ abstract class AbstractIncrementalJpsTest(
             builder.addMessageHandler(buildResult)
             builder.build(scope.build(), false)
 
-            if (checkLookups) {
-                checkLookups(lookupTracker, logger.compiledFiles)
-            }
-
-            val lookups = lookupTracker.lookups.map { LookupSymbol(it.name, it.scopeFqName) }
-            lookupsDuringTest.addAll(lookups)
+            lookupTracker.lookups.mapTo(lookupsDuringTest) { LookupSymbol(it.name, it.scopeFqName) }
 
             if (!buildResult.isSuccessful) {
                 val errorMessages =
@@ -196,7 +187,7 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun rebuild(): MakeResult {
-        return build(CompileScopeTestBuilder.rebuild().allModules(), checkLookups = false)
+        return build(CompileScopeTestBuilder.rebuild().allModules())
     }
 
     private fun rebuildAndCheckOutput(makeOverallResult: MakeResult) {
