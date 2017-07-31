@@ -1,0 +1,11 @@
+==== INITIAL BUILD ====
+Compiling files:
+  src/bar.kt
+  src/constraints.kt
+  src/foo.kt
+  src/usages.kt
+Exit code: COMPILATION_ERROR
+  Unresolved reference: vala
+  Unresolved reference: vara
+  Unresolved reference: foo
+  Unresolved reference: bar

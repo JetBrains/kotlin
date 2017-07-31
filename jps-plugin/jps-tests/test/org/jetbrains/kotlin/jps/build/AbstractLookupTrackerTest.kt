@@ -20,6 +20,8 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.HashMap
 import com.intellij.util.containers.StringInterner
 import org.jetbrains.kotlin.TestWithWorkingDir
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.*
@@ -35,6 +37,10 @@ import org.jetbrains.kotlin.incremental.testingUtils.TouchPolicy
 import org.jetbrains.kotlin.incremental.testingUtils.copyTestSources
 import org.jetbrains.kotlin.incremental.testingUtils.getModificationsToPerform
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
+import org.jetbrains.kotlin.jps.incremental.runJSCompiler
 import org.jetbrains.kotlin.jps.incremental.createTestingCompilerEnvironment
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.*
@@ -73,6 +79,69 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
     }
 }
 
+abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
+    private lateinit var incrementalDataDir: File
+    private lateinit var binaryTreesDir: File
+    private lateinit var packagesMetadataDir: File
+    private lateinit var headerMetadataFile: File
+
+    override fun setUp() {
+        super.setUp()
+        incrementalDataDir = File(workingDir, "incremental-data")
+        binaryTreesDir = File(incrementalDataDir, "binary-trees")
+        packagesMetadataDir = File(incrementalDataDir, "packages-metadata")
+        headerMetadataFile = File(incrementalDataDir, "header.metadata")
+    }
+
+    override fun Services.Builder.registerAdditionalServices() {
+        if (incrementalDataDir.exists()) {
+            register(IncrementalDataProvider::class.java, object : IncrementalDataProvider {
+                override val headerMetadata: ByteArray
+                    get() = headerMetadataFile.readBytes()
+                override val packagePartsMetadata: List<ByteArray>
+                    get() = packagesMetadataDir.walk().filter { it.isFile }.map { it.readBytes() }.toList()
+                override val binaryTrees: List<ByteArray>
+                    get() = binaryTreesDir.walk().filter { it.isFile }.map { it.readBytes() }.toList()
+            })
+        }
+
+        register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
+    }
+
+    override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
+        val args = K2JSCompilerArguments().apply {
+            outputFile = File(outDir, "out.js").canonicalPath
+            reportOutputFiles = true
+            freeArgs.addAll(filesToCompile.map { it.canonicalPath })
+        }
+        val exitCode = runJSCompiler(args, env)
+
+        if (exitCode != ExitCode.OK) return exitCode
+
+        val incrementalResults = env.services.get(IncrementalResultsConsumer::class.java) as IncrementalResultsConsumerImpl
+        incrementalResults.apply {
+            packageParts.forEach {
+                val relativePath = it.sourceFile.toRelativeString(srcDir)
+                val treeFile = File(binaryTreesDir, relativePath + ".ast").apply { parentFile.mkdirs() }
+                treeFile.writeBytes(it.binaryAst)
+
+                val partProtoFile = File(packagesMetadataDir, relativePath + ".proto").apply { parentFile.mkdirs() }
+                partProtoFile.writeBytes(it.proto)
+
+                env.outputItemsCollector.outputs.apply {
+                    val sources = listOf(it.sourceFile)
+                    add(SimpleOutputItem(sources, treeFile))
+                    add(SimpleOutputItem(sources, partProtoFile))
+                }
+            }
+
+            headerMetadataFile.parentFile.mkdirs()
+            headerMetadataFile.writeBytes(headerMetadata)
+        }
+
+        return exitCode
+    }
+}
 
 abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
     private val DECLARATION_KEYWORDS = listOf("interface", "class", "enum class", "object", "fun", "operator fun", "val", "var")
@@ -174,6 +243,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         val outputItemsCollector = OutputItemsCollectorImpl()
         val services = Services.Builder().run {
             register(LookupTracker::class.java, lookupTracker)
+            registerAdditionalServices()
             build()
         }
         val environment = createTestingCompilerEnvironment(messageCollector, outputItemsCollector, services)
@@ -193,6 +263,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         return CompilerOutput(exitCode.toString(), messageCollector.errors, filesToCompile, lookupsCount)
     }
 
+    protected open fun Services.Builder.registerAdditionalServices() {}
 
     private fun checkLookups(
             compiledFiles: Iterable<File>,
