@@ -1,4 +1,4 @@
-// "Add 'private' modifier" "true"
+// "Make 'a' private" "true"
 open class A {
     <caret>protected val a = ""
 
