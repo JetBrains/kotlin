@@ -1,0 +1,38 @@
+// FILE: test.before.kt
+// "Change function signature to 'fun foo(a: String, b: String?, c: String?)'" "true"
+// ERROR: 'foo' overrides nothing
+package foo
+
+class KotlinClass : JavaClass() {
+    <caret>override fun foo() {
+    }
+}
+
+// FILE: foo/JavaClass.java
+package foo;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public class JavaClass {
+    void foo(@NotNull String a,
+             @Nullable String b,
+             @JavaAnnotation String c) {
+    }
+}
+
+// FILE: foo/JavaAnnotation.java
+package foo;
+
+public @interface JavaAnnotation {
+}
+
+// FILE: test.after.kt
+// "Change function signature to 'fun foo(a: String, b: String?, c: String?)'" "true"
+// ERROR: 'foo' overrides nothing
+package foo
+
+class KotlinClass : JavaClass() {
+    <caret>override fun foo(a: String, b: String?, @JavaAnnotation c: String?) {
+    }
+}
