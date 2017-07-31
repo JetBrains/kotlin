@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
+import java.io.File;
+
 public abstract class AbstractDiagnosticsWithModifiedMockJdkTest extends AbstractDiagnosticsTest {
     @NotNull
     @Override
@@ -30,7 +32,7 @@ public abstract class AbstractDiagnosticsWithModifiedMockJdkTest extends Abstrac
 
     @NotNull
     @Override
-    protected TestJdkKind getTestJdkKind() {
+    protected TestJdkKind getTestJdkKind(@NotNull File file) {
         return TestJdkKind.MODIFIED_MOCK_JDK;
     }
 }

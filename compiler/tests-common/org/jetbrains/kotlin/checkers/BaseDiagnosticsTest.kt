@@ -72,7 +72,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             })
         }
 
-        environment = createEnvironment()
+        environment = createEnvironment(file)
 
         analyzeAndCheck(file, testFiles)
     }

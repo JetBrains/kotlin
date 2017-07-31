@@ -34,7 +34,7 @@ public abstract class AbstractDiagnosticsWithJdk9Test extends AbstractDiagnostic
 
     @NotNull
     @Override
-    protected TestJdkKind getTestJdkKind() {
+    protected TestJdkKind getTestJdkKind(@NotNull File file) {
         return TestJdkKind.FULL_JDK_9;
     }
 
