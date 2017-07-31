@@ -40,6 +40,39 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.*
 import java.util.*
 
+abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
+    override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
+        val moduleFile = makeModuleFile(
+                name = "test",
+                isTest = true,
+                outputDir = outDir,
+                sourcesToCompile = filesToCompile.toList(),
+                javaSourceRoots = listOf(srcDir),
+                classpath = listOf(outDir).filter { it.exists() },
+                friendDirs = emptyList()
+        )
+
+        val args = K2JVMCompilerArguments().apply {
+            buildFile = moduleFile.canonicalPath
+            reportOutputFiles = true
+        }
+        val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
+
+        try {
+            val stream = ByteArrayOutputStream()
+            val out = PrintStream(stream)
+            val exitCode = CompilerRunnerUtil.invokeExecMethod(K2JVMCompiler::class.java.name, argsArray, env, out)
+            val reader = BufferedReader(StringReader(stream.toString()))
+            CompilerOutputParser.parseCompilerMessagesFromReader(env.messageCollector, reader, env.outputItemsCollector)
+
+            return exitCode
+        }
+        finally {
+            moduleFile.delete()
+        }
+    }
+}
+
 
 abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
     private val DECLARATION_KEYWORDS = listOf("interface", "class", "enum class", "object", "fun", "operator fun", "val", "var")
@@ -70,6 +103,8 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         IncrementalCompilation.setIsEnabled(isICEnabledBackup)
         super.tearDown()
     }
+
+    protected abstract fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any?
 
     fun doTest(path: String) {
         val sb = StringBuilder()
@@ -158,35 +193,6 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         return CompilerOutput(exitCode.toString(), messageCollector.errors, filesToCompile, lookupsCount)
     }
 
-
-    private fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
-        val moduleFile = makeModuleFile(name = "test",
-                                        isTest = true,
-                                        outputDir = outDir,
-                                        sourcesToCompile = filesToCompile.toList(),
-                                        javaSourceRoots = listOf(srcDir),
-                                        classpath = listOf(outDir).filter { it.exists() },
-                                        friendDirs = emptyList())
-        outDir.mkdirs()
-        val args = K2JVMCompilerArguments().apply {
-            buildFile = moduleFile.canonicalPath
-            reportOutputFiles = true
-        }
-        val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
-
-        try {
-            val stream = ByteArrayOutputStream()
-            val out = PrintStream(stream)
-            val exitCode = CompilerRunnerUtil.invokeExecMethod(K2JVMCompiler::class.java.name, argsArray, env, out)
-            val reader = BufferedReader(StringReader(stream.toString()))
-            CompilerOutputParser.parseCompilerMessagesFromReader(env.messageCollector, reader, env.outputItemsCollector)
-
-            return exitCode
-        }
-        finally {
-            moduleFile.delete()
-        }
-    }
 
     private fun checkLookups(
             compiledFiles: Iterable<File>,
