@@ -113,7 +113,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         }
 
         // variation of IDEA's AnnotationUtil.checkAnnotatedUsingPatterns()
-        private fun checkAnnotatedUsingPatterns(annotated: Annotated, annotationPatterns: Collection<String>): Boolean {
+        fun checkAnnotatedUsingPatterns(annotated: Annotated, annotationPatterns: Collection<String>): Boolean {
             val annotationsPresent = annotated.annotations.mapNotNull { it.fqName?.asString() }
             if (annotationsPresent.isEmpty()) return false
 
