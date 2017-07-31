@@ -10,6 +10,8 @@
       </option>
       <option name="taskNames">
         <list>
+          <option value=":kotlin-stdlib:clean" />
+          <option value=":kotlin-reflect:clean" />
           <option value=":tools:binary-compatibility-validator:cleanTest" />
           <option value=":tools:binary-compatibility-validator:test" />
         </list>
