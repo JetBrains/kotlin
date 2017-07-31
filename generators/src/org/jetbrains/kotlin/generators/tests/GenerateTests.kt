@@ -1197,6 +1197,8 @@ fun main(args: Array<String>) {
         testClass<AbstractJvmLookupTrackerTest> {
             model("incremental/lookupTracker/jvm", extension = null, recursive = false)
         }
+        testClass<AbstractJsLookupTrackerTest> {
+            model("incremental/lookupTracker/js", extension = null, recursive = false)
         }
 
         testClass(AbstractIncrementalLazyCachesTest::class.java) {
