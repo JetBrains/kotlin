@@ -346,7 +346,7 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
                         /* containingDeclaration = */ containingDeclaration,
                         /* annotations           = */ annotations,
                         /* isPrimary             = */ false,
-                        /* source                = */ SourceElement.NO_SOURCE)
+                        /* source                = */ source)
             is FunctionDescriptor -> {
                 val name = Name.identifier("$name\$default")
 
@@ -355,7 +355,7 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
                         /* annotations           = */ annotations,
                         /* name                  = */ name,
                         /* kind                  = */ CallableMemberDescriptor.Kind.SYNTHESIZED,
-                        /* source                = */ SourceElement.NO_SOURCE)
+                        /* source                = */ source)
             }
             else -> TODO("FIXME: $this")
         }
