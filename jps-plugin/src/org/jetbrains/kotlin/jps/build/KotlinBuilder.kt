@@ -81,6 +81,19 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         const val JVM_BUILD_META_INFO_FILE_NAME = "jvm-build-meta-info.txt"
         const val SKIP_CACHE_VERSION_CHECK_PROPERTY = "kotlin.jps.skip.cache.version.check"
         const val JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home"
+
+        val classesToLoadByParent: ClassCondition
+            get() = ClassCondition { className ->
+                className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.components.")
+                || className.startsWith("org.jetbrains.kotlin.incremental.components.")
+                || className.startsWith("org.jetbrains.kotlin.incremental.js")
+                || className == "org.jetbrains.kotlin.config.Services"
+                || className.startsWith("org.apache.log4j.") // For logging from compiler
+                || className == "org.jetbrains.kotlin.progress.CompilationCanceledStatus"
+                || className == "org.jetbrains.kotlin.progress.CompilationCanceledException"
+                || className == "org.jetbrains.kotlin.modules.TargetId"
+                || className == "org.jetbrains.kotlin.cli.common.ExitCode"
+            }
     }
 
     private val statisticsLogger = TeamcityStatisticsLogger()
@@ -467,15 +480,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         return JpsCompilerEnvironment(
                 paths,
                 compilerServices,
-                ClassCondition { className ->
-                    className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.components.")
-                    || className.startsWith("org.jetbrains.kotlin.incremental.components.")
-                    || className == "org.jetbrains.kotlin.config.Services"
-                    || className.startsWith("org.apache.log4j.") // For logging from compiler
-                    || className == "org.jetbrains.kotlin.progress.CompilationCanceledStatus"
-                    || className == "org.jetbrains.kotlin.progress.CompilationCanceledException"
-                    || className == "org.jetbrains.kotlin.modules.TargetId"
-                },
+                classesToLoadByParent,
                 messageCollector,
                 OutputItemsCollectorImpl()
         )
