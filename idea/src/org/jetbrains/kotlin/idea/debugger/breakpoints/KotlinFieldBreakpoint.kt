@@ -122,7 +122,7 @@ class KotlinFieldBreakpoint(
 
         val property = getProperty(sourcePosition) ?: return
 
-        breakpointType = computeBreakpointType(property)
+        breakpointType = (computeBreakpointType(property) ?: return)
 
         val vm = debugProcess.virtualMachineProxy
         try {
@@ -187,7 +187,7 @@ class KotlinFieldBreakpoint(
         }
     }
 
-    private fun computeBreakpointType(property: KtCallableDeclaration): BreakpointType {
+    private fun computeBreakpointType(property: KtCallableDeclaration): BreakpointType? {
         return runReadAction {
             val bindingContext = property.analyze()
             var descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property)
@@ -195,11 +195,16 @@ class KotlinFieldBreakpoint(
                 descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor)
             }
 
-            if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor)!!) {
-                BreakpointType.FIELD
+            if (descriptor != null) {
+                if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor)!!) {
+                    BreakpointType.FIELD
+                }
+                else {
+                    BreakpointType.METHOD
+                }
             }
             else {
-                BreakpointType.METHOD
+                null
             }
         }
     }
