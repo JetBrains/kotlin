@@ -261,6 +261,15 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return getter
     }
 
+    fun createPropertySetter(expression: KtExpression): KtPropertyAccessor {
+        val property = createProperty("val x get() = 1\nset(value) = TODO()")
+        val setter = property.setter!!
+        val bodyExpression = setter.bodyExpression!!
+
+        bodyExpression.replace(expression)
+        return setter
+    }
+
     fun createDestructuringDeclaration(text: String): KtDestructuringDeclaration {
         return (createFunction("fun foo() {$text}").bodyExpression as KtBlockExpression).statements.first() as KtDestructuringDeclaration
     }

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementAsConstructorPa
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.*
 import org.jetbrains.kotlin.idea.intentions.AddValVarToConstructorParameterAction
+import org.jetbrains.kotlin.idea.intentions.ConvertPropertyInitializerToGetterIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory
@@ -69,7 +70,7 @@ class QuickFixRegistrar : QuickFixContributor {
         ABSTRACT_PROPERTY_WITH_GETTER.registerFactory(removeAbstractModifierFactory, removePartsFromPropertyFactory)
         ABSTRACT_PROPERTY_WITH_SETTER.registerFactory(removeAbstractModifierFactory, removePartsFromPropertyFactory)
 
-        PROPERTY_INITIALIZER_IN_INTERFACE.registerFactory(removePartsFromPropertyFactory)
+        PROPERTY_INITIALIZER_IN_INTERFACE.registerFactory(removePartsFromPropertyFactory, ConvertPropertyInitializerToGetterIntention)
 
         MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(addAbstractModifierFactory)
         ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
