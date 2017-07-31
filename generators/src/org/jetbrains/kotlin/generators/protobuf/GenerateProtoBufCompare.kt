@@ -342,11 +342,16 @@ class GenerateProtoBufCompare {
         val fullFieldName = "$outerClassName.$fieldName"
 
         override fun printRepeatedField() {
-            p.println("if (old.getExtensionCount($fullFieldName) != new.getExtensionCount($fullFieldName)) $statement")
-            p.println()
-            p.println("for(i in 0..old.getExtensionCount($fullFieldName) - 1) {")
-            p.printlnIfWithComparisonIndent(field, "getExtension($fullFieldName, i)", statement)
-            p.println("}")
+            p.printlnMultiline("""
+                if (old.getExtensionCount($fullFieldName) != new.getExtensionCount($fullFieldName)) {
+                    $statement
+                }
+                else {
+                    for(i in 0..old.getExtensionCount($fullFieldName) - 1) {
+                        ${ifWithComparison(field, "getExtension($fullFieldName, i)", statement)}
+                    }
+                }
+            """)
         }
 
         override fun printRequiredField() {
@@ -390,19 +395,21 @@ class GenerateProtoBufCompare {
         }
     }
 
+    private fun ifWithComparison(field: Descriptors.FieldDescriptor, expr: String, statement: String) =
+            when {
+                field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable) ||
+                field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
+                    "if (!$CHECK_STRING_EQUALS_NAME(old.$expr, new.$expr)) $statement"
+                field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->
+                    "if (!$CHECK_CLASS_ID_EQUALS_NAME(old.$expr, new.$expr)) $statement"
+                field.javaType in JAVA_TYPES_WITH_INLINED_EQUALS ->
+                    "if (old.$expr != new.$expr) $statement"
+                else ->
+                    "if (!$CHECK_EQUALS_NAME(old.$expr, new.$expr)) $statement"
+            }
+
     private fun Printer.printlnIfWithComparison(field: Descriptors.FieldDescriptor, expr: String, statement: String = "return false") {
-        val line = when {
-            field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable) ||
-            field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
-                "if (!$CHECK_STRING_EQUALS_NAME(old.$expr, new.$expr)) $statement"
-            field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->
-                "if (!$CHECK_CLASS_ID_EQUALS_NAME(old.$expr, new.$expr)) $statement"
-            field.javaType in JAVA_TYPES_WITH_INLINED_EQUALS ->
-                "if (old.$expr != new.$expr) $statement"
-            else ->
-                "if (!$CHECK_EQUALS_NAME(old.$expr, new.$expr)) $statement"
-        }
-        this.println(line)
+        this.println(ifWithComparison(field, expr, statement))
     }
 
     fun Printer.printlnIfWithComparisonIndent(field: Descriptors.FieldDescriptor, expr: String, statement: String = "return false") {
@@ -457,4 +464,8 @@ class GenerateProtoBufCompare {
 
     private val String.javaName: String
         get() = this.split("_").joinToString("") { it.capitalize() }.decapitalize()
+}
+
+private fun Printer.printlnMultiline(string: String) {
+    string.trimIndent().split("\n").forEach { this.println(it) }
 }
