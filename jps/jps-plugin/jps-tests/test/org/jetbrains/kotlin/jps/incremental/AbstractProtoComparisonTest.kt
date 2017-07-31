@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.incremental.Difference
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 
 abstract class AbstractProtoComparisonTest<PROTO_DATA> : TestWithWorkingDir() {
