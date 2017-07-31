@@ -70,7 +70,7 @@ object DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
                 "'Parcelable' constructor parameter should be 'val' or 'var'")
 
         MAP.put(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED,
-                "Property would not be serialized into a 'Parcel'. Add '@Transient' annotation to it")
+                "Property would not be serialized into a 'Parcel'. Add '@Transient' annotation to remove the warning")
 
         MAP.put(ErrorsAndroid.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED,
                 "Overriding 'writeToParcel' is not allowed. Use 'Parceler' companion object instead.")
