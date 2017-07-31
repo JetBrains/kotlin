@@ -1,4 +1,4 @@
-// "Add 'private' modifier" "true"
+// "Make 'a' private" "true"
 class A {
     <caret>public val a = ""
 
