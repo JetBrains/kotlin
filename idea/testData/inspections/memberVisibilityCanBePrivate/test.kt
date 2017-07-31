@@ -205,3 +205,7 @@ fun withLocal(): Int {
     val local = Local(42)
     return local.res()
 }
+
+class Math {
+    @test.anno.EntryPoint fun fact(n: Int) = if (n < 2) 1 else n * fact(n - 1)
+}
