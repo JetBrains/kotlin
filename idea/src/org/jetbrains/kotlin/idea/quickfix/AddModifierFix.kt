@@ -46,7 +46,7 @@ open class AddModifierFix(
 
     override fun getText(): String {
         val element = element ?: return ""
-        if (modifier in modalityModifiers) {
+        if (modifier in modalityModifiers || modifier in KtTokens.VISIBILITY_MODIFIERS) {
             return "Make ${getElementName(element)} ${modifier.value}"
         }
         return "Add '${modifier.value}' modifier"
