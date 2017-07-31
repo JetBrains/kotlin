@@ -17,21 +17,22 @@
 package org.jetbrains.kotlin.cli.bc
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
-import org.jetbrains.kotlin.konan.target.*
-import java.util.*
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.utils.KotlinPaths
 import kotlin.reflect.KFunction
 
 // TODO: Don't use reflection?
@@ -55,10 +56,7 @@ private fun maybeExecuteHelper(targetName: String) {
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
-    override fun doExecute(arguments : K2NativeCompilerArguments,
-                           configuration : CompilerConfiguration,
-                           rootDisposable: Disposable
-                          ): ExitCode {
+    override fun doExecute(@NotNull arguments: K2NativeCompilerArguments, @NotNull configuration: CompilerConfiguration, @NotNull rootDisposable: Disposable, @Nullable paths: KotlinPaths?): ExitCode {
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
             configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
