@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.Name
 data class IsKotlinBinary(val isKotlinBinary: Boolean, val timestamp: Long)
 
 val KOTLIN_COMPILED_FILE_ATTRIBUTE: String = "kotlin-compiled-file".apply {
-    ServiceManager.getService(FileAttributeService::class.java).register(this, 1)
+    ServiceManager.getService(FileAttributeService::class.java)?.register(this, 1)
 }
 
 val KEY = Key.create<IsKotlinBinary>(KOTLIN_COMPILED_FILE_ATTRIBUTE)
