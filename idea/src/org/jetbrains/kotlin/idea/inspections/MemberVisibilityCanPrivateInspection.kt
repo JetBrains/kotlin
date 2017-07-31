@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.ex.EntryPointsManager
+import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.PsiReference
@@ -84,6 +86,11 @@ class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
         if (declaration.isOverridable()) return false
 
         if (descriptor.hasJvmFieldAnnotation()) return false
+        val entryPointsManager = EntryPointsManager.getInstance(declaration.project) as EntryPointsManagerBase
+        if (UnusedSymbolInspection.checkAnnotatedUsingPatterns(descriptor,
+                                                               with (entryPointsManager) {
+                                                                   additionalAnnotations + ADDITIONAL_ANNOTATIONS
+                                                               })) return false
 
         val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.project)
         val useScope = declaration.useScope
