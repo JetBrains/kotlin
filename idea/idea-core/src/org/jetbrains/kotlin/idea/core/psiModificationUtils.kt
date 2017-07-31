@@ -279,7 +279,7 @@ fun KtDeclaration.implicitModality(): KtModifierKeywordToken {
     for (extension in extensions) {
         val newModality = extension.refineDeclarationModality(
                 this,
-                null,
+                descriptor as? ClassDescriptor,
                 containingDescriptor,
                 mapModalityToken(predictedModality),
                 bindingContext,
