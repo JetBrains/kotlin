@@ -1,0 +1,10 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant modality modifier</problem_class>
+        <description>Redundant modality modifier</description>
+    </problem>
+</problems>
