@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
@@ -236,7 +237,8 @@ public class JsConfig {
 
                 JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModuleFromProto(
                         cached, storageManager, moduleDescriptor,
-                        new CompilerDeserializationConfiguration(languageVersionSettings)
+                        new CompilerDeserializationConfiguration(languageVersionSettings),
+                        LookupTracker.DO_NOTHING.INSTANCE
                 );
 
                 PackageFragmentProvider provider = rawDescriptor.getData();
@@ -318,9 +320,11 @@ public class JsConfig {
                     Name.special("<" + m.getModuleName() + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns()
             );
 
+            LookupTracker lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER, LookupTracker.DO_NOTHING.INSTANCE);
             JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModule(
                     m.getBody(), storageManager, moduleDescriptor,
-                    new CompilerDeserializationConfiguration(languageVersionSettings)
+                    new CompilerDeserializationConfiguration(languageVersionSettings),
+                    lookupTracker
             );
 
             PackageFragmentProvider provider = rawDescriptor.getData();

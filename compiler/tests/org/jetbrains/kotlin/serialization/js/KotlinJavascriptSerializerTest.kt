@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
@@ -90,7 +91,7 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         assert(metadata.size == 1)
 
         val provider = KotlinJavascriptSerializationUtil.readModule(
-                metadata.single().body, LockBasedStorageManager(), module, DeserializationConfiguration.Default
+                metadata.single().body, LockBasedStorageManager(), module, DeserializationConfiguration.Default, LookupTracker.DO_NOTHING
         ).data.sure { "No package fragment provider was created" }
 
         module.initialize(provider)
