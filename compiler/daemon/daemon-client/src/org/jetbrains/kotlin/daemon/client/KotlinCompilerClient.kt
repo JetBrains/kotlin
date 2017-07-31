@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.daemon.client
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
@@ -35,6 +36,7 @@ import kotlin.concurrent.thread
 
 class CompilationServices(
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
+        val lookupTracker: LookupTracker? = null,
         val compilationCanceledStatus: CompilationCanceledStatus? = null
 )
 
@@ -170,6 +172,7 @@ object KotlinCompilerClient {
                     targetPlatform,
                     args,
                     CompilerCallbackServicesFacadeServer(incrementalCompilationComponents = callbackServices.incrementalCompilationComponents,
+                                                         lookupTracker = callbackServices.lookupTracker,
                                                          compilationCanceledStatus = callbackServices.compilationCanceledStatus,
                                                          port = port),
                     RemoteOutputStreamServer(compilerOut, port),

@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import gnu.trove.THashSet
+import jdk.nashorn.internal.lookup.Lookup
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.DirtyFilesHolder
@@ -459,9 +460,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             messageCollector: MessageCollectorAdapter
     ): JpsCompilerEnvironment? {
         val compilerServices = with(Services.Builder()) {
+            register(LookupTracker::class.java, lookupTracker)
             register(IncrementalCompilationComponents::class.java,
-                  IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { TargetId(it.key) },
-                                                       lookupTracker))
+                     IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { TargetId(it.key) }))
             register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
                 override fun checkCanceled() {
                     if (context.cancelStatus.isCanceled) throw CompilationCanceledException()

@@ -33,6 +33,7 @@ import kotlin.reflect.full.allSuperclasses
 
 open class CompilerCallbackServicesFacadeServer(
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
+        val lookupTracker: LookupTracker? = null,
         val compilationCanceledStatus: CompilationCanceledStatus? = null,
         port: Int = SOCKET_ANY_FREE_PORT
 ) : CompilerCallbackServicesFacade,
@@ -66,17 +67,17 @@ open class CompilerCallbackServicesFacadeServer(
         incrementalCompilationComponents!!.getIncrementalCache(target).close()
     }
 
-    override fun lookupTracker_requiresPosition() = incrementalCompilationComponents!!.getLookupTracker().requiresPosition
+    override fun lookupTracker_requiresPosition() = lookupTracker!!.requiresPosition
 
     override fun lookupTracker_record(lookups: Collection<LookupInfo>) {
-        val lookupTracker = incrementalCompilationComponents!!.getLookupTracker()
+        val lookupTracker = lookupTracker!!
 
         for (it in lookups) {
             lookupTracker.record(it.filePath, it.position, it.scopeFqName, it.scopeKind, it.name)
         }
     }
 
-    private val lookupTracker_isDoNothing: Boolean = incrementalCompilationComponents?.getLookupTracker() === LookupTracker.DO_NOTHING
+    private val lookupTracker_isDoNothing: Boolean = lookupTracker === LookupTracker.DO_NOTHING
 
     override fun lookupTracker_isDoNothing(): Boolean = lookupTracker_isDoNothing
 
