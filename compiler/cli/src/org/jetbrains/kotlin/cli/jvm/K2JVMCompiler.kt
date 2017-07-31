@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.cliPluginUsageString
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -288,9 +289,12 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
     ) {
         if (IncrementalCompilation.isEnabled()) {
-            val components = services.get(IncrementalCompilationComponents::class.java)
-            if (components != null) {
-                configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, components)
+            services.get(LookupTracker::class.java)?.let {
+                configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, it)
+            }
+
+            services.get(IncrementalCompilationComponents::class.java)?.let {
+                configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, it)
             }
         }
 

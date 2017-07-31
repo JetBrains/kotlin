@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.config
 
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+
 object CommonConfigurationKeys {
     @JvmField
     val LANGUAGE_VERSION_SETTINGS = CompilerConfigurationKey<LanguageVersionSettings>("language version settings")
@@ -28,6 +30,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val REPORT_OUTPUT_FILES = CompilerConfigurationKey<Boolean>("report output files")
+
+    @JvmField
+    val LOOKUP_TRACKER = CompilerConfigurationKey.create<LookupTracker>("lookup tracker")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
