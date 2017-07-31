@@ -1022,6 +1022,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/memberVisibilityCanBePrivate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/memberVisibilityCanBePrivate/annotation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("JvmFieldOnParameter.kt")
         public void testJvmFieldOnParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/memberVisibilityCanBePrivate/JvmFieldOnParameter.kt");
