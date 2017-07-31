@@ -35,6 +35,9 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.NOT_NULL_ANNOTATIONS
+import org.jetbrains.kotlin.load.java.NULLABLE_ANNOTATIONS
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameterList
@@ -202,8 +205,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
                     SourceElement.NO_SOURCE
             )
 
-            val parameters = newParameters.withIndex().map {
-                val (index, parameter) = it
+            val parameters = newParameters.withIndex().map { (index, parameter) ->
                 ValueParameterDescriptorImpl(
                         descriptor, null, index,
                         parameter.annotations, parameter.name, parameter.returnType!!, parameter.declaresDefaultValue(),
@@ -317,6 +319,15 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 val newTypeRef = function.setTypeReference(patternFunction.typeReference)
                 if (newTypeRef != null) {
                     ShortenReferences.DEFAULT.process(newTypeRef)
+                }
+
+                patternFunction.valueParameters.forEach { param ->
+                    param.annotationEntries.forEach { a ->
+                        a.typeReference?.run {
+                            val fqName = FqName(this.text)
+                            if (fqName in (NULLABLE_ANNOTATIONS + NOT_NULL_ANNOTATIONS)) a.delete()
+                        }
+                    }
                 }
 
                 val newParameterList = function.valueParameterList!!.replace(patternFunction.valueParameterList!!) as KtParameterList
