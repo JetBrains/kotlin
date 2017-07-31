@@ -1855,6 +1855,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 doTestWithExtraFile(fileName);
             }
 
+            @TestMetadata("overrideJavaMethodWithAnnotation.test")
+            public void testOverrideJavaMethodWithAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/nothingToOverride/overrideJavaMethodWithAnnotation.test");
+                doTestWithExtraFile(fileName);
+            }
+
             @TestMetadata("twoPackages.before.Main.kt")
             public void testTwoPackages() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/nothingToOverride/twoPackages.before.Main.kt");
