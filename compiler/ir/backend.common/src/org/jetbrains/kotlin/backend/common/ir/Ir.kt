@@ -1,13 +1,13 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -26,7 +26,7 @@ abstract class Ir<out T: CommonBackendContext>(val context: T, val irModule: IrM
     open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }
 
-open class Symbols<out T: CommonBackendContext>(val context: T, private val symbolTable: SymbolTable) {
+abstract class Symbols<out T: CommonBackendContext>(val context: T, private val symbolTable: SymbolTable) {
 
     private val builtIns
         get() = context.builtIns
@@ -36,28 +36,17 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
 
     val refClass = symbolTable.referenceClass(context.getInternalClass("Ref"))
 
-//    val areEqualByValue = context.getInternalFunctions("areEqualByValue").map {
-//        symbolTable.referenceSimpleFunction(it)
-//    }
+    abstract val areEqualByValue: IrFunctionSymbol
 
-    val areEqual = symbolTable.referenceSimpleFunction(context.getInternalFunctions("areEqual").single())
+    abstract val areEqual: IrFunctionSymbol
 
-    val ThrowNullPointerException = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("ThrowNullPointerException").single())
+    abstract val ThrowNullPointerException: IrFunctionSymbol
+    abstract val ThrowNoWhenBranchMatchedException: IrFunctionSymbol
+    abstract val ThrowTypeCastException: IrFunctionSymbol
 
-    val ThrowNoWhenBranchMatchedException = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("ThrowNoWhenBranchMatchedException").single())
+    abstract val ThrowUninitializedPropertyAccessException: IrFunctionSymbol
 
-    val ThrowTypeCastException = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("ThrowTypeCastException").single())
-
-    val ThrowUninitializedPropertyAccessException = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("ThrowUninitializedPropertyAccessException").single()
-    )
-
-    val stringBuilder = symbolTable.referenceClass(
-            context.getClass(FqName("java.lang.StringBuilder")) as ClassDescriptor
-    )
+    abstract val stringBuilder: IrClassSymbol
 
     val iterator = symbolTable.referenceClass(
             builtInsPackage("kotlin", "collections").getContributedClassifier(
@@ -80,10 +69,10 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
     val progressionClasses = listOf(charProgression, intProgression, longProgression)
     val progressionClassesTypes = progressionClasses.map { it.descriptor.defaultType }.toSet()
 
-    val checkProgressionStep = context.getInternalFunctions("checkProgressionStep")
-            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
-    val getProgressionLast = context.getInternalFunctions("getProgressionLast")
-            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
+//    val checkProgressionStep = context.getInternalFunctions("checkProgressionStep")
+//            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
+//    val getProgressionLast = context.getInternalFunctions("getProgressionLast")
+//            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
 
     val defaultConstructorMarker = symbolTable.referenceClass(context.getInternalClass("DefaultConstructorMarker"))
 
@@ -143,18 +132,10 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
             builtIns.getPrimitiveArrayKotlinType(PrimitiveType.BOOLEAN),
             builtIns.array.defaultType
     )
-    val arrayContentToString = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentToString") })
-    val arrayContentHashCode = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentHashCode") })
+//    val arrayContentToString = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentToString") })
+//    val arrayContentHashCode = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentHashCode") })
 
-    val copyRangeTo = arrays.map { symbol ->
-        val packageViewDescriptor = builtIns.builtInsModule.getPackage(KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME)
-        val functionDescriptor = packageViewDescriptor.memberScope
-                .getContributedFunctions(Name.identifier("copyRangeTo"), NoLookupLocation.FROM_BACKEND)
-                .first {
-                    it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor == symbol.descriptor
-                }
-        symbol.descriptor to symbolTable.referenceSimpleFunction(functionDescriptor)
-    }.toMap()
+    abstract val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
 
     val intAnd = symbolTable.referenceFunction(
             builtIns.intType.memberScope
@@ -170,24 +151,18 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
                     }
     )
 
+//    val valuesForEnum = symbolTable.referenceSimpleFunction(
+//            context.getInternalFunctions("valuesForEnum").single())
+//
+//    val valueOfForEnum = symbolTable.referenceSimpleFunction(
+//            context.getInternalFunctions("valueOfForEnum").single())
 
+//    val getContinuation = symbolTable.referenceSimpleFunction(
+//            context.getInternalFunctions("getContinuation").single())
 
-    val valuesForEnum = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("valuesForEnum").single())
+    abstract val coroutineImpl: IrClassSymbol
 
-    val valueOfForEnum = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("valueOfForEnum").single())
-
-    val getContinuation = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("getContinuation").single())
-
-    val coroutineImpl = symbolTable.referenceClass(context.getInternalClass("CoroutineImpl"))
-
-    val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
-            builtInsPackage("kotlin", "coroutines", "experimental", "intrinsics")
-                    .getContributedVariables(Name.identifier("COROUTINE_SUSPENDED"), NoLookupLocation.FROM_BACKEND)
-                    .single().getter!!
-    )
+    abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
 
     val kFunctionImpl = symbolTable.referenceClass(context.reflectionTypes.kFunctionImpl)
 
@@ -197,8 +172,8 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
     val kMutableProperty0Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty0Impl)
     val kMutableProperty1Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty1Impl)
     val kMutableProperty2Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty2Impl)
-    val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedPropertyImpl)
-    val kLocalDelegatedMutablePropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedMutablePropertyImpl)
+//    val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedPropertyImpl)
+//    val kLocalDelegatedMutablePropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedMutablePropertyImpl)
 
     fun getFunction(name: Name, receiverType: KotlinType, vararg argTypes: KotlinType) =
         symbolTable.referenceFunction(receiverType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
