@@ -36,7 +36,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-annotation-processing:$kotlin_version"
 
     compile 'commons-io:commons-io:2.4'
-    compile 'commons-lang:commons-lang:2.4'
+    compile 'commons-lang:commons-lang:2.6'
 
     compileOnly 'com.android.tools.build:gradle:2.0.0'
     compileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
