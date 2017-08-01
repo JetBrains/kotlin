@@ -2921,6 +2921,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("comanionObjectFieldVsClassField.kt")
+        public void testComanionObjectFieldVsClassField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/comanionObjectFieldVsClassField.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultObjectSameNamesAsInOuter.kt")
         public void testDefaultObjectSameNamesAsInOuter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/defaultObjectSameNamesAsInOuter.kt");

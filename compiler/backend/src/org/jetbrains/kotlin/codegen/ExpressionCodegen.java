@@ -1868,7 +1868,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull DeclarationDescriptor containingDeclaration
     ) {
         switch (accessorKind) {
-            case NORMAL: return context.getParentContext();
+            case NORMAL:
+                if (containingDeclaration instanceof ClassDescriptor) {
+                    CodegenContext parentWithDescriptor = context.findParentContextWithDescriptor(containingDeclaration);
+                    if (parentWithDescriptor != null) {
+                        return parentWithDescriptor;
+                    }
+                }
+                return context.getParentContext();
             // For companion object property, backing field lives in object containing class
             // Otherwise, it lives in its containing declaration
             case IN_CLASS_COMPANION: return context.findParentContextWithDescriptor(containingDeclaration.getContainingDeclaration());
