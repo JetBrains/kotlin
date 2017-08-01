@@ -3,6 +3,7 @@ package org.jetbrains.uast.test.kotlin
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.uast.*
@@ -116,6 +117,14 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             setter2.uastParameters.first().annotations.single { it.qualifiedName == "MyAnnotation" }
 
             test2.fields.find { it.name == "bar" }!!.annotations.single { it.qualifiedName == "MyAnnotation" }
+        }
+    }
+
+    @Test fun testConvertTypeInAnnotation() {
+        doTest("TypeInAnnotation") { _, file ->
+            val index = file.psi.text.indexOf("Test")
+            val element = file.psi.findElementAt(index)!!.getParentOfType<KtUserType>(false)!!
+            assertNotNull(element.getUastParentOfType(UAnnotation::class.java))
         }
     }
 
