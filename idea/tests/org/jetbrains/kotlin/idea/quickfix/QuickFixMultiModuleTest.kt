@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.junit.Test
 
 class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
