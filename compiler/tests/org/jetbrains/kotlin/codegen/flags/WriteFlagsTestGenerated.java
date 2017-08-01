@@ -746,6 +746,21 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("compiler/testData/writeFlags/property/accessors")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Accessors extends AbstractWriteFlagsTest {
+            @TestMetadata("accessorForProtectedPropertyWithPrivateSetter.kt")
+            public void testAccessorForProtectedPropertyWithPrivateSetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/accessors/accessorForProtectedPropertyWithPrivateSetter.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInAccessors() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/accessors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+        }
+
         @TestMetadata("compiler/testData/writeFlags/property/classObject")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
