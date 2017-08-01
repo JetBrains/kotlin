@@ -47,7 +47,9 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
-class KotlinInlineValHandler : InlineActionHandler() {
+class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHandler() {
+
+    constructor(): this(withPrompt = true)
 
     override fun isEnabledForLanguage(l: Language) = l == KotlinLanguage.INSTANCE
 
@@ -185,9 +187,9 @@ class KotlinInlineValHandler : InlineActionHandler() {
 
         val reference = editor?.let { TargetElementUtil.findReference(it, it.caretModel.offset) } as? KtSimpleNameReference
 
-        val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignmentToDelete)
+        val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignmentToDelete, withPreview = withPrompt)
 
-        if (!ApplicationManager.getApplication().isUnitTestMode && dialog.shouldBeShown()) {
+        if (withPrompt && !ApplicationManager.getApplication().isUnitTestMode && dialog.shouldBeShown()) {
             dialog.show()
             if (!dialog.isOK && hasHighlightings) {
                 val statusBar = WindowManager.getInstance().getStatusBar(declaration.project)
