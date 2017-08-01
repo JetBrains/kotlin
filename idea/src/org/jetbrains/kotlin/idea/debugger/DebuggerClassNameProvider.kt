@@ -268,13 +268,13 @@ private fun DebugProcess.findTargetClasses(outerClass: ReferenceType, lineAt: In
                 continue
             }
 
-            val method = location.method()
-            if (method == null || DebuggerUtils.isSynthetic(method) || method.isBridge) {
-                // skip synthetic methods
-                continue
-            }
-
             if (lineAt == locationLine) {
+                val method = location.method()
+                if (method == null || DebuggerUtils.isSynthetic(method) || method.isBridge) {
+                    // skip synthetic methods
+                    continue
+                }
+
                 targetClasses += outerClass
                 break
             }
