@@ -468,10 +468,6 @@ fun main(args: Array<String>) {
             model("codegen/java8/box")
         }
 
-        testClass<AbstractDiagnosticsWithFullJdkTest>("DiagnosticsWithJava8TestGenerated") {
-            model("diagnostics/testsWithJava8")
-        }
-
         testClass<AbstractForeignJava8AnnotationsTest> {
             model("foreignAnnotationsJava8/tests")
         }

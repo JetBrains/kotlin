@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import java.util.function.Consumer
 
 abstract class MyIt1<out T> : Iterator<T> {

@@ -17,15 +17,17 @@
 package org.jetbrains.kotlin.checkers
 
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.Jsr305State
 import java.io.File
 
 val FOREIGN_ANNOTATIONS_SOURCES_PATH = "compiler/testData/foreignAnnotations/annotations"
 val TEST_ANNOTATIONS_SOURCE_PATH = "compiler/testData/foreignAnnotations/testAnnotations"
 
-abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsWithFullJdkTest() {
+abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
     private val WARNING_FOR_JSR305_ANNOTATIONS_DIRECTIVE = "WARNING_FOR_JSR305_ANNOTATIONS"
 
     override fun getExtraClasspath(): List<File> {
@@ -39,6 +41,10 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsWithFullJdkTe
                 "test-foreign-annotations",
                 extraClasspath = extraClassPath.map { it.path }
         ))
+
+    override fun getConfigurationKind(): ConfigurationKind = ConfigurationKind.ALL
+
+    override fun getTestJdkKind(file: File): TestJdkKind = TestJdkKind.FULL_JDK
 
     open protected val annotationsPath: String
         get() = FOREIGN_ANNOTATIONS_SOURCES_PATH

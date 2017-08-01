@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import java.util.concurrent.*
 
 val concurrent: ConcurrentMap<String, Int> = null!!
