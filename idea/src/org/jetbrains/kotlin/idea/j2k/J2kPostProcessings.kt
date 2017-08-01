@@ -280,7 +280,7 @@ object J2KPostProcessingRegistrar {
             if (!UnnecessaryVariableInspection.isActiveFor(element)) return null
 
             return {
-                KotlinInlineValHandler().inlineElement(element.project, element.findExistingEditor(), element)
+                KotlinInlineValHandler(withPrompt = false).inlineElement(element.project, element.findExistingEditor(), element)
             }
         }
     }
