@@ -1,4 +1,4 @@
-// "Add 'private' modifier" "true"
+// "Change visibility to 'private'" "true"
 class A(<caret>internal val a: String = "") {
     fun foo() {
         a

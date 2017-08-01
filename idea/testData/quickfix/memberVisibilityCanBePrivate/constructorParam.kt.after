@@ -1,4 +1,4 @@
-// "Add 'private' modifier" "true"
+// "Change visibility to 'private'" "true"
 class A(private val a: String = "") {
     fun foo() {
         a

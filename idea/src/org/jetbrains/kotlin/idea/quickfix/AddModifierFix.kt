@@ -46,10 +46,11 @@ open class AddModifierFix(
 
     override fun getText(): String {
         val element = element ?: return ""
-        if (modifier in modalityModifiers) {
-            return "Make ${getElementName(element)} ${modifier.value}"
+        return when {
+            modifier in modalityModifiers -> "Make ${getElementName(element)} ${modifier.value}"
+            modifier in KtTokens.VISIBILITY_MODIFIERS && element.hasVisibilityModifier() -> "Change visibility to '${modifier.value}'"
+            else -> "Add '${modifier.value}' modifier"
         }
-        return "Add '${modifier.value}' modifier"
     }
 
     override fun getFamilyName() = "Add modifier"
@@ -61,6 +62,12 @@ open class AddModifierFix(
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         val element = element ?: return false
         return super.isAvailable(project, editor, file) && element.canRefactor()
+    }
+
+    private fun KtModifierListOwner.hasVisibilityModifier(): Boolean {
+        return KtTokens.VISIBILITY_MODIFIERS.types.any {
+            hasModifier(it as KtModifierKeywordToken)
+        }
     }
 
     companion object {
