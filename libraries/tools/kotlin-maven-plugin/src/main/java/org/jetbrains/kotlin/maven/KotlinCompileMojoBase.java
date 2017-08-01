@@ -470,7 +470,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                 arguments.pluginClasspaths = pluginClassPaths.toArray(new String[pluginClassPaths.size()]);
             } else {
                 for (String path : pluginClassPaths) {
-                    arguments.pluginClasspaths = ArrayUtil.append(arguments.pluginClasspaths, path);
+                    if (ArrayUtil.indexOf(arguments.pluginClasspaths, path) < 0) {
+                        arguments.pluginClasspaths = ArrayUtil.append(arguments.pluginClasspaths, path);
+                    }
                 }
             }
 
