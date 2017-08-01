@@ -134,10 +134,18 @@ private val MODIFIERS_TO_REPLACE = mapOf(
 )
 
 private val MODIFIERS_ORDER = listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD,
-                                     FINAL_KEYWORD, OPEN_KEYWORD, ABSTRACT_KEYWORD, SEALED_KEYWORD, ANNOTATION_KEYWORD,
-                                     OVERRIDE_KEYWORD,
+                                     FINAL_KEYWORD, OPEN_KEYWORD, ABSTRACT_KEYWORD, SEALED_KEYWORD,
                                      CONST_KEYWORD,
+                                     EXTERNAL_KEYWORD,
+                                     OVERRIDE_KEYWORD,
                                      LATEINIT_KEYWORD,
+                                     TAILREC_KEYWORD,
+                                     VARARG_KEYWORD,
                                      SUSPEND_KEYWORD,
                                      INNER_KEYWORD,
-                                     ENUM_KEYWORD, COMPANION_KEYWORD, INFIX_KEYWORD, OPERATOR_KEYWORD, DATA_KEYWORD)
+                                     ENUM_KEYWORD, ANNOTATION_KEYWORD,
+                                     COMPANION_KEYWORD,
+                                     INLINE_KEYWORD,
+                                     INFIX_KEYWORD,
+                                     OPERATOR_KEYWORD,
+                                     DATA_KEYWORD)
