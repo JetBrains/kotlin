@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import java.lang.annotation.Repeatable
 
 <!DEPRECATED_JAVA_ANNOTATION!>@java.lang.annotation.Repeatable(Annotations::class)<!> annotation class RepAnn

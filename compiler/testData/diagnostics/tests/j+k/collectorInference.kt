@@ -1,5 +1,7 @@
 // !CHECK_TYPE
 // SKIP_TXT
+// FULL_JDK
+
 import java.util.stream.Collectors
 import java.util.stream.Stream
 

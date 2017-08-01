@@ -1,6 +1,7 @@
 // !CHECK_TYPE
 // !LANGUAGE: -AdditionalBuiltInsMembers
 // SKIP_TXT
+// FULL_JDK
 
 class A : java.util.ArrayList<String>() {
     // `stream` is defined in ArrayList, so it was impossible to override it in 1.0

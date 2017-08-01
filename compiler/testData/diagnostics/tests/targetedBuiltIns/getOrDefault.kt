@@ -1,3 +1,5 @@
+// FULL_JDK
+
 abstract class A : Map<Int, String>
 
 fun foo(x: Map<Int, String>, a: A, b: java.util.HashMap<Int, String>) {
