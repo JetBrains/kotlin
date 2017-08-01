@@ -153,12 +153,10 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
 
             val newBounds = insertImports(boundsAfterReplace, referenceData, explicitImports)
 
-            runWriteAction {
-                PsiDocumentManager.getInstance(project).commitAllDocuments()
-                AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, newBounds)
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
+            AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, newBounds)
 
-                conversionPerformed = true
-            }
+            conversionPerformed = true
         }
     }
 

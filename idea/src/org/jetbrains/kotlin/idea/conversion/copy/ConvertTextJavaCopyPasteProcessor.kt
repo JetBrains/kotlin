@@ -111,7 +111,7 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
 
         val convertedText = dataForConversion.convertCodeToKotlin(project).text
 
-        runWriteAction {
+        val newBounds = runWriteAction {
 
             val importsInsertOffset = targetFile.importList?.endOffset ?: 0
             if (targetFile.importDirectives.isEmpty() && importsInsertOffset > 0)
@@ -125,14 +125,13 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
             val endOffsetAfterCopy = startOffset + convertedText.length
             editor.caretModel.moveToOffset(endOffsetAfterCopy)
 
-            val newBounds = TextRange(startOffset, startOffset + convertedText.length)
-
-            psiDocumentManager.commitAllDocuments()
-
-            AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, newBounds)
-
-            conversionPerformed = true
+            TextRange(startOffset, startOffset + convertedText.length)
         }
+
+        psiDocumentManager.commitAllDocuments()
+        AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, newBounds)
+
+        conversionPerformed = true
     }
 
     private fun DataForConversion.convertCodeToKotlin(project: Project): ConversionResult {
