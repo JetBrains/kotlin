@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.android.parcel
 
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+//import org.robolectric.RobolectricTestRunner
+//import org.robolectric.annotation.Config
 
 // This class is not generated because it uses the custom test runner
-@RunWith(RobolectricTestRunner::class)
-@Config(manifest = Config.NONE)
+//@RunWith(RobolectricTestRunner::class)
+//@Config(manifest = Config.NONE)
 class ParcelBoxTest : AbstractParcelBoxTest() {
     @Test fun simple() = doTest("simple")
     @Test fun primitiveTypes() = doTest("primitiveTypes")
