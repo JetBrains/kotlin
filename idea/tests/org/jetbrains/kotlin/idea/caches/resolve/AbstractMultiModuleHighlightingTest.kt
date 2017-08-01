@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiHighlightingTest
+import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.test.TestJdkKind
 
 abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTest() {

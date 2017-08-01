@@ -166,7 +166,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     override fun configureAnalysisFlags(): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags()
-        Jsr305State.values().firstOrNull { it.description == jsr305GlobalReportLevel }?.let {
+        Jsr305State.findByDescription(jsr305GlobalReportLevel)?.let {
             result.put(AnalysisFlag.loadJsr305Annotations, it)
         }
         return result

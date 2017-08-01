@@ -96,22 +96,6 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         }, this, kind)
     }
 
-    protected fun Module.createFacet(platformKind: TargetPlatformKind<*>? = null) {
-        val accessToken = WriteAction.start()
-        try {
-            val modelsProvider = IdeModifiableModelsProviderImpl(project)
-            getOrCreateFacet(modelsProvider, true).configuration.settings.initializeIfNeeded(
-                    this,
-                    modelsProvider.getModifiableRootModel(this),
-                    platformKind
-            )
-            modelsProvider.commit()
-        }
-        finally {
-            accessToken.finish()
-        }
-    }
-
     protected fun Module.enableMultiPlatform() {
         createFacet()
         val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
@@ -130,5 +114,21 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
             }
         }
         Assert.assertTrue(atLeastOneFile)
+    }
+}
+
+fun Module.createFacet(platformKind: TargetPlatformKind<*>? = null) {
+    val accessToken = WriteAction.start()
+    try {
+        val modelsProvider = IdeModifiableModelsProviderImpl(project)
+        getOrCreateFacet(modelsProvider, true).configuration.settings.initializeIfNeeded(
+                this,
+                modelsProvider.getModifiableRootModel(this),
+                platformKind
+        )
+        modelsProvider.commit()
+    }
+    finally {
+        accessToken.finish()
     }
 }

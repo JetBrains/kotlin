@@ -74,7 +74,9 @@ fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     return languageLevel
 }
 
-fun Project.getLanguageVersionSettings(contextModule: Module? = null): LanguageVersionSettings {
+@JvmOverloads
+fun Project.getLanguageVersionSettings(contextModule: Module? = null,
+                                       extraAnalysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()): LanguageVersionSettings {
     val arguments = KotlinCommonCompilerArgumentsHolder.getInstance(this).settings
     val languageVersion =
             LanguageVersion.fromVersionString(arguments.languageVersion)
@@ -88,7 +90,9 @@ fun Project.getLanguageVersionSettings(contextModule: Module? = null): LanguageV
             compilerSettings,
             null
     )
-    return LanguageVersionSettingsImpl(languageVersion, apiVersion, arguments.configureAnalysisFlags(), extraLanguageFeatures)
+    return LanguageVersionSettingsImpl(languageVersion, apiVersion,
+                                       arguments.configureAnalysisFlags() + extraAnalysisFlags,
+                                       extraLanguageFeatures)
 }
 
 val Module.languageVersionSettings: LanguageVersionSettings
