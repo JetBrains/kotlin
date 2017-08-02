@@ -84,6 +84,9 @@ class IrDeclarationTranslationVisitor(private val context: IrTranslationContext)
                 context.exporter.export(declaration.descriptor)
             }
         }
+
+        val model = ClassModelGenerator(context.naming, context.module.descriptor).generateClassModel(declaration.descriptor)
+        context.fragment.classes[model.name] = model
     }
 
     private fun translateFunction(declaration: IrFunction) {
