@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.SmartList
+import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
@@ -124,7 +125,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
             }
         }
 
-        if (argumentField.property.returnType.classifier?.javaClass?.isArray == false
+        if ((argumentField.property.returnType.classifier as? KClass<*>)?.java?.isArray == false
             && !visitedArgs.add(argument.value) && value is String && property.get(result) != value) {
             errors.duplicateArguments.put(argument.value, value)
         }
