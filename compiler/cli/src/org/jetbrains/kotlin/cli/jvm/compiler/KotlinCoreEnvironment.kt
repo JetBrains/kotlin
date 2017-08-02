@@ -109,6 +109,7 @@ import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.ScriptReportSink
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.util.zip.ZipFile
 
 class KotlinCoreEnvironment private constructor(
         parentDisposable: Disposable,
@@ -482,20 +483,25 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
-            var pluginRoot =
+
+            fun File.hasConfigFile(configFile: String): Boolean =
+                    if (isDirectory) File(this, "META-INF" + File.separator + configFile).exists()
+                    else try {
+                        ZipFile(this).use {
+                            it.getEntry("META-INF/" + configFile) != null
+                        }
+                    }
+                    catch (e: Throwable) {
+                        false
+                    }
+
+            val pluginRoot =
                     configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
                     ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
-                    ?: PathUtil.pathUtilJar
-
-            val app = ApplicationManager.getApplication()
-            val parentFile = pluginRoot.parentFile
-
-            if (pluginRoot.isDirectory && app != null && app.isUnitTestMode
-                && FileUtil.toCanonicalPath(parentFile.path).endsWith("out/production")) {
-                // hack for load extensions when compiler run directly from out directory(e.g. in tests)
-                val srcDir = parentFile.parentFile.parentFile
-                pluginRoot = File(srcDir, "idea/src")
-            }
+                    ?: PathUtil.getPathUtilJar().takeIf { it.hasConfigFile(configFilePath) }
+                    // hack for load extensions when compiler run directly from project directory (e.g. in tests)
+                    ?: File("idea/src").takeIf { it.hasConfigFile(configFilePath) }
+                    ?: throw IllegalStateException("Unable to find extension point configuration $configFilePath")
 
             CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea())
         }
