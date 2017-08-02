@@ -44,6 +44,8 @@ proto/compiler/tests
 proto/compiler/google/src/google/protobuf/compiler/kotlin/bin
 proto/compiler/google/src/google/protobuf/compiler/kotlin/protoc
 
+peformance/build
+
 # translator auto generated artifacts
 kotstd/ll
 
