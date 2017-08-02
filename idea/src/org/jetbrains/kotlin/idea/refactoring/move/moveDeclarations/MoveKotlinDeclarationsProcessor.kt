@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.keysToMap
 import java.lang.AssertionError
 import java.util.*
@@ -129,7 +130,7 @@ class MoveKotlinDeclarationsProcessor(
     private val elementsToMove = descriptor.elementsToMove.filter { e -> e.parent != descriptor.moveTarget.getTargetPsiIfExists(e) }
     private val kotlinToLightElementsBySourceFile = elementsToMove
             .groupBy { it.containingKtFile }
-            .mapValues { it.value.keysToMap { it.toLightElements() } }
+            .mapValues { it.value.keysToMap { it.toLightElements().ifEmpty { listOf(it) } } }
     private val conflicts = MultiMap<PsiElement, String>()
 
     override fun getRefactoringId() = REFACTORING_ID

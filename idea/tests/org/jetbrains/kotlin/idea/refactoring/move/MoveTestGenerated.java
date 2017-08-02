@@ -228,6 +228,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/changePackage/headerClasses/headerClasses.test")
+    public void testKotlin_changePackage_headerClasses_HeaderClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/changePackage/headerClasses/headerClasses.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveDirectory/moveDirectoryWithPackageDirectiveChange/moveDirectoryWithPackageDirectiveChange.test")
     public void testKotlin_moveDirectory_moveDirectoryWithPackageDirectiveChange_MoveDirectoryWithPackageDirectiveChange() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveDirectory/moveDirectoryWithPackageDirectiveChange/moveDirectoryWithPackageDirectiveChange.test");
