@@ -71,9 +71,9 @@ private object EmptyICReporter : ICReporter {
     }
 }
 
-inline fun <R> withIC(fn: ()->R): R {
+inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
     val isEnabledBackup = IncrementalCompilation.isEnabled()
-    IncrementalCompilation.setIsEnabled(true)
+    IncrementalCompilation.setIsEnabled(enabled)
 
     try {
         return fn()
