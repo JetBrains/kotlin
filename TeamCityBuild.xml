@@ -7,7 +7,7 @@
 
     <property name="version_substitute_dir" value="${basedir}/versions_temp/"/>
 
-    <property name="artifact.output.path" value="${basedir}/out/artifacts"/>
+    <property name="artifact.output.path" value="${basedir}/dist/artifacts"/>
     <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
     <property name="plugin.xml.bk" value="${version_substitute_dir}/plugin.xml.bk"/>
     <property name="plugin.xml.versioned" value="${plugin.xml}.versioned"/>
