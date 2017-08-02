@@ -190,8 +190,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         File outputPostfixFile = null;
-        if (arguments.getOutputPrefix() != null) {
-            outputPostfixFile = new File(arguments.getOutputPrefix());
+        if (arguments.getOutputPostfix() != null) {
+            outputPostfixFile = new File(arguments.getOutputPostfix());
             if (!outputPostfixFile.exists()) {
                 messageCollector.report(ERROR, "Output postfix file '" + arguments.getOutputPostfix() + "' not found", null);
                 return ExitCode.COMPILATION_ERROR;
