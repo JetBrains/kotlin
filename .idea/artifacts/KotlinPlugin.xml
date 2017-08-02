@@ -62,6 +62,7 @@
           <element id="module-output" name="annotation-based-compiler-plugins-ide-support" />
           <element id="module-output" name="frontend.script" />
           <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/json-org.jar" path-in-jar="/" />
+          <element id="module-output" name="idea-gradle" />
         </element>
         <element id="library" level="project" name="javax.inject" />
         <element id="directory" name="jps">

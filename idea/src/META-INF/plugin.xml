@@ -2477,6 +2477,7 @@
     <indexedRootsProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.KotlinScriptDependenciesIndexableSetContributor"/>
     <psi.clsCustomNavigationPolicy implementation="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependencySourceNavigationPolicyForJavaClasses"/>
     <resolveScopeProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.KotlinScriptResolveScopeProvider"/>
+    <projectOpenProcessor implementation="org.jetbrains.kotlin.gradle.GradleKotlinDSLProjectOpenProcessor"/>
 
   </extensions>
 
