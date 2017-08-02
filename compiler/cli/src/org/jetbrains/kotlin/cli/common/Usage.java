@@ -16,13 +16,16 @@
 
 package org.jetbrains.kotlin.cli.common;
 
+import com.intellij.util.containers.ContainerUtil;
+import kotlin.jvm.JvmClassMappingKt;
+import kotlin.reflect.KCallable;
+import kotlin.reflect.KClass;
+import kotlin.reflect.KProperty1;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.Argument;
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments;
 import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
-
-import java.lang.reflect.Method;
 
 public class Usage {
     // The magic number 29 corresponds to the similar padding width in javac and scalac command line compilers
@@ -33,10 +36,10 @@ public class Usage {
         StringBuilder sb = new StringBuilder();
         appendln(sb, "Usage: " + tool.executableScriptFileName() + " <options> <source files>");
         appendln(sb, "where " + (arguments.getExtraHelp() ? "advanced" : "possible") + " options include:");
-        for (Class<?> clazz = arguments.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
-            for (Method method : clazz.getDeclaredMethods()) {
-                propertyUsage(sb, method, arguments.getExtraHelp());
-            }
+        KClass<? extends CommonToolArguments> kClass = JvmClassMappingKt.getKotlinClass(arguments.getClass());
+        for (KCallable<?> callable : kClass.getMembers()) {
+            if (!(callable instanceof KProperty1)) continue;
+            propertyUsage(sb, (KProperty1) callable, arguments.getExtraHelp());
         }
 
         if (arguments.getExtraHelp()) {
@@ -47,8 +50,8 @@ public class Usage {
         return sb.toString();
     }
 
-    private static void propertyUsage(@NotNull StringBuilder sb, @NotNull Method method, boolean extraHelp) {
-        Argument argument = method.getAnnotation(Argument.class);
+    private static void propertyUsage(@NotNull StringBuilder sb, @NotNull KProperty1 property, boolean extraHelp) {
+        Argument argument = ContainerUtil.findInstance(property.getAnnotations(), Argument.class);
         if (argument == null) return;
 
         if (extraHelp != ParseCommandLineArgumentsKt.isAdvanced(argument)) return;
