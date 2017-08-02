@@ -261,12 +261,12 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
             val line = position.line + 1
 
-            val locations = type.locationsOfLine(KOTLIN_STRATA_NAME, null, line).filter { it.sourceName(KOTLIN_STRATA_NAME) == position.file.name }
-            if (locations.isEmpty()) {
+            val locations = type.locationsOfLine(KOTLIN_STRATA_NAME, null, line)
+            if (locations == null || locations.isEmpty()) {
                 throw NoDataException.INSTANCE
             }
 
-            return locations
+            return locations.filter { it.sourceName(KOTLIN_STRATA_NAME) == position.file.name }
         }
         catch (e: AbsentInformationException) {
             throw NoDataException.INSTANCE

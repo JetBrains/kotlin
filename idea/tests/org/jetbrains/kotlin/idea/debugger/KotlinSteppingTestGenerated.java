@@ -998,6 +998,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stopInWrongClass.kt")
+        public void testStopInWrongClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInWrongClass.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stopInlineCallInLocalFunInSecondaryConstructor.kt")
         public void testStopInlineCallInLocalFunInSecondaryConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInlineCallInLocalFunInSecondaryConstructor.kt");
