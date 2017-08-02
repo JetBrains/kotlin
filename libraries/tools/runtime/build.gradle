@@ -13,8 +13,8 @@ sourceSets {
     if(!System.properties.'idea.active')
     main {
         java {
-            srcDir "${rootDir}/../core/builtins/src"
-            srcDir "${rootDir}/../core/runtime.jvm/src"
+            srcDir "${rootDir}/core/builtins/src"
+            srcDir "${rootDir}/core/runtime.jvm/src"
             exclude 'org/jetbrains/annotations/**'
         }
         kotlin {
@@ -25,13 +25,13 @@ sourceSets {
 
 jar {
     manifestAttributes(manifest, project, 'Main')
-    from("${rootDir}/../dist/builtins")
+    from("${rootDir}/dist/builtins")
 }
 
 sourcesJar {
     classifier = 'sources'
     from sourceSets.main.kotlin
-    from "${rootDir}/../core/builtins/native"
+    from "${rootDir}/core/builtins/native"
 }
 
 artifacts {
@@ -44,7 +44,7 @@ compileKotlin {
         freeCompilerArgs = [
                 "-Xallow-kotlin-package",
                 "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
-                "-cp", "${rootDir}/../dist/builtins",
+                "-cp", "${rootDir}/dist/builtins",
                 "-module-name", project.name
         ]
     }

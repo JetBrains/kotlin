@@ -12,7 +12,7 @@ dependencies {
 sourceSets {
     main {
         kotlin {
-            srcDir "${rootDir}/../core/script.runtime/src"
+            srcDir "${rootDir}/core/script.runtime/src"
         }
     }
 }

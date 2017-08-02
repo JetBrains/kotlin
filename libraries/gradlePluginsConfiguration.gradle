@@ -1,0 +1,42 @@
+
+//task clean {
+//    doLast {
+//        delete "${buildDir}/repo"
+//    }
+//}
+
+configure([project(':kotlin-gradle-plugin'), project(':kotlin-allopen'), project(':kotlin-noarg')]) { project ->
+    apply plugin: 'com.gradle.plugin-publish'
+
+    if (project.hasProperty('publishPluginsVersion')) {
+        configurations.archives.artifacts.all {
+            version = project.getProperty('publishPluginsVersion')
+        }
+    }
+
+    if (project.hasProperty("${project.name}-jar")) {
+        println("Using pre-built artifact for ${project.name}")
+        configurations.archives.artifacts.clear()
+
+        artifacts {
+            archives(file(project.getProperty("${project.name}-jar"))) {
+                name project.name
+            }
+        }
+    }
+
+    publishPlugins.doFirst {
+        assert !kotlin_version.contains('SNAPSHOT')
+    }
+
+    pluginBundle {
+        website = 'https://kotlinlang.org/'
+        vcsUrl = 'https://github.com/JetBrains/kotlin/'
+        description = 'Kotlin plugins for Gradle'
+        tags = ['kotlin']
+
+        mavenCoordinates {
+            groupId = "org.jetbrains.kotlin"
+        }
+    }
+}

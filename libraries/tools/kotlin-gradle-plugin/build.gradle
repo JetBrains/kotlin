@@ -43,7 +43,7 @@ dependencies {
     agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
     agp25CompileOnly gradleApi()
 
-    testCompile "org.jetbrains.kotlin:kotlin-build-common-test:$kotlin_version"
+    testCompile project (path: ':build-common', configuration: 'tests-jar')
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testCompile "junit:junit:4.12"
 }

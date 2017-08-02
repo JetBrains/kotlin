@@ -5,14 +5,14 @@ String jdkPath(String version) {
     return path
 }
 
-ext {
-    JDK_16 = jdkPath("1.6")
-    JDK_17 = jdkPath("1.7")
-    JDK_18 = jdkPath("1.8")
-    distDir = file("$kotlin_root/dist")
-    distLibDir = file("$kotlin_root/dist/kotlinc/lib")
-    bootstrapCompilerFile = file("$distDir/kotlin-compiler-for-maven.jar")
-}
+//ext {
+//    JDK_16 = jdkPath("1.6")
+//    JDK_17 = jdkPath("1.7")
+//    JDK_18 = jdkPath("1.8")
+//    distDir = file("$kotlin_root/dist")
+//    distLibDir = file("$kotlin_root/dist/kotlinc/lib")
+//    bootstrapCompilerFile = file("$distDir/kotlin-compiler-for-maven.jar")
+//}
 
 ext.configureJvmProject = { Project project ->
     project.configure(project) {
@@ -159,9 +159,11 @@ ext.configurePublishing = { Project project ->
 
 ext.createPreprocessorTask = { Project project, def name, def sourceDir, def targetDir, def profile = "JS" ->
     return project.tasks.create("preprocessSources$name", JavaExec) {
+//        dependsOn(rootProject.prepareBootstrap)
         inputs.dir(sourceDir)
         outputs.dir(targetDir)
-        classpath = project.files(bootstrapCompilerFile)
+        classpath = rootProject.configurations.bootstrapCompile
+//        classpath = project.files(bootstrapCompilerFile)
         main = "org.jetbrains.kotlin.preprocessor.PreprocessorCLI"
         args = [sourceDir, targetDir, profile]
     }
@@ -170,13 +172,15 @@ ext.createPreprocessorTask = { Project project, def name, def sourceDir, def tar
 ext.createScriptTask = { Project project, def name, Closure<JavaExec> configureClosure = null ->
     JavaExec task = project.tasks.create(name, JavaExec)
     return project.configure(task) {
-        classpath = project.configurations.scriptCompile
+//        dependsOn(rootProject.prepareBootstrap)
+        classpath = rootProject.configurations.scriptCompile
+        println(rootProject.configurations.scriptCompile.files)
         main = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
         args = [
                 "-script",
                 "-version",
                 "-no-stdlib",
-                "-cp", project.configurations.scriptRuntime.asPath]
+                "-cp", rootProject.configurations.scriptRuntime.asPath]
 
         if (configureClosure != null) {
             configureClosure.delegate = it

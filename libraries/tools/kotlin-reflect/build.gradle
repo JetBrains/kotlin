@@ -19,7 +19,7 @@ configureJvmProject(project)
 configurePublishing(project)
 
 
-def core = "${rootDir}/../core"
+def core = "${rootDir}//core"
 def annotationsSrc = "${buildDir}/annotations"
 def relocatedCoreSrc = "${buildDir}/core-relocated"
 
@@ -47,9 +47,10 @@ configurations {
 dependencies {
     proguardDeps project(':kotlin-stdlib')
     shadows 'javax.inject:javax.inject:1'
-    shadows project(path: ':tools:protobuf-lite')
+    shadows project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
 
     compile project(':kotlin-stdlib')
+    compile project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
 }
 
 task copyAnnotations(type: Sync) {
@@ -70,6 +71,7 @@ compileJava {
 
 compileKotlin {
     dependsOn copyAnnotations
+    dependsOn ':custom-dependencies:protobuf-lite:prepare'
     kotlinOptions {
         freeCompilerArgs = ["-version",
                             "-Xallow-kotlin-package",
@@ -107,14 +109,13 @@ createScriptTask(project, "stripMetadata") {
     inputs.file(inputJar)
     outputs.file(outputJar)
     args += [
-            "${rootDir}/../generators/infrastructure/strip-kotlin-annotations.kts",
+            "${rootDir}/generators/infrastructure/strip-kotlin-annotations.kts",
             "kotlin/Metadata",
             "kotlin/reflect/jvm/internal/impl/.*",
             inputJar,
             outputJar
     ]
 }
-
 
 def mainArchiveName = "${archivesBaseName}-${project.version}.jar"
 def outputJarPath = "${libsDir}/${mainArchiveName}"

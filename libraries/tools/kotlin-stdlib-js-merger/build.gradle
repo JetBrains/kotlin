@@ -3,7 +3,7 @@ description = 'Merge utility for Kotlin Standard Library for JS'
 apply plugin: 'kotlin'
 
 dependencies {
-    compile files("$distDir/kotlin-compiler-for-maven.jar")
+    compile "org.jetbrains.kotlin:kotlin-compiler:$kotlin_version"
 }
 
 sourceSets {

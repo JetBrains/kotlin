@@ -5,7 +5,7 @@ sourceSets {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_gradle_plugin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 compileKotlin {
@@ -17,5 +17,5 @@ task run(type: JavaExec) {
     group 'application'
     main 'generators.GenerateStandardLibKt'
     classpath sourceSets.main.runtimeClasspath
-    args = ["${rootDir}/.."]
+    args = ["${rootDir}"]
 }

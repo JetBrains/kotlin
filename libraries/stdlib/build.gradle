@@ -9,7 +9,7 @@ sourceSets {
     annotations {
         if(!System.properties.'idea.active') {
             java {
-                srcDir "${rootDir}/../core/runtime.jvm/src"
+                srcDir "${rootDir}/core/runtime.jvm/src"
                 include 'org/jetbrains/annotations/**'
             }
             kotlin {
@@ -19,13 +19,13 @@ sourceSets {
     }
     builtins {
         java {
-            srcDir "${rootDir}/../core/builtins/src"
-            srcDir "${rootDir}/../core/runtime.jvm/src"
+            srcDir "${rootDir}/core/builtins/src"
+            srcDir "${rootDir}/core/runtime.jvm/src"
             exclude 'org/jetbrains/annotations/**'
         }
         kotlin {
-            srcDir "${rootDir}/../core/builtins/src"
-            srcDir "${rootDir}/../core/runtime.jvm/src"
+            srcDir "${rootDir}/core/builtins/src"
+            srcDir "${rootDir}/core/runtime.jvm/src"
             exclude 'org/jetbrains/annotations/**'
         }
     }
@@ -56,7 +56,8 @@ task originalStdlibJar(type: Jar) {
 
 jar {
     manifestAttributes(manifest, project, 'Main')
-    from("${rootDir}/../dist/builtins")
+    dependsOn ":core:builtins:serialize"
+    from("${rootDir}/dist/builtins")
     from sourceSets.builtins.output
 }
 
@@ -64,14 +65,14 @@ task distJar(type: Jar) {
     baseName = 'dist-kotlin-stdlib'
     version = null
     manifestAttributes(manifest, project, 'Main')
-    from("${rootDir}/../dist/builtins")
+    from("${rootDir}/dist/builtins")
     from sourceSets.annotations.output
     from sourceSets.builtins.output
     from sourceSets.main.output
 }
 
 sourcesJar {
-    from "${rootDir}/../core/builtins/native"
+    from "${rootDir}/core/builtins/native"
     from sourceSets.builtins.kotlin
 }
 
@@ -102,7 +103,7 @@ compileBuiltinsKotlin {
                 "-version",
                 "-Xallow-kotlin-package",
                 "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
-                "-cp", "${rootDir}/../dist/builtins",
+                "-cp", "${rootDir}/dist/builtins",
                 "-module-name", "kotlin-runtime"
         ]
     }

@@ -13,8 +13,8 @@ def builtinsSrcDir = "${buildDir}/builtin-sources"
 def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
 def commonSrcDir = "${buildDir}/common-sources"
 def commonTestSrcDir = "${buildDir}/common-test-sources"
-def builtinsDir = "${rootDir}/../core/builtins"
-def jsLibrariesDir = "${rootDir}/../js/js.libraries"
+def builtinsDir = "${rootDir}/core/builtins"
+def jsLibrariesDir = "${rootDir}/js/js.libraries"
 def jsSrcDir = "${jsLibrariesDir}/src"
 def jsTestSrcDir = "${jsLibrariesDir}/test"
 def jsSrcJsDir = "${jsSrcDir}/js"
@@ -205,7 +205,7 @@ task mergedJar(type: Jar, dependsOn: classes) {
 
     // TODO: Use standard implementation title after js stdlib detector becomes more flexible
     Properties properties = new Properties()
-    new File("${rootDir}/../resources/kotlinManifest.properties").withInputStream {
+    new File("${rootDir}/resources/kotlinManifest.properties").withInputStream {
         properties.load(it)
     }
     manifest.attributes 'Implementation-Title' : properties."manifest.impl.title.kotlin.javascript.stdlib"
