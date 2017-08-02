@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.*
+import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.framework.libraryKind
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import java.io.File
@@ -95,7 +96,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
                 modifiableModelsProvider.getModifiableRootModel(module).orderEntries().forEachLibrary { library ->
                     if ((library as LibraryEx).kind == null) {
                         val model = modifiableModelsProvider.getModifiableLibraryModel(library) as LibraryEx.ModifiableModelEx
-                        model.kind = targetLibraryKind
+                        detectLibraryKind(model.getFiles(OrderRootType.CLASSES))?.let { model.kind = it }
                     }
                     true
                 }
