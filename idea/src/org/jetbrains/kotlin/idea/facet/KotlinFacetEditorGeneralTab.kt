@@ -67,9 +67,9 @@ class KotlinFacetEditorGeneralTab(
             else {
                 editableCommonArguments = configuration!!.settings.compilerArguments!!
                 editableJvmArguments = editableCommonArguments as? K2JVMCompilerArguments
-                                       ?: Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings
+                                       ?: Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JVMCompilerArguments
                 editableJsArguments = editableCommonArguments as? K2JSCompilerArguments
-                                      ?: Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings
+                                      ?: Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JSCompilerArguments
                 editableCompilerSettings = configuration.settings.compilerSettings!!
             }
 
@@ -132,10 +132,10 @@ class KotlinFacetEditorGeneralTab(
             compilerConfigurable.setTargetPlatform(chosenPlatform)
             compilerConfigurable.setEnabled(!useProjectSettings)
             if (useProjectSettings) {
-                compilerConfigurable.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).settings
-                compilerConfigurable.k2jvmCompilerArguments = Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings
-                compilerConfigurable.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings
-                compilerConfigurable.compilerSettings = KotlinCompilerSettings.getInstance(project).settings
+                compilerConfigurable.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as CommonCompilerArguments?
+                compilerConfigurable.k2jvmCompilerArguments = Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JVMCompilerArguments?
+                compilerConfigurable.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JSCompilerArguments?
+                compilerConfigurable.compilerSettings = KotlinCompilerSettings.getInstance(project).settings.unfrozen() as CompilerSettings?
             }
             else {
                 compilerConfigurable.commonCompilerArguments = editableCommonArguments
