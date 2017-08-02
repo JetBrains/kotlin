@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
+import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -49,7 +50,7 @@ import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
 
-internal class PropertyDelegationLowering(val context: CommonBackendContext) : FileLoweringPass {
+internal class PropertyDelegationLowering(val context: KonanBackendContext) : FileLoweringPass {
     private val reflectionTypes = context.reflectionTypes
     private var tempIndex = 0
 

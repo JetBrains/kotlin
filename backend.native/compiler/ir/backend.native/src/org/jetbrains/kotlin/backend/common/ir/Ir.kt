@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -26,40 +27,23 @@ abstract class Ir<out T: CommonBackendContext>(val context: T, val irModule: IrM
     open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }
 
-open class Symbols<out T: CommonBackendContext>(val context: T, private val symbolTable: SymbolTable) {
+abstract class Symbols<out T: CommonBackendContext>(val context: T, private val symbolTable: SymbolTable) {
 
     private val builtIns
         get() = context.builtIns
 
-    private fun builtInsPackage(vararg packageNameSegments: String) =
+    protected fun builtInsPackage(vararg packageNameSegments: String) =
             context.builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
 
     val refClass = symbolTable.referenceClass(context.getInternalClass("Ref"))
 
-    val areEqualByValue = context.getInternalFunctions("areEqualByValue").map {
-        symbolTable.referenceSimpleFunction(it)
-    }
+    abstract val areEqual: IrFunctionSymbol
+    abstract val ThrowNullPointerException: IrFunctionSymbol
+    abstract val ThrowNoWhenBranchMatchedException: IrFunctionSymbol
+    abstract val ThrowTypeCastException: IrFunctionSymbol
+    abstract val ThrowUninitializedPropertyAccessException: IrFunctionSymbol
 
-    val areEqual = symbolTable.referenceSimpleFunction(context.getInternalFunctions("areEqual").single())
-
-    val ThrowNullPointerException = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("ThrowNullPointerException").single())
-
-    val ThrowNoWhenBranchMatchedException = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("ThrowNoWhenBranchMatchedException").single())
-
-    val ThrowTypeCastException = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("ThrowTypeCastException").single())
-
-    val ThrowUninitializedPropertyAccessException = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("ThrowUninitializedPropertyAccessException").single()
-    )
-
-    val stringBuilder = symbolTable.referenceClass(
-            builtInsPackage("kotlin", "text").getContributedClassifier(
-                    Name.identifier("StringBuilder"), NoLookupLocation.FROM_BACKEND
-            ) as ClassDescriptor
-    )
+    abstract val stringBuilder: IrClassSymbol
 
     val iterator = symbolTable.referenceClass(
             builtInsPackage("kotlin", "collections").getContributedClassifier(
@@ -81,11 +65,6 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
     val longProgression = progression("LongProgression")
     val progressionClasses = listOf(charProgression, intProgression, longProgression)
     val progressionClassesTypes = progressionClasses.map { it.descriptor.defaultType }.toSet()
-
-    val checkProgressionStep = context.getInternalFunctions("checkProgressionStep")
-            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
-    val getProgressionLast = context.getInternalFunctions("getProgressionLast")
-            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
 
     val defaultConstructorMarker = symbolTable.referenceClass(context.getInternalClass("DefaultConstructorMarker"))
 
@@ -124,7 +103,7 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
 
     val arrays = PrimitiveType.values().map { primitiveArrayClass(it) } + array
 
-    private fun arrayExtensionFun(type: KotlinType, name: String): IrSimpleFunctionSymbol {
+    protected fun arrayExtensionFun(type: KotlinType, name: String): IrSimpleFunctionSymbol {
         val descriptor = builtInsPackage("kotlin")
                 .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
                 .singleOrNull { it.valueParameters.isEmpty()
@@ -134,7 +113,7 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
     }
 
 
-    private val arrayTypes = arrayOf(
+    protected val arrayTypes = arrayOf(
             builtIns.getPrimitiveArrayKotlinType(PrimitiveType.BYTE),
             builtIns.getPrimitiveArrayKotlinType(PrimitiveType.CHAR),
             builtIns.getPrimitiveArrayKotlinType(PrimitiveType.SHORT),
@@ -145,8 +124,6 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
             builtIns.getPrimitiveArrayKotlinType(PrimitiveType.BOOLEAN),
             builtIns.array.defaultType
     )
-    val arrayContentToString = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentToString") })
-    val arrayContentHashCode = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentHashCode") })
 
     val copyRangeTo = arrays.map { symbol ->
         val packageViewDescriptor = builtIns.builtInsModule.getPackage(KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME)
@@ -174,14 +151,9 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
 
 
 
-    val valuesForEnum = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("valuesForEnum").single())
-
-    val valueOfForEnum = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("valueOfForEnum").single())
-
-    val getContinuation = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("getContinuation").single())
+    abstract val valuesForEnum: IrFunctionSymbol
+    abstract val valueOfForEnum: IrFunctionSymbol
+    abstract val getContinuation: IrFunctionSymbol
 
     val coroutineImpl = symbolTable.referenceClass(context.getInternalClass("CoroutineImpl"))
 
@@ -199,8 +171,6 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
     val kMutableProperty0Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty0Impl)
     val kMutableProperty1Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty1Impl)
     val kMutableProperty2Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty2Impl)
-    val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedPropertyImpl)
-    val kLocalDelegatedMutablePropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedMutablePropertyImpl)
 
     fun getFunction(name: Name, receiverType: KotlinType, vararg argTypes: KotlinType) =
         symbolTable.referenceFunction(receiverType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
