@@ -271,53 +271,6 @@
             <mapper type="flatten"/>
         </unzip>
 
-        <local name="download.bootstrap.compiler"/>
-        <condition property="download.bootstrap.compiler">
-            <or>
-                <not>
-                    <isset property="teamcity.version"/>
-                </not>
-                <and>
-                    <istrue value="${kotlin.bootstrap.locator.force}"/>
-                    <istrue value="${bootstrap.build.no.tests}"/>
-                </and>
-            </or>
-        </condition>
-
-        <sequential if:set="download.bootstrap.compiler">
-            <!-- Download bootstrap compiler for local build -->
-            <download_teamcity_artifact
-                teamcity.server.url="https://teamcity.jetbrains.com"
-                build.locator.request="${kotlin.bootstrap.locator}"
-                artifact.path="kotlin-plugin-{build.number}.zip"
-                dest="${dependencies}/download/bootstrap-compiler.zip"
-                build.number.pattern="[\w-+\.]+"
-                usetimestamp="true"/>
-
-            <delete dir="${dependencies}/bootstrap-compiler" failonerror="false"/>
-            <unzip src="${dependencies}/download/bootstrap-compiler.zip" dest="${dependencies}/bootstrap-compiler"/>
-        </sequential>
-
-        <sequential unless:set="download.bootstrap.compiler">
-            <available file="${dependencies}/bootstrap-compiler/Kotlin" property="have.bootstrap.compiler"/>
-            <fail message="Bootstrap compiler is expected to be downloaded to '${dependencies}/bootstrap-compiler' by TeamCity" unless:set="have.bootstrap.compiler"/>
-            <echo message="Bootstrap compiler found in '${dependencies}/bootstrap-compiler'" if:set="have.bootstrap.compiler"/>
-        </sequential>
-
-        <local name="bootstrap.need.chmod"/>
-        <condition property="bootstrap.need.chmod">
-            <or>
-                <isset property="isMac" />
-                <isset property="isLinux" />
-            </or>
-        </condition>
-
-        <!-- Java can't manipulate permissions -->
-        <exec executable="find" if:set="bootstrap.need.chmod">
-            <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin"/>
-            <arg line="-name 'kotlin*' ! -name '*.bat' -exec chmod a+x '{}' ;"/>
-        </exec>
-
         <get-protobuf-and-rename-packages/>
 
         <download_teamcity_artifact
