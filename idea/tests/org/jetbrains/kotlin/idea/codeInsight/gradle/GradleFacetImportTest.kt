@@ -439,6 +439,10 @@ compileTestKotlin {
 
             apply plugin: 'kotlin2js'
 
+            repositories {
+                mavenCentral()
+            }
+
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
             }
@@ -634,9 +638,6 @@ compileTestKotlin {
             buildscript {
                 repositories {
                     mavenCentral()
-                    maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
                 }
 
                 dependencies {
@@ -645,6 +646,15 @@ compileTestKotlin {
             }
 
             apply plugin: 'kotlin-platform-js'
+
+            repositories {
+                mavenCentral()
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
+                compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
+            }
         """)
         importProject()
 
@@ -653,6 +663,11 @@ compileTestKotlin {
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
         }
+
+        val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
+        val libraries = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().mapNotNull { it.library as LibraryEx }
+        assertEquals(JSLibraryKind, libraries.single { it.name?.contains("kotlin-stdlib-js") == true }.kind)
+        assertEquals(CommonLibraryKind, libraries.single { it.name?.contains("kotlin-stdlib-common") == true }.kind)
     }
 
     @Test
@@ -675,6 +690,10 @@ compileTestKotlin {
             }
 
             apply plugin: 'kotlin-platform-common'
+
+            repositories {
+                mavenCentral()
+            }
 
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
