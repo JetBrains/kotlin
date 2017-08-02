@@ -36,7 +36,6 @@ class Runtime(bitcodeFile: String) {
     val methodTableRecordType = getStructType("MethodTableRecord")
     val globalHashType = getStructType("GlobalHash")
 
-    val containerHeaderType = getStructType("ContainerHeader")
     val objHeaderType = getStructType("ObjHeader")
     val arrayHeaderType = getStructType("ArrayHeader")
 

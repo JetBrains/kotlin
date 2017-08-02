@@ -114,8 +114,6 @@ internal val RuntimeAware.kTypeInfo: LLVMTypeRef
     get() = runtime.typeInfoType
 internal val RuntimeAware.kObjHeader: LLVMTypeRef
     get() = runtime.objHeaderType
-internal val RuntimeAware.kContainerHeader: LLVMTypeRef
-    get() = runtime.containerHeaderType
 internal val RuntimeAware.kObjHeaderPtr: LLVMTypeRef
     get() = pointerType(kObjHeader)
 internal val RuntimeAware.kObjHeaderPtrPtr: LLVMTypeRef
