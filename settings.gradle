@@ -1,0 +1,162 @@
+// modules
+include 'buildSrc' // this fixes import into idea, so buildsrc is not longer imported with different gradle version
+include "build-common"
+include "compiler"
+include "compiler:util"
+include "compiler:daemon-common"
+include "compiler:daemon-client"
+include "compiler:preloader"
+include "compiler:cli-runner"
+include "compiler:container"
+include "compiler:resolution"
+include "compiler:serialization"
+include "compiler:frontend"
+include "compiler:frontend.java"
+include "compiler:frontend.script"
+include "compiler:compiler-runner"
+include "compiler:cli-common"
+include "compiler:ir.tree"
+include "compiler:ir.psi2ir"
+include "compiler:ir.ir2cfg"
+include "compiler:backend-common"
+include "compiler:backend"
+include "compiler:plugin-api"
+include "compiler:light-classes"
+include "compiler:cli"
+include "compiler:incremental-compilation-impl"
+include "compiler:android-tests"
+include "compiler.tests-common"
+include "js:js.ast"
+include "js:js.serializer"
+include "js:js.parser"
+include "js:js.frontend"
+include "js:js.translator"
+include "js:js.dce"
+include "js:js.tests"
+include "jps-plugin"
+include "core"
+include "core:builtins"
+include "core:reflection.jvm"
+include "core:script.runtime"
+include "core:util.runtime"
+include "custom-dependencies:protobuf-lite"
+include "idea:idea-jps-common"
+include "idea:formatter"
+include "idea:ide-common"
+include "idea:idea-core"
+include "idea:kotlin-gradle-tooling"
+include "idea:idea-android"
+include "idea:idea-android-output-parser"
+include "idea:idea-test-framework"
+include "idea"
+include "eval4j"
+include "j2k"
+include "plugins:lint"
+include "plugins:android-extensions-compiler"
+include "plugins:android-extensions-idea"
+include "plugins:android-extensions-jps"
+include "plugins:allopen-cli"
+include "plugins:allopen-ide"
+include "plugins:noarg-cli"
+include "plugins:noarg-ide"
+include "plugins:sam-with-receiver-cli"
+include "plugins:sam-with-receiver-ide"
+include "plugins:source-sections-compiler"
+include "plugins:uast-kotlin"
+include "plugins:uast-kotlin-idea"
+include "plugins:annotation-based-compiler-plugins-ide-support"
+include "plugins:kapt3"
+include "plugins:plugins-tests"
+include "kotlin-script-runtime"
+include "kotlin-runtime"
+include "kotlin-test:kotlin-test-common"
+include "kotlin-test:kotlin-test-jvm"
+include "kotlin-test:kotlin-test-junit"
+include "kotlin-test:kotlin-test-js"
+include "kotlin-stdlib-common"
+include "kotlin-stdlib"
+include "kotlin-stdlib-js"
+include "kotlin-stdlib-jre7"
+include "kotlin-stdlib-jre8"
+include "kotlin-stdlib:samples"
+include "prepare:build.version"
+//include "prepare:compiler"
+//include "prepare:compiler-embeddable"
+//include "prepare:reflect"
+//include "prepare:runtime"
+include "prepare:jps-plugin"
+include "prepare:formatter"
+include "prepare:ide-lazy-resolver"
+include "prepare:kotlin-plugin"
+include "prepare:android-lint"
+include "prepare:mock-runtime-for-test"
+include "kotlin-reflect"
+include "ant"
+include "compiler:tests-java8"
+include "generators"
+include 'tools:binary-compatibility-validator'
+include 'tools:kotlin-stdlib-js-merger'
+include 'tools:kotlin-stdlib-gen'
+include ':kotlin-gradle-plugin-api',
+        ':kotlin-gradle-plugin',
+        ':kotlin-gradle-plugin-integration-tests',
+        ':kotlin-allopen',
+        ':kotlin-noarg',
+        ':kotlin-sam-with-receiver',
+        ':kotlin-gradle-subplugin-example'
+
+include ':examples:annotation-processor-example'
+
+rootProject.name = "kotlin"
+
+project(':kotlin-runtime').projectDir = "$rootDir/libraries/tools/runtime" as File
+project(':kotlin-script-runtime').projectDir = "$rootDir/libraries/tools/script-runtime" as File
+project(':kotlin-test:kotlin-test-common').projectDir = "$rootDir/libraries/kotlin.test/common" as File
+project(':kotlin-test:kotlin-test-jvm').projectDir = "$rootDir/libraries/kotlin.test/jvm" as File
+project(':kotlin-test:kotlin-test-junit').projectDir = "$rootDir/libraries/kotlin.test/junit" as File
+project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
+project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
+project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib" as File
+project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js" as File
+project(':kotlin-stdlib-jre7').projectDir = "$rootDir/libraries/stdlib/jre7" as File
+project(':kotlin-stdlib-jre8').projectDir = "$rootDir/libraries/stdlib/jre8" as File
+project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
+project(':kotlin-reflect').projectDir = "$rootDir/libraries/tools/kotlin-reflect" as File
+project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
+project(':compiler:cli-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
+project(':compiler:daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
+project(':compiler:daemon-client').projectDir = "$rootDir/compiler/daemon/daemon-client" as File
+project(':compiler:ir.tree').projectDir = "$rootDir/compiler/ir/ir.tree" as File
+project(':compiler:ir.psi2ir').projectDir = "$rootDir/compiler/ir/ir.psi2ir" as File
+project(':compiler:ir.ir2cfg').projectDir = "$rootDir/compiler/ir/ir.ir2cfg" as File
+project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-android/idea-android-output-parser" as File
+project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
+project(':plugins:android-extensions-idea').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
+project(':plugins:android-extensions-jps').projectDir = "$rootDir/plugins/android-extensions/android-extensions-jps" as File
+project(':plugins:allopen-cli').projectDir = "$rootDir/plugins/allopen/allopen-cli" as File
+project(':plugins:allopen-ide').projectDir = "$rootDir/plugins/allopen/allopen-ide" as File
+project(':plugins:noarg-cli').projectDir = "$rootDir/plugins/noarg/noarg-cli" as File
+project(':plugins:noarg-ide').projectDir = "$rootDir/plugins/noarg/noarg-ide" as File
+project(':plugins:sam-with-receiver-cli').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-cli" as File
+project(':plugins:sam-with-receiver-ide').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-ide" as File
+project(':plugins:source-sections-compiler').projectDir = "$rootDir/plugins/source-sections/source-sections-compiler" as File
+project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
+project(':tools:kotlin-stdlib-js-merger').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-js-merger" as File
+project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
+project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File
+project(':kotlin-gradle-plugin').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin" as File
+project(':kotlin-gradle-plugin-integration-tests').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-integration-tests" as File
+project(':kotlin-allopen').projectDir = "$rootDir/libraries/tools/kotlin-allopen" as File
+project(':kotlin-noarg').projectDir = "$rootDir/libraries/tools/kotlin-noarg" as File
+project(':kotlin-sam-with-receiver').projectDir = "$rootDir/libraries/tools/kotlin-sam-with-receiver" as File
+project(':kotlin-gradle-subplugin-example').projectDir = "$rootDir/libraries/examples/kotlin-gradle-subplugin-example" as File
+project(':examples:annotation-processor-example').projectDir = "$rootDir/libraries/examples/annotation-processor-example" as File
+
+def setBuildFile(ProjectDescriptor project) {
+    if (project.projectDir.listFiles().any { file -> file.name == "build.gradle.kts"}) {
+        project.buildFileName = "build.gradle.kts"
+    }
+    project.children.each { p -> setBuildFile(p) }
+}
+
+setBuildFile(rootProject)
