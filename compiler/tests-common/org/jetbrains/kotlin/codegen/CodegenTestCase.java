@@ -711,7 +711,19 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             result = invokeBoxInSeparateProcess(classLoader, aClass);
         }
         else {
-            result = (String) method.invoke(null);
+            ClassLoader savedClassLoader = Thread.currentThread().getContextClassLoader();
+            if (savedClassLoader != classLoader) {
+                // otherwise the test infrastructure used in the test may conflict with the one from the context classloader
+                Thread.currentThread().setContextClassLoader(classLoader);
+            }
+            try {
+                result = (String) method.invoke(null);
+            }
+            finally {
+                if (savedClassLoader != classLoader) {
+                    Thread.currentThread().setContextClassLoader(savedClassLoader);
+                }
+            }
         }
         assertEquals("OK", result);
     }

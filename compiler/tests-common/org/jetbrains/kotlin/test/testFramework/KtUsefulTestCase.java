@@ -20,6 +20,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileSystemUtil;
@@ -27,6 +28,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
+import com.intellij.testFramework.TestLoggerFactory;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.HashMap;
@@ -60,6 +62,10 @@ public abstract class KtUsefulTestCase extends TestCase {
     private static final Map<String, Long> TOTAL_TEARDOWN_COST_MILLIS = new HashMap<>();
 
     private Application application;
+
+    static {
+        Logger.setFactory(TestLoggerFactory.class);
+    }
 
     @NotNull
     protected final Disposable myTestRootDisposable = new TestDisposable();
@@ -243,8 +249,10 @@ public abstract class KtUsefulTestCase extends TestCase {
             logPerClassCost(setupCost, TOTAL_SETUP_COST_MILLIS);
 
             runTest();
+            TestLoggerFactory.onTestFinished(true);
         }
         catch (Throwable running) {
+            TestLoggerFactory.onTestFinished(false);
             exception = running;
         }
         finally {

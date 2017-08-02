@@ -75,7 +75,8 @@ public class ForTestCompileRuntime {
     @NotNull
     @Deprecated
     public static File[] runtimeClassesForTests() {
-        return new File[] { assertExists(new File("dist/builtins")), assertExists(new File("libraries/stdlib/build/classes/builtins")), assertExists(new File("libraries/stdlib/build/classes/main")) };
+        // TODO: replace hardcoded path with something flexible
+        return new File[] { assertExists(new File("dist/builtins")), assertExists(new File("build/kotlin-stdlib/classes/java/builtins")), assertExists(new File("build/kotlin-stdlib/classes/java/main")) };
     }
 
     @NotNull
