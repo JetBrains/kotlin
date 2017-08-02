@@ -1,11 +1,11 @@
 Usage: kotlin-dce-js <options> <source files>
 where possible options include:
-  -output-dir <path>         Output directory
   -keep <fully.qualified.name[,]>
                              List of fully-qualified names of declarations that shouldn't be eliminated
-  -help (-h)                 Print a synopsis of standard options
+  -output-dir <path>         Output directory
   -X                         Print a synopsis of advanced options
-  -version                   Display compiler version
-  -verbose                   Enable verbose logging output
+  -help (-h)                 Print a synopsis of standard options
   -nowarn                    Generate no warnings
+  -verbose                   Enable verbose logging output
+  -version                   Display compiler version
 OK
