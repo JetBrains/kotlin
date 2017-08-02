@@ -61,10 +61,10 @@ public class MetadataMojo extends KotlinCompileMojoBase<K2MetadataCompilerArgume
 
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2MetadataCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
-        arguments.destination = output;
-        if (!arguments.multiPlatform) {
+        arguments.setDestination(output);
+        if (!arguments.getMultiPlatform()) {
             getLog().info("multiPlatform forced for metadata generation");
-            arguments.multiPlatform = true;
+            arguments.setMultiPlatform(true);
         }
 
         List<String> classpathList = filterClassPath(project.getBasedir(), classpath);
@@ -73,7 +73,7 @@ public class MetadataMojo extends KotlinCompileMojoBase<K2MetadataCompilerArgume
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);
             getLog().debug("Classpath: " + classPathString);
-            arguments.classpath = classPathString;
+            arguments.setClasspath(classPathString);
         }
     }
 }

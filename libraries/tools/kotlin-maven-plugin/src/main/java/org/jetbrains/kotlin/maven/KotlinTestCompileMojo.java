@@ -88,7 +88,7 @@ public class KotlinTestCompileMojo extends K2JVMCompileMojo {
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         classpath = testClasspath;
-        arguments.friendPaths = new String[] { output };
+        arguments.setFriendPaths(new String[] { output });
         output = testOutput;
         super.configureSpecificCompilerArguments(arguments, sourceRoots);
     }

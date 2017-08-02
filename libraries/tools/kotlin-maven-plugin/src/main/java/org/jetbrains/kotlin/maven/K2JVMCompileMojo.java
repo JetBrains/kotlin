@@ -139,11 +139,11 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
-        arguments.destination = output;
+        arguments.setDestination(output);
 
         // don't include runtime, it should be in maven dependencies
-        arguments.noStdlib = true;
-        arguments.javaParameters = this.javaParameters;
+        arguments.setNoStdlib(true);
+        arguments.setJavaParameters(this.javaParameters);
 
         //noinspection deprecation
         if (module != null || testModule != null) {
@@ -156,35 +156,35 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             String classPathString = join(classpathList, File.pathSeparator);
             if (isJava9Module(sourceRoots)) {
                 getLog().debug("Module path: " + classPathString);
-                arguments.javaModulePath = classPathString;
+                arguments.setJavaModulePath(classPathString);
             }
             else {
                 getLog().debug("Classpath: " + classPathString);
-                arguments.classpath = classPathString;
+                arguments.setClasspath(classPathString);
             }
         }
 
         getLog().debug("Classes directory is " + output);
-        arguments.destination = output;
+        arguments.setDestination(output);
 
-        arguments.moduleName = moduleName;
+        arguments.setModuleName(moduleName);
         getLog().info("Module name is " + moduleName);
 
-        if (arguments.noOptimize) {
+        if (arguments.getNoOptimize()) {
             getLog().info("Optimization is turned off");
         }
 
         if (jvmTarget != null) {
-            arguments.jvmTarget = jvmTarget;
+            arguments.setJvmTarget(jvmTarget);
         }
 
         if (jdkHome != null) {
             getLog().info("Overriding JDK home path with: " + jdkHome);
-            arguments.jdkHome = jdkHome;
+            arguments.setJdkHome(jdkHome);
         }
 
         if (scriptTemplates != null && !scriptTemplates.isEmpty()) {
-            arguments.scriptTemplates = scriptTemplates.toArray(new String[0]);
+            arguments.setScriptTemplates(scriptTemplates.toArray(new String[0]));
         }
     }
 
