@@ -38,7 +38,7 @@ OBJ_GETTER(setupArgs, int argc, const char** argv) {
 //--- main --------------------------------------------------------------------//
 extern "C" KInt Konan_start(const ObjHeader*);
 
-extern "C" int Konan_main(int argc, const char** argv) {
+extern "C" RUNTIME_USED int Konan_main(int argc, const char** argv) {
   RuntimeState* state = InitRuntime();
 
   if (state == nullptr) {

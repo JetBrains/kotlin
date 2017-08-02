@@ -211,6 +211,10 @@ internal class LinkStage(val context: Context) {
     private val emitted = context.bitcodeFileName
     private val libraries = context.config.libraries
 
+    private fun MutableList<String>.addNonEmpty(elements: List<String>) {
+        addAll(elements.filter { !it.isEmpty() })
+    }
+
     private fun llvmLto(files: List<BitcodeFile>): ObjectFile {
         val tmpCombined = createTempFile("combined", ".o")
         tmpCombined.deleteOnExit()
@@ -218,13 +222,13 @@ internal class LinkStage(val context: Context) {
 
         val tool = distribution.llvmLto
         val command = mutableListOf(tool, "-o", combined)
-        command.addAll(platform.llvmLtoFlags)
+        command.addNonEmpty(platform.llvmLtoFlags)
         when {
-            optimize -> command.addAll(platform.llvmLtoOptFlags)
-            debug    -> command.addAll(platform.llvmDebugOptFlags)
-            else     -> command.addAll(platform.llvmLtoNooptFlags)
+            optimize -> command.addNonEmpty(platform.llvmLtoOptFlags)
+            debug    -> command.addNonEmpty(platform.llvmDebugOptFlags)
+            else     -> command.addNonEmpty(platform.llvmLtoNooptFlags)
         }
-        command.addAll(files)
+        command.addNonEmpty(files)
         runTool(*command.toTypedArray())
 
         return combined

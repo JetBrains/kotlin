@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef RUNTIME_STRING_H
-#define RUNTIME_STRING_H
+#ifndef RUNTIME_KSTRING_H
+#define RUNTIME_KSTRING_H
 
 #include "Common.h"
 #include "Memory.h"
@@ -52,4 +52,4 @@ int binarySearchRange(const T* array, int arrayLength, T needle) {
   return middle - (needle < value ? 1 : 0);
 }
 
-#endif // RUNTIME_STRING_H
+#endif // RUNTIME_KSTRING_H
