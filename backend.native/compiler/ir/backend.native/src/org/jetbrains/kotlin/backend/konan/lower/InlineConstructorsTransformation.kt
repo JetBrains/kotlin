@@ -39,11 +39,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 //-----------------------------------------------------------------------------//
 
+private val inlineConstructor by lazy { FqName("konan.internal.InlineConstructor") }
+
+internal val FunctionDescriptor.isInlineConstructor get() = annotations.hasAnnotation(inlineConstructor)
+
 internal class InlineConstructorsTransformation(val context: Context): IrElementTransformerVoidWithContext() {
 
     private val deserializer      by lazy { DeserializerDriver(context) }
     private val substituteMap     by lazy { mutableMapOf<ValueDescriptor, IrExpression>() }
-    private val inlineConstructor by lazy { FqName("konan.internal.InlineConstructor") }
 
     //-------------------------------------------------------------------------//
 
@@ -55,7 +58,7 @@ internal class InlineConstructorsTransformation(val context: Context): IrElement
 
         val irCall = super.visitCall(expression) as IrCall
         val functionDescriptor = irCall.descriptor
-        if (!functionDescriptor.annotations.hasAnnotation(inlineConstructor)) return irCall                                // This call does not need inlining.
+        if (!functionDescriptor.isInlineConstructor) return irCall                        // This call does not need inlining.
 
         val functionDeclaration = getFunctionDeclaration(irCall)                            // Get declaration of the function to be inlined.
         if (functionDeclaration == null) {                                                  // We failed to get the declaration.

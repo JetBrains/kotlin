@@ -38,9 +38,11 @@ public final class Array<T> {
         get() = getArrayLength()
 
     @SymbolName("Kotlin_Array_get")
+    @PointsTo(0b0100, 0, 0b0001) // <this> points to <return>, <return> points to <this>.
     external public operator fun get(index: Int): T
 
     @SymbolName("Kotlin_Array_set")
+    @PointsTo(0b0100) // <this> points to <value>.
     external public operator fun set(index: Int, value: T): Unit
 
     public operator fun iterator(): kotlin.collections.Iterator<T> {

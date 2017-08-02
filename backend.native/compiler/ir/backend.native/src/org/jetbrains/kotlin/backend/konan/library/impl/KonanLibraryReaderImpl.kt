@@ -47,6 +47,7 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int, val t
         }
 
     val targetList = inPlace.targetsDir.listFiles.map{it.name}
+    override val escapeAnalysis: ByteArray? by lazy { inPlace.escapeAnalysisFile.let { if (it.exists) it.readBytes() else null } }
 
     override val libraryName 
         get() = inPlace.libraryName

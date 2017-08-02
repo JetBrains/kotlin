@@ -82,6 +82,10 @@ class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int,
         println("manifest addend: ${properties.stringPropertyNames().joinToString(" ")}")
     }
 
+    override fun addEscapeAnalysis(escapeAnalysis: ByteArray) {
+        escapeAnalysisFile.writeBytes(escapeAnalysis)
+    }
+
     override fun commit() {
         manifestProperties.saveToFile(manifestFile)
         if (!nopack) {
@@ -99,7 +103,8 @@ internal fun buildLibrary(
     output: String, 
     llvmModule: LLVMModuleRef, 
     nopack: Boolean, 
-    manifest: String?): KonanLibraryWriter {
+    manifest: String?,
+    escapeAnalysis: ByteArray?): KonanLibraryWriter {
 
     val library = LibraryWriterImpl(output, abiVersion, target, nopack)
 
@@ -109,6 +114,7 @@ internal fun buildLibrary(
         library.addNativeBitcode(it)
     }
     manifest ?.let { library.addManifestAddend(it) }
+    escapeAnalysis?.let { library.addEscapeAnalysis(it) }
 
     library.commit()
     return library

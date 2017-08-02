@@ -191,6 +191,7 @@ internal fun <E> Array<E>.resetAt(index: Int) {
 }
 
 @SymbolName("Kotlin_Array_fillImpl")
+@PointsTo(0b01000) // <array> points to <value>.
 external private fun fillImpl(array: Array<Any>, fromIndex: Int, toIndex: Int, value: Any?)
 
 @SymbolName("Kotlin_IntArray_fillImpl")
@@ -212,6 +213,7 @@ internal fun IntArray.fill(fromIndex: Int, toIndex: Int, value: Int) {
 }
 
 @SymbolName("Kotlin_Array_copyImpl")
+@PointsTo(0, 0, 0b000001) // <destination> points to <array>.
 external private fun copyImpl(array: Array<Any>, fromIndex: Int,
                          destination: Array<Any>, toIndex: Int, count: Int)
 

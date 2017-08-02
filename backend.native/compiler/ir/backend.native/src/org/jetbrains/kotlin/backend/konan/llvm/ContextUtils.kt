@@ -32,40 +32,105 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
-internal enum class SlotType {
+internal sealed class SlotType {
     // Frame local arena slot can be used.
-    ARENA,
+    class ARENA: SlotType()
     // Return slot can be used.
-    RETURN,
+    class RETURN: SlotType()
     // Return slot, if it is an arena, can be used.
-    RETURN_IF_ARENA,
+    class RETURN_IF_ARENA: SlotType()
+    // Return slot, if it is an arena, can be used.
+    class PARAM_IF_ARENA(val parameter: Int): SlotType()
     // Anonymous slot.
-    ANONYMOUS,
+    class ANONYMOUS: SlotType()
     // Unknown slot type.
-    UNKNOWN
+    class UNKNOWN: SlotType()
+
+    companion object {
+        val ARENA = ARENA()
+        val RETURN = RETURN()
+        val RETURN_IF_ARENA = RETURN_IF_ARENA()
+        val ANONYMOUS = ANONYMOUS()
+        val UNKNOWN = UNKNOWN()
+    }
 }
 
 // Lifetimes class of reference, computed by escape analysis.
-enum class Lifetime(val slotType: SlotType) {
+internal sealed class Lifetime(val slotType: SlotType) {
     // If reference is frame-local (only obtained from some call and never leaves).
-    LOCAL(SlotType.ARENA),
+    class LOCAL: Lifetime(SlotType.ARENA) {
+        override fun toString(): String {
+            return "LOCAL"
+        }
+    }
+
     // If reference is only returned.
-    RETURN_VALUE(SlotType.RETURN),
+    class RETURN_VALUE: Lifetime(SlotType.RETURN) {
+        override fun toString(): String {
+            return "RETURN_VALUE"
+        }
+    }
+
     // If reference is set as field of references of class RETURN_VALUE or INDIRECT_RETURN_VALUE.
-    INDIRECT_RETURN_VALUE(SlotType.RETURN_IF_ARENA),
+    class INDIRECT_RETURN_VALUE: Lifetime(SlotType.RETURN_IF_ARENA) {
+        override fun toString(): String {
+            return "INDIRECT_RETURN_VALUE"
+        }
+    }
+
     // If reference is stored to the field of an incoming parameters.
-    PARAMETER_FIELD(SlotType.ANONYMOUS),
+    class PARAMETER_FIELD(val parameter: Int): Lifetime(SlotType.PARAM_IF_ARENA(parameter)) {
+        override fun toString(): String {
+            return "PARAMETER_FIELD($parameter)"
+        }
+    }
+
     // If reference refers to the global (either global object or global variable).
-    GLOBAL(SlotType.ANONYMOUS),
+    class GLOBAL: Lifetime(SlotType.ANONYMOUS) {
+        override fun toString(): String {
+            return "GLOBAL"
+        }
+    }
+
     // If reference used to throw.
-    THROW(SlotType.ANONYMOUS),
+    class THROW: Lifetime(SlotType.ANONYMOUS) {
+        override fun toString(): String {
+            return "THROW"
+        }
+    }
+
     // If reference used as an argument of outgoing function. Class can be improved by escape analysis
     // of called function.
-    ARGUMENT(SlotType.ANONYMOUS),
+    class ARGUMENT: Lifetime(SlotType.ANONYMOUS) {
+        override fun toString(): String {
+            return "ARGUMENT"
+        }
+    }
+
     // If reference class is unknown.
-    UNKNOWN(SlotType.UNKNOWN),
+    class UNKNOWN: Lifetime(SlotType.UNKNOWN) {
+        override fun toString(): String {
+            return "UNKNOWN"
+        }
+    }
+
     // If reference class is irrelevant.
-    IRRELEVANT(SlotType.UNKNOWN)
+    class IRRELEVANT: Lifetime(SlotType.UNKNOWN) {
+        override fun toString(): String {
+            return "IRRELEVANT"
+        }
+    }
+
+    companion object {
+        val LOCAL = LOCAL()
+        val RETURN_VALUE = RETURN_VALUE()
+        val INDIRECT_RETURN_VALUE = INDIRECT_RETURN_VALUE()
+        val GLOBAL = GLOBAL()
+        val THROW = THROW()
+        val ARGUMENT = ARGUMENT()
+        val UNKNOWN = UNKNOWN()
+        val IRRELEVANT = IRRELEVANT()
+    }
 }
 
 /**
@@ -253,6 +318,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val setRefFunction = importRtFunction("SetRef")
     val updateRefFunction = importRtFunction("UpdateRef")
     val leaveFrameFunction = importRtFunction("LeaveFrame")
+    val getReturnSlotIfArenaFunction = importRtFunction("GetReturnSlotIfArena")
+    val getParamSlotIfArenaFunction = importRtFunction("GetParamSlotIfArena")
     val lookupOpenMethodFunction = importRtFunction("LookupOpenMethod")
     val isInstanceFunction = importRtFunction("IsInstance")
     val checkInstanceFunction = importRtFunction("CheckInstance")

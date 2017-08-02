@@ -52,6 +52,4 @@ int binarySearchRange(const T* array, int arrayLength, T needle) {
   return middle - (needle < value ? 1 : 0);
 }
 
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-
 #endif // RUNTIME_STRING_H

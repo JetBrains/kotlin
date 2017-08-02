@@ -1,20 +1,13 @@
-fun foo1(arg: String) : String = arg
+//fun foo1(arg: String) : String = foo0(arg)
+fun foo1(arg: Any) : Any = foo0(arg)
 
-/*
-fun foo2(arg: String) : String = arg + " foo2"
+fun foo0(arg: Any) : Any = Any()
 
-fun bar(arg1: String, arg2: String) : String  = arg1 + " bar " + arg2
+var global : Any =  Any()
 
-fun zoo1() : String {
-    var x = foo1("")
-    var y = 4
-    return x
-}
-
-fun zoo2() : String {
-    val x = foo1("")
-    var y = 5
-    return x
+fun foo0_escape(arg: Any) : Any{
+    global = arg
+    return Any()
 }
 
 class Node(var previous: Node?)
@@ -38,10 +31,11 @@ fun zoo4(arg: Int) : Any {
         else -> c
     }
     return a
-} */
+}
 
-fun zoo5(arg: String) : String {
-    return arg + foo1(arg)
+fun zoo5(arg: Any) : Any{
+    foo1(arg)
+    return arg
 }
 
 fun zoo6(arg: Any) : Any {
@@ -53,6 +47,7 @@ fun zoo7(arg1: Any, arg2: Any, selector: Int) : Any {
 }
 
 fun main(args : Array<String>) {
-    val z = zoo7(Any(), Any(), 1)
+    //val z = zoo7(Any(), Any(), 1)
+    val x = zoo5(Any())
     //println(bar(foo1(foo2("")), foo2(foo1(""))))
 }

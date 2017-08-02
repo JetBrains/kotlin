@@ -71,8 +71,13 @@ internal fun emitLLVM(context: Context) {
 
         generateDebugInfoHeader(context)
 
+        val lifetimes = mutableMapOf<IrElement, Lifetime>()
+        phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {
+            EscapeAnalysis.computeLifetimes(irModule, context, lifetimes)
+        }
+
         phaser.phase(KonanPhase.CODEGEN) {
-            irModule.acceptVoid(CodeGeneratorVisitor(context))
+            irModule.acceptVoid(CodeGeneratorVisitor(context, lifetimes))
         }
 
         if (context.shouldContainDebugInfo()) {
@@ -118,7 +123,8 @@ internal fun produceOutput(context: Context) {
                 libraryName, 
                 llvmModule,
                 nopack,
-                manifest)
+                manifest,
+                context.moduleEscapeAnalysisResult?.build()?.toByteArray())
 
             context.library = library
             context.bitcodeFileName = library.mainBitcodeFileName
@@ -232,10 +238,9 @@ internal interface CodeContext {
 
 //-------------------------------------------------------------------------//
 
-internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid {
+internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrElement, Lifetime>) : IrElementVisitorVoid {
 
     val codegen = CodeGenerator(context)
-    val resultLifetimes = mutableMapOf<IrElement, Lifetime>()
 
     //-------------------------------------------------------------------------//
 
@@ -309,8 +314,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
     override fun visitModuleFragment(declaration: IrModuleFragment) {
         context.log{"visitModule                    : ${ir2string(declaration)}"}
-
-        // computeLifetimes(module, this.codegen, resultLifetimes)
 
         declaration.acceptChildrenVoid(this)
         appendLlvmUsed(context.llvm.usedFunctions)
@@ -1847,7 +1850,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
     private fun resultLifetime(callee: IrElement): Lifetime {
-        return resultLifetimes.getOrElse(callee) { /* TODO: make IRRELEVANT */ Lifetime.GLOBAL }
+        return lifetimes.getOrElse(callee) { /* TODO: make IRRELEVANT */ Lifetime.GLOBAL }
     }
 
     private fun evaluateConstructorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {

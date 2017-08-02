@@ -89,3 +89,7 @@ public annotation class FixmeInline
  * Need to be fixed.
  */
 public annotation class Fixme
+
+public annotation class Escapes(val who: Int)
+
+public annotation class PointsTo(vararg val onWhom: Int)

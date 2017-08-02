@@ -137,8 +137,8 @@ void Kotlin_CharArray_set(KRef thiz, KInt index, KChar value) {
 
 OBJ_GETTER(Kotlin_CharArray_copyOf, KConstRef thiz, KInt newSize) {
   const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = ArrayContainer(
-      theCharArrayTypeInfo, newSize).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      array->type_info(), newSize, OBJ_RESULT)->array();
   KInt toCopy = array->count_ < newSize ?  array->count_ : newSize;
   memcpy(
       PrimitiveArrayAddressOfElementAt<KChar>(result, 0),

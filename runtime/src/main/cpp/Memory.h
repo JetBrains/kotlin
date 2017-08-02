@@ -36,7 +36,7 @@ typedef enum {
   CONTAINER_TAG_SEEN = 4,
   // Shift to get actual counter.
   CONTAINER_TAG_SHIFT = 3,
-  // Actual value to increment/decrement conatiner by. Tag is in lower bits.
+  // Actual value to increment/decrement container by. Tag is in lower bits.
   CONTAINER_TAG_INCREMENT = 1 << CONTAINER_TAG_SHIFT,
   // Mask for container type, disregard seen bit.
   CONTAINER_TAG_MASK = ((CONTAINER_TAG_INCREMENT >> 1) - 1)
@@ -239,6 +239,17 @@ class ArrayContainer : public Container {
 // Container is used for reference counting, and it is assumed that objects
 // with related placement will share container. Only
 // whole container can be freed, individual objects are not taken into account.
+class ArenaContainer;
+
+struct ContainerChunk {
+  ContainerChunk* next;
+  ArenaContainer* arena;
+  // Then we have ContainerHeader here.
+  ContainerHeader* asHeader() {
+    return reinterpret_cast<ContainerHeader*>(this + 1);
+  }
+};
+
 class ArenaContainer {
  public:
   void Init();
@@ -252,15 +263,9 @@ class ArenaContainer {
   // same operation could be used to place strings.
   ArrayHeader* PlaceArray(const TypeInfo* array_type_info, container_size_t count);
 
- private:
-  struct ContainerChunk {
-    ContainerChunk* next;
-    // Then we have ContainerHeader here.
-    ContainerHeader* asHeader() {
-      return reinterpret_cast<ContainerHeader*>(this + 1);
-    }
-  };
+  ObjHeader** getSlot();
 
+ private:
   void* place(container_size_t size);
   bool allocContainer(container_size_t minSize);
   void setMeta(ObjHeader* obj, const TypeInfo* type_info) {
@@ -272,6 +277,8 @@ class ArenaContainer {
   ContainerChunk* currentChunk_;
   uint8_t* current_;
   uint8_t* end_;
+  ArrayHeader* slots_;
+  uint32_t slotsCount_;
 };
 
 #ifdef __cplusplus
@@ -350,6 +357,10 @@ void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NO
 void ReleaseRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
 // Called on frame leave, if it has object slots.
 void LeaveFrame(ObjHeader** start, int count) RUNTIME_NOTHROW;
+// Tries to use returnSlot's arena for allocation.
+ObjHeader** GetReturnSlotIfArena(ObjHeader** returnSlot, ObjHeader** localSlot) RUNTIME_NOTHROW;
+// Tries to use param's arena for allocation.
+ObjHeader** GetParamSlotIfArena(ObjHeader* param, ObjHeader** localSlot) RUNTIME_NOTHROW;
 // Collect garbage, which cannot be found by reference counting (cycles).
 void GarbageCollect() RUNTIME_NOTHROW;
 // Clears object subgraph references from memory subsystem, and optionally
