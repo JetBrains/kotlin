@@ -18,5 +18,6 @@
     <orderEntry type="module" module-name="js.serializer" />
     <orderEntry type="module" module-name="js.frontend" />
     <orderEntry type="module" module-name="ir.psi2ir" />
+    <orderEntry type="module" module-name="backend-common" />
   </component>
 </module>
