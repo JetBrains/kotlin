@@ -83,7 +83,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         options.add(new KaptOption("correctErrorTypes", correctErrorTypes));
         options.add(new KaptOption("processors", annotationProcessors));
 
-        if (arguments.verbose) {
+        if (arguments.getVerbose()) {
             options.add(new KaptOption("verbose", true));
         }
 
@@ -133,13 +133,17 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         }
 
         String[] kaptOptions = renderKaptOptions(getKaptOptions(arguments, resolvedArtifacts));
-        arguments.pluginOptions = joinArrays(arguments.pluginOptions, kaptOptions);
+        arguments.setPluginOptions(joinArrays(arguments.getPluginOptions(), kaptOptions));
 
         String jdkToolsJarPath = getJdkToolsJarPath();
-        arguments.pluginClasspaths = joinArrays(arguments.pluginClasspaths,
-                (jdkToolsJarPath == null)
-                        ? new String[] { resolvedArtifacts.kaptCompilerPluginArtifact }
-                        : new String[] { jdkToolsJarPath, resolvedArtifacts.kaptCompilerPluginArtifact });
+        arguments.setPluginClasspaths(
+                joinArrays(
+                        arguments.getPluginClasspaths(),
+                        (jdkToolsJarPath == null)
+                                ? new String[]{resolvedArtifacts.kaptCompilerPluginArtifact}
+                                : new String[]{jdkToolsJarPath, resolvedArtifacts.kaptCompilerPluginArtifact}
+                )
+        );
     }
 
     @Nullable

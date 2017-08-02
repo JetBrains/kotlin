@@ -55,8 +55,8 @@ open class KaptTask : ConventionTask() {
         val args = K2JVMCompilerArguments()
         kotlinCompileTask.setupCompilerArgs(args)
 
-        args.pluginClasspaths = (pluginOptions.classpath + args.pluginClasspaths).toSet().toTypedArray()
-        args.pluginOptions = (pluginOptions.arguments + args.pluginOptions).toTypedArray()
+        args.pluginClasspaths = (pluginOptions.classpath + args.pluginClasspaths!!).toSet().toTypedArray()
+        args.pluginOptions = (pluginOptions.arguments + args.pluginOptions!!).toTypedArray()
         args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
 
         val messageCollector = GradleMessageCollector(logger)

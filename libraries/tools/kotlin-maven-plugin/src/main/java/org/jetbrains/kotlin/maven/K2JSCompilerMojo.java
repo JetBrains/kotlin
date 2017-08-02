@@ -96,11 +96,11 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
 
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
-        arguments.outputFile = outputFile;
-        arguments.noStdlib = true;
-        arguments.metaInfo = metaInfo;
-        arguments.moduleKind = moduleKind;
-        arguments.main = main;
+        arguments.setOutputFile(outputFile);
+        arguments.setNoStdlib(true);
+        arguments.setMetaInfo(metaInfo);
+        arguments.setModuleKind(moduleKind);
+        arguments.setMain(main);
 
         List<String> libraries;
         try {
@@ -109,11 +109,11 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
             throw new MojoExecutionException("Unresolved dependencies", e);
         }
         getLog().debug("libraries: " + libraries);
-        arguments.libraries = StringUtil.join(libraries, File.pathSeparator);
+        arguments.setLibraries(StringUtil.join(libraries, File.pathSeparator));
 
-        arguments.sourceMap = sourceMap;
-        arguments.sourceMapPrefix = sourceMapPrefix;
-        arguments.sourceMapEmbedSources = sourceMapEmbedSources;
+        arguments.setSourceMap(sourceMap);
+        arguments.setSourceMapPrefix(sourceMapPrefix);
+        arguments.setSourceMapEmbedSources(sourceMapEmbedSources);
 
         if (outputFile != null) {
             ConcurrentMap<String, List<String>> collector = getOutputDirectoriesCollector();
@@ -131,7 +131,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
             }
         }
 
-        arguments.sourceMapSourceRoots = sourceMapSourceRoots.toString();
+        arguments.setSourceMapSourceRoots(sourceMapSourceRoots.toString());
     }
 
     protected List<String> getClassPathElements() throws DependencyResolutionRequiredException {

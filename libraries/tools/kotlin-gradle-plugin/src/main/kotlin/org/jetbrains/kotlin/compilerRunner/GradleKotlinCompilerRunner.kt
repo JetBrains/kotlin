@@ -89,7 +89,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             environment: GradleCompilerEnvironment
     ): ExitCode {
         val buildFile = makeModuleFile(
-                args.moduleName,
+                args.moduleName!!,
                 isTest = false,
                 outputDir = args.destinationAsFile,
                 sourcesToCompile = sourcesToCompile,
