@@ -444,8 +444,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             element: KtDotQualifiedExpression,
             bindingContext: BindingContext
         ): AnalyzeQualifiedElementResult {
-            val receiver = element.receiverExpression
-            if (receiver !is KtThisExpression && bindingContext[BindingContext.QUALIFIER, receiver] == null) return AnalyzeQualifiedElementResult.Skip
+            if (!canBePossibleToDropReceiver(element, bindingContext)) return AnalyzeQualifiedElementResult.Skip
 
             if (PsiTreeUtil.getParentOfType(
                     element,
@@ -503,6 +502,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
 
 
+            val receiver = element.receiverExpression
             if (receiver is KtThisExpression) {
                 if (!targetsMatch) return AnalyzeQualifiedElementResult.Skip
                 val originalCall = selector.getResolvedCall(bindingContext) ?: return AnalyzeQualifiedElementResult.Skip
@@ -534,6 +534,17 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 else ->
                     AnalyzeQualifiedElementResult.ImportDescriptors(targets)
             }
+        }
+
+        private fun canBePossibleToDropReceiver(element: KtDotQualifiedExpression, bindingContext: BindingContext): Boolean {
+            val receiver = element.receiverExpression
+            if (receiver is KtThisExpression) return true
+            val qualifier = bindingContext[BindingContext.QUALIFIER, receiver] ?: return false
+            val classDescriptor = qualifier.descriptor as? ClassDescriptor ?: return true
+            if (classDescriptor.kind != ClassKind.OBJECT) return true
+            // for object receiver we should additionally check that it's dispatch receiver (that is the member is inside the object)
+            val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
+            return resolvedCall.explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER
         }
 
         private fun copyShortenAndAnalyze(
