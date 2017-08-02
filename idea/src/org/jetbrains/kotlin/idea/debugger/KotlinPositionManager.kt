@@ -284,8 +284,11 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
 
         val classNames = DebuggerClassNameProvider(myDebugProcess, scopes).getOuterClassNamesForPosition(position)
-        return classNames.mapNotNull { name ->
-            myDebugProcess.requestsManager.createClassPrepareRequest(requestor, name + "*")
+        return classNames.flatMap { name ->
+            listOfNotNull(
+                    myDebugProcess.requestsManager.createClassPrepareRequest(requestor, name),
+                    myDebugProcess.requestsManager.createClassPrepareRequest(requestor, "$name$*")
+            )
         }
     }
 
