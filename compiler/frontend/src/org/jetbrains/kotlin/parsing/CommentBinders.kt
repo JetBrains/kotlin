@@ -94,7 +94,7 @@ private class AllCommentsBinder(val isTrailing: Boolean) : WhitespacesAndComment
 
         val size = tokens.size
 
-        // Skip comment if needed. Expect that there can't be several consecutive comments
+        // Skip one whitespace if needed. Expect that there can't be several consecutive whitespaces
         val endToken = tokens[if (isTrailing) size - 1 else 0]
         val shift = if (endToken == KtTokens.WHITE_SPACE) 1 else 0
 
