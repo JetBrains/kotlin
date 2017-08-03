@@ -2689,6 +2689,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("FunctionComment.kts")
+            public void testFunctionComment() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/FunctionComment.kts");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("Import.kts")
             public void testImport() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/Import.kts");
