@@ -88,6 +88,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         private val firstDependency: M? = null,
         private val modulePlatforms: (M) -> MultiTargetPlatform?,
         private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
+        private val languageSettingsProvider: LanguageSettingsProvider = LanguageSettingsProvider.Default,
         private val invalidateOnOOCB: Boolean = true
 ) : ResolverForProject<M>() {
 
@@ -148,6 +149,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 analyzerFacade(module).createResolverForModule(
                         module, descriptor as ModuleDescriptorImpl, projectContext.withModule(descriptor), modulesContent(module),
                         platformParameters, targetEnvironment, this@ResolverForProjectImpl,
+                        languageSettingsProvider,
                         packagePartProviderFactory(module, modulesContent(module)))
             }
         }

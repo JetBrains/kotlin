@@ -78,12 +78,12 @@ fun createModuleResolverProvider(
             debugName, globalContext.withProject(project), modulesToCreateResolversFor,
             { module -> AnalyzerFacadeProvider.getAnalyzerFacade(module.platform ?: analysisSettings.platform) },
             modulesContent, jvmPlatformParameters,
-                IDELanguageSettingsProvider,
-                IdeaEnvironment, builtIns,
+            IdeaEnvironment, builtIns,
             delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
             analysisSettings.sdk?.let { SdkInfo(project, it) },
             modulePlatforms = { module -> module.platform?.multiTargetPlatform },
             packageOracleFactory = project.service<IdePackageOracleFactory>(),
+            languageSettingsProvider =  IDELanguageSettingsProvider,
             invalidateOnOOCB = invalidateOnOOCB
     )
 
