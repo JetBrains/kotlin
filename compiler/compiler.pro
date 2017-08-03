@@ -203,3 +203,6 @@ messages/**)
 # for tools.jar
 -keep class com.sun.tools.javac.** { *; }
 -keep class com.sun.source.** { *; }
+
+# for coroutines
+-keep class kotlinx.coroutines.** { *; }
