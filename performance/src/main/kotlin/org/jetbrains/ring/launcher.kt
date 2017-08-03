@@ -23,9 +23,9 @@ val BENCHMARK_SIZE = 100
 //-----------------------------------------------------------------------------//
 
 class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
-    val results = mutableListOf<Long>()
+    val results = mutableMapOf<String, Long>()
 
-    fun launch(benchmark: () -> Any?) {
+    fun launch(benchmark: () -> Any?): Long {
         var i = numWarmIterations
         var j = numMeasureIterations
 
@@ -34,22 +34,12 @@ class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
             while (j-- > 0) benchmark()
         }
 
-        val timeNormalized = time / numMeasureIterations
-        results.add(timeNormalized)
-        printResult(benchmark.toString(), timeNormalized)
+        return time / numMeasureIterations
     }
 
     //-------------------------------------------------------------------------//
 
-    fun printResult(name: String, time: Long) {
-        val niceName = name.replace(" (Kotlin reflection is not available)", "").padEnd(45, ' ')
-        val niceTime = time.toString().padStart(10, ' ')
-        println("  $niceName : $niceTime")
-    }
-
-    //-------------------------------------------------------------------------//
-
-    fun runBenchmarks(): Long {
+    fun runBenchmarks() {
         runAbstractMethodBenchmark()
         runClassArrayBenchmark()
         runClassBaselineBenchmark()
@@ -74,370 +64,356 @@ class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
         runSwitchBenchmark()
         runWithIndiciesBenchmark()
 
-        return average()
+        printResults()
     }
-
 
     //-------------------------------------------------------------------------//
 
-    fun average(): Long {
-        val total = results.fold(0L) { total, next -> total + next }
-        return total / results.size
+    fun printResults() {
+        var total = 0L
+        results.forEach {
+            val normaTime = NormaResults[it.key]
+            val norma     = it.value / normaTime!!
+            val niceName  = it.key.padEnd(50, ' ')
+            val niceNorma = norma.toString().padStart(10, ' ')
+            println("$niceName : $niceNorma")
+
+            total += norma
+        }
+        val average = total / results.size
+        println("\nRingAverage: $average")
     }
 
     //-------------------------------------------------------------------------//
 
     fun runAbstractMethodBenchmark() {
-        println("\nAbstractMethodBenchmark")
         val benchmark = AbstractMethodBenchmark()
 
-        launch(benchmark::sortStrings)
-        launch(benchmark::sortStringsWithComparator)
+        results["AbstractMethod.sortStrings"]               = launch(benchmark::sortStrings)
+        results["AbstractMethod.sortStringsWithComparator"] = launch(benchmark::sortStringsWithComparator)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runClassArrayBenchmark() {
-        println("\nClassArrayBenchmark")
         val benchmark = ClassArrayBenchmark()
         benchmark.setup()
 
-        launch(benchmark::copy)
-        launch(benchmark::copyManual)
-        launch(benchmark::filterAndCount)
-        launch(benchmark::filterAndMap)
-        launch(benchmark::filterAndMapManual)
-        launch(benchmark::filter)
-        launch(benchmark::filterManual)
-        launch(benchmark::countFilteredManual)
-        launch(benchmark::countFiltered)
-        launch(benchmark::countFilteredLocal)
+        results["ClassArray.copy"]                = launch(benchmark::copy)
+        results["ClassArray.copyManual"]          = launch(benchmark::copyManual)
+        results["ClassArray.filterAndCount"]      = launch(benchmark::filterAndCount)
+        results["ClassArray.filterAndMap"]        = launch(benchmark::filterAndMap)
+        results["ClassArray.filterAndMapManual"]  = launch(benchmark::filterAndMapManual)
+        results["ClassArray.filter"]              = launch(benchmark::filter)
+        results["ClassArray.filterManual"]        = launch(benchmark::filterManual)
+        results["ClassArray.countFilteredManual"] = launch(benchmark::countFilteredManual)
+        results["ClassArray.countFiltered"]       = launch(benchmark::countFiltered)
+        results["ClassArray.countFilteredLocal"]  = launch(benchmark::countFilteredLocal)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runClassBaselineBenchmark() {
-        println("\nClassBaselineBenchmark")
         val benchmark = ClassBaselineBenchmark()
 
-        launch(benchmark::consume)
-        launch(benchmark::consumeField)
-        launch(benchmark::allocateList)
-        launch(benchmark::allocateArray)
-        launch(benchmark::allocateListAndFill)
-        launch(benchmark::allocateListAndWrite)
-        launch(benchmark::allocateArrayAndFill)
+        results["ClassBaseline.consume"]              = launch(benchmark::consume)
+        results["ClassBaseline.consumeField"]         = launch(benchmark::consumeField)
+        results["ClassBaseline.allocateList"]         = launch(benchmark::allocateList)
+        results["ClassBaseline.allocateArray"]        = launch(benchmark::allocateArray)
+        results["ClassBaseline.allocateListAndFill"]  = launch(benchmark::allocateListAndFill)
+        results["ClassBaseline.allocateListAndWrite"] = launch(benchmark::allocateListAndWrite)
+        results["ClassBaseline.allocateArrayAndFill"] = launch(benchmark::allocateArrayAndFill)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runClassListBenchmark() {
-        println("\nClassListBenchmark")
         val benchmark = ClassListBenchmark()
         benchmark.setup()
 
-        launch(benchmark::copy)
-        launch(benchmark::copyManual)
-        launch(benchmark::filterAndCount)
-        launch(benchmark::filterAndCountWithLambda)
-        launch(benchmark::filterWithLambda)
-        launch(benchmark::mapWithLambda)
-        launch(benchmark::countWithLambda)
-        launch(benchmark::filterAndMapWithLambda)
-        launch(benchmark::filterAndMapWithLambdaAsSequence)
-        launch(benchmark::filterAndMap)
-        launch(benchmark::filterAndMapManual)
-        launch(benchmark::filter)
-        launch(benchmark::filterManual)
-        launch(benchmark::countFilteredManual)
-        launch(benchmark::countFiltered)
-        launch(benchmark::reduce)
+        results["ClassList.copy"]                             = launch(benchmark::copy)
+        results["ClassList.copyManual"]                       = launch(benchmark::copyManual)
+        results["ClassList.filterAndCount"]                   = launch(benchmark::filterAndCount)
+        results["ClassList.filterAndCountWithLambda"]         = launch(benchmark::filterAndCountWithLambda)
+        results["ClassList.filterWithLambda"]                 = launch(benchmark::filterWithLambda)
+        results["ClassList.mapWithLambda"]                    = launch(benchmark::mapWithLambda)
+        results["ClassList.countWithLambda"]                  = launch(benchmark::countWithLambda)
+        results["ClassList.filterAndMapWithLambda"]           = launch(benchmark::filterAndMapWithLambda)
+        results["ClassList.filterAndMapWithLambdaAsSequence"] = launch(benchmark::filterAndMapWithLambdaAsSequence)
+        results["ClassList.filterAndMap"]                     = launch(benchmark::filterAndMap)
+        results["ClassList.filterAndMapManual"]               = launch(benchmark::filterAndMapManual)
+        results["ClassList.filter"]                           = launch(benchmark::filter)
+        results["ClassList.filterManual"]                     = launch(benchmark::filterManual)
+        results["ClassList.countFilteredManual"]              = launch(benchmark::countFilteredManual)
+        results["ClassList.countFiltered"]                    = launch(benchmark::countFiltered)
+        results["ClassList.reduce"]                           = launch(benchmark::reduce)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runClassStreamBenchmark() {
-        println("\nClassStreamBenchmark")
         val benchmark = ClassStreamBenchmark()
         benchmark.setup()
 
-        launch(benchmark::copy)
-        launch(benchmark::copyManual)
-        launch(benchmark::filterAndCount)
-        launch(benchmark::filterAndMap)
-        launch(benchmark::filterAndMapManual)
-        launch(benchmark::filter)
-        launch(benchmark::filterManual)
-        launch(benchmark::countFilteredManual)
-        launch(benchmark::countFiltered)
-        launch(benchmark::reduce)
+        results["ClassStream.copy"]                = launch(benchmark::copy)
+        results["ClassStream.copyManual"]          = launch(benchmark::copyManual)
+        results["ClassStream.filterAndCount"]      = launch(benchmark::filterAndCount)
+        results["ClassStream.filterAndMap"]        = launch(benchmark::filterAndMap)
+        results["ClassStream.filterAndMapManual"]  = launch(benchmark::filterAndMapManual)
+        results["ClassStream.filter"]              = launch(benchmark::filter)
+        results["ClassStream.filterManual"]        = launch(benchmark::filterManual)
+        results["ClassStream.countFilteredManual"] = launch(benchmark::countFilteredManual)
+        results["ClassStream.countFiltered"]       = launch(benchmark::countFiltered)
+        results["ClassStream.reduce"]              = launch(benchmark::reduce)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runCompanionObjectBenchmark() {
-        println("\nCompanionObjectBenchmark")
         val benchmark = CompanionObjectBenchmark()
 
-        launch(benchmark::invokeRegularFunction)
-        launch(benchmark::invokeJvmStaticFunction)
+        results["CompanionObject.invokeRegularFunction"]   = launch(benchmark::invokeRegularFunction)
+        results["CompanionObject.invokeJvmStaticFunction"] = launch(benchmark::invokeJvmStaticFunction)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runDefaultArgumentBenchmark() {
-        println("\nDefaultArgumentBenchmark")
         val benchmark = DefaultArgumentBenchmark()
         benchmark.setup()
 
-        launch(benchmark::testOneOfTwo)
-        launch(benchmark::testTwoOfTwo)
-        launch(benchmark::testOneOfFour)
-        launch(benchmark::testFourOfFour)
-        launch(benchmark::testOneOfEight)
-        launch(benchmark::testEightOfEight)
+        results["DefaultArgument.testOneOfTwo"]     = launch(benchmark::testOneOfTwo)
+        results["DefaultArgument.testTwoOfTwo"]     = launch(benchmark::testTwoOfTwo)
+        results["DefaultArgument.testOneOfFour"]    = launch(benchmark::testOneOfFour)
+        results["DefaultArgument.testFourOfFour"]   = launch(benchmark::testFourOfFour)
+        results["DefaultArgument.testOneOfEight"]   = launch(benchmark::testOneOfEight)
+        results["DefaultArgument.testEightOfEight"] = launch(benchmark::testEightOfEight)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runElvisBenchmark() {
-        println("\nElvisBenchmark")
         val benchmark = ElvisBenchmark()
         benchmark.setup()
 
-        launch(benchmark::testElvis)
+        results["Elvis.testElvis"] = launch(benchmark::testElvis)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runEulerBenchmark() {
-        println("\nEulerBenchmark")
         val benchmark = EulerBenchmark()
 
-        launch(benchmark::problem1bySequence)
-        launch(benchmark::problem1)
-        launch(benchmark::problem2)
-        launch(benchmark::problem4)
-        launch(benchmark::problem8)
-        launch(benchmark::problem9)
-        launch(benchmark::problem14)
-        launch(benchmark::problem14full)
+        results["Euler.problem1bySequence"] = launch(benchmark::problem1bySequence)
+        results["Euler.problem1"]           = launch(benchmark::problem1)
+        results["Euler.problem2"]           = launch(benchmark::problem2)
+        results["Euler.problem4"]           = launch(benchmark::problem4)
+        results["Euler.problem8"]           = launch(benchmark::problem8)
+        results["Euler.problem9"]           = launch(benchmark::problem9)
+        results["Euler.problem14"]          = launch(benchmark::problem14)
+        results["Euler.problem14full"]      = launch(benchmark::problem14full)
     }
 
 
     //-------------------------------------------------------------------------//
 
     fun runFibonacciBenchmark() {
-        println("\nFibonacciBenchmark")
         val benchmark = FibonacciBenchmark()
-        launch(benchmark::calcClassic)
-        launch(benchmark::calc)
-        launch(benchmark::calcWithProgression)
-        launch(benchmark::calcSquare)
+        results["Fibonacci.calcClassic"]         = launch(benchmark::calcClassic)
+        results["Fibonacci.calc"]                = launch(benchmark::calc)
+        results["Fibonacci.calcWithProgression"] = launch(benchmark::calcWithProgression)
+        results["Fibonacci.calcSquare"]          = launch(benchmark::calcSquare)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runInlineBenchmark() {
-        println("\nInlineBenchmark")
         val benchmark = InlineBenchmark()
-        launch(benchmark::calculate)
-        launch(benchmark::calculateInline)
-        launch(benchmark::calculateGeneric)
-        launch(benchmark::calculateGenericInline)
+        results["Inline.calculate"]              = launch(benchmark::calculate)
+        results["Inline.calculateInline"]        = launch(benchmark::calculateInline)
+        results["Inline.calculateGeneric"]       = launch(benchmark::calculateGeneric)
+        results["Inline.calculateGenericInline"] = launch(benchmark::calculateGenericInline)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runIntArrayBenchmark() {
-        println("\nIntArrayBenchmark")
         val benchmark = IntArrayBenchmark()
         benchmark.setup()
 
-        launch(benchmark::copy)
-        launch(benchmark::copyManual)
-        launch(benchmark::filterAndCount)
-        launch(benchmark::filterSomeAndCount)
-        launch(benchmark::filterAndMap)
-        launch(benchmark::filterAndMapManual)
-        launch(benchmark::filter)
-        launch(benchmark::filterSome)
-        launch(benchmark::filterPrime)
-        launch(benchmark::filterManual)
-        launch(benchmark::filterSomeManual)
-        launch(benchmark::countFilteredManual)
-        launch(benchmark::countFilteredSomeManual)
-        launch(benchmark::countFilteredPrimeManual)
-        launch(benchmark::countFiltered)
-        launch(benchmark::countFilteredSome)
-        launch(benchmark::countFilteredPrime)
-        launch(benchmark::countFilteredLocal)
-        launch(benchmark::countFilteredSomeLocal)
-        launch(benchmark::reduce)
+        results["IntArray.copy"]                     = launch(benchmark::copy)
+        results["IntArray.copyManual"]               = launch(benchmark::copyManual)
+        results["IntArray.filterAndCount"]           = launch(benchmark::filterAndCount)
+        results["IntArray.filterSomeAndCount"]       = launch(benchmark::filterSomeAndCount)
+        results["IntArray.filterAndMap"]             = launch(benchmark::filterAndMap)
+        results["IntArray.filterAndMapManual"]       = launch(benchmark::filterAndMapManual)
+        results["IntArray.filter"]                   = launch(benchmark::filter)
+        results["IntArray.filterSome"]               = launch(benchmark::filterSome)
+        results["IntArray.filterPrime"]              = launch(benchmark::filterPrime)
+        results["IntArray.filterManual"]             = launch(benchmark::filterManual)
+        results["IntArray.filterSomeManual"]         = launch(benchmark::filterSomeManual)
+        results["IntArray.countFilteredManual"]      = launch(benchmark::countFilteredManual)
+        results["IntArray.countFilteredSomeManual"]  = launch(benchmark::countFilteredSomeManual)
+        results["IntArray.countFilteredPrimeManual"] = launch(benchmark::countFilteredPrimeManual)
+        results["IntArray.countFiltered"]            = launch(benchmark::countFiltered)
+        results["IntArray.countFilteredSome"]        = launch(benchmark::countFilteredSome)
+        results["IntArray.countFilteredPrime"]       = launch(benchmark::countFilteredPrime)
+        results["IntArray.countFilteredLocal"]       = launch(benchmark::countFilteredLocal)
+        results["IntArray.countFilteredSomeLocal"]   = launch(benchmark::countFilteredSomeLocal)
+        results["IntArray.reduce"]                   = launch(benchmark::reduce)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runIntBaselineBenchmark() {
-        println("\nIntBaselineBenchmark")
         val benchmark = IntBaselineBenchmark()
 
-        launch(benchmark::consume)
-        launch(benchmark::allocateList)
-        launch(benchmark::allocateArray)
-        launch(benchmark::allocateListAndFill)
-        launch(benchmark::allocateArrayAndFill)
+        results["IntBaseline.consume"]              = launch(benchmark::consume)
+        results["IntBaseline.allocateList"]         = launch(benchmark::allocateList)
+        results["IntBaseline.allocateArray"]        = launch(benchmark::allocateArray)
+        results["IntBaseline.allocateListAndFill"]  = launch(benchmark::allocateListAndFill)
+        results["IntBaseline.allocateArrayAndFill"] = launch(benchmark::allocateArrayAndFill)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runIntListBenchmark() {
-        println("\nIntListBenchmark")
         val benchmark = IntListBenchmark()
         benchmark.setup()
 
-        launch(benchmark::copy)
-        launch(benchmark::copyManual)
-        launch(benchmark::filterAndCount)
-        launch(benchmark::filterAndMap)
-        launch(benchmark::filterAndMapManual)
-        launch(benchmark::filter)
-        launch(benchmark::filterManual)
-        launch(benchmark::countFilteredManual)
-        launch(benchmark::countFiltered)
-        launch(benchmark::countFilteredLocal)
-        launch(benchmark::reduce)
+        results["IntList.copy"]                = launch(benchmark::copy)
+        results["IntList.copyManual"]          = launch(benchmark::copyManual)
+        results["IntList.filterAndCount"]      = launch(benchmark::filterAndCount)
+        results["IntList.filterAndMap"]        = launch(benchmark::filterAndMap)
+        results["IntList.filterAndMapManual"]  = launch(benchmark::filterAndMapManual)
+        results["IntList.filter"]              = launch(benchmark::filter)
+        results["IntList.filterManual"]        = launch(benchmark::filterManual)
+        results["IntList.countFilteredManual"] = launch(benchmark::countFilteredManual)
+        results["IntList.countFiltered"]       = launch(benchmark::countFiltered)
+        results["IntList.countFilteredLocal"]  = launch(benchmark::countFilteredLocal)
+        results["IntList.reduce"]              = launch(benchmark::reduce)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runIntStreamBenchmark() {
-        println("\nIntStreamBenchmark")
         val benchmark = IntStreamBenchmark()
         benchmark.setup()
 
-        launch(benchmark::copy)
-        launch(benchmark::copyManual)
-        launch(benchmark::filterAndCount)
-        launch(benchmark::filterAndMap)
-        launch(benchmark::filterAndMapManual)
-        launch(benchmark::filter)
-        launch(benchmark::filterManual)
-        launch(benchmark::countFilteredManual)
-        launch(benchmark::countFiltered)
-        launch(benchmark::countFilteredLocal)
-        launch(benchmark::reduce)
+        results["IntStream.copy"]                = launch(benchmark::copy)
+        results["IntStream.copyManual"]          = launch(benchmark::copyManual)
+        results["IntStream.filterAndCount"]      = launch(benchmark::filterAndCount)
+        results["IntStream.filterAndMap"]        = launch(benchmark::filterAndMap)
+        results["IntStream.filterAndMapManual"]  = launch(benchmark::filterAndMapManual)
+        results["IntStream.filter"]              = launch(benchmark::filter)
+        results["IntStream.filterManual"]        = launch(benchmark::filterManual)
+        results["IntStream.countFilteredManual"] = launch(benchmark::countFilteredManual)
+        results["IntStream.countFiltered"]       = launch(benchmark::countFiltered)
+        results["IntStream.countFilteredLocal"]  = launch(benchmark::countFilteredLocal)
+        results["IntStream.reduce"]              = launch(benchmark::reduce)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runLambdaBenchmark() {
-        println("\nLambdaBenchmark")
         val benchmark = LambdaBenchmark()
         benchmark.setup()
 
-        launch(benchmark::noncapturingLambda)
-        launch(benchmark::noncapturingLambdaNoInline)
-        launch(benchmark::capturingLambda)
-        launch(benchmark::capturingLambdaNoInline)
-        launch(benchmark::mutatingLambda)
-        launch(benchmark::mutatingLambdaNoInline)
-        launch(benchmark::methodReference)
-        launch(benchmark::methodReferenceNoInline)
+        results["Lambda.noncapturingLambda"]         = launch(benchmark::noncapturingLambda)
+        results["Lambda.noncapturingLambdaNoInline"] = launch(benchmark::noncapturingLambdaNoInline)
+        results["Lambda.capturingLambda"]            = launch(benchmark::capturingLambda)
+        results["Lambda.capturingLambdaNoInline"]    = launch(benchmark::capturingLambdaNoInline)
+        results["Lambda.mutatingLambda"]             = launch(benchmark::mutatingLambda)
+        results["Lambda.mutatingLambdaNoInline"]     = launch(benchmark::mutatingLambdaNoInline)
+        results["Lambda.methodReference"]            = launch(benchmark::methodReference)
+        results["Lambda.methodReferenceNoInline"]    = launch(benchmark::methodReferenceNoInline)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runLoopBenchmark() {
-        println("\nLoopBenchmark")
         val benchmark = LoopBenchmark()
         benchmark.setup()
 
-        launch(benchmark::arrayLoop)
-        launch(benchmark::arrayIndexLoop)
-        launch(benchmark::rangeLoop)
-        launch(benchmark::arrayListLoop)
-        launch(benchmark::arrayWhileLoop)
-        launch(benchmark::arrayForeachLoop)
-        launch(benchmark::arrayListForeachLoop)
+        results["Loop.arrayLoop"]            = launch(benchmark::arrayLoop)
+        results["Loop.arrayIndexLoop"]       = launch(benchmark::arrayIndexLoop)
+        results["Loop.rangeLoop"]            = launch(benchmark::rangeLoop)
+        results["Loop.arrayListLoop"]        = launch(benchmark::arrayListLoop)
+        results["Loop.arrayWhileLoop"]       = launch(benchmark::arrayWhileLoop)
+        results["Loop.arrayForeachLoop"]     = launch(benchmark::arrayForeachLoop)
+        results["Loop.arrayListForeachLoop"] = launch(benchmark::arrayListForeachLoop)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runMatrixMapBenchmark() {
-        println("\nMatrixMapBenchmark")
         val benchmark = MatrixMapBenchmark()
 
-        launch(benchmark::add)
+        results["MatrixMap.add"] = launch(benchmark::add)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runParameterNotNullAssertionBenchmark() {
-        println("\nParameterNotNullAssertionBenchmark")
         val benchmark = ParameterNotNullAssertionBenchmark()
 
-        launch(benchmark::invokeOneArgWithNullCheck)
-        launch(benchmark::invokeOneArgWithoutNullCheck)
-        launch(benchmark::invokeTwoArgsWithNullCheck)
-        launch(benchmark::invokeTwoArgsWithoutNullCheck)
-        launch(benchmark::invokeEightArgsWithNullCheck)
-        launch(benchmark::invokeEightArgsWithoutNullCheck)
+        results["ParameterNotNull.invokeOneArgWithNullCheck"]       = launch(benchmark::invokeOneArgWithNullCheck)
+        results["ParameterNotNull.invokeOneArgWithoutNullCheck"]    = launch(benchmark::invokeOneArgWithoutNullCheck)
+        results["ParameterNotNull.invokeTwoArgsWithNullCheck"]      = launch(benchmark::invokeTwoArgsWithNullCheck)
+        results["ParameterNotNull.invokeTwoArgsWithoutNullCheck"]   = launch(benchmark::invokeTwoArgsWithoutNullCheck)
+        results["ParameterNotNull.invokeEightArgsWithNullCheck"]    = launch(benchmark::invokeEightArgsWithNullCheck)
+        results["ParameterNotNull.invokeEightArgsWithoutNullCheck"] = launch(benchmark::invokeEightArgsWithoutNullCheck)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runPrimeListBenchmark() {
-        println("\nPrimeListBenchmark")
         val benchmark = PrimeListBenchmark()
 
-        launch(benchmark::calcDirect)
-        launch(benchmark::calcEratosthenes)
+        results["PrimeList.calcDirect"]       = launch(benchmark::calcDirect)
+        results["PrimeList.calcEratosthenes"] = launch(benchmark::calcEratosthenes)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runStringBenchmark() {
-        println("\nStringBenchmark")
         val benchmark = StringBenchmark()
         benchmark.setup()
 
-        launch(benchmark::stringConcat)
-        launch(benchmark::stringConcatNullable)
-        launch(benchmark::stringBuilderConcat)
-        launch(benchmark::stringBuilderConcatNullable)
-        launch(benchmark::summarizeSplittedCsv)
+        results["String.stringConcat"]                = launch(benchmark::stringConcat)
+        results["String.stringConcatNullable"]        = launch(benchmark::stringConcatNullable)
+        results["String.stringBuilderConcat"]         = launch(benchmark::stringBuilderConcat)
+        results["String.stringBuilderConcatNullable"] = launch(benchmark::stringBuilderConcatNullable)
+        results["String.summarizeSplittedCsv"]        = launch(benchmark::summarizeSplittedCsv)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runSwitchBenchmark() {
-        println("\nSwitchBenchmark")
         val benchmark = SwitchBenchmark()
         benchmark.setupInts()
         benchmark.setupStrings()
         benchmark.setupEnums()
         benchmark.setupSealedClassses()
 
-        launch(benchmark::testSparseIntSwitch)
-        launch(benchmark::testDenseIntSwitch)
-        launch(benchmark::testConstSwitch)
-        launch(benchmark::testObjConstSwitch)
-        launch(benchmark::testVarSwitch)
-        launch(benchmark::testStringsSwitch)
-        launch(benchmark::testEnumsSwitch)
-        launch(benchmark::testDenseEnumsSwitch)
-        launch(benchmark::testSealedWhenSwitch)
+        results["Switch.testSparseIntSwitch"]  = launch(benchmark::testSparseIntSwitch)
+        results["Switch.testDenseIntSwitch"]   = launch(benchmark::testDenseIntSwitch)
+        results["Switch.testConstSwitch"]      = launch(benchmark::testConstSwitch)
+        results["Switch.testObjConstSwitch"]   = launch(benchmark::testObjConstSwitch)
+        results["Switch.testVarSwitch"]        = launch(benchmark::testVarSwitch)
+        results["Switch.testStringsSwitch"]    = launch(benchmark::testStringsSwitch)
+        results["Switch.testEnumsSwitch"]      = launch(benchmark::testEnumsSwitch)
+        results["Switch.testDenseEnumsSwitch"] = launch(benchmark::testDenseEnumsSwitch)
+        results["Switch.testSealedWhenSwitch"] = launch(benchmark::testSealedWhenSwitch)
     }
 
     //-------------------------------------------------------------------------//
 
     fun runWithIndiciesBenchmark() {
-        println("\nWithIndiciesBenchmark")
         val benchmark = WithIndiciesBenchmark()
         benchmark.setup()
 
-        launch(benchmark::withIndicies)
-        launch(benchmark::withIndiciesManual)
+        results["WithIndicies.withIndicies"]       = launch(benchmark::withIndicies)
+        results["WithIndicies.withIndiciesManual"] = launch(benchmark::withIndiciesManual)
     }
 }

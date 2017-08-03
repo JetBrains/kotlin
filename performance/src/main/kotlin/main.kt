@@ -9,6 +9,5 @@ fun main(args: Array<String>) {
         numMeasureIterations = args[1].toInt()
     }
 
-    val average = Launcher(numWarmIterations, numMeasureIterations).runBenchmarks()
-    println("\nRingAverage: $average\n")
+    Launcher(numWarmIterations, numMeasureIterations).runBenchmarks()
 }
