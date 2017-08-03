@@ -41,14 +41,15 @@ import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Log
 import com.sun.tools.javac.util.Names
 import com.sun.tools.javac.util.Options
+import org.jetbrains.kotlin.javac.resolve.ClassifierResolver
+import org.jetbrains.kotlin.javac.resolve.IdentifierResolver
+import org.jetbrains.kotlin.javac.resolve.KotlinClassifiersCache
+import org.jetbrains.kotlin.javac.resolve.classId
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClass
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClassifierType
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedPackage
 import org.jetbrains.kotlin.javac.wrappers.trees.*
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaClassifier
-import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.Closeable
@@ -67,7 +68,7 @@ class JavacWrapper(
         jvmClasspathRoots: List<File>,
         bootClasspath: List<File>?,
         sourcePath: List<File>?,
-        val kotlinSupertypeResolver: KotlinSupertypeResolver,
+        val kotlinResolver: JavacWrapperKotlinResolver,
         private val compileJava: Boolean,
         private val outputDirectory: File?,
         private val context: Context
@@ -174,6 +175,7 @@ class JavacWrapper(
     }
 
     val classifierResolver = ClassifierResolver(this)
+    private val identifierResolver = IdentifierResolver(this)
     private val kotlinClassifiersCache = KotlinClassifiersCache(if (javaFiles.isNotEmpty()) kotlinFiles else emptyList(), this)
     private val symbolBasedPackagesCache = hashMapOf<String, SymbolBasedPackage?>()
 
@@ -280,6 +282,9 @@ class JavacWrapper(
 
     fun resolve(treePath: TreePath): JavaClassifier? =
             classifierResolver.resolve(treePath)
+
+    fun resolveField(treePath: TreePath, containingClass: JavaClass): JavaField? =
+            identifierResolver.resolve(treePath, containingClass)
 
     fun toVirtualFile(javaFileObject: JavaFileObject): VirtualFile? =
             javaFileObject.toUri().let { uri ->

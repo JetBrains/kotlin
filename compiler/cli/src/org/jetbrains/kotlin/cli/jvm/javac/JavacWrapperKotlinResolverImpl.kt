@@ -17,21 +17,35 @@
 package org.jetbrains.kotlin.cli.jvm.javac
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
-import org.jetbrains.kotlin.javac.KotlinSupertypeResolver
+import org.jetbrains.kotlin.javac.JavacWrapperKotlinResolver
+import org.jetbrains.kotlin.javac.resolve.MockKotlinField
+import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-class KotlinSupertypeResolverImpl(private val lightClassGenerationSupport: CliLightClassGenerationSupport) : KotlinSupertypeResolver {
+class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: CliLightClassGenerationSupport) : JavacWrapperKotlinResolver {
+
+    private val cache = hashMapOf<KtClassOrObject, KtLightClass>()
 
     override fun resolveSupertypes(classOrObject: KtClassOrObject): List<ClassId> {
-        val lightClass = lightClassGenerationSupport.getLightClass(classOrObject) ?: return emptyList()
+        val lightClass = classOrObject.getLightClass() ?: return emptyList()
 
         return lightClass.superTypes
                 .mapNotNull { it.resolve()?.computeClassId() }
     }
+
+    override fun findField(classOrObject: KtClassOrObject, name: String): JavaField? {
+        val lightClass = classOrObject.getLightClass() ?: return null
+
+        return lightClass.allFields.find { it.name == name}?.let(::MockKotlinField)
+    }
+
+    private fun KtClassOrObject.getLightClass(): KtLightClass? =
+        cache[this] ?: lightClassGenerationSupport.getLightClass(this)?.also { cache[this] = it }
 
     private fun PsiClass.computeClassId(): ClassId? =
             containingClass?.computeClassId()?.createNestedClassId(Name.identifier(name!!)) ?: qualifiedName?.let { ClassId.topLevel(FqName(it)) }

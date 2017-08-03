@@ -220,6 +220,11 @@ fun main(args: Array<String>) {
             model("javac/diagnostics/tests", testClassName = "TestsWithoutJavac", testMethod = "doTestWithoutJavacWrapper")
         }
 
+        testClass<AbstractJavacFieldResolutionTest> {
+            model("javac/fieldsResolution/tests")
+            model("javac/fieldsResolution/tests", testClassName = "TestsWithoutJavac", testMethod = "doTestWithoutJavacWrapper")
+        }
+
         testClass<AbstractDiagnosticsTestWithStdLib> {
             model("diagnostics/testsWithStdLib")
         }

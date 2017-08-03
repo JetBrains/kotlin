@@ -87,25 +87,13 @@ class ValueCalculator(private val containingClass: JavaClass,
                 }
                 else expr.value
             }
-            is JCTree.JCIdent -> containingClass.fields
-                    .find { it.name == expr.name.toString().let { Name.identifier(it) } }
-                    ?.initializerValue
-            is JCTree.JCFieldAccess -> fieldAccessValue(expr)
+            is JCTree.JCIdent,
+            is JCTree.JCFieldAccess -> javac.resolveField(javac.getTreePath(expr, treePath.compilationUnit), containingClass)?.initializerValue
             is JCTree.JCBinary -> binaryInitializerValue(expr)
             is JCTree.JCParens -> getValue(expr.expr)
             is JCTree.JCUnary -> unaryInitializerValue(expr)
             else -> null
         }
-    }
-
-    private fun fieldAccessValue(value: JCTree.JCFieldAccess): Any? {
-        val newTreePath = javac.getTreePath(value.selected, treePath.compilationUnit)
-        val javaClass = javac.resolve(newTreePath) as? JavaClass ?: return null
-        val fieldName = value.name.toString().let { Name.identifier(it) }
-
-        return javaClass.fields
-                .find { it.name == fieldName }
-                ?.initializerValue
     }
 
     private fun unaryInitializerValue(value: JCTree.JCUnary): Any? {
