@@ -2,7 +2,7 @@ description = 'Kotlin Test JUnit'
 
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
 
 

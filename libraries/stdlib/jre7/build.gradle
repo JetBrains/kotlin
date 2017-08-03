@@ -2,7 +2,7 @@ description = 'Kotlin Standard Library JRE 7 extension'
 
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
 
 dependencies {

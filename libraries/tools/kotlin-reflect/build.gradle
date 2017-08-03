@@ -15,7 +15,7 @@ buildscript {
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
 
 
@@ -42,6 +42,7 @@ configurations {
     proguardDeps
     shadows
     compileOnly.extendsFrom(shadows)
+    mainJar
 }
 
 dependencies {
@@ -174,6 +175,7 @@ task relocatedSourcesJar(type: Jar) {
 def artifactJar = [file: file(outputJarPath), builtBy: proguard, name: archivesBaseName]
 
 artifacts {
+    mainJar artifactJar
     runtime artifactJar
     archives artifactJar
     archives relocatedSourcesJar

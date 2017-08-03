@@ -2,7 +2,7 @@ description = 'Kotlin Standard Library'
 
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
 
 sourceSets {
@@ -49,6 +49,10 @@ dependencies {
     testCompile project(':kotlin-test:kotlin-test-junit')
 }
 
+configurations {
+    mainJar
+}
+
 task originalStdlibJar(type: Jar) {
     baseName = 'original-kotlin-stdlib'
     from sourceSets.main.output
@@ -79,6 +83,7 @@ sourcesJar {
 artifacts {
     archives sourcesJar
     archives javadocJar
+    mainJar jar
 }
 
 dist {

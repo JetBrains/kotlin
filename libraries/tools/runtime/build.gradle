@@ -2,7 +2,7 @@ description 'Kotlin Runtime (deprecated, use koltin-stdlib artifact instead)'
 
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
 
 dependencies {

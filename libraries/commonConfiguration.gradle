@@ -22,6 +22,33 @@ ext.configureJvmProject = { Project project ->
         }
 
         tasks.withType(JavaCompile) {
+//            sourceCompatibility = 1.6
+//            targetCompatibility = 1.6
+            options.fork = true
+            options.forkOptions.javaHome = file(JDK_18)
+        }
+
+        tasks.withType(project.compileKotlin.class) {
+            kotlinOptions.jdkHome = JDK_18
+            doFirst {
+                System.setProperty("kotlin.colors.enabled", "false")
+            }
+        }
+
+        test {
+            executable = "$JDK_16/bin/java"
+        }
+    }
+}
+
+ext.configureJvm6Project = { Project project ->
+    project.configure(project) {
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            classifier = 'sources'
+            from sourceSets.main.kotlin
+        }
+
+        tasks.withType(JavaCompile) {
             sourceCompatibility = 1.6
             targetCompatibility = 1.6
             options.fork = true

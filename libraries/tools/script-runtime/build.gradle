@@ -2,11 +2,15 @@ description 'Kotlin Script Runtime'
 
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
 
 dependencies {
     compileOnly project(':kotlin-stdlib')
+}
+
+configurations {
+    mainJar
 }
 
 sourceSets {
@@ -24,8 +28,8 @@ jar {
 artifacts {
     archives sourcesJar
     archives javadocJar
+    mainJar jar
 }
-
 
 dist {
     from (jar, sourcesJar)
