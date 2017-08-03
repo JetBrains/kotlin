@@ -114,3 +114,16 @@ object DoNotBindAnything : WhitespacesAndCommentsBinder {
         return 0
     }
 }
+
+class BindAll(val isTrailing: Boolean) : WhitespacesAndCommentsBinder {
+    override fun getEdgePosition(
+            tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
+        return if (!isTrailing) 0 else tokens.size
+    }
+}
+
+@JvmField
+val PRECEDING_ALL_BINDER: WhitespacesAndCommentsBinder = BindAll(false)
+
+@JvmField
+val TRAILING_ALL_BINDER: WhitespacesAndCommentsBinder = BindAll(true)

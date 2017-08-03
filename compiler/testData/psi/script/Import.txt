@@ -23,9 +23,9 @@ KtFile: Import.kts
         PsiElement(IDENTIFIER)('ddd')
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
-  PsiWhiteSpace('\n\n')
   SCRIPT
     BLOCK
+      PsiWhiteSpace('\n\n')
       FUN
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
