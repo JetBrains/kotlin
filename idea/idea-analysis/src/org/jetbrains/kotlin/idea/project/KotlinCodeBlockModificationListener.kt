@@ -95,7 +95,7 @@ class KotlinCodeBlockModificationListener(
             val newModCount = modificationTrackerImpl.outOfCodeBlockModificationCount
             val affectedModule = lastAffectedModule
             if (affectedModule != null && newModCount == lastAffectedModuleModCount + 1) {
-                if (perModuleChangesHighwatermark== null) {
+                if (perModuleChangesHighwatermark == null) {
                     perModuleChangesHighwatermark = lastAffectedModuleModCount
                 }
                 perModuleModCount[affectedModule] = newModCount
