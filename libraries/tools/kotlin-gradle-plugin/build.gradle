@@ -29,11 +29,14 @@ configurations {
 dependencies {
     compile project(':kotlin-gradle-plugin-api')
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-compiler-runner:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-annotation-processing:$kotlin_version"
+    compile project(':kotlin-stdlib')
+    compile project(':plugins:android-extensions-compiler')
+//    compile project(path: ':compiler', configuration: 'embeddableCompilerJar')
+    compile project(':build-common')
+    compile project(':compiler:compiler-runner')
+    compile project(":compiler:incremental-compilation-impl")
+    compile project(":compiler")
+    compile project(':kotlin-annotation-processing')
 
     compileOnly 'com.android.tools.build:gradle:2.0.0'
     compileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
@@ -44,7 +47,7 @@ dependencies {
     agp25CompileOnly gradleApi()
 
     testCompile project (path: ':build-common', configuration: 'tests-jar')
-    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile project(':kotlin-test::kotlin-test-junit')
     testCompile "junit:junit:4.12"
 }
 

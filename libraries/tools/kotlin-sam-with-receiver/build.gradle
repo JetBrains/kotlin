@@ -18,25 +18,26 @@ repositories {
 dependencies {
     compile project(':kotlin-gradle-plugin-api')
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compileOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlin_version"
+    compile project(':kotlin-stdlib')
+    compileOnly project(':compiler')
+    compile project(':plugins:sam-with-receiver-cli')
 
     compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
 }
 
 def originalSrc = "$kotlin_root/plugins/sam-with-receiver/sam-with-receiver-cli/src"
-def targetSrc = file("$buildDir/sam-with-receiver-target-src")
+//def targetSrc = file("$buildDir/sam-with-receiver-target-src")
+//
+//task preprocessSources(type: Copy) {
+//    from originalSrc
+//    into targetSrc
+//    filter { it.replaceAll('(?<!\\.)com\\.intellij', 'org.jetbrains.kotlin.com.intellij') }
+//}
 
-task preprocessSources(type: Copy) {
-    from originalSrc
-    into targetSrc
-    filter { it.replaceAll('(?<!\\.)com\\.intellij', 'org.jetbrains.kotlin.com.intellij') }
-}
+//sourceSets.main.java.srcDirs += originalSrc
 
-sourceSets.main.java.srcDirs += targetSrc
-
-compileKotlin.dependsOn preprocessSources
+//compileKotlin.dependsOn preprocessSources
 
 jar {
-    from(targetSrc) { include("META-INF/**") }
+    from(originalSrc) { include("META-INF/**") }
 }

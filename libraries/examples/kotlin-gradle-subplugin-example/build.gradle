@@ -12,10 +12,13 @@ dependencies {
     // Use this dependency instead when building apart from the other modules:
     // compile "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version"
 
-    compile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    compile project(':kotlin-test::kotlin-test-junit')
 
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compileOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlin_version"
+    compileOnly project(':compiler')
+    compileOnly project(':compiler:plugin-api')
+    compileOnly project(':compiler:cli-common')
+    compileOnly project(':compiler:cli')
     
     compileOnly "org.jetbrains.kotlin:gradle-api:1.6"
 }

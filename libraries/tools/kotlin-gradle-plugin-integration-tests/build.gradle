@@ -14,10 +14,10 @@ dependencies {
     testCompile project(':kotlin-gradle-subplugin-example')
     testCompile project(':kotlin-allopen')
 
-    testCompile project (path: ':examples:annotation-processor-example')
-    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-    testCompile "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
-    testCompile project (path: ':build-common', configuration: 'tests-jar')
+    testCompile project(path: ':examples:annotation-processor-example')
+    testCompile project(':kotlin-stdlib-jre8')
+    testCompile project(':plugins:android-extensions-compiler')
+    testCompile project(path: ':build-common', configuration: 'tests-jar')
 
     testCompile 'org.jetbrains.kotlin:gradle-api:2.2'
 }

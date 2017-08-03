@@ -8,7 +8,7 @@ import com.android.ide.common.res2.ResourceSet
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.kotlin.com.intellij.util.ReflectionUtil
+import com.intellij.util.ReflectionUtil
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptTask

@@ -12,27 +12,28 @@ repositories {
 dependencies {
     compile project(':kotlin-gradle-plugin-api')
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compileOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlin_version"
+    compile project(':kotlin-stdlib')
+    compileOnly project(path: ':compiler', configuration: 'embeddableCompilerJar')
+    compile project(':plugins:allopen-cli')
 
     compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
 }
 
 def originalSrc = "$kotlin_root/plugins/allopen/allopen-cli/src"
-def targetSrc = file("$buildDir/allopen-target-src")
+//def targetSrc = file("$buildDir/allopen-target-src")
+//
+//task preprocessSources(type: Copy) {
+//    from originalSrc
+//    into targetSrc
+//    filter { it.replaceAll('(?<!\\.)com\\.intellij', 'org.jetbrains.kotlin.com.intellij') }
+//}
 
-task preprocessSources(type: Copy) {
-    from originalSrc
-    into targetSrc
-    filter { it.replaceAll('(?<!\\.)com\\.intellij', 'org.jetbrains.kotlin.com.intellij') }
-}
+//sourceSets.main.java.srcDirs += originalSrc
 
-sourceSets.main.java.srcDirs += targetSrc
-
-compileKotlin.dependsOn preprocessSources
+//compileKotlin.dependsOn preprocessSources
 
 jar {
-    from(targetSrc) { include("META-INF/**") }
+    from(originalSrc) { include("META-INF/**") }
 }
 
 pluginBundle {
