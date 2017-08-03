@@ -65,7 +65,12 @@ private abstract class FieldScope(protected val javac: JavacWrapper,
                 .mapNotNull {
                     val classifier = it.classifier as? JavaClass
                     if (classifier !in checkedSupertypes) {
-                        classifier?.findFieldIncludingSupertypes(name, checkedSupertypes)
+                        if (classifier is MockKotlinClassifier) {
+                            classifier.findField(name.asString())
+                        }
+                        else {
+                            classifier?.findFieldIncludingSupertypes(name, checkedSupertypes)
+                        }
                     }
                     else null
                 }.singleOrNull()

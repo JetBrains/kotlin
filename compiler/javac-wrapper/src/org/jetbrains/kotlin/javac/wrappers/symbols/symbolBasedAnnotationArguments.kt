@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import com.sun.tools.javac.code.Symbol
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
@@ -26,7 +27,7 @@ import javax.lang.model.type.TypeMirror
 
 sealed class SymbolBasedAnnotationArgument(
         override val name: Name,
-        val javac: JavacWrapper
+        protected val javac: JavacWrapper
 ) : JavaAnnotationArgument, JavaElement {
 
     companion object {
@@ -40,7 +41,7 @@ sealed class SymbolBasedAnnotationArgument(
         }
 
         private fun arrayAnnotationArguments(values: Collection<*>, name: Name, javac: JavacWrapper): JavaArrayAnnotationArgument =
-                values.map { if (it is Collection<*>) arrayAnnotationArguments(it, name, javac) else create(it!!, name, javac) }
+                values.map { create(it!!, name, javac) }
                 .let { argumentList -> SymbolBasedArrayAnnotationArgument(argumentList, name, javac) }
 
     }
@@ -48,7 +49,7 @@ sealed class SymbolBasedAnnotationArgument(
 }
 
 class SymbolBasedAnnotationAsAnnotationArgument(
-        val mirror: AnnotationMirror,
+        private val mirror: AnnotationMirror,
         name: Name,
         javac: JavacWrapper
 ) : SymbolBasedAnnotationArgument(name, javac), JavaAnnotationAsAnnotationArgument {
@@ -65,12 +66,17 @@ class SymbolBasedReferenceAnnotationArgument(
     override val entryName: Name?
         get() = Name.identifier(name)
 
-    override fun resolve() = SymbolBasedField(element, javac)
+    override fun resolve(): SymbolBasedField {
+        val containingClass = (element.enclosingElement as Symbol.ClassSymbol).let {
+            SymbolBasedClass(it, javac, null, it.classfile)
+        }
+        return SymbolBasedField(element, containingClass, javac)
+    }
 
 }
 
 class SymbolBasedClassObjectAnnotationArgument(
-        val type: TypeMirror,
+        private val type: TypeMirror,
         name : Name,
         javac: JavacWrapper
 ) : SymbolBasedAnnotationArgument(name, javac), JavaClassObjectAnnotationArgument {

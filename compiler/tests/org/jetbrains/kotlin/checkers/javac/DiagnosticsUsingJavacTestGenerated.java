@@ -886,6 +886,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("annotatedExpressionInsideAnnotation.kt")
+            public void testAnnotatedExpressionInsideAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/annotatedExpressionInsideAnnotation.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("AnnotatedLocalObjectFun.kt")
             public void testAnnotatedLocalObjectFun() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotatedLocalObjectFun.kt");

@@ -149,7 +149,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var useJavac: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xcompile-java", description = "Reuse javac analysis and compile Java source files")
-    public boolean compileJava;
+    var compileJava by FreezableVar(false)
 
     @Argument(
             value = "-Xjavac-arguments",

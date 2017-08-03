@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.cli.jvm.javac
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.javac.JavacWrapperKotlinResolver
 import org.jetbrains.kotlin.javac.resolve.MockKotlinField
 import org.jetbrains.kotlin.load.java.structure.JavaField
@@ -26,8 +27,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 
-class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: CliLightClassGenerationSupport) : JavacWrapperKotlinResolver {
+class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: LightClassGenerationSupport) : JavacWrapperKotlinResolver {
 
     private val cache = hashMapOf<KtClassOrObject, KtLightClass>()
 
@@ -40,6 +42,12 @@ class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: Cl
 
     override fun findField(classOrObject: KtClassOrObject, name: String): JavaField? {
         val lightClass = classOrObject.getLightClass() ?: return null
+
+        return lightClass.allFields.find { it.name == name}?.let(::MockKotlinField)
+    }
+
+    override fun findField(ktFile: KtFile?, name: String): JavaField? {
+        val lightClass = ktFile?.findFacadeClass() ?: return null
 
         return lightClass.allFields.find { it.name == name}?.let(::MockKotlinField)
     }

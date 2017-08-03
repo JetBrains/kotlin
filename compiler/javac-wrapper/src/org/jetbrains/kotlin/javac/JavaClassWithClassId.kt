@@ -16,15 +16,9 @@
 
 package org.jetbrains.kotlin.javac
 
-import org.jetbrains.kotlin.load.java.structure.JavaField
+import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
 
-interface JavacWrapperKotlinResolver {
-    fun resolveSupertypes(classOrObject: KtClassOrObject): List<ClassId>
-
-    fun findField(classOrObject: KtClassOrObject, name: String): JavaField?
-
-    fun findField(ktFile: KtFile?, name: String): JavaField?
+interface JavaClassWithClassId : VirtualFileBoundJavaClass {
+    val classId: ClassId?
 }
