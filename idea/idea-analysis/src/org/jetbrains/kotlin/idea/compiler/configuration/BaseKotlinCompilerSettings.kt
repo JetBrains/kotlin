@@ -75,7 +75,10 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor()
         private val SKIP_DEFAULT_VALUES = SkipDefaultValuesSerializationFilters(
                 CommonCompilerArguments.DummyImpl(),
                 K2JVMCompilerArguments(),
-                K2JSCompilerArguments()
+                K2JSCompilerArguments().apply {
+                    sourceMapPrefix = ""
+                    sourceMapEmbedSources = K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING
+                }
         )
     }
 }
