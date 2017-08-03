@@ -706,7 +706,6 @@ ObjHeader** GetParamSlotIfArena(ObjHeader* param, ObjHeader** localSlot) {
 
 void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
   if (isArenaSlot(returnSlot)) {
-    return;
     if (object == nullptr
         || (object->container()->refCount_ & CONTAINER_TAG_MASK) > CONTAINER_TAG_NORMAL) {
         // Not a subject of reference counting.
