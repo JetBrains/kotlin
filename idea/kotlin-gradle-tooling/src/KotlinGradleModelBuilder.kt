@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.tooling.ModelBuilder
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.File
@@ -60,7 +61,7 @@ class KotlinGradleModelImpl(
         override val transitiveCommonDependencies: Set<String>
 ) : KotlinGradleModel
 
-class KotlinGradleModelBuilder : ModelBuilderService {
+abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
     companion object {
         val kotlinCompileTaskClasses = listOf("org.jetbrains.kotlin.gradle.tasks.KotlinCompile_Decorated",
                                               "org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile_Decorated")
@@ -70,10 +71,20 @@ class KotlinGradleModelBuilder : ModelBuilderService {
                 "kotlin2js" to "kotlin-platform-js"
         )
         val kotlinPluginIds = listOf("kotlin", "kotlin2js", "kotlin-android")
-        private val kotlinPlatformCommonPluginId = "kotlin-platform-common"
-        private val ABSTRACT_KOTLIN_COMPILE_CLASS = "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile"
-    }
+        val kotlinPlatformCommonPluginId = "kotlin-platform-common"
+        val ABSTRACT_KOTLIN_COMPILE_CLASS = "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile"
 
+        fun Task.getSourceSetName(): String {
+            return try {
+                javaClass.methods.firstOrNull { it.name.startsWith("getSourceSetName") && it.parameterTypes.isEmpty() }?.invoke(this) as? String
+            } catch (e : InvocationTargetException) {
+                null // can be thrown if property is not initialized yet
+            } ?: "main"
+        }
+    }
+}
+
+class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
     override fun getErrorMessageBuilder(project: Project, e: Exception): ErrorMessageBuilder {
         return ErrorMessageBuilder.create(project, e, "Gradle import errors").withDescription("Unable to build Kotlin project configuration")
     }
@@ -166,14 +177,6 @@ class KotlinGradleModelBuilder : ModelBuilderService {
         catch(e: NoSuchMethodException) {
             null
         }
-    }
-
-    private fun Task.getSourceSetName(): String {
-        return try {
-            javaClass.methods.firstOrNull { it.name.startsWith("getSourceSetName") && it.parameterTypes.isEmpty() }?.invoke(this) as? String
-        } catch (e : InvocationTargetException) {
-            null // can be thrown if property is not initialized yet
-        } ?: "main"
     }
 
     override fun buildAll(modelName: String?, project: Project): KotlinGradleModelImpl {

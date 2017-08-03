@@ -53,7 +53,7 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
             }
             if (Kapt3GradleSubplugin.isEnabled(project)) {
                 // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
-                val kaptClasssesDir = Kapt3KotlinGradleSubplugin.getKaptClasssesDir(project, getVariantName(variantData))
+                val kaptClasssesDir = Kapt3GradleSubplugin.getKaptGeneratedClassesDir(project, getVariantName(variantData))
                 add(kaptClasssesDir)
             }
         }

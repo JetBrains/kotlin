@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil.compareVer
 import org.jetbrains.kotlin.com.intellij.util.ReflectionUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.internal.*
-import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.getKaptClasssesDir
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.gradle.utils.checkedReflection
@@ -679,7 +679,7 @@ internal fun createSyncOutputTask(
     syncTask.kotlinTask = kotlinCompile
     kotlinTask.javaOutputDir = javaDir
     kotlinAfterJavaTask?.javaOutputDir = javaDir
-    syncTask.kaptClassesDir = getKaptClasssesDir(project, variantName)
+    syncTask.kaptClassesDir = getKaptGeneratedClassesDir(project, variantName)
 
     // copying should be executed after a latter task
     val previousTask = kotlinAfterJavaTask ?: javaTask

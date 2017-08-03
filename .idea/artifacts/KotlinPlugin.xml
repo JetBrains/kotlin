@@ -109,6 +109,9 @@
         <element id="library" level="project" name="kotlinx-coroutines-core" />
         <element id="library" level="project" name="javaslang" />
         <element id="library" level="project" name="kotlinx-coroutines-jdk8" />
+        <element id="archive" name="kapt-idea.jar">
+          <element id="module-output" name="kapt3-idea" />
+        </element>
       </element>
       <element id="directory" name="kotlinc">
         <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />

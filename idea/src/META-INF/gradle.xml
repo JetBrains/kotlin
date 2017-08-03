@@ -7,6 +7,7 @@
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPJSFrameworkSupportProvider"/>
         <pluginDescriptions implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradlePluginDescription"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectResolverExtension" order="first"/>
+        <projectResolve implementation="org.jetbrains.kotlin.kapt.idea.KaptProjectResolverExtension" order="last"/>
     </extensions>
 
     <extensionPoints>

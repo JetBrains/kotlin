@@ -78,6 +78,7 @@
       <module fileurl="file://$PROJECT_DIR$/js/js.translator/js.translator.iml" filepath="$PROJECT_DIR$/js/js.translator/js.translator.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" filepath="$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/plugins/kapt3/kapt3.iml" filepath="$PROJECT_DIR$/plugins/kapt3/kapt3.iml" group="plugins" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/kapt3-idea/kapt3-idea.iml" filepath="$PROJECT_DIR$/plugins/kapt3-idea/kapt3-idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea/kotlin-gradle-tooling/kotlin-gradle-tooling.iml" filepath="$PROJECT_DIR$/idea/kotlin-gradle-tooling/kotlin-gradle-tooling.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/light-classes/light-classes.iml" filepath="$PROJECT_DIR$/compiler/light-classes/light-classes.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" group="plugins/lint" />

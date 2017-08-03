@@ -34,11 +34,26 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
 import javax.xml.bind.DatatypeConverter.printBase64Binary
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
 
 // apply plugin: 'kotlin-kapt'
 class Kapt3GradleSubplugin : Plugin<Project> {
     companion object {
         fun isEnabled(project: Project) = project.plugins.findPlugin(Kapt3GradleSubplugin::class.java) != null
+
+        @JvmStatic
+        fun getKaptGeneratedClassesDir(project: Project, sourceSetName: String) =
+                File(project.project.buildDir, "tmp/kapt3/classes/$sourceSetName")
+
+        @JvmStatic
+        fun getKaptGeneratedSourcesDir(project: Project, sourceSetName: String) =
+                File(project.project.buildDir, "generated/source/kapt/$sourceSetName")
+
+        @JvmStatic
+        fun getKaptGeneratedKotlinSourcesDir(project: Project, sourceSetName: String) =
+                File(project.project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
     }
 
     override fun apply(project: Project) {}
@@ -77,22 +92,11 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         fun findMainKaptConfiguration(project: Project) = project.findKaptConfiguration(MAIN_KAPT_CONFIGURATION_NAME)
-
-        fun getKaptClasssesDir(project: Project, sourceSetName: String): File =
-                File(project.project.buildDir, "tmp/kapt3/classes/$sourceSetName")
     }
 
     private val kotlinToKaptGenerateStubsTasksMap = mutableMapOf<KotlinCompile, KaptGenerateStubsTask>()
 
     override fun isApplicable(project: Project, task: AbstractCompile) = task is KotlinCompile && Kapt3GradleSubplugin.isEnabled(project)
-
-    fun getKaptGeneratedDir(project: Project, sourceSetName: String): File {
-        return File(project.project.buildDir, "generated/source/kapt/$sourceSetName")
-    }
-
-    fun getKaptGeneratedDirForKotlin(project: Project, sourceSetName: String): File {
-        return File(project.project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
-    }
 
     private fun Kapt3SubpluginContext.getKaptStubsDir() = createAndReturnTemporaryKaptDirectory("stubs")
 
@@ -113,9 +117,9 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             val javaSourceSet: SourceSet?,
             val kaptExtension: KaptExtension,
             val kaptClasspath: MutableList<File>) {
-        val sourcesOutputDir = getKaptGeneratedDir(project, sourceSetName)
-        val kotlinSourcesOutputDir = getKaptGeneratedDirForKotlin(project, sourceSetName)
-        val classesOutputDir = getKaptClasssesDir(project, sourceSetName)
+        val sourcesOutputDir = getKaptGeneratedSourcesDir(project, sourceSetName)
+        val kotlinSourcesOutputDir = getKaptGeneratedKotlinSourcesDir(project, sourceSetName)
+        val classesOutputDir = getKaptGeneratedClassesDir(project, sourceSetName)
 
         val kaptClasspathArtifacts = project
                 .resolveSubpluginArtifacts(listOf(this@Kapt3KotlinGradleSubplugin))
@@ -193,7 +197,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     private fun Kapt3SubpluginContext.buildOptions(aptMode: String): List<SubpluginOption> {
         val pluginOptions = mutableListOf<SubpluginOption>()
 
-        val generatedFilesDir = getKaptGeneratedDir(project, sourceSetName)
+        val generatedFilesDir = getKaptGeneratedSourcesDir(project, sourceSetName)
         kaptVariantData?.addJavaSourceFoldersToModel(generatedFilesDir)
 
         pluginOptions += SubpluginOption("aptMode", aptMode)
@@ -207,7 +211,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         javaCompile.source(generatedFilesDir)
 
         pluginOptions += SubpluginOption("sources", generatedFilesDir.canonicalPath)
-        pluginOptions += SubpluginOption("classes", getKaptClasssesDir(project, sourceSetName).canonicalPath)
+        pluginOptions += SubpluginOption("classes", getKaptGeneratedClassesDir(project, sourceSetName).canonicalPath)
 
         pluginOptions += SubpluginOption("incrementalData", getKaptIncrementalDataDir().canonicalPath)
 
