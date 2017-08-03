@@ -21,7 +21,7 @@ import com.sun.tools.javac.code.BoundKind
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.javac.MockKotlinClassifier
+import org.jetbrains.kotlin.javac.resolve.MockKotlinClassifier
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType

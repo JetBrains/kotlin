@@ -58,7 +58,7 @@ object JavacWrapperRegistrar {
         val jvmClasspathRoots = configuration.jvmClasspathRoots
         val outputDirectory = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
         val compileJava = configuration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)
-        val kotlinSupertypesResolver = KotlinSupertypeResolverImpl(lightClassGenerationSupport)
+        val kotlinSupertypesResolver = JavacWrapperKotlinResolverImpl(lightClassGenerationSupport)
 
         val javacWrapper = JavacWrapper(javaFiles, kotlinFiles, arguments, jvmClasspathRoots, bootClasspath, sourcePath,
                                         kotlinSupertypesResolver, compileJava, outputDirectory, context)
