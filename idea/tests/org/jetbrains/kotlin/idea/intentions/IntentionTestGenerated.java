@@ -11138,6 +11138,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("moveLambda14.kt")
+        public void testMoveLambda14() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaInsideParentheses/moveLambda14.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("moveLambda2.kt")
         public void testMoveLambda2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaInsideParentheses/moveLambda2.kt");
