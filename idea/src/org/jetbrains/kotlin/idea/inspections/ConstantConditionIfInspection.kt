@@ -72,34 +72,10 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val ifExpression = descriptor.psiElement.getParentOfType<KtIfExpression>(strict = true) ?: return
-            val caretModel = ifExpression.findExistingEditor()?.caretModel
 
             val branch = ifExpression.branch(conditionValue)?.unwrapBlockOrParenthesis() ?: return
 
-            val lastExpression = when {
-                branch !is KtBlockExpression -> ifExpression.replaced(branch)
-                isUsedAsExpression -> {
-                    val factory = KtPsiFactory(ifExpression)
-                    ifExpression.replaced(factory.createExpressionByPattern("run $0", branch.text))
-                }
-                else -> {
-                    val firstChild = branch.firstChild.nextSibling
-
-                    if (firstChild == branch.lastChild) {
-                        ifExpression.delete()
-                    }
-                    else {
-                        val lastChild = branch.lastChild.prevSibling
-                        val parent = ifExpression.parent
-                        parent.addRangeAfter(firstChild, lastChild, ifExpression)
-                        ifExpression.delete()
-                    }
-
-                    null
-                }
-            }
-
-            caretModel?.moveToOffset(lastExpression?.startOffset ?: return)
+            ifExpression.replaceWithBranch(branch, isUsedAsExpression)
         }
     }
 
@@ -113,15 +89,41 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
             ifExpression.delete()
         }
     }
+}
 
-    private companion object {
-        private fun KtIfExpression.branch(thenBranch: Boolean) = if (thenBranch) then else `else`
+private fun KtIfExpression.branch(thenBranch: Boolean) = if (thenBranch) then else `else`
 
-        private fun KtExpression.constantBooleanValue(context: BindingContext): Boolean? {
-            val type = getType(context) ?: return null
+private fun KtExpression.constantBooleanValue(context: BindingContext): Boolean? {
+    val type = getType(context) ?: return null
 
-            val constantValue = ConstantExpressionEvaluator.getConstant(this, context)?.toConstantValue(type)
-            return constantValue?.value as? Boolean
+    val constantValue = ConstantExpressionEvaluator.getConstant(this, context)?.toConstantValue(type)
+    return constantValue?.value as? Boolean
+}
+
+fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boolean) {
+    val lastExpression = when {
+        branch !is KtBlockExpression -> replaced(branch)
+        isUsedAsExpression -> {
+            val factory = KtPsiFactory(this)
+            replaced(factory.createExpressionByPattern("run $0", branch.text))
+        }
+        else -> {
+            val firstChild = branch.firstChild.nextSibling
+
+            if (firstChild == branch.lastChild) {
+                delete()
+            }
+            else {
+                val lastChild = branch.lastChild.prevSibling
+                val parent = parent
+                parent.addRangeAfter(firstChild, lastChild, this)
+                delete()
+            }
+
+            null
         }
     }
+
+    val caretModel = branch.findExistingEditor()?.caretModel
+    caretModel?.moveToOffset(lastExpression?.startOffset ?: return)
 }
