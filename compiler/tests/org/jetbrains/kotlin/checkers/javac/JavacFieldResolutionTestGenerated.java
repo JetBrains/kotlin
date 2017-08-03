@@ -44,9 +44,27 @@ public class JavacFieldResolutionTestGenerated extends AbstractJavacFieldResolut
             doTest(fileName);
         }
 
+        @TestMetadata("BinaryInitializers.kt")
+        public void testBinaryInitializers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/BinaryInitializers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ConstantByFqName.kt")
+        public void testConstantByFqName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantByFqName.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ConstantValues.kt")
         public void testConstantValues() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantValues.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ConstantValuesFromKtFile.kt")
+        public void testConstantValuesFromKtFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantValuesFromKtFile.kt");
             doTest(fileName);
         }
 
@@ -59,6 +77,12 @@ public class JavacFieldResolutionTestGenerated extends AbstractJavacFieldResolut
         @TestMetadata("InheritedField.kt")
         public void testInheritedField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/InheritedField.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MultipleOuters.kt")
+        public void testMultipleOuters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/MultipleOuters.kt");
             doTest(fileName);
         }
 
@@ -101,9 +125,27 @@ public class JavacFieldResolutionTestGenerated extends AbstractJavacFieldResolut
             doTestWithoutJavacWrapper(fileName);
         }
 
+        @TestMetadata("BinaryInitializers.kt")
+        public void testBinaryInitializers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/BinaryInitializers.kt");
+            doTestWithoutJavacWrapper(fileName);
+        }
+
+        @TestMetadata("ConstantByFqName.kt")
+        public void testConstantByFqName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantByFqName.kt");
+            doTestWithoutJavacWrapper(fileName);
+        }
+
         @TestMetadata("ConstantValues.kt")
         public void testConstantValues() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantValues.kt");
+            doTestWithoutJavacWrapper(fileName);
+        }
+
+        @TestMetadata("ConstantValuesFromKtFile.kt")
+        public void testConstantValuesFromKtFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantValuesFromKtFile.kt");
             doTestWithoutJavacWrapper(fileName);
         }
 
@@ -116,6 +158,12 @@ public class JavacFieldResolutionTestGenerated extends AbstractJavacFieldResolut
         @TestMetadata("InheritedField.kt")
         public void testInheritedField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/InheritedField.kt");
+            doTestWithoutJavacWrapper(fileName);
+        }
+
+        @TestMetadata("MultipleOuters.kt")
+        public void testMultipleOuters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/MultipleOuters.kt");
             doTestWithoutJavacWrapper(fileName);
         }
 

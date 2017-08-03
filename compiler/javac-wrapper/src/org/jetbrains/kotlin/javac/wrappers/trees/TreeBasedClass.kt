@@ -25,9 +25,10 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeInfo
 import org.jetbrains.kotlin.descriptors.Visibilities.PUBLIC
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.tools.JavaFileObject
@@ -36,8 +37,9 @@ class TreeBasedClass(
         tree: JCTree.JCClassDecl,
         treePath: TreePath,
         javac: JavacWrapper,
-        val file: JavaFileObject
-) : TreeBasedElement<JCTree.JCClassDecl>(tree, treePath, javac), VirtualFileBoundJavaClass {
+        val file: JavaFileObject,
+        override val classId: ClassId?
+) : TreeBasedElement<JCTree.JCClassDecl>(tree, treePath, javac), JavaClassWithClassId {
 
     override val name: Name
         get() = Name.identifier(tree.simpleName.toString())
@@ -70,45 +72,43 @@ class TreeBasedClass(
         }
 
     override val fqName: FqName
-        get() = treePath.reversed()
-                .filterIsInstance<JCTree.JCClassDecl>()
-                .joinToString(
-                        separator = ".",
-                        transform = JCTree.JCClassDecl::name
-                )
-                .let { treePath.compilationUnit.packageName?.let { packageName -> FqName("$packageName.$it") } ?: FqName.topLevel(Name.identifier(it))}
+        get() = classId?.asSingleFqName() ?: throw UnsupportedOperationException("classId of $name is null")
 
     override val supertypes: Collection<JavaClassifierType>
-        get() = arrayListOf<JavaClassifierType>().also { list ->
-            if (isEnum) {
-                createEnumSupertype(this, javac).let { list.add(it) }
-            } else if (isAnnotationType) {
-                javac.JAVA_LANG_ANNOTATION_ANNOTATION?.let { list.add(it) }
-            }
+            by lazy {
+                arrayListOf<JavaClassifierType>().also { list ->
+                    if (isEnum) {
+                        createEnumSupertype(this, javac).let { list.add(it) }
+                    }
+                    else if (isAnnotationType) {
+                        javac.JAVA_LANG_ANNOTATION_ANNOTATION?.let { list.add(it) }
+                    }
 
-            tree.extending?.let {
-                (TreeBasedType.create(it, javac.getTreePath(it, treePath.compilationUnit), javac, emptyList()) as? JavaClassifierType)
-                        ?.let { list.add(it) }
-            }
-            tree.implementing?.mapNotNull {
-                TreeBasedType.create(it, javac.getTreePath(it, treePath.compilationUnit), javac, emptyList()) as? JavaClassifierType
-            }?.let { list.addAll(it) }
+                    tree.extending?.let {
+                        (TreeBasedType.create(it, javac.getTreePath(it, treePath.compilationUnit), javac, emptyList()) as? JavaClassifierType)
+                                ?.let { list.add(it) }
+                    }
+                    tree.implementing?.mapNotNull {
+                        TreeBasedType.create(it, javac.getTreePath(it, treePath.compilationUnit), javac, emptyList()) as? JavaClassifierType
+                    }?.let { list.addAll(it) }
 
-            if (list.isEmpty()) {
-                javac.JAVA_LANG_OBJECT?.let { list.add(it) }
+                    if (list.isEmpty()) {
+                        javac.JAVA_LANG_OBJECT?.let { list.add(it) }
+                    }
+                }
             }
-        }
 
     val innerClasses: Map<Name, TreeBasedClass> by lazy {
         tree.members
                 .filterIsInstance(JCTree.JCClassDecl::class.java)
-                .map { TreeBasedClass(it, TreePath(treePath, it), javac, file) }
+                .map { TreeBasedClass(it, TreePath(treePath, it), javac, file, classId?.createNestedClassId(Name.identifier(it.simpleName.toString()))) }
                 .associateBy(JavaClass::name)
     }
 
     override val outerClass: JavaClass? by lazy {
         (treePath.parentPath.leaf as? JCTree.JCClassDecl)?.let { classDecl ->
-            TreeBasedClass(classDecl, treePath.parentPath, javac, file)
+            javac.findClass(classId!!.outerClassId!!)
+            ?: TreeBasedClass(classDecl, treePath.parentPath, javac, file, classId.outerClassId)
         }
     }
 
@@ -156,7 +156,7 @@ class TreeBasedClass(
 
 private fun createEnumSupertype(javaClass: JavaClass,
                                 javac: JavacWrapper) = object : JavaClassifierType {
-    override val classifier: JavaClassifier?
+    override val classifier: JavaClass?
         get() = javac.JAVA_LANG_ENUM
 
     override val typeArguments: List<JavaType>
@@ -167,11 +167,12 @@ private fun createEnumSupertype(javaClass: JavaClass,
     override val annotations: Collection<JavaAnnotation>
         get() = emptyList()
     override val classifierQualifiedName: String
-        get() = (classifier as? JavaClass)?.fqName?.asString() ?: ""
+        get() = classifier?.fqName?.asString() ?: ""
     override val presentableText: String
         get() = classifierQualifiedName
     override val isDeprecatedInJavaDoc: Boolean
         get() = false
+
     override fun findAnnotation(fqName: FqName) = null
 
     private inner class TypeArgument : JavaClassifierType {
@@ -189,6 +190,7 @@ private fun createEnumSupertype(javaClass: JavaClass,
             get() = classifierQualifiedName
         override val isDeprecatedInJavaDoc: Boolean
             get() = false
+
         override fun findAnnotation(fqName: FqName) = null
 
     }

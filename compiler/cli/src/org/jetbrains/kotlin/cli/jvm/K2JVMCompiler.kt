@@ -253,7 +253,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     private fun compileJavaFilesIfNeeded(environment: KotlinCoreEnvironment,
                                          arguments: K2JVMCompilerArguments): Boolean  {
-        if (arguments.useJavac) {
+        if (arguments.compileJava) {
             return JavacWrapper.getInstance(environment.project).use { it.compile() }
         }
         return true

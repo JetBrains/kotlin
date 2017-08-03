@@ -20,7 +20,6 @@ import com.sun.source.util.TreePath
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.FqName
@@ -32,12 +31,14 @@ class TreeBasedValueParameter(
         javac: JavacWrapper
 ) : TreeBasedElement<JCTree.JCVariableDecl>(tree, treePath, javac), JavaValueParameter {
 
-    override val annotations: Collection<JavaAnnotation> by lazy {
+    override val annotations: Collection<TreeBasedAnnotation> by lazy {
         tree.annotations().map { TreeBasedAnnotation(it, treePath, javac) }
     }
 
     override fun findAnnotation(fqName: FqName) =
-            annotations.find { it.classId?.asSingleFqName() == fqName }
+            annotations
+                    .filter { it.annotation.annotationType.toString().endsWith(fqName.shortName().asString()) }
+                    .find { it.classId?.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = javac.isDeprecatedInJavaDoc(treePath)

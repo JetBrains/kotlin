@@ -238,7 +238,7 @@ private class CurrentClassAndInnerScope(javac: JavacWrapper,
 
     override fun findClass(name: String, pathSegments: List<String>): JavaClassifier? {
         val identifier = Name.identifier(name)
-        treePath.enclosingClasses.forEach {
+        treePath.enclosingClasses().forEach {
             (it as? TreeBasedClass)?.typeParameters
                     ?.find { typeParameter -> typeParameter.name == identifier }
                     ?.let { typeParameter -> return typeParameter }
@@ -251,30 +251,29 @@ private class CurrentClassAndInnerScope(javac: JavacWrapper,
         return parent.findClass(name, pathSegments)
     }
 
-    private val TreePath.enclosingClasses: List<JavaClass>
-        get() {
-            val outerClasses = filterIsInstance<JCTree.JCClassDecl>()
-                    .dropWhile { it.extending == leaf || leaf in it.implementing }
-                    .asReversed()
-                    .map { it.simpleName.toString() }
+    private fun TreePath.enclosingClasses(): List<JavaClass> {
+        val outerClasses = filterIsInstance<JCTree.JCClassDecl>()
+                .dropWhile { it.extending == leaf || leaf in it.implementing }
+                .asReversed()
+                .map { it.simpleName.toString() }
 
-            val packageName = compilationUnit.packageName?.toString() ?: ""
-            val outermostClassName = outerClasses.firstOrNull() ?: return emptyList()
+        val packageName = compilationUnit.packageName?.toString() ?: ""
+        val outermostClassName = outerClasses.firstOrNull() ?: return emptyList()
 
-            val outermostClassId = classId(packageName, outermostClassName)
-            var outermostClass = javac.findClass(outermostClassId) ?: return emptyList()
+        val outermostClassId = classId(packageName, outermostClassName)
+        var outermostClass = javac.findClass(outermostClassId) ?: return emptyList()
 
-            val classes = arrayListOf<JavaClass>()
+        val classes = arrayListOf<JavaClass>()
+        classes.add(outermostClass)
+
+        for (it in outerClasses.drop(1)) {
+            outermostClass = outermostClass.findInnerClass(Name.identifier(it))
+                             ?: throw AssertionError("Couldn't find a class ($it) that is surely defined in ${outermostClass.fqName?.asString()}")
             classes.add(outermostClass)
-
-            for (it in outerClasses.drop(1)) {
-                outermostClass = outermostClass.findInnerClass(Name.identifier(it))
-                                 ?: throw AssertionError("Couldn't find a class ($it) that is surely defined in ${outermostClass.fqName?.asString()}")
-                classes.add(outermostClass)
-            }
-
-            return classes.reversed()
         }
+
+        return classes.reversed()
+    }
 
 }
 

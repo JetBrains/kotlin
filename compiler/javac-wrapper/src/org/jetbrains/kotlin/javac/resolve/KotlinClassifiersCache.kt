@@ -22,6 +22,8 @@ import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JavaVisibilities
@@ -29,7 +31,6 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
@@ -38,9 +39,12 @@ class KotlinClassifiersCache(sourceFiles: Collection<KtFile>,
                              private val javac: JavacWrapper) {
 
     private val kotlinPackages = hashSetOf<FqName>()
+    private val kotlinFacadeClasses = hashMapOf<ClassId, KtFile>()
     private val kotlinClasses: Map<ClassId?, KtClassOrObject?> =
             sourceFiles.flatMap { ktFile ->
                 kotlinPackages.add(ktFile.packageFqName)
+                val facadeFqName = ktFile.javaFileFacadeFqName
+                kotlinFacadeClasses[ClassId(facadeFqName.parent(), facadeFqName.shortName())] = ktFile
                 ktFile.declarations
                         .filterIsInstance<KtClassOrObject>()
                         .map { it.computeClassId() to it }
@@ -50,9 +54,11 @@ class KotlinClassifiersCache(sourceFiles: Collection<KtFile>,
 
     fun getKotlinClassifier(classId: ClassId) = classifiers[classId] ?: createClassifier(classId)
 
-    fun createMockKotlinClassifier(classifier: KtClassOrObject,
+    fun createMockKotlinClassifier(classifier: KtClassOrObject?,
+                                   ktFile: KtFile?,
                                    classId: ClassId) = MockKotlinClassifier(classId,
                                                                             classifier,
+                                                                            ktFile,
                                                                             this,
                                                                             javac)
             .apply { classifiers[classId] = this }
@@ -60,11 +66,14 @@ class KotlinClassifiersCache(sourceFiles: Collection<KtFile>,
     fun hasPackage(packageFqName: FqName) = kotlinPackages.contains(packageFqName)
 
     private fun createClassifier(classId: ClassId): JavaClass? {
+        kotlinFacadeClasses[classId]?.let {
+            return createMockKotlinClassifier(null, it, classId)
+        }
         if (classId.isNestedClass) {
             classifiers[classId]?.let { return it }
             val pathSegments = classId.relativeClassName.pathSegments().map { it.asString() }
             val outerClassId = ClassId(classId.packageFqName, Name.identifier(pathSegments.first()))
-            var outerClass: JavaClass = kotlinClasses[outerClassId]?.let { createMockKotlinClassifier(it, outerClassId) } ?: return null
+            var outerClass: JavaClass = kotlinClasses[outerClassId]?.let { createMockKotlinClassifier(it, null, outerClassId) } ?: return null
 
             pathSegments.drop(1).forEach {
                 outerClass = outerClass.findInnerClass(Name.identifier(it)) ?: return null
@@ -75,21 +84,25 @@ class KotlinClassifiersCache(sourceFiles: Collection<KtFile>,
 
         val kotlinClassifier = kotlinClasses[classId] ?: return null
 
-        return createMockKotlinClassifier(kotlinClassifier, classId)
+        return createMockKotlinClassifier(kotlinClassifier, null, classId)
     }
 
 }
 
-class MockKotlinClassifier(val classId: ClassId,
-                           private val classOrObject: KtClassOrObject,
+class MockKotlinClassifier(override val classId: ClassId,
+                           private val classOrObject: KtClassOrObject?,
+                           private val ktFile: KtFile?,
                            private val cache: KotlinClassifiersCache,
-                           private val javac: JavacWrapper) : VirtualFileBoundJavaClass {
+                           private val javac: JavacWrapper) : JavaClassWithClassId {
 
     override val fqName: FqName
         get() = classId.asSingleFqName()
 
     override val visibility: Visibility
-        get() = when (classOrObject.visibilityModifierType()) {
+        get() = if (classOrObject == null) {
+            Visibilities.PUBLIC
+        }
+        else when (classOrObject.visibilityModifierType()) {
             null, KtTokens.PUBLIC_KEYWORD -> Visibilities.PUBLIC
             KtTokens.PRIVATE_KEYWORD -> Visibilities.PRIVATE
             KtTokens.PROTECTED_KEYWORD -> Visibilities.PROTECTED
@@ -97,17 +110,19 @@ class MockKotlinClassifier(val classId: ClassId,
         }
 
     override val supertypes: Collection<JavaClassifierType>
-        get() = javac.kotlinResolver.resolveSupertypes(classOrObject)
+        get() = if (classOrObject == null) {
+            emptyList()
+        }
+        else javac.kotlinResolver.resolveSupertypes(classOrObject)
                 .mapNotNull { javac.getKotlinClassifier(it) ?: javac.findClass(it) }
                 .map { MockKotlinClassifierType(it) }
 
     val innerClasses: Collection<JavaClass>
-        get() = classOrObject.declarations.filterIsInstance<KtClassOrObject>()
-                .mapNotNull { nestedClassOrObject ->
-                    nestedClassOrObject.computeClassId()?.let {
-                        cache.createMockKotlinClassifier(nestedClassOrObject, it)
-                    }
-                }
+        get() = classOrObject?.declarations
+                        ?.filterIsInstance<KtClassOrObject>()
+                        ?.mapNotNull { nestedClassOrObject ->
+                            cache.createMockKotlinClassifier(nestedClassOrObject, ktFile, classId.createNestedClassId(nestedClassOrObject.nameAsSafeName))
+                        } ?: emptyList()
 
     override val lightClassOriginKind
         get() = LightClassOriginKind.SOURCE
@@ -127,12 +142,12 @@ class MockKotlinClassifier(val classId: ClassId,
             innerClasses.find { it.name == name }
 
     val typeParametersNumber: Int
-        get() = classOrObject.typeParameters.size
+        get() = classOrObject?.typeParameters?.size ?: 0
 
     val hasTypeParameters: Boolean
         get() = typeParametersNumber > 0
 
-    fun findField(name: String) = javac.kotlinResolver.findField(classOrObject, name)
+    fun findField(name: String) = classOrObject?.let { javac.kotlinResolver.findField(it, name) } ?: javac.kotlinResolver.findField(ktFile, name)
 
     override val isAbstract: Boolean
         get() = throw UnsupportedOperationException("Should not be called")

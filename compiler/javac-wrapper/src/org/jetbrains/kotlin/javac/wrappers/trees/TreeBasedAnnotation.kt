@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.javac.resolve.ConstantEvaluator
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -34,7 +36,7 @@ class TreeBasedAnnotation(
         get() = createAnnotationArguments(this, javac)
 
     override val classId: ClassId?
-        get() = resolve()?.computeClassId() ?: ClassId.topLevel(FqName(annotation.annotationType.toString().substringAfter("@")))
+        get() = (resolve() as? JavaClassWithClassId)?.classId ?: ClassId.topLevel(FqName(annotation.annotationType.toString().substringAfter("@")))
 
     override fun resolve() =
             javac.resolve(TreePath.getPath(treePath.compilationUnit, annotation.annotationType)) as? JavaClass
@@ -130,11 +132,10 @@ private fun resolveArgumentValue(argument: JCTree.JCExpression,
                                  name: Name,
                                  treePath: TreePath,
                                  javac: JavacWrapper): JavaAnnotationArgument? {
-    val containingAnnotation = annotation.resolve()
-    val type = containingAnnotation?.methods?.find { it.name == name }?.returnType ?: return null
-    val calculator = ValueCalculator(containingAnnotation, javac, treePath, type)
+    val containingAnnotation = annotation.resolve() ?: return null
+    val evaluator = ConstantEvaluator(containingAnnotation, javac, treePath)
 
-    return calculator.getValue(argument)?.let { TreeBasedLiteralAnnotationArgument(name, it, javac) }
+    return evaluator.getValue(argument)?.let { TreeBasedLiteralAnnotationArgument(name, it, javac) }
 }
 
 private fun arrayAnnotationArguments(values: List<JCTree.JCExpression>,

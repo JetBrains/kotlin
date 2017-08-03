@@ -18,15 +18,13 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.code.Flags
-import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.javac.resolve.ConstantEvaluator
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaField
-import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.name.Name
 
@@ -60,7 +58,7 @@ class TreeBasedField(
 
     override val initializerValue: Any?
         get() = tree.init?.let { initExpr ->
-            if (hasConstantNotNullInitializer) ValueCalculator(containingClass, javac, treePath, type).getValue(initExpr) else null
+            if (hasConstantNotNullInitializer) ConstantEvaluator(containingClass, javac, treePath).getValue(initExpr) else null
         }
 
     override val hasConstantNotNullInitializer: Boolean
@@ -73,92 +71,4 @@ class TreeBasedField(
                          type.classifierQualifiedName == "java.lang.String"))
         } ?: false
 
-}
-
-class ValueCalculator(private val containingClass: JavaClass,
-                      private val javac: JavacWrapper,
-                      private val treePath: TreePath,
-                      private val type: JavaType) {
-    fun getValue(expr: JCTree.JCExpression): Any? {
-        return when (expr) {
-            is JCTree.JCLiteral -> {
-                if (expr.typetag == TypeTag.BOOLEAN) {
-                    expr.value != 0
-                }
-                else expr.value
-            }
-            is JCTree.JCIdent,
-            is JCTree.JCFieldAccess -> javac.resolveField(javac.getTreePath(expr, treePath.compilationUnit), containingClass)?.initializerValue
-            is JCTree.JCBinary -> binaryInitializerValue(expr)
-            is JCTree.JCParens -> getValue(expr.expr)
-            is JCTree.JCUnary -> unaryInitializerValue(expr)
-            else -> null
-        }
-    }
-
-    private fun unaryInitializerValue(value: JCTree.JCUnary): Any? {
-        val argValue = getValue(value.arg)
-        return when (value.tag) {
-            JCTree.Tag.COMPL -> (argValue as? Int)?.inv()
-            JCTree.Tag.NOT -> (argValue as? Boolean)?.let { !it }
-            else -> null
-        }
-    }
-
-    private fun binaryInitializerValue(value: JCTree.JCBinary): Any? {
-        val lhsValue = getValue(value.lhs) ?: return null
-        val rhsValue = getValue(value.rhs) ?: return null
-
-        return calculateValue(lhsValue, rhsValue, value.tag)
-    }
-
-    private fun calculateValue(lhsValue: Any?, rhsValue: Any?, opcode: JCTree.Tag): Any? {
-        if (lhsValue is String && opcode == JCTree.Tag.PLUS) return lhsValue + rhsValue
-
-        if (lhsValue is Boolean && rhsValue is Boolean) {
-            return when (opcode) {
-                JCTree.Tag.AND -> lhsValue && rhsValue
-                JCTree.Tag.OR -> lhsValue || rhsValue
-                JCTree.Tag.EQ -> lhsValue == rhsValue
-                JCTree.Tag.NE -> lhsValue != rhsValue
-                else -> null
-            }
-        }
-
-        val l = (lhsValue as? Number)?.toInt() ?: return null
-        val r = (rhsValue as? Number)?.toInt() ?: return null
-        return when (opcode) {
-            JCTree.Tag.PLUS -> getExpressionType(l + r)
-            JCTree.Tag.MINUS -> getExpressionType(l - r)
-            JCTree.Tag.MUL -> getExpressionType(l * r)
-            JCTree.Tag.DIV -> getExpressionType(l / r)
-            JCTree.Tag.MOD -> getExpressionType(l % r)
-            JCTree.Tag.SR -> getExpressionType(l shr r)
-            JCTree.Tag.SL -> getExpressionType(l shl r)
-            JCTree.Tag.BITAND -> getExpressionType(l and r)
-            JCTree.Tag.BITOR -> getExpressionType(l or r)
-            JCTree.Tag.BITXOR -> getExpressionType(l xor r)
-            JCTree.Tag.USR -> getExpressionType(l ushr r)
-            JCTree.Tag.EQ -> l == r
-            JCTree.Tag.NE -> l != r
-            JCTree.Tag.LT -> l < r
-            JCTree.Tag.LE -> l <= r
-            JCTree.Tag.GT -> l > r
-            JCTree.Tag.GE -> l >= r
-            else -> null
-        }
-    }
-
-    private fun getExpressionType(expression: Int): Any? {
-        val type = type as? JavaPrimitiveType ?: return null
-        return when (type.type) {
-            PrimitiveType.DOUBLE -> expression.toDouble()
-            PrimitiveType.INT -> expression
-            PrimitiveType.FLOAT -> expression.toFloat()
-            PrimitiveType.LONG -> expression.toLong()
-            PrimitiveType.SHORT -> expression.toShort()
-            PrimitiveType.BYTE -> expression.toByte()
-            else -> null
-        }
-    }
 }

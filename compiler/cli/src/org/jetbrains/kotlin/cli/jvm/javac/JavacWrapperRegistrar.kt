@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.cli.jvm.javac
 
 import com.intellij.mock.MockProject
 import com.sun.tools.javac.util.Context
+import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -40,7 +40,7 @@ object JavacWrapperRegistrar {
             arguments: Array<String>?,
             bootClasspath: List<File>?,
             sourcePath: List<File>?,
-            lightClassGenerationSupport: CliLightClassGenerationSupport
+            lightClassGenerationSupport: LightClassGenerationSupport
     ): Boolean {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
