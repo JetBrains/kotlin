@@ -33,6 +33,12 @@ internal enum class DwarfTypeKind(val value:Byte) {
 #undef HANDLE_DW_ATE
 }
 
+internal enum class DwarfOp(val value:Long) {
+#define HANDLE_DW_OP(ID, NAME) DW_OP_##NAME(ID),
+#include "llvm/Support/Dwarf.def"
+#undef HANDLE_DW_OP
+}
+
 internal enum class DwarfLanguage(val value:Int) {
 #define HANDLE_DW_LANG(ID, NAME) DW_LANG_##NAME(ID),
 #include "llvm/Support/Dwarf.def"

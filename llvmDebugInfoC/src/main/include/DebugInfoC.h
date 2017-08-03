@@ -59,6 +59,7 @@ DICompositeTypeRef DICreateArrayType(DIBuilderRef refBuilder,
                                       uint64_t elementsCount);
 
 DIDerivedTypeRef DICreateReferenceType(DIBuilderRef refBuilder, DITypeOpaqueRef refType);
+DIDerivedTypeRef DICreatePointerType(DIBuilderRef refBuilder, DITypeOpaqueRef refType);
 DICompositeTypeRef DICreateReplaceableCompositeType(DIBuilderRef refBuilder,
                                                     int tag,
                                                     const char *name,
@@ -92,7 +93,7 @@ DISubroutineTypeRef DICreateSubroutineType(DIBuilderRef builder,
                                            unsigned typesCount);
 
 DILocalVariableRef DICreateAutoVariable(DIBuilderRef builder, DIScopeOpaqueRef scope, const char *name, DIFileRef file, unsigned line, DITypeOpaqueRef type);
-void DIInsertDeclarationWithEmptyExpression(DIBuilderRef builder, LLVMValueRef value, DILocalVariableRef localVariable, DILocationRef location, LLVMBasicBlockRef bb);
+void DIInsertDeclaration(DIBuilderRef builder, LLVMValueRef value, DILocalVariableRef localVariable, DILocationRef location, LLVMBasicBlockRef bb, int64_t *expr, uint64_t exprCount);
 DIExpressionRef DICreateEmptyExpression(DIBuilderRef builder);
 void DIFunctionAddSubprogram(LLVMValueRef fn, DISubprogramRef sp);
 DILocationRef LLVMBuilderSetDebugLocation(LLVMBuilderRef builder, unsigned line, unsigned col, DIScopeOpaqueRef scope);

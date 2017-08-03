@@ -20,15 +20,14 @@ import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.KonanVersion
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.SourceManager.FileEntry
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -104,23 +103,23 @@ internal fun generateDebugInfoHeader(context: Context) {
 
         val path = context.config.outputFile
             .toFileAndFolder()
-
-        context.debugInfo.module = DICreateModule(
-                builder = context.debugInfo.builder,
-                scope = context.llvmModule as DIScopeOpaqueRef,
-                name = path.path(),
+        @Suppress("UNCHECKED_CAST")
+        context.debugInfo.module   = DICreateModule(
+                builder            = context.debugInfo.builder,
+                scope              = context.llvmModule as DIScopeOpaqueRef,
+                name               = path.path(),
                 configurationMacro = "",
-                includePath = "",
-                iSysRoot = "")
+                includePath        = "",
+                iSysRoot           = "")
         context.debugInfo.compilationModule = DICreateCompilationUnit(
-                builder = context.debugInfo.builder,
-                lang = DwarfLanguage.DW_LANG_Kotlin.value,
-                File = path.file,
-                dir = path.folder,
-                producer = DWARF.producer,
+                builder     = context.debugInfo.builder,
+                lang        = DwarfLanguage.DW_LANG_Kotlin.value,
+                File        = path.file,
+                dir         = path.folder,
+                producer    = DWARF.producer,
                 isOptimized = 0,
-                flags = "",
-                rv = DWARF.runtimeVersion)
+                flags       = "",
+                rv          = DWARF.runtimeVersion)
         /* TODO: figure out what here 2 means:
          *
          * 0:b-backend-dwarf:minamoto@minamoto-osx(0)# cat /dev/null | clang -xc -S -emit-llvm -g -o - -
@@ -152,39 +151,35 @@ internal fun generateDebugInfoHeader(context: Context) {
 
 @Suppress("UNCHECKED_CAST")
 internal fun KotlinType.dwarfType(context:Context, targetData:LLVMTargetDataRef): DITypeOpaqueRef {
-    return when {
-        KotlinBuiltIns.isPrimitiveType(this) -> debugInfoBaseType(context, targetData, this.getJetTypeFqName(false), llvmType(context), encoding(context).value.toInt())
+    when {
+        KotlinBuiltIns.isPrimitiveType(this) -> return debugInfoBaseType(context, targetData, this.getJetTypeFqName(false), llvmType(context), encoding(context).value.toInt())
         KotlinBuiltIns.isArray(this) -> {
             val arrayElementType = context.builtIns.getArrayElementType(this)
-            DICreateArrayType(context.debugInfo.builder, arrayElementType.size(context), arrayElementType.alignment(context),
+            return DICreateArrayType(context.debugInfo.builder, arrayElementType.size(context), arrayElementType.alignment(context),
                     arrayElementType.diType(context, targetData),  1) as DITypeOpaqueRef
         }
         else -> {
             val classDescriptor = TypeUtils.getClassDescriptor(this)
-            if (classDescriptor != null) {
-                /**
-                 * Ideally we'd use [KotlinType.typeInfoSymbolName] here , by type could be not
-                 * exportable.
-                 */
-                DICreateStructType(
-                        refBuilder    = context.debugInfo.builder,
-                        scope         = context.debugInfo.compilationModule as DIScopeOpaqueRef,
-                        name          = "ktype:${classDescriptor.fqNameSafe}",
-                        file          = null,
-                        lineNumber    = 0,
-                        sizeInBits    = 0,
-                        alignInBits   = 0,
-                        flags         = DWARF.flagsForwardDeclaration,
-                        derivedFrom   = null,
-                        elements      = null,
-                        elementsCount = 0,
-                        refPlace      = null)!! as DITypeOpaqueRef
-            }
-            else if (TypeUtils.isTypeParameter(this)){
-                //TODO: Type parameter,  how to deal with if?
-                debugInfoBaseType(context, targetData, this.toString(), llvmType(context), encoding(context).value.toInt())
-            } else {
-                TODO("$this: Does this case really exist?")
+            return when {
+                classDescriptor != null -> {
+                    val type = DICreateStructType(
+                            refBuilder    = context.debugInfo.builder,
+                            scope         = context.debugInfo.compilationModule as DIScopeOpaqueRef,
+                            name          = "ObjHeader",
+                            file          = null,
+                            lineNumber    = 0,
+                            sizeInBits    = 0,
+                            alignInBits   = 0,
+                            flags         = DWARF.flagsForwardDeclaration,
+                            derivedFrom   = null,
+                            elements      = null,
+                            elementsCount = 0,
+                            refPlace      = null)!! as DITypeOpaqueRef
+                    dwarfPointerType(context, type)
+                }
+                TypeUtils.isTypeParameter(this) -> //TODO: Type parameter,  how to deal with if?
+                    debugInfoBaseType(context, targetData, this.toString(), llvmType(context), encoding(context).value.toInt())
+                else -> TODO("$this: Does this case really exist?")
             }
         }
     }
@@ -215,17 +210,16 @@ internal fun KotlinType.alignment(context:Context) = context.debugInfo.llvmTypeA
 internal fun KotlinType.llvmType(context:Context): LLVMTypeRef = context.debugInfo.llvmTypes.getOrDefault(this, context.debugInfo.otherLlvmType)
 
 private fun<T> or(v:T, vararg p:(T)->Boolean):Boolean = p.any{it(v)}
-internal fun KotlinType.encoding(context:Context):DwarfTypeKind {
-            return when {
-                this in context.debugInfo.intTypes            -> DwarfTypeKind.DW_ATE_signed
-                this in context.debugInfo.realTypes           -> DwarfTypeKind.DW_ATE_float
-                KotlinBuiltIns.isBoolean(this)                -> DwarfTypeKind.DW_ATE_boolean
-                KotlinBuiltIns.isChar(this)             -> DwarfTypeKind.DW_ATE_unsigned
-                (!KotlinBuiltIns.isPrimitiveType(this)) -> DwarfTypeKind.DW_ATE_address
-                else                                          -> TODO(toString())
 
-            }
-        }
+internal fun KotlinType.encoding(context:Context):DwarfTypeKind = when {
+    this in context.debugInfo.intTypes            -> DwarfTypeKind.DW_ATE_signed
+    this in context.debugInfo.realTypes           -> DwarfTypeKind.DW_ATE_float
+    KotlinBuiltIns.isBoolean(this)                -> DwarfTypeKind.DW_ATE_boolean
+    KotlinBuiltIns.isChar(this)                   -> DwarfTypeKind.DW_ATE_unsigned
+    (!KotlinBuiltIns.isPrimitiveType(this))       -> DwarfTypeKind.DW_ATE_address
+    else                                          -> TODO(toString())
+}
+
 internal fun alignTo(value:Long, align:Long):Long = (value + align - 1) / align * align
 
 internal fun  FunctionDescriptor.subroutineType(context: Context, llvmTargetData: LLVMTargetDataRef): DISubroutineTypeRef {
@@ -242,5 +236,9 @@ private fun KotlinType.referenceOrValue(context: Context, llvmTargetData: LLVMTa
     return if (KotlinBuiltIns.isPrimitiveType(this))
         refType
     else
-        DICreateReferenceType(context.debugInfo.builder, refType) as DITypeOpaqueRef
+        dwarfPointerType(context, refType)
 }
+
+@Suppress("UNCHECKED_CAST")
+private fun dwarfPointerType(context: Context, type: DITypeOpaqueRef) =
+        DICreatePointerType(context.debugInfo.builder, type) as DITypeOpaqueRef

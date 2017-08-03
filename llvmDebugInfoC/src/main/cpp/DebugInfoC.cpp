@@ -178,6 +178,12 @@ DIDerivedTypeRef DICreateReferenceType(DIBuilderRef refBuilder, DITypeOpaqueRef 
                       llvm::unwrap(refType)));
 }
 
+DIDerivedTypeRef DICreatePointerType(DIBuilderRef refBuilder, DITypeOpaqueRef refType) {
+  return llvm::wrap(llvm::unwrap(refBuilder)->createReferenceType(
+                      llvm::dwarf::DW_TAG_pointer_type,
+                      llvm::unwrap(refType)));
+}
+
 DISubroutineTypeRef DICreateSubroutineType(DIBuilderRef builder,
                                            DITypeOpaqueRef* types,
                                            unsigned typesCount) {
@@ -212,11 +218,14 @@ DIExpressionRef DICreateEmptyExpression(DIBuilderRef builder) {
   return llvm::wrap(llvm::unwrap(builder)->createExpression());
 }
 
-void DIInsertDeclarationWithEmptyExpression(DIBuilderRef builder, LLVMValueRef value, DILocalVariableRef localVariable, DILocationRef location, LLVMBasicBlockRef bb) {
+void DIInsertDeclaration(DIBuilderRef builder, LLVMValueRef value, DILocalVariableRef localVariable, DILocationRef location, LLVMBasicBlockRef bb, int64_t *expr, uint64_t exprCount) {
   auto di_builder = llvm::unwrap(builder);
+  std::vector<int64_t> expression;
+  for (uint64_t i = 0; i < exprCount; ++i)
+    expression.push_back(expr[i]);
   di_builder->insertDeclare(llvm::unwrap(value),
                             llvm::unwrap(localVariable),
-                            di_builder->createExpression(),
+                            di_builder->createExpression(expression),
                             llvm::unwrap(location),
                             llvm::unwrap(bb));
 }

@@ -208,7 +208,7 @@ internal interface CodeContext {
      * Declares the variable.
      * @return index of declared variable.
      */
-    fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?): Int
+    fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?, variableLocation: VariableDebugLocation?): Int
 
     /**
      * @return index of variable declared before, or -1 if no such variable has been declared yet.
@@ -276,7 +276,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         override fun genThrow(exception: LLVMValueRef) = unsupported()
 
-        override fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?) = unsupported(descriptor)
+        override fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?, variableLocation: VariableDebugLocation?) = unsupported(descriptor)
 
         override fun getDeclaredVariable(descriptor: VariableDescriptor) = -1
 
@@ -492,8 +492,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
      */
     private inner class VariableScope : InnerScopeImpl() {
 
-        override fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?): Int {
-            return functionGenerationContext.vars.createVariable(descriptor, value)
+        override fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?, variableLocation: VariableDebugLocation?): Int {
+            return functionGenerationContext.vars.createVariable(descriptor, value, variableLocation)
         }
 
         override fun getDeclaredVariable(descriptor: VariableDescriptor): Int {
@@ -964,7 +964,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             for (catch in catches) {
                 fun genCatchBlock() {
                     using(VariableScope()) {
-                        currentCodeContext.genDeclareVariable(catch.parameter, exception)
+                        currentCodeContext.genDeclareVariable(catch.parameter, exception, null)
                         evaluateExpressionAndJump(catch.result, success)
                     }
                 }
@@ -1128,22 +1128,20 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         context.log{"generateVariable               : ${ir2string(value)}"}
         val result = value.initializer?.let { evaluateExpression(it) }
         val variableDescriptor = value.descriptor
-        val index = currentCodeContext.genDeclareVariable(variableDescriptor, result)
-        if (context.shouldContainDebugInfo()) {
+        val functionScope = (currentCodeContext.functionScope() as FunctionScope).declaration?.scope()
+        val variableLocation = if (context.shouldContainDebugInfo() && functionScope != null && variableDescriptor.isVar) {
             val location = debugLocation(value)
-            val functionScope = (currentCodeContext.functionScope() as FunctionScope).declaration?.scope() ?: return
             val file = (currentCodeContext.fileScope() as FileScope).file.file()
-            val variable = functionGenerationContext.vars.load(index)
             val line = value.startLine()
             functionGenerationContext.vars.debugInfoLocalVariableLocation(
                     functionScope = functionScope,
                     diType        = variableDescriptor.type.diType(context, functionGenerationContext.llvmTargetData),
                     name          = variableDescriptor.name,
-                    variable      = variable,
                     file          = file,
                     line          = line,
                     location      = location)
-        }
+        } else null
+        currentCodeContext.genDeclareVariable(variableDescriptor, result, variableLocation)
     }
 
     //-------------------------------------------------------------------------//

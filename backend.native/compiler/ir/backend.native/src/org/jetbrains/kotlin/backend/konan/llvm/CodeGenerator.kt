@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.types.KotlinType
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 
@@ -110,9 +109,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         get() = (functionDescriptor as? ClassConstructorDescriptor)?.constructedClass
     private var returnSlot: LLVMValueRef? = null
     private var slotsPhi: LLVMValueRef? = null
-    private var slotCount = 0
+    private var slotCount = 1
     private var localAllocs = 0
     private var arenaSlot: LLVMValueRef? = null
+    private val slotToVariableLocation = mutableMapOf<Int,VariableDebugLocation>()
 
     private val prologueBb        = basicBlockInFunction("prologue", startLocation)
     private val localsInitBb      = basicBlockInFunction("locals_init", startLocation)
@@ -142,15 +142,31 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return result
     }
 
-    fun alloca(type: LLVMTypeRef?, name: String = ""): LLVMValueRef {
+    fun alloca(type: LLVMTypeRef?, name: String = "", variableLocation: VariableDebugLocation? = null): LLVMValueRef {
         if (isObjectType(type!!)) {
             appendingTo(localsInitBb) {
-                return gep(slotsPhi!!, Int32(slotCount++).llvm, name)
+                val slotAddress = gep(slotsPhi!!, Int32(slotCount).llvm, name)
+                variableLocation?.let {
+                    slotToVariableLocation[slotCount] = it
+                }
+                slotCount++
+                return slotAddress
             }
         }
 
         appendingTo(prologueBb) {
-            return LLVMBuildAlloca(builder, type, name)!!
+            val slotAddress = LLVMBuildAlloca(builder, type, name)!!
+            variableLocation?.let {
+                DIInsertDeclaration(
+                        builder       = codegen.context.debugInfo.builder,
+                        value         = slotAddress,
+                        localVariable = it.localVariable,
+                        location      = it.location,
+                        bb            = prologueBb,
+                        expr          = null,
+                        exprCount     = 0)
+            }
+            return slotAddress
         }
     }
 
@@ -179,7 +195,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     fun loadSlot(address: LLVMValueRef, isVar: Boolean, name: String = ""): LLVMValueRef {
         val value = LLVMBuildLoad(builder, address, name)!!
         if (isObjectRef(value) && isVar) {
-            val slot = alloca(LLVMTypeOf(value))
+            val slot = alloca(LLVMTypeOf(value), variableLocation = null)
             storeAnyLocal(value, slot)
         }
         return value
@@ -465,9 +481,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
         positionAtEnd(localsInitBb)
         slotsPhi = phi(kObjHeaderPtrPtr)
-        // First slot can be assigned to keep pointer to frame local arena.
-        slotCount = 1
-        localAllocs = 0
         // Is removed by DCE trivially, if not needed.
         arenaSlot = intToPtr(
                 or(ptrToInt(slotsPhi, codegen.intPtrType), codegen.immOneIntPtrType), kObjHeaderPtrPtr)
@@ -491,6 +504,20 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                                 Int1(0).llvm))
             }
             addPhiIncoming(slotsPhi!!, prologueBb to slots)
+            val slotOffset = pointerSize * slotCount
+            memScoped {
+                slotToVariableLocation.forEach { slot, variable ->
+                    val expr = longArrayOf(DwarfOp.DW_OP_minus.value, slotOffset + pointerSize * slot.toLong()).toCValues()
+                    DIInsertDeclaration(
+                            builder       = codegen.context.debugInfo.builder,
+                            value         = slotsPhi,
+                            localVariable = variable.localVariable,
+                            location      = variable.location,
+                            bb            = prologueBb,
+                            expr          = expr,
+                            exprCount     = 2)
+                }
+            }
             br(localsInitBb)
         }
 

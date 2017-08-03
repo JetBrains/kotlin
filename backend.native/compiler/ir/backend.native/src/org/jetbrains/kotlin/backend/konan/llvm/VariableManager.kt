@@ -51,7 +51,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         contextVariablesToIndex.clear()
     }
 
-    fun createVariable(descriptor: VariableDescriptor, value: LLVMValueRef? = null) : Int {
+    fun createVariable(descriptor: VariableDescriptor, value: LLVMValueRef? = null, variableLocation: VariableDebugLocation?) : Int {
         // Note that we always create slot for object references for memory management.
         if (!descriptor.isVar && value != null)
             return createImmutable(descriptor, value)
@@ -60,15 +60,15 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
             // as even vals can be assigned on multiple paths. However, we use varness
             // knowledge, as anonymous slots are created only for true vars (for vals
             // their single assigner already have slot).
-            return createMutable(descriptor, descriptor.isVar, value)
+            return createMutable(descriptor, descriptor.isVar, value, variableLocation)
     }
 
     fun createMutable(descriptor: VariableDescriptor,
-                      isVar: Boolean, value: LLVMValueRef? = null) : Int {
+                      isVar: Boolean, value: LLVMValueRef? = null, variableLocation: VariableDebugLocation?) : Int {
         assert(!contextVariablesToIndex.contains(descriptor))
         val index = variables.size
         val type = functionGenerationContext.getLLVMType(descriptor.type)
-        val slot = functionGenerationContext.alloca(type, descriptor.name.asString())
+        val slot = functionGenerationContext.alloca(type, descriptor.name.asString(), variableLocation)
         if (value != null)
             functionGenerationContext.storeAnyLocal(value, slot)
         variables.add(SlotRecord(slot, functionGenerationContext.isObjectType(type), isVar))
@@ -85,7 +85,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
 
     private fun createAnonymousMutable(type: LLVMTypeRef, value: LLVMValueRef? = null) : Int {
         val index = variables.size
-        val slot = functionGenerationContext.alloca(type)
+        val slot = functionGenerationContext.alloca(type, variableLocation = null)
         if (value != null)
             functionGenerationContext.storeAnyLocal(value, slot)
         variables.add(SlotRecord(slot, functionGenerationContext.isObjectType(type), true))
@@ -117,7 +117,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         variables[index].store(value)
     }
 
-    fun debugInfoLocalVariableLocation(functionScope: DIScopeOpaqueRef, diType: DITypeOpaqueRef, name:Name, variable: LLVMValueRef, file: DIFileRef, line: Int, location: DILocationRef?) {
+    fun debugInfoLocalVariableLocation(functionScope: DIScopeOpaqueRef, diType: DITypeOpaqueRef, name:Name, file: DIFileRef, line: Int, location: DILocationRef?):VariableDebugLocation {
         val variableDeclaration = DICreateAutoVariable(
                 builder = functionGenerationContext.context.debugInfo.builder,
                 scope = functionScope,
@@ -125,11 +125,9 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
                 file = file,
                 line = line,
                 type = diType)
-        DIInsertDeclarationWithEmptyExpression(
-                builder = functionGenerationContext.context.debugInfo.builder,
-                value = variable,
-                localVariable = variableDeclaration,
-                location = location,
-                bb = LLVMGetInsertBlock(functionGenerationContext.builder))
+
+        return VariableDebugLocation(localVariable = variableDeclaration!!, location = location, file = file, line = line)
     }
 }
+
+internal data class VariableDebugLocation(val localVariable: DILocalVariableRef, val location:DILocationRef?, val file:DIFileRef, val line:Int)
