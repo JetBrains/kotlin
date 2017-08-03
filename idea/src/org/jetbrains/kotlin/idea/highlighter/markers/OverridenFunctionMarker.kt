@@ -24,21 +24,19 @@ import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.util.Pair
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiModifier
+import com.intellij.psi.*
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.search.PsiElementProcessorAdapter
-import com.intellij.psi.search.searches.AllOverridingMethodsSearch
 import com.intellij.psi.search.searches.OverridingMethodsSearch
-import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.util.PsiFormatUtil
 import com.intellij.util.CommonProcessors
-import com.intellij.util.Processor
 import gnu.trove.THashSet
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isTraitFakeOverride
+import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachDeclaredMemberOverride
+import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.JComponent
@@ -47,26 +45,21 @@ private fun PsiMethod.isMethodWithDeclarationInOtherClass(): Boolean {
     return this is KtLightMethod && this.isTraitFakeOverride()
 }
 
-internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, T>, classes: Set<PsiClass>): Set<T> {
+internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiElement, T>, classes: Set<PsiClass>): Set<T> {
     val overridden = HashSet<T>()
     for (aClass in classes) {
-        AllOverridingMethodsSearch.search(aClass).forEach(object : Processor<Pair<PsiMethod, PsiMethod>> {
-            override fun process(pair: Pair<PsiMethod, PsiMethod>?): Boolean {
-                ProgressManager.checkCanceled()
-
-                if (!pair!!.getSecond().isMethodWithDeclarationInOtherClass()) {
-                    val superMethod = pair.getFirst()
-
-                    val declaration = mappingToJava.get(superMethod)
-                    if (declaration != null) {
-                        mappingToJava.remove(superMethod)
-                        overridden.add(declaration)
-                    }
+        aClass.forEachDeclaredMemberOverride { superMember, overridingMember ->
+            ProgressManager.checkCanceled()
+            if (overridingMember.toLightMethods().any { !it.isMethodWithDeclarationInOtherClass() }) {
+                val declaration = mappingToJava[superMember]
+                if (declaration != null) {
+                    mappingToJava.remove(superMember)
+                    overridden.add(declaration)
                 }
-
-                return !mappingToJava.isEmpty()
             }
-        })
+
+            !mappingToJava.isEmpty()
+        }
     }
 
     return overridden
@@ -103,7 +96,11 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
     val processor = PsiElementProcessor.CollectElementsWithLimit<PsiMethod>(2, THashSet<PsiMethod>())
     if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
             {
-                OverridingMethodsSearch.search(method, true).forEach(PsiElementProcessorAdapter(processor))
+                method.forEachOverridingMethod {
+                    runReadAction {
+                        processor.execute(it)
+                    }
+                }
             },
             "Searching for overriding declarations", true, method.project, e?.component as JComponent?)) {
         return null
@@ -112,7 +109,13 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
     var overridingJavaMethods = processor.collection.filter { !it.isMethodWithDeclarationInOtherClass() }
     if (overridingJavaMethods.isEmpty()) return null
 
-    val showMethodNames = !PsiUtil.allMethodsHaveSameSignature(overridingJavaMethods.toTypedArray())
+    val renderedSignatures = overridingJavaMethods.map {
+        PsiFormatUtil.formatMethod(it,
+                                   PsiSubstitutor.EMPTY,
+                                   PsiFormatUtil.SHOW_PARAMETERS + PsiFormatUtil.SHOW_FQ_CLASS_NAMES,
+                                   PsiFormatUtil.SHOW_TYPE + PsiFormatUtil.SHOW_FQ_CLASS_NAMES)
+    }
+    val showMethodNames = renderedSignatures.distinct().size > 1
 
     val renderer = MethodCellRenderer(showMethodNames)
     overridingJavaMethods = overridingJavaMethods.sortedWith(renderer.comparator)
@@ -138,7 +141,7 @@ private class OverridingMethodsUpdater(
 
     override fun run(indicator: ProgressIndicator) {
         super.run(indicator)
-        OverridingMethodsSearch.search(myMethod, true).forEach(object : CommonProcessors.CollectProcessor<PsiMethod>() {
+        val processor = object : CommonProcessors.CollectProcessor<PsiMethod>() {
             override fun process(psiMethod: PsiMethod?): Boolean {
                 if (!updateComponent(psiMethod, myRenderer.comparator)) {
                     indicator.cancel()
@@ -146,6 +149,7 @@ private class OverridingMethodsUpdater(
                 indicator.checkCanceled()
                 return super.process(psiMethod)
             }
-        })
+        }
+        myMethod.forEachOverridingMethod { processor.process(it) }
     }
 }
