@@ -265,10 +265,10 @@ abstract class AnalyzerFacade {
 
 class LazyModuleDependencies<M: ModuleInfo>(
         storageManager: StorageManager,
-        module: M,
+        private val module: M,
         modulePlatforms: (M) -> MultiTargetPlatform?,
         firstDependency: M? = null,
-        resolverForProject: ResolverForProjectImpl<M>
+        private val resolverForProject: ResolverForProjectImpl<M>
 ) : ModuleDependencies {
     private val dependencies = storageManager.createLazyValue {
         val moduleDescriptor = resolverForProject.descriptorForModule(module)
@@ -288,22 +288,24 @@ class LazyModuleDependencies<M: ModuleInfo>(
         }.toList()
     }
 
-    private val visibleInternals = storageManager.createLazyValue {
-        module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
-            resolverForProject.descriptorForModule(it as M)
-        }
-    }
-
     private val implementingModules = storageManager.createLazyValue {
-        if (modulePlatforms(module) != MultiTargetPlatform.Common) emptySet<ModuleDescriptorImpl>()
+        if (modulePlatforms(module) != MultiTargetPlatform.Common) emptySet<M>()
         else resolverForProject.modules
-                .filter { modulePlatforms(it) != MultiTargetPlatform.Common && module in it.dependencies() }
-                .mapTo(mutableSetOf(), resolverForProject::descriptorForModule)
+                .filterTo(mutableSetOf()) {
+                    modulePlatforms(it) != MultiTargetPlatform.Common && module in it.dependencies()
+                }
     }
 
     override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
-    override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl> get() = visibleInternals()
-    override val allImplementingModules: Set<ModuleDescriptorImpl> get() = implementingModules()
+
+    override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
+        get() =
+            module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
+                resolverForProject.descriptorForModule(it as M)
+            }
+
+    override val allImplementingModules: Set<ModuleDescriptorImpl>
+        get() = implementingModules().mapTo(mutableSetOf()) { resolverForProject.descriptorForModule(it) }
 }
 
 
