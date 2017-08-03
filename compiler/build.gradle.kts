@@ -77,7 +77,7 @@ dependencies {
     compileOnly(project(":build-common"))
     compileOnly(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
     compileOnly(commonDep("org.fusesource.jansi", "jansi"))
-    compileOnly(commonDep("jline"))
+    compileOnly(commonDep("org.jline", "jline"))
 
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
@@ -108,7 +108,7 @@ dependencies {
     fatJarContents(ideaSdkDeps("jna-platform", "oromatcher"))
     fatJarContents(ideaSdkDeps("jps-model.jar", subdir = "jps"))
     fatJarContents(commonDep("javax.inject"))
-    fatJarContents(commonDep("jline"))
+    fatJarContents(commonDep("org.jline", "jline"))
     fatJarContents(protobufFull())
     fatJarContents(commonDep("com.github.spullara.cli-parser", "cli-parser"))
     fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))
@@ -118,9 +118,9 @@ dependencies {
     proguardLibraryJars(files(firstFromJavaHomeThatExists("lib/rt.jar", "../Classes/classes.jar"),
                               firstFromJavaHomeThatExists("lib/jsse.jar", "../Classes/jsse.jar"),
                               firstFromJavaHomeThatExists("../lib/tools.jar", "../Classes/tools.jar")))
-    proguardLibraryJars(kotlinDep("stdlib"))
-    proguardLibraryJars(kotlinDep("script-runtime"))
-    proguardLibraryJars(kotlinDep("reflect"))
+    proguardLibraryJars(project(":kotlin-stdlib", configuration = "mainJar"))
+    proguardLibraryJars(project(":kotlin-script-runtime", configuration = "mainJar"))
+    proguardLibraryJars(project(":kotlin-reflect", configuration = "mainJar"))
     proguardLibraryJars(preloadedDeps("kotlinx-coroutines-core"))
 
 //    proguardLibraryJars(project(":prepare:runtime", configuration = "default").apply { isTransitive = false })

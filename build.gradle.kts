@@ -11,7 +11,8 @@ buildscript {
     extra["kotlin_gradle_plugin_version"] = extra["kotlin_version"]
     extra["repos"] = listOf("https://dl.bintray.com/kotlin/kotlin-dev",
                             "https://repo.gradle.org/gradle/repo",
-                            "https://plugins.gradle.org/m2")
+                            "https://plugins.gradle.org/m2",
+                            "http://repository.jetbrains.com/utils/")
 
     repositories {
         for (repo in (rootProject.extra["repos"] as List<String>)) {
@@ -83,7 +84,7 @@ extra["versions.javax.inject"] = "1"
 extra["versions.jsr305"] = "1.3.9"
 extra["versions.cli-parser"] = "1.1.2"
 extra["versions.jansi"] = "1.11"
-extra["versions.jline"] = "2.12.1"
+extra["versions.jline"] = "3.3.1"
 extra["versions.junit"] = "4.12"
 extra["versions.javaslang"] = "2.0.6"
 extra["versions.ant"] = "1.8.2"
@@ -124,9 +125,12 @@ allprojects {
     version = buildNumber
 }
 
-applyFrom("libraries/commonConfiguration.gradle")
-applyFrom("libraries/gradlePluginsConfiguration.gradle")
-applyFrom("libraries/configureGradleTools.gradle")
+apply {
+    from("libraries/commonConfiguration.gradle")
+    from("libraries/gradlePluginsConfiguration.gradle")
+    from("libraries/configureGradleTools.gradle")
+//    from("libraries/prepareSonatypeStaging.gradle")
+}
 
 val importedAntTasksPrefix = "imported-ant-update-"
 

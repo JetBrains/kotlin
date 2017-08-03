@@ -15,6 +15,7 @@ dependencies {
 }
 
 configureKotlinProjectSources("android-extensions-compiler/src", "android-extensions-runtime/src", sourcesBaseDir = File(rootDir, "plugins", "android-extensions"))
+configureKotlinProjectResourcesDefault(sourcesBaseDir = File(rootDir, "plugins", "android-extensions", "android-extensions-compiler", "src"))
 configureKotlinProjectNoTests()
 
 val jar: Jar by tasks

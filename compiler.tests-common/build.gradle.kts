@@ -23,7 +23,7 @@ dependencies {
     compile(project(":js:js.frontend"))
     compile(project(":js:js.translator"))
     compile(project(":plugins:android-extensions-compiler"))
-    compile(kotlinDep("test"))
+    compile(project(":kotlin-test:kotlin-test-jvm"))
     compile(commonDep("junit"))
     compile(ideaSdkCoreDeps("intellij-core"))
     compile(ideaSdkDeps("openapi", "idea", "idea_rt"))

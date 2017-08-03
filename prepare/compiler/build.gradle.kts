@@ -45,7 +45,7 @@ dependencies {
     ideaSdkCoreCfg(ideaSdkDeps("jna-platform", "oromatcher"))
     ideaSdkCoreCfg(ideaSdkDeps("jps-model.jar", subdir = "jps"))
     otherDepsCfg(commonDep("javax.inject"))
-    otherDepsCfg(commonDep("jline"))
+    otherDepsCfg(commonDep("org.jline", "jline"))
     otherDepsCfg(protobufFull())
     otherDepsCfg(commonDep("com.github.spullara.cli-parser", "cli-parser"))
     otherDepsCfg(commonDep("com.google.code.findbugs", "jsr305"))

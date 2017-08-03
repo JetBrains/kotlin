@@ -5,7 +5,7 @@ apply { plugin("kotlin") }
 
 dependencies {
     val compile by configurations
-    compile(kotlinDep("stdlib"))
+    compile(project(":kotlin-stdlib"))
     buildVersion()
 }
 

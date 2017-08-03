@@ -7,7 +7,7 @@ dependencies {
     val testCompileOnly by configurations
     val testRuntime by configurations
 
-    compile(kotlinDep("reflect"))
+    compile(project(":kotlin-reflect"))
     compile(project(":compiler:util"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:frontend"))

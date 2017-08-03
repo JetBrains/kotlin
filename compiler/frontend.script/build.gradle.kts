@@ -5,7 +5,7 @@ dependencies {
     val compile by configurations
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
-    compile(kotlinDep("reflect"))
+    compile(project(":kotlin-reflect"))
     compile(preloadedDeps("kotlinx-coroutines-core"))
 }
 

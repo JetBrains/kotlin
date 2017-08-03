@@ -7,7 +7,7 @@ apply {
 dependencies {
     val compile by configurations
     compile(project(":core:builtins"))
-    compile(kotlinDep("stdlib"))
+    compile(project(":kotlin-stdlib"))
 }
 
 configureKotlinProjectSourcesDefault()

@@ -18,7 +18,7 @@ dependencies {
     compile(project(":js:js.dce"))
     compile(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
     compile(commonDep("org.fusesource.jansi", "jansi"))
-    compile(commonDep("jline"))
+    compile(commonDep("org.jline", "jline"))
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 }
 
