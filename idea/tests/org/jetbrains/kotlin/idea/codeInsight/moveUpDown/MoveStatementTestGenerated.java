@@ -821,7 +821,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Expressions extends AbstractMoveStatementTest {
         public void testAllFilesPresentInExpressions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/expressions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/expressions"), Pattern.compile("^(.+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("binaryExpr1.kt")
@@ -1103,6 +1103,18 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         @TestMetadata("outOfClosure2.kt")
         public void testOutOfClosure2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfClosure2.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("outOfClosureInScriptsDown.kts")
+        public void testOutOfClosureInScriptsDown() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfClosureInScriptsDown.kts");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("outOfClosureInScriptsUp.kts")
+        public void testOutOfClosureInScriptsUp() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/outOfClosureInScriptsUp.kts");
             doTestExpression(fileName);
         }
 

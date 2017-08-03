@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.ServiceManager
@@ -24,6 +25,7 @@ import com.intellij.openapi.project.ProjectUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
@@ -32,13 +34,15 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.asCoroutineDispatcher
 import kotlinx.coroutines.experimental.launch
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
+import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
-import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 
 internal class ScriptDependenciesUpdater(
         private val project: Project,
@@ -233,11 +237,14 @@ internal class ScriptDependenciesUpdater(
 
     private fun listenToVfsChanges() {
         project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
-
             val projectFileIndex = ProjectRootManager.getInstance(project).fileIndex
             val application = ApplicationManager.getApplication()
 
             override fun after(events: List<VFileEvent>) {
+                if (application.isUnitTestMode && application.isScriptDependenciesUpdaterDisabled == true) {
+                    return
+                }
+
                 if (updateCache(events.mapNotNull {
                     // The check is partly taken from the BuildManager.java
                     it.file?.takeIf {
@@ -258,7 +265,6 @@ internal class ScriptDependenciesUpdater(
     }
 }
 
-
 private data class TimeStamp(private val stamp: Long) {
     operator fun compareTo(other: TimeStamp) = this.stamp.compareTo(other.stamp)
 }
@@ -268,3 +274,6 @@ private object TimeStamps {
 
     fun next() = TimeStamp(current++)
 }
+
+@set: TestOnly
+var Application.isScriptDependenciesUpdaterDisabled by NotNullableUserDataProperty(Key.create("SCRIPT_DEPENDENCIES_UPDATER_DISABLED"), false)

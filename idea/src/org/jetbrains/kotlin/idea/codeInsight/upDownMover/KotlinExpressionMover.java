@@ -184,7 +184,7 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
         while (current != null) {
             PsiElement parent = current.getParent();
             if (parent instanceof KtClassBody ||
-                parent instanceof KtAnonymousInitializer ||
+                (parent instanceof KtAnonymousInitializer && !(parent instanceof KtScriptInitializer)) ||
                 parent instanceof KtNamedFunction ||
                 (parent instanceof KtProperty && !((KtProperty) parent).isLocal())) {
                 return null;
