@@ -20,6 +20,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
+import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
@@ -132,7 +133,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal var javaOutputDir: File? = null
     internal var sourceSetName: String by Delegates.notNull()
     internal val moduleName: String
-            get() = "${project.name}_$sourceSetName"
+        get() {
+            val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
+                    ?: project.name
+            val suffix = if (sourceSetName == "main") "" else "_$sourceSetName"
+            return "$baseName$suffix"
+        }
 
     @Suppress("UNCHECKED_CAST")
     protected val friendTask: AbstractKotlinCompile<T>?
