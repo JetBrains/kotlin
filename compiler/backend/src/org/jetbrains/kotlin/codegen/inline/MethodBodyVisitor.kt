@@ -14,60 +14,37 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
-import org.jetbrains.org.objectweb.asm.Attribute;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.TypePath;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor
+import org.jetbrains.org.objectweb.asm.Attribute
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.TypePath
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.API;
+open class MethodBodyVisitor(mv: MethodVisitor, private val visitAnnotationsAndAttributes: Boolean = false) : InstructionAdapter(API, mv) {
 
-public class MethodBodyVisitor extends InstructionAdapter {
+    override fun visitParameter(name: String, access: Int) {}
 
-    public MethodBodyVisitor(MethodVisitor mv) {
-        super(API, mv);
+    override fun visitAnnotationDefault(): AnnotationVisitor? =
+            if (visitAnnotationsAndAttributes) super.visitAnnotationDefault() else null
+
+    override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =
+            if (visitAnnotationsAndAttributes) super.visitAnnotation(desc, visible) else null
+
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath, desc: String, visible: Boolean): AnnotationVisitor? =
+            if (visitAnnotationsAndAttributes) super.visitTypeAnnotation(typeRef, typePath, desc, visible) else null
+
+    override fun visitParameterAnnotation(parameter: Int, desc: String, visible: Boolean): AnnotationVisitor? =
+            if (visitAnnotationsAndAttributes) super.visitParameterAnnotation(parameter, desc, visible) else null
+
+    override fun visitAttribute(attr: Attribute) {
+        if (visitAnnotationsAndAttributes) super.visitAttribute(attr)
     }
 
-    @Override
-    public void visitParameter(String name, int access) {
-    }
+    override fun visitCode() {}
 
-    @Override
-    public AnnotationVisitor visitAnnotationDefault() {
-        return null;
-    }
+    override fun visitMaxs(maxStack: Int, maxLocals: Int) {}
 
-    @Override
-    public AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
-        return null;
-    }
-
-    @Override
-    public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String desc, boolean visible) {
-        return null;
-    }
-
-    @Override
-    public AnnotationVisitor visitParameterAnnotation(int parameter, @NotNull String desc, boolean visible) {
-        return null;
-    }
-
-    @Override
-    public void visitAttribute(@NotNull Attribute attr) {
-    }
-
-    @Override
-    public void visitCode() {
-    }
-
-    @Override
-    public void visitMaxs(int maxStack, int maxLocals) {
-    }
-
-    @Override
-    public void visitEnd() {
-    }
+    override fun visitEnd() {}
 }
