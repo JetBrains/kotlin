@@ -11,6 +11,7 @@ open class Base {
     fun foo() = "OK"
 }
 
+@kotlin.Suppress("DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET")
 class C : Base(), IBase {
     val lambda1 = {
         super.foo()
