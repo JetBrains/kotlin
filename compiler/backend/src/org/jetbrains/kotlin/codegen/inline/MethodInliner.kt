@@ -90,7 +90,11 @@ class MethodInliner(
                 API, transformedNode.access, transformedNode.name, transformedNode.desc,
                 transformedNode.signature, transformedNode.exceptions?.toTypedArray()
         )
-        val visitor = RemapVisitor(resultNode, remapper, nodeRemapper)
+        val visitor = RemapVisitor(
+                resultNode, remapper, nodeRemapper,
+                /*copy annotation and attributes*/
+                nodeRemapper is RegeneratedLambdaFieldRemapper
+        )
         try {
             transformedNode.accept(visitor)
         }
@@ -109,7 +113,7 @@ class MethodInliner(
 
         processReturns(resultNode, labelOwner, remapReturn, end)
         //flush transformed node to output
-        resultNode.accept(MethodBodyVisitor(adapter))
+        resultNode.accept(MethodBodyVisitor(adapter, true))
 
         sourceMapper.endMapping()
         return result

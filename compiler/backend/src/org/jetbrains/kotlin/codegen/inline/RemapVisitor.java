@@ -34,9 +34,10 @@ public class RemapVisitor extends MethodBodyVisitor {
     public RemapVisitor(
             @NotNull MethodVisitor mv,
             @NotNull LocalVarRemapper remapper,
-            @NotNull FieldRemapper nodeRemapper
+            @NotNull FieldRemapper nodeRemapper,
+            boolean copyAnnotationsAndAttributes
     ) {
-        super(mv);
+        super(mv, copyAnnotationsAndAttributes);
         this.instructionAdapter = new InstructionAdapter(mv);
         this.remapper = remapper;
         this.nodeRemapper = nodeRemapper;
