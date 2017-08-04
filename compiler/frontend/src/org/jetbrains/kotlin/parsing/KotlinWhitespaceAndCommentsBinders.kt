@@ -115,6 +115,17 @@ object DoNotBindAnything : WhitespacesAndCommentsBinder {
     }
 }
 
+object BindFirstShebangWithWhitespaceOnly : WhitespacesAndCommentsBinder {
+    override fun getEdgePosition(
+            tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
+        if (tokens.firstOrNull() == KtTokens.SHEBANG_COMMENT) {
+            return if (tokens.getOrNull(1) == KtTokens.WHITE_SPACE) 2 else 1
+        }
+
+        return 0
+    }
+}
+
 class BindAll(val isTrailing: Boolean) : WhitespacesAndCommentsBinder {
     override fun getEdgePosition(
             tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
