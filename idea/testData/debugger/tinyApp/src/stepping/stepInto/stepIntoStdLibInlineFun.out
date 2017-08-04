@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 stepIntoStdLibInlineFun.kt:6
 _Collections.!EXT!
-resuming stepIntoStdLibInlineFun.kt:5
+resuming stepIntoStdLibInlineFun.kt:6
 Disconnected from the target VM
 
 Process finished with exit code 0
