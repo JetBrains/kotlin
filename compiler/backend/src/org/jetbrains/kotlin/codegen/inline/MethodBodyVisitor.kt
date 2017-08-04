@@ -24,7 +24,9 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 open class MethodBodyVisitor(mv: MethodVisitor, private val visitAnnotationsAndAttributes: Boolean = false) : InstructionAdapter(API, mv) {
 
-    override fun visitParameter(name: String, access: Int) {}
+    override fun visitParameter(name: String, access: Int) {
+        if (visitAnnotationsAndAttributes) super.visitParameter(name, access)
+    }
 
     override fun visitAnnotationDefault(): AnnotationVisitor? =
             if (visitAnnotationsAndAttributes) super.visitAnnotationDefault() else null
@@ -42,7 +44,9 @@ open class MethodBodyVisitor(mv: MethodVisitor, private val visitAnnotationsAndA
         if (visitAnnotationsAndAttributes) super.visitAttribute(attr)
     }
 
-    override fun visitCode() {}
+    override fun visitCode() {
+        if (visitAnnotationsAndAttributes) super.visitCode()
+    }
 
     override fun visitMaxs(maxStack: Int, maxLocals: Int) {}
 
