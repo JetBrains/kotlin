@@ -57,6 +57,7 @@ messages/**)
 -dontwarn javax.crypto.**
 -dontwarn java.lang.invoke.MethodHandle
 -dontwarn org.jline.builtins.Nano$Buffer
+-dontwarn net.jpountz.lz4.LZ4Factory
 
 -libraryjars '<rtjar>'
 -libraryjars '<jssejar>'
