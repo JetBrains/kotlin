@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
@@ -33,7 +34,9 @@ open class KaptGenerateStubsTask : KotlinCompile() {
 
     internal lateinit var kotlinCompileTask: KotlinCompile
 
+    @get:OutputDirectory
     lateinit var stubsDir: File
+
     lateinit var generatedSourcesDir: File
 
     override fun source(vararg sources: Any?): SourceTask? {
