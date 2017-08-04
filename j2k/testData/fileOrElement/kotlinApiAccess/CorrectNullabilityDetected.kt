@@ -1,6 +1,5 @@
 import kotlinApi.*
 
-//TODO: Formatter works incorrectly
 internal class A {
     fun foo(c: KotlinClass): Int {
         return (c.nullableProperty!!.length

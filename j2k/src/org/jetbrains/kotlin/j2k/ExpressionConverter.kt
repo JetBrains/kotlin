@@ -704,13 +704,9 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             codeConverter.convertExpression(it, expression.type).assignPrototype(it, CommentsAndSpacesInheritance.LINE_BREAKS)
         }
         val operators = expression.operands.mapNotNull {
-            expression.getTokenBeforeOperand(it)?.let {
-                val operator = Operator(it.tokenType)
-                val commentsAndSpacesInheritance = if (operator.acceptLineBreakBefore()) CommentsAndSpacesInheritance.LINE_BREAKS else CommentsAndSpacesInheritance.NO_SPACES
-                operator.assignPrototype(it, commentsAndSpacesInheritance)
-            }
+            expression.getTokenBeforeOperand(it)?.run { Operator(tokenType).assignPrototype(this, CommentsAndSpacesInheritance.LINE_BREAKS) }
         }
-        result = polyadicExpressionToBinaryExpressions(args, operators).assignPrototype(expression)
+        result = polyadicExpressionToBinaryExpressions(args, operators)
         if (!expression.isInSingleLine()) {
             result = ParenthesizedExpression(result.assignNoPrototype())
         }
