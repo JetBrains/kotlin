@@ -420,7 +420,9 @@ class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
 //-----------------------------------------------------------------------------//
 
     fun Double.toString(n: Int): String {
-        val str      = this.toString()
+        val str = this.toString()
+        if (str.contains('e', ignoreCase = true)) return str
+
         val len      = str.length
         val pointIdx = str.indexOf('.')
         val dropCnt  = len - pointIdx - n - 1
