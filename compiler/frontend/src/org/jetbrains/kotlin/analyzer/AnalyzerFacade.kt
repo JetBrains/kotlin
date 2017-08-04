@@ -96,7 +96,12 @@ class ResolverForProjectImpl<M : ModuleInfo>(
             val moduleDescriptor: ModuleDescriptorImpl,
             val modificationTracker: ModificationTracker?,
             val modificationCount: Long?
-    )
+    ) {
+        fun isOutOfDate(): Boolean {
+            val currentModCount = modificationTracker?.modificationCount
+            return currentModCount != null && currentModCount > modificationCount!!
+        }
+    }
 
     private val descriptorByModule = mutableMapOf<M, ModuleData>()
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
@@ -171,8 +176,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 var moduleData = descriptorByModule.getOrPut(module) {
                     createModuleDescriptor(module)
                 }
-                val currentModCount = moduleData.modificationTracker?.modificationCount
-                if (currentModCount != null && currentModCount > moduleData.modificationCount!!) {
+                if (moduleData.isOutOfDate()) {
                     moduleData = recreateModuleDescriptor(module)
                 }
                 moduleData.moduleDescriptor

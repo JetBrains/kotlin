@@ -280,6 +280,7 @@ public class LazyDeclarationResolver {
         if (isTopLevel) { // for top level declarations we search directly in package because of possible conflicts with imports
             KtFile ktFile = (KtFile) declaration.getContainingFile();
             FqName fqName = ktFile.getPackageFqName();
+            topLevelDescriptorProvider.assertValid();
             LazyPackageDescriptor packageDescriptor = topLevelDescriptorProvider.getPackageFragment(fqName);
             if (packageDescriptor == null) {
                 if (topLevelDescriptorProvider instanceof LazyClassContext) {

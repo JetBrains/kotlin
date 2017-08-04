@@ -127,6 +127,11 @@ public class ErrorUtils {
             public boolean isValid() {
                 return false;
             }
+
+            @Override
+            public void assertValid() {
+                throw new IllegalStateException("ERROR_MODULE is not a valid module");
+            }
         };
     }
 
