@@ -53,7 +53,7 @@ internal class LocalDeclarationSerializer(val context: Context, val rootFunction
         contextStack.push(newSerializer)
     }
 
-    fun popContext(descriptor: DeclarationDescriptor) {
+    fun popContext() {
         contextStack.pop()
     }
 
@@ -67,9 +67,6 @@ internal class LocalDeclarationSerializer(val context: Context, val rootFunction
         val proto = KonanIr.DeclarationDescriptor.newBuilder()
 
         context.log{"### serializeLocalDeclaration: $descriptor"}
-
-        val parent = descriptor.classOrPackage
-
 
         when (descriptor) {
             is ClassConstructorDescriptor ->

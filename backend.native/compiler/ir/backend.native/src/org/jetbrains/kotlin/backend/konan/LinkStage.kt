@@ -118,7 +118,7 @@ internal open class LinuxBasedPlatform(distribution: Distribution)
     : PlatformFlags(distribution.targetProperties) {
 
     private val llvmLib = distribution.llvmLib
-    private val libGcc = "$targetSysRoot/${propertyTargetString("libGcc")!!}"
+    private val libGcc = "$targetSysRoot/${propertyTargetString("libGcc")}"
     private val linker = "$targetToolchain/bin/ld.gold"
     private val pluginOptimizationFlags = propertyTargetList("pluginOptimizationFlags")
     private val specificLibs
@@ -201,8 +201,6 @@ internal class LinkStage(val context: Context) {
             MingwPlatform(distribution)
         KonanTarget.WASM32 ->
             WasmPlatform(distribution)
-        else ->
-            error("Unexpected target platform: ${target}")
     }
 
     private val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
@@ -293,9 +291,6 @@ internal class LinkStage(val context: Context) {
     // And just do the same on Linux.
     private val entryPointSelector: List<String>
         get() = if (nomain) emptyList() else platform.entrySelector
-
-    private val libffi 
-        get() = platform.targetLibffi ?.let { listOf(it) } ?: emptyList()
 
     private fun link(objectFiles: List<ObjectFile>, libraryProvidedLinkerFlags: List<String>): ExecutableFile {
         val executable = context.config.outputFile

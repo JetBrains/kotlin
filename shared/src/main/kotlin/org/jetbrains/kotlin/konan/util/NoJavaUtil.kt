@@ -58,7 +58,7 @@ class File constructor(internal val javaPath: Path) {
             return result
         }
 
-    fun copyTo(destination: File, vararg options: StandardCopyOption) {
+    fun copyTo(destination: File) {
         Files.copy(javaPath, destination.javaPath, StandardCopyOption.REPLACE_EXISTING) 
     }
 
@@ -147,8 +147,7 @@ private val File.zipUri: URI
 
 fun File.zipFileSystem(mutable: Boolean = false): FileSystem {
     val zipUri = this.zipUri
-    val allowCreation = if (mutable) "true" else  "false"
-    val attributes = hashMapOf("create" to if (mutable) "true" else  "false")
+    val attributes = hashMapOf("create" to mutable.toString())
     return FileSystems.newFileSystem(zipUri, attributes, null)
 }
 

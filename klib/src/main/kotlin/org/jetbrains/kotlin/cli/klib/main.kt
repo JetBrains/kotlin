@@ -84,7 +84,6 @@ class Library(val name: String, val requestedRepository: String?, val target: St
     fun info() {
         val library = libraryInRepoOrCurrentDir(repository, name)
         val reader = LibraryReaderImpl(library, currentAbiVersion)
-        val header = reader.manifestProperties
         val headerAbiVersion = reader.abiVersion
         val moduleName = ModuleDeserializer(reader.moduleHeaderData).moduleName
 

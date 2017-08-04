@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.konan.file.File
 internal class MetadataWriterImpl(library: KonanLibrary): KonanLibrary by library {
 
     fun addLinkData(linkData: LinkData) {
-
-        val linkdataDir = File(libDir, "linkdata")
         moduleHeaderFile.writeBytes(linkData.module)
-
         linkData.fragments.forEachIndexed { index, it ->
             val name = linkData.fragmentNames[index] 
             packageFile(name).writeBytes(it)

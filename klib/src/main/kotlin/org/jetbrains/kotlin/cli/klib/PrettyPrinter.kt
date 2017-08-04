@@ -68,7 +68,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
         val protoClasses = packageFragment.classes.classesList                     // ProtoBuf classes
         protoClasses.forEach { protoClass ->
-            val classKind = Flags.CLASS_KIND.get(protoClass.flags)
+            val classKind = Flags.CLASS_KIND.get(protoClass.flags)!!
             when (classKind) {
                 ProtoBuf.Class.Kind.CLASS            -> printClass(protoClass)
                 ProtoBuf.Class.Kind.ENUM_CLASS       -> printEnum(protoClass)
@@ -566,7 +566,7 @@ class PackageFragmentPrinter(val packageFragment: KonanLinkData.PackageFragment,
 
     fun classOrInterface(protoClass: ProtoBuf.Class): String {
         val flags     = protoClass.flags
-        val classKind = Flags.CLASS_KIND.get(flags)
+        val classKind = Flags.CLASS_KIND.get(flags)!!
         val modality  = modalityToString(Flags.MODALITY.get(flags))
         val visibility = visibilityToString(Flags.VISIBILITY.get(flags))
 

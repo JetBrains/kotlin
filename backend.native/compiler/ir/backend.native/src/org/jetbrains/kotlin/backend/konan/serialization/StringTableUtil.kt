@@ -34,7 +34,7 @@ internal fun NameResolverImpl.getDescriptorByFqNameIndex(
     // TODO: Here we are using internals of NameresolverImpl. 
     // Consider extending NameResolver.
     val proto = nameTable.getQualifiedName(fqNameIndex)
-    when (proto.kind) {
+    when (proto.kind!!) {
         QualifiedName.Kind.CLASS,
         QualifiedName.Kind.LOCAL ->
             return module.findClassAcrossModuleDependencies(this.getClassId(fqNameIndex))!!
