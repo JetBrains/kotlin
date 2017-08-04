@@ -231,8 +231,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseFileAnnotationList(FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED);
             packageDirective = mark();
             packageDirective.done(PACKAGE_DIRECTIVE);
-            // this is necessary to allow comments at the start of the file to be bound to the first declaration
-            packageDirective.setCustomEdgeTokenBinders(DoNotBindAnything.INSTANCE, null);
+            // Need to skip everything but shebang comment to allow comments at the start of the file to be bound to the first declaration.
+            packageDirective.setCustomEdgeTokenBinders(BindFirstShebangWithWhitespaceOnly.INSTANCE, null);
         }
 
         parseImportDirectives();

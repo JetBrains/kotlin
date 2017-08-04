@@ -2719,6 +2719,18 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("ShebangWithImports.kts")
+            public void testShebangWithImports() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/ShebangWithImports.kts");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("ShebangWithPackage.kts")
+            public void testShebangWithPackage() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/ShebangWithPackage.kts");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("SimpleScript.kts")
             public void testSimpleScript() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/SimpleScript.kts");
