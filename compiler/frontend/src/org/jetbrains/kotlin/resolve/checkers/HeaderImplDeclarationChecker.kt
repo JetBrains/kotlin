@@ -175,12 +175,20 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             findHeaderForImpl(this, commonModule)?.get(Compatible).orEmpty()
 
     private fun CallableMemberDescriptor.findNamesakesFromModule(module: ModuleDescriptor): Collection<CallableMemberDescriptor> {
-        val packageFqName = (containingDeclaration as? PackageFragmentDescriptor)?.fqName ?: return emptyList()
-        val scope = module.getPackage(packageFqName).memberScope
+        val containingDeclaration = containingDeclaration
+        val scopes = when (containingDeclaration) {
+            is PackageFragmentDescriptor -> {
+                listOf(module.getPackage(containingDeclaration.fqName).memberScope)
+            }
+            is ClassDescriptor -> {
+                containingDeclaration.findClassifiersFromModule(module).mapNotNull { (it as? ClassDescriptor)?.unsubstitutedMemberScope }
+            }
+            else -> return emptyList()
+        }
 
         return when (this) {
-            is FunctionDescriptor -> scope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
-            is PropertyDescriptor -> scope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+            is FunctionDescriptor -> scopes.flatMap { it.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) }
+            is PropertyDescriptor -> scopes.flatMap { it.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED) }
             else -> throw AssertionError("Unsupported declaration: $this")
         }
     }
