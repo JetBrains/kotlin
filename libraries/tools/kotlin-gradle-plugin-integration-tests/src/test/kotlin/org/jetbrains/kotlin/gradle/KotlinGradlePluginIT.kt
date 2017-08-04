@@ -558,4 +558,28 @@ class KotlinGradleIT: BaseGradleIT() {
             assertNoSuchFile("build/kotlin-classes")
         }
     }
+
+    @Test
+    fun testArchiveBaseNameForModuleName() {
+        val project = Project("simpleProject", "4.0")
+        project.setupWorkingDir()
+
+        val archivesBaseName = "myArchivesBaseName"
+
+        val buildGradle = File(project.projectDir, "build.gradle")
+        buildGradle.appendText("\narchivesBaseName = '$archivesBaseName'")
+
+        // Add top-level members to force generation of the *.kotlin_module files for the two source sets
+        val mainHelloWorldKt = File(project.projectDir, "src/main/kotlin/helloWorld.kt")
+        mainHelloWorldKt.appendText("\nfun topLevelFun() = 1")
+        val deployKotlinSrcKt = File(project.projectDir, "src/deploy/kotlin/kotlinSrc.kt")
+        deployKotlinSrcKt.appendText("\nfun topLevelFun() = 1")
+
+        project.build("build", "compileDeployKotlin") {
+            assertSuccessful()
+            // Main source set should have a *.kotlin_module file without '_main'
+            assertFileExists("build/classes/kotlin/main/META-INF/$archivesBaseName.kotlin_module")
+            assertFileExists("build/classes/kotlin/deploy/META-INF/${archivesBaseName}_deploy.kotlin_module")
+        }
+    }
 }
