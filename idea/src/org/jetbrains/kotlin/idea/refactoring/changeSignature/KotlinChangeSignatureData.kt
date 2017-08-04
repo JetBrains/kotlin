@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
+import org.jetbrains.kotlin.idea.highlighter.markers.isHeaderOrHeaderClassMember
 import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -101,7 +102,7 @@ class KotlinChangeSignatureData(
         primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
             val primaryDeclaration = primaryFunction.declaration as? KtCallableDeclaration ?: return@flatMapTo emptyList()
 
-            if (primaryDeclaration.hasModifier(KtTokens.HEADER_KEYWORD)) {
+            if (primaryDeclaration.isHeaderOrHeaderClassMember()) {
                 return@flatMapTo primaryDeclaration.headerImplementations().map {
                     KotlinCallableDefinitionUsage<PsiElement>(it, it.resolveToDescriptor() as CallableDescriptor, primaryFunction, null)
                 }
