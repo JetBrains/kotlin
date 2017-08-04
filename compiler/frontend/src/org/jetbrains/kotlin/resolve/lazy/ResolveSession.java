@@ -308,6 +308,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     @NotNull
     public DeclarationDescriptor resolveToDescriptor(@NotNull KtDeclaration declaration) {
+        assertValid();
         if (!areDescriptorsCreatedForDeclaration(declaration)) {
             throw new IllegalStateException(
                     "No descriptors are created for declarations of type " + declaration.getClass().getSimpleName()
@@ -448,5 +449,10 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public WrappedTypeFactory getWrappedTypeFactory() {
         return wrappedTypeFactory;
+    }
+
+    @Override
+    public void assertValid() {
+        module.assertValid();
     }
 }

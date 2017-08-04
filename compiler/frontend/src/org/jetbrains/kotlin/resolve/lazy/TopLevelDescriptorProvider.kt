@@ -25,6 +25,8 @@ interface TopLevelDescriptorProvider {
     fun getPackageFragment(fqName: FqName): LazyPackageDescriptor?
 
     fun getTopLevelClassifierDescriptors(fqName: FqName, location: LookupLocation): Collection<ClassifierDescriptor>
+
+    fun assertValid()
 }
 
 object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
@@ -35,6 +37,10 @@ object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
     }
 
     override fun getTopLevelClassifierDescriptors(fqName: FqName, location: LookupLocation): Collection<ClassifierDescriptor> {
+        shouldNotBeCalled()
+    }
+
+    override fun assertValid() {
         shouldNotBeCalled()
     }
 }

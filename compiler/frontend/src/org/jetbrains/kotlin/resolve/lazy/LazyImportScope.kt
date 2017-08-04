@@ -188,6 +188,7 @@ class LazyImportResolver(
     }
 
     fun getImportScope(directive: KtImportDirective): ImportingScope {
+        moduleDescriptor.assertValid()
         return importedScopesProvider(directive) ?: ImportingScope.Empty
     }
 }

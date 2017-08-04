@@ -50,4 +50,6 @@ interface ModuleDescriptor : DeclarationDescriptor {
     }
 
     val isValid: Boolean
+
+    fun assertValid()
 }

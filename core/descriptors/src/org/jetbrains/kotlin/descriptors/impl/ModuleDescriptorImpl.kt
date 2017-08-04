@@ -48,8 +48,11 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null
 
     override var isValid: Boolean = true
+        set(value) {
+            field = value
+        }
 
-    private fun assertValid() {
+    override fun assertValid() {
         if (!isValid) {
             throw IllegalStateException("Accessing invalid module descriptor $this")
         }
