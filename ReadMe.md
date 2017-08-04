@@ -37,6 +37,8 @@ In order to build Kotlin distribution you need to have:
         JDK_17="path to JDK 1.7"
         JDK_18="path to JDK 1.8"
 
+> Note: The JDK 6 for MacOS is not available on Oracle's site. You can [download it here](https://support.apple.com/kb/DL1572). 
+
 ## Building
 
 To build this project, first time you try to build you need to run this:
