@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.`when`
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
@@ -29,14 +30,16 @@ import org.jetbrains.org.objectweb.asm.Type
 
 import java.util.ArrayList
 
-object SwitchCodegenUtil {
-    @JvmStatic
-    fun checkAllItemsAreConstantsSatisfying(
-            expression: KtWhenExpression,
-            bindingContext: BindingContext,
-            shouldInlineConstVals: Boolean,
-            predicate: Function1<ConstantValue<*>, Boolean>
-    ): Boolean =
+class SwitchCodegenProvider
+private constructor (
+        private val bindingContext: BindingContext,
+        private val shouldInlineConstVals: Boolean,
+        private val codegen: ExpressionCodegen?
+) {
+    constructor(state: GenerationState) : this(state.bindingContext, state.shouldInlineConstVals, null)
+    constructor(codegen: ExpressionCodegen) : this(codegen.bindingContext, codegen.state.shouldInlineConstVals, codegen)
+
+    fun checkAllItemsAreConstantsSatisfying(expression: KtWhenExpression, predicate: Function1<ConstantValue<*>, Boolean>): Boolean =
             expression.entries.all { entry ->
                 entry.conditions.all { condition ->
                     if (condition !is KtWhenConditionWithExpression) return false
@@ -46,33 +49,19 @@ object SwitchCodegenUtil {
                 }
             }
 
-    @JvmStatic
-    fun getAllConstants(
-            expression: KtWhenExpression,
-            bindingContext: BindingContext,
-            shouldInlineConstVals: Boolean
-    ): Iterable<ConstantValue<*>?> =
+    fun getAllConstants(expression: KtWhenExpression): Iterable<ConstantValue<*>?> =
             ArrayList<ConstantValue<*>?>().apply {
                 for (entry in expression.entries) {
-                    addConstantsFromConditions(entry, bindingContext, shouldInlineConstVals)
+                    addConstantsFromConditions(entry)
                 }
             }
 
-    @JvmStatic
-    fun getConstantsFromEntry(
-            entry: KtWhenEntry,
-            bindingContext: BindingContext,
-            shouldInlineConstVals: Boolean
-    ): Iterable<ConstantValue<*>?> =
+    fun getConstantsFromEntry(entry: KtWhenEntry): Iterable<ConstantValue<*>?> =
             ArrayList<ConstantValue<*>?>().apply {
-                addConstantsFromConditions(entry, bindingContext, shouldInlineConstVals)
+                addConstantsFromConditions(entry)
             }
 
-    private fun ArrayList<ConstantValue<*>?>.addConstantsFromConditions(
-            entry: KtWhenEntry,
-            bindingContext: BindingContext,
-            shouldInlineConstVals: Boolean
-    ) {
+    private fun ArrayList<ConstantValue<*>?>.addConstantsFromConditions(entry: KtWhenEntry) {
         for (condition in entry.conditions) {
             if (condition !is KtWhenConditionWithExpression) continue
             val patternExpression = condition.expression ?: throw AssertionError("expression in when should not be null")
@@ -80,16 +69,14 @@ object SwitchCodegenUtil {
         }
     }
 
-    @JvmStatic
     fun buildAppropriateSwitchCodegenIfPossible(
             expression: KtWhenExpression,
             isStatement: Boolean,
-            isExhaustive: Boolean,
-            codegen: ExpressionCodegen
+            isExhaustive: Boolean
     ): SwitchCodegen? {
-        val bindingContext = codegen.bindingContext
-        val shouldInlineConstVals = codegen.state.shouldInlineConstVals
-        if (!isThereConstantEntriesButNulls(expression, bindingContext, shouldInlineConstVals)) {
+        val codegen = codegen ?: throw AssertionError("Can't create SwitchCodegen in this context")
+
+        if (!isThereConstantEntriesButNulls(expression)) {
             return null
         }
 
@@ -100,37 +87,23 @@ object SwitchCodegenUtil {
         return when {
             mapping != null ->
                 EnumSwitchCodegen(expression, isStatement, isExhaustive, codegen, mapping)
-            isIntegralConstantsSwitch(expression, subjectType, bindingContext, shouldInlineConstVals) ->
+            isIntegralConstantsSwitch(expression, subjectType) ->
                 IntegralConstantsSwitchCodegen(expression, isStatement, isExhaustive, codegen)
-            isStringConstantsSwitch(expression, subjectType, bindingContext, shouldInlineConstVals) ->
+            isStringConstantsSwitch(expression, subjectType) ->
                 StringSwitchCodegen(expression, isStatement, isExhaustive, codegen)
             else -> null
         }
 
     }
 
-    private fun isThereConstantEntriesButNulls(
-            expression: KtWhenExpression,
-            bindingContext: BindingContext,
-            shouldInlineConstVals: Boolean
-    ): Boolean =
-            getAllConstants(expression, bindingContext, shouldInlineConstVals).any { it != null && it !is NullValue }
+    private fun isThereConstantEntriesButNulls(expression: KtWhenExpression): Boolean =
+            getAllConstants(expression).any { it != null && it !is NullValue }
 
-    private fun isIntegralConstantsSwitch(
-            expression: KtWhenExpression,
-            subjectType: Type,
-            bindingContext: BindingContext,
-            shouldInlineConstVals: Boolean
-    ): Boolean =
+    private fun isIntegralConstantsSwitch(expression: KtWhenExpression, subjectType: Type): Boolean =
             AsmUtil.isIntPrimitive(subjectType) &&
-            checkAllItemsAreConstantsSatisfying(expression, bindingContext, shouldInlineConstVals) { it is IntegerValueConstant<*> }
+            checkAllItemsAreConstantsSatisfying(expression) { it is IntegerValueConstant<*> }
 
-    private fun isStringConstantsSwitch(
-            expression: KtWhenExpression,
-            subjectType: Type,
-            bindingContext: BindingContext,
-            shouldInlineConstVals: Boolean
-    ): Boolean =
+    private fun isStringConstantsSwitch(expression: KtWhenExpression, subjectType: Type): Boolean =
             subjectType.className == String::class.java.name &&
-            checkAllItemsAreConstantsSatisfying(expression, bindingContext, shouldInlineConstVals) { it is StringValue || it is NullValue }
+            checkAllItemsAreConstantsSatisfying(expression) { it is StringValue || it is NullValue }
 }

@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
-import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
+import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
 import org.jetbrains.kotlin.config.ApiVersion;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
@@ -131,6 +131,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private final MemberCodegen<?> parentCodegen;
     private final TailRecursionCodegen tailRecursionCodegen;
     public final CallGenerator defaultCallGenerator = new CallGenerator.DefaultCallGenerator(this);
+    private final SwitchCodegenProvider switchCodegenProvider;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<>();
 
@@ -162,6 +163,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         this.parentCodegen = parentCodegen;
         this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
+        this.switchCodegenProvider = new SwitchCodegenProvider(this);
     }
 
     @Nullable
@@ -4122,12 +4124,12 @@ The "returned" value of try expression with no finally is either the last expres
         Type resultType = isStatement ? Type.VOID_TYPE : expressionType(expression);
 
         return StackValue.operation(resultType, v -> {
-            SwitchCodegen switchCodegen = SwitchCodegenUtil.buildAppropriateSwitchCodegenIfPossible(
-                    expression, isStatement, CodegenUtil.isExhaustive(bindingContext, expression, isStatement), this
+            SwitchCodegen switchCodegen = switchCodegenProvider.buildAppropriateSwitchCodegenIfPossible(
+                    expression, isStatement, CodegenUtil.isExhaustive(bindingContext, expression, isStatement)
             );
             if (switchCodegen != null) {
                 switchCodegen.generate();
-                return Unit.INSTANCE;
+                return null;
             }
 
             int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType) : -1;
