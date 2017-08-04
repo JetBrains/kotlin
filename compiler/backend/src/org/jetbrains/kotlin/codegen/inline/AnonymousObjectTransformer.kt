@@ -253,18 +253,15 @@ class AnonymousObjectTransformer(
         val newFieldsWithSkipped = getNewFieldsToGenerate(allCapturedBuilder.listCaptured())
         val fieldInfoWithSkipped = transformToFieldInfo(Type.getObjectType(transformationInfo.newClassName), newFieldsWithSkipped)
 
-        var paramIndex = 0
         val capturedFieldInitializer = InstructionAdapter(constructorVisitor)
-        for (i in fieldInfoWithSkipped.indices) {
-            val fieldInfo = fieldInfoWithSkipped[i]
-            if (!newFieldsWithSkipped[i].skip) {
+        fieldInfoWithSkipped.forEachIndexed { paramIndex, fieldInfo ->
+            if (!newFieldsWithSkipped[paramIndex].skip) {
                 AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, capturedIndexes[paramIndex], capturedFieldInitializer)
             }
-            paramIndex++
         }
 
         //then transform constructor
-        //HACK: in inlinining into constructor we access original captured fields with field access not local var
+        //HACK: in inlining into constructor we access original captured fields with field access not local var
         //but this fields added to general params (this assumes local var access) not captured one,
         //so we need to add them to captured params
         for (info in constructorAdditionalFakeParams) {
@@ -288,7 +285,7 @@ class AnonymousObjectTransformer(
         removeFinallyMarkers(intermediateMethodNode)
 
         val first = intermediateMethodNode.instructions.first
-        val oldStartLabel = if (first is LabelNode) first.label else null
+        val oldStartLabel = (first as? LabelNode)?.label
         intermediateMethodNode.accept(object : MethodBodyVisitor(capturedFieldInitializer) {
             override fun visitLocalVariable(
                     name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
@@ -444,16 +441,10 @@ class AnonymousObjectTransformer(
     }
 
     private fun shouldRenameThis0(parentFieldRemapper: FieldRemapper, values: Collection<LambdaInfo>): Boolean {
-        if (isFirstDeclSiteLambdaFieldRemapper(parentFieldRemapper)) {
-            for (value in values) {
-                for (desc in value.capturedVars) {
-                    if (isThis0(desc.fieldName)) {
-                        return true
-                    }
-                }
-            }
+        return if (isFirstDeclSiteLambdaFieldRemapper(parentFieldRemapper)) {
+            values.any { it.capturedVars.any { isThis0(it.fieldName) }}
         }
-        return false
+        else false
     }
 
     private fun getNewFieldName(oldName: String, originalField: Boolean): String {
@@ -470,14 +461,13 @@ class AnonymousObjectTransformer(
     }
 
     private fun addUniqueField(name: String): String {
-        val existNames = fieldNames.getOrPut(name) { LinkedList<String>() }
+        val existNames = fieldNames.getOrPut(name) { LinkedList() }
         val suffix = if (existNames.isEmpty()) "" else "$" + existNames.size
         val newName = name + suffix
         existNames.add(newName)
         return newName
     }
 
-    private fun isFirstDeclSiteLambdaFieldRemapper(parentRemapper: FieldRemapper): Boolean {
-        return parentRemapper !is RegeneratedLambdaFieldRemapper && parentRemapper !is InlinedLambdaRemapper
-    }
+    private fun isFirstDeclSiteLambdaFieldRemapper(parentRemapper: FieldRemapper): Boolean =
+            parentRemapper !is RegeneratedLambdaFieldRemapper && parentRemapper !is InlinedLambdaRemapper
 }
