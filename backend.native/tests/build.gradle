@@ -414,13 +414,13 @@ task hello0(type: RunKonanTest) {
 }
 
 task hello1(type: RunKonanTest) {
-    goldValue = "Hello World"
+    goldValue = "Hello World\n"
     testData = "Hello World\n"
     source = "runtime/basic/hello1.kt"
 }
 
 task hello2(type: RunKonanTest) {
-    goldValue = "you entered 'Hello World'"
+    goldValue = "you entered 'Hello World\n'"
     testData = "Hello World\n"
     source = "runtime/basic/hello2.kt"
 }

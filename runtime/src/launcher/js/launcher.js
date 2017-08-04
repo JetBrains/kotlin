@@ -73,7 +73,9 @@ var konan_dependencies = {
         },
         // TODO: Account for file and size.
         fgets: function(str, size, file) {
-            fromString(utf8encode(readline()), str);
+            // TODO: readline can't read lines without a newline.
+            // Browsers cant read from console at all.
+            fromString(utf8encode(readline() + '\n'), str);
             return str;
         },
         Konan_heap_upper: function() {
