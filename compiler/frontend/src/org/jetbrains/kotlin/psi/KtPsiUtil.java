@@ -513,14 +513,8 @@ public class KtPsiUtil {
             return false;
         }
 
-        if (innerExpression instanceof KtBinaryExpression) {
-            PsiElement expr = innerExpression.getFirstChild();
-            while (expr != null) {
-                if (expr instanceof PsiWhiteSpace && (expr.textContains('\n') || expr.textContains('\r'))) {
-                    return true;
-                }
-                expr = expr.getNextSibling();
-            }
+        if (innerExpression instanceof KtBinaryExpression && isKeepParenthesesInBE((KtBinaryExpression) innerExpression)) {
+            return true;
         }
 
         int innerPriority = getPriority(innerExpression);
@@ -542,6 +536,21 @@ public class KtPsiUtil {
         }
 
         return innerPriority < parentPriority;
+    }
+
+    private static boolean isKeepParenthesesInBE(KtBinaryExpression expression) {
+        PsiElement expr = expression.getFirstChild();
+        while (expr != null) {
+            if (expr instanceof PsiWhiteSpace && expr.textContains('\n')) {
+                return true;
+            }
+            if (expr instanceof KtOperationReferenceExpression) {
+                break;
+            }
+            expr = expr.getNextSibling();
+        }
+        return (expression.getRight() instanceof KtBinaryExpression && isKeepParenthesesInBE((KtBinaryExpression) expression.getRight())) ||
+               (expression.getLeft() instanceof KtBinaryExpression && isKeepParenthesesInBE((KtBinaryExpression) expression.getLeft()));
     }
 
     public static boolean isAssignment(@NotNull PsiElement element) {
