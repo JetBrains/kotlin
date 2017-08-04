@@ -114,6 +114,9 @@ internal object EscapeAnalysis {
         fun has(role: Role): Boolean = data[role] != null
 
         fun escapes() = has(Role.WRITTEN_TO_GLOBAL) || has(Role.THROW_VALUE)
+
+        override fun toString() =
+                data.keys.joinToString(separator = "; ", prefix = "Roles: ") { it.toString() }
     }
 
     private class VariableValues {
@@ -205,14 +208,13 @@ internal object EscapeAnalysis {
 
                 is IrTypeOperatorCall -> {
                     when (expression.operator) {
-                        IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.CAST ->
+                        IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.CAST, IrTypeOperator.SAFE_CAST,
+                        IrTypeOperator.IMPLICIT_INTEGER_COERCION, IrTypeOperator.IMPLICIT_NOTNULL ->
                             forEachValue(expression.argument, block)
 
                         // No info from those ones.
                         IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF,
                         IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> { }
-
-                        else -> error("Unexpected type operator: ${expression.operator}")
                     }
                 }
 
@@ -263,7 +265,7 @@ internal object EscapeAnalysis {
     private class IntraproceduralAnalysisResult(val functionAnalysisResults: Map<FunctionDescriptor, FunctionAnalysisResult>,
                                                 val expressionValuesExtractor: ExpressionValuesExtractor)
 
-    private class IntraproceduralAnalysis() {
+    private class IntraproceduralAnalysis {
 
         // Possible values of a returnable block.
         private val returnableBlockValues = mutableMapOf<IrReturnableBlock, MutableList<IrExpression>>()
@@ -277,6 +279,7 @@ internal object EscapeAnalysis {
                 (expression is IrMemberAccessExpression && isInteresting(expression.type))
                         || (expression is IrGetValue && isInteresting(expression.type))
                         || (expression is IrGetField && isInteresting(expression.type))
+                        || expression is IrGetObjectValue
 
         private fun isInteresting(variable: ValueDescriptor) = isInteresting(variable.type)
 
@@ -292,7 +295,10 @@ internal object EscapeAnalysis {
                     val body = declaration.body
                             ?: return
 
-                    DEBUG_OUTPUT(1) { println("Analysing function ${declaration.descriptor}") }
+                    DEBUG_OUTPUT(1) {
+                        println("Analysing function ${declaration.descriptor}")
+                        println("IR: ${ir2stringWhole(declaration, true)}")
+                    }
 
                     // Find all interesting expressions, variables and functions.
                     val parameterRoles = ParameterRoles()
@@ -366,8 +372,8 @@ internal object EscapeAnalysis {
             val expressionToRoles = mutableMapOf<IrExpression, Roles>()
             val variableValues = VariableValues()
 
-            private val returnableBlocks = mutableMapOf<FunctionDescriptor, IrReturnableBlock>()
-            private val suspendableExpressionStack = mutableListOf<IrSuspendableExpression>()
+            private val returnableBlocksStack = mutableListOf<IrReturnableBlock>()
+            private val suspendableExpressionsStack = mutableListOf<IrSuspendableExpression>()
 
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -378,24 +384,24 @@ internal object EscapeAnalysis {
                     expressionToRoles[expression] = Roles()
                 }
                 if (expression is IrReturnableBlock) {
-                    returnableBlocks.put(expression.descriptor, expression)
+                    returnableBlocksStack.push(expression)
                     returnableBlockValues.put(expression, mutableListOf())
                 }
                 if (expression is IrSuspendableExpression) {
-                    suspendableExpressionStack.push(expression)
+                    suspendableExpressionsStack.push(expression)
                     suspendableExpressionValues.put(expression, mutableListOf())
                 }
                 if (expression is IrSuspensionPoint)
-                    suspendableExpressionValues[suspendableExpressionStack.peek()!!]!!.add(expression)
+                    suspendableExpressionValues[suspendableExpressionsStack.peek()!!]!!.add(expression)
                 super.visitExpression(expression)
                 if (expression is IrReturnableBlock)
-                    returnableBlocks.remove(expression.descriptor)
+                    returnableBlocksStack.pop()
                 if (expression is IrSuspendableExpression)
-                    suspendableExpressionStack.pop()
+                    suspendableExpressionsStack.pop()
             }
 
             override fun visitReturn(expression: IrReturn) {
-                val returnableBlock = returnableBlocks[expression.returnTarget]
+                val returnableBlock = returnableBlocksStack.lastOrNull { it.descriptor == expression.returnTarget }
                 if (returnableBlock != null) {
                     returnableBlockValues[returnableBlock]!!.add(expression.value)
                 }
@@ -421,32 +427,6 @@ internal object EscapeAnalysis {
             private val variableValues = functionAnalysisResult.variableValues
             private val parameterRoles = functionAnalysisResult.parameterRoles
 
-            private fun assignExpressionRole(expression: IrExpression, role: Role, infoEntry: RoleInfoEntry?) {
-                if (!useVarValues)
-                    expressionRoles[expression]?.add(role, infoEntry)
-            }
-
-            private fun assignValueRole(value: ValueDescriptor, role: Role, infoEntry: RoleInfoEntry?) {
-                if (!useVarValues) return
-                // Whenever we see variable use in certain role - we propagate this role
-                // to all possible expressions this variable can be assigned from.
-                when (value) {
-                    is ParameterDescriptor -> {
-                        if (isInteresting(value))
-                            parameterRoles.add(value, role, infoEntry)
-                    }
-
-                    is VariableDescriptor -> {
-                        val possibleValues = variableValues.get(value)
-                        if (possibleValues != null) {
-                            for (possibleValue in possibleValues) {
-                                expressionRoles[possibleValue]?.add(role, infoEntry)
-                            }
-                        }
-                    }
-                }
-            }
-
             // Here we handle variable assignment.
             private fun assignVariable(variable: VariableDescriptor, value: IrExpression) {
                 if (useVarValues) return
@@ -457,10 +437,17 @@ internal object EscapeAnalysis {
 
             // Here we assign a role to expression's value.
             private fun assignRole(expression: IrExpression, role: Role, infoEntry: RoleInfoEntry?) {
-                expressionValuesExtractor.forEachValue(expression) {
-                    if (it is IrGetValue)
-                        assignValueRole(it.descriptor, role, infoEntry)
-                    else assignExpressionRole(it, role, infoEntry)
+                if (!useVarValues) return
+                expressionValuesExtractor.extractNodesUsingVariableValues(
+                        expression     = expression,
+                        variableValues = variableValues
+                ).forEach {
+                    if (it is ParameterDescriptor) {
+                        if (isInteresting(it))
+                            parameterRoles.add(it, role, infoEntry)
+                    } else {
+                        expressionRoles[it as IrExpression]?.add(role, infoEntry)
+                    }
                 }
             }
 
@@ -888,25 +875,6 @@ internal object EscapeAnalysis {
                 NAME_POINTS_TO, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
         private val pointsToOnWhomDescriptor = pointsToAnnotationDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters.single()
 
-        private fun KotlinType.erasure(): KotlinType {
-            val descriptor = this.constructor.declarationDescriptor
-            return when (descriptor) {
-                is ClassDescriptor -> this
-                is TypeParameterDescriptor -> {
-                    val upperBound = descriptor.upperBounds.singleOrNull() ?:
-                            TODO("$descriptor : ${descriptor.upperBounds}")
-
-                    if (this.isMarkedNullable) {
-                        // `T?`
-                        upperBound.erasure().makeNullable()
-                    } else {
-                        upperBound.erasure()
-                    }
-                }
-                else -> TODO(this.toString())
-            }
-        }
-
         private fun getExternalFunctionEAResult(callSite: CallSite): FunctionEscapeAnalysisResult {
             val callee = callSite.actualCallee
 
@@ -931,6 +899,7 @@ internal object EscapeAnalysis {
             DEBUG_OUTPUT(0) {
                 println("Escape analysis result")
                 println(calleeEAResult.toString())
+                println()
             }
 
             return calleeEAResult
@@ -1141,9 +1110,26 @@ internal object EscapeAnalysis {
                         )
                     }
                 }
+
+                DEBUG_OUTPUT(0) {
+                    println("Possible values:")
+                    possibleArgumentValues.forEachIndexed { index, list ->
+                        println("    PARAM#$index")
+                        list.forEach {
+                            println("        ${nodeToString(it)}")
+                        }
+                    }
+                }
+
                 for (index in 0..callee.allParameters.size) {
                     val parameterEAResult = calleeEscapeAnalysisResult.parameters[index]
                     if (parameterEAResult.escapes) {
+                        DEBUG_OUTPUT(0) {
+                            if (possibleArgumentValues[index].isEmpty()) {
+                                println("WARNING: There are no arguments for PARAM#$index")
+                            }
+                        }
+
                         possibleArgumentValues[index].forEach {
                             nodes[it]?.kind = PointsToGraphNodeKind.ESCAPES
 
@@ -1151,11 +1137,17 @@ internal object EscapeAnalysis {
                         }
                     }
                     parameterEAResult.pointsTo.forEach { toIndex ->
+                        DEBUG_OUTPUT(0) {
+                            if (possibleArgumentValues[index].isEmpty()) {
+                                println("WARNING: There are no arguments for PARAM#$index")
+                            }
+                        }
+
                         possibleArgumentValues[index].forEach { from ->
                             val nodeFrom = nodes[from]
                             if (nodeFrom == null) {
                                 DEBUG_OUTPUT(0) {
-                                    println("There is no node")
+                                    println("WARNING: There is no node")
                                     println("    FROM ${nodeToString(from)}")
                                 }
                             } else {
@@ -1163,7 +1155,7 @@ internal object EscapeAnalysis {
                                     val nodeTo = nodes[to]
                                     if (nodeTo == null) {
                                         DEBUG_OUTPUT(0) {
-                                            println("There is no node")
+                                            println("WARNING: There is no node")
                                             println("    TO ${nodeToString(to)}")
                                         }
                                     } else {
@@ -1186,7 +1178,13 @@ internal object EscapeAnalysis {
                 val parameters = function.allParameters.withIndex().toList()
                 val reachabilities = mutableListOf<IntArray>()
 
-                DEBUG_OUTPUT(0) { println("BUILDING CLOSURE") }
+                DEBUG_OUTPUT(0) {
+                    println("BUILDING CLOSURE")
+                    println("Return values:")
+                    returnValues.forEach {
+                        println("    ${nodeToString(it)}")
+                    }
+                }
 
                 parameters.forEach {
                     val visited = mutableSetOf<Any>()
@@ -1273,7 +1271,6 @@ internal object EscapeAnalysis {
         val isStdlib = context.config.configuration[KonanConfigKeys.NOSTDLIB] == true
 
         val externalFunctionEAResults = mutableMapOf<String, FunctionEscapeAnalysisResult>()
-        // TODO: serialize/deserialize in binary.
         context.config.libraries.forEach { library ->
             val libraryEscapeAnalysis = library.escapeAnalysis
             if (libraryEscapeAnalysis != null) {
