@@ -49,6 +49,8 @@ abstract public class SwitchCodegen {
     protected Label endLabel = new Label();
     protected Label defaultLabel;
 
+    protected final SwitchCodegenProvider switchCodegenProvider;
+
     public SwitchCodegen(
             @NotNull KtWhenExpression expression, boolean isStatement,
             boolean isExhaustive, @NotNull ExpressionCodegen codegen,
@@ -59,6 +61,7 @@ abstract public class SwitchCodegen {
         this.isExhaustive = isExhaustive;
         this.codegen = codegen;
         this.bindingContext = codegen.getBindingContext();
+        this.switchCodegenProvider = new SwitchCodegenProvider(codegen);
 
         this.subjectType = subjectType != null ? subjectType : codegen.expressionType(expression.getSubjectExpression());
         resultType = isStatement ? Type.VOID_TYPE : codegen.expressionType(expression);
@@ -100,7 +103,7 @@ abstract public class SwitchCodegen {
         for (KtWhenEntry entry : expression.getEntries()) {
             Label entryLabel = new Label();
 
-            for (ConstantValue<?> constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext, codegen.getState().getShouldInlineConstVals())) {
+            for (ConstantValue<?> constant : switchCodegenProvider.getConstantsFromEntry(entry)) {
                 if (constant instanceof NullValue) continue;
                 processConstant(constant, entryLabel);
             }
@@ -158,7 +161,7 @@ abstract public class SwitchCodegen {
     private int findNullEntryIndex(@NotNull KtWhenExpression expression) {
         int entryIndex = 0;
         for (KtWhenEntry entry : expression.getEntries()) {
-            for (ConstantValue<?> constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext, codegen.getState().getShouldInlineConstVals())) {
+            for (ConstantValue<?> constant : switchCodegenProvider.getConstantsFromEntry(entry)) {
                 if (constant instanceof NullValue) {
                     return entryIndex;
                 }
