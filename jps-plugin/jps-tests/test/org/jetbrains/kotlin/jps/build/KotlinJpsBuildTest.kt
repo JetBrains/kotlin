@@ -169,7 +169,8 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             }
         }
 
-        private fun findFileInOutputDir(module: JpsModule, relativePath: String): File {
+        @JvmStatic
+        protected fun findFileInOutputDir(module: JpsModule, relativePath: String): File {
             val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
             assertNotNull(outputUrl)
             val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
