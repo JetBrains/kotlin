@@ -73,10 +73,10 @@ class ConstructorConverter(
         private set
 
     fun convertConstructor(constructor: PsiMethod,
-                                  annotations: Annotations,
-                                  modifiers: Modifiers,
-                                  fieldsToDrop: MutableSet<PsiField>,
-                                  postProcessBody: (Block) -> Block): Constructor? {
+                           annotations: Annotations,
+                           modifiers: Modifiers,
+                           fieldsToDrop: MutableSet<PsiField>,
+                           postProcessBody: (Block) -> Block): Constructor? {
         return if (constructor == primaryConstructor) {
             convertPrimaryConstructor(annotations, modifiers, fieldsToDrop, postProcessBody)
         }
@@ -92,7 +92,7 @@ class ConstructorConverter(
                 null
 
             fun convertBody(codeConverter: CodeConverter): Block {
-                return postProcessBody(codeConverter.withSpecialExpressionConverter(object: SpecialExpressionConverter {
+                return postProcessBody(codeConverter.withSpecialExpressionConverter(object : SpecialExpressionConverter {
                     override fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression? {
                         if (expression.isThisConstructorCall() || expression.isSuperConstructorCall()) {
                             return Expression.Empty // skip it
@@ -196,10 +196,13 @@ class ConstructorConverter(
                     else {
                         val (field, type) = parameterToField[parameter]!!
                         val propertyInfo = fieldToPropertyInfo(field)
+                        var annot = converter.convertAnnotations(parameter, AnnotationUseTarget.Param) + converter.convertAnnotations(field)
+                        propertyInfo.getMethod?.let { annot += converter.convertAnnotations(it, AnnotationUseTarget.Get) }
+                        propertyInfo.setMethod?.let { annot += converter.convertAnnotations(it, AnnotationUseTarget.Set) }
                         FunctionParameter(propertyInfo.identifier,
                                           type,
                                           if (propertyInfo.isVar) FunctionParameter.VarValModifier.Var else FunctionParameter.VarValModifier.Val,
-                                          converter.convertAnnotations(parameter, AnnotationUseTarget.Param) + converter.convertAnnotations(field),
+                                          annot,
                                           propertyInfo.modifiers,
                                           default)
                                 .assignPrototypes(
