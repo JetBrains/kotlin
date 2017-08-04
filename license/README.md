@@ -122,6 +122,15 @@ any distributions of the compiler, libraries or plugin:
       - License: Apache 2 (license/third_party/testdata/spring_license.txt)
       - Origin: Spring Framework, Copyright 2002-2007 the original author or authors.
 
+## Kotlin Tools and Libraries Tests
+
+The following source code is used for testing the Kotlin tools and/or libraries and is not incorporated into 
+any distributions of the tools or libraries:
+
+ - Path: libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt
+      - License: Apache 2 (license/third_party/testdata/gradle_license.txt)
+      - Origin: Gradle, Copyright 2002-2017 Gradle, Inc. 
+
 ## Example Code
 
 The following code is provided as examples and is not incorporated into 
