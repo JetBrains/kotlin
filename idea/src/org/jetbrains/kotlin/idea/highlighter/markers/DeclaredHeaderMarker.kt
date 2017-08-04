@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.highlighter.sourceKind
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
@@ -62,6 +64,9 @@ internal fun KtDeclaration.headerDeclarationIfAny(): KtDeclaration? {
     val headerDescriptor = (toDescriptor() as? MemberDescriptor)?.headerDescriptor() ?: return null
     return DescriptorToSourceUtils.descriptorToDeclaration(headerDescriptor) as? KtDeclaration
 }
+
+internal fun KtDeclaration.isHeaderOrHeaderClassMember() =
+        hasModifier(KtTokens.HEADER_KEYWORD) || (containingClassOrObject?.hasModifier(KtTokens.HEADER_KEYWORD) ?: false)
 
 private fun DeclarationDescriptor.liftToHeader(): DeclarationDescriptor? {
     if (this is MemberDescriptor) {

@@ -55,4 +55,12 @@ class KotlinMultiModuleChangeSignatureTest : KotlinMultiFileTestCase() {
     fun testHeadersAndImplsByImplFun() = doTest("JS/src/test/test.kt") {
         newName = "baz"
     }
+
+    fun testHeadersAndImplsByHeaderClassMemberFun() = doTest("Common/src/test/test.kt") {
+        newName = "baz"
+    }
+
+    fun testHeadersAndImplsByImplClassMemberFun() = doTest("JS/src/test/test.kt") {
+        newName = "baz"
+    }
 }
