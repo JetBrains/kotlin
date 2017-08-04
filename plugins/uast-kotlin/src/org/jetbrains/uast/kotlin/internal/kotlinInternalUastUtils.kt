@@ -17,6 +17,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPrimitiveType
@@ -49,14 +50,19 @@ import java.text.StringCharacterIterator
 internal val KOTLIN_CACHED_UELEMENT_KEY = Key.create<WeakReference<UElement>>("cached-kotlin-uelement")
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun String?.orAnonymous(kind: String = ""): String {
-    return this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
-}
+internal inline fun String?.orAnonymous(kind: String = ""): String = this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
 
-internal fun DeclarationDescriptor.toSource() = try {
-    DescriptorToSourceUtils.descriptorToDeclaration(this)
-} catch (e: Exception) {
-    null
+internal fun DeclarationDescriptor.toSource(): PsiElement? {
+    return try {
+        DescriptorToSourceUtils.getEffectiveReferencedDescriptors(this)
+                .asSequence()
+                .mapNotNull { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
+                .firstOrNull()
+    }
+    catch (e: Exception) {
+        Logger.getInstance("DeclarationDescriptor.toSource").error(e)
+        null
+    }
 }
 
 internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
