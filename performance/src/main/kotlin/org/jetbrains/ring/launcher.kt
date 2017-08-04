@@ -70,18 +70,18 @@ class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
     //-------------------------------------------------------------------------//
 
     fun printResults() {
-        var total = 0L
+        var total = 0.0
         results.forEach {
             val normaTime = NormaResults[it.key]
-            val norma     = it.value / normaTime!!
+            val norma     = it.value.toDouble() / normaTime!!.toDouble()
             val niceName  = it.key.padEnd(50, ' ')
-            val niceNorma = norma.toString().padStart(10, ' ')
+            val niceNorma = norma.toString(2).padStart(10, ' ')
             println("$niceName : $niceNorma")
 
             total += norma
         }
         val average = total / results.size
-        println("\nRingAverage: $average")
+        println("\nRingAverage: ${average.toString(2)}")
     }
 
     //-------------------------------------------------------------------------//
@@ -415,5 +415,16 @@ class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
 
         results["WithIndicies.withIndicies"]       = launch(benchmark::withIndicies)
         results["WithIndicies.withIndiciesManual"] = launch(benchmark::withIndiciesManual)
+    }
+
+//-----------------------------------------------------------------------------//
+
+    fun Double.toString(n: Int): String {
+        val str      = this.toString()
+        val len      = str.length
+        val pointIdx = str.indexOf('.')
+        val dropCnt  = len - pointIdx - n - 1
+        if (dropCnt < 1) return str
+        return str.dropLast(dropCnt)
     }
 }
