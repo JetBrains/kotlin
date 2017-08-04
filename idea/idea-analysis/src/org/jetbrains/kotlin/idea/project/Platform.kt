@@ -25,6 +25,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyBean
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -100,18 +101,19 @@ val Module.languageVersionSettings: LanguageVersionSettings
         val languageVersion = facetSettings.languageLevel ?: getAndCacheLanguageLevelByDependencies()
         val apiVersion = facetSettings.apiLevel ?: languageVersion
 
+        val compilerSettings = facetSettings.compilerSettings
+
         val extraLanguageFeatures = getExtraLanguageFeatures(
                 facetSettings.targetPlatformKind ?: TargetPlatformKind.Common,
                 facetSettings.coroutineSupport,
-                facetSettings.compilerSettings,
+                compilerSettings,
                 this
         )
 
-        val arguments = facetSettings.compilerArguments
-        if (arguments != null) {
-            facetSettings.compilerSettings?.let { compilerSettings ->
-                parseCommandLineArguments(compilerSettings.additionalArgumentsAsList, arguments)
-            }
+        var arguments = facetSettings.compilerArguments
+        if (arguments != null && compilerSettings != null) {
+            arguments = copyBean(arguments)
+            parseCommandLineArguments(compilerSettings.additionalArgumentsAsList, arguments)
         }
 
         return LanguageVersionSettingsImpl(
