@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.highlighter.sourceKind
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
@@ -63,10 +63,20 @@ internal fun KtDeclaration.headerDeclarationIfAny(): KtDeclaration? {
     return DescriptorToSourceUtils.descriptorToDeclaration(headerDescriptor) as? KtDeclaration
 }
 
-internal fun KtDeclaration.liftToHeader(): KtDeclaration? {
-    return when {
-        hasModifier(KtTokens.HEADER_KEYWORD) -> this
-        hasModifier(KtTokens.IMPL_KEYWORD) -> headerDeclarationIfAny()
-        else -> null
+private fun DeclarationDescriptor.liftToHeader(): DeclarationDescriptor? {
+    if (this is MemberDescriptor) {
+        return when {
+            isHeader -> this
+            isImpl -> headerDescriptor()
+            else -> null
+        }
     }
+
+    return null
+}
+
+internal fun KtDeclaration.liftToHeader(): KtDeclaration? {
+    val descriptor = resolveToDescriptor()
+    val headerDescriptor = descriptor.liftToHeader() ?: return null
+    return DescriptorToSourceUtils.descriptorToDeclaration(headerDescriptor) as? KtDeclaration
 }
