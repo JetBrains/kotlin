@@ -70,6 +70,7 @@ class KotlinToResolvedCallTransformer(
             allResolvedCalls.add(result)
 
             if (trace != null) {
+                // todo: check checkers order
                 val callCheckerContext = CallCheckerContext(context.replaceBindingTrace(trace), languageFeatureSettings)
                 for (resolvedCall in allResolvedCalls) {
                     runCallCheckers(resolvedCall, callCheckerContext)

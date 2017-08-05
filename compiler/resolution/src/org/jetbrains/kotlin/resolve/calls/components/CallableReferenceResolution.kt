@@ -35,13 +35,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -87,7 +84,7 @@ class CallableReferenceCandidate(
 fun createCallableReferenceProcessor(factory: CallableReferencesCandidateFactory): ScopeTowerProcessor<CallableReferenceCandidate> {
     val lhsResult = factory.argument.lhsResult
     when (lhsResult) {
-        LHSResult.Empty, is LHSResult.Expression -> {
+        LHSResult.Empty, LHSResult.Error, is LHSResult.Expression -> {
             val explicitReceiver = (lhsResult as? LHSResult.Expression)?.lshCallArgument?.receiver
             return factory.createCallableProcessor(explicitReceiver)
         }
@@ -95,18 +92,18 @@ fun createCallableReferenceProcessor(factory: CallableReferencesCandidateFactory
             val static = factory.createCallableProcessor(lhsResult.qualifier)
             val unbound = factory.createCallableProcessor(lhsResult.unboundDetailedReceiver)
 
-            // note that if we use CompositeScopeTowerProcessor then static will win over unbound members
-            val staticOrUnbound = CompositeSimpleScopeTowerProcessor(static, unbound)
+            // note that if we use PrioritizedCompositeScopeTowerProcessor then static will win over unbound members
+            val staticOrUnbound = SamePriorityCompositeScopeTowerProcessor(static, unbound)
 
             val asValue = lhsResult.qualifier.classValueReceiverWithSmartCastInfo ?: return staticOrUnbound
-            return CompositeScopeTowerProcessor(staticOrUnbound, factory.createCallableProcessor(asValue))
+            return PrioritizedCompositeScopeTowerProcessor(staticOrUnbound, factory.createCallableProcessor(asValue))
         }
         is LHSResult.Object -> {
             // callable reference to nested class constructor
             val static = factory.createCallableProcessor(lhsResult.qualifier)
             val boundObjectReference = factory.createCallableProcessor(lhsResult.objectValueReceiver)
 
-            return CompositeSimpleScopeTowerProcessor(static, boundObjectReference)
+            return SamePriorityCompositeScopeTowerProcessor(static, boundObjectReference)
         }
     }
 }
@@ -120,33 +117,37 @@ fun ConstraintSystemOperation.checkCallableReference(
         expectedType: UnwrappedType?,
         ownerDescriptor: DeclarationDescriptor
 ): Pair<FreshVariableNewTypeSubstitutor, KotlinCallDiagnostic?> {
-    val invisibleMember = Visibilities.findInvisibleMember(dispatchReceiver?.asReceiverValueForVisibilityChecks,
-                                                           candidateDescriptor, ownerDescriptor)
-
     val position = ArgumentConstraintPosition(argument)
 
-    val toFreshSubstitutor = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, this, kotlinCall = null)
-    val reflectionType = toFreshSubstitutor.safeSubstitute(reflectionCandidateType)
+    val toFreshSubstitutor = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, this)
 
     if (expectedType != null) {
-        addSubtypeConstraint(reflectionType, expectedType, position)
+        addSubtypeConstraint(toFreshSubstitutor.safeSubstitute(reflectionCandidateType), expectedType, position)
     }
 
     addReceiverConstraint(toFreshSubstitutor, dispatchReceiver, candidateDescriptor.dispatchReceiverParameter, position)
     addReceiverConstraint(toFreshSubstitutor, extensionReceiver, candidateDescriptor.extensionReceiverParameter, position)
 
+    val invisibleMember = Visibilities.findInvisibleMember(dispatchReceiver?.asReceiverValueForVisibilityChecks,
+                                                           candidateDescriptor, ownerDescriptor)
     return toFreshSubstitutor to invisibleMember?.let(::VisibilityError)
 }
 
 
 private fun ConstraintSystemOperation.addReceiverConstraint(
         toFreshSubstitutor: FreshVariableNewTypeSubstitutor,
-        receiver: CallableReceiver?,
-        candidateReceiver: ReceiverParameterDescriptor?,
+        receiverArgument: CallableReceiver?,
+        receiverParameter: ReceiverParameterDescriptor?,
         position: ArgumentConstraintPosition
 ) {
-    val expectedType = toFreshSubstitutor.safeSubstitute(candidateReceiver?.value?.type?.unwrap() ?: return)
-    val receiverType = receiver?.receiver?.stableType ?: return
+    if (receiverArgument == null || receiverParameter == null) {
+        assert(receiverArgument == null) { "Receiver argument should be null if parameter is: $receiverArgument" }
+        assert(receiverParameter == null) { "Receiver parameter should be null if argument is: $receiverParameter" }
+        return
+    }
+
+    val expectedType = toFreshSubstitutor.safeSubstitute(receiverParameter.value.type.unwrap())
+    val receiverType = receiverArgument.receiver.stableType
     addSubtypeConstraint(receiverType, expectedType, position)
 }
 
@@ -170,11 +171,17 @@ class CallableReferencesCandidateFactory(
         val dispatchCallableReceiver = towerCandidate.dispatchReceiver?.let { toCallableReceiver(it, explicitReceiverKind == DISPATCH_RECEIVER) }
         val extensionCallableReceiver = extensionReceiver?.let { toCallableReceiver(it, explicitReceiverKind == EXTENSION_RECEIVER) }
         val candidateDescriptor = towerCandidate.descriptor
+        val diagnostics = SmartList<KotlinCallDiagnostic>()
 
-        val (reflectionCandidateType, defaults) = buildReflectionType(candidateDescriptor,
-                                                          dispatchCallableReceiver,
-                                                          extensionCallableReceiver,
-                                                          expectedType)
+        val (reflectionCandidateType, defaults) = buildReflectionType(
+                candidateDescriptor,
+                dispatchCallableReceiver,
+                extensionCallableReceiver,
+                expectedType)
+
+        if (defaults != 0) {
+            diagnostics.add(CallableReferencesDefaultArgumentUsed(argument, candidateDescriptor, defaults))
+        }
 
         if (candidateDescriptor !is CallableMemberDescriptor) {
             val status = ResolutionCandidateStatus(listOf(NotCallableMemberReference(argument, candidateDescriptor)))
@@ -182,15 +189,15 @@ class CallableReferencesCandidateFactory(
                                               explicitReceiverKind, reflectionCandidateType, defaults, status)
         }
 
-        val diagnostics = SmartList<KotlinCallDiagnostic>()
         diagnostics.addAll(towerCandidate.diagnostics)
         // todo smartcast on receiver diagnostic and CheckInstantiationOfAbstractClass
 
         compatibilityChecker {
             if (it.hasContradiction) return@compatibilityChecker
 
-            val (_, visibilityError) = it.checkCallableReference(argument, dispatchCallableReceiver, extensionCallableReceiver, candidateDescriptor,
-                                      reflectionCandidateType, expectedType, scopeTower.lexicalScope.ownerDescriptor)
+            val (_, visibilityError) = it.checkCallableReference(
+                    argument, dispatchCallableReceiver, extensionCallableReceiver, candidateDescriptor,
+                    reflectionCandidateType, expectedType, scopeTower.lexicalScope.ownerDescriptor)
 
             diagnostics.addIfNotNull(visibilityError)
 
@@ -244,8 +251,10 @@ class CallableReferencesCandidateFactory(
         }
         if (mappedArguments.any { it == null }) return null
 
-        val unitExpectedType = functionType.let(KotlinType::getReturnTypeFromFunctionType).takeIf { it.upperIfFlexible().isUnit() }
-        val coercion = if (unitExpectedType != null) CoercionStrategy.COERCION_TO_UNIT else CoercionStrategy.NO_COERCION
+        // lower(Unit!) = Unit
+        val returnExpectedType = functionType.getReturnTypeFromFunctionType().lowerIfFlexible()
+
+        val coercion = if (returnExpectedType.isUnit()) CoercionStrategy.COERCION_TO_UNIT else CoercionStrategy.NO_COERCION
 
         @Suppress("UNCHECKED_CAST")
         return Triple(mappedArguments as Array<KotlinType>, coercion, defaults)

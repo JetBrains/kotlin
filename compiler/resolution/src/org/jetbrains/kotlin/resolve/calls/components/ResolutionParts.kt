@@ -111,7 +111,7 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
             descriptorWithFreshTypes = candidateDescriptor
             return emptyList()
         }
-        val toFreshVariables = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, csBuilder, kotlinCall)
+        val toFreshVariables = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, csBuilder)
         typeVariablesForFreshTypeParameters = toFreshVariables.freshVariables
 
         // bad function -- error on declaration side
@@ -166,12 +166,11 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
 
     fun createToFreshVariableSubstitutorAndAddInitialConstraints(
             candidateDescriptor: CallableDescriptor,
-            csBuilder: ConstraintSystemOperation,
-            kotlinCall: KotlinCall?
+            csBuilder: ConstraintSystemOperation
     ): FreshVariableNewTypeSubstitutor {
         val typeParameters = candidateDescriptor.typeParameters
 
-        val freshTypeVariables = typeParameters.map { TypeVariableFromCallableDescriptor(it, kotlinCall) }
+        val freshTypeVariables = typeParameters.map { TypeVariableFromCallableDescriptor(it) }
 
         val toFreshVariables = FreshVariableNewTypeSubstitutor(freshTypeVariables)
 

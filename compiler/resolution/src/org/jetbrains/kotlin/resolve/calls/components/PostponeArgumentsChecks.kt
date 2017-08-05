@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaR
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun createPostponedArgumentAndPerformInitialChecks(
         csBuilder: ConstraintSystemBuilder,
@@ -63,20 +64,20 @@ private fun preprocessLambdaArgument(
         if (argument.parametersTypes != null) {
             parameters = argument.parametersTypes!!.mapIndexed {
                 index, type ->
-                type ?: expectedParameters.getOrNull(index)?.type?.unwrap() ?: builtIns.anyType
+                type ?: expectedParameters.getOrNull(index)?.type?.unwrap() ?: builtIns.nullableAnyType
             }
         }
         else {
             // lambda without explicit parameters: { }
             parameters = expectedParameters.map { it.type.unwrap() }
         }
-        returnType = (argument as? FunctionExpression)?.returnType ?: expectedType.getReturnTypeFromFunctionType().unwrap()
+        returnType = argument.safeAs<FunctionExpression>()?.returnType ?: expectedType.getReturnTypeFromFunctionType().unwrap()
     }
     else {
         val isFunctionSupertype = KotlinBuiltIns.isNotNullOrNullableFunctionSupertype(expectedType)
-        receiverType = (argument as? FunctionExpression)?.receiverType
+        receiverType = argument.safeAs<FunctionExpression>()?.receiverType
         parameters = argument.parametersTypes?.map { it ?: builtIns.nothingType } ?: emptyList()
-        returnType = (argument as? FunctionExpression)?.returnType ?:
+        returnType = argument.safeAs<FunctionExpression>()?.returnType ?:
                      expectedType.arguments.singleOrNull()?.type?.unwrap()?.takeIf { isFunctionSupertype } ?:
                      createFreshTypeVariableForLambdaReturnType(csBuilder, argument, builtIns)
 
