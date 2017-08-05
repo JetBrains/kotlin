@@ -44,6 +44,18 @@ internal object DefaultJsAsserter : Asserter {
         super.assertNotEquals(message, illegal, actual)
     }
 
+    override fun assertSame(message: String?, expected: Any?, actual: Any?) {
+        e = expected
+        a = actual
+        super.assertSame(message, expected, actual)
+    }
+
+    override fun assertNotSame(message: String?, illegal: Any?, actual: Any?) {
+        e = illegal
+        a = actual
+        super.assertNotSame(message, illegal, actual)
+    }
+
     override fun assertNull(message: String?, actual: Any?) {
         a = actual
         super.assertNull(message, actual)
