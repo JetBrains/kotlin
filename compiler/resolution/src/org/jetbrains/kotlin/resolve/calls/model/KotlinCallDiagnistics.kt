@@ -98,6 +98,15 @@ class CallableReferenceNotCompatible(
         val callableReverenceType: UnwrappedType
 ) : InapplicableArgumentDiagnostic()
 
+// supported by FE but not supported by BE now
+class CallableReferencesDefaultArgumentUsed(
+    val argument: CallableReferenceKotlinCallArgument,
+    val candidate: CallableDescriptor,
+    val defaultsCount: Int
+) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
+}
+
 class NotCallableMemberReference(
         override val argument: CallableReferenceKotlinCallArgument,
         val candidate: CallableDescriptor

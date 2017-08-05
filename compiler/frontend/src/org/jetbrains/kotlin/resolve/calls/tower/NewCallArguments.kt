@@ -221,7 +221,7 @@ internal fun createSimplePSICallArgument(
     // we should use DFI after this argument, because there can be some useful smartcast. Popular case: if branches.
     val receiverToCast = transformToReceiverWithSmartCastInfo(
             ownerDescriptor, bindingContext,
-            typeInfoForArgument.dataFlowInfo,
+            typeInfoForArgument.dataFlowInfo, // dataFlowInfoBeforeThisArgument cannot be used here, because of if() { if (x != null) return; x }
             ExpressionReceiver.create(ktExpression, baseType, bindingContext)
     ).prepareReceiverRegardingCaptureTypes()
 

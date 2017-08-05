@@ -110,6 +110,8 @@ sealed class LHSResult {
 
     // todo this case is forbid for now
     object Empty: LHSResult()
+
+    object Error: LHSResult()
 }
 
 interface CallableReferenceKotlinCallArgument : PostponableKotlinCallArgument {
