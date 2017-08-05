@@ -73,7 +73,7 @@ fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
 
     val psiFactory = KtPsiFactory(project)
 
-    val argument = if (shouldLambdaParameterNamed(newCallExpression.getValueArgumentsInParentheses(), oldCallExpression)) {
+    val argument = if (shouldLambdaParameterBeNamed(newCallExpression.getValueArgumentsInParentheses(), oldCallExpression)) {
         psiFactory.createArgument(replacement, functionLiteralArgumentName)
     }
     else {
@@ -95,11 +95,10 @@ fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
     return oldCallExpression.replace(newCallExpression) as KtCallExpression
 }
 
-private fun shouldLambdaParameterNamed(args: List<ValueArgument>, callExpr: KtCallExpression): Boolean {
-    return args.any { it.isNamed() } ||
-           (callExpr.calleeExpression?.mainReference?.resolve() as? KtFunction)?.run {
-               if (valueParameters.any { it.isVarArg }) true else valueParameters.size - 1 > args.size
-           } ?: true
+private fun shouldLambdaParameterBeNamed(args: List<ValueArgument>, callExpr: KtCallExpression): Boolean {
+    if (args.any { it.isNamed() }) return true
+    val calee = (callExpr.calleeExpression?.mainReference?.resolve() as? KtFunction) ?: return true
+    return if (calee.valueParameters.any { it.isVarArg }) true else calee.valueParameters.size - 1 > args.size
 }
 
 
