@@ -108,7 +108,7 @@ class NewResolutionOldInference(
             ): ScopeTowerProcessor<MyCandidate> {
                 val functionFactory = outer.CandidateFactoryImpl(name, context, tracing)
                 val variableFactory = outer.CandidateFactoryImpl(name, context, tracing)
-                return CompositeScopeTowerProcessor(
+                return PrioritizedCompositeScopeTowerProcessor(
                         createSimpleFunctionProcessor(scopeTower, name, functionFactory, explicitReceiver, classValueReceiver = false),
                         createVariableProcessor(scopeTower, name, variableFactory, explicitReceiver, classValueReceiver = false)
                 )

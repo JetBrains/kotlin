@@ -531,14 +531,14 @@ class PSICallResolver(
                             LHSResult.Object(ClassQualifier(calleeExpression, classifier))
                         }
                         else {
-                            LHSResult.Empty // this is error case actually
+                            LHSResult.Error
                         }
                     }
                     else {
                         val fakeArgument = FakeValueArgumentForLeftCallableReference(ktExpression)
 
                         val kotlinCallArgument = createSimplePSICallArgument(context, fakeArgument, lhsResult.typeInfo)
-                        kotlinCallArgument?.let { LHSResult.Expression(it as SimpleKotlinCallArgument) } ?: LHSResult.Empty
+                        kotlinCallArgument?.let { LHSResult.Expression(it as SimpleKotlinCallArgument) } ?: LHSResult.Error
                     }
                 }
                 is DoubleColonLHS.Type -> {
@@ -547,7 +547,7 @@ class PSICallResolver(
                         LHSResult.Type(qualifier, lhsResult.type.unwrap())
                     }
                     else {
-                        LHSResult.Empty // this is error case actually
+                        LHSResult.Error
                     }
                 }
             }

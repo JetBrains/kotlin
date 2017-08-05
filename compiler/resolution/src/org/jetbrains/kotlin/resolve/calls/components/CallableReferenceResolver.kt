@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.TowerResolver
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 class CallableReferenceOverloadConflictResolver(
@@ -68,11 +69,11 @@ class CallableReferenceResolver(
         val argument = postponedArgument.argument
         val expectedType = postponedArgument.expectedType
 
-        val subLHSCall = ((argument.lhsResult as? LHSResult.Expression)?.lshCallArgument as? SubKotlinCallArgument)
+        val subLHSCall = argument.lhsResult.safeAs<LHSResult.Expression>()?.lshCallArgument.safeAs<SubKotlinCallArgument>()
         if (subLHSCall != null) {
             csBuilder.addInnerCall(subLHSCall.resolvedCall)
         }
-        val candidates = runRLSResolution(scopeTower, argument, expectedType) { checkCallableReference ->
+        val candidates = runRHSResolution(scopeTower, argument, expectedType) { checkCallableReference ->
             csBuilder.runTransaction { checkCallableReference(this); false }
         }
         val chosenCandidate = when (candidates.size) {
@@ -93,18 +94,20 @@ class CallableReferenceResolver(
     }
 
 
-    private fun runRLSResolution(
+    private fun runRHSResolution(
             scopeTower: ImplicitScopeTower,
             callableReference: CallableReferenceKotlinCallArgument,
             expectedType: UnwrappedType?, // this type can have not fixed type variable inside
-            compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit // you can run anything throw this operation and all this operation will be roll backed
+            compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit // you can run anything throw this operation and all this operation will be rolled back
     ): Set<CallableReferenceCandidate> {
         val factory = CallableReferencesCandidateFactory(callableReference, callComponents, scopeTower, compatibilityChecker, expectedType)
         val processor = createCallableReferenceProcessor(factory)
         val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = true)
-        return callableReferenceOverloadConflictResolver.chooseMaximallySpecificCandidates(candidates, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                                   discriminateGenerics = false,
-                                                                   isDebuggerContext = scopeTower.isDebuggerContext)
+        return callableReferenceOverloadConflictResolver.chooseMaximallySpecificCandidates(
+                candidates,
+                CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                discriminateGenerics = false, // we can't specify generics explicitly for callable references
+                isDebuggerContext = scopeTower.isDebuggerContext)
     }
 }
 

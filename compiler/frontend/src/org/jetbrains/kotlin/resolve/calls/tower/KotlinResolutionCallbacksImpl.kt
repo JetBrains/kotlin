@@ -120,6 +120,7 @@ class KotlinResolutionCallbacksImpl(
             val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
                 if (expectedReturnType?.isUnit() == true) return@let null // coercion to Unit
 
+                // todo lastExpression can be if without else
                 val lastExpressionType = trace.getType(lastExpression)
                 val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, lambdaInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
                 createCallArgument(lastExpression, lastExpressionTypeInfo)
