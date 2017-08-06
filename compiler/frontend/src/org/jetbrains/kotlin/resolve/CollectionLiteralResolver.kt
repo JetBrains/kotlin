@@ -74,16 +74,15 @@ class CollectionLiteralResolver(val module: ModuleDescriptor, val callResolver: 
     ): KotlinTypeInfo {
         val call = CallMaker.makeCallForCollectionLiteral(expression)
         val callName = getArrayFunctionCallName(context.expectedType)
-        val functionDescriptor = getFunctionDescriptorForCollectionLiteral(expression, callName)
-        if (functionDescriptor == null) {
+        val functionDescriptors = getFunctionDescriptorForCollectionLiteral(expression, callName)
+        if (functionDescriptors.isEmpty()) {
             context.trace.report(MISSING_STDLIB.on(
                     expression, "Collection literal call '$callName()' is unresolved"))
             return noTypeInfo(context)
         }
 
-        val resolutionResults = callResolver.resolveCollectionLiteralCallWithGivenDescriptor(context, expression, call, functionDescriptor)
+        val resolutionResults = callResolver.resolveCollectionLiteralCallWithGivenDescriptor(context, expression, call, functionDescriptors)
 
-        // No single result after resolving one candidate?
         if (!resolutionResults.isSingleResult) {
             return noTypeInfo(context)
         }
@@ -95,9 +94,9 @@ class CollectionLiteralResolver(val module: ModuleDescriptor, val callResolver: 
     private fun getFunctionDescriptorForCollectionLiteral(
             expression: KtCollectionLiteralExpression,
             callName: Name
-    ): SimpleFunctionDescriptor? {
+    ): Collection<SimpleFunctionDescriptor> {
         val memberScopeOfKotlinPackage = module.getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME).memberScope
-        return memberScopeOfKotlinPackage.getContributedFunctions(callName, KotlinLookupLocation(expression)).singleOrNull()
+        return memberScopeOfKotlinPackage.getContributedFunctions(callName, KotlinLookupLocation(expression))
     }
 
     private fun checkSupportsArrayLiterals(expression: KtCollectionLiteralExpression, context: ExpressionTypingContext) {
