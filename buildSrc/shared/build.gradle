@@ -21,13 +21,7 @@ buildscript {
         kotlin_version = gradleProperties."kotlin_version"
     }
 
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+    apply from: '../../gradle/kotlinGradlePlugin.gradle'
 }
 
 apply plugin: 'kotlin'

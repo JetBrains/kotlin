@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.konan.properties.KonanProperties
 import org.jetbrains.kotlin.konan.properties.*
 
 buildscript {
+    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+
     repositories {
-        mavenCentral()
         jcenter()
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }

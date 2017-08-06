@@ -22,13 +22,7 @@ import org.jetbrains.kotlin.TestFailedException
 import java.util.concurrent.atomic.AtomicInteger
 
 buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
 }
 
 // Copied from backend.native project. =====

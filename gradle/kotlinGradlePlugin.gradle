@@ -1,0 +1,11 @@
+if (!hasProperty('kotlin_version')) {
+    throw new GradleException('Please ensure the "kotlin_version" property is defined before applying this script.')
+}
+
+project.buildscript.repositories {
+    mavenCentral()
+}
+
+project.buildscript.dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+}

@@ -15,13 +15,7 @@
  */
 
 buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-   dependencies {
-     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-   }
+    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
 }
 
 apply plugin: 'kotlin'

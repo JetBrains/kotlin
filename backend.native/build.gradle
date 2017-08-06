@@ -15,15 +15,15 @@
  */
 
 buildscript {
+   apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+
    repositories {
        mavenCentral()
    }
 
    dependencies {
-       classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.0"
    }
-
 }
 
 String protobufVersion = '2.6.1'
