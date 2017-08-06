@@ -120,6 +120,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
+    @TestMetadata("overloadResolutionOnCollectionLiteral")
+    public void testOverloadResolutionOnCollectionLiteral() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/overloadResolutionOnCollectionLiteral/");
+        doTest(fileName);
+    }
+
     @TestMetadata("stdlibForJavacWithNoKotlin")
     public void testStdlibForJavacWithNoKotlin() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/stdlibForJavacWithNoKotlin/");
@@ -129,6 +135,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
     @TestMetadata("suppressWarnings")
     public void testSuppressWarnings() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/suppressWarnings/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("twoStdlibForCollectionLiterals")
+    public void testTwoStdlibForCollectionLiterals() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/twoStdlibForCollectionLiterals/");
         doTest(fileName);
     }
 
@@ -159,6 +171,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
     @TestMetadata("withKotlinNoJavaSources")
     public void testWithKotlinNoJavaSources() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/withKotlinNoJavaSources/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("wrongCallForCollectionLiteral")
+    public void testWrongCallForCollectionLiteral() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/wrongCallForCollectionLiteral/");
         doTest(fileName);
     }
 }

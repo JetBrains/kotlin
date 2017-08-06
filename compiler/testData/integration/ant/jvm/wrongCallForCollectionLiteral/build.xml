@@ -1,0 +1,25 @@
+<project name="Ant Task Test" default="build">
+    <taskdef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
+
+    <target name="build">
+        <mkdir dir="${temp}/classes"/>
+        <javac srcdir="${test.data}" destdir="${temp}/classes" includeantruntime="false">
+            <classpath>
+                <pathelement location="${kotlin.runtime.jar}"/>
+            </classpath>
+            <withKotlin>
+                <compilerarg value="-Xallow-kotlin-package"/>
+            </withKotlin>
+        </javac>
+        <jar destfile="${temp}/literals.jar">
+            <fileset dir="${temp}/classes"/>
+        </jar>
+
+        <java classname="lit.LiteralsKt" fork="true">
+            <classpath>
+                <pathelement location="${temp}/literals.jar"/>
+                <pathelement location="${kotlin.runtime.jar}"/>
+            </classpath>
+        </java>
+    </target>
+</project>
