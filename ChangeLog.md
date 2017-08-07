@@ -14,7 +14,6 @@
 - [`KT-15825`](https://youtrack.jetbrains.com/issue/KT-15825) Switch warning to error for java-default method calls within 1.6 target
 - [`KT-18702`](https://youtrack.jetbrains.com/issue/KT-18702) Do not use non-existing class for suspend markers
 - [`KT-18845`](https://youtrack.jetbrains.com/issue/KT-18845) Exception on building gradle project with collection literals
-- [`KT-19251`](https://youtrack.jetbrains.com/issue/KT-19251) Generate SAM wrappers only if they are required for a given argument
 - [`KT-19441`](https://youtrack.jetbrains.com/issue/KT-19441) Fix collection literals resolve in gradle-based projects
 
 ### IDE. Inspections and Intentions
