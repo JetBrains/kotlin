@@ -1,0 +1,4 @@
+class A {
+    fun a(){}<caret>
+    fun b(){}
+}
