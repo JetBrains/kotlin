@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,15 @@ class MainFunctionDetector {
             return false
         }
 
-        if (function.valueParameters.size != 1 || !function.typeParameters.isEmpty()) {
+
+        var parametersCount = function.valueParameters.size
+        if (function.receiverTypeReference != null) parametersCount++
+
+        if (parametersCount != 1) {
+            return false
+        }
+
+        if (!function.typeParameters.isEmpty()) {
             return false
         }
 
@@ -98,11 +106,12 @@ class MainFunctionDetector {
                 return false
             }
 
-            val parameters = descriptor.valueParameters
+            val parameters = descriptor.valueParameters.mapTo(mutableListOf()) { it.type }
+            descriptor.extensionReceiverParameter?.type?.let {parameters += it}
+
             if (parameters.size != 1 || !descriptor.typeParameters.isEmpty()) return false
 
-            val parameter = parameters[0]
-            val parameterType = parameter.type
+            val parameterType = parameters[0]
             if (!KotlinBuiltIns.isArray(parameterType)) return false
 
             val typeArguments = parameterType.arguments
