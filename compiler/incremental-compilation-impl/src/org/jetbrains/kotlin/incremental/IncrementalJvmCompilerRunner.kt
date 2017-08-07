@@ -93,7 +93,6 @@ class IncrementalJvmCompilerRunner(
         private val changesRegistry: ChangesRegistry? = null
 ) {
     private var anyClassesCompiled: Boolean = false
-            private set
     private val cacheDirectory = File(workingDir, CACHES_DIR_NAME)
     private val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
     private val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
