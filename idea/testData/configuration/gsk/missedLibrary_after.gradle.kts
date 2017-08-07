@@ -2,6 +2,7 @@ import org.gradle.api.JavaVersion.VERSION_1_7
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kotlin_version: String by extra
+
 buildscript {
     var kotlin_version: String by extra
     kotlin_version = "$VERSION$"

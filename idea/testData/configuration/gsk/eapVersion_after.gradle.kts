@@ -13,6 +13,7 @@ buildscript {
         classpath(kotlinModule("gradle-plugin", kotlin_version))
     }
 }
+
 plugins {
     application
 }
