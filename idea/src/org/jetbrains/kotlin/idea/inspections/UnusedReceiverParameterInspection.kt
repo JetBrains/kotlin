@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
@@ -53,6 +54,8 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 if (callableDeclaration is KtNamedFunction && !callableDeclaration.hasBody()) return
 
                 val callable = callableDeclaration.descriptor
+
+                if (callable != null && MainFunctionDetector.isMain(callable)) return
 
                 var used = false
                 callableDeclaration.acceptChildren(object : KtVisitorVoid() {
