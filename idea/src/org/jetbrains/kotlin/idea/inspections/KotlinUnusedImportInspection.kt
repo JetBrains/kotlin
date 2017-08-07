@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.OptimizedImportsBuilder
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -61,7 +62,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
     companion object {
         fun analyzeImports(file: KtFile): ImportData? {
             if (file is KtCodeFragment) return null
-            if (!file.manager.isInProject(file)) return null
+            if (!ProjectRootsUtil.isInProjectSource(file)) return null
             if (file.importDirectives.isEmpty()) return null
 
             val optimizerData = KotlinImportOptimizer.collectDescriptorsToImport(file)
