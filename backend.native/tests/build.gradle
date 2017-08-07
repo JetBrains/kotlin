@@ -1757,6 +1757,16 @@ task memory_throw_cleanup(type: RunKonanTest) {
     source = "runtime/memory/throw_cleanup.kt"
 }
 
+task memory_escape1(type: RunKonanTest) {
+    goldValue = "zzz\n"
+    source = "runtime/memory/escape1.kt"
+}
+
+task memory_escape2(type: RunKonanTest) {
+    goldValue = "zzz\n"
+    source = "runtime/memory/escape2.kt"
+}
+
 task unit1(type: RunKonanTest) {
     goldValue = "First\nkotlin.Unit\n"
     source = "codegen/basics/unit1.kt"
