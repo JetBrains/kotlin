@@ -25,10 +25,15 @@ abstract class JavaAnnotationArgumentImpl(
 ) : JavaAnnotationArgument {
     companion object Factory {
         fun create(argument: PsiAnnotationMemberValue, name: Name?): JavaAnnotationArgument {
+            if (argument is PsiClassObjectAccessExpression) {
+                return JavaClassObjectAnnotationArgumentImpl(argument, name)
+            }
+
             val value = JavaPsiFacade.getInstance(argument.project).constantEvaluationHelper.computeConstantExpression(argument)
             if (value is Enum<*>) {
                 return JavaEnumValueAnnotationArgumentImpl(argument as PsiReferenceExpression, name)
             }
+
             if (value != null || argument is PsiLiteralExpression) {
                 return JavaLiteralAnnotationArgumentImpl(name, value)
             }
@@ -37,7 +42,6 @@ abstract class JavaAnnotationArgumentImpl(
                 is PsiReferenceExpression -> JavaEnumValueAnnotationArgumentImpl(argument, name)
                 is PsiArrayInitializerMemberValue -> JavaArrayAnnotationArgumentImpl(argument, name)
                 is PsiAnnotation -> JavaAnnotationAsAnnotationArgumentImpl(argument, name)
-                is PsiClassObjectAccessExpression -> JavaClassObjectAnnotationArgumentImpl(argument, name)
                 else -> throw UnsupportedOperationException("Unsupported annotation argument type: " + argument)
             }
         }
