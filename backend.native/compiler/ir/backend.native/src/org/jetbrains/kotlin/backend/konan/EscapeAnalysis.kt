@@ -100,8 +100,8 @@ internal object EscapeAnalysis {
         open fun add(entry: RoleInfoEntry) = entries.add(entry)
     }
 
-    private fun isInteresting(type: KotlinType?): Boolean =
-            type != null && !type.isUnit() && !type.isNothing()
+    private fun RuntimeAware.isInteresting(type: KotlinType?): Boolean =
+            type != null && !type.isUnit() && !type.isNothing() && isObjectType(type)
 
     private class Roles {
         val data = HashMap<Role, RoleInfo>()
@@ -265,7 +265,7 @@ internal object EscapeAnalysis {
     private class IntraproceduralAnalysisResult(val functionAnalysisResults: Map<FunctionDescriptor, FunctionAnalysisResult>,
                                                 val expressionValuesExtractor: ExpressionValuesExtractor)
 
-    private class IntraproceduralAnalysis {
+    private class IntraproceduralAnalysis(val context: RuntimeAware) {
 
         // Possible values of a returnable block.
         private val returnableBlockValues = mutableMapOf<IrReturnableBlock, MutableList<IrExpression>>()
@@ -276,12 +276,12 @@ internal object EscapeAnalysis {
         private val expressionValuesExtractor = ExpressionValuesExtractor(returnableBlockValues, suspendableExpressionValues)
 
         private fun isInteresting(expression: IrExpression) =
-                (expression is IrMemberAccessExpression && isInteresting(expression.type))
-                        || (expression is IrGetValue && isInteresting(expression.type))
-                        || (expression is IrGetField && isInteresting(expression.type))
+                (expression is IrMemberAccessExpression && context.isInteresting(expression.type))
+                        || (expression is IrGetValue && context.isInteresting(expression.type))
+                        || (expression is IrGetField && context.isInteresting(expression.type))
                         || expression is IrGetObjectValue
 
-        private fun isInteresting(variable: ValueDescriptor) = isInteresting(variable.type)
+        private fun isInteresting(variable: ValueDescriptor) = context.isInteresting(variable.type)
 
         fun analyze(irModule: IrModuleFragment): IntraproceduralAnalysisResult {
             val result = mutableMapOf<FunctionDescriptor, FunctionAnalysisResult>()
@@ -465,6 +465,14 @@ internal object EscapeAnalysis {
                             variableValues = if (useVarValues) variableValues else null
                     )
                     nodes.forEach { assignRole(receiver, Role.FIELD_WRITTEN, RoleInfoEntry(it)) }
+
+                    // TODO: make more precise analysis and differentiate fields from receivers.
+                    // See test escape2.kt, why we need these edges.
+                    val receiverNodes = expressionValuesExtractor.extractNodesUsingVariableValues(
+                            expression     = receiver,
+                            variableValues = if (useVarValues) variableValues else null
+                    )
+                    receiverNodes.forEach { assignRole(expression.value, Role.FIELD_WRITTEN, RoleInfoEntry(it)) }
                 }
                 super.visitSetField(expression)
             }
@@ -624,6 +632,7 @@ internal object EscapeAnalysis {
     private class InterproceduralAnalysisResult(val functionEscapeAnalysisResults: Map<FunctionDescriptor, FunctionEscapeAnalysisResult>)
 
     private class InterproceduralAnalysis(context: Context,
+                                          val runtimeAware: RuntimeAware,
                                           val externalFunctionEscapeAnalysisResults: Map<String, FunctionEscapeAnalysisResult>,
                                           val intraproceduralAnalysisResult: IntraproceduralAnalysisResult,
                                           val lifetimes: MutableMap<IrElement, Lifetime>) {
@@ -890,7 +899,7 @@ internal object EscapeAnalysis {
                         FunctionEscapeAnalysisResult((0..parameters.size).map {
                             val type = if (it < parameters.size) parameters[it].type else callee.returnType
                             ParameterEscapeAnalysisResult(
-                                    escapes  = isInteresting(type), // Conservatively assume all references escape.
+                                    escapes  = runtimeAware.isInteresting(type), // Conservatively assume all references escape.
                                     pointsTo = IntArray(0)
                             )
                         }.toTypedArray())
@@ -1231,7 +1240,7 @@ internal object EscapeAnalysis {
                             if (index == parameters.size) // Return value.
                                 returnValues.any { nodes[it]!!.kind == PointsToGraphNodeKind.ESCAPES }
                             else {
-                                isInteresting(parameters[index].value.type)
+                                runtimeAware.isInteresting(parameters[index].value.type)
                                         && nodes[parameters[index].value]!!.kind == PointsToGraphNodeKind.ESCAPES
                             }
                     ParameterEscapeAnalysisResult(escapes, reachability)
@@ -1264,7 +1273,7 @@ internal object EscapeAnalysis {
         }
     }
 
-    internal fun computeLifetimes(irModule: IrModuleFragment, context: Context,
+    internal fun computeLifetimes(irModule: IrModuleFragment, context: Context, runtimeAware: RuntimeAware,
                                   lifetimes: MutableMap<IrElement, Lifetime>) {
         assert(lifetimes.isEmpty())
 
@@ -1288,8 +1297,8 @@ internal object EscapeAnalysis {
                 }
             }
         }
-        val intraproceduralAnalysisResult = IntraproceduralAnalysis().analyze(irModule)
-        val interproceduralAnalysisResult = InterproceduralAnalysis(context,
+        val intraproceduralAnalysisResult = IntraproceduralAnalysis(runtimeAware).analyze(irModule)
+        val interproceduralAnalysisResult = InterproceduralAnalysis(context, runtimeAware,
                 externalFunctionEAResults, intraproceduralAnalysisResult, lifetimes).analyze(irModule)
         if (isStdlib) { // Save only for stdlib for now.
             interproceduralAnalysisResult.functionEscapeAnalysisResults

@@ -42,7 +42,7 @@ public final class Array<T> {
     external public operator fun get(index: Int): T
 
     @SymbolName("Kotlin_Array_set")
-    @PointsTo(0b0100) // <this> points to <value>.
+    @PointsTo(0b0100, 0, 0b0001) // <this> points to <value>, <value> points to <this>.
     external public operator fun set(index: Int, value: T): Unit
 
     public operator fun iterator(): kotlin.collections.Iterator<T> {

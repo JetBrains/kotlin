@@ -72,12 +72,13 @@ internal fun emitLLVM(context: Context) {
         generateDebugInfoHeader(context)
 
         val lifetimes = mutableMapOf<IrElement, Lifetime>()
+        val codegenVisitor = CodeGeneratorVisitor(context, lifetimes)
         phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {
-            EscapeAnalysis.computeLifetimes(irModule, context, lifetimes)
+            EscapeAnalysis.computeLifetimes(irModule, context, codegenVisitor.codegen, lifetimes)
         }
 
         phaser.phase(KonanPhase.CODEGEN) {
-            irModule.acceptVoid(CodeGeneratorVisitor(context, lifetimes))
+            irModule.acceptVoid(codegenVisitor)
         }
 
         if (context.shouldContainDebugInfo()) {
