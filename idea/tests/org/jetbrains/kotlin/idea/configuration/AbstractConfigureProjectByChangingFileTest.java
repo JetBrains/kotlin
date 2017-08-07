@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.idea.configuration;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdaterKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
@@ -27,6 +29,18 @@ import java.io.File;
 
 public abstract class AbstractConfigureProjectByChangingFileTest<C extends KotlinProjectConfigurator> extends LightCodeInsightTestCase {
     private static final String DEFAULT_VERSION = "default_version";
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        ScriptDependenciesUpdaterKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), true);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        ScriptDependenciesUpdaterKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), false);
+        super.tearDown();
+    }
 
     protected void doTest(@NotNull String beforeFile, @NotNull String afterFile, @NotNull C configurator) throws Exception {
         configureByFile(beforeFile);
