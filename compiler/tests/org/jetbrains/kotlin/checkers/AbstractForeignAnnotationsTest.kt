@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.checkers
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.utils.Jsr305State
 import java.io.File
 
 val FOREIGN_ANNOTATIONS_SOURCES_PATH = "compiler/testData/foreignAnnotations/annotations"

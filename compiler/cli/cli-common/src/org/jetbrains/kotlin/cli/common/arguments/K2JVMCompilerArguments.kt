@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.Jsr305State
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.utils.Jsr305State
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
