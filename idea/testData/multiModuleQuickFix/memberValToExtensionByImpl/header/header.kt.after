@@ -1,0 +1,4 @@
+header class Foo {
+}
+
+header val Foo.foo: Int
