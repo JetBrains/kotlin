@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.daemon
 
+import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.scripts.captureOut
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import java.io.File
 import java.net.URLClassLoader
@@ -45,15 +47,21 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
     private fun compileLocally(messageCollector: TestMessageCollector, vararg args: String): Pair<Int, Collection<OutputMessageUtil.Output>> {
-        val code = K2JVMCompiler().exec(messageCollector,
-                                        Services.EMPTY,
-                                        K2JVMCompilerArguments().apply { K2JVMCompiler().parseArguments(args, this) }).code
-        val outputs = messageCollector.messages.filter { it.severity == CompilerMessageSeverity.OUTPUT }.mapNotNull {
-            OutputMessageUtil.parseOutputMessage(it.message)?.let { outs ->
-                outs.outputFile?.let { OutputMessageUtil.Output(outs.sourceFiles, it) }
+        val application = ApplicationManager.getApplication()
+        try {
+            val code = K2JVMCompiler().exec(messageCollector,
+                                            Services.EMPTY,
+                                            K2JVMCompilerArguments().apply { K2JVMCompiler().parseArguments(args, this) }).code
+            val outputs = messageCollector.messages.filter { it.severity == CompilerMessageSeverity.OUTPUT }.mapNotNull {
+                OutputMessageUtil.parseOutputMessage(it.message)?.let { outs ->
+                    outs.outputFile?.let { OutputMessageUtil.Output(outs.sourceFiles, it) }
+                }
             }
+            return code to outputs
         }
-        return code to outputs
+        finally {
+            KtUsefulTestCase.resetApplicationToNull(application)
+        }
     }
 
     private fun compileOnDaemon(clientAliveFile: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions,
