@@ -1,9 +1,6 @@
 buildscript {
-    ext.kotlin_version = '+'
-
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
-
     repositories {
+        mavenCentral()
         maven {
             url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
         }

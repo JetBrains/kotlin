@@ -306,12 +306,6 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
     }
 }
 
-task performance {
-    dependsOn 'dist'
-    dependsOn ':performance:build'
-    dependsOn ':performance:run'
-}
-
 task clean {
     doLast {
         file('dist').traverse(type: FileType.ANY, excludeNameFilter: "dependencies", maxDepth: 0) {
