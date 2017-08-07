@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -43,7 +46,11 @@ class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<
         convertPropertyInitializerToGetter(element, editor)
     }
 
-    companion object {
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            return ConvertPropertyInitializerToGetterIntention()
+        }
+
         fun convertPropertyInitializerToGetter(property: KtProperty, editor: Editor?) {
             val type = SpecifyTypeExplicitlyIntention.getTypeForDeclaration(property)
             SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, property, type)
@@ -54,6 +61,12 @@ class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<
 
             if (setter != null) {
                 property.addBefore(getter, setter)
+            }
+            else if (property.isVar) {
+                property.add(getter)
+                val notImplemented = KtPsiFactory(property).createExpression("TODO()")
+                val notImplementedSetter = KtPsiFactory(property).createPropertySetter(notImplemented)
+                property.add(notImplementedSetter)
             }
             else {
                 property.add(getter)

@@ -1422,6 +1422,33 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/convertPropertyInitializerToGetter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertPropertyInitializerToGetter extends AbstractQuickFixTest {
+        public void testAllFilesPresentInConvertPropertyInitializerToGetter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/convertPropertyInitializerToGetter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("val.kt")
+        public void testVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/convertPropertyInitializerToGetter/val.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/convertPropertyInitializerToGetter/var.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varWithSetter.kt")
+        public void testVarWithSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/convertPropertyInitializerToGetter/varWithSetter.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/createFromUsage")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -8284,6 +8311,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("baseCase.kt")
             public void testBaseCase() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/properties/extensionPropertyInitializerToGetter/baseCase.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("baseCaseVar.kt")
+            public void testBaseCaseVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/properties/extensionPropertyInitializerToGetter/baseCaseVar.kt");
                 doTest(fileName);
             }
 
