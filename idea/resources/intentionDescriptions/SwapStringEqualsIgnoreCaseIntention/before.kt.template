@@ -1,0 +1,1 @@
+"abc".equals("ABC", true)
