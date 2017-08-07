@@ -1,0 +1,5 @@
+// "Convert extension property initializer to getter" "true"
+// WITH_RUNTIME
+var String.foo: Int
+    get() = 0
+    set(value) = TODO()
