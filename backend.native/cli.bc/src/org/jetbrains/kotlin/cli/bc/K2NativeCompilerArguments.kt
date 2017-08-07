@@ -24,102 +24,102 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     // Prepend them with a single dash.
     // Keep the list lexically sorted.
 
-    @field:Argument(value = "-g", description = "Enable emitting debug information")
-    @JvmField var debug: Boolean = false
+    @Argument(value = "-g", description = "Enable emitting debug information")
+    var debug: Boolean = false
 
-    @field:Argument(value = "-enable_assertions", shortName = "-ea", description = "Enable runtime assertions in generated code")
-    @JvmField var enableAssertions: Boolean = false
+    @Argument(value = "-enable_assertions", shortName = "-ea", description = "Enable runtime assertions in generated code")
+    var enableAssertions: Boolean = false
 
-    @field:Argument(value = "-library", shortName = "-l", valueDescription = "<path>", description = "Link with the library")
-    @JvmField var libraries: Array<String>? = null
+    @Argument(value = "-library", shortName = "-l", valueDescription = "<path>", description = "Link with the library")
+    var libraries: Array<String>? = null
 
-    @field:Argument(value = "-list_targets", description = "List available hardware targets")
-    @JvmField var listTargets: Boolean = false
+    @Argument(value = "-list_targets", description = "List available hardware targets")
+    var listTargets: Boolean = false
 
-    @field:Argument(value = "-manifest", valueDescription = "<path>", description = "Provide a maniferst addend file")
-    @JvmField var manifestFile: String? = null
+    @Argument(value = "-manifest", valueDescription = "<path>", description = "Provide a maniferst addend file")
+    var manifestFile: String? = null
 
-    @field:Argument(value = "-nativelibrary", shortName = "-nl", valueDescription = "<path>", description = "Include the native library")
-    @JvmField var nativeLibraries: Array<String>? = null
+    @Argument(value = "-nativelibrary", shortName = "-nl", valueDescription = "<path>", description = "Include the native library")
+    var nativeLibraries: Array<String>? = null
 
-    @field:Argument(value = "-nomain", description = "Assume 'main' entry point to be provided by external libraries")
-    @JvmField var nomain: Boolean = false
+    @Argument(value = "-nomain", description = "Assume 'main' entry point to be provided by external libraries")
+    var nomain: Boolean = false
 
-    @field:Argument(value = "-nopack", description = "Don't pack the library into a klib file")
-    @JvmField var nopack: Boolean = false
+    @Argument(value = "-nopack", description = "Don't pack the library into a klib file")
+    var nopack: Boolean = false
 
-    @field:Argument(value = "-linkerOpts", valueDescription = "<arg>", description = "Pass arguments to linker", delimiter = " ")
-    @JvmField var linkerArguments: Array<String>? = null
+    @Argument(value = "-linkerOpts", valueDescription = "<arg>", description = "Pass arguments to linker", delimiter = " ")
+    var linkerArguments: Array<String>? = null
 
-    @field:Argument(value = "-nostdlib", description = "Don't link with stdlib")
-    @JvmField var nostdlib: Boolean = false
+    @Argument(value = "-nostdlib", description = "Don't link with stdlib")
+    var nostdlib: Boolean = false
 
-    @field:Argument(value = "-opt", description = "Enable optimizations during compilation")
-    @JvmField var optimization: Boolean = false
+    @Argument(value = "-opt", description = "Enable optimizations during compilation")
+    var optimization: Boolean = false
 
-    @field:Argument(value = "-output", shortName = "-o", valueDescription = "<name>", description = "Output name")
-    @JvmField var outputName: String? = null
+    @Argument(value = "-output", shortName = "-o", valueDescription = "<name>", description = "Output name")
+    var outputName: String? = null
 
-    @field:Argument(value = "-entry", shortName = "-e", valueDescription = "<name>", description = "Qualified entry point name")
-    @JvmField var mainPackage: String? = null
+    @Argument(value = "-entry", shortName = "-e", valueDescription = "<name>", description = "Qualified entry point name")
+    var mainPackage: String? = null
 
-    @field:Argument(value = "-produce", shortName = "-p", valueDescription = "{program|library|bitcode}", description = "Specify output file kind")
-    @JvmField var produce: String? = null
+    @Argument(value = "-produce", shortName = "-p", valueDescription = "{program|library|bitcode}", description = "Specify output file kind")
+    var produce: String? = null
 
-    @field:Argument(value = "-properties", valueDescription = "<path>", description = "Override standard 'konan.properties' location")
-    @JvmField var propertyFile: String? = null
+    @Argument(value = "-properties", valueDescription = "<path>", description = "Override standard 'konan.properties' location")
+    var propertyFile: String? = null
 
-    @field:Argument(value = "-repo", shortName = "-r", valueDescription = "<path>", description = "Library search path")
-    @JvmField var repositories: Array<String>? = null
+    @Argument(value = "-repo", shortName = "-r", valueDescription = "<path>", description = "Library search path")
+    var repositories: Array<String>? = null
 
-    @field:Argument(value = "-runtime", valueDescription = "<path>", description = "Override standard 'runtime.bc' location")
-    @JvmField var runtimeFile: String? = null
+    @Argument(value = "-runtime", valueDescription = "<path>", description = "Override standard 'runtime.bc' location")
+    var runtimeFile: String? = null
 
-    @field:Argument(value = "-target", valueDescription = "<target>", description = "Set hardware target")
-    @JvmField var target: String? = null
+    @Argument(value = "-target", valueDescription = "<target>", description = "Set hardware target")
+    var target: String? = null
 
     // The rest of the options are only interesting to the developers.
     // Make sure to prepend them with a double dash.
     // Keep the list lexically sorted.
 
-    @field:Argument(value = "--enable", valueDescription = "<Phase>", description = "Enable backend phase")
-    @JvmField var enablePhases: Array<String>? = null
+    @Argument(value = "--enable", valueDescription = "<Phase>", description = "Enable backend phase")
+    var enablePhases: Array<String>? = null
 
-    @field:Argument(value = "--disable", valueDescription = "<Phase>", description = "Disable backend phase")
-    @JvmField var disablePhases: Array<String>? = null
+    @Argument(value = "--disable", valueDescription = "<Phase>", description = "Disable backend phase")
+    var disablePhases: Array<String>? = null
 
-    @field:Argument(value = "--list_phases", description = "List all backend phases")
-    @JvmField var listPhases: Boolean = false
+    @Argument(value = "--list_phases", description = "List all backend phases")
+    var listPhases: Boolean = false
 
-    @field:Argument(value = "--print_bitcode", description = "Print llvm bitcode")
-    @JvmField var printBitCode: Boolean = false
+    @Argument(value = "--print_bitcode", description = "Print llvm bitcode")
+    var printBitCode: Boolean = false
 
-    @field:Argument(value = "--print_descriptors", description = "Print descriptor tree")
-    @JvmField var printDescriptors: Boolean = false
+    @Argument(value = "--print_descriptors", description = "Print descriptor tree")
+    var printDescriptors: Boolean = false
 
-    @field:Argument(value = "--print_ir", description = "Print IR")
-    @JvmField var printIr: Boolean = false
+    @Argument(value = "--print_ir", description = "Print IR")
+    var printIr: Boolean = false
 
-    @field:Argument(value = "--print_ir_with_descriptors", description = "Print IR with descriptors")
-    @JvmField var printIrWithDescriptors: Boolean = false
+    @Argument(value = "--print_ir_with_descriptors", description = "Print IR with descriptors")
+    var printIrWithDescriptors: Boolean = false
 
-    @field:Argument(value = "--print_locations", description = "Print locations")
-    @JvmField var printLocations: Boolean = false
+    @Argument(value = "--print_locations", description = "Print locations")
+    var printLocations: Boolean = false
 
-    @field:Argument(value = "--time", description = "Report execution time for compiler phases")
-    @JvmField var timePhases: Boolean = false
+    @Argument(value = "--time", description = "Report execution time for compiler phases")
+    var timePhases: Boolean = false
 
-    @field:Argument(value = "--verbose", valueDescription = "<Phase>", description = "Trace phase execution")
-    @JvmField var verbosePhases: Array<String>? = null
+    @Argument(value = "--verbose", valueDescription = "<Phase>", description = "Trace phase execution")
+    var verbosePhases: Array<String>? = null
 
-    @field:Argument(value = "--verify_bitcode", description = "Verify llvm bitcode after each method")
-    @JvmField var verifyBitCode: Boolean = false
+    @Argument(value = "--verify_bitcode", description = "Verify llvm bitcode after each method")
+    var verifyBitCode: Boolean = false
 
-    @field:Argument(value = "--verify_descriptors", description = "Verify descriptor tree")
-    @JvmField var verifyDescriptors: Boolean = false
+    @Argument(value = "--verify_descriptors", description = "Verify descriptor tree")
+    var verifyDescriptors: Boolean = false
 
-    @field:Argument(value = "--verify_ir", description = "Verify IR")
-    @JvmField var verifyIr: Boolean = false
+    @Argument(value = "--verify_ir", description = "Verify IR")
+    var verifyIr: Boolean = false
 
 }
 
