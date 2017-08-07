@@ -5,7 +5,7 @@ private fun <A> unaryOperation(
         functionName: String,
         operation: Function1<A, Any>,
         checker: Function1<Long, Long>
-) = UnaryOperationKey(a, functionName) to <!UNCHECKED_CAST!>Pair(operation, checker) as Pair<Function1<Any?, Any>, Function1<Long, Long>><!>
+) = UnaryOperationKey(a, functionName) to Pair(operation, checker) <!UNCHECKED_CAST!>as Pair<Function1<Any?, Any>, Function1<Long, Long>><!>
 
 private fun <A, B> binaryOperation(
         a: CompileTimeType<A>,
@@ -13,7 +13,7 @@ private fun <A, B> binaryOperation(
         functionName: String,
         operation: Function2<A, B, Any>,
         checker: Function2<BigInteger, BigInteger, BigInteger>
-) = BinaryOperationKey(a, b, functionName) to <!UNCHECKED_CAST!>Pair(operation, checker) as Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>><!>
+) = BinaryOperationKey(a, b, functionName) to Pair(operation, checker) <!UNCHECKED_CAST!>as Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>><!>
 
 private data class UnaryOperationKey<A>(val f: CompileTimeType<out A>, val functionName: String)
 //HashMap<BinaryOperationKey<*, *>, Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>>>
