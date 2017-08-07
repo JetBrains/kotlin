@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.utils.Jsr305State
 import java.io.File
 
 class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {

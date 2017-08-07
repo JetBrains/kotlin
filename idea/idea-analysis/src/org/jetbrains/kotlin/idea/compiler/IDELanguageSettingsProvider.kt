@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.targetPlatform
+import org.jetbrains.kotlin.utils.Jsr305State
 
 object IDELanguageSettingsProvider : LanguageSettingsProvider {
     override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings =

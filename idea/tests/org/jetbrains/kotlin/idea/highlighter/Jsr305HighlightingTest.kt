@@ -21,7 +21,6 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.Jsr305State
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.TargetPlatformKind
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.utils.Jsr305State
 
 class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
