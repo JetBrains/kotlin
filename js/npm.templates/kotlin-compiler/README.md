@@ -10,7 +10,7 @@ Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
  * [Forum](http://devnet.jetbrains.net/community/kotlin?view=discussions)
  * [Kotlin Blog](http://blog.jetbrains.com/kotlin/)
  * [Follow Kotlin on Twitter](https://twitter.com/kotlin)
- * [Public Slack channel](http://kotlinslackin.herokuapp.com/)
+ * [Public Slack channel](http://slack.kotlinlang.org/)
  * [TeamCity CI build](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin)
 
 ## Editing Kotlin
