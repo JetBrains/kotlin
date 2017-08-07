@@ -1,0 +1,6 @@
+// "Convert member to extension" "true"
+
+header class Foo {
+}
+
+header val Foo.foo: Int

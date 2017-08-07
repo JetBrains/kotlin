@@ -1,0 +1,4 @@
+impl class Foo {
+}
+
+impl val Foo.foo get() = 2
