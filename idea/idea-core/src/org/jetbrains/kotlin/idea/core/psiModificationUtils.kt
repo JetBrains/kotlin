@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -43,7 +44,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
+inline fun <reified T : PsiElement> PsiElement.replaced(newElement: T): T {
     val result = replace(newElement)
     return if (result is T)
         result
@@ -51,7 +52,8 @@ inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
         (result as KtParenthesizedExpression).expression as T
 }
 
-@Suppress("UNCHECKED_CAST") fun <T: PsiElement> T.copied(): T = copy() as T
+@Suppress("UNCHECKED_CAST")
+fun <T : PsiElement> T.copied(): T = copy() as T
 
 fun KtLambdaArgument.moveInsideParentheses(bindingContext: BindingContext): KtCallExpression {
     return moveInsideParenthesesAndReplaceWith(this.getArgumentExpression(), bindingContext)
@@ -70,7 +72,8 @@ fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
     val newCallExpression = oldCallExpression.copy() as KtCallExpression
 
     val psiFactory = KtPsiFactory(project)
-    val argument = if (newCallExpression.getValueArgumentsInParentheses().any { it.isNamed() }) {
+
+    val argument = if (shouldLambdaParameterBeNamed(newCallExpression.getValueArgumentsInParentheses(), oldCallExpression)) {
         psiFactory.createArgument(replacement, functionLiteralArgumentName)
     }
     else {
@@ -91,6 +94,13 @@ fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
     }
     return oldCallExpression.replace(newCallExpression) as KtCallExpression
 }
+
+private fun shouldLambdaParameterBeNamed(args: List<ValueArgument>, callExpr: KtCallExpression): Boolean {
+    if (args.any { it.isNamed() }) return true
+    val calee = (callExpr.calleeExpression?.mainReference?.resolve() as? KtFunction) ?: return true
+    return if (calee.valueParameters.any { it.isVarArg }) true else calee.valueParameters.size - 1 > args.size
+}
+
 
 fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
     assert(lambdaArguments.isEmpty())
@@ -169,7 +179,7 @@ fun PsiElement.deleteSingle() {
     CodeEditUtil.removeChild(parent?.node ?: return, node ?: return)
 }
 
-fun KtClass.getOrCreateCompanionObject() : KtObjectDeclaration {
+fun KtClass.getOrCreateCompanionObject(): KtObjectDeclaration {
     companionObjects.firstOrNull()?.let { return it }
     return addDeclaration(KtPsiFactory(this).createCompanionObject())
 }
@@ -354,11 +364,11 @@ fun KtTypeParameterListOwner.addTypeParameter(typeParameter: KtTypeParameter): K
     val list = KtPsiFactory(this).createTypeParameterList("<X>")
     list.parameters[0].replace(typeParameter)
     val leftAnchor = when (this) {
-        is KtClass -> nameIdentifier ?: getClassOrInterfaceKeyword()
-        is KtNamedFunction -> funKeyword
-        is KtProperty -> valOrVarKeyword
-        else -> null
-    } ?: return null
+                         is KtClass -> nameIdentifier ?: getClassOrInterfaceKeyword()
+                         is KtNamedFunction -> funKeyword
+                         is KtProperty -> valOrVarKeyword
+                         else -> null
+                     } ?: return null
     return (addAfter(list, leftAnchor) as KtTypeParameterList).parameters.first()
 }
 
