@@ -20,7 +20,7 @@ fun foo() {
 
     val x = { 1 }
     builder(<!TYPE_MISMATCH!>x<!>)
-    builder(<!UNCHECKED_CAST!>{1} as (suspend () -> Int)<!>)
+    builder({1} <!UNCHECKED_CAST!>as (suspend () -> Int)<!>)
 
     var i: Int = 1
     i = genericBuilder({ 1 })
