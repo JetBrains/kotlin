@@ -15348,6 +15348,27 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/swapStringEqualsIgnoreCase")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SwapStringEqualsIgnoreCase extends AbstractIntentionTest {
+        public void testAllFilesPresentInSwapStringEqualsIgnoreCase() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/swapStringEqualsIgnoreCase"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("equals.kt")
+        public void testEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapStringEqualsIgnoreCase/equals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("equalsIgnoreCase.kt")
+        public void testEqualsIgnoreCase() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapStringEqualsIgnoreCase/equalsIgnoreCase.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/toInfixCall")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

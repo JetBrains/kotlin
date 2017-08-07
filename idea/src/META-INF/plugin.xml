@@ -1152,6 +1152,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.SwapStringEqualsIgnoreCaseIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.SplitIfIntention</className>
       <category>Kotlin</category>
     </intentionAction>
