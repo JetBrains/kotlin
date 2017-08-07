@@ -51,4 +51,6 @@ To run integration tests, run from `tools/gradle-tools`:
 
     gradlew :kotlin-gradle-plugin-integration-tests:test
     
-Android integration tests are disabled by default, add `-Pandroid` to include them as well.
+The tests that use the Gradle plugins DSL ([`PluginsDslIT`](https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt)) also require the Gradle plugin marker artifacts to be installed from `tools/gradle-tools`:
+
+    gradlew -Pmarker_version_suffix=-test :kotlin-gradle-plugin:plugin-marker:install :kotlin-noarg:plugin-marker:install :kotlin-allopen:plugin-marker:install
