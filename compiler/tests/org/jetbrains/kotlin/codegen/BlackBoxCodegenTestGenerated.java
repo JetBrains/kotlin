@@ -5455,6 +5455,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("forWithStep.kt")
+            public void testForWithStep() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/forWithStep.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ifStatement.kt")
             public void testIfStatement() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/ifStatement.kt");
