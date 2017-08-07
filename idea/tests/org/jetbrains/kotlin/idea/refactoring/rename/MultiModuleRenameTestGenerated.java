@@ -54,15 +54,39 @@ public class MultiModuleRenameTestGenerated extends AbstractMultiModuleRenameTes
         doTest(fileName);
     }
 
+    @TestMetadata("headersAndImplsByHeaderClassMemberFunParameter/headersAndImplsByHeaderClassMemberFunParameter.test")
+    public void testHeadersAndImplsByHeaderClassMemberFunParameter_HeadersAndImplsByHeaderClassMemberFunParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByHeaderClassMemberFunParameter/headersAndImplsByHeaderClassMemberFunParameter.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("headersAndImplsByHeaderClassMemberVal/headersAndImplsByHeaderClassMemberVal.test")
     public void testHeadersAndImplsByHeaderClassMemberVal_HeadersAndImplsByHeaderClassMemberVal() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByHeaderClassMemberVal/headersAndImplsByHeaderClassMemberVal.test");
         doTest(fileName);
     }
 
+    @TestMetadata("headersAndImplsByHeaderClassPrimaryConstructorParameter/headersAndImplsByHeaderClassPrimaryConstructorParameter.test")
+    public void testHeadersAndImplsByHeaderClassPrimaryConstructorParameter_HeadersAndImplsByHeaderClassPrimaryConstructorParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByHeaderClassPrimaryConstructorParameter/headersAndImplsByHeaderClassPrimaryConstructorParameter.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headersAndImplsByHeaderClassSecondaryConstructorParameter/headersAndImplsByHeaderClassSecondaryConstructorParameter.test")
+    public void testHeadersAndImplsByHeaderClassSecondaryConstructorParameter_HeadersAndImplsByHeaderClassSecondaryConstructorParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByHeaderClassSecondaryConstructorParameter/headersAndImplsByHeaderClassSecondaryConstructorParameter.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("headersAndImplsByHeaderFun/headersAndImplsByHeaderFun.test")
     public void testHeadersAndImplsByHeaderFun_HeadersAndImplsByHeaderFun() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByHeaderFun/headersAndImplsByHeaderFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headersAndImplsByHeaderFunParameter/headersAndImplsByHeaderFunParameter.test")
+    public void testHeadersAndImplsByHeaderFunParameter_HeadersAndImplsByHeaderFunParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByHeaderFunParameter/headersAndImplsByHeaderFunParameter.test");
         doTest(fileName);
     }
 
@@ -84,15 +108,39 @@ public class MultiModuleRenameTestGenerated extends AbstractMultiModuleRenameTes
         doTest(fileName);
     }
 
+    @TestMetadata("headersAndImplsByImplClassMemberFunParameter/headersAndImplsByImplClassMemberFunParameter.test")
+    public void testHeadersAndImplsByImplClassMemberFunParameter_HeadersAndImplsByImplClassMemberFunParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplClassMemberFunParameter/headersAndImplsByImplClassMemberFunParameter.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("headersAndImplsByImplClassMemberVal/headersAndImplsByImplClassMemberVal.test")
     public void testHeadersAndImplsByImplClassMemberVal_HeadersAndImplsByImplClassMemberVal() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplClassMemberVal/headersAndImplsByImplClassMemberVal.test");
         doTest(fileName);
     }
 
+    @TestMetadata("headersAndImplsByImplClassPrimaryConstructorParameter/headersAndImplsByImplClassPrimaryConstructorParameter.test")
+    public void testHeadersAndImplsByImplClassPrimaryConstructorParameter_HeadersAndImplsByImplClassPrimaryConstructorParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplClassPrimaryConstructorParameter/headersAndImplsByImplClassPrimaryConstructorParameter.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headersAndImplsByImplClassSecondaryConstructorParameter/headersAndImplsByImplClassSecondaryConstructorParameter.test")
+    public void testHeadersAndImplsByImplClassSecondaryConstructorParameter_HeadersAndImplsByImplClassSecondaryConstructorParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplClassSecondaryConstructorParameter/headersAndImplsByImplClassSecondaryConstructorParameter.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("headersAndImplsByImplFun/headersAndImplsByImplFun.test")
     public void testHeadersAndImplsByImplFun_HeadersAndImplsByImplFun() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplFun/headersAndImplsByImplFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headersAndImplsByImplFunParameter/headersAndImplsByImplFunParameter.test")
+    public void testHeadersAndImplsByImplFunParameter_HeadersAndImplsByImplFunParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplFunParameter/headersAndImplsByImplFunParameter.test");
         doTest(fileName);
     }
 

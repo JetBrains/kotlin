@@ -77,6 +77,11 @@ private fun DeclarationDescriptor.liftToHeader(): DeclarationDescriptor? {
         }
     }
 
+    if (this is ValueParameterDescriptor) {
+        val containingHeaderDescriptor = containingDeclaration.liftToHeader() as? CallableDescriptor ?: return null
+        return containingHeaderDescriptor.valueParameters.getOrNull(index)
+    }
+
     return null
 }
 
