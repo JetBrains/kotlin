@@ -179,7 +179,9 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) return false
 
         // if we stand inside import statements, do not optimize
-        val importsRange = file.importList?.textRange ?: return false
+        val importList = file.importList ?: return false
+        if (importList)
+        val importsRange = importList?.textRange ?: return false
         if (importsRange.containsOffset(editor.caretModel.offset)) return false
 
         val codeAnalyzer = DaemonCodeAnalyzerEx.getInstanceEx(project)
