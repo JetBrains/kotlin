@@ -100,8 +100,9 @@ internal object EscapeAnalysis {
         open fun add(entry: RoleInfoEntry) = entries.add(entry)
     }
 
+    // TODO: Seems like overhead to analyze value types but they might be boxed, think how to optimize this.
     private fun RuntimeAware.isInteresting(type: KotlinType?): Boolean =
-            type != null && !type.isUnit() && !type.isNothing() && isObjectType(type)
+            type != null && !type.isUnit() && !type.isNothing()/* && isObjectType(type)*/
 
     private class Roles {
         val data = HashMap<Role, RoleInfo>()

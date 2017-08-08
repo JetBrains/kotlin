@@ -253,8 +253,12 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 }
 
                 is SlotType.PARAM_IF_ARENA ->
-                    call(context.llvm.getParamSlotIfArenaFunction,
-                            listOf(vars.load(resultLifetime.slotType.parameter), vars.createAnonymousSlot()))
+                    if (LLVMTypeOf(vars.load(resultLifetime.slotType.parameter)) != codegen.runtime.objHeaderPtrType)
+                        vars.createAnonymousSlot()
+                    else {
+                        call(context.llvm.getParamSlotIfArenaFunction,
+                                listOf(vars.load(resultLifetime.slotType.parameter), vars.createAnonymousSlot()))
+                    }
 
                 else -> throw Error("Incorrect slot type: ${resultLifetime.slotType}")
             }
