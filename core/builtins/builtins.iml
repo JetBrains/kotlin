@@ -7,6 +7,7 @@
         <compilerArguments>
           <option name="languageVersion" value="1.1" />
           <option name="apiVersion" value="1.1" />
+          <option name="version" value="true" />
         </compilerArguments>
       </configuration>
     </facet>
