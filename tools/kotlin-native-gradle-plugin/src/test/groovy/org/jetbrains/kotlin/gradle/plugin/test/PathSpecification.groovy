@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
+import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -27,6 +28,26 @@ class PathSpecification extends Specification {
         manifest.exists() && manifest.file
         def nativeLib = new File("$konan/nativelibs/genStdioInteropStubs/stdiostubs.bc")
         nativeLib.exists() && nativeLib.file
+    }
+
+    def 'Plugin should stop building if the compiler classpath is empty'() {
+        when:
+        def project = KonanProject.createEmpty(tmpFolder)
+        project.propertiesFile.write("konan.home=${tmpFolder.root.canonicalPath}}")
+        def result = project.createRunner().withArguments('build').buildAndFail()
+
+        then:
+        result.task(project.downloadTask).outcome == TaskOutcome.FAILED
+    }
+
+    def 'Plugin should stop building if the stub generator classpath is empty'() {
+        when:
+        def project = KonanInteropProject.createEmpty(tmpFolder)
+        project.propertiesFile.write("konan.home=${tmpFolder.root.canonicalPath}}")
+        def result = project.createRunner().withArguments('build').buildAndFail()
+
+        then:
+        result.task(project.downloadTask).outcome == TaskOutcome.FAILED
     }
 
 }

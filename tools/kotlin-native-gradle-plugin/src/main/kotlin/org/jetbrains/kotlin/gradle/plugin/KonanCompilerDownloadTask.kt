@@ -35,14 +35,27 @@ open class KonanCompilerDownloadTask : DefaultTask() {
         if (!project.hasProperty(KonanPlugin.ProjectProperty.DOWNLOAD_COMPILER)) {
             val konanHome = project.getProperty(KonanPlugin.ProjectProperty.KONAN_HOME)
             logger.info("Use a user-defined compiler path: $konanHome")
+
+            val interopClasspath = project.konanInteropClasspath
+            if (interopClasspath.isEmpty) {
+                throw IllegalStateException("Stub generator classpath is empty: ${interopClasspath.dir}\n" +
+                        "Probably the 'konan.home' project property contains an incorrect path. Please change it to the compiler root directory and rerun the build.")
+            }
+
+            val compilerClasspath = project.konanCompilerClasspath
+            if (compilerClasspath.isEmpty) {
+                throw IllegalStateException("Kotlin/Native compiler classpath is empty: ${compilerClasspath.dir}\n" +
+                        "Probably the 'konan.home' project property contains an incorrect path. Please change it to the compiler root directory and rerun the build.")
+            }
+
             return
         }
         try {
             val konanCompiler = project.konanCompilerName()
-            logger.info("Downloading Kotlin Native compiler from $DOWNLOAD_URL/$konanCompiler into $KONAN_PARENT_DIR")
+            logger.info("Downloading Kotlin/Native compiler from $DOWNLOAD_URL/$konanCompiler into $KONAN_PARENT_DIR")
             DependencyDownloader(File(KONAN_PARENT_DIR), DOWNLOAD_URL, listOf(konanCompiler)).run()
         } catch (e: RuntimeException) {
-            throw GradleScriptException("Cannot download Kotlin Native compiler", e)
+            throw GradleScriptException("Cannot download Kotlin/Native compiler", e)
         }
     }
 }

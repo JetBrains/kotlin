@@ -24,10 +24,10 @@ project property:
 
     konan.version=0.3
 
-If you already downloaded the compiler manually you may specify the path to it using `konan.home` project property (e.g.
- in `gradle.properties`). Note: the plugin ignores the `konan.version` property in this case.
+If you already downloaded the compiler manually you may specify the path to its root directory using `konan.home`
+project property (e.g. in `gradle.properties`). Note: the plugin ignores the `konan.version` property in this case.
 
-    konan.home=/path/to/already/downloaded/compiler
+    konan.home=/home/user/kotlin-native-0.3
 
 In this case the compiler will not be downloaded by the plugin.
 

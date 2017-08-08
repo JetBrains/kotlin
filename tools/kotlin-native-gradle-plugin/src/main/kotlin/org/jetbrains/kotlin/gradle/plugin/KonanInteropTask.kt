@@ -56,8 +56,6 @@ open class KonanInteropTask: KonanTargetableTask() {
 
     internal val INTEROP_JVM_ARGS: List<String>
         @Internal get() = listOf("-Dkonan.home=${project.konanHome}", "-Djava.library.path=${project.konanHome}/konan/nativelib")
-    internal val INTEROP_CLASSPATH: String
-        @Internal get() = "${project.konanHome}/konan/lib/"
 
     // Output directories -----------------------------------------------------
 
@@ -100,7 +98,7 @@ open class KonanInteropTask: KonanTargetableTask() {
         project.javaexec {
             with(it) {
                 main = INTEROP_MAIN
-                classpath = project.fileTree(INTEROP_CLASSPATH).apply { include("*.jar") }
+                classpath = project.konanInteropClasspath
                 jvmArgs(INTEROP_JVM_ARGS)
                 environment("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
                 // TODO: remove this hack.

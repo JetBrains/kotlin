@@ -75,8 +75,6 @@ open class KonanCompileTask: KonanTargetableTask() {
 
     val COMPILER_JVM_ARGS: List<String>
         @Internal get() = listOf("-Dkonan.home=${project.konanHome}", "-Djava.library.path=${project.konanHome}/konan/nativelib")
-    val COMPILER_CLASSPATH: String
-        @Internal get() = "${project.konanHome}/konan/lib/"
 
     // Output artifact --------------------------------------------------------
 
@@ -175,7 +173,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         project.javaexec {
             with(it) {
                 main = COMPILER_MAIN
-                classpath = project.fileTree(COMPILER_CLASSPATH).apply { include("*.jar") }
+                classpath = project.konanCompilerClasspath
                 jvmArgs(COMPILER_JVM_ARGS)
                 args(buildArgs().apply { logger.info("Compiler args: ${this.joinToString(separator = " ")}") })
             }
