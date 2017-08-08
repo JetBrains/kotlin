@@ -132,11 +132,14 @@ public abstract class KtUsefulTestCase extends TestCase {
         UIUtil.removeLeakingAppleListeners();
         super.tearDown();
 
-        if (application == null) {
-            resetApplicationToNull();
-        }
+        resetApplicationToNull(application);
 
         application = null;
+    }
+
+    public static void resetApplicationToNull(Application old) {
+        if (old != null) return;
+        resetApplicationToNull();
     }
 
     public static void resetApplicationToNull() {
