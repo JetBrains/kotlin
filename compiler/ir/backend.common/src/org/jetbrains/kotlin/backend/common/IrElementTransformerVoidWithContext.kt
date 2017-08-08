@@ -98,7 +98,7 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
     }
 }
 
-abstract internal class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
+abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
 
     private val scopeStack = mutableListOf<ScopeWithIr>()
 

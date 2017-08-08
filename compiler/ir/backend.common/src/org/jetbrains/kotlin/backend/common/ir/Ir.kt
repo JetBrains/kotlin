@@ -111,7 +111,7 @@ abstract class Symbols<out T: CommonBackendContext>(val context: T, private val 
 
     val arrays = PrimitiveType.values().map { primitiveArrayClass(it) } + array
 
-    private fun arrayExtensionFun(type: KotlinType, name: String): IrSimpleFunctionSymbol {
+    protected fun arrayExtensionFun(type: KotlinType, name: String): IrSimpleFunctionSymbol {
         val descriptor = builtInsPackage("kotlin")
                 .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
                 .singleOrNull { it.valueParameters.isEmpty()
