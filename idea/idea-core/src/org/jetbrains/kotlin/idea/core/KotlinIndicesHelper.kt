@@ -24,7 +24,6 @@ import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.indexing.IdFilter
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache
 import org.jetbrains.kotlin.idea.caches.resolve.*
@@ -44,7 +43,7 @@ import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.isHiddenInResolution
+import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticStaticFunctions
@@ -68,7 +67,7 @@ class KotlinIndicesHelper(
     private val scopeWithoutKotlin = scope.excludeKotlinSources() as GlobalSearchScope
 
     private val descriptorFilter: (DeclarationDescriptor) -> Boolean = filter@ {
-        if (it.isHiddenInResolution(resolutionFacade.frontendService<LanguageVersionSettings>())) return@filter false
+        if (resolutionFacade.frontendService<DeprecationResolver>().isHiddenInResolution(it)) return@filter false
         if (!visibilityFilter(it)) return@filter false
         if (applyExcludeSettings && it.isExcludedFromAutoImport(project, file)) return@filter false
         true

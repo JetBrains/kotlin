@@ -81,7 +81,8 @@ class LazyImportResolver(
         val indexedImports: IndexedImports,
         excludedImportNames: Collection<FqName>,
         private val traceForImportResolve: BindingTrace,
-        private val packageFragment: PackageFragmentDescriptor
+        private val packageFragment: PackageFragmentDescriptor,
+        val deprecationResolver: DeprecationResolver
 ) : ImportResolver {
     private val importedScopesProvider = storageManager.createMemoizedFunctionWithNullableValues {
         directive: KtImportDirective ->
@@ -208,7 +209,7 @@ class LazyImportScope(
     private fun isClassifierVisible(descriptor: ClassifierDescriptor): Boolean {
         if (filteringKind == FilteringKind.ALL) return true
 
-        if (descriptor.isHiddenInResolution(importResolver.languageVersionSettings)) return false
+        if (importResolver.deprecationResolver.isHiddenInResolution(descriptor)) return false
 
         val visibility = (descriptor as DeclarationDescriptorWithVisibility).visibility
         val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES

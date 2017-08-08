@@ -48,6 +48,7 @@ class LazyTopDownAnalyzer(
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val identifierChecker: IdentifierChecker,
         private val languageVersionSettings: LanguageVersionSettings,
+        private val deprecationResolver: DeprecationResolver,
         private val classifierUsageCheckers: Iterable<ClassifierUsageChecker>
 ) {
     fun analyzeDeclarations(
@@ -215,7 +216,7 @@ class LazyTopDownAnalyzer(
 
         resolveImportsInAllFiles(c)
 
-        ClassifierUsageChecker.check(declarations, trace, languageVersionSettings, classifierUsageCheckers)
+        ClassifierUsageChecker.check(declarations, trace, languageVersionSettings, deprecationResolver, classifierUsageCheckers)
 
         return c
     }

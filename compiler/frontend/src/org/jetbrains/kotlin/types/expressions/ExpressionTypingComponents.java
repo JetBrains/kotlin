@@ -63,6 +63,7 @@ public class ExpressionTypingComponents {
     /*package*/ Iterable<RttiExpressionChecker> rttiExpressionCheckers;
     /*package*/ WrappedTypeFactory wrappedTypeFactory;
     /*package*/ CollectionLiteralResolver collectionLiteralResolver;
+    /*package*/ DeprecationResolver deprecationResolver;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -212,5 +213,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setCollectionLiteralResolver(CollectionLiteralResolver collectionLiteralResolver) {
         this.collectionLiteralResolver = collectionLiteralResolver;
+    }
+
+    @Inject
+    public void setDeprecationResolver(DeprecationResolver deprecationResolver) {
+        this.deprecationResolver = deprecationResolver;
     }
 }

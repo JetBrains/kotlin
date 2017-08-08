@@ -66,10 +66,11 @@ class KotlinToResolvedCallTransformer(
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val constantExpressionEvaluator: ConstantExpressionEvaluator,
+        private val deprecationResolver: DeprecationResolver,
         private val expressionTypingServices: ExpressionTypingServices,
         private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
         private val additionalDiagnosticReporter: AdditionalDiagnosticReporter
- ) {
+) {
 
     fun <D : CallableDescriptor> onlyTransform(
             resolvedCallAtom: ResolvedCallAtom
@@ -90,7 +91,7 @@ class KotlinToResolvedCallTransformer(
                 val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(resultSubstitutor, context.trace, context, this,
                                                                  expressionTypingServices, argumentTypeResolver, doubleColonExpressionResolver,
-                                                                 languageFeatureSettings)
+                                                                 languageFeatureSettings, deprecationResolver)
 
                 for (subKtPrimitive in candidate.subResolvedAtoms) {
                     ktPrimitiveCompleter.completeAll(subKtPrimitive)

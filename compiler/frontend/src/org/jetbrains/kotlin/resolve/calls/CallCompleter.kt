@@ -60,7 +60,8 @@ class CallCompleter(
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val callCheckers: Iterable<CallChecker>,
         private val builtIns: KotlinBuiltIns,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val deprecationResolver: DeprecationResolver
 ) {
     fun <D : CallableDescriptor> completeCall(
             context: BasicCallResolutionContext,
@@ -91,7 +92,7 @@ class CallCompleter(
                     if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
                     else resolvedCall.call.callElement
 
-            val callCheckerContext = CallCheckerContext(context, languageVersionSettings)
+            val callCheckerContext = CallCheckerContext(context, languageVersionSettings, deprecationResolver)
             for (callChecker in callCheckers) {
                 callChecker.check(resolvedCall, reportOn, callCheckerContext)
 

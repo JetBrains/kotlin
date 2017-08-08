@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -37,7 +38,10 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.IndexedParametersSubstitution
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -51,9 +55,10 @@ class ResolvedAtomCompleter(
         private val expressionTypingServices: ExpressionTypingServices,
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        deprecationResolver: DeprecationResolver
 ) {
-    private val callCheckerContext = CallCheckerContext(topLevelCallContext, languageVersionSettings)
+    private val callCheckerContext = CallCheckerContext(topLevelCallContext, languageVersionSettings, deprecationResolver)
 
     fun completeAndReport(resolvedAtom: ResolvedAtom) {
         when (resolvedAtom) {

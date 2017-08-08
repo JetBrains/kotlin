@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.codegen.serialization.JvmStringTable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmTarget;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.MessageLite;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.DeprecationUtilKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
@@ -204,7 +202,7 @@ public class AsmUtil {
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
-        int flags = getCommonCallableFlags(functionDescriptor);
+        int flags = getCommonCallableFlags(functionDescriptor, state);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
             if (flagAnnotation.hasAnnotation(functionDescriptor.getOriginal())) {
@@ -245,17 +243,11 @@ public class AsmUtil {
         return flags;
     }
 
-    public static int getCommonCallableFlags(FunctionDescriptor functionDescriptor) {
+    public static int getCommonCallableFlags(FunctionDescriptor functionDescriptor, @NotNull GenerationState state) {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (DeprecationUtilKt.isDeprecatedHidden(functionDescriptor, LanguageVersionSettingsImpl.DEFAULT)
-            || functionDescriptor instanceof PropertyAccessorDescriptor
-               && DeprecationUtilKt.isDeprecatedHidden(
-                       ((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty(),
-                       LanguageVersionSettingsImpl.DEFAULT
-               )
-        ) {
+        if (state.getDeprecationProvider().isDeprecatedHidden(functionDescriptor)) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;

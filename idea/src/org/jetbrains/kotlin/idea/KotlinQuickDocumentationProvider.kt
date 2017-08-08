@@ -27,7 +27,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -39,8 +38,8 @@ import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
 import org.jetbrains.kotlin.idea.kdoc.findKDoc
 import org.jetbrains.kotlin.idea.kdoc.isBoringBuiltinClass
 import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
@@ -49,12 +48,12 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.deprecatedByAnnotationReplaceWithExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.getDeprecations
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 
@@ -246,20 +245,20 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 return "No documentation available"
             }
 
-            return renderKotlin(context, declarationDescriptor, quickNavigation, declaration.languageVersionSettings)
+            return renderKotlin(context, declarationDescriptor, quickNavigation, declaration)
         }
 
         private fun renderKotlinImplicitLambdaParameter(element: KtReferenceExpression, quickNavigation: Boolean): String? {
             val context = element.analyze(BodyResolveMode.PARTIAL)
             val target = element.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return null
-            return renderKotlin(context, target, quickNavigation, element.languageVersionSettings)
+            return renderKotlin(context, target, quickNavigation, element)
         }
 
         private fun renderKotlin(
                 context: BindingContext,
                 declarationDescriptor: DeclarationDescriptor,
                 quickNavigation: Boolean,
-                languageVersionSettings: LanguageVersionSettings
+                ktElement: KtElement
         ): String {
             @Suppress("NAME_SHADOWING")
             var declarationDescriptor = declarationDescriptor
@@ -278,7 +277,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 renderedDecl = "<pre>$renderedDecl</pre>"
             }
 
-            renderedDecl += renderDeprecationInfo(declarationDescriptor, languageVersionSettings)
+            val deprecationProvider = ktElement.getResolutionFacade().frontendService<DeprecationResolver>()
+            renderedDecl += renderDeprecationInfo(declarationDescriptor, deprecationProvider)
 
             if (!quickNavigation) {
                 val comment = declarationDescriptor.findKDoc()
@@ -310,9 +310,9 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
         private fun renderDeprecationInfo(
                 declarationDescriptor: DeclarationDescriptor,
-                languageVersionSettings: LanguageVersionSettings
+                deprecationResolver: DeprecationResolver
         ): String {
-            val deprecation = declarationDescriptor.getDeprecations(languageVersionSettings).firstOrNull() ?: return ""
+            val deprecation = deprecationResolver.getDeprecations(declarationDescriptor).firstOrNull() ?: return ""
 
             return buildString {
                 wrapTag("DL") {
