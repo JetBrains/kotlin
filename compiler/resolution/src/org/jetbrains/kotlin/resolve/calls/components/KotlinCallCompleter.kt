@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompleter
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompleter.CompletionType
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompleter.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
@@ -67,19 +67,19 @@ class KotlinCallCompleter(
         lastCall.runCompletion(completionType, resolutionCallbacks)
 
         if (lastCall.constraintSystem.asConstraintSystemCompleterContext().canBeProper(lastCall.descriptorWithFreshTypes.returnTypeOrNothing)) {
-            completionType = CompletionType.FULL
+            completionType = ConstraintSystemCompletionMode.FULL
             lastCall.runCompletion(completionType, resolutionCallbacks)
         }
 
         return when (completionType) {
-            CompletionType.FULL -> toCompletedBaseResolvedCall(lastCall.constraintSystem.asCallCompleterContext(), candidate, resolutionCallbacks)
-            CompletionType.PARTIAL -> ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
+            ConstraintSystemCompletionMode.FULL -> toCompletedBaseResolvedCall(lastCall.constraintSystem.asCallCompleterContext(), candidate, resolutionCallbacks)
+            ConstraintSystemCompletionMode.PARTIAL -> ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
         }
     }
 
-    private fun SimpleKotlinResolutionCandidate.runCompletion(completionType: CompletionType, resolutionCallbacks: KotlinResolutionCallbacks) {
+    private fun SimpleKotlinResolutionCandidate.runCompletion(completionMode: ConstraintSystemCompletionMode, resolutionCallbacks: KotlinResolutionCallbacks) {
         constraintSystemCompleter.runCompletion(
-                constraintSystem.asConstraintSystemCompleterContext(), completionType, descriptorWithFreshTypes.returnTypeOrNothing
+                constraintSystem.asConstraintSystemCompleterContext(), completionMode, descriptorWithFreshTypes.returnTypeOrNothing
         ) {
             postponedArgumentsAnalyzer.analyze(constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it)
         }
@@ -158,17 +158,17 @@ class KotlinCallCompleter(
     }
 
     // true if we should complete this call
-    private fun SimpleKotlinResolutionCandidate.prepareForCompletion(expectedType: UnwrappedType?): CompletionType {
-        val returnType = descriptorWithFreshTypes.returnType?.unwrap() ?: return CompletionType.PARTIAL
+    private fun SimpleKotlinResolutionCandidate.prepareForCompletion(expectedType: UnwrappedType?): ConstraintSystemCompletionMode {
+        val returnType = descriptorWithFreshTypes.returnType?.unwrap() ?: return ConstraintSystemCompletionMode.PARTIAL
         if (expectedType != null && !TypeUtils.noExpectedType(expectedType)) {
             csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(kotlinCall))
         }
 
         return if (expectedType != null || csBuilder.isProperType(returnType)) {
-            CompletionType.FULL
+            ConstraintSystemCompletionMode.FULL
         }
         else {
-            CompletionType.PARTIAL
+            ConstraintSystemCompletionMode.PARTIAL
         }
     }
 }

@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceArgument
-import org.jetbrains.kotlin.resolve.calls.model.PostponedKotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.PostponedLambdaArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -31,7 +28,7 @@ class ConstraintSystemCompleter(
         private val resultTypeResolver: ResultTypeResolver,
         private val variableFixationFinder: VariableFixationFinder
 ) {
-    enum class CompletionType {
+    enum class ConstraintSystemCompletionMode {
         FULL,
         PARTIAL
     }
@@ -50,16 +47,21 @@ class ConstraintSystemCompleter(
 
     fun runCompletion(
             c: Context,
-            type: CompletionType,
+            completionMode: ConstraintSystemCompletionMode,
             topLevelType: UnwrappedType,
             analyze: (PostponedKotlinCallArgument) -> Unit
     ) {
-        while (c.notFixedTypeVariables.isNotEmpty()) {
+        while (true) {
             if (analyzePostponeArgumentIfPossible(c, analyze)) continue
 
-            val variableForFixation = variableFixationFinder.findFirstVariableForFixation(c, type, topLevelType)
+            val variableForFixation = variableFixationFinder.findFirstVariableForFixation(c, completionMode, topLevelType)
+
+            if (shouldWeForceCallableReferenceResolution(completionMode, variableForFixation)) {
+                if (forceCallableReferenceResolution(c, analyze)) continue
+            }
+
             if (variableForFixation != null) {
-                if (variableForFixation.hasProperConstraint || (type == CompletionType.FULL && allCallableReferencesAnalyzed(c))) {
+                if (variableForFixation.hasProperConstraint || completionMode == ConstraintSystemCompletionMode.FULL) {
                     val variableWithConstraints = c.notFixedTypeVariables[variableForFixation.variable]!!
 
                     fixVariable(c, topLevelType, variableWithConstraints)
@@ -70,37 +72,35 @@ class ConstraintSystemCompleter(
                     continue
                 }
             }
-
-            if (type == CompletionType.FULL && forceCallableReferenceResolution(c, analyze)) continue
-
             break
         }
 
-        if (type == CompletionType.FULL) {
+        if (completionMode == ConstraintSystemCompletionMode.FULL) {
             // force resolution for all not-analyzed argument's
             c.postponedArguments.filterNot { it.analyzed }.forEach(analyze)
         }
+    }
 
+    private fun shouldWeForceCallableReferenceResolution(
+            completionMode: ConstraintSystemCompletionMode,
+            variableForFixation: VariableFixationFinder.VariableForFixation?
+    ): Boolean {
+        if (completionMode == ConstraintSystemCompletionMode.PARTIAL) return false
+        if (variableForFixation != null && variableForFixation.hasProperConstraint) return false
+
+        return true
     }
 
     // true if we do analyze
     private fun analyzePostponeArgumentIfPossible(c: Context, analyze: (PostponedKotlinCallArgument) -> Unit): Boolean {
         for (argument in getOrderedNotAnalyzedPostponedArguments(c)) {
-            val canWeAnalyzeIt = when (argument) {
-                is PostponedCallableReferenceArgument -> canWeAnalyzeIt(c, argument)
-                is PostponedLambdaArgument -> canWeAnalyzeIt(c, argument)
-                else -> false
-            }
-            if (canWeAnalyzeIt) {
+            if (canWeAnalyzeIt(c, argument)) {
                 analyze(argument)
                 return true
             }
         }
         return false
     }
-
-    private fun allCallableReferencesAnalyzed(c: Context) =
-            c.postponedArguments.all { it.analyzed || it !is PostponedCallableReferenceArgument }
 
     // true if we find some callable reference and run resolution for it. Note that such resolution can be unsuccessful
     private fun forceCallableReferenceResolution(c: Context, analyze: (PostponedKotlinCallArgument) -> Unit): Boolean {
@@ -119,10 +119,10 @@ class ConstraintSystemCompleter(
     }
 
 
-    private fun canWeAnalyzeIt(c: Context, lambda: PostponedKotlinCallArgument): Boolean {
-        if (lambda.analyzed) return false
+    private fun canWeAnalyzeIt(c: Context, argument: PostponedKotlinCallArgument): Boolean {
+        if (argument is PostponedCollectionLiteralArgument || argument.analyzed) return false
 
-        return lambda.inputTypes.all { c.canBeProper(it) }
+        return argument.inputTypes.all { c.canBeProper(it) }
     }
 
     private fun fixVariable(
