@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -213,19 +213,30 @@ class DelegatedPropertyResolver(
             delegateExpression: KtExpression,
             delegateType: KotlinType,
             operatorRequired: Boolean = true
-    ) {
+    ): Boolean {
         val expectedFunction = renderCall(delegateOperatorCall, trace.bindingContext)
 
-        when {
+        val resolutionErrorFactory = when {
             delegateOperatorResults.isSingleResult ||
             delegateOperatorResults.isIncomplete ||
-            delegateOperatorResults.resultCode == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES ->
-                trace.report(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE.on(delegateExpression, expectedFunction, delegateOperatorResults.resultingCalls))
-            delegateOperatorResults.isAmbiguity ->
-                trace.report(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY.on(delegateExpression, expectedFunction, delegateOperatorResults.resultingCalls))
-            else ->
-                if (operatorRequired) trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType))
+            delegateOperatorResults.resultCode == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES -> DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
+
+            delegateOperatorResults.isAmbiguity -> DELEGATE_SPECIAL_FUNCTION_AMBIGUITY
+
+            else -> null
         }
+
+        if (resolutionErrorFactory != null) {
+            trace.report(resolutionErrorFactory.on(delegateExpression, expectedFunction, delegateOperatorResults.resultingCalls))
+            return true
+        }
+
+        if (operatorRequired) {
+            trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType))
+            return true
+        }
+
+        return false
     }
 
     private fun resolveProvideDelegateMethod(
@@ -239,15 +250,24 @@ class DelegatedPropertyResolver(
         if (!isOperatorProvideDelegateSupported) return
         if (trace.bindingContext.get(BindingContext.PROVIDE_DELEGATE_CALL, propertyDescriptor) != null) return
 
+        val traceForProvideDelegate = TemporaryBindingTrace.create(trace, "trace to resolve provideDelegate method")
+
         val provideDelegateResults = getProvideDelegateMethod(propertyDescriptor, byExpression, byExpressionType,
-                                                            trace, initializerScope, dataFlowInfo)
+                                                            traceForProvideDelegate, initializerScope, dataFlowInfo)
         if (!provideDelegateResults.isSuccess) {
-            val call = trace.bindingContext.get(BindingContext.PROVIDE_DELEGATE_CALL, propertyDescriptor)
+            val call = traceForProvideDelegate.bindingContext.get(BindingContext.PROVIDE_DELEGATE_CALL, propertyDescriptor)
                        ?: throw AssertionError("'getDelegatedPropertyConventionMethod' didn't record a call")
-            reportDelegateOperatorResolutionError(trace, call, provideDelegateResults, byExpression, byExpressionType,
-                                                  operatorRequired = false)
+            val shouldCommitTrace = reportDelegateOperatorResolutionError(
+                    traceForProvideDelegate, call, provideDelegateResults, byExpression, byExpressionType, operatorRequired = false)
+
+            if (shouldCommitTrace) {
+                traceForProvideDelegate.commit()
+            }
+
             return
         }
+
+        traceForProvideDelegate.commit()
 
         val resultingDescriptor = provideDelegateResults.resultingDescriptor
         if (!resultingDescriptor.isOperator) {
