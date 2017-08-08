@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
 import java.io.File
 
@@ -157,6 +158,8 @@ open class KonanInteropConfig(
             KonanInteropTask::class.java) {
         it.init(name)
         it.manifest = "${it.stubsDir.path}/manifest.properties"
+        it.group = BasePlugin.BUILD_GROUP
+        it.description = "Generates stubs for the Kotlin/Native interop '$name'"
     }
     // Config and task to compile *.kt stubs into a library
     internal val compileStubsConfig = KonanCompileConfig("${name}InteropStubs", project, "compile").apply {
@@ -165,6 +168,8 @@ open class KonanInteropConfig(
         produce("library")
         inputFiles(project.fileTree(generateStubsTask.stubsDir).apply { builtBy(generateStubsTask) })
         manifest("${generateStubsTask.stubsDir.path}/manifest.properties")
+        compilationTask.group = BasePlugin.BUILD_GROUP
+        compilationTask.description = "Compiles stubs for the Kotlin/Native interop '${this@KonanInteropConfig.name}'"
     }
     val compileStubsTask = compileStubsConfig.compilationTask
 

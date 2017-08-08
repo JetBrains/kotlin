@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
 import java.io.File
 
@@ -194,8 +195,11 @@ open class KonanCompileConfig(
 
     val compilationTask: KonanCompileTask = project.tasks.create(
             "$taskNamePrefix${configName.capitalize()}",
-            KonanCompileTask::class.java
-    ) { it.init(this@KonanCompileConfig.name) }
+            KonanCompileTask::class.java) {
+        it.init(this@KonanCompileConfig.name)
+        it.group = BasePlugin.BUILD_GROUP
+        it.description = "Compiles the Kotlin/Native artifact '${this@KonanCompileConfig.name}'"
+    }
 
     // DSL methods --------------------------------------------------
 

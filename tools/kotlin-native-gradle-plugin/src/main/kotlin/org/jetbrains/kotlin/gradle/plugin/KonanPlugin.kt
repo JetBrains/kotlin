@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.*
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import java.util.*
@@ -265,6 +266,8 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         // Create and set up aggregate building tasks.
         val compileKonanTask = project.getOrCreateTask("compileKonan").apply {
             dependsOn(project.supportedCompileTasks)
+            group = BasePlugin.BUILD_GROUP
+            description = "Compiles all the Kotlin/Native artifacts supported"
         }
         project.getTask("build").apply {
             dependsOn(compileKonanTask)
