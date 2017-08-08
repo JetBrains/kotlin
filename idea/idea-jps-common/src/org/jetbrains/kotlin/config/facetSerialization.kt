@@ -24,8 +24,6 @@ import org.jdom.DataConversionException
 import org.jdom.Element
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
-import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses
@@ -179,13 +177,13 @@ private fun Class<*>.computeNormalPropertyOrdering(): Map<String, Int> {
     val result = LinkedHashMap<String, Int>()
     var count = 0
     generateSequence(this) { it.superclass }.forEach { clazz ->
-        for (method in clazz.declaredMethods) {
-            if (method.modifiers and Modifier.STATIC != 0) continue
+        for (field in clazz.declaredFields) {
+            if (field.modifiers and Modifier.STATIC != 0) continue
 
-            val name = method.name
-            if (!JvmAbi.isGetterName(name)) continue
-
-            val propertyName = propertyNameByGetMethodName(Name.identifier(name))?.asString() ?: continue
+            var propertyName = field.name
+            if (propertyName.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)) {
+                propertyName = propertyName.dropLast(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX.length)
+            }
 
             result[propertyName] = count++
         }
