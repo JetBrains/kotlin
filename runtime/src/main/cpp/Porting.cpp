@@ -171,11 +171,14 @@ uint64_t getTimeMicros() {
 // This one is an interface to query module.env.memory.buffer.byteLength
 extern "C" unsigned long Konan_heap_upper();
 extern "C" unsigned long Konan_heap_lower();
+extern "C" unsigned long Konan_heap_grow(unsigned long);
 
 #define MFAIL ((void*) ~(size_t)0)
-#define WASM_PAGESIZE  65536U
+#define WASM_PAGESIZE_EXPONENT 16
+#define WASM_PAGESIZE  (1u << WASM_PAGESIZE_EXPONENT)
 #define WASM_PAGEMASK ((WASM_PAGESIZE-(size_t)1))
 #define PAGE_ALIGN(value) ((value + WASM_PAGEMASK) & ~(WASM_PAGEMASK))
+#define IN_PAGES(value) (value >> WASM_PAGESIZE_EXPONENT)
 
 void* moreCore(int size) {
     static int initialized = 0;
@@ -184,7 +187,6 @@ void* moreCore(int size) {
 
     if (!initialized) {
         sbrk_top = (void*)PAGE_ALIGN(Konan_heap_lower());
-        upperHeapLimit = (void*)Konan_heap_upper();
         initialized = 1;
     }
 
@@ -197,12 +199,12 @@ void* moreCore(int size) {
     size = PAGE_ALIGN(size);
 
     void* old_sbrk_top = sbrk_top;
+    long excess = (char*)sbrk_top + size - (char*)Konan_heap_upper();
+    if (excess > 0) {
+        Konan_heap_grow(IN_PAGES(PAGE_ALIGN(excess)));
+    }
     sbrk_top = (char*)sbrk_top + size;
 
-    if (((char*)sbrk_top - (char*)upperHeapLimit) >= 0) {
-        // TODO: Consider using grow() and .maximum Memory settings.
-        abort();
-    }
     return old_sbrk_top;
 }
 

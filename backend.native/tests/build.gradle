@@ -1331,7 +1331,6 @@ task array_list1(type: RunKonanTest) {
 }
 
 task hash_map0(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails on wasm32 (remainder by zero)
     goldValue = "OK\n"
     source = "runtime/collections/hash_map0.kt"
 }

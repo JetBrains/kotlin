@@ -84,6 +84,13 @@ var konan_dependencies = {
         Konan_heap_lower: function() {
             return konanStackTop;
         },
+        Konan_heap_grow: function(pages) {
+            // The buffer is allocated anew on calls to grow(),
+            // so renew the heap array.
+            var oldLength = memory.grow(pages);
+            heap = new Uint8Array(konan_dependencies.env.memory.buffer);
+            return oldLength;
+        },
         Konan_abort: function(pointer) {
             throw new Error("Konan_abort(" + utf8decode(toString(pointer)) + ")");
         },
@@ -110,7 +117,7 @@ var konan_dependencies = {
             // Approximate it with write() to stdout for now.
             write(utf8decode(toString(str))); // TODO: write() d8 specific.
         },
-        memory: new WebAssembly.Memory({ initial: 256 })
+        memory: new WebAssembly.Memory({ initial: 256, maximum: 16384 })
     }
 };
 
@@ -124,7 +131,6 @@ module.env.tablebase = 0;
 instance = new WebAssembly.Instance(module, konan_dependencies);
 memory = konan_dependencies.env.memory
 heap = new Uint8Array(konan_dependencies.env.memory.buffer);
-heap32 = new Uint32Array(konan_dependencies.env.memory.buffer);
 konanStackTop = stackTop();
 
 try {
