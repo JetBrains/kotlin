@@ -32,7 +32,8 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 internal class FixStackAnalyzer(
         owner: String,
         val method: MethodNode,
-        val context: FixStackContext
+        val context: FixStackContext,
+        private val skipBreakContinueGotoEdges: Boolean = true
 ) {
     companion object {
         // Stack size is always non-negative
@@ -65,17 +66,14 @@ internal class FixStackAnalyzer(
         }
     }
 
-    private val analyzer = InternalAnalyzer(owner, method, context)
+    private val analyzer = InternalAnalyzer(owner)
 
-    private class InternalAnalyzer(
-            owner: String,
-            method: MethodNode,
-            val context: FixStackContext
-    ) : MethodAnalyzer<BasicValue>(owner, method, OptimizationBasicInterpreter()) {
+    private inner class InternalAnalyzer(owner: String) : MethodAnalyzer<BasicValue>(owner, method, OptimizationBasicInterpreter()) {
         val spilledStacks = hashMapOf<AbstractInsnNode, List<BasicValue>>()
         var maxExtraStackSize = 0; private set
 
         override fun visitControlFlowEdge(insn: Int, successor: Int): Boolean {
+            if (!skipBreakContinueGotoEdges) return true
             val insnNode = instructions[insn]
             return !(insnNode is JumpInsnNode && context.breakContinueGotoNodes.contains(insnNode))
         }
