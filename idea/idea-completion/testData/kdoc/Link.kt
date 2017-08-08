@@ -1,19 +1,19 @@
 package z
 
 /**
- * [<caret>]
+ * [a<caret>]
  */
-fun f(xyzzy: String) {
+fun az(ap: String) {
 
 }
 
-fun bar() {
+fun aaa() {
 
 }
 
-class Z
+class aZ
 
-// EXIST: z
-// EXIST: Z
-// EXIST: xyzzy
-// EXIST: bar
+// EXIST: az
+// EXIST: aZ
+// EXIST: ap
+// EXIST: aaa
