@@ -4969,6 +4969,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("tryCatchAfterWhileTrue.kt")
+            public void testTryCatchAfterWhileTrue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryCatchAfterWhileTrue.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("tryInsideCatch.kt")
             public void testTryInsideCatch() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryInsideCatch.kt");
@@ -5942,6 +5948,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         public static class VarSpilling extends AbstractLightAnalysisModeTest {
             public void testAllFilesPresentInVarSpilling() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("kt19475.kt")
+            public void testKt19475() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/varSpilling/kt19475.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("nullSpilling.kt")
