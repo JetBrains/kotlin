@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ class KaptError : RuntimeException {
     val kind: Kind
 
     enum class Kind(val message: String) {
-        ERROR_WHILE_ANALYSIS("Java file analysis error"),
         EXCEPTION("Exception while annotation processing"),
         ERROR_RAISED("Error while annotation processing"),
-        UNKNOWN("Unknown error while annotation processing")
     }
 
     constructor(kind: Kind) : super(kind.message) {

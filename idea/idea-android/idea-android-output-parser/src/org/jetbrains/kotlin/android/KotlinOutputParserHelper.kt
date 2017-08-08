@@ -24,7 +24,9 @@ import com.google.common.base.Optional
 import com.google.common.collect.ImmutableList
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import java.io.File
+import java.lang.IllegalStateException
 import java.util.regex.Pattern
 
 fun parse(line: String, reader: OutputLineReader, messages: MutableList<Message>): Boolean {
@@ -127,7 +129,22 @@ private fun Int.skipDriveOnWin(line: String): Int {
     return if (this == 1) line.indexOf(COLON, this + 1) else this
 }
 
+private val KAPT_ERROR_WHILE_ANNOTATION_PROCESSING_MARKER_TEXT =
+        KaptError::class.java.canonicalName + ": " + KaptError.Kind.ERROR_RAISED.message
+
+private fun isKaptErrorWhileAnnotationProcessing(message: Message): Boolean {
+    if (message.kind != Message.Kind.ERROR) return false
+    if (message.sourceFilePositions.singleOrNull() != SourceFilePosition.UNKNOWN) return false
+
+    val messageText = message.text
+    return messageText.startsWith(IllegalStateException::class.java.name)
+           && messageText.contains(KAPT_ERROR_WHILE_ANNOTATION_PROCESSING_MARKER_TEXT)
+}
+
 private fun addMessage(message: Message, messages: MutableList<Message>): Boolean {
+    // Ignore KaptError.ERROR_RAISED message from kapt. We already processed all errors from annotation processing
+    if (isKaptErrorWhileAnnotationProcessing(message)) return true
+
     var duplicatesPrevious = false
     val messageCount = messages.size
     if (messageCount > 0) {
