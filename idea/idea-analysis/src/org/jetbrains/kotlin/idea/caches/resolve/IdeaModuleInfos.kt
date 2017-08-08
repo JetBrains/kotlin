@@ -81,7 +81,7 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, pro
     }
 }
 
-private fun <T> Module.cached(provider: CachedValueProvider<T>): T {
+fun <T> Module.cached(provider: CachedValueProvider<T>): T {
     return CachedValuesManager.getManager(project).getCachedValue(this, provider)
 }
 

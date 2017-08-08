@@ -20,6 +20,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
@@ -32,8 +33,10 @@ import com.intellij.pom.tree.events.TreeChangeEvent
 import com.intellij.psi.PsiCodeFragment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiModificationTrackerImpl
+import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.CommonProcessors
+import org.jetbrains.kotlin.idea.caches.resolve.cached
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -178,10 +181,15 @@ class KotlinModuleModificationTracker(val module: Module): ModificationTracker {
     private val kotlinModCountListener = KotlinCodeBlockModificationListener.getInstance(module.project)
     private val psiModificationTracker = PsiModificationTracker.SERVICE.getInstance(module.project)
     private val dependencies by lazy {
-        HashSet<Module>().apply {
-            ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule(
-                    CommonProcessors.CollectProcessor(this))
-        }
+        module.cached(CachedValueProvider {
+            CachedValueProvider.Result.create(
+                    HashSet<Module>().apply {
+                        ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule(
+                                CommonProcessors.CollectProcessor(this))
+                    },
+                    ProjectRootModificationTracker.getInstance(module.project)
+            )
+        })
     }
 
     override fun getModificationCount(): Long {
