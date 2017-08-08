@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 
 open class FooBean {
-    @Qualifier("barBean") @Autowired lateinit var barBean: BarBean
+    @Qualifier("barBean")
+    @Autowired lateinit var barBean<caret>: BarBean
 
 }
 
