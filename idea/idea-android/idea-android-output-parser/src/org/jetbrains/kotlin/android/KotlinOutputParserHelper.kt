@@ -22,7 +22,6 @@ import com.android.ide.common.blame.SourcePosition
 import com.android.ide.common.blame.parser.util.OutputLineReader
 import com.google.common.base.Optional
 import com.google.common.collect.ImmutableList
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import java.io.File
@@ -50,7 +49,7 @@ fun parse(line: String, reader: OutputLineReader, messages: MutableList<Message>
         if (colonIndex3 >= 0) {
             val position = lineWoPath.substringBeforeAndTrim(colonIndex3)
 
-            val matcher = POSITION_PATTERN.matcher(position)
+            val matcher = KOTLIN_POSITION_PATTERN.matcher(position).takeIf { it.matches() } ?: JAVAC_POSITION_PATTERN.matcher(position)
             val message = lineWoPath.substringAfterAndTrim(colonIndex3).amendNextLinesIfNeeded(reader)
 
             if (matcher.matches()) {
@@ -74,7 +73,8 @@ fun parse(line: String, reader: OutputLineReader, messages: MutableList<Message>
 }
 
 private val COLON = ":"
-private val POSITION_PATTERN = Pattern.compile("\\(([0-9]*), ([0-9]*)\\)")
+private val KOTLIN_POSITION_PATTERN = Pattern.compile("\\(([0-9]*), ([0-9]*)\\)")
+private val JAVAC_POSITION_PATTERN = Pattern.compile("([0-9]+)")
 
 private fun String.amendNextLinesIfNeeded(reader: OutputLineReader): String {
     var nextLine = reader.readLine()
