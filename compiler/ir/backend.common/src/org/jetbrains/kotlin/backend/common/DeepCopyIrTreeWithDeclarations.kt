@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.ir.util.DeepCopySymbolsRemapper
 import org.jetbrains.kotlin.ir.util.DescriptorsRemapper
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-fun IrElement.deepCopyWithVariablesImpl(): IrElement {
+@Suppress("UNCHECKED_CAST")
+fun <T : IrElement> T.deepCopyWithVariables(): T {
     val descriptorsRemapper = object : DescriptorsRemapper {
         override fun remapDeclaredVariable(descriptor: VariableDescriptor) = LocalVariableDescriptor(
                 /* containingDeclaration = */ descriptor.containingDeclaration,
@@ -47,8 +48,5 @@ fun IrElement.deepCopyWithVariablesImpl(): IrElement {
                 }
             },
             null
-    )
+    ) as T
 }
-
-inline fun <reified T : IrElement> T.deepCopyWithVariables(): T =
-        this.deepCopyWithVariablesImpl() as T
