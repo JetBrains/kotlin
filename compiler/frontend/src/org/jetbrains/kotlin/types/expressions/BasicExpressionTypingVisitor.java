@@ -1116,7 +1116,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         ExpressionTypingContext contextWithDataFlow = context.replaceDataFlowInfo(dataFlowInfo);
 
         ExpressionReceiver receiver = createReceiverForEquals(left, contextWithDataFlow);
-        Collection<FunctionDescriptor> equalsFunctions = findEqualsWithNullableAnyParameter(receiver, left);
+        Collection<FunctionDescriptor> equalsFunctions = findEqualsWithNullableAnyParameter(receiver, expression);
 
         Call call = CallMaker.makeCallWithExpressions(
                 expression,
@@ -1158,13 +1158,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     private List<FunctionDescriptor> findEqualsWithNullableAnyParameter(
             @NotNull ExpressionReceiver receiver,
-            @NotNull KtExpression left
+            @NotNull KtBinaryExpression expression
     ) {
         KotlinType refinedType = KotlinBuiltIns.isNothingOrNullableNothing(receiver.getType()) ?
                                  components.builtIns.getNullableAnyType() :
                                  receiver.getType();
-        Collection<SimpleFunctionDescriptor> equalsMembers =
-                refinedType.getMemberScope().getContributedFunctions(OperatorNameConventions.EQUALS, new KotlinLookupLocation(left));
+        Collection<SimpleFunctionDescriptor> equalsMembers = refinedType.getMemberScope().getContributedFunctions(
+                OperatorNameConventions.EQUALS, new KotlinLookupLocation(expression.getOperationReference()));
 
         return CollectionsKt.filter(equalsMembers, descriptor -> {
             if (ErrorUtils.isError(descriptor)) return true;
