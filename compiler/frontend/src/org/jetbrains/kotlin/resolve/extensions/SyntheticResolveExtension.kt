@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
+import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
@@ -37,37 +39,56 @@ interface SyntheticResolveExtension {
             if (instances.size == 1) return instances.single()
             // return list combiner here
             return object : SyntheticResolveExtension {
+                override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> =
+                        instances.flatMap { it.getSyntheticNestedClassNames(thisDescriptor) }
+
+                override fun generateSyntheticClasses(thisDescriptor: ClassDescriptor, name: Name,
+                                                      ctx: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider,
+                                                      result: MutableSet<ClassDescriptor>) =
+                        instances.forEach { it.generateSyntheticClasses(thisDescriptor, name, ctx, declarationProvider, result) }
+
                 override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? =
-                    instances.firstNotNullResult { it.getSyntheticCompanionObjectNameIfNeeded(thisDescriptor) }
+                        instances.firstNotNullResult { it.getSyntheticCompanionObjectNameIfNeeded(thisDescriptor) }
 
                 override fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) =
-                    instances.forEach { it.addSyntheticSupertypes(thisDescriptor, supertypes) }
+                        instances.forEach { it.addSyntheticSupertypes(thisDescriptor, supertypes) }
 
+                // todo revert
                 override fun generateSyntheticMethods(thisDescriptor: ClassDescriptor, name: Name,
                                                       fromSupertypes: List<SimpleFunctionDescriptor>,
                                                       result: MutableCollection<SimpleFunctionDescriptor>) =
-                    instances.forEach { it.generateSyntheticMethods(thisDescriptor, name, fromSupertypes, result) }
+                        instances.forEach { it.generateSyntheticMethods(thisDescriptor, name, fromSupertypes, result) }
 
                 override fun generateSyntheticProperties(thisDescriptor: ClassDescriptor, name: Name,
                                                          fromSupertypes: ArrayList<PropertyDescriptor>,
-                                                         result: MutableSet<PropertyDescriptor>)  =
-                    instances.forEach { it.generateSyntheticProperties(thisDescriptor, name, fromSupertypes, result) }
+                                                         result: MutableSet<PropertyDescriptor>) =
+                        instances.forEach { it.generateSyntheticProperties(thisDescriptor, name, fromSupertypes, result) }
             }
         }
     }
 
-    fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name?
+    fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? = null
+
+    fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
 
     fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {}
+
+    fun generateSyntheticClasses(thisDescriptor: ClassDescriptor,
+                                 name: Name,
+                                 ctx: LazyClassContext,
+                                 declarationProvider: ClassMemberDeclarationProvider,
+                                 result: MutableSet<ClassDescriptor>) {
+    }
 
     fun generateSyntheticMethods(thisDescriptor: ClassDescriptor,
                                  name: Name,
                                  fromSupertypes: List<SimpleFunctionDescriptor>,
-                                 result: MutableCollection<SimpleFunctionDescriptor>) {}
+                                 result: MutableCollection<SimpleFunctionDescriptor>) {
+    }
 
     fun generateSyntheticProperties(thisDescriptor: ClassDescriptor,
                                     name: Name,
-                                    fromSupertypes:
-                                    ArrayList<PropertyDescriptor>,
-                                    result: MutableSet<PropertyDescriptor>) {}
+                                    fromSupertypes: ArrayList<PropertyDescriptor>,
+                                    result: MutableSet<PropertyDescriptor>) {
+    }
 }

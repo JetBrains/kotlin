@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.ServiceManager
@@ -24,6 +25,7 @@ import com.intellij.openapi.project.ProjectUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
@@ -32,17 +34,19 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.asCoroutineDispatcher
 import kotlinx.coroutines.experimental.launch
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
-import kotlin.script.dependencies.DependenciesResolver
-import kotlin.script.dependencies.ScriptDependencies
-import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
+import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.dependencies.ScriptDependencies
 
 internal class ScriptDependenciesUpdater(
         private val project: Project,
-        private val cache: DependenciesCache,
+        private val cache: ScriptDependenciesCache,
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
 ) {
     private val requests = ConcurrentHashMap<String, ModStampedRequest>()
@@ -80,8 +84,11 @@ internal class ScriptDependenciesUpdater(
 
     private fun tryLoadingFromDisk(file: VirtualFile) {
         ScriptDependenciesFileAttribute.read(file)?.let { deserialized ->
+            val rootsChanged = cache.hasNotCachedRoots(deserialized)
             cache.save(file, deserialized)
-            onChange()
+            if (rootsChanged) {
+                notifyRootsChanged()
+            }
         }
     }
 
@@ -186,8 +193,8 @@ internal class ScriptDependenciesUpdater(
             }
             ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
             val resultingDependencies = (result.dependencies ?: ScriptDependencies.Empty).adjustByDefinition(scriptDef)
-            if (cache(resultingDependencies, file)) {
-                onChange()
+            if (saveNewDependencies(resultingDependencies, file)) {
+                notifyRootsChanged()
             }
         }
     }
@@ -195,26 +202,21 @@ internal class ScriptDependenciesUpdater(
 
     fun updateSync(file: VirtualFile, scriptDef: KotlinScriptDefinition): Boolean {
         val newDeps = contentLoader.loadContentsAndResolveDependencies(scriptDef, file) ?: ScriptDependencies.Empty
-        return cache(newDeps, file)
+        return saveNewDependencies(newDeps, file)
     }
 
-    private fun cache(
+    private fun saveNewDependencies(
             new: ScriptDependencies,
             file: VirtualFile
     ): Boolean {
-        val updated = cache.save(file, new)
-        if (updated) {
+        val rootsChanged = cache.hasNotCachedRoots(new)
+        if (cache.save(file, new)) {
             ScriptDependenciesFileAttribute.write(file, new)
         }
-        return updated
+        return rootsChanged
     }
 
-    fun onChange() {
-        cache.onChange()
-        notifyRootsChanged()
-    }
-
-    private fun notifyRootsChanged() {
+    fun notifyRootsChanged() {
         val rootsChangesRunnable = {
             runWriteAction {
                 if (project.isDisposed) return@runWriteAction
@@ -235,11 +237,14 @@ internal class ScriptDependenciesUpdater(
 
     private fun listenToVfsChanges() {
         project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
-
             val projectFileIndex = ProjectRootManager.getInstance(project).fileIndex
             val application = ApplicationManager.getApplication()
 
             override fun after(events: List<VFileEvent>) {
+                if (application.isUnitTestMode && application.isScriptDependenciesUpdaterDisabled == true) {
+                    return
+                }
+
                 if (updateCache(events.mapNotNull {
                     // The check is partly taken from the BuildManager.java
                     it.file?.takeIf {
@@ -248,7 +253,7 @@ internal class ScriptDependenciesUpdater(
                         (application.isUnitTestMode || projectFileIndex.isInContent(it)) && !ProjectUtil.isProjectOrWorkspaceFile(it)
                     }
                 })) {
-                    onChange()
+                    notifyRootsChanged()
                 }
             }
         })
@@ -260,7 +265,6 @@ internal class ScriptDependenciesUpdater(
     }
 }
 
-
 private data class TimeStamp(private val stamp: Long) {
     operator fun compareTo(other: TimeStamp) = this.stamp.compareTo(other.stamp)
 }
@@ -270,3 +274,6 @@ private object TimeStamps {
 
     fun next() = TimeStamp(current++)
 }
+
+@set: TestOnly
+var Application.isScriptDependenciesUpdaterDisabled by NotNullableUserDataProperty(Key.create("SCRIPT_DEPENDENCIES_UPDATER_DISABLED"), false)

@@ -153,7 +153,7 @@ class ReferenceVariantsCollector(
         return ReferenceVariants(filterConfiguration.filterVariants(basicVariants).toHashSet(), emptyList())
     }
 
-    fun doCollectExtensionVariants(filterConfiguration: FilterConfiguration, basicVariants: ReferenceVariants): ReferenceVariants {
+    private fun doCollectExtensionVariants(filterConfiguration: FilterConfiguration, basicVariants: ReferenceVariants): ReferenceVariants {
         val (_, additionalPropertyNameFilter, shadowedDeclarationsFilter, completeExtensionsFromIndices) = filterConfiguration
 
         if (completeExtensionsFromIndices) {
@@ -184,7 +184,7 @@ class ReferenceVariantsCollector(
         return ReferenceVariants(emptyList(), emptyList())
     }
 
-    fun <TDescriptor : DeclarationDescriptor> FilterConfiguration.filterVariants(_variants: Collection<TDescriptor>): Collection<TDescriptor> {
+    private fun <TDescriptor : DeclarationDescriptor> FilterConfiguration.filterVariants(_variants: Collection<TDescriptor>): Collection<TDescriptor> {
         var variants = _variants
 
         if (shadowedDeclarationsFilter != null)

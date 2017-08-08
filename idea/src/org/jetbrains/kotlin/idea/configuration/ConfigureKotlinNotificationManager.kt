@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationsManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 import kotlin.reflect.KClass
@@ -64,3 +66,16 @@ interface KotlinSingleNotificationManager<in T: Notification> {
     }
 }
 
+
+fun checkHideNonConfiguredNotifications(project: Project) {
+    if (ConfigureKotlinNotificationManager.getVisibleNotifications(project).isNotEmpty()) {
+        ApplicationManager.getApplication().executeOnPooledThread {
+            DumbService.getInstance(project).waitForSmartMode()
+            if (getConfigurableModulesWithKotlinFiles(project).all(::isModuleConfigured)) {
+                ApplicationManager.getApplication().invokeLater {
+                    ConfigureKotlinNotificationManager.expireOldNotifications(project)
+                }
+            }
+        }
+    }
+}

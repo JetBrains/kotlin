@@ -94,9 +94,9 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
                 ),
                 listOf(File(TEST_DATA_PATH))
         ).apply {
-            languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE).apply {
-                switchFlag(AnalysisFlags.loadJsr305Annotations, true)
-            }
+            languageVersionSettings = LanguageVersionSettingsImpl(
+                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.loadJsr305Annotations to Jsr305State.ENABLE)
+            )
         }
 
         val environment = KotlinCoreEnvironment.createForTests(myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)

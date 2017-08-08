@@ -16,23 +16,56 @@
 
 package org.jetbrains.kotlin.android.synthetic.idea
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.module.Module
+import kotlinx.android.extensions.CacheImplementation
+import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.ANDROID_COMPILER_PLUGIN_ID
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.EXPERIMENTAL_OPTION
+import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.ENABLED_OPTION
+import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.DEFAULT_CACHE_IMPL_OPTION
+import org.jetbrains.kotlin.android.synthetic.AndroidComponentRegistrar.Companion.parseCacheImplementationType
+import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 
-private val ANNOTATION_OPTION_PREFIX = "plugin:$ANDROID_COMPILER_PLUGIN_ID:${EXPERIMENTAL_OPTION.name}="
+private val ANNOTATION_OPTION_PREFIX = "plugin:$ANDROID_COMPILER_PLUGIN_ID:"
+
+private fun Module.getOptionValueInFacet(option: CliOption): String? {
+    val kotlinFacet = KotlinFacet.get(this) ?: return null
+    val commonArgs = kotlinFacet.configuration.settings.compilerArguments ?: return null
+
+    val prefix = ANNOTATION_OPTION_PREFIX + option.name + "="
+
+    val optionValue = commonArgs.pluginOptions
+            ?.firstOrNull { it.startsWith(prefix) }
+            ?.substring(prefix.length)
+
+    return optionValue
+}
+
+private fun isTestMode(module: Module): Boolean {
+    return ApplicationManager.getApplication().isUnitTestMode && AndroidFacet.getInstance(module) != null
+}
+
+internal val Module.androidExtensionsIsEnabled: Boolean
+    get() = isTestMode(this) || getOptionValueInFacet(ENABLED_OPTION) == "true"
 
 internal val ModuleInfo.androidExtensionsIsExperimental: Boolean
     get() {
         val module = (this as? ModuleSourceInfo)?.module ?: return false
-        val kotlinFacet = KotlinFacet.get(module) ?: return false
-        val commonArgs = kotlinFacet.configuration.settings.compilerArguments ?: return false
+        return module.androidExtensionsIsExperimental
+    }
 
-        val isExperimentalString = commonArgs.pluginOptions
-                ?.firstOrNull { it.startsWith(ANNOTATION_OPTION_PREFIX) }
-                ?.substring(ANNOTATION_OPTION_PREFIX.length)
+internal val Module.androidExtensionsIsExperimental: Boolean
+    get() {
+        if (isTestMode(this)) return true
+        return getOptionValueInFacet(EXPERIMENTAL_OPTION) == "true"
+    }
 
-        return isExperimentalString == "true"
+val ModuleInfo.androidExtensionsGlobalCacheImpl: CacheImplementation
+    get() {
+        val module = (this as? ModuleSourceInfo)?.module ?: return CacheImplementation.NO_CACHE
+        return parseCacheImplementationType(module.getOptionValueInFacet(DEFAULT_CACHE_IMPL_OPTION))
     }

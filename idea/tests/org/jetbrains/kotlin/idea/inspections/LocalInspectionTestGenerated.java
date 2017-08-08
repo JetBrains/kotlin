@@ -113,6 +113,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("withAnnotation.kt")
+        public void testWithAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/cascadeIf/withAnnotation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("withBreak.kt")
         public void testWithBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/cascadeIf/withBreak.kt");
@@ -482,6 +488,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("this.kt")
         public void testThis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/copyWithoutNamedArguments/this.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/inspectionsLocal/doubleNegation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DoubleNegation extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInDoubleNegation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/doubleNegation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("function.kt")
+        public void testFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/doubleNegation/function.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invalid.kt")
+        public void testInvalid() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/doubleNegation/invalid.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parenthesized.kt")
+        public void testParenthesized() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/doubleNegation/parenthesized.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/doubleNegation/simple.kt");
             doTest(fileName);
         }
     }
@@ -867,6 +906,24 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToAssignment/simpleWhenWithoutTerminatingAssignment.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("whenHasMissingCase.kt")
+            public void testWhenHasMissingCase() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToAssignment/whenHasMissingCase.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenHasNoMissingCase.kt")
+            public void testWhenHasNoMissingCase() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToAssignment/whenHasNoMissingCase.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenHasNoMissingCaseWithElse.kt")
+            public void testWhenHasNoMissingCaseWithElse() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToAssignment/whenHasNoMissingCaseWithElse.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn")
@@ -919,6 +976,24 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("whenHasMissingCase.kt")
+            public void testWhenHasMissingCase() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/whenHasMissingCase.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenHasNoMissingCase.kt")
+            public void testWhenHasNoMissingCase() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/whenHasNoMissingCase.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenHasNoMissingCaseWithElse.kt")
+            public void testWhenHasNoMissingCaseWithElse() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/whenHasNoMissingCaseWithElse.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("whenOneReturn.kt")
             public void testWhenOneReturn() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToReturn/whenOneReturn.kt");
@@ -945,6 +1020,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
     public static class MemberVisibilityCanBePrivate extends AbstractLocalInspectionTest {
         public void testAllFilesPresentInMemberVisibilityCanBePrivate() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/memberVisibilityCanBePrivate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/memberVisibilityCanBePrivate/annotation.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("JvmFieldOnParameter.kt")
@@ -1220,6 +1301,27 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("top.kt")
         public void testTop() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantExplicitType/top.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/inspectionsLocal/redundantLambdaArrow")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantLambdaArrow extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInRedundantLambdaArrow() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantLambdaArrow"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("hasArguments.kt")
+        public void testHasArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantLambdaArrow/hasArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantLambdaArrow/simple.kt");
             doTest(fileName);
         }
     }
@@ -1845,6 +1947,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/keepComments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
                 }
             }
+        }
+    }
+
+    @TestMetadata("idea/testData/inspectionsLocal/whenWithOnlyElse")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WhenWithOnlyElse extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInWhenWithOnlyElse() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/whenWithOnlyElse"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("complexExpression.kt")
+        public void testComplexExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/whenWithOnlyElse/complexExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasOtherBranches.kt")
+        public void testHasOtherBranches() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/whenWithOnlyElse/hasOtherBranches.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notExpression.kt")
+        public void testNotExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/whenWithOnlyElse/notExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleExpression.kt")
+        public void testSimpleExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/whenWithOnlyElse/simpleExpression.kt");
+            doTest(fileName);
         }
     }
 

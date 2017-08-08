@@ -16,6 +16,32 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-open class AndroidExtensionsExtension {
+import groovy.lang.Closure
+import org.gradle.util.Configurable
+
+enum class CacheImplementation(val optionName: String) {
+    HASH_MAP("hashMap"),
+    SPARSE_ARRAY("sparseArray"),
+    NONE("none")
+}
+
+open class AndroidExtensionsExtension : Configurable<AndroidExtensionsExtension> {
+    private lateinit var onEvaluatedHandler: (AndroidExtensionsExtension) -> Unit
+
+    fun setEvaluatedHandler(handler: (AndroidExtensionsExtension) -> Unit) {
+        onEvaluatedHandler = handler
+    }
+
     open var isExperimental: Boolean = false
+
+    open var defaultCacheImplementation: CacheImplementation = CacheImplementation.HASH_MAP
+
+    override fun configure(closure: Closure<*>): AndroidExtensionsExtension {
+        // ConfigureUtil is not used here to prevent infinite recursion
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = this
+        closure.call()
+        onEvaluatedHandler(this)
+        return this
+    }
 }

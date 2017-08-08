@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
+import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -611,6 +612,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         KtExpression returnedExpression = expression.getReturnedExpression();
 
+        KotlinResolutionCallbacksImpl.LambdaInfo newInferenceLambdaInfo = null;
+
         KotlinType expectedType = NO_EXPECTED_TYPE;
         KotlinType resultType = components.builtIns.getNothingType();
         KtDeclaration parentDeclaration = context.getContextParentOfType(expression, KtDeclaration.class);
@@ -642,6 +645,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 }
 
                 expectedType = getFunctionExpectedReturnType(containingFunctionDescriptor, (KtElement) containingFunInfo.getSecond(), context);
+                newInferenceLambdaInfo = getNewInferenceLambdaInfo(context, (KtElement) containingFunInfo.getSecond());
             }
             else {
                 // Outside a function
@@ -653,6 +657,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, labelTargetElement);
             if (functionDescriptor != null) {
                 expectedType = getFunctionExpectedReturnType(functionDescriptor, labelTargetElement, context);
+                newInferenceLambdaInfo = getNewInferenceLambdaInfo(context, labelTargetElement);
                 if (!InlineUtil.checkNonLocalReturnUsage(functionDescriptor, expression, context)) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
@@ -662,12 +667,22 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
 
         if (returnedExpression != null) {
-            facade.getTypeInfo(returnedExpression, context.replaceExpectedType(expectedType).replaceContextDependency(INDEPENDENT));
+            if (newInferenceLambdaInfo != null) {
+                KotlinTypeInfo result = facade.getTypeInfo(returnedExpression, context.replaceExpectedType(newInferenceLambdaInfo.getExpectedType())
+                        .replaceContextDependency(newInferenceLambdaInfo.getContextDependency()));
+                newInferenceLambdaInfo.getReturnStatements().add(new kotlin.Pair<>(expression, result));
+            }
+            else {
+                facade.getTypeInfo(returnedExpression, context.replaceExpectedType(expectedType).replaceContextDependency(INDEPENDENT));
+            }
         }
         else {
             // for lambda with implicit return type Unit
             if (!noExpectedType(expectedType) && !KotlinBuiltIns.isUnit(expectedType) && !isDontCarePlaceholder(expectedType)) {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
+            }
+            if (newInferenceLambdaInfo != null) {
+                newInferenceLambdaInfo.getReturnStatements().add(new kotlin.Pair<>(expression, null));
             }
         }
         return components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, expression);
@@ -690,6 +705,17 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         LabelResolver.INSTANCE.resolveControlLabel(expression, context);
         return components.dataFlowAnalyzer.createCheckedTypeInfo(components.builtIns.getNothingType(), context, expression).
                 replaceJumpOutPossible(true);
+    }
+
+    @Nullable
+    private static KotlinResolutionCallbacksImpl.LambdaInfo getNewInferenceLambdaInfo(
+            @NotNull ExpressionTypingContext context,
+            @NotNull KtElement function
+    ) {
+        if (function instanceof KtFunction) {
+            return context.trace.get(BindingContext.NEW_INFERENCE_LAMBDA_INFO, (KtFunction) function);
+        }
+        return null;
     }
 
     @NotNull

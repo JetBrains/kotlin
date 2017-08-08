@@ -214,7 +214,7 @@ object MockLibraryUtil {
     @Synchronized
     private fun createCompilerClassLoader(): ClassLoader {
         return ClassPreloadingUtils.preloadClasses(
-                listOf(PathUtil.getKotlinPathsForDistDirectory().compilerPath),
+                listOf(PathUtil.kotlinPathsForDistDirectory.compilerPath),
                 Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null
         )
     }

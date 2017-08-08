@@ -1,0 +1,6 @@
+fun println(s: String) {}
+
+fun foo() {
+    <caret>println("")
+    1
+}

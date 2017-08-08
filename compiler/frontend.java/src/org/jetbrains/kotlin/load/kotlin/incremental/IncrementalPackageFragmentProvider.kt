@@ -47,7 +47,7 @@ class IncrementalPackageFragmentProvider(
         val target: TargetId,
         private val kotlinClassFinder: KotlinClassFinder
 ) : PackageFragmentProvider {
-    val fqNameToPackageFragment =
+    private val fqNameToPackageFragment =
             PackagePartClassUtils.getFilesWithCallables(sourceFiles)
                     .mapTo(hashSetOf()) { it.packageFqName }
                     .keysToMap(this::IncrementalPackageFragment)

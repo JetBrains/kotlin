@@ -823,8 +823,7 @@ public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
  * Returns `true` if char sequence has at least one character.
  */
 public fun CharSequence.any(): Boolean {
-    for (element in this) return true
-    return false
+    return !isEmpty()
 }
 
 /**
@@ -1011,8 +1010,7 @@ public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
  * Returns `true` if the char sequence has no characters.
  */
 public fun CharSequence.none(): Boolean {
-    for (element in this) return false
-    return true
+    return isEmpty()
 }
 
 /**

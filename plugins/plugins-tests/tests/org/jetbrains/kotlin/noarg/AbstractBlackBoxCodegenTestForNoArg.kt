@@ -16,18 +16,13 @@
 
 package org.jetbrains.kotlin.noarg
 
-import com.intellij.openapi.extensions.Extensions
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor.Companion.registerExtension
 import org.jetbrains.kotlin.noarg.AbstractBytecodeListingTestForNoArg.Companion.NOARG_ANNOTATIONS
-import org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg
 
 abstract class AbstractBlackBoxCodegenTestForNoArg : AbstractBlackBoxCodegenTest() {
     override fun loadMultiFiles(files: MutableList<TestFile>) {
-        Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesNoArg())
-
         val project = myEnvironment.project
         registerExtension(project, CliNoArgComponentContainerContributor(NOARG_ANNOTATIONS))
         val invokeInitializers = files.any { "// INVOKE_INITIALIZERS" in it.content }

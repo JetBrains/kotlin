@@ -49,10 +49,10 @@ public class TestMetadataMojo extends MetadataMojo {
         output = testOutput;
         super.configureSpecificCompilerArguments(arguments, sourceRoots);
 
-        if (arguments.classpath == null) {
-            arguments.classpath = productionOutput;
+        if (arguments.getClasspath() == null) {
+            arguments.setClasspath(productionOutput);
         } else {
-            arguments.classpath = arguments.classpath + File.pathSeparator + productionOutput;
+            arguments.setClasspath(arguments.getClasspath() + File.pathSeparator + productionOutput);
         }
     }
 

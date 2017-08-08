@@ -61,8 +61,6 @@ class InlineCodegenForDefaultBody(
         sourceCompilerForInline.initializeInlineFunctionContext(functionDescriptor)
         jvmSignature = state.typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompilerForInline.contextKind)
 
-        InlineCodegen.reportIncrementalInfo(functionDescriptor, codegen.context.functionDescriptor.original, jvmSignature, state)
-
         //InlineCodegenForDefaultBody created just after visitCode call
         codegen.v.visitLabel(methodStartLabel)
     }

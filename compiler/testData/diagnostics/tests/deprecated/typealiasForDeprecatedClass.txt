@@ -3,6 +3,16 @@ package
 public fun use1(/*0*/ b: Test1 /* = Foo */): Test1 /* = Foo */
 public fun use2(/*0*/ b: Test2 /* = kotlin.collections.List<Foo> */): Test2 /* = kotlin.collections.List<Foo> */
 public fun use3(/*0*/ b: Test3 /* = kotlin.collections.List<Test2 /* = kotlin.collections.List<Foo> */> */): Test3 /* = kotlin.collections.List<Test2 /* = kotlin.collections.List<Foo> */> */
+public fun useErr1(/*0*/ b: TestErr1 /* = Err */): TestErr1 /* = Err */
+public fun useErr2(/*0*/ b: TestErr2 /* = kotlin.collections.List<Err> */): TestErr2 /* = kotlin.collections.List<Err> */
+public fun useErr3(/*0*/ b: TestErr3 /* = kotlin.collections.List<TestErr2 /* = kotlin.collections.List<Err> */> */): TestErr3 /* = kotlin.collections.List<TestErr2 /* = kotlin.collections.List<Err> */> */
+
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "") public final class Err {
+    public constructor Err()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
 
 @kotlin.Deprecated(message = "") public final class Foo {
     public constructor Foo()
@@ -13,3 +23,6 @@ public fun use3(/*0*/ b: Test3 /* = kotlin.collections.List<Test2 /* = kotlin.co
 public typealias Test1 = Foo
 public typealias Test2 = kotlin.collections.List<Foo>
 public typealias Test3 = kotlin.collections.List<Test2>
+public typealias TestErr1 = Err
+public typealias TestErr2 = kotlin.collections.List<Err>
+public typealias TestErr3 = kotlin.collections.List<TestErr2>

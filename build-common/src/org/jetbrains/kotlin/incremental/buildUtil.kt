@@ -79,7 +79,7 @@ fun makeCompileServices(
     }
 
 fun makeLookupTracker(parentLookupTracker: LookupTracker = LookupTracker.DO_NOTHING): LookupTracker =
-        if (IncrementalCompilation.isExperimental()) LookupTrackerImpl(parentLookupTracker)
+        if (IncrementalCompilation.isEnabled()) LookupTrackerImpl(parentLookupTracker)
         else parentLookupTracker
 
 fun<Target> makeIncrementalCachesMap(

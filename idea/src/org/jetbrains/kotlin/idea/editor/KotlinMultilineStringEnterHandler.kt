@@ -247,9 +247,9 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
             private val kotlinIndentOptions =
                     CodeStyleSettingsManager.getInstance(project).currentSettings.getIndentOptions(KotlinFileType.INSTANCE)
 
-            val useTabs = kotlinIndentOptions.USE_TAB_CHARACTER
-            val tabSize = kotlinIndentOptions.TAB_SIZE
-            val regularIndent = kotlinIndentOptions.INDENT_SIZE
+            private val useTabs = kotlinIndentOptions.USE_TAB_CHARACTER
+            private val tabSize = kotlinIndentOptions.TAB_SIZE
+            private val regularIndent = kotlinIndentOptions.INDENT_SIZE
             val marginIndent = regularIndent
 
             fun getSmartSpaces(count: Int): String = when {
@@ -301,7 +301,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
         }
 
 
-        fun getLiteralCalls(str: KtStringTemplateExpression): Sequence<KtCallExpression> {
+        private fun getLiteralCalls(str: KtStringTemplateExpression): Sequence<KtCallExpression> {
             var previous: PsiElement = str
             return str.parents
                     .takeWhile { parent ->

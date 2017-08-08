@@ -84,7 +84,7 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
 
 class DefaultLambda(
         override val lambdaClassType: Type,
-        val capturedArgs: Array<Type>,
+        private val capturedArgs: Array<Type>,
         val parameterDescriptor: ValueParameterDescriptor,
         val offset: Int,
         val needReification: Boolean
@@ -135,7 +135,7 @@ class DefaultLambda(
                 classReader.b,
                 "<init>",
                 descriptor,
-                lambdaClassType.internalName)?.node
+                lambdaClassType)?.node
 
         assert(constructor != null || capturedArgs.isEmpty()) {
             "Can't find non-default constructor <init>$descriptor for default lambda $lambdaClassType"
@@ -164,7 +164,7 @@ class DefaultLambda(
                 classReader.b,
                 invokeMethod.name,
                 invokeMethod.descriptor,
-                lambdaClassType.internalName)!!
+                lambdaClassType)!!
 
         if (needReification) {
             //nested classes could also require reification

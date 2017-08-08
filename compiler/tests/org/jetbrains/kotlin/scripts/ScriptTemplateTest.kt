@@ -48,8 +48,9 @@ import java.net.URLClassLoader
 import java.util.concurrent.Future
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.*
-import kotlin.script.dependencies.DependenciesResolver.ResolveResult
-import kotlin.script.dependencies.experimental.AsyncDependenciesResolver
+import kotlin.script.experimental.dependencies.*
+import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
+import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.templates.AcceptedAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -398,25 +399,24 @@ private fun classpathFromClassloader(): List<File> =
 
 open class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenciesResolver() {
 
-    private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
+    private val kotlinPaths by lazy { PathUtil.kotlinPathsForCompiler }
 
     @AcceptedAnnotations(DependsOn::class, DependsOnTwo::class)
-    override fun resolve(scriptContents: ScriptContents,
-                         environment: Environment
-    ): ResolveResult
-    {
-        val cp = scriptContents.annotations.flatMap {
-            when (it) {
-                is DependsOn -> if (it.path == "@{runtime}") listOf(kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath) else listOf(File(it.path))
-                is DependsOnTwo -> listOf(it.path1, it.path2).flatMap {
+    override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
+        val cp = scriptContents.annotations.flatMap { annotation ->
+            when (annotation) {
+                is DependsOn ->
+                    if (annotation.path == "@{kotlin-stdlib}") listOf(kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
+                    else listOf(File(annotation.path))
+                is DependsOnTwo -> listOf(annotation.path1, annotation.path2).flatMap {
                     when {
                         it.isBlank() -> emptyList()
-                        it == "@{runtime}" -> listOf(kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
+                        it == "@{kotlin-stdlib}" -> listOf(kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
                         else -> listOf(File(it))
                     }
                 }
-                is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${it.name}", it.error)
-                else -> throw Exception("Unknown annotation ${it::class.java}")
+                is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${annotation.name}", annotation.error)
+                else -> throw Exception("Unknown annotation ${annotation::class.java}")
             }
         }
         return ScriptDependencies(

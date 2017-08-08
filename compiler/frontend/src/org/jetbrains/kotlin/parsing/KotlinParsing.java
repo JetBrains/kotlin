@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.*;
+import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.PRECEDING_ALL_BINDER;
+import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.TRAILING_ALL_BINDER;
 
 public class KotlinParsing extends AbstractKotlinParsing {
     private static final Logger LOG = Logger.getInstance(KotlinParsing.class);
@@ -174,7 +176,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
         checkForUnexpectedSymbols();
 
         blockMarker.done(BLOCK);
+        blockMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER);
+
         scriptMarker.done(SCRIPT);
+        scriptMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER);
+
         fileMarker.done(KT_FILE);
     }
 
@@ -225,8 +231,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseFileAnnotationList(FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED);
             packageDirective = mark();
             packageDirective.done(PACKAGE_DIRECTIVE);
-            // this is necessary to allow comments at the start of the file to be bound to the first declaration
-            packageDirective.setCustomEdgeTokenBinders(DoNotBindAnything.INSTANCE, null);
+            // Need to skip everything but shebang comment to allow comments at the start of the file to be bound to the first declaration.
+            packageDirective.setCustomEdgeTokenBinders(BindFirstShebangWithWhitespaceOnly.INSTANCE, null);
         }
 
         parseImportDirectives();
@@ -694,21 +700,16 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         if (targetKeyword == null && mode.isFileAnnotationParsingMode) {
-            parseAnnotationTarget(mode, FILE_KEYWORD);
+            parseAnnotationTarget(FILE_KEYWORD);
         }
         else if (targetKeyword != null) {
-            parseAnnotationTarget(mode, targetKeyword);
+            parseAnnotationTarget(targetKeyword);
         }
 
         return true;
     }
 
-    private void parseAnnotationTarget(AnnotationParsingMode mode, KtKeywordToken keyword) {
-        if (keyword == FILE_KEYWORD && !mode.isFileAnnotationParsingMode && at(keyword) && lookahead(1) == COLON) {
-            errorAndAdvance(AT.getValue() + keyword.getValue() + " annotations are only allowed before package declaration", 2);
-            return;
-        }
-
+    private void parseAnnotationTarget(KtKeywordToken keyword) {
         String message = "Expecting \"" + keyword.getValue() + COLON.getValue() + "\" prefix for " + keyword.getValue() + " annotations";
 
         PsiBuilder.Marker marker = mark();

@@ -28,12 +28,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 
-class ContainerOptionsProxy(val containerType: AndroidContainerType, val cache: CacheImplementation) {
+class ContainerOptionsProxy(val containerType: AndroidContainerType, val cache: CacheImplementation?) {
     companion object {
         private val CONTAINER_OPTIONS_FQNAME = FqName(ContainerOptions::class.java.canonicalName)
         private val CACHE_NAME = ContainerOptions::cache.name
-
-        private val DEFAULT_CACHE_IMPL = SPARSE_ARRAY
 
         fun create(container: ClassDescriptor): ContainerOptionsProxy {
             if (container.kind != ClassKind.CLASS) {
@@ -49,24 +47,24 @@ class ContainerOptionsProxy(val containerType: AndroidContainerType, val cache: 
                 val supportsCache = container.source is KotlinSourceElement && containerType.doesSupportCache
                 return ContainerOptionsProxy(
                         containerType,
-                        if (supportsCache) DEFAULT_CACHE_IMPL else NO_CACHE)
+                        if (supportsCache) null else NO_CACHE) // `null` here means "use global cache implementation setting"
             }
 
-            val cache = anno.getEnumValue(CACHE_NAME, DEFAULT_CACHE_IMPL) { valueOf(it) }
+            val cache = anno.getEnumValue(CACHE_NAME) { valueOf(it) }
 
             return ContainerOptionsProxy(containerType, cache)
         }
     }
 }
 
-private fun <E : Enum<E>> AnnotationDescriptor.getEnumValue(name: String, defaultValue: E, factory: (String) -> E): E {
-    val valueName = (allValueArguments[Name.identifier(name)] as? EnumValue)?.value?.name?.asString() ?: defaultValue.name
+private fun <E : Enum<E>> AnnotationDescriptor.getEnumValue(name: String, factory: (String) -> E): E? {
+    val valueName = (allValueArguments[Name.identifier(name)] as? EnumValue)?.value?.name?.asString() ?: return null
 
     return try {
         factory(valueName)
     }
     catch (e: IllegalArgumentException) {
         // Enum.valueOf() may throw this
-        defaultValue
+        null
     }
 }

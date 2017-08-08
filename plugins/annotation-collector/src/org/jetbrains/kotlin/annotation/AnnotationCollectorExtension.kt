@@ -244,7 +244,7 @@ abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations:
 
 class AnnotationCollectorExtension(
         override val annotationFilterList: List<String>? = null,
-        val outputFilename: String? = null,
+        private val outputFilename: String? = null,
         supportInheritedAnnotations: Boolean
 ) : AnnotationCollectorExtensionBase(supportInheritedAnnotations) {
 

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility.*
@@ -263,7 +262,7 @@ enum class RelationToType(val description: String) {
     override fun toString() = description
 }
 
-data class DescriptorWithRelation(val descriptor: ClassifierDescriptor, val relation: RelationToType) {
+data class DescriptorWithRelation(val descriptor: ClassifierDescriptor, private val relation: RelationToType) {
     fun effectiveVisibility() =
             (descriptor as? ClassDescriptor)?.visibility?.effectiveVisibility(descriptor, false) ?: Public
 

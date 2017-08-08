@@ -38,7 +38,8 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import kotlin.script.dependencies.*
-import kotlin.script.dependencies.DependenciesResolver.ResolveResult
+import kotlin.script.experimental.dependencies.*
+import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.test.fail
 
@@ -85,11 +86,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                       verbose = true,
                                       reportPerf = true)
 
-    fun makeTestDaemonJvmOptions(logFile: File? = null, xmx: Int = 384): DaemonJVMOptions {
+    fun makeTestDaemonJvmOptions(logFile: File? = null, xmx: Int = 384, args: Iterable<String> = listOf()): DaemonJVMOptions {
         val additionalArgs = arrayListOf<String>()
         if (logFile != null) {
             additionalArgs.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"")
         }
+        args.forEach { additionalArgs.add(it) }
         val baseOpts = if (xmx > 0) DaemonJVMOptions(maxMemory = "${xmx}m") else DaemonJVMOptions()
         return configureDaemonJVMOptions(
                 baseOpts,
@@ -343,6 +345,61 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 logFile.assertLogContainsSequence("All sessions finished",
                                                   "Shutdown started")
             }
+        }
+    }
+
+    fun testDaemonExitsOnClientFlagDeletedWithActiveSessions() {
+        val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1000, shutdownDelayMilliseconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+        val clientFlag = createTempFile(getTestName(true), "-client.alive")
+        val sessionFlag = createTempFile(getTestName(true), "-session.alive")
+        try {
+            withLogFile("kotlin-daemon-test") { logFile ->
+                val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
+                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, clientFlag, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+                assertNotNull("failed to connect daemon", daemon)
+                daemon?.leaseCompileSession(sessionFlag.canonicalPath)
+
+                clientFlag.delete()
+
+                Thread.sleep(2100) // allow deleted file detection, should be 2 * DAEMON_PERIODIC_CHECK_INTERVAL_MS + o
+                // TODO: consider possibility to set DAEMON_PERIODIC_CHECK_INTERVAL_MS from tests, to allow shorter sleeps
+
+                logFile.assertLogContainsSequence("No more clients left",
+                                                  "Shutdown started")
+            }
+        }
+        finally {
+            sessionFlag.delete()
+            clientFlag.delete()
+        }
+    }
+
+    fun testDaemonExitsOnClientFlagDeletedWithAllSessionsReleased() {
+        val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1000, shutdownDelayMilliseconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+        val clientFlag = createTempFile(getTestName(true), "-client.alive")
+        val sessionFlag = createTempFile(getTestName(true), "-session.alive")
+        try {
+            withLogFile("kotlin-daemon-test") { logFile ->
+                val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
+                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, clientFlag, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+                assertNotNull("failed to connect daemon", daemon)
+                daemon?.leaseCompileSession(sessionFlag.canonicalPath)
+
+                sessionFlag.delete()
+
+                Thread.sleep(2100) // allow deleted file detection, should be 2 * DAEMON_PERIODIC_CHECK_INTERVAL_MS + o
+
+                clientFlag.delete()
+
+                Thread.sleep(2100) // allow deleted file detection, should be 2 * DAEMON_PERIODIC_CHECK_INTERVAL_MS + o
+
+                logFile.assertLogContainsSequence("No more clients left",
+                                                  "Shutdown started")
+            }
+        }
+        finally {
+            sessionFlag.delete()
+            clientFlag.delete()
         }
     }
 

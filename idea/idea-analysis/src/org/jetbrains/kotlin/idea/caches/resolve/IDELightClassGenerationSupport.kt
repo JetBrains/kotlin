@@ -276,7 +276,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         return getClassRelativeName(parent).child(name)
     }
 
-    fun createLightClassForDecompiledKotlinFile(file: KtClsFile): KtLightClassForDecompiledDeclaration? {
+    private fun createLightClassForDecompiledKotlinFile(file: KtClsFile): KtLightClassForDecompiledDeclaration? {
         val virtualFile = file.virtualFile ?: return null
 
         val classOrObject = file.declarations.filterIsInstance<KtClassOrObject>().singleOrNull()

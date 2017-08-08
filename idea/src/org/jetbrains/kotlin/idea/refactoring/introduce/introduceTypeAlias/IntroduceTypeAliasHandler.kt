@@ -48,7 +48,7 @@ open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
         val INSTANCE = KotlinIntroduceTypeAliasHandler()
     }
 
-    fun selectElements(editor: Editor, file: KtFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
+    private fun selectElements(editor: Editor, file: KtFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
         selectElementsWithTargetSibling(
                 REFACTORING_NAME,
                 editor,

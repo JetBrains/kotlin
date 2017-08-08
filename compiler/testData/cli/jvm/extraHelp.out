@@ -1,37 +1,38 @@
 Usage: kotlinc-jvm <options> <source files>
 where advanced options include:
-  -Xmodule-path=<path>       Paths where to find Java 9+ modules
+  -Xadd-compiler-builtins    Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)
   -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules,
                              or all modules on the module path if <module> is ALL-MODULE-PATH
-  -Xno-call-assertions       Don't generate not-null assertion after each invocation of method returning not-null
-  -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
-  -Xno-optimize              Disable optimizations
-  -Xreport-perf              Report detailed performance statistics
   -Xbuild-file=<path>        Path to the .xml build file to compile
-  -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
-  -Xskip-runtime-version-check Allow Kotlin runtime libraries of incompatible versions in the classpath
-  -Xuse-old-class-files-reading Use old class files reading implementation (may slow down the build and should be used in case of problems with the new implementation)
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
-  -Xsingle-module            Combine modules for source files and binary dependencies into a single module
-  -Xadd-compiler-builtins    Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)
+  -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
+  -Xmodule-path=<path>       Paths where to find Java 9+ modules
+  -Xjavac-arguments=<option[,]> Java compiler arguments
+  -Xjsr305-annotations={ignore|enable}
+                             Specify global behavior for JSR-305 nullability annotations: ignore, or treat as other supported nullability annotations
   -Xload-builtins-from-dependencies
                              Load definitions of built-in declarations from module dependencies, instead of from the compiler
+  -Xno-call-assertions       Don't generate not-null assertion after each invocation of method returning not-null
+  -Xno-optimize              Disable optimizations
+  -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
+  -Xreport-perf              Report detailed performance statistics
   -Xscript-resolver-environment=<key=value[,]>
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)
+  -Xsingle-module            Combine modules for source files and binary dependencies into a single module
+  -Xskip-runtime-version-check Allow Kotlin runtime libraries of incompatible versions in the classpath
   -Xuse-javac                Use javac for Java source and class files analysis
-  -Xjavac-arguments=<option[,]> Java compiler arguments
-  -Xload-jsr305-annotations  Load JSR-305 nullability annotations
-  -Xno-inline                Disable method inlining
-  -Xrepeat=<count>           Repeat compilation (for performance analysis)
-  -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
+  -Xuse-old-class-files-reading Use old class files reading implementation (may slow down the build and should be used in case of problems with the new implementation)
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin'
-  -Xreport-output-files      Report source to output files mapping
-  -Xplugin=<path>            Load plugins from the given classpath
-  -Xmulti-platform           Enable experimental language support for multi-platform projects
-  -Xno-check-impl            Do not check presence of 'impl' modifier in multi-platform projects
-  -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
+  -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
+  -Xmulti-platform           Enable experimental language support for multi-platform projects
+  -Xno-check-impl            Do not check presence of 'impl' modifier in multi-platform projects
+  -Xno-inline                Disable method inlining
+  -Xplugin=<path>            Load plugins from the given classpath
+  -Xrepeat=<count>           Repeat compilation (for performance analysis)
+  -Xreport-output-files      Report source to output files mapping
+  -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

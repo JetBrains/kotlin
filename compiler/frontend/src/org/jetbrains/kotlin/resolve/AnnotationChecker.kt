@@ -249,7 +249,7 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
 
             val T_DESTRUCTURING_DECLARATION = targetList(DESTRUCTURING_DECLARATION)
 
-            fun TargetListBuilder.propertyTargets(backingField: Boolean, delegate: Boolean) {
+            private fun TargetListBuilder.propertyTargets(backingField: Boolean, delegate: Boolean) {
                 if (backingField) extraTargets(FIELD)
                 if (delegate) {
                     onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER, FIELD)

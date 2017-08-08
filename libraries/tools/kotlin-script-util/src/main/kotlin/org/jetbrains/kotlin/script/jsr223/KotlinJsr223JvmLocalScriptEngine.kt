@@ -71,8 +71,8 @@ class KotlinJsr223JvmLocalScriptEngine(
         addJvmClasspathRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
         addJvmClasspathRoots(templateClasspath)
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
-        languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE).apply {
-            switchFlag(AnalysisFlags.skipMetadataVersionCheck, true)
-        }
+        languageVersionSettings = LanguageVersionSettingsImpl(
+                LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.skipMetadataVersionCheck to true)
+        )
     }
 }

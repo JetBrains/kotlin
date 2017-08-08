@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.KotlinResolutionConfigurationKt;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -309,7 +310,13 @@ public class ExpressionTypingServices {
                 expectedType = context.expectedType;
             }
 
-            return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType), true);
+            ContextDependency dependency = context.contextDependency;
+            if (KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE()) {
+                dependency = ContextDependency.INDEPENDENT;
+
+            }
+
+            return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType).replaceContextDependency(dependency), true);
         }
         KotlinTypeInfo result = blockLevelVisitor.getTypeInfo(statementExpression, context, true);
         if (coercionStrategyForLastExpression == COERCION_TO_UNIT) {

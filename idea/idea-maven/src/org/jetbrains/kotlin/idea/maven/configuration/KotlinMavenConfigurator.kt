@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersi
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.excludeMavenChildrenModules
 import org.jetbrains.kotlin.idea.maven.kotlinPluginId
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 abstract class KotlinMavenConfigurator
         protected constructor(private val testArtifactId: String?,
@@ -48,11 +49,12 @@ abstract class KotlinMavenConfigurator
                               override val name: String,
                               override val presentableText: String) : KotlinProjectConfigurator {
 
-    override fun getStatus(module: Module): ConfigureKotlinStatus {
+    override fun getStatus(moduleSourceRootGroup: ModuleSourceRootGroup): ConfigureKotlinStatus {
+        val module = moduleSourceRootGroup.baseModule
         if (!KotlinPluginUtil.isMavenModule(module))
             return ConfigureKotlinStatus.NON_APPLICABLE
 
-        val psi = findModulePomFile(module)
+        val psi = runReadAction { findModulePomFile(module) }
         if (psi == null
             || !psi.isValid
             || psi !is XmlFile

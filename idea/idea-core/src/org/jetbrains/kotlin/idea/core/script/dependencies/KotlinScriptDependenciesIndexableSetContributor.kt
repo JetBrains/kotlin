@@ -25,7 +25,7 @@ class KotlinScriptDependenciesIndexableSetContributor : IndexableSetContributor(
 
     override fun getAdditionalProjectRootsToIndex(project: Project): Set<VirtualFile> {
         val manager = ScriptDependenciesManager.getInstance(project)
-        return (manager.getAllScriptsClasspath() + manager.getAllLibrarySources()).toSet()
+        return (manager.getAllScriptsClasspath() + manager.getAllLibrarySources()).filterTo(LinkedHashSet()) { it.isValid }
     }
 
     override fun getAdditionalRootsToIndex(): Set<VirtualFile> = emptySet()

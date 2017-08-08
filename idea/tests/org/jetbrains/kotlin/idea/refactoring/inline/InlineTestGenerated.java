@@ -50,6 +50,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ExtensionAndDispatchReceivers.kt")
+        public void testExtensionAndDispatchReceivers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/ExtensionAndDispatchReceivers.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InStringTemplates.kt")
         public void testInStringTemplates() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/InStringTemplates.kt");
@@ -71,6 +77,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("MultipleReturns.kt")
         public void testMultipleReturns() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/MultipleReturns.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OuterClassReceiver.kt")
+        public void testOuterClassReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/OuterClassReceiver.kt");
             doTest(fileName);
         }
 

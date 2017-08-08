@@ -6,12 +6,12 @@ import java.io.File
 
 class Kapt3Android30IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: String
-        get() = "3.0.0-alpha4"
+        get() = "3.0.0-alpha8"
 }
 
 open class Kapt3AndroidIT : Kapt3BaseIT() {
     companion object {
-        private const val GRADLE_VERSION = "4.0-rc-1"
+        private const val GRADLE_VERSION = "4.1-rc-1"
     }
 
     protected open val androidGradlePluginVersion: String

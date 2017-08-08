@@ -1,0 +1,49 @@
+ext.pluginMarkerProject = { String pluginProjectId ->
+    evaluationDependsOn(":$pluginProjectId")
+
+    def pluginProject = findProject(":$pluginProjectId")
+
+    repositories.addAll(pluginProject.repositories.toList())
+
+    apply plugin: 'java'
+
+    dependencies {
+        compile pluginProject
+    }
+
+    // Remove the default JAR artifact added by the Java plugin
+    configurations.archives.artifacts.clear()
+
+    configurePublishing(project)
+
+    task emptyJar(type: Jar)
+
+    version = project.version + (findProperty('marker_version_suffix') ?: "")
+
+    for (pluginId in pluginProject.pluginBundle.plugins.collect { it.id }) {
+        def artifactName = "${pluginId}.gradle.plugin"
+
+        artifacts {
+            ['', 'javadoc', 'sources'].forEach { theClassifier ->
+                archives(emptyJar) {
+                    group = pluginId
+                    name = artifactName
+                    classifier = theClassifier
+                }
+            }
+        }
+
+        // Publish each gradle plugin marker under its own Maven coordinates pluginId:pluginId.gradle.plugin
+        def setUpSeparateArtifact = {
+            addFilter(pluginId) { artifact, file -> artifact.name == artifactName }
+            def pom = pom(pluginId)
+            pom.groupId = pluginId
+            pom.artifactId = "${pluginId}.gradle.plugin"
+        }
+
+        configure(uploadArchives.repositories.mavenDeployer, setUpSeparateArtifact)
+        configure(install.repositories.mavenInstaller, setUpSeparateArtifact)
+    }
+
+    publish.dependsOn uploadArchives
+}

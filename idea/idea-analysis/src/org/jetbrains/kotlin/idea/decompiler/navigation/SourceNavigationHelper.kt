@@ -72,7 +72,7 @@ object SourceNavigationHelper {
         }
     }
 
-    private fun Collection<GlobalSearchScope>.union() = GlobalSearchScope.union(this.toTypedArray())
+    private fun Collection<GlobalSearchScope>.union() = if (this.isNotEmpty()) GlobalSearchScope.union(this.toTypedArray()) else null
 
     private fun haveRenamesInImports(files: Collection<KtFile>) = files.any { it.importDirectives.any { it.aliasName != null } }
 

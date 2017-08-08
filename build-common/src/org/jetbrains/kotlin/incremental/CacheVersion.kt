@@ -24,11 +24,9 @@ import java.io.File
 import java.io.IOException
 
 private val NORMAL_VERSION = 8
-private val EXPERIMENTAL_VERSION = 4
 private val DATA_CONTAINER_VERSION = 2
 
 private val NORMAL_VERSION_FILE_NAME = "format-version.txt"
-private val EXPERIMENTAL_VERSION_FILE_NAME = "experimental-format-version.txt"
 private val DATA_CONTAINER_VERSION_FILE_NAME = "data-container-format-version.txt"
 
 class CacheVersion(
@@ -92,7 +90,6 @@ class CacheVersion(
         REBUILD_ALL_KOTLIN,
         REBUILD_CHUNK,
         CLEAN_NORMAL_CACHES,
-        CLEAN_EXPERIMENTAL_CACHES,
         CLEAN_DATA_CONTAINER,
         DO_NOTHING
     }
@@ -106,18 +103,10 @@ fun normalCacheVersion(dataRoot: File): CacheVersion =
                      whenTurnedOff = CacheVersion.Action.CLEAN_NORMAL_CACHES,
                      isEnabled = { IncrementalCompilation.isEnabled() })
 
-fun experimentalCacheVersion(dataRoot: File): CacheVersion =
-        CacheVersion(ownVersion = EXPERIMENTAL_VERSION,
-                     versionFile = File(dataRoot, EXPERIMENTAL_VERSION_FILE_NAME),
-                     whenVersionChanged = CacheVersion.Action.REBUILD_CHUNK,
-                     whenTurnedOn = CacheVersion.Action.REBUILD_CHUNK,
-                     whenTurnedOff = CacheVersion.Action.CLEAN_EXPERIMENTAL_CACHES,
-                     isEnabled = { IncrementalCompilation.isExperimental() })
-
 fun dataContainerCacheVersion(dataRoot: File): CacheVersion =
         CacheVersion(ownVersion = DATA_CONTAINER_VERSION,
                      versionFile = File(dataRoot, DATA_CONTAINER_VERSION_FILE_NAME),
                      whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                      whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                      whenTurnedOff = CacheVersion.Action.CLEAN_DATA_CONTAINER,
-                     isEnabled = { IncrementalCompilation.isExperimental() })
+                     isEnabled = { IncrementalCompilation.isEnabled() })

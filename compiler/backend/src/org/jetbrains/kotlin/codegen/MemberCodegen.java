@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
@@ -50,7 +49,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -344,16 +342,23 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 parentCodegen.innerClasses.add(classDescriptor);
             }
 
-            for (MemberCodegen<?> codegen = this; codegen != null; codegen = codegen.getParentCodegen()) {
-                ClassDescriptor outerClass = codegen.classForInnerClassRecord();
-                if (outerClass != null) {
-                    innerClasses.add(outerClass);
-                }
-            }
+            addParentsToInnerClassesIfNeeded(innerClasses);
         }
 
         for (ClassDescriptor innerClass : innerClasses) {
             writeInnerClass(innerClass);
+        }
+    }
+
+    protected void addParentsToInnerClassesIfNeeded(@NotNull Collection<ClassDescriptor> innerClasses) {
+        ClassDescriptor outerClass = classForInnerClassRecord();
+        if (outerClass != null) {
+            innerClasses.add(outerClass);
+        }
+
+        MemberCodegen<?> parentCodegen = getParentCodegen();
+        if (parentCodegen != null) {
+            parentCodegen.addParentsToInnerClassesIfNeeded(innerClasses);
         }
     }
 
@@ -511,7 +516,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     public void beforeMethodBody(@NotNull MethodVisitor mv) {
     }
 
-    private void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull KtProperty property) {
+    // Requires public access, because it is used by serialization plugin to generate initializer in synthetic constructor
+    public void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull KtProperty property) {
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
         assert propertyDescriptor != null;
 
@@ -536,7 +542,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         propValue.store(delegateValue, codegen.v);
     }
 
-    protected boolean shouldInitializeProperty(@NotNull KtProperty property) {
+    // Public accessible for serialization plugin to check whether call to initializeProperty(..) is legal.
+    public boolean shouldInitializeProperty(@NotNull KtProperty property) {
         if (!property.hasDelegateExpressionOrInitializer()) return false;
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);

@@ -1,0 +1,14 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '<pluginMarkerVersion>' apply false
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+}

@@ -152,14 +152,6 @@ public class AsmUtil {
         return isIntPrimitive(type) || type == Type.LONG_TYPE;
     }
 
-    public static boolean isNumberPrimitiveOrBoolean(Type type) {
-        return isNumberPrimitive(type) || type.getSort() == Type.BOOLEAN;
-    }
-
-    public static boolean isNumberPrimitive(Type type) {
-        return isIntPrimitive(type) || type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE || type == Type.LONG_TYPE;
-    }
-
     public static boolean isPrimitive(Type type) {
         return type.getSort() != Type.OBJECT && type.getSort() != Type.ARRAY;
     }
@@ -362,7 +354,9 @@ public class AsmUtil {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         Visibility memberVisibility = memberDescriptor.getVisibility();
 
-        if (isEffectivelyInlineOnly(memberDescriptor)) return ACC_PRIVATE;
+        if (isEffectivelyInlineOnly(memberDescriptor)) {
+            return ACC_PRIVATE;
+        }
 
         if (memberVisibility == Visibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
             return ACC_PUBLIC;
@@ -717,7 +711,7 @@ public class AsmUtil {
                 if (innerType.getSort() == Type.OBJECT || innerType.getSort() == Type.ARRAY) {
                     v.dup();
                     v.visitLdcInsn(runtimeAssertionInfo.getMessage());
-                    v.invokestatic("kotlin/jvm/internal/Intrinsics", "checkExpressionValueIsNotNull",
+                    v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkExpressionValueIsNotNull",
                                    "(Ljava/lang/Object;Ljava/lang/String;)V", false);
                 }
                 StackValue.coerce(innerType, type, v);

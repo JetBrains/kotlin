@@ -44,7 +44,7 @@ class KotlinJsr223JvmScriptEngine4Idea(
 ) : KotlinJsr223JvmScriptEngineBase(factory) {
 
     private val daemon by lazy {
-        val path = PathUtil.getKotlinPathsForIdeaPlugin().compilerPath
+        val path = PathUtil.kotlinPathsForIdeaPlugin.compilerPath
         assert(path.exists())
         val compilerId = CompilerId.makeCompilerId(path)
         val daemonOptions = configureDaemonOptions()
@@ -73,7 +73,7 @@ class KotlinJsr223JvmScriptEngine4Idea(
     override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? =
             getScriptArgs(getContext(), scriptArgsTypes)
 
-    val localEvaluator: ReplFullEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader) }
+    private val localEvaluator: ReplFullEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader) }
 
     override val replEvaluator: ReplFullEvaluator get() = localEvaluator
 

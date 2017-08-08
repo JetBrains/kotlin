@@ -71,17 +71,16 @@ abstract class AbstractIncrementalJpsTest(
         private val DEBUG_LOGGING_ENABLED = System.getProperty("debug.logging.enabled") == "true"
     }
 
-    protected open val enableExperimentalIncrementalCompilation = false
-
     protected lateinit var testDataDir: File
     protected lateinit var workDir: File
     protected lateinit var projectDescriptor: ProjectDescriptor
     protected lateinit var lookupsDuringTest: MutableSet<LookupSymbol>
+    private var isICEnabledBackup: Boolean = false
 
     protected var mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
 
     protected open val buildLogFinder: BuildLogFinder
-        get() = BuildLogFinder(isExperimentalEnabled = enableExperimentalIncrementalCompilation)
+        get() = BuildLogFinder()
 
     private fun enableDebugLogging() {
         com.intellij.openapi.diagnostic.Logger.setFactory(TestLoggerFactory::class.java)
@@ -112,7 +111,8 @@ abstract class AbstractIncrementalJpsTest(
     override fun setUp() {
         super.setUp()
         lookupsDuringTest = hashSetOf()
-        IncrementalCompilation.setIsExperimental(enableExperimentalIncrementalCompilation)
+        isICEnabledBackup = IncrementalCompilation.isEnabled()
+        IncrementalCompilation.setIsEnabled(true)
 
         if (DEBUG_LOGGING_ENABLED) {
             enableDebugLogging()
@@ -125,6 +125,7 @@ abstract class AbstractIncrementalJpsTest(
         (AbstractIncrementalJpsTest::projectDescriptor).javaField!![this] = null
         (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
         lookupsDuringTest.clear()
+        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
         super.tearDown()
     }
 
@@ -279,8 +280,6 @@ abstract class AbstractIncrementalJpsTest(
             throw IllegalStateException("No build log file in $testDataDir")
         }
 
-        if (!enableExperimentalIncrementalCompilation && File(testDataDir, "dont-check-caches-in-non-experimental-ic.txt").exists()) return
-
         val lastMakeResult = otherMakeResults.last()
         rebuildAndCheckOutput(lastMakeResult)
         clearCachesRebuildAndCheckOutput(lastMakeResult)
@@ -419,8 +418,8 @@ abstract class AbstractIncrementalJpsTest(
 
             moduleNames = nameToModule.keys
         }
-        AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject)
-        AbstractKotlinJpsBuildTestCase.addKotlinTestRuntimeDependency(myProject)
+        AbstractKotlinJpsBuildTestCase.addKotlinStdlibDependency(myProject)
+        AbstractKotlinJpsBuildTestCase.addKotlinTestDependency(myProject)
         return moduleNames
     }
 

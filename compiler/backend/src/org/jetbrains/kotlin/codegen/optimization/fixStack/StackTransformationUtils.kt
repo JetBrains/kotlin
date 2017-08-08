@@ -57,7 +57,7 @@ class SavedStackDescriptor(
         val savedValues: List<BasicValue>,
         val firstLocalVarIndex: Int
 ) {
-    val savedValuesSize = savedValues.fold(0, { size, value -> size + value.size })
+    private val savedValuesSize = savedValues.fold(0, { size, value -> size + value.size })
     val firstUnusedLocalVarIndex = firstLocalVarIndex + savedValuesSize
 
     override fun toString(): String =

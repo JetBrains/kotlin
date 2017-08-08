@@ -51,7 +51,7 @@ class KotlinPushDownDialog(
 
     private var memberInfoModel: MemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>? = null
 
-    val selectedMemberInfos: List<KotlinMemberInfo>
+    private val selectedMemberInfos: List<KotlinMemberInfo>
         get() = memberInfos.filter { it.isChecked && memberInfoModel?.isMemberEnabled(it) ?: false }
 
     override fun getDimensionServiceKey() = "#" + this::class.java.name

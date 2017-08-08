@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.SmartList
-import java.lang.reflect.Field
-import java.util.*
+import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.memberProperties
 
 annotation class Argument(
         val value: String,
@@ -54,12 +56,14 @@ data class ArgumentParseErrors(
 )
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
-fun <A : CommonToolArguments> parseCommandLineArguments(args: Array<out String>, result: A) {
-    data class ArgumentField(val field: Field, val argument: Argument)
+fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A) {
+    data class ArgumentField(val property: KMutableProperty1<A, Any?>, val argument: Argument)
 
-    val fields = result::class.java.fields.mapNotNull { field ->
-        val argument = field.getAnnotation(Argument::class.java)
-        if (argument != null) ArgumentField(field, argument) else null
+    @Suppress("UNCHECKED_CAST")
+    val properties = result::class.memberProperties.mapNotNull { property ->
+        if (property !is KMutableProperty1<*, *>) return@mapNotNull null
+        val argument = property.findAnnotation<Argument>() ?: return@mapNotNull null
+        ArgumentField(property as KMutableProperty1<A, Any?>, argument)
     }
 
     val errors = result.errors
@@ -73,7 +77,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: Array<out String>,
         }
 
         if (argument.value == arg) {
-            if (argument.isAdvanced && field.type != Boolean::class.java) {
+            if (argument.isAdvanced && property.returnType.classifier != Boolean::class) {
                 errors.extraArgumentsPassedInObsoleteForm.add(arg)
             }
             return true
@@ -96,7 +100,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: Array<out String>,
             continue
         }
 
-        val argumentField = fields.firstOrNull { it.matches(arg) }
+        val argumentField = properties.firstOrNull { it.matches(arg) }
         if (argumentField == null) {
             when {
                 arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.unknownExtraFlags.add(arg)
@@ -106,9 +110,9 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: Array<out String>,
             continue
         }
 
-        val (field, argument) = argumentField
+        val (property, argument) = argumentField
         val value: Any = when {
-            field.type == Boolean::class.java -> true
+            argumentField.property.returnType.classifier == Boolean::class -> true
             argument.isAdvanced && arg.startsWith(argument.value + "=") -> {
                 arg.substring(argument.value.length + 1)
             }
@@ -121,24 +125,25 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: Array<out String>,
             }
         }
 
-        if (!field.type.isArray && !visitedArgs.add(argument.value) && value is String && field.get(result) != value) {
+        if ((argumentField.property.returnType.classifier as? KClass<*>)?.java?.isArray == false
+            && !visitedArgs.add(argument.value) && value is String && property.get(result) != value) {
             errors.duplicateArguments.put(argument.value, value)
         }
 
-        updateField(field, result, value, argument.delimiter)
+        updateField(property, result, value, argument.delimiter)
     }
 }
 
-private fun <A : CommonToolArguments> updateField(field: Field, result: A, value: Any, delimiter: String) {
-    when (field.type) {
-        Boolean::class.java, String::class.java -> field.set(result, value)
-        Array<String>::class.java -> {
+private fun <A : CommonToolArguments> updateField(property: KMutableProperty1<A, Any?>, result: A, value: Any, delimiter: String) {
+    when (property.returnType.classifier) {
+        Boolean::class, String::class -> property.set(result, value)
+        Array<String>::class -> {
             val newElements = (value as String).split(delimiter).toTypedArray()
             @Suppress("UNCHECKED_CAST")
-            val oldValue = field.get(result) as Array<String>?
-            field.set(result, if (oldValue != null) arrayOf(*oldValue, *newElements) else newElements)
+            val oldValue = property.get(result) as Array<String>?
+            property.set(result, if (oldValue != null) arrayOf(*oldValue, *newElements) else newElements)
         }
-        else -> throw IllegalStateException("Unsupported argument type: ${field.type}")
+        else -> throw IllegalStateException("Unsupported argument type: ${property.returnType}")
     }
 }
 

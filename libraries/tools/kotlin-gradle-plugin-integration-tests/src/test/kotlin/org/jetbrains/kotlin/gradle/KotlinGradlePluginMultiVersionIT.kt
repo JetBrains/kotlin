@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
+import java.util.zip.ZipFile
 
 class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
     @Test
@@ -15,6 +17,52 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
             assertContainsRegex("""-processorpath \S*.build.tmp.kapt.main.wrappers""".toRegex())
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertClassFilesNotContain(File(project.projectDir, "build/classes"), "ExampleSourceAnnotation")
+        }
+    }
+
+    @Test
+    fun testKt19179() {
+        val project = Project("kt19179", gradleVersion, directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+            assertFileExists("processor/build/tmp/kapt3/classes/main/META-INF/services/javax.annotation.processing.Processor")
+
+            val processorJar = fileInWorkingDir("processor/build/libs/processor.jar")
+            assert(processorJar.exists())
+
+            val zip = ZipFile(processorJar)
+            @Suppress("ConvertTryFinallyToUseCall")
+            try {
+                assert(zip.getEntry("META-INF/services/javax.annotation.processing.Processor") != null)
+            } finally {
+                zip.close()
+            }
+
+            assertTasksExecuted(listOf(
+                    ":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin",
+                    ":app:kaptGenerateStubsKotlin", ":app:kaptKotlin"))
+        }
+
+        project.projectDir.getFileByName("Test.kt").modify { text ->
+            assert("SomeClass()" in text)
+            text.replace("SomeClass()", "SomeClass(); val a = 5")
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksUpToDate(listOf(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin", ":app:kaptKotlin"))
+            assertTasksExecuted(listOf(":app:kaptGenerateStubsKotlin"))
+        }
+
+        project.projectDir.getFileByName("Test.kt").modify { text ->
+            text + "\n\nfun t() {}"
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksUpToDate(listOf(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin"))
+            assertTasksExecuted(listOf(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin"))
         }
     }
 

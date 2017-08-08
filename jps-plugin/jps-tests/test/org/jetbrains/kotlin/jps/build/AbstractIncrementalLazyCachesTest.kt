@@ -31,8 +31,21 @@ import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() {
-    protected open val expectedCachesFileName: String
+    private val expectedCachesFileName: String
         get() = "expected-kotlin-caches.txt"
+
+    private var isICEnabledBackup: Boolean = false
+
+    override fun setUp() {
+        super.setUp()
+        isICEnabledBackup = IncrementalCompilation.isEnabled()
+        IncrementalCompilation.setIsEnabled(true)
+    }
+
+    override fun tearDown() {
+        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
+        super.tearDown()
+    }
 
     override fun doTest(testDataPath: String) {
         super.doTest(testDataPath)
@@ -53,9 +66,6 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
             when {
                 name.endsWith("incremental-compilation") -> {
                     IncrementalCompilation.setIsEnabled(modification.dataFile.readAsBool())
-                }
-                name.endsWith("experimental-compilation") -> {
-                    IncrementalCompilation.setIsExperimental(modification.dataFile.readAsBool())
                 }
             }
         }
@@ -85,7 +95,6 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
             val jvmMetaBuildInfo = jvmBuildMetaInfoFile(target, dataManager)
             dumpCachesForTarget(p, paths, target,
                                 versions.normalVersion(target).formatVersionFile,
-                                versions.experimentalVersion(target).formatVersionFile,
                                 jvmMetaBuildInfo,
                                 subdirectory = KOTLIN_CACHE_DIRECTORY_NAME)
         }

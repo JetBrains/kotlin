@@ -39,7 +39,11 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.lang.RuntimeException
 
-class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBackendContext, val parentClassCodegen: ClassCodegen? = null) : InnerClassConsumer {
+class ClassCodegen private constructor(
+        private val irClass: IrClass,
+        val context: JvmBackendContext,
+        private val parentClassCodegen: ClassCodegen? = null
+) : InnerClassConsumer {
 
     private val innerClasses = mutableListOf<ClassDescriptor>()
 
@@ -49,7 +53,7 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
 
     val descriptor = irClass.descriptor
 
-    val isAnonymous = DescriptorUtils.isAnonymousObject(irClass.descriptor)
+    private val isAnonymous = DescriptorUtils.isAnonymousObject(irClass.descriptor)
 
     val type: Type = if (isAnonymous) CodegenBinding.asmTypeForAnonymousClass(state.bindingContext, descriptor.source.getPsi() as KtElement) else typeMapper.mapType(descriptor)
 
@@ -120,7 +124,7 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
     }
 
 
-    fun generateField(field: IrField) {
+    private fun generateField(field: IrField) {
         val fieldType = typeMapper.mapType(field.descriptor)
         val fieldSignature = typeMapper.mapFieldSignature(field.descriptor.type, field.descriptor)
         val fv = visitor.newField(field.OtherOrigin, field.descriptor.calculateCommonFlags(), field.descriptor.name.asString(), fieldType.descriptor,
@@ -134,7 +138,7 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
         }
     }
 
-    fun generateMethod(method: IrFunction) {
+    private fun generateMethod(method: IrFunction) {
         if (method.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
         FunctionCodegen(method, this).generate()
     }

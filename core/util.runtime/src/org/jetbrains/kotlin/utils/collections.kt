@@ -55,6 +55,8 @@ inline fun <K, V> MutableMap<K, V>.getOrPutNullable(key: K, defaultValue: () -> 
 
 inline fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) body() else this
 
+inline fun <K, V, M: Map<K, V>> M.ifEmpty(body: () -> M): M = if (isEmpty()) body() else this
+
 inline fun <T> Array<out T>.ifEmpty(body: () -> Array<out T>): Array<out T> = if (isEmpty()) body() else this
 
 fun <T: Any> MutableCollection<T>.addIfNotNull(t: T?) {

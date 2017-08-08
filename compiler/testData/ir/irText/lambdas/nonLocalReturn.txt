@@ -29,6 +29,23 @@ FILE /nonLocalReturn.kt
               RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
                 GET_OBJECT 'Unit' type=kotlin.Unit
           FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+  FUN public fun test3(): kotlin.Unit
+    BLOCK_BODY
+      CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
+        <R>: Unit
+        block: BLOCK type=() -> kotlin.Unit origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                CALL 'run(() -> Nothing): Nothing' type=kotlin.Nothing origin=null
+                  <R>: Nothing
+                  block: BLOCK type=() -> kotlin.Nothing origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Nothing
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                          GET_OBJECT 'Unit' type=kotlin.Unit
+                    FUNCTION_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
   FUN public fun testLrmFoo1(ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
     VALUE_PARAMETER value-parameter ints: kotlin.collections.List<kotlin.Int>
     BLOCK_BODY
@@ -71,4 +88,3 @@ FILE /nonLocalReturn.kt
                 CALL 'print(Int): Unit' type=kotlin.Unit origin=null
                   message: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
           FUNCTION_REFERENCE '<anonymous>(Int): Unit' type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
-

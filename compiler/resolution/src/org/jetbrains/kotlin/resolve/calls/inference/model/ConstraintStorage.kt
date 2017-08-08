@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -54,7 +52,7 @@ interface ConstraintStorage {
     val maxTypeDepthFromInitialConstraints: Int
     val errors: List<KotlinCallDiagnostic>
     val fixedTypeVariables: Map<TypeConstructor, UnwrappedType>
-    val lambdaArguments: List<ResolvedLambdaArgument>
+    val postponedArguments: List<PostponedKotlinCallArgument>
     val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall>
 
     object Empty : ConstraintStorage {
@@ -64,7 +62,7 @@ interface ConstraintStorage {
         override val maxTypeDepthFromInitialConstraints: Int get() = 1
         override val errors: List<KotlinCallDiagnostic> get() = emptyList()
         override val fixedTypeVariables: Map<TypeConstructor, UnwrappedType> get() = emptyMap()
-        override val lambdaArguments: List<ResolvedLambdaArgument> get() = emptyList()
+        override val postponedArguments: List<PostponedKotlinCallArgument> get() = emptyList()
         override val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall> get() = emptyList()
     }
 }
@@ -125,10 +123,14 @@ class InitialConstraint(
 fun InitialConstraint.checkConstraint(substitutor: TypeSubstitutor): Boolean {
     val newA = substitutor.substitute(a)
     val newB = substitutor.substitute(a)
+    return checkConstraint(newB, constraintKind, newA)
+}
+
+fun checkConstraint(constraintType: UnwrappedType, constraintKind: ConstraintKind, resultType: UnwrappedType): Boolean {
     val typeChecker = KotlinTypeChecker.DEFAULT
     return when (constraintKind) {
-        ConstraintKind.EQUALITY -> typeChecker.equalTypes(newA, newB)
-        ConstraintKind.UPPER -> typeChecker.isSubtypeOf(newA, newB)
-        ConstraintKind.LOWER -> typeChecker.isSubtypeOf(newB, newA)
+        ConstraintKind.EQUALITY -> typeChecker.equalTypes(constraintType, resultType)
+        ConstraintKind.LOWER -> typeChecker.isSubtypeOf(constraintType, resultType)
+        ConstraintKind.UPPER -> typeChecker.isSubtypeOf(resultType, constraintType)
     }
 }

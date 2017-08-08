@@ -15,10 +15,11 @@
 !org/apache/log4j/net/SMTP*,
 !org/apache/log4j/or/jms/MessageRenderer*,
 !org/jdom/xpath/Jaxen*,
+!org/jline/builtins/ssh/**,
 !org/mozilla/javascript/xml/impl/xmlbeans/**,
 !net/sf/cglib/**,
 !META-INF/maven**,
-**.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,
+**.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,**.txt,**.caps,
 META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
 messages/**)
 
@@ -51,6 +52,7 @@ messages/**)
 -dontwarn org.w3c.dom.ElementTraversal
 -dontwarn javaslang.match.annotation.Unapply
 -dontwarn javaslang.match.annotation.Patterns
+-dontwarn org.jline.builtins.Nano$Buffer
 
 -libraryjars '<rtjar>'
 -libraryjars '<jssejar>'
@@ -184,9 +186,8 @@ messages/**)
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureReader { *; }
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureVisitor { *; }
 
--keepclassmembers class org.jetbrains.org.objectweb.asm.Type {
-    *** ARRAY;
-    *** OBJECT;
+-keep class org.jetbrains.org.objectweb.asm.Type {
+    public protected *;
 }
 
 -keepclassmembers class org.jetbrains.org.objectweb.asm.ClassReader {
@@ -204,3 +205,6 @@ messages/**)
 # for tools.jar
 -keep class com.sun.tools.javac.** { *; }
 -keep class com.sun.source.** { *; }
+
+# for coroutines
+-keep class kotlinx.coroutines.** { *; }

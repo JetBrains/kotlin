@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,13 +66,16 @@ class KotlinCallResolver(
     ): Collection<ResolvedKotlinCall> {
         kotlinCall.checkCallInvariants()
 
+        val isSafeCall = (kotlinCall.explicitReceiver as? SimpleKotlinCallArgument)?.isSafeCall ?: false
+
         val resolutionCandidates = givenCandidates.map {
             SimpleKotlinResolutionCandidate(callContext,
                                             kotlinCall,
                                             if (it.dispatchReceiver == null) ExplicitReceiverKind.NO_EXPLICIT_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER,
-                                            it.dispatchReceiver?.let { ReceiverExpressionKotlinCallArgument(it) },
+                                            it.dispatchReceiver?.let { ReceiverExpressionKotlinCallArgument(it, isSafeCall) },
                                             null,
                                             it.descriptor,
+                                            it.knownTypeParametersResultingSubstitutor,
                                             listOf()
             )
         }

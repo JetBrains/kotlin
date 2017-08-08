@@ -24,7 +24,7 @@ class TypeParameter(val oldName: String, val newName: String?, val isReified: Bo
 class TypeRemapper private constructor(
         private val typeMapping: MutableMap<String, String>,
         val parent: TypeRemapper? = null,
-        val isRootInlineLambda: Boolean = false
+        private val isRootInlineLambda: Boolean = false
 ) {
     private val additionalMappings = hashMapOf<String, String>()
     private val typeParametersMapping = hashMapOf<String, TypeParameter>()

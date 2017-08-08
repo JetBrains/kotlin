@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.noarg.NO_ARG_CLASS_KEY
 import org.jetbrains.kotlin.psi.KtClass
@@ -54,7 +55,7 @@ abstract class AbstractNoArgDeclarationChecker : DeclarationChecker, AnnotationB
             val superClass = descriptor.getSuperClassOrAny()
             if (superClass.constructors.none { it.isNoArgConstructor() } && !superClass.hasSpecialAnnotation(declaration)) {
                 val reportTarget = declaration.nameIdentifier ?: declaration.getClassOrInterfaceKeyword() ?: declaration
-                diagnosticHolder.report(ErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS.on(reportTarget))
+                diagnosticHolder.reportFromPlugin(ErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS.on(reportTarget), DefaultErrorMessagesNoArg)
             }
         }
     }

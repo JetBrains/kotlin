@@ -21,10 +21,10 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.replaceUsagesInWholeProject
+import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -57,6 +57,7 @@ class DeprecatedSymbolUsageInWholeProjectFix(
         return when (referenceTarget) {
             is KtNamedFunction -> referenceTarget
             is KtProperty -> referenceTarget
+            is KtTypeAlias -> referenceTarget
             is KtConstructor<*> -> referenceTarget.getContainingClassOrObject() //TODO: constructor can be deprecated itself
             else -> null
         }

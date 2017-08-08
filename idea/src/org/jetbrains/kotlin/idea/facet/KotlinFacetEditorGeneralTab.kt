@@ -26,13 +26,16 @@ import com.intellij.ui.HoverHyperlinkLabel
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.ThreeStateCheckBox
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.config.createCompilerArguments
+import org.jetbrains.kotlin.config.splitArgumentString
 import org.jetbrains.kotlin.idea.compiler.configuration.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.awt.BorderLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 import javax.swing.event.DocumentEvent
+import kotlin.reflect.full.findAnnotation
 
 class KotlinFacetEditorGeneralTab(
         private val configuration: KotlinFacetConfiguration,
@@ -45,10 +48,10 @@ class KotlinFacetEditorGeneralTab(
     ) : JPanel(BorderLayout()) {
         private val isMultiEditor = configuration == null
 
-        var editableCommonArguments: CommonCompilerArguments
-        var editableJvmArguments: K2JVMCompilerArguments
-        var editableJsArguments: K2JSCompilerArguments
-        var editableCompilerSettings: CompilerSettings
+        private var editableCommonArguments: CommonCompilerArguments
+        private var editableJvmArguments: K2JVMCompilerArguments
+        private var editableJsArguments: K2JSCompilerArguments
+        private var editableCompilerSettings: CompilerSettings
 
         val compilerConfigurable: KotlinCompilerConfigurableTab
 
@@ -64,9 +67,9 @@ class KotlinFacetEditorGeneralTab(
             else {
                 editableCommonArguments = configuration!!.settings.compilerArguments!!
                 editableJvmArguments = editableCommonArguments as? K2JVMCompilerArguments
-                                       ?: Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings
+                                       ?: Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JVMCompilerArguments
                 editableJsArguments = editableCommonArguments as? K2JSCompilerArguments
-                                      ?: Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings
+                                      ?: Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JSCompilerArguments
                 editableCompilerSettings = configuration.settings.compilerSettings!!
             }
 
@@ -129,10 +132,10 @@ class KotlinFacetEditorGeneralTab(
             compilerConfigurable.setTargetPlatform(chosenPlatform)
             compilerConfigurable.setEnabled(!useProjectSettings)
             if (useProjectSettings) {
-                compilerConfigurable.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).settings
-                compilerConfigurable.k2jvmCompilerArguments = Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings
-                compilerConfigurable.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings
-                compilerConfigurable.compilerSettings = KotlinCompilerSettings.getInstance(project).settings
+                compilerConfigurable.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as CommonCompilerArguments?
+                compilerConfigurable.k2jvmCompilerArguments = Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JVMCompilerArguments?
+                compilerConfigurable.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JSCompilerArguments?
+                compilerConfigurable.compilerSettings = KotlinCompilerSettings.getInstance(project).settings.unfrozen() as CompilerSettings?
             }
             else {
                 compilerConfigurable.commonCompilerArguments = editableCommonArguments
@@ -143,7 +146,7 @@ class KotlinFacetEditorGeneralTab(
             compilerConfigurable.reset()
         }
 
-        val chosenPlatform: TargetPlatformKind<*>?
+        private val chosenPlatform: TargetPlatformKind<*>?
             get() = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
     }
 
@@ -160,9 +163,7 @@ class KotlinFacetEditorGeneralTab(
             }
             val argumentClass = primaryArguments.javaClass
             val additionalArguments = argumentClass.newInstance().apply {
-                parseCommandLineArguments(
-                        splitArgumentString(editor.compilerConfigurable.additionalArgsOptionsField.text).toTypedArray(), this
-                )
+                parseCommandLineArguments(splitArgumentString(editor.compilerConfigurable.additionalArgsOptionsField.text), this)
                 validateArguments(errors)?.let { message -> return ValidationResult(message) }
             }
             val emptyArguments = argumentClass.newInstance()
@@ -171,14 +172,15 @@ class KotlinFacetEditorGeneralTab(
                 is TargetPlatformKind.JavaScript -> jsUIExposedFields
                 else -> commonUIExposedFields
             }
-            val fieldsToCheck = collectFieldsToCopy(argumentClass, false).filter { it.name in fieldNamesToCheck }
+
+            val propertiesToCheck = collectProperties(argumentClass.kotlin, false).filter { it.name in fieldNamesToCheck }
             val overridingArguments = ArrayList<String>()
             val redundantArguments = ArrayList<String>()
-            for (field in fieldsToCheck) {
-                val additionalValue = field[additionalArguments]
-                if (additionalValue != field[emptyArguments]) {
-                    val argumentInfo = field.annotations.firstIsInstanceOrNull<Argument>() ?: continue
-                    val addTo = if (additionalValue != field[primaryArguments]) overridingArguments else redundantArguments
+            for (property in propertiesToCheck) {
+                val additionalValue = property.get(additionalArguments)
+                if (additionalValue != property.get(emptyArguments)) {
+                    val argumentInfo = property.findAnnotation<Argument>() ?: continue
+                    val addTo = if (additionalValue != property.get(primaryArguments)) overridingArguments else redundantArguments
                     addTo += "<strong>" + argumentInfo.value.first() + "</strong>"
                 }
             }

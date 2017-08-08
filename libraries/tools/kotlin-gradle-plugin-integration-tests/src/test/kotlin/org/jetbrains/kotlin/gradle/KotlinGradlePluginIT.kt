@@ -151,13 +151,13 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testLogLevelForceGC() {
-        val debugProject = Project("simpleProject", GRADLE_VERSION, minLogLevel = LogLevel.DEBUG)
-        debugProject.build("build") {
+        val debugProject = Project("simpleProject", GRADLE_VERSION, minLogLevel = LogLevel.LIFECYCLE)
+        debugProject.build("build", "-Dkotlin.gradle.test.report.memory.usage=true") {
             assertContains("Forcing System.gc()")
         }
 
-        val infoProject = Project("simpleProject", GRADLE_VERSION, minLogLevel = LogLevel.INFO)
-        infoProject.build("clean", "build") {
+        val infoProject = Project("simpleProject", GRADLE_VERSION, minLogLevel = LogLevel.QUIET)
+        infoProject.build("clean", "build", "-Dkotlin.gradle.test.report.memory.usage=true") {
             assertNotContains("Forcing System.gc()")
         }
     }

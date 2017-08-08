@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtFile
 
 class ExtractKotlinFunctionHandler(
-        val allContainersEnabled: Boolean = false,
+        private val allContainersEnabled: Boolean = false,
         private val helper: ExtractionEngineHelper = ExtractKotlinFunctionHandler.InteractiveExtractionHelper) : RefactoringActionHandler {
 
     object InteractiveExtractionHelper : ExtractionEngineHelper(EXTRACT_FUNCTION) {

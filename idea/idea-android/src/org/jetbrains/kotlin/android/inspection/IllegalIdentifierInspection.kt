@@ -52,12 +52,12 @@ class IllegalIdentifierInspection : AbstractKotlinInspection() {
                 }
             }
 
-            fun checkAndroidFacet(element: PsiElement): Boolean {
+            private fun checkAndroidFacet(element: PsiElement): Boolean {
                 return element.getAndroidFacetForFile() != null || ApplicationManager.getApplication().isUnitTestMode
             }
 
             // https://source.android.com/devices/tech/dalvik/dex-format.html#string-syntax
-            fun isValidDalvikCharacter(c: Char) = when (c) {
+            private fun isValidDalvikCharacter(c: Char) = when (c) {
                 in 'A'..'Z' -> true
                 in 'a'..'z' -> true
                 in '0'..'9' -> true

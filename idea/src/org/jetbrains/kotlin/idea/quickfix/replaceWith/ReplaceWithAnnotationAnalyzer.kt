@@ -78,17 +78,14 @@ object ReplaceWithAnnotationAnalyzer {
 
         val expressionTypingServices = resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
 
-        fun analyzeExpression(): BindingContext {
-            return expression.analyzeInContext(scope, expressionTypingServices = expressionTypingServices)
-        }
+        fun analyzeExpression() = expression.analyzeInContext(scope, expressionTypingServices = expressionTypingServices)
 
-        return CodeToInlineBuilder(symbolDescriptor, resolutionFacade)
-                .prepareCodeToInline(expression, emptyList(), ::analyzeExpression, importFqNames = importFqNames(annotation))
+        return CodeToInlineBuilder(symbolDescriptor, resolutionFacade).prepareCodeToInline(expression, emptyList(), ::analyzeExpression)
     }
 
-    fun analyzeClassReplacement(
+    fun analyzeClassifierReplacement(
             annotation: ReplaceWith,
-            symbolDescriptor: ClassDescriptor,
+            symbolDescriptor: ClassifierDescriptorWithTypeParameters,
             resolutionFacade: ResolutionFacade
     ): KtUserType? {
         val psiFactory = KtPsiFactory(resolutionFacade.project)
@@ -162,14 +159,24 @@ object ReplaceWithAnnotationAnalyzer {
                 getResolutionScope(moduleDescriptor.getPackage(descriptor.fqName), ownerDescriptor, additionalScopes)
             }
 
-            is PackageViewDescriptor -> LexicalScope.Base(
-                    chainImportingScopes(listOf(descriptor.memberScope.memberScopeAsImportingScope()) + additionalScopes)!!,
-                    ownerDescriptor
-            )
+            is PackageViewDescriptor -> {
+                LexicalScope.Base(
+                        chainImportingScopes(listOf(descriptor.memberScope.memberScopeAsImportingScope()) + additionalScopes)!!,
+                        ownerDescriptor)
+            }
 
             is ClassDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
                 ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope }).scopeForMemberDeclarationResolution()
+            }
+
+            is TypeAliasDescriptor -> {
+                val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
+                LexicalScopeImpl(outerScope, descriptor, false, null, LexicalScopeKind.TYPE_ALIAS_HEADER, LocalRedeclarationChecker.DO_NOTHING) {
+                    for (typeParameter in descriptor.declaredTypeParameters) {
+                        addClassifierDescriptor(typeParameter)
+                    }
+                }
             }
 
             is FunctionDescriptor -> {
@@ -186,4 +193,5 @@ object ReplaceWithAnnotationAnalyzer {
             else -> return null // something local, should not work with ReplaceWith
         }
     }
+
 }

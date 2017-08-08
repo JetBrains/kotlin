@@ -51,8 +51,11 @@ import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
+import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -65,9 +68,7 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.utils.JsLibraryUtils
-import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.util.*
@@ -79,6 +80,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
         const val JVM_BUILD_META_INFO_FILE_NAME = "jvm-build-meta-info.txt"
         const val SKIP_CACHE_VERSION_CHECK_PROPERTY = "kotlin.jps.skip.cache.version.check"
+        const val JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home"
     }
 
     private val statisticsLogger = TeamcityStatisticsLogger()
@@ -90,7 +92,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     override fun buildStarted(context: CompileContext) {
         LOG.debug("==========================================")
         LOG.info("is Kotlin incremental compilation enabled: ${IncrementalCompilation.isEnabled()}")
-        LOG.info("is Kotlin experimental incremental compilation enabled: ${IncrementalCompilation.isExperimental()}")
         LOG.info("is Kotlin compiler daemon enabled: ${isDaemonEnabled()}")
 
         val historyLabel = context.getBuilderParameter("history label")
@@ -240,11 +241,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val project = projectDescriptor.project
         val lookupTracker = getLookupTracker(project)
         val incrementalCaches = getIncrementalCaches(chunk, context)
-        val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context, messageCollector)
-        if (!environment.success()) {
-            environment.reportErrorsTo(messageCollector)
-            return ABORT
-        }
+        val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context, messageCollector) ?: return ABORT
 
         val commonArguments = compilerArgumentsForChunk(chunk).apply {
             reportOutputFiles = true
@@ -311,8 +308,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return OK
         }
 
-        processChanges(filesToCompile.values().toSet(), allCompiledFiles, dataManager, incrementalCaches.values, changesInfo, fsOperations)
-        incrementalCaches.values.forEach { it.cleanDirtyInlineFunctions() }
+        changesInfo.processChangesUsingLookups(filesToCompile.values().toSet(), dataManager, fsOperations, incrementalCaches.values)
 
         return OK
     }
@@ -372,13 +368,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
                     for (target in allTargets) {
                         dataManager.getKotlinCache(target).clean()
-                    }
-                }
-                CacheVersion.Action.CLEAN_EXPERIMENTAL_CACHES -> {
-                    LOG.info("Clearing experimental caches for all targets")
-
-                    for (target in allTargets) {
-                        dataManager.getKotlinCache(target).cleanExperimental()
                     }
                 }
                 CacheVersion.Action.CLEAN_DATA_CONTAINER -> {
@@ -455,7 +444,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             lookupTracker: LookupTracker,
             context: CompileContext,
             messageCollector: MessageCollectorAdapter
-    ): JpsCompilerEnvironment {
+    ): JpsCompilerEnvironment? {
         val compilerServices = with(Services.Builder()) {
             register(IncrementalCompilationComponents::class.java,
                   IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { TargetId(it.key) },
@@ -468,8 +457,15 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             build()
         }
 
+        val paths = computeKotlinPathsForJpsPlugin()
+        if (paths == null || !paths.homePath.exists()) {
+            messageCollector.report(ERROR, "Cannot find kotlinc home. Make sure the plugin is properly installed, " +
+                                           "or specify $JPS_KOTLIN_HOME_PROPERTY system property")
+            return null
+        }
+
         return JpsCompilerEnvironment(
-                PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),
+                paths,
                 compilerServices,
                 ClassCondition { className ->
                     className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.components.")
@@ -483,6 +479,27 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 messageCollector,
                 OutputItemsCollectorImpl()
         )
+    }
+
+    // When JPS is run on TeamCity, it can not rely on Kotlin plugin layout,
+    // so the path to Kotlin is specified in a system property
+    private fun computeKotlinPathsForJpsPlugin(): KotlinPaths? {
+        if (System.getProperty("kotlin.jps.tests").equals("true", ignoreCase = true)) {
+            return PathUtil.kotlinPathsForDistDirectory
+        }
+
+        val jpsKotlinHome = System.getProperty(JPS_KOTLIN_HOME_PROPERTY)
+        if (jpsKotlinHome != null) {
+            return KotlinPathsFromHomeDir(File(jpsKotlinHome))
+        }
+
+        val jar = PathUtil.pathUtilJar.takeIf(File::exists)
+        if (jar?.name == "kotlin-jps-plugin.jar") {
+            val pluginHome = jar.parentFile.parentFile.parentFile
+            return KotlinPathsFromHomeDir(File(pluginHome, PathUtil.HOME_FOLDER_NAME))
+        }
+
+        return null
     }
 
     private fun getGeneratedFiles(
@@ -617,8 +634,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             filesToCompile: MultiMap<ModuleBuildTarget, File>
     ) {
-        if (!IncrementalCompilation.isExperimental()) return
-
         if (lookupTracker !is LookupTrackerImpl) throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker::class.java}")
 
         val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
@@ -788,51 +803,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     }
 }
 
-private fun processChanges(
-        compiledFiles: Set<File>,
-        allCompiledFiles: MutableSet<File>,
-        dataManager: BuildDataManager,
-        caches: Collection<JpsIncrementalCacheImpl>,
-        compilationResult: CompilationResult,
-        fsOperations: FSOperationsHelper
-) {
-    if (IncrementalCompilation.isExperimental()) {
-        compilationResult.doProcessChangesUsingLookups(compiledFiles, dataManager, fsOperations, caches)
-    }
-    else {
-        compilationResult.doProcessChanges(compiledFiles, allCompiledFiles, caches, fsOperations)
-    }
-}
-
-private fun CompilationResult.doProcessChanges(
-        compiledFiles: Set<File>,
-        allCompiledFiles: MutableSet<File>,
-        caches: Collection<JpsIncrementalCacheImpl>,
-        fsOperations: FSOperationsHelper
-) {
-    KotlinBuilder.LOG.debug("compilationResult = $this")
-
-    when {
-        inlineAdded -> {
-            allCompiledFiles.clear()
-            fsOperations.markChunk(recursively = true, kotlinOnly = true, excludeFiles = compiledFiles)
-            return
-        }
-        constantsChanged -> {
-            fsOperations.markChunk(recursively = true, kotlinOnly = false, excludeFiles = allCompiledFiles)
-            return
-        }
-        protoChanged -> {
-            fsOperations.markChunk(recursively = false, kotlinOnly = true, excludeFiles = allCompiledFiles)
-        }
-    }
-
-    if (inlineChanged) {
-        val files = caches.flatMap { it.getFilesToReinline() }
-        fsOperations.markFiles(files, excludeFiles = compiledFiles)
-    }
-}
-
 private class JpsICReporter : ICReporter {
     override fun report(message: ()->String) {
         if (KotlinBuilder.LOG.isDebugEnabled) {
@@ -841,7 +811,7 @@ private class JpsICReporter : ICReporter {
     }
 }
 
-private fun CompilationResult.doProcessChangesUsingLookups(
+private fun CompilationResult.processChangesUsingLookups(
         compiledFiles: Set<File>,
         dataManager: BuildDataManager,
         fsOperations: FSOperationsHelper,
@@ -856,7 +826,7 @@ private fun CompilationResult.doProcessChangesUsingLookups(
     val (dirtyLookupSymbols, dirtyClassFqNames) = getDirtyData(allCaches, reporter)
     val dirtyFiles = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, reporter) +
                      mapClassesFqNamesToFiles(allCaches, dirtyClassFqNames, reporter)
-    fsOperations.markFiles(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
+    fsOperations.markInChunkOrDependents(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
 
     reporter.report { "End of processing changes" }
 }
@@ -864,7 +834,7 @@ private fun CompilationResult.doProcessChangesUsingLookups(
 private fun getLookupTracker(project: JpsProject): LookupTracker {
     val testLookupTracker = project.testingContext?.lookupTracker ?: LookupTracker.DO_NOTHING
 
-    if (IncrementalCompilation.isExperimental()) return LookupTrackerImpl(testLookupTracker)
+    if (IncrementalCompilation.isEnabled()) return LookupTrackerImpl(testLookupTracker)
 
     return testLookupTracker
 }

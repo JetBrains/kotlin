@@ -15,6 +15,7 @@ dependencies {
     testCompile project(':kotlin-allopen')
 
     testCompile "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     testCompile "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
     testCompile "org.jetbrains.kotlin:kotlin-build-common-test:$kotlin_version"
 
@@ -24,6 +25,9 @@ dependencies {
 processResources {
     expand(project.properties)
 }
+
+compileTestKotlin.kotlinOptions.jdkHome = JDK_18
+compileTestKotlin.kotlinOptions.jvmTarget = "1.8"
 
 tasks.withType(Test) {
     onlyIf { !project.hasProperty("noTest") }

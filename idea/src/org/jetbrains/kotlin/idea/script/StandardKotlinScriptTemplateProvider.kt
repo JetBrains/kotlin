@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.script.ScriptTemplatesProvider
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import kotlin.script.dependencies.*
-import kotlin.script.dependencies.DependenciesResolver.ResolveResult
+import kotlin.script.experimental.dependencies.*
+import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class StandardKotlinScriptTemplateProvider(val project: Project) : ScriptTemplatesProvider {
@@ -60,7 +61,7 @@ class BundledKotlinScriptDependenciesResolver : DependenciesResolver {
         val javaHome = environment.get("sdk") as String?
         val dependencies = ScriptDependencies(
                 javaHome = javaHome?.let(::File),
-                classpath = with(PathUtil.getKotlinPathsForIdeaPlugin()) {
+                classpath = with(PathUtil.kotlinPathsForIdeaPlugin) {
                     listOf(
                             reflectPath,
                             stdlibPath,

@@ -18,25 +18,26 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExplicitTypeParameterConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.KnownTypeParameterConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.RUNTIME_ERROR
+import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
+import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (candidateDescriptor is ConstructorDescriptor && !kotlinCall.isSuperOrDelegatingConstructorCall) {
+        if (candidateDescriptor is ConstructorDescriptor && !callContext.externalPredicates.isSuperOrDelegatingConstructorCall(kotlinCall)) {
             if (candidateDescriptor.constructedClass.modality == Modality.ABSTRACT) {
                 return listOf(InstantiationOfAbstractClass)
             }
@@ -52,9 +53,9 @@ internal object CheckVisibility : ResolutionPart {
         val invisibleMember = Visibilities.findInvisibleMember(receiverValue, candidateDescriptor, containingDescriptor) ?: return emptyList()
 
         if (dispatchReceiverArgument is ExpressionKotlinCallArgument) {
-            val smartCastReceiver = getReceiverValueWithSmartCast(receiverValue, dispatchReceiverArgument.stableType)
+            val smartCastReceiver = getReceiverValueWithSmartCast(receiverValue, dispatchReceiverArgument.receiver.stableType)
             if (Visibilities.findInvisibleMember(smartCastReceiver, candidateDescriptor, containingDescriptor) == null) {
-                return listOf(SmartCastDiagnostic(dispatchReceiverArgument, dispatchReceiverArgument.stableType))
+                return listOf(SmartCastDiagnostic(dispatchReceiverArgument, dispatchReceiverArgument.receiver.stableType))
             }
         }
 
@@ -83,7 +84,7 @@ internal object NoTypeArguments : ResolutionPart {
 
 internal object MapArguments : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        val mapping = callContext.argumentsToParametersMapper.mapArguments(kotlinCall, candidateDescriptor.original)
+        val mapping = callContext.argumentsToParametersMapper.mapArguments(kotlinCall, candidateDescriptor)
         argumentMappingByOriginal = mapping.parameterToCallArgumentMap
         return mapping.diagnostics
     }
@@ -108,26 +109,8 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
             descriptorWithFreshTypes = candidateDescriptor
             return emptyList()
         }
-        val typeParameters = candidateDescriptor.typeParameters
-
-        val freshTypeVariables = typeParameters.map { TypeVariableFromCallableDescriptor(kotlinCall, it) }
-        typeVariablesForFreshTypeParameters = freshTypeVariables
-
-        val toFreshVariables = FreshVariableNewTypeSubstitutor(freshTypeVariables)
-
-        for (freshVariable in freshTypeVariables) {
-            csBuilder.registerVariable(freshVariable)
-        }
-
-        for (index in typeParameters.indices) {
-            val typeParameter = typeParameters[index]
-            val freshVariable = freshTypeVariables[index]
-            val position = DeclaredUpperBoundConstraintPosition(typeParameter)
-
-            for (upperBound in typeParameter.upperBounds) {
-                csBuilder.addSubtypeConstraint(freshVariable.defaultType, toFreshVariables.safeSubstitute(upperBound.unwrap()), position)
-            }
-        }
+        val toFreshVariables = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, csBuilder, kotlinCall)
+        typeVariablesForFreshTypeParameters = toFreshVariables.freshVariables
 
         // bad function -- error on declaration side
         if (csBuilder.hasContradiction) {
@@ -136,18 +119,26 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
         }
 
         // optimization
-        if (typeArgumentMappingByOriginal == NoExplicitArguments) {
+        if (typeArgumentMappingByOriginal == NoExplicitArguments && knownTypeParametersResultingSubstitutor == null) {
             descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables)
             csBuilder.simplify().let { assert(it.isEmpty) { "Substitutor should be empty: $it, call: $kotlinCall" } }
             return emptyList()
         }
 
+        val typeParameters = candidateDescriptor.typeParameters
         for (index in typeParameters.indices) {
             val typeParameter = typeParameters[index]
+            val knownTypeArgument = knownTypeParametersResultingSubstitutor?.substitute(typeParameter.defaultType)
+            if (knownTypeArgument != null) {
+                val freshVariable = toFreshVariables.freshVariables[index]
+                csBuilder.addEqualityConstraint(freshVariable.defaultType, knownTypeArgument.unwrap(), KnownTypeParameterConstraintPosition(knownTypeArgument))
+                continue
+            }
+
             val typeArgument = typeArgumentMappingByOriginal.getTypeArgument(typeParameter)
 
             if (typeArgument is SimpleTypeArgument) {
-                val freshVariable = freshTypeVariables[index]
+                val freshVariable = toFreshVariables.freshVariables[index]
                 csBuilder.addEqualityConstraint(freshVariable.defaultType, typeArgument.type, ExplicitTypeParameterConstraintPosition(typeArgument))
             }
             else {
@@ -169,6 +160,33 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
         descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables).substitute(toFixedTypeParameters)
 
         return emptyList()
+    }
+
+    fun createToFreshVariableSubstitutorAndAddInitialConstraints(
+            candidateDescriptor: CallableDescriptor,
+            csBuilder: ConstraintSystemOperation,
+            kotlinCall: KotlinCall?
+    ): FreshVariableNewTypeSubstitutor {
+        val typeParameters = candidateDescriptor.typeParameters
+
+        val freshTypeVariables = typeParameters.map { TypeVariableFromCallableDescriptor(it, kotlinCall) }
+
+        val toFreshVariables = FreshVariableNewTypeSubstitutor(freshTypeVariables)
+
+        for (freshVariable in freshTypeVariables) {
+            csBuilder.registerVariable(freshVariable)
+        }
+
+        for (index in typeParameters.indices) {
+            val typeParameter = typeParameters[index]
+            val freshVariable = freshTypeVariables[index]
+            val position = DeclaredUpperBoundConstraintPosition(typeParameter)
+
+            for (upperBound in typeParameter.upperBounds) {
+                csBuilder.addSubtypeConstraint(freshVariable.defaultType, toFreshVariables.safeSubstitute(upperBound.unwrap()), position)
+            }
+        }
+        return toFreshVariables
     }
 }
 
@@ -200,57 +218,56 @@ internal object CheckReceivers : ResolutionPart {
 
         val expectedType = receiverParameter.type.unwrap()
 
-        return when (receiverArgument) {
-            is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, receiverArgument, expectedType, isReceiver = true)
-            is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, receiverArgument, expectedType, isReceiver = true)
-            else -> incorrectReceiver(receiverArgument)
-        }
+        return checkSimpleArgument(csBuilder, receiverArgument, expectedType, isReceiver = true)
     }
-
-    private fun incorrectReceiver(callReceiver: SimpleKotlinCallArgument): Nothing =
-            error("Incorrect receiver type: $callReceiver. Class name: ${callReceiver.javaClass.canonicalName}")
 
     override fun SimpleKotlinResolutionCandidate.process() =
             listOfNotNull(checkReceiver(dispatchReceiverArgument, descriptorWithFreshTypes.dispatchReceiverParameter),
                           checkReceiver(extensionReceiver, descriptorWithFreshTypes.extensionReceiverParameter))
 }
 
+internal object CheckArguments : ResolutionPart {
+    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+        val diagnostics = SmartList<KotlinCallDiagnostic>()
+        for (parameterDescriptor in descriptorWithFreshTypes.valueParameters) {
+            // error was reported in ArgumentsToParametersMapper
+            val resolvedCallArgument = argumentMappingByOriginal[parameterDescriptor.original] ?: continue
+            for (argument in resolvedCallArgument.arguments) {
 
-fun <D : CallableDescriptor> D.safeSubstitute(substitutor: TypeSubstitutor): D =
-        @Suppress("UNCHECKED_CAST") (substitute(substitutor) as D)
+                val diagnostic = when (argument) {
+                    is SimpleKotlinCallArgument ->
+                        checkSimpleArgument(csBuilder, argument, argument.getExpectedType(parameterDescriptor))
+                    is PostponableKotlinCallArgument ->
+                        createPostponedArgumentAndPerformInitialChecks(kotlinCall, csBuilder, argument, parameterDescriptor)
+                    else -> unexpectedArgument(argument)
+                }
+                diagnostics.addIfNotNull(diagnostic)
 
-fun UnwrappedType.substitute(substitutor: TypeSubstitutor): UnwrappedType = substitutor.substitute(this, Variance.INVARIANT)!!.unwrap()
-
-
-object InstantiationOfAbstractClass : KotlinCallDiagnostic(RUNTIME_ERROR) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
+                if (diagnostic != null && !diagnostic.candidateApplicability.isSuccess) break
+            }
+        }
+        return diagnostics
+    }
 }
 
-class UnstableSmartCast(val expressionArgument: ExpressionKotlinCallArgument, val targetType: UnwrappedType) :
-        KotlinCallDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(expressionArgument, this)
+internal object CheckInfixResolutionPart : ResolutionPart {
+    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+        if (callContext.externalPredicates.isInfixCall(kotlinCall) &&
+            (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isInfix)) {
+            return listOf(InfixCallNoInfixModifier)
+        }
+
+        return emptyList()
+    }
 }
 
-class UnsafeCallError(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallReceiver(receiver, this)
-}
+internal object CheckOperatorResolutionPart : ResolutionPart {
+    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+        if (callContext.externalPredicates.isOperatorCall(kotlinCall) &&
+            (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isOperator)) {
+            return listOf(InvokeConventionCallNoOperatorModifier)
+        }
 
-class ExpectedLambdaParametersCountMismatch(
-        val lambdaArgument: LambdaKotlinCallArgument,
-        val expected: Int,
-        val actual: Int
-) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(lambdaArgument, this)
-}
-
-class UnexpectedReceiver(val functionExpression: FunctionExpression) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(functionExpression, this)
-}
-
-class MissingReceiver(val functionExpression: FunctionExpression) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(functionExpression, this)
-}
-
-class ErrorCallableMapping(val functionReference: ResolvedFunctionReference) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(functionReference.argument, this)
+        return emptyList()
+    }
 }

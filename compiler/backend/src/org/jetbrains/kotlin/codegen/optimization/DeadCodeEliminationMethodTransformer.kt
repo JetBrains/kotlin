@@ -88,7 +88,7 @@ class DeadCodeEliminationMethodTransformer : MethodTransformer() {
         return true
     }
 
-    class Result(val removedNodes: Set<AbstractInsnNode>) {
+    class Result(private val removedNodes: Set<AbstractInsnNode>) {
         fun hasRemovedAnything() = removedNodes.isNotEmpty()
         fun isRemoved(node: AbstractInsnNode) = removedNodes.contains(node)
         fun isAlive(node: AbstractInsnNode) = !isRemoved(node)

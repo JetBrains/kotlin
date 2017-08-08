@@ -69,7 +69,7 @@ class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpress
 
     val fqNameList = mutableListOf<FqNameUnsafe>()
 
-    var fqNameStrings: List<String>
+    private var fqNameStrings: List<String>
         get() = fqNameList.map { it.asString() }
         set(value) {
             fqNameList.clear()

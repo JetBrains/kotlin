@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.SET
 
 object OperatorNameCompletion {
 
-    val additionalOperatorPresentation = mapOf(
+    private val additionalOperatorPresentation = mapOf(
             SET to "[...] = ...",
             GET to "[...]",
             CONTAINS to "in !in",

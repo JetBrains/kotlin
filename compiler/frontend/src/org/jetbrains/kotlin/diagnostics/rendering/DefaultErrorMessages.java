@@ -90,8 +90,8 @@ public class DefaultErrorMessages {
     static {
         MAP.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", ELEMENT_TEXT);
 
-        MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is {1} in {2}", NAME, VISIBILITY, NAME_OF_PARENT_OR_FILE);
-        MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is {1} in {2}", NAME, VISIBILITY, NAME_OF_PARENT_OR_FILE);
+        MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is {1} in {2}", NAME, VISIBILITY, NAME_OF_CONTAINING_DECLARATION_OR_FILE);
+        MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is {1} in {2}", NAME, VISIBILITY, NAME_OF_CONTAINING_DECLARATION_OR_FILE);
 
         MAP.put(PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL, "Protected constructor ''{0}'' from other classes can only be used in super-call", Renderers.SHORT_NAMES_IN_TYPES);
 
@@ -159,6 +159,7 @@ public class DefaultErrorMessages {
         MAP.put(INAPPLICABLE_RECEIVER_TARGET, "'@receiver:' annotations can only be applied to the receiver type of extension function or extension property declarations");
         MAP.put(INAPPLICABLE_PARAM_TARGET, "'@param:' annotations could be applied only to primary constructor parameters");
         MAP.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", STRING);
+        MAP.put(INAPPLICABLE_FILE_TARGET, "'@file:' annotations can only be applied before package declaration");
 
         MAP.put(ILLEGAL_SINCE_KOTLIN_VALUE, "Invalid @SinceKotlin annotation value (should be 'major.minor' or 'major.minor.patch')");
         MAP.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}", STRING);
@@ -306,7 +307,8 @@ public class DefaultErrorMessages {
         MAP.put(CAPTURED_VAL_INITIALIZATION, "Captured values initialization is forbidden due to possible reassignment", NAME);
         MAP.put(CAPTURED_MEMBER_VAL_INITIALIZATION, "Captured member values initialization is forbidden due to possible reassignment", NAME);
         MAP.put(SETTER_PROJECTED_OUT, "Setter for ''{0}'' is removed by type projection", NAME);
-        MAP.put(INVISIBLE_SETTER, "Cannot assign to ''{0}'': the setter is {1} in {2}", NAME, VISIBILITY, NAME_OF_PARENT_OR_FILE);
+        MAP.put(INVISIBLE_SETTER, "Cannot assign to ''{0}'': the setter is {1} in {2}", NAME, VISIBILITY,
+                NAME_OF_CONTAINING_DECLARATION_OR_FILE);
         MAP.put(INITIALIZATION_BEFORE_DECLARATION, "Variable cannot be initialized before declaration", NAME);
         MAP.put(VARIABLE_EXPECTED, "Variable expected");
 
@@ -322,14 +324,19 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATION, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
         MAP.put(DEPRECATION_ERROR, "Using ''{0}'' is an error. {1}", DEPRECATION_RENDERER, STRING);
 
+        MAP.put(TYPEALIAS_EXPANSION_DEPRECATION, "''{0}'' uses ''{1}'', which is deprecated. {2}", DEPRECATION_RENDERER, DEPRECATION_RENDERER, STRING);
+        MAP.put(TYPEALIAS_EXPANSION_DEPRECATION_ERROR, "''{0}'' uses ''{1}'', which is an error. {2}", DEPRECATION_RENDERER, DEPRECATION_RENDERER, STRING);
+
         DiagnosticParameterRenderer<Pair<LanguageVersion, String>> sinceKotlinInfoMessage = (pair, renderingContext) -> {
             String message = pair.getSecond();
             return pair.getFirst().getVersionString() + (message != null ? ". " + message : "");
         };
         MAP.put(SINCE_KOTLIN_INFO_DEPRECATION, "''{0}''{1} should not be used in Kotlin {2}", DEPRECATION_RENDERER,
-                (obj, renderingContext) -> obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only supported since Kotlin " + obj.asString() + " and", sinceKotlinInfoMessage);
+                (obj, renderingContext) -> obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only supported since Kotlin " + obj.asString() + " and",
+                sinceKotlinInfoMessage);
         MAP.put(SINCE_KOTLIN_INFO_DEPRECATION_ERROR, "''{0}''{1} cannot be used in Kotlin {2}", DEPRECATION_RENDERER,
-                (obj, renderingContext) -> obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only available since Kotlin " + obj.asString() + " and", sinceKotlinInfoMessage);
+                (obj, renderingContext) -> obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only available since Kotlin " + obj.asString() + " and",
+                sinceKotlinInfoMessage);
 
         MAP.put(API_NOT_AVAILABLE, "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}", STRING, STRING);
 
@@ -786,6 +793,8 @@ public class DefaultErrorMessages {
                 "Annotations on block-level expressions are being parsed differently depending on presence of a new line after them. " +
                 "Use new line if whole block-level expression must be annotated or wrap annotated expression in parentheses");
 
+        MAP.put(ANNOTATION_USED_AS_ANNOTATION_ARGUMENT, "An annotation can't be used as the annotations argument");
+
         MAP.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects");
         MAP.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate");
         MAP.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter");
@@ -857,6 +866,10 @@ public class DefaultErrorMessages {
         MAP.put(NON_LOCAL_SUSPENSION_POINT, "Suspension functions can be called only within coroutine body");
         MAP.put(ILLEGAL_SUSPEND_FUNCTION_CALL, "Suspend function ''{0}'' should be called only from a coroutine or another suspend function", NAME);
         MAP.put(ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL, "Restricted suspending functions can only invoke member or extension suspending functions on their restricted coroutine scope");
+
+        MAP.put(PLUGIN_ERROR, "{0}: {1}", TO_STRING, TO_STRING);
+        MAP.put(PLUGIN_WARNING, "{0}: {1}", TO_STRING, TO_STRING);
+        MAP.put(PLUGIN_INFO, "{0}: {1}", TO_STRING, TO_STRING);
 
         MAP.setImmutable();
 

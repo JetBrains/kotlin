@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,35 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
-interface IsDescriptorFromSourcePredicate: (CallableDescriptor) -> Boolean
+// stateless component
+interface KotlinResolutionExternalPredicates {
+    fun isDescriptorFromSource(descriptor: CallableDescriptor): Boolean
+    fun isInfixCall(kotlinCall: KotlinCall): Boolean
+    fun isOperatorCall(kotlinCall: KotlinCall): Boolean
+    fun isSuperOrDelegatingConstructorCall(kotlinCall: KotlinCall): Boolean
+    fun isHiddenInResolution(descriptor: DeclarationDescriptor, kotlinCall: KotlinCall): Boolean
+}
 
 // This components hold state (trace). Work with this carefully.
 interface KotlinResolutionCallbacks {
     fun analyzeAndGetLambdaResultArguments(
-            topLevelCall: KotlinCall,
+            outerCall: KotlinCall,
             lambdaArgument: LambdaKotlinCallArgument,
+            isSuspend: Boolean,
             receiverType: UnwrappedType?,
             parameters: List<UnwrappedType>,
             expectedReturnType: UnwrappedType? // null means, that return type is not proper i.e. it depends on some type variables
-    ): List<KotlinCallArgument>
+    ): List<SimpleKotlinCallArgument>
 
     // todo this is hack for some client which try to read ResolvedCall from trace before all calls completed
     fun bindStubResolvedCallForCandidate(candidate: KotlinResolutionCandidate)
 
-    fun completeLambdaReturnType(lambdaArgument: ResolvedLambdaArgument, returnType: KotlinType)
+    fun completeCallableReference(callableReferenceArgument: PostponedCallableReferenceArgument,
+                                  resultTypeParameters: List<UnwrappedType>)
 
+    fun completeCollectionLiteralCalls(collectionLiteralArgument: PostponedCollectionLiteralArgument)
 }

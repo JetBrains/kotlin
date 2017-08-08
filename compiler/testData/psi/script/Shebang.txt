@@ -1,10 +1,10 @@
 KtFile: Shebang.kts
+  PsiComment(SHEBANG_COMMENT)('#!/usr/bin/env kotlin')
+  PsiWhiteSpace('\n\n')
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST
     <empty list>
-  PsiComment(SHEBANG_COMMENT)('#!/usr/bin/env kotlin')
-  PsiWhiteSpace('\n\n')
   SCRIPT
     BLOCK
       SCRIPT_INITIALIZER

@@ -8,9 +8,18 @@ End of files
 Compiling files:
   module1/src/const.kt
 End of files
+Marked as dirty by Kotlin:
+  module2/src/usage.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
-Exit code: NOTHING_DONE
+Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
+  out/production/module1/test/ConstKt.class
+End of files
+Compiling files:
+  module1/src/const.kt
+End of files
+Exit code: OK
 ------------------------------------------
 Building module2
 Cleaning output files:

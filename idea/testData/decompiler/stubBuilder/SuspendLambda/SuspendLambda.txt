@@ -94,3 +94,62 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+      FUN[fqName=test.SuspendLambda.createCoroutine, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, name=createCoroutine]
+        MODIFIER_LIST[public final]
+        TYPE_PARAMETER_LIST
+          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_REFERENCE
+          MODIFIER_LIST[suspend]
+          FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=R]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=T]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=R]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=completion]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=test]
+                REFERENCE_EXPRESSION[referencedName=Continuation]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]
+      FUN[fqName=test.SuspendLambda.createCoroutineAnother, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, name=createCoroutineAnother]
+        MODIFIER_LIST[public final]
+        TYPE_PARAMETER_LIST
+          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_REFERENCE
+          MODIFIER_LIST[suspend]
+          FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=R]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=T]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]

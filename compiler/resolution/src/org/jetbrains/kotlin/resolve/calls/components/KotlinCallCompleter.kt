@@ -19,37 +19,35 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
-import org.jetbrains.kotlin.resolve.calls.inference.components.FixationOrderCalculator
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
+import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaTypeVariable
+import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
+import org.jetbrains.kotlin.types.TypeApproximator
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.types.checker.NewCapturedType
+import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.contains
 
 class KotlinCallCompleter(
-        val resultTypeResolver: ResultTypeResolver,
-        val fixationOrderCalculator: FixationOrderCalculator
+        private val fixationOrderCalculator: FixationOrderCalculator,
+        private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
+        private val inferenceStepResolver: InferenceStepResolver
 ) {
     interface Context {
         val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall>
         val hasContradiction: Boolean
         fun buildCurrentSubstitutor(): NewTypeSubstitutor
         fun buildResultingSubstitutor(): NewTypeSubstitutor
-        val lambdaArguments: List<ResolvedLambdaArgument>
+        val postponedArguments: List<PostponedKotlinCallArgument>
+        val lambdaArguments: List<PostponedLambdaArgument>
 
         // type can be proper if it not contains not fixed type variables
         fun canBeProper(type: UnwrappedType): Boolean
@@ -66,6 +64,7 @@ class KotlinCallCompleter(
     fun transformWhenAmbiguity(candidate: KotlinResolutionCandidate, resolutionCallbacks: KotlinResolutionCallbacks): ResolvedKotlinCall =
             toCompletedBaseResolvedCall(candidate.lastCall.constraintSystem.asCallCompleterContext(), candidate, resolutionCallbacks)
 
+    // todo investigate variable+function calls
     fun completeCallIfNecessary(
             candidate: KotlinResolutionCandidate,
             expectedType: UnwrappedType?,
@@ -81,11 +80,21 @@ class KotlinCallCompleter(
         if (topLevelCall.prepareForCompletion(expectedType)) {
             val c = candidate.lastCall.constraintSystem.asCallCompleterContext()
 
+            resolveCallableReferenceArguments(c, candidate.lastCall)
+
             topLevelCall.competeCall(c, resolutionCallbacks)
             return toCompletedBaseResolvedCall(c, candidate, resolutionCallbacks)
         }
 
         return ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
+    }
+
+    // todo do not use topLevelCall
+    private fun resolveCallableReferenceArguments(c: Context, topLevelCall: SimpleKotlinResolutionCandidate) {
+        for (callableReferenceArgument in c.postponedArguments) {
+            if (callableReferenceArgument !is PostponedCallableReferenceArgument) continue
+            processCallableReferenceArgument(topLevelCall.callContext, c.getBuilder(), callableReferenceArgument)
+        }
     }
 
     private fun toCompletedBaseResolvedCall(
@@ -98,10 +107,21 @@ class KotlinCallCompleter(
         val competedCalls = c.innerCalls.map {
             it.candidate.toCompletedCall(currentSubstitutor)
         }
-        c.lambdaArguments.forEach {
-            resolutionCallbacks.completeLambdaReturnType(it, currentSubstitutor.safeSubstitute(it.returnType))
+        for (postponedArgument in c.postponedArguments) {
+            when (postponedArgument) {
+                is PostponedLambdaArgument -> {
+                    postponedArgument.finalReturnType = currentSubstitutor.safeSubstitute(postponedArgument.returnType)
+                }
+                is PostponedCallableReferenceArgument -> {
+                    val resultTypeParameters = postponedArgument.myTypeVariables.map { currentSubstitutor.safeSubstitute(it.defaultType) }
+                    resolutionCallbacks.completeCallableReference(postponedArgument, resultTypeParameters)
+                }
+                is PostponedCollectionLiteralArgument -> {
+                    resolutionCallbacks.completeCollectionLiteralCalls(postponedArgument)
+                }
+            }
         }
-        return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls)
+        return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls, c.lambdaArguments)
     }
 
     private fun KotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor): CompletedKotlinCall {
@@ -115,9 +135,10 @@ class KotlinCallCompleter(
     }
 
     private fun SimpleKotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor): CompletedKotlinCall.Simple {
+        val containsCapturedTypes = descriptorWithFreshTypes.returnType?.contains { it is NewCapturedType } ?: false
         val resultingDescriptor = when {
             descriptorWithFreshTypes is FunctionDescriptor ||
-            descriptorWithFreshTypes is PropertyDescriptor && descriptorWithFreshTypes.typeParameters.isNotEmpty() ->
+            (descriptorWithFreshTypes is PropertyDescriptor && (descriptorWithFreshTypes.typeParameters.isNotEmpty() || containsCapturedTypes)) ->
                 // this code is very suspicious. Now it is very useful for BE, because they cannot do nothing with captured types,
                 // but it seems like temporary solution.
                 descriptorWithFreshTypes.substituteAndApproximateCapturedTypes(substitutor)
@@ -126,7 +147,8 @@ class KotlinCallCompleter(
         }
 
         val typeArguments = descriptorWithFreshTypes.typeParameters.map {
-            substitutor.safeSubstitute(typeVariablesForFreshTypeParameters[it.index].defaultType)
+            val substituted = substitutor.safeSubstitute(typeVariablesForFreshTypeParameters[it.index].defaultType)
+            TypeApproximator().approximateToSuperType(substituted, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: substituted
         }
 
         val status = computeStatus(this, resultingDescriptor)
@@ -135,58 +157,9 @@ class KotlinCallCompleter(
     }
 
     private fun computeStatus(candidate: SimpleKotlinResolutionCandidate, resultingDescriptor: CallableDescriptor): ResolutionCandidateStatus {
-        val smartCasts = reportSmartCasts(candidate, resultingDescriptor).takeIf { it.isNotEmpty() } ?: return candidate.status
+        val smartCasts = additionalDiagnosticReporter.createAdditionalDiagnostics(candidate, resultingDescriptor).takeIf { it.isNotEmpty() } ?:
+                         return candidate.status
         return ResolutionCandidateStatus(candidate.status.diagnostics + smartCasts)
-    }
-
-    private fun createSmartCastDiagnostic(argument: KotlinCallArgument, expectedResultType: UnwrappedType): SmartCastDiagnostic? {
-        if (argument !is ExpressionKotlinCallArgument) return null
-        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(argument.receiver.receiverValue.type, expectedResultType)) {
-            return SmartCastDiagnostic(argument, expectedResultType.unwrap())
-        }
-        return null
-    }
-
-    private fun reportSmartCastOnReceiver(
-            candidate: KotlinResolutionCandidate,
-            receiver: SimpleKotlinCallArgument?,
-            parameter: ReceiverParameterDescriptor?
-    ): SmartCastDiagnostic? {
-        if (receiver == null || parameter == null) return null
-        val expectedType = parameter.type.unwrap().let { if (receiver.isSafeCall) it.makeNullableAsSpecified(true) else it }
-
-        val smartCastDiagnostic = createSmartCastDiagnostic(receiver, expectedType) ?: return null
-
-        // todo may be we have smart cast to Int?
-        return smartCastDiagnostic.takeIf {
-            candidate.status.diagnostics.filterIsInstance<UnsafeCallError>().none {
-                it.receiver == receiver
-            }
-            &&
-            candidate.status.diagnostics.filterIsInstance<UnstableSmartCast>().none {
-                it.expressionArgument == receiver
-            }
-        }
-    }
-
-
-    private fun reportSmartCasts(candidate: SimpleKotlinResolutionCandidate, resultingDescriptor: CallableDescriptor): List<KotlinCallDiagnostic> = SmartList<KotlinCallDiagnostic>().apply {
-        addIfNotNull(reportSmartCastOnReceiver(candidate, candidate.extensionReceiver, resultingDescriptor.extensionReceiverParameter))
-        addIfNotNull(reportSmartCastOnReceiver(candidate, candidate.dispatchReceiverArgument, resultingDescriptor.dispatchReceiverParameter))
-
-        for (parameter in resultingDescriptor.valueParameters) {
-            for (argument in candidate.argumentMappingByOriginal[parameter.original]?.arguments ?: continue) {
-                val smartCastDiagnostic = createSmartCastDiagnostic(argument, argument.getExpectedType(parameter)) ?: continue
-
-                val thereIsUnstableSmartCastError = candidate.status.diagnostics.filterIsInstance<UnstableSmartCast>().any {
-                    it.expressionArgument == argument
-                }
-
-                if (!thereIsUnstableSmartCastError) {
-                    add(smartCastDiagnostic)
-                }
-            }
-        }
     }
 
     // true if we should complete this call
@@ -206,39 +179,19 @@ class KotlinCallCompleter(
     }
 
     // true if it is the end (happy or not)
+    // every step we fix type variable or analyzeLambda
     private fun SimpleKotlinResolutionCandidate.oneStepToEndOrLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks): Boolean {
-        if (c.hasContradiction) return true
-
         val lambda = c.lambdaArguments.find { canWeAnalyzeIt(c, it) }
         if (lambda != null) {
-            analyzeLambda(c, resolutionCallbacks, callContext, kotlinCall, lambda)
+            analyzeLambda(c, resolutionCallbacks, lambda)
             return false
         }
 
         val completionOrder = fixationOrderCalculator.computeCompletionOrder(c.asFixationOrderCalculatorContext(), descriptorWithFreshTypes.returnTypeOrNothing)
-        for ((variableWithConstraints, direction) in completionOrder) {
-            if (c.hasContradiction) return true
-            val variable = variableWithConstraints.typeVariable
-
-            val resultType = resultTypeResolver.findResultType(c.asResultTypeResolverContext(), variableWithConstraints, direction)
-            if (resultType == null) {
-                c.addError(NotEnoughInformationForTypeParameter(variable))
-                break
-            }
-            c.fixVariable(variable, resultType)
-
-            if (variable is LambdaTypeVariable) {
-                val resolvedLambda = c.lambdaArguments.find { it.argument == variable.lambdaArgument } ?: return true
-                if (canWeAnalyzeIt(c, resolvedLambda)) {
-                    analyzeLambda(c, resolutionCallbacks, callContext, kotlinCall, resolvedLambda)
-                    return false
-                }
-            }
-        }
-        return true
+        return inferenceStepResolver.resolveVariables(c, completionOrder)
     }
 
-    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, topLevelCallContext: KotlinCallContext, topLevelCall: KotlinCall, lambda: ResolvedLambdaArgument) {
+    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: PostponedLambdaArgument) {
         val currentSubstitutor = c.buildCurrentSubstitutor()
         fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type)
 
@@ -246,35 +199,26 @@ class KotlinCallCompleter(
         val parameters = lambda.parameters.map(::substitute)
         val expectedType = lambda.returnType.takeIf { c.canBeProper(it) }?.let(::substitute)
         lambda.analyzed = true
-        lambda.resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(topLevelCall, lambda.argument, receiver, parameters, expectedType)
+        lambda.resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(lambda.outerCall, lambda.argument, lambda.isSuspend, receiver, parameters, expectedType)
 
-        for (innerCall in lambda.resultArguments) {
-            // todo strange code -- why top-level kotlinCall? may be it isn't right outer call
-            CheckArguments.checkArgument(topLevelCallContext, topLevelCall, c.getBuilder(), innerCall, lambda.returnType)
+        for (resultLambdaArgument in lambda.resultArguments) {
+            checkSimpleArgument(c.getBuilder(), resultLambdaArgument, lambda.returnType.let(::substitute))
         }
-//            when (innerCall) {
-//                is ResolvedKotlinCall.CompletedResolvedKotlinCall -> {
-//                    val returnType = innerCall.completedCall.lastCall.resultingDescriptor.returnTypeOrNothing
-//                    constraintInjector.addInitialSubtypeConstraint(injectorContext, returnType, lambda.returnType, position)
-//                }
-//                is ResolvedKotlinCall.OnlyResolvedKotlinCall -> {
-//                    // todo register call
-//                    val returnType = innerCall.candidate.lastCall.descriptorWithFreshTypes.returnTypeOrNothing
-//                    c.addInnerCall(innerCall)
-//                    constraintInjector.addInitialSubtypeConstraint(injectorContext, returnType, lambda.returnType, position)
-//                }
-//            }
+
+        if (lambda.resultArguments.isEmpty()) {
+            val unitType = lambda.returnType.builtIns.unitType
+            c.getBuilder().addSubtypeConstraint(lambda.returnType.let(::substitute), unitType, LambdaArgumentConstraintPosition(lambda))
+        }
     }
 
-    private fun canWeAnalyzeIt(c: Context, lambda: ResolvedLambdaArgument): Boolean {
+    private fun canWeAnalyzeIt(c: Context, lambda: PostponedLambdaArgument): Boolean {
         if (lambda.analyzed) return false
+
+        if (c.hasContradiction) return true // to record info about lambda and avoid exceptions
+
         lambda.receiver?.let {
             if (!c.canBeProper(it)) return false
         }
         return lambda.parameters.all { c.canBeProper(it) }
     }
-}
-
-class SmartCastDiagnostic(val expressionArgument: ExpressionKotlinCallArgument, val smartCastType: UnwrappedType): KotlinCallDiagnostic(ResolutionCandidateApplicability.RESOLVED) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(expressionArgument, this)
 }

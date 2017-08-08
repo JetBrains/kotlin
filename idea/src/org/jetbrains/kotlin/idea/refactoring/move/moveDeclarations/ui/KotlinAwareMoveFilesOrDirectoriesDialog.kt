@@ -157,7 +157,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     override fun doHelpAction() = HelpManager.getInstance().invokeHelp(helpID)
 
-    fun isOpenInEditor(): Boolean {
+    private fun isOpenInEditor(): Boolean {
         if (ApplicationManager.getApplication().isUnitTestMode) return false
         return PropertiesComponent.getInstance().getBoolean(MOVE_FILES_OPEN_IN_EDITOR, false)
     }

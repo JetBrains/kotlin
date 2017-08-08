@@ -1075,6 +1075,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("InValExtType.kt")
+            public void testInValExtType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/InValExtType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoAutoPopupAfterNumberLiteral.kt")
             public void testNoAutoPopupAfterNumberLiteral() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutoPopupAfterNumberLiteral.kt");

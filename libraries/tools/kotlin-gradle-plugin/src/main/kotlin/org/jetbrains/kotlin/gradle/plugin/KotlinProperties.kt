@@ -29,7 +29,9 @@ fun mapKotlinTaskProperties(project: Project, task: AbstractKotlinCompile<*>) {
     val localPropertiesFile = project.rootProject.file("local.properties")
     if (localPropertiesFile.isFile) {
         val properties = Properties()
-        properties.load(localPropertiesFile.inputStream())
+        localPropertiesFile.inputStream().use {
+            properties.load(it)
+        }
         propertyMappings.forEach { it.apply(properties, task) }
     }
 }

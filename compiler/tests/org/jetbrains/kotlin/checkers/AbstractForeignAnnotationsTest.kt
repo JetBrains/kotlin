@@ -29,9 +29,7 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsWithFullJdkTe
     open protected val annotationsPath: String
         get() = FOREIGN_ANNOTATIONS_SOURCES_PATH
 
-    override fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings {
-        return LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE).apply {
-            switchFlag(AnalysisFlags.loadJsr305Annotations, true)
-        }
-    }
+    override fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings =
+            LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE,
+                                        mapOf(AnalysisFlag.loadJsr305Annotations to Jsr305State.ENABLE))
 }

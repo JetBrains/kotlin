@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
-class AddLoopLabelFix(loop: KtLoopExpression, val jumpExpression: KtExpressionWithLabel): KotlinQuickFixAction<KtLoopExpression>(loop) {
+class AddLoopLabelFix(
+        loop: KtLoopExpression,
+        private val jumpExpression: KtExpressionWithLabel
+): KotlinQuickFixAction<KtLoopExpression>(loop) {
 
     private val existingLabelName = (loop.parent as? KtLabeledExpression)?.getLabelName()
 

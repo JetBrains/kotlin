@@ -177,7 +177,7 @@ class ConstantExpressionEvaluator(
         return getArgumentExpressionsForArrayLikeCall(resolvedCall)
     }
 
-    fun getArgumentExpressionsForCollectionLiteralCall(
+    private fun getArgumentExpressionsForCollectionLiteralCall(
             expression: KtCollectionLiteralExpression,
             trace: BindingTrace): Pair<List<KtExpression>, KotlinType?>? {
         val resolvedCall = trace[COLLECTION_LITERAL_CALL, expression] ?: return null

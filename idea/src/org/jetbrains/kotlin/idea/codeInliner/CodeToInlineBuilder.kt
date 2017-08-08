@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
@@ -54,19 +54,17 @@ class CodeToInlineBuilder(
     fun prepareCodeToInline(
             mainExpression: KtExpression?,
             statementsBefore: List<KtExpression>,
-            analyze: () -> BindingContext,
-            importFqNames: Collection<FqName> = emptyList()
+            analyze: () -> BindingContext
     ): CodeToInline {
         var bindingContext = analyze()
 
-        val codeToInline = MutableCodeToInline(mainExpression, statementsBefore.toMutableList(), importFqNames.toMutableSet())
+        val codeToInline = MutableCodeToInline(mainExpression, statementsBefore.toMutableList(), mutableSetOf())
 
         bindingContext = insertExplicitTypeArguments(codeToInline, bindingContext, analyze)
 
-        insertExplicitReceivers(codeToInline, bindingContext)
+        processReferences(codeToInline, bindingContext)
 
-        // NB: we must check in codeToInline, otherwise we get AE from addPostInsertionAction
-        if (mainExpression != null && mainExpression in codeToInline) {
+        if (mainExpression != null) {
             val functionLiteralExpression = mainExpression.unpackFunctionLiteral(true)
             if (functionLiteralExpression != null) {
                 val functionLiteralParameterTypes = getParametersForFunctionLiteral(functionLiteralExpression, bindingContext)
@@ -85,7 +83,7 @@ class CodeToInlineBuilder(
         val lambdaDescriptor = context.get(BindingContext.FUNCTION, functionLiteralExpression.functionLiteral)
         if (lambdaDescriptor == null || ErrorUtils.containsErrorType(lambdaDescriptor)) return null
         return lambdaDescriptor.valueParameters.joinToString {
-            it.name.asString() + ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(it.type)
+            it.name.render() + ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(it.type)
         }
     }
 
@@ -136,7 +134,7 @@ class CodeToInlineBuilder(
         return analyze()
     }
 
-    private fun insertExplicitReceivers(codeToInline: MutableCodeToInline, bindingContext: BindingContext) {
+    private fun processReferences(codeToInline: MutableCodeToInline, bindingContext: BindingContext) {
         val receiversToAdd = ArrayList<Pair<KtExpression, KtExpression>>()
 
         codeToInline.forEachDescendantOfType<KtSimpleNameExpression> { expression ->

@@ -451,7 +451,7 @@ interface KotlinIntroduceLambdaParameterHelper: KotlinIntroduceParameterHelper {
 open class KotlinIntroduceLambdaParameterHandler(
         helper: KotlinIntroduceLambdaParameterHelper = KotlinIntroduceLambdaParameterHelper.Default
 ): KotlinIntroduceParameterHandler(helper) {
-    val extractLambdaHelper = object: ExtractionEngineHelper(INTRODUCE_LAMBDA_PARAMETER) {
+    private val extractLambdaHelper = object: ExtractionEngineHelper(INTRODUCE_LAMBDA_PARAMETER) {
         private fun createDialog(
                 project: Project,
                 editor: Editor,

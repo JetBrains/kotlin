@@ -108,7 +108,7 @@ class KotlinInplaceParameterIntroducer(
 
         init {
             val templateState = TemplateManagerImpl.getTemplateState(myEditor)
-            val currentType = if (templateState != null && templateState.template != null) {
+            val currentType = if (templateState?.template != null) {
                 templateState
                         .getVariableValue(KotlinInplaceVariableIntroducer.TYPE_REFERENCE_VARIABLE_NAME)
                         ?.text

@@ -10,7 +10,7 @@ import java.io.File
 class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.0")
 class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.+")
 
-class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "4.0-rc-1", androidGradlePluginVersion = "3.0.0-alpha4") {
+class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "4.1-rc-1", androidGradlePluginVersion = "3.0.0-alpha8") {
 
     @Test
     fun testApplyWithFeaturePlugin() {

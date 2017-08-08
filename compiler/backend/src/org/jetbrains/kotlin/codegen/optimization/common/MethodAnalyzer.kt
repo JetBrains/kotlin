@@ -67,7 +67,7 @@ open class MethodAnalyzer<V : Value>(
         protected val interpreter: Interpreter<V>
 ) {
     val instructions: InsnList = method.instructions
-    val nInsns: Int = instructions.size()
+    private val nInsns: Int = instructions.size()
 
     val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
 
@@ -146,10 +146,10 @@ open class MethodAnalyzer<V : Value>(
 
             }
             catch (e: AnalyzerException) {
-                throw AnalyzerException(e.node, "Error at instruction #" + insn + " ${insnNode.insnText}: " + e.message, e)
+                throw AnalyzerException(e.node, "Error at instruction #$insn ${insnNode.insnText}: ${e.message}", e)
             }
             catch (e: Exception) {
-                throw AnalyzerException(insnNode, "Error at instruction #" + insn + " ${insnNode.insnText}: " + e.message, e)
+                throw AnalyzerException(insnNode, "Error at instruction #$insn ${insnNode.insnText}: ${e.message}", e)
             }
 
         }
@@ -236,7 +236,7 @@ open class MethodAnalyzer<V : Value>(
         for (tcb in m.tryCatchBlocks) {
             val begin = instructions.indexOf(tcb.start)
             val end = instructions.indexOf(tcb.end)
-            for (j in begin..end - 1) {
+            for (j in begin until end) {
                 var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[j]
                 if (insnHandlers == null) {
                     insnHandlers = ArrayList<TryCatchBlockNode>()
@@ -249,15 +249,13 @@ open class MethodAnalyzer<V : Value>(
 
     private fun mergeControlFlowEdge(insn: Int, frame: Frame<V>) {
         val oldFrame = frames[insn]
-        val changes: Boolean
-
-        if (oldFrame == null) {
-            frames[insn] = newFrame(frame)
-            changes = true
-        }
-        else {
-            changes = oldFrame.merge(frame, interpreter)
-        }
+        val changes =
+                if (oldFrame != null)
+                    oldFrame.merge(frame, interpreter)
+                else {
+                    frames[insn] = newFrame(frame)
+                    true
+                }
         if (changes && !queued[insn]) {
             queued[insn] = true
             queue[top++] = insn

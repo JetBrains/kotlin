@@ -291,7 +291,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val platform = moduleDescriptor.getMultiTargetPlatform()
         if (platform == MultiTargetPlatform.Common) {
             return DefaultAnalyzerFacade.analyzeFiles(
-                    files, moduleDescriptor.name, true,
+                    files, moduleDescriptor.name, true, languageVersionSettings,
                     mapOf(
                             MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common,
                             MODULE_FILES to files

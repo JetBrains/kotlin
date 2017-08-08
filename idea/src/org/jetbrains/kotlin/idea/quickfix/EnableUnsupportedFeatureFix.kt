@@ -155,7 +155,7 @@ sealed class EnableUnsupportedFeatureFix(
             val targetVersion = feature.sinceVersion!!
 
             KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
-                val parsedApiVersion = ApiVersion.parse(apiVersion)
+                val parsedApiVersion = ApiVersion.parse(apiVersion!!)
                 if (parsedApiVersion != null && feature.sinceApiVersion > parsedApiVersion) {
                     if (!checkUpdateRuntime(project, feature.sinceApiVersion)) return@update
                     apiVersion = feature.sinceApiVersion.versionString

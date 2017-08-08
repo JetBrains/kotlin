@@ -8,15 +8,5 @@ End of files
 Compiling files:
   module2/src/b.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Cleaning output files:
-  out/production/module1/META-INF/module1.kotlin_module
-  out/production/module1/a/A.class
-  out/production/module1/a/AKt.class
-End of files
-Compiling files:
-  module1/src/a.kt
-End of files
 Exit code: OK
 ------------------------------------------

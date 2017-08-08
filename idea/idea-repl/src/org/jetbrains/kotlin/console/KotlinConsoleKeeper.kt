@@ -24,7 +24,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkType
-import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderEnumerator
@@ -68,7 +67,7 @@ class KotlinConsoleKeeper(val project: Project) {
         // use to debug repl process
         //paramList.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
 
-        val kotlinPaths = PathUtil.getKotlinPathsForIdeaPlugin()
+        val kotlinPaths = PathUtil.kotlinPathsForIdeaPlugin
         val replClassPath = listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
                 .joinToString(File.pathSeparator) { it.absolutePath }
 

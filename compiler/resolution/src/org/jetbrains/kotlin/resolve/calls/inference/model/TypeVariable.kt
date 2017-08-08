@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 
@@ -42,35 +43,22 @@ class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debu
 sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) {
     val freshTypeConstructor: TypeConstructor = TypeVariableTypeConstructor(builtIns, name)
 
+    // member scope is used if we have receiver with type TypeVariable(T)
+    // todo add to member scope methods from supertypes for type variable
     val defaultType: SimpleType = KotlinTypeFactory.simpleType(
             Annotations.EMPTY, freshTypeConstructor, arguments = emptyList(),
-            nullable = false, memberScope = ErrorUtils.createErrorScope("Type variable", true))
+            nullable = false, memberScope = builtIns.any.unsubstitutedMemberScope)
 
     override fun toString() = freshTypeConstructor.toString()
 }
 
 class TypeVariableFromCallableDescriptor(
-        val call: KotlinCall,
-        val originalTypeParameter: TypeParameterDescriptor
+        val originalTypeParameter: TypeParameterDescriptor,
+        val call: KotlinCall? = null
 ) : NewTypeVariable(originalTypeParameter.builtIns, originalTypeParameter.name.identifier)
 
-class LambdaTypeVariable(
+class TypeVariableForLambdaReturnType(
         val lambdaArgument: LambdaKotlinCallArgument,
-        val kind: Kind,
-        builtIns: KotlinBuiltIns
-) : NewTypeVariable(builtIns, createDebugName(lambdaArgument, kind)) {
-    enum class Kind {
-        RECEIVER,
-        PARAMETER,
-        RETURN_TYPE
-    }
-}
-
-private fun createDebugName(lambdaArgument: LambdaKotlinCallArgument, kind: LambdaTypeVariable.Kind): String {
-    val text = lambdaArgument.toString().let { it.substring(0..(Math.min(20, it.lastIndex))) }
-    return when (kind) {
-        LambdaTypeVariable.Kind.RECEIVER -> "Receiver[$text]"
-        LambdaTypeVariable.Kind.PARAMETER -> "Parameter[$text]"
-        LambdaTypeVariable.Kind.RETURN_TYPE -> "Result[$text]"
-    }
-}
+        builtIns: KotlinBuiltIns,
+        name: String
+) : NewTypeVariable(builtIns, name)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.resolve.calls.inference
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 
 interface ConstraintSystemOperation {
@@ -31,11 +31,13 @@ interface ConstraintSystemOperation {
     fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition)
 
     fun isProperType(type: UnwrappedType): Boolean
+
+    fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor>
 }
 
 interface ConstraintSystemBuilder : ConstraintSystemOperation {
     fun addInnerCall(innerCall: ResolvedKotlinCall.OnlyResolvedKotlinCall)
-    fun addLambdaArgument(resolvedLambdaArgument: ResolvedLambdaArgument)
+    fun addPostponedArgument(postponedArgument: PostponedKotlinCallArgument)
 
     // if runOperations return true, then this operation will be applied, and function return true
     fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean

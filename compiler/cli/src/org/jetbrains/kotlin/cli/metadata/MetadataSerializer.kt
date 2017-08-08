@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.serializeToByteArray
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -63,7 +64,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val analyzer = AnalyzerWithCompilerReport(messageCollector)
         analyzer.analyzeAndReport(files) {
-            DefaultAnalyzerFacade.analyzeFiles(files, moduleName, dependOnOldBuiltIns) { _, content ->
+            DefaultAnalyzerFacade.analyzeFiles(files, moduleName, dependOnOldBuiltIns, configuration.languageVersionSettings) { _, content ->
                 environment.createPackagePartProvider(content.moduleContentScope)
             }
         }

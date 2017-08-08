@@ -65,9 +65,16 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                     }
 
                     run(EDT) {
-                        for ((element, action, _) in elementToActions) {
+                        for ((element, action, _, writeActionNeeded) in elementToActions) {
                             if (element.isValid) {
-                                action()
+                                if (writeActionNeeded) {
+                                    runWriteAction {
+                                        action()
+                                    }
+                                }
+                                else {
+                                    action()
+                                }
                             }
                             else {
                                 modificationStamp = null
@@ -99,7 +106,7 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             }
 
 
-    private data class ActionData(val element: KtElement, val action: () -> Unit, val priority: Int)
+    private data class ActionData(val element: KtElement, val action: () -> Unit, val priority: Int, val writeActionNeeded: Boolean)
 
     private fun collectAvailableActions(file: KtFile, rangeMarker: RangeMarker?): List<ActionData> {
         val diagnostics = analyzeFileRange(file, rangeMarker)
@@ -118,7 +125,9 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                         J2KPostProcessingRegistrar.processings.forEach { processing ->
                             val action = processing.createAction(element, diagnostics)
                             if (action != null) {
-                                availableActions.add(ActionData(element, action, J2KPostProcessingRegistrar.priority(processing)))
+                                availableActions.add(ActionData(element, action,
+                                                                J2KPostProcessingRegistrar.priority(processing),
+                                                                processing.writeActionNeeded))
                             }
                         }
                     }

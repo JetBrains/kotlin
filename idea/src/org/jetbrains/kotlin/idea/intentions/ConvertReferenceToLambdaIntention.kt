@@ -39,7 +39,7 @@ class ConvertReferenceToLambdaInspection : IntentionBasedInspection<KtCallableRe
 class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntention<KtCallableReferenceExpression>(
         KtCallableReferenceExpression::class.java, "Convert reference to lambda"
 ) {
-    val SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE
+    private val SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE
 
     override fun applyTo(element: KtCallableReferenceExpression, editor: Editor?) {
         val context = element.analyze(BodyResolveMode.PARTIAL)

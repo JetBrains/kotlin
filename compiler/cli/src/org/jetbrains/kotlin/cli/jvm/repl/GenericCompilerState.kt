@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.script.dependencies.ScriptDependencies
+import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class ReplCompilerStageHistory(private val state: GenericReplCompilerState) : BasicReplStageHistory<ScriptDescriptor>(state.lock) {
 

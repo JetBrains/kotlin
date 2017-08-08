@@ -477,7 +477,7 @@ class KotlinCoreEnvironment private constructor(
             var pluginRoot =
                     configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
                     ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
-                    ?: PathUtil.getPathUtilJar()
+                    ?: PathUtil.pathUtilJar
 
             val app = ApplicationManager.getApplication()
             val parentFile = pluginRoot.parentFile

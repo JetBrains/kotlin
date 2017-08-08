@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import kotlin.script.dependencies.ScriptDependencies
+import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
     override fun equals(other: Any?) = other is ScriptModuleSearchScope && scriptFile == other.scriptFile && super.equals(other)
@@ -37,8 +37,11 @@ class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSear
     override fun hashCode() = scriptFile.hashCode() * 73 * super.hashCode()
 }
 
-data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
-                            val scriptDefinition: KotlinScriptDefinition) : IdeaModuleInfo {
+data class ScriptModuleInfo(
+        val project: Project,
+        val scriptFile: VirtualFile,
+        val scriptDefinition: KotlinScriptDefinition
+) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 

@@ -8,26 +8,25 @@ End of files
 Compiling files:
   src/A.kt
 End of files
+Marked as dirty by Kotlin:
+  src/B.kt
+  src/createADefault.kt
+  src/createANonDefault.kt
+  src/useA.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/foo/B.class
-  out/production/module/foo/C.class
   out/production/module/foo/CreateADefaultKt.class
   out/production/module/foo/CreateANonDefaultKt.class
-  out/production/module/foo/CreateBKt.class
   out/production/module/foo/UseAKt.class
-  out/production/module/foo/UseBKt.class
 End of files
 Compiling files:
   src/B.kt
-  src/C.kt
   src/createADefault.kt
   src/createANonDefault.kt
-  src/createB.kt
   src/useA.kt
-  src/useB.kt
 End of files
 Exit code: OK
 ------------------------------------------

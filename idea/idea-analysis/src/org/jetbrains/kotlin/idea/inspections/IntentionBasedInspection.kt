@@ -45,7 +45,7 @@ import kotlin.reflect.KClass
 @Suppress("DEPRECATION")
 @Deprecated("Please do not use for new inspections. Use AbstractKotlinInspection as base class for them")
 abstract class IntentionBasedInspection<TElement : PsiElement>(
-        val intentionInfos: List<IntentionBasedInspection.IntentionData<TElement>>,
+        private val intentionInfos: List<IntentionBasedInspection.IntentionData<TElement>>,
         protected open val problemText: String?
 ) : AbstractKotlinInspection() {
 

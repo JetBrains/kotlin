@@ -132,6 +132,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("doNotStoreNullForTmpInDestructuring.kt")
+    public void testDoNotStoreNullForTmpInDestructuring() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/doNotStoreNullForTmpInDestructuring.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("doNotStoreNullsForCapturedVars.kt")
     public void testDoNotStoreNullsForCapturedVars() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/doNotStoreNullsForCapturedVars.kt");
@@ -1238,6 +1244,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forInRangeToConst.kt")
+        public void testForInRangeToConst() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInRangeToConst.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forInRangeWithImplicitReceiver.kt")
         public void testForInRangeWithImplicitReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithImplicitReceiver.kt");
@@ -1253,6 +1265,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("forIntInDownTo.kt")
         public void testForIntInDownTo() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forIntInDownTo.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intrinsicArrayConstructorsUseCounterLoop.kt")
+        public void testIntrinsicArrayConstructorsUseCounterLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/intrinsicArrayConstructorsUseCounterLoop.kt");
             doTest(fileName);
         }
 
@@ -2189,6 +2207,18 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt18818.kt")
+        public void testKt18818() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/kt18818.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noBoxingInDefaultWhenWithSpecialCases.kt")
+        public void testNoBoxingInDefaultWhenWithSpecialCases() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/noBoxingInDefaultWhenWithSpecialCases.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("qualifiedConstValsInsideWhen.kt")
         public void testQualifiedConstValsInsideWhen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/qualifiedConstValsInsideWhen.kt");
@@ -2204,6 +2234,18 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("simpleConstValsInsideWhen.kt")
         public void testSimpleConstValsInsideWhen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/simpleConstValsInsideWhen.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenNull.kt")
+        public void testWhenNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/whenNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenZero.kt")
+        public void testWhenZero() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/whenZero.kt");
             doTest(fileName);
         }
     }

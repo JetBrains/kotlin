@@ -77,7 +77,7 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
         return true
     }
 
-    fun selectElements(klass: KtClassOrObject, project: Project, editor: Editor?) {
+    private fun selectElements(klass: KtClassOrObject, project: Project, editor: Editor?) {
         val containers = klass.getExtractionContainers(strict = true, includeAll = true) + SeparateFileWrapper(klass.manager)
 
         if (editor == null) return doInvoke(klass, containers.first(), project, editor)

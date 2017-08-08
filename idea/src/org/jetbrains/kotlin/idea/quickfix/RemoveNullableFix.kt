@@ -48,7 +48,7 @@ class RemoveNullableFix(element: KtNullableType,
     class Factory(private val typeOfError: NullableKind) : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtNullableType>? {
             val nullType = diagnostic.psiElement.getNonStrictParentOfType<KtNullableType>()
-            if (nullType == null || nullType.innerType == null) return null
+            if (nullType?.innerType == null) return null
             return RemoveNullableFix(nullType, typeOfError)
         }
     }

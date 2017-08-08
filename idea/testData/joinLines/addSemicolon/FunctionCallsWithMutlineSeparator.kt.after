@@ -1,0 +1,4 @@
+fun foo() {
+    println()<caret>
+    println()
+}

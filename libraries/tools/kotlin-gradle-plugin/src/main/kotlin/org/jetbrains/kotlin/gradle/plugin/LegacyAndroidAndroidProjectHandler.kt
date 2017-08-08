@@ -4,6 +4,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.build.gradle.internal.variant.BaseVariantOutputData
+import com.android.build.gradle.internal.variant.LibraryVariantData
 import com.android.build.gradle.internal.variant.TestVariantData
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.internal.registerGeneratedJavaSource
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.checkedReflection
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProviderAndroidWrapper
 import java.io.File
@@ -57,7 +59,28 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
 
         configureJavaTask(kotlinTask, javaTask, logger)
         createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, getVariantName(variantData))
+
+        // In lib modules, the androidTest variants get the classes jar in their classpath instead of the Java
+        // destination dir. To use it as a friend path, set the jar as the javaOutputDir (see its usages):
+        if (variantData is LibraryVariantData) {
+            variantData.dependencyJarOrNull?.let { kotlinTask.javaOutputDir = it }
+        }
     }
+
+    private val LibraryVariantData.dependencyJarOrNull: File?
+        get() =
+            checkedReflection(f@{
+                val output = variantConfiguration.javaClass.methods.firstOrNull { it.name == "getOutput" }
+                        ?.invoke(variantConfiguration)
+                        ?: return@f null
+
+                output.javaClass.methods?.firstOrNull { it.name == "getJarFile" }
+                        ?.invoke(output) as? File
+
+            }, { e: Exception ->
+                logger.kotlinDebug("dependencyJarOrNull for lib variant $name failed due to $e")
+                null
+            })
 
     override fun getVariantName(variant: BaseVariantData<out BaseVariantOutputData>): String = variant.name
 

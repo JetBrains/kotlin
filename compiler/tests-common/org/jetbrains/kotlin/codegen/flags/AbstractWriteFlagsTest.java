@@ -261,7 +261,7 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
 
         @Override
         public void visitInnerClass(@NotNull String innerClassInternalName, String outerClassInternalName, String name, int access) {
-            if (name.equals(innerClassName)) {
+            if (innerClassName.equals(name)) {
                 this.access = access;
                 isExists = true;
             }

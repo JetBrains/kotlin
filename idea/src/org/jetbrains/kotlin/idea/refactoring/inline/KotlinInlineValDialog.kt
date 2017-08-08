@@ -30,7 +30,8 @@ class KotlinInlineValDialog(
         private val property: KtProperty,
         private val reference: KtSimpleNameReference?,
         private val replacementStrategy: UsageReplacementStrategy,
-        private val assignmentToDelete: KtBinaryExpression?
+        private val assignmentToDelete: KtBinaryExpression?,
+        withPreview: Boolean = true
 ) : InlineOptionsDialog(property.project, true, property) {
 
     private var occurrenceCount = initOccurrencesNumber(property)
@@ -42,7 +43,7 @@ class KotlinInlineValDialog(
     init {
         myInvokedOnReference = reference != null
         title = refactoringName
-        setPreviewResults(shouldBeShown())
+        setPreviewResults(withPreview && shouldBeShown())
         if (forSimpleLocal()) {
             setDoNotAskOption(object : DialogWrapper.DoNotAskOption {
                 override fun isToBeShown() = EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog

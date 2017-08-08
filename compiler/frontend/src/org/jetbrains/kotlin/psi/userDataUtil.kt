@@ -49,8 +49,10 @@ class NotNullableCopyableUserDataProperty<in R : PsiElement, T : Any>(val key: K
     }
 }
 
-class NotNullableCopyableUserDataPropertyWithLazyDefault<in R : PsiElement, T : Any>(val key: Key<T>,
-                                                                                            val computeDefaultValue: () -> T) {
+class NotNullableCopyableUserDataPropertyWithLazyDefault<in R : PsiElement, T : Any>(
+        val key: Key<T>,
+        val computeDefaultValue: () -> T
+) {
     private val delegate by lazy { NotNullableCopyableUserDataProperty<R, T>(key, computeDefaultValue()) }
 
     operator fun getValue(thisRef: R, property: KProperty<*>) = delegate.getValue(thisRef, property)

@@ -2689,6 +2689,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("FunctionComment.kts")
+            public void testFunctionComment() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/FunctionComment.kts");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("Import.kts")
             public void testImport() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/Import.kts");
@@ -2710,6 +2716,18 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             @TestMetadata("ShebangIncorrect.kts")
             public void testShebangIncorrect() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/ShebangIncorrect.kts");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("ShebangWithImports.kts")
+            public void testShebangWithImports() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/ShebangWithImports.kts");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("ShebangWithPackage.kts")
+            public void testShebangWithPackage() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/ShebangWithPackage.kts");
                 doParsingTest(fileName);
             }
 

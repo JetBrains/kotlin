@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
+import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 
 object BranchedFoldingUtils {
-    fun getFoldableBranchedAssignment(branch: KtExpression?): KtBinaryExpression? {
+    private fun getFoldableBranchedAssignment(branch: KtExpression?): KtBinaryExpression? {
         fun checkAssignment(expression: KtBinaryExpression): Boolean {
             if (expression.operationToken !in KtTokens.ALL_ASSIGNMENTS) return false
 
@@ -51,7 +52,7 @@ object BranchedFoldingUtils {
                 it.getTargetLabel() == null
             }
 
-    fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean =
+    private fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean =
             a1.left?.text == a2.left?.text && a1.operationToken == a2.operationToken
 
     internal fun getFoldableAssignmentNumber(expression: KtExpression?): Int {
@@ -60,7 +61,7 @@ object BranchedFoldingUtils {
         fun collectAssignmentsAndCheck(e: KtExpression?): Boolean = when (e) {
             is KtWhenExpression -> {
                 val entries = e.entries
-                KtPsiUtil.checkWhenExpressionHasSingleElse(e) &&
+                !e.hasMissingCases() &&
                 entries.isNotEmpty() &&
                 entries.all { entry ->
                     val assignment = getFoldableBranchedAssignment(entry.expression)?.run { assignments.add(this) }
@@ -128,7 +129,7 @@ object BranchedFoldingUtils {
         is KtWhenExpression -> {
             val entries = expression.entries
             when {
-                !KtPsiUtil.checkWhenExpressionHasSingleElse(expression) -> null
+                expression.hasMissingCases() -> null
                 entries.isEmpty() -> null
                 else -> getFoldableReturns(entries.map { it.expression })
             }
@@ -210,5 +211,8 @@ object BranchedFoldingUtils {
     }
 
     private fun KtTryExpression.tryBlockAndCatchBodies(): List<KtExpression?> = listOf(tryBlock) + catchClauses.map { it.catchBody }
+
+    private fun KtWhenExpression.hasMissingCases(): Boolean =
+            !KtPsiUtil.checkWhenExpressionHasSingleElse(this) && WhenChecker.getMissingCases(this, this.analyze()).isNotEmpty()
 
 }

@@ -328,7 +328,7 @@ public class BodyResolver {
                 OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
                         trace, scopeForConstructor,
                         CallMaker.makeConstructorCallWithoutTypeArguments(call), NO_EXPECTED_TYPE, outerDataFlowInfo, false);
-                if (results.isSuccess()) {
+                if (results.isSingleResult()) {
                     KotlinType supertype = results.getResultingDescriptor().getReturnType();
                     recordSupertype(typeReference, supertype);
                     ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);

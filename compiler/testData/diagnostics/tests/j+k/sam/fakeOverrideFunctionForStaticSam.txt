@@ -1,0 +1,30 @@
+package
+
+public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+
+public open class BehaviorSubject</*0*/ T : kotlin.Any!> : Observable<T!> {
+    public constructor BehaviorSubject</*0*/ T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> create(/*0*/ f: Observable.OnSubscribe<T!>!): Observable<T!>!
+}
+
+public open class Observable</*0*/ T : kotlin.Any!> {
+    public constructor Observable</*0*/ T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface OnSubscribe</*0*/ T : kotlin.Any!> {
+        public abstract fun call(/*0*/ t: T!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public open fun </*0*/ T : kotlin.Any!> create(/*0*/ f: Observable.OnSubscribe<T!>!): Observable<T!>!
+}

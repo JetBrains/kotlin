@@ -24,8 +24,10 @@ import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import org.jetbrains.kotlin.idea.configuration.detectPlatformByPlugin
+import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.framework.libraryKind
 
 class KotlinAndroidGradleLibraryDataService : AbstractProjectDataService<JavaProject, Void>() {
@@ -43,7 +45,8 @@ class KotlinAndroidGradleLibraryDataService : AbstractProjectDataService<JavaPro
                 for (dep in dataNode.data.jarLibraryDependencies) {
                     val library = modelsProvider.getLibraryByName(dep.name) as LibraryEx? ?: continue
                     if (library.kind == null) {
-                        (modelsProvider.getModifiableLibraryModel(library) as LibraryEx.ModifiableModelEx).kind = targetLibraryKind
+                        val model = modelsProvider.getModifiableLibraryModel(library) as LibraryEx.ModifiableModelEx
+                        detectLibraryKind(model.getFiles(OrderRootType.CLASSES))?.let { model.kind = it }
                     }
                 }
             }

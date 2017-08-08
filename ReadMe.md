@@ -37,6 +37,8 @@ In order to build Kotlin distribution you need to have:
         JDK_17="path to JDK 1.7"
         JDK_18="path to JDK 1.8"
 
+> Note: The JDK 6 for MacOS is not available on Oracle's site. You can [download it here](https://support.apple.com/kb/DL1572). 
+
 ## Building
 
 To build this project, first time you try to build you need to run this:
@@ -113,7 +115,7 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 
 We love contributions! There's [lots to do on Kotlin](https://youtrack.jetbrains.com/issues/KT) and on the
 [standard library](https://youtrack.jetbrains.com/issues/KT?q=%23Kotlin%20%23Unresolved%20and%20(links:%20KT-2554,%20KT-4089%20or%20%23Libraries)) so why not chat with us
-about what you're interested in doing? Please join the #kontributors channel in [our Slack chat](http://kotlinslackin.herokuapp.com/)
+about what you're interested in doing? Please join the #kontributors channel in [our Slack chat](http://slack.kotlinlang.org/)
 and let us know about your plans.
 
 If you want to find some issues to start off with, try [this query](https://youtrack.jetbrains.com/issues/KT?q=tag:%20%7BUp%20For%20Grabs%7D%20%23Unresolved) which should find all Kotlin issues that marked as "up-for-grabs".

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
-import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -83,6 +81,7 @@ open class LazyClassMemberScope(
 
         addDataClassMethods(result, location)
         addSyntheticCompanionObject(result, location)
+        addSyntheticNestedClasses(result, location)
 
         result.trimToSize()
         return result
@@ -131,6 +130,7 @@ open class LazyClassMemberScope(
 
     override fun getNonDeclaredClasses(name: Name, result: MutableSet<ClassDescriptor>) {
         generateSyntheticCompanionObject(name, result)
+        c.syntheticResolveExtension.generateSyntheticClasses(thisDescriptor, name, c, declarationProvider, result)
     }
 
     override fun getNonDeclaredFunctions(name: Name, result: MutableSet<SimpleFunctionDescriptor>) {
@@ -218,6 +218,10 @@ open class LazyClassMemberScope(
         val syntheticCompanionName = c.syntheticResolveExtension.getSyntheticCompanionObjectNameIfNeeded(thisDescriptor) ?: return
         val descriptor = getContributedClassifier(syntheticCompanionName, location) ?: return
         result.add(descriptor)
+    }
+
+    private fun addSyntheticNestedClasses(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
+        result.addAll(c.syntheticResolveExtension.getSyntheticNestedClassNames(thisDescriptor).mapNotNull { getContributedClassifier(it, location) }.toList())
     }
 
     private fun generateSyntheticCompanionObject(name: Name, result: MutableSet<ClassDescriptor>) {

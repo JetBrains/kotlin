@@ -47,7 +47,7 @@ object JvmSimpleNameBacktickChecker : IdentifierChecker {
         }
     }
 
-    fun checkNamed(declaration: KtNamedDeclaration, diagnosticHolder: DiagnosticSink) {
+    private fun checkNamed(declaration: KtNamedDeclaration, diagnosticHolder: DiagnosticSink) {
         val name = declaration.name ?: return
 
         val element = declaration.nameIdentifier ?: declaration

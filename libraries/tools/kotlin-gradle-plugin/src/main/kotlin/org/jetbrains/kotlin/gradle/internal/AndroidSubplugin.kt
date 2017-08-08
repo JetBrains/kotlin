@@ -38,8 +38,16 @@ import javax.xml.parsers.DocumentBuilderFactory
 // Use apply plugin: 'kotlin-android-extensions' to enable Android Extensions in an Android project.
 class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
     override fun apply(project: Project) {
-        project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
+        val extension = project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
 
+        extension.setEvaluatedHandler { evaluatedExtension ->
+            if (evaluatedExtension.isExperimental) {
+                addAndroidExtensionsRuntimeIfNeeded(project)
+            }
+        }
+    }
+
+    private fun addAndroidExtensionsRuntimeIfNeeded(project: Project) {
         val kotlinPluginWrapper = project.plugins.findPlugin(KotlinAndroidPluginWrapper::class.java) ?: run {
             project.logger.error("'kotlin-android' plugin should be enabled before 'kotlin-android-extensions'")
             return
@@ -90,7 +98,8 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)
 
         if (androidExtensionsExtension.isExperimental) {
-            return applyExperimental(androidExtension, project, variantData, androidProjectHandler)
+            return applyExperimental(androidExtension, androidExtensionsExtension,
+                    project, variantData, androidProjectHandler)
         }
 
         val sourceSets = androidExtension.sourceSets
@@ -123,6 +132,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private fun applyExperimental(
             androidExtension: BaseExtension,
+            androidExtensionsExtension: AndroidExtensionsExtension,
             project: Project,
             variantData: Any?,
             androidProjectHandler: Any?
@@ -133,6 +143,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val pluginOptions = arrayListOf<SubpluginOption>()
 
         pluginOptions += SubpluginOption("experimental", "true")
+        pluginOptions += SubpluginOption("defaultCacheImplementation", androidExtensionsExtension.defaultCacheImplementation.optionName)
 
         val mainSourceSet = androidExtension.sourceSets.getByName("main")
         pluginOptions += SubpluginOption("package", getApplicationPackage(project, mainSourceSet))

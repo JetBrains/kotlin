@@ -189,7 +189,7 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
                                         File(jpsResourcesPath, "changeIncrementalOption"),
                                         File(jpsResourcesPath, "custom"),
                                         File(jpsResourcesPath, "lookupTracker"))
-        private val buildLogFinder = BuildLogFinder(isExperimentalEnabled = true, isGradleEnabled = true)
+        private val buildLogFinder = BuildLogFinder(isGradleEnabled = true)
 
         @Suppress("unused")
         @Parameterized.Parameters(name = "{1}")

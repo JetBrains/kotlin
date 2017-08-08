@@ -22,8 +22,11 @@ import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 
 abstract class AbstractBytecodeListingTestForAllOpen : AbstractBytecodeListingTest() {
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
+        val annotations = AbstractAllOpenDeclarationAttributeAltererExtension.ANNOTATIONS_FOR_TESTS +
+                          AllOpenCommandLineProcessor.SUPPORTED_PRESETS.flatMap { it.value }
+
         DeclarationAttributeAltererExtension.registerExtension(
-                environment.project, CliAllOpenDeclarationAttributeAltererExtension(
-                AbstractAllOpenDeclarationAttributeAltererExtension.ANNOTATIONS_FOR_TESTS))
+                environment.project,
+                CliAllOpenDeclarationAttributeAltererExtension(annotations))
     }
 }

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -123,7 +122,7 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     private fun reportSmartCast(smartCastDiagnostic: SmartCastDiagnostic) {
-        val expressionArgument = smartCastDiagnostic.expressionArgument
+        val expressionArgument = smartCastDiagnostic.argument
         if (expressionArgument is ExpressionKotlinCallArgumentImpl) {
             val context = context.replaceDataFlowInfo(expressionArgument.dataFlowInfoBeforeThisArgument)
             val argumentExpression = KtPsiUtil.getLastElementDeparenthesized(expressionArgument.valueArgument.getArgumentExpression (), context.statementFilter)
@@ -143,7 +142,7 @@ class DiagnosticReporterByTrackingStrategy(
 
     private fun reportUnstableSmartCast(unstableSmartCast: UnstableSmartCast) {
         // todo hack -- remove it after removing SmartCastManager
-        reportSmartCast(SmartCastDiagnostic(unstableSmartCast.expressionArgument, unstableSmartCast.targetType))
+        reportSmartCast(SmartCastDiagnostic(unstableSmartCast.argument, unstableSmartCast.targetType))
     }
 
     override fun constraintError(diagnostic: KotlinCallDiagnostic) {
@@ -151,8 +150,10 @@ class DiagnosticReporterByTrackingStrategy(
             NewConstraintError::class.java -> {
                 val constraintError = diagnostic as NewConstraintError
                 val position = constraintError.position.from
-                (position as? ArgumentConstraintPosition)?.let {
-                    val expression = it.argument.psiExpression ?: return
+                val argument = (position as? ArgumentConstraintPosition)?.argument
+                               ?: (position as? ReceiverConstraintPosition)?.argument
+                argument?.let {
+                    val expression = it.psiExpression ?: return
                     if (reportConstantTypeMismatch(constraintError, expression)) return
                     trace.report(Errors.TYPE_MISMATCH.on(expression, constraintError.upperType, constraintError.lowerType))
                 }

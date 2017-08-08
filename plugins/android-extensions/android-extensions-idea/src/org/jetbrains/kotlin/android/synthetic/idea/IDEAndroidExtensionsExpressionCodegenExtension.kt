@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.android.synthetic.idea
 
+import kotlinx.android.extensions.CacheImplementation
 import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension
 import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 
 class IDEAndroidExtensionsExpressionCodegenExtension : AbstractAndroidExtensionsExpressionCodegenExtension() {
-    override fun isExperimental(clazz: KtClassOrObject): Boolean {
-        val moduleInfo = clazz.getModuleInfo() ?: return false
-        return moduleInfo.androidExtensionsIsExperimental
-    }
+    override fun isExperimental(element: KtElement?) =
+            element?.getModuleInfo()?.androidExtensionsIsExperimental ?: false
+
+    override fun getGlobalCacheImpl(element: KtElement?) =
+            element?.getModuleInfo()?.androidExtensionsGlobalCacheImpl ?: CacheImplementation.DEFAULT
 }

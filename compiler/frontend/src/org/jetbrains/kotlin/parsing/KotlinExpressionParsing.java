@@ -35,6 +35,8 @@ import java.util.Set;
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.DEFAULT;
+import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.PRECEDING_ALL_COMMENTS_BINDER;
+import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.TRAILING_ALL_COMMENTS_BINDER;
 
 public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
@@ -116,7 +118,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             LBRACKET // Collection literal expression
     );
 
-    private static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
+    public static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
             EXPRESSION_FIRST,
             TokenSet.create(
                     // declaration
@@ -1145,7 +1147,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             parseStatements();
 
             body.done(BLOCK);
-            body.setCustomEdgeTokenBinders(CommentBindersKt.PRECEDING_ALL_COMMENTS_BINDER, CommentBindersKt.TRAILING_ALL_COMMENTS_BINDER);
+            body.setCustomEdgeTokenBinders(PRECEDING_ALL_COMMENTS_BINDER, TRAILING_ALL_COMMENTS_BINDER);
 
             expect(RBRACE, "Expecting '}'");
             literal.done(FUNCTION_LITERAL);

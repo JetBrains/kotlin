@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
 
@@ -36,8 +39,21 @@ class DeclaredUpperBoundConstraintPosition(val typeParameterDescriptor: TypePara
 class ArgumentConstraintPosition(val argument: KotlinCallArgument) : ConstraintPosition() {
     override fun toString() = "Argument $argument"
 }
+
+class ReceiverConstraintPosition(val argument: KotlinCallArgument) : ConstraintPosition() {
+    override fun toString() = "Receiver $argument"
+}
+
 class FixVariableConstraintPosition(val variable: NewTypeVariable) : ConstraintPosition() {
     override fun toString() = "Fix variable $variable"
+}
+class KnownTypeParameterConstraintPosition(val typeArgument: KotlinType) : ConstraintPosition() {
+    override fun toString() = "TypeArgument $typeArgument"
+}
+class LambdaArgumentConstraintPosition(val lambdaArgument: PostponedLambdaArgument) : ConstraintPosition() {
+    override fun toString(): String {
+        return "LambdaArgument $lambdaArgument"
+    }
 }
 
 class IncorporationConstraintPosition(val from: ConstraintPosition, val initialConstraint: InitialConstraint) : ConstraintPosition() {
@@ -47,17 +63,20 @@ class IncorporationConstraintPosition(val from: ConstraintPosition, val initialC
 @Deprecated("Should be used only in SimpleConstraintSystemImpl")
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
-
-class NewConstraintError(val lowerType: UnwrappedType, val upperType: UnwrappedType, val position: IncorporationConstraintPosition):
-        KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
+abstract class ConstraintSystemCallDiagnostic(applicability: ResolutionCandidateApplicability) : KotlinCallDiagnostic(applicability) {
     override fun report(reporter: DiagnosticReporter) = reporter.constraintError(this)
 }
 
-class CapturedTypeFromSubtyping(val typeVariable: NewTypeVariable, val constraintType: UnwrappedType, val position: ConstraintPosition) :
-        KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.constraintError(this)
-}
+class NewConstraintError(
+        val lowerType: UnwrappedType,
+        val upperType: UnwrappedType,
+        val position: IncorporationConstraintPosition
+) : ConstraintSystemCallDiagnostic(if (position.from is ReceiverConstraintPosition) INAPPLICABLE_WRONG_RECEIVER else INAPPLICABLE)
 
-class NotEnoughInformationForTypeParameter(val typeVariable: NewTypeVariable) : KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.constraintError(this)
-}
+class CapturedTypeFromSubtyping(
+        val typeVariable: NewTypeVariable,
+        val constraintType: UnwrappedType,
+        val position: ConstraintPosition
+) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+
+class NotEnoughInformationForTypeParameter(val typeVariable: NewTypeVariable) : ConstraintSystemCallDiagnostic(INAPPLICABLE)

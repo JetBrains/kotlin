@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import java.util.*
 
 abstract class CreateCallableMemberFromUsageFactory<E : KtElement>(
-        val extensionsSupported: Boolean = true
+        private val extensionsSupported: Boolean = true
 ) : KotlinIntentionActionFactoryWithDelegate<E, List<CallableInfo>>() {
     private fun newCallableQuickFix(
             originalElementPointer: SmartPsiElementPointer<E>,

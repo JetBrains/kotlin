@@ -1,0 +1,20 @@
+<node text="List  (kotlin.collections)" base="true">
+  <node text="UnmodifiableList in Collections  (java.util)"/>
+  <node text="CheckedList in Collections  (java.util)"/>
+  <node text="SynchronizedList in Collections  (java.util)"/>
+  <node text="AbstractList  (java.util)">
+    <node text="ArrayList in Arrays  (java.util)"/>
+    <node text="EmptyList in Collections  (java.util)"/>
+    <node text="SubList in ArrayList  (java.util)"/>
+    <node text="AbstractSequentialList  (java.util)"/>
+    <node text="CopiesList in Collections  (java.util)"/>
+    <node text="SingletonList in Collections  (java.util)"/>
+    <node text="ArrayList  (java.util)"/>
+  </node>
+  <node text="ArrayList  (java.util)"/>
+  <node text="AbstractList  (kotlin.collections)">
+    <node text="SubList in AbstractList  (kotlin.collections)"/>
+    <node text="ReversedListReadOnly  (kotlin.collections)"/>
+  </node>
+  <node text="EmptyList  (kotlin.collections)"/>
+</node>

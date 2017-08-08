@@ -27,8 +27,11 @@ import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptorKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -99,6 +102,16 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
         ClassDescriptor companionObjectDescriptor = descriptor.getCompanionObjectDescriptor();
         if (companionObjectDescriptor instanceof SyntheticClassOrObjectDescriptor) {
             genSyntheticClassOrObject((SyntheticClassOrObjectDescriptor) companionObjectDescriptor);
+        }
+
+        // Generate synthetic nested classes
+        Collection<DeclarationDescriptor> classifiers = descriptor
+                .getUnsubstitutedMemberScope()
+                .getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.Companion.getALL_NAME_FILTER());
+        for (DeclarationDescriptor memberDescriptor : classifiers) {
+            if (memberDescriptor instanceof SyntheticClassOrObjectDescriptor) {
+                genSyntheticClassOrObject((SyntheticClassOrObjectDescriptor) memberDescriptor);
+            }
         }
 
         if (generateNonClassMembers) {
@@ -182,7 +195,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     }
 
     @NotNull
-    protected List<KtParameter> getPrimaryConstructorParameters() {
+    public List<KtParameter> getPrimaryConstructorParameters() {
         if (myClass instanceof KtClass) {
             return myClass.getPrimaryConstructorParameters();
         }
@@ -192,6 +205,6 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     @Nullable
     @Override
     protected ClassDescriptor classForInnerClassRecord() {
-        return DescriptorUtils.isTopLevelDeclaration(descriptor) ? null : descriptor;
+        return InnerClassConsumer.Companion.classForInnerClassRecord(descriptor, false);
     }
 }

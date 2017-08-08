@@ -94,7 +94,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             field = value
             logger.kotlinDebug { "Set $this.incremental=$value" }
             System.setProperty("kotlin.incremental.compilation", value.toString())
-            System.setProperty("kotlin.incremental.compilation.experimental", value.toString())
         }
 
     private lateinit var destinationDirProvider: Lazy<File>
@@ -139,8 +138,23 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     protected val friendTask: AbstractKotlinCompile<T>?
             get() = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractKotlinCompile<T>
 
+    /** Classes directories that are not produced by this task but should be consumed by
+     * other tasks that have this one as a [friendTask]. */
+    private val attachedClassesDirs: MutableList<Lazy<File?>> = mutableListOf()
+
+    /** Registers the directory provided by the [provider] as attached, meaning that the directory should
+     * be consumed as a friend classes directory by other tasks that have this task as a [friendTask]. */
+    fun attachClassesDir(provider: () -> File?) {
+        attachedClassesDirs += lazy(provider)
+    }
+
     var friendPaths: Lazy<Array<String>?> = lazy {
-        friendTask?.run { arrayOf((javaOutputDir ?: destinationDir).absolutePath) }
+        friendTask?.let { friendTask ->
+            mutableListOf<String>().apply {
+                add((friendTask.javaOutputDir ?: friendTask.destinationDir).absolutePath)
+                addAll(friendTask.attachedClassesDirs.mapNotNull { it.value?.absolutePath })
+            }.toTypedArray()
+        }
     }
 
     override fun compile() {
@@ -196,7 +210,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
     private val cacheVersions by lazy {
         listOf(normalCacheVersion(taskBuildDirectory),
-               experimentalCacheVersion(taskBuildDirectory),
                dataContainerCacheVersion(taskBuildDirectory),
                gradleCacheVersion(taskBuildDirectory))
     }

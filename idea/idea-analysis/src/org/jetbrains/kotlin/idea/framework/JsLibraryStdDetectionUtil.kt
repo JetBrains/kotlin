@@ -33,9 +33,9 @@ import java.util.jar.Attributes
 object JsLibraryStdDetectionUtil {
     private val IS_JS_LIBRARY_STD_LIB = Key.create<Boolean>("IS_JS_LIBRARY_STD_LIB")
 
-    fun hasJsStdlibJar(library: Library): Boolean {
+    fun hasJsStdlibJar(library: Library, ignoreKind: Boolean = false): Boolean {
         if (library !is LibraryEx || library.isDisposed) return false
-        if (library.kind !is JSLibraryKind) return false
+        if (!ignoreKind && library.kind !is JSLibraryKind) return false
 
         val classes = Arrays.asList(*library.getFiles(OrderRootType.CLASSES))
         return getJsStdLibJar(classes) != null

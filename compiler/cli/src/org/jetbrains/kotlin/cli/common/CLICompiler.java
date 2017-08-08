@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.common;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import kotlin.collections.ArraysKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
@@ -32,8 +33,12 @@ import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
+import org.jetbrains.kotlin.utils.KotlinPaths;
+import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir;
+import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
@@ -65,16 +70,21 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, groupingCollector);
 
-        setupCommonArgumentsAndServices(configuration, arguments, services);
-        setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
-
         try {
+            setupCommonArgumentsAndServices(configuration, arguments, services);
+            setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
+            KotlinPaths paths = computeKotlinPaths(groupingCollector, arguments);
+            if (groupingCollector.hasErrors()) {
+                return ExitCode.COMPILATION_ERROR;
+            }
+
             ExitCode exitCode = OK;
 
             int repeatCount = 1;
-            if (arguments.repeat != null) {
+            String repeat = arguments.getRepeat();
+            if (repeat != null) {
                 try {
-                    repeatCount = Integer.parseInt(arguments.repeat);
+                    repeatCount = Integer.parseInt(repeat);
                 }
                 catch (NumberFormatException ignored) {
                 }
@@ -90,7 +100,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
                 Disposable rootDisposable = Disposer.newDisposable();
                 try {
                     setIdeaIoUseFallback();
-                    ExitCode code = doExecute(arguments, configuration, rootDisposable);
+                    ExitCode code = doExecute(arguments, configuration, rootDisposable, paths);
                     exitCode = groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
                 }
                 catch (CompilationCanceledException e) {
@@ -125,13 +135,13 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     private void setupCommonArgumentsAndServices(
             @NotNull CompilerConfiguration configuration, @NotNull A arguments, @NotNull Services services
     ) {
-        if (arguments.noInline) {
+        if (arguments.getNoInline()) {
             configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
         }
-        if (arguments.intellijPluginRoot != null) {
-            configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot);
+        if (arguments.getIntellijPluginRoot()!= null) {
+            configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.getIntellijPluginRoot());
         }
-        if (arguments.reportOutputFiles) {
+        if (arguments.getReportOutputFiles()) {
             configuration.put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, true);
         }
         @SuppressWarnings("deprecation")
@@ -144,8 +154,8 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     }
 
     private void setupLanguageVersionSettings(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
-        LanguageVersion languageVersion = parseVersion(configuration, arguments.languageVersion, "language");
-        LanguageVersion apiVersion = parseVersion(configuration, arguments.apiVersion, "API");
+        LanguageVersion languageVersion = parseVersion(configuration, arguments.getLanguageVersion(), "language");
+        LanguageVersion apiVersion = parseVersion(configuration, arguments.getApiVersion(), "API");
 
         if (languageVersion == null) {
             // If only "-api-version" is specified, language version is assumed to be the latest stable
@@ -180,7 +190,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         }
 
         Map<LanguageFeature, LanguageFeature.State> extraLanguageFeatures = new HashMap<>(0);
-        if (arguments.multiPlatform) {
+        if (arguments.getMultiPlatform()) {
             extraLanguageFeatures.put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED);
         }
 
@@ -189,15 +199,57 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             extraLanguageFeatures.put(LanguageFeature.Coroutines, coroutinesState);
         }
 
-        LanguageVersionSettingsImpl settings =
-                new LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures);
-        settings.switchFlag(AnalysisFlags.getSkipMetadataVersionCheck(), arguments.skipMetadataVersionCheck);
-        settings.switchFlag(AnalysisFlags.getMultiPlatformDoNotCheckImpl(), arguments.noCheckImpl);
-        configureAnalysisFlags(settings, arguments);
-        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, settings);
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
+                languageVersion,
+                ApiVersion.createByLanguageVersion(apiVersion),
+                arguments.configureAnalysisFlags(),
+                extraLanguageFeatures
+        ));
     }
 
-    protected void configureAnalysisFlags(@NotNull LanguageVersionSettingsImpl settings, @NotNull A arguments) {
+    @Nullable
+    private static KotlinPaths computeKotlinPaths(@NotNull MessageCollector messageCollector, @NotNull CommonCompilerArguments arguments) {
+        KotlinPaths paths;
+        if (arguments.getKotlinHome() != null) {
+            File kotlinHome = new File(arguments.getKotlinHome());
+            if (kotlinHome.isDirectory()) {
+                paths = new KotlinPathsFromHomeDir(kotlinHome);
+            }
+            else {
+                messageCollector.report(ERROR, "Kotlin home does not exist or is not a directory: " + kotlinHome, null);
+                paths = null;
+            }
+        }
+        else {
+            paths = PathUtil.getKotlinPathsForCompiler();
+        }
+
+        if (paths != null) {
+            messageCollector.report(LOGGING, "Using Kotlin home directory " + paths.getHomePath(), null);
+        }
+
+        return paths;
+    }
+
+    @Nullable
+    public static File getLibraryFromHome(
+            @Nullable KotlinPaths paths,
+            @NotNull Function1<KotlinPaths, File> getLibrary,
+            @NotNull String libraryName,
+            @NotNull MessageCollector messageCollector,
+            @NotNull String noLibraryArgument
+    ) {
+        if (paths != null) {
+            File stdlibJar = getLibrary.invoke(paths);
+            if (stdlibJar.exists()) {
+                return stdlibJar;
+            }
+        }
+
+        messageCollector.report(STRONG_WARNING, "Unable to find " + libraryName + " in the Kotlin home directory. " +
+                                                "Pass either " + noLibraryArgument + " to prevent adding it to the classpath, " +
+                                                "or the correct '-kotlin-home'", null);
+        return null;
     }
 
     @Nullable
@@ -205,7 +257,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             @NotNull CompilerConfiguration configuration,
             @NotNull CommonCompilerArguments arguments
     ) {
-        switch (arguments.coroutinesState) {
+        switch (arguments.getCoroutinesState()) {
             case CommonCompilerArguments.ERROR:
                 return LanguageFeature.State.ENABLED_WITH_ERROR;
             case CommonCompilerArguments.ENABLE:
@@ -213,7 +265,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             case CommonCompilerArguments.WARN:
                 return null;
             default:
-                String message = "Invalid value of -Xcoroutines (should be: enable, warn or error): " + arguments.coroutinesState;
+                String message = "Invalid value of -Xcoroutines (should be: enable, warn or error): " + arguments.getCoroutinesState();
                 configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(ERROR, message, null);
                 return null;
         }
@@ -245,6 +297,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     protected abstract ExitCode doExecute(
             @NotNull A arguments,
             @NotNull CompilerConfiguration configuration,
-            @NotNull Disposable rootDisposable
+            @NotNull Disposable rootDisposable,
+            @Nullable KotlinPaths paths
     );
 }

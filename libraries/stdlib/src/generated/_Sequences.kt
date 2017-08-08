@@ -958,8 +958,7 @@ public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
  * The operation is _terminal_.
  */
 public fun <T> Sequence<T>.any(): Boolean {
-    for (element in this) return true
-    return false
+    return iterator().hasNext()
 }
 
 /**
@@ -1237,8 +1236,7 @@ public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T? {
  * The operation is _terminal_.
  */
 public fun <T> Sequence<T>.none(): Boolean {
-    for (element in this) return false
-    return true
+    return !iterator().hasNext()
 }
 
 /**

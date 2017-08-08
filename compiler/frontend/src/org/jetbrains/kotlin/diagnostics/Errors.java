@@ -99,6 +99,8 @@ public interface Errors {
 
     DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATION = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATION_ERROR = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory3<PsiElement, TypeAliasDescriptor, DeclarationDescriptor, String> TYPEALIAS_EXPANSION_DEPRECATION = DiagnosticFactory3.create(WARNING);
+    DiagnosticFactory3<PsiElement, TypeAliasDescriptor, DeclarationDescriptor, String> TYPEALIAS_EXPANSION_DEPRECATION_ERROR = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory3<PsiElement, DeclarationDescriptor, SinceKotlinInfo.Version, Pair<LanguageVersion, String>> SINCE_KOTLIN_INFO_DEPRECATION = DiagnosticFactory3.create(WARNING);
     DiagnosticFactory3<PsiElement, DeclarationDescriptor, SinceKotlinInfo.Version, Pair<LanguageVersion, String>> SINCE_KOTLIN_INFO_DEPRECATION_ERROR = DiagnosticFactory3.create(ERROR);
 
@@ -222,6 +224,7 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotatedExpression> ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtAnnotationEntry> ANNOTATION_USED_AS_ANNOTATION_ARGUMENT = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> ILLEGAL_SINCE_KOTLIN_VALUE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> NEWER_VERSION_IN_SINCE_KOTLIN = DiagnosticFactory1.create(WARNING);
@@ -243,6 +246,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> INAPPLICABLE_RECEIVER_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_PARAM_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> REDUNDANT_ANNOTATION_TARGET = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory0<KtAnnotationUseSiteTarget> INAPPLICABLE_FILE_TARGET = DiagnosticFactory0.create(ERROR);
 
     // Classes and interfaces
 
@@ -826,7 +830,7 @@ public interface Errors {
     // Casts and is-checks
 
     DiagnosticFactory1<KtElement, KotlinType> CANNOT_CHECK_FOR_ERASED = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<KtBinaryExpressionWithTypeRHS, KotlinType, KotlinType> UNCHECKED_CAST = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<KtBinaryExpressionWithTypeRHS, KotlinType, KotlinType> UNCHECKED_CAST = DiagnosticFactory2.create(WARNING, AS_TYPE);
 
     DiagnosticFactory0<KtBinaryExpressionWithTypeRHS> USELESS_CAST = DiagnosticFactory0.create(WARNING, AS_TYPE);
     DiagnosticFactory0<KtSimpleNameExpression> CAST_NEVER_SUCCEEDS = DiagnosticFactory0.create(WARNING);
@@ -946,6 +950,9 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, CallableDescriptor> ILLEGAL_SUSPEND_FUNCTION_CALL = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory2<PsiElement, String, String> PLUGIN_ERROR = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, String, String> PLUGIN_WARNING = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, String, String> PLUGIN_INFO = DiagnosticFactory2.create(INFO);
 
     // Error sets
     ImmutableSet<? extends DiagnosticFactory<?>> UNRESOLVED_REFERENCE_DIAGNOSTICS = ImmutableSet.of(

@@ -22,7 +22,7 @@ import java.util.*
 
 class DefaultCallArgs(val size: Int) {
 
-    val bits: BitSet = BitSet(size)
+    private val bits: BitSet = BitSet(size)
 
     fun mark(index: Int) {
         assert (index < size) {
@@ -39,7 +39,7 @@ class DefaultCallArgs(val size: Int) {
         val masks = ArrayList<Int>(1)
 
         var mask = 0
-        for (i in 0..size - 1) {
+        for (i in 0 until size) {
             if (i != 0 && i % Integer.SIZE == 0) {
                 masks.add(mask)
                 mask = 0

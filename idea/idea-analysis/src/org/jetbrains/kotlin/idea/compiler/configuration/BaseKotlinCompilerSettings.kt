@@ -23,26 +23,33 @@ import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.SettingConstants
+import kotlin.reflect.KClass
 
-abstract class BaseKotlinCompilerSettings<T : Any> protected constructor() : PersistentStateComponent<Element>, Cloneable {
-    @Suppress("LeakingThis")
-    private var _settings: T = createSettings()
+abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor() : PersistentStateComponent<Element>, Cloneable {
+    @Suppress("LeakingThis", "UNCHECKED_CAST")
+    private var _settings: T = createSettings().frozen() as T
+        private set(value) {
+            field = value.frozen() as T
+        }
 
     var settings: T
-        get() = copyBean(_settings)
+        get() = _settings
         set(value) {
             validateNewSettings(value)
-            _settings = copyBean(value)
+            @Suppress("UNCHECKED_CAST")
+            _settings = value
         }
 
     fun update(changer: T.() -> Unit) {
-        settings = settings.apply { changer() }
+        @Suppress("UNCHECKED_CAST")
+        settings = (settings.unfrozen() as T).apply { changer() }
     }
 
     protected fun validateInheritedFieldsUnchanged(settings: T) {
-        val inheritedFields = collectFieldsToCopy(settings.javaClass, true)
+        @Suppress("UNCHECKED_CAST")
+        val inheritedProperties = collectProperties<T>(settings::class as KClass<T>, true)
         val defaultInstance = createSettings()
-        val invalidFields = inheritedFields.filter { it.get(settings) != it.get(defaultInstance) }
+        val invalidFields = inheritedProperties.filter { it.get(settings) != it.get(defaultInstance) }
         if (invalidFields.isNotEmpty()) {
             throw IllegalArgumentException("Following fields are expected to be left unchanged in ${settings.javaClass}: ${invalidFields.joinToString { it.name }}")
         }
@@ -68,7 +75,10 @@ abstract class BaseKotlinCompilerSettings<T : Any> protected constructor() : Per
         private val SKIP_DEFAULT_VALUES = SkipDefaultValuesSerializationFilters(
                 CommonCompilerArguments.DummyImpl(),
                 K2JVMCompilerArguments(),
-                K2JSCompilerArguments()
+                K2JSCompilerArguments().apply {
+                    sourceMapPrefix = ""
+                    sourceMapEmbedSources = K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING
+                }
         )
     }
 }

@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
+import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
@@ -123,7 +125,17 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             createTypeInfo(components.dataFlowAnalyzer.checkStatementType(function, context), context)
         }
         else {
-            components.dataFlowAnalyzer.createCheckedTypeInfo(functionDescriptor.createFunctionType(), context, function)
+            val expectedType = context.expectedType
+
+            val functionalTypeExpected = expectedType.isBuiltinFunctionalType()
+            val suspendFunctionTypeExpected = expectedType.isSuspendFunctionType()
+
+            val resultType = functionDescriptor.createFunctionType(suspendFunctionTypeExpected)
+
+            if (USE_NEW_INFERENCE && functionalTypeExpected)
+                createTypeInfo(resultType, context)
+            else
+                components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, function)
         }
     }
 
@@ -144,8 +156,8 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         if (!expression.functionLiteral.hasBody()) return null
 
         val expectedType = context.expectedType
-        val functionTypeExpected = !noExpectedType(expectedType) && expectedType.isBuiltinFunctionalType
-        val suspendFunctionTypeExpected = !noExpectedType(expectedType) && expectedType.isSuspendFunctionType
+        val functionTypeExpected = expectedType.isBuiltinFunctionalType()
+        val suspendFunctionTypeExpected = expectedType.isSuspendFunctionType()
 
         val functionDescriptor = createFunctionLiteralDescriptor(expression, context)
         expression.valueParameters.forEach {
@@ -174,10 +186,10 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     ): AnonymousFunctionDescriptor {
         val functionLiteral = expression.functionLiteral
         val functionDescriptor = AnonymousFunctionDescriptor(
-            context.scope.ownerDescriptor,
-            components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
-            CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement(),
-            !noExpectedType(context.expectedType) && context.expectedType.isSuspendFunctionType
+                context.scope.ownerDescriptor,
+                components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
+                CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement(),
+                context.expectedType.isSuspendFunctionType()
         )
         components.functionDescriptorResolver.
                 initializeFunctionDescriptorAndExplicitReturnType(context.scope.ownerDescriptor, context.scope, functionLiteral,
@@ -188,6 +200,12 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, functionLiteral, functionDescriptor)
         return functionDescriptor
     }
+
+    private fun KotlinType.isBuiltinFunctionalType() =
+            !noExpectedType(this) && isBuiltinFunctionalType
+
+    private fun KotlinType.isSuspendFunctionType() =
+            !noExpectedType(this) && isSuspendFunctionType
 
     private fun computeReturnType(
             expression: KtLambdaExpression,
@@ -216,14 +234,26 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
         val expectedType = expectedReturnType ?: NO_EXPECTED_TYPE
         val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace, components.overloadChecker)
-        val newContext = context.replaceScope(functionInnerScope).replaceExpectedType(expectedType)
+        var newContext = context.replaceScope(functionInnerScope).replaceExpectedType(expectedType)
 
         // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
         context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType)
 
+        val newInferenceLambdaInfo = context.trace[BindingContext.NEW_INFERENCE_LAMBDA_INFO, expression.functionLiteral]
+
+        // i.e. this lambda isn't call arguments
+        if (newInferenceLambdaInfo == null && USE_NEW_INFERENCE) {
+            newContext = newContext.replaceContextDependency(ContextDependency.INDEPENDENT)
+        }
+
         // Type-check the body
         val blockReturnedType = components.expressionTypingServices.getBlockReturnedType(functionLiteral.bodyExpression!!, COERCION_TO_UNIT, newContext)
         val typeOfBodyExpression = blockReturnedType.type
+
+        newInferenceLambdaInfo?.let {
+            it.dataFlowInfoAfter = blockReturnedType.dataFlowInfo
+            return null
+        }
 
         return computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression)
     }

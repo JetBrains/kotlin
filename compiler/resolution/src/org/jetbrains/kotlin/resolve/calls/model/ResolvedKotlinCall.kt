@@ -18,22 +18,24 @@ package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
 
 sealed class ResolvedKotlinCall {
+    abstract val currentStatus: ResolutionCandidateStatus
+
     class CompletedResolvedKotlinCall(
             val completedCall: CompletedKotlinCall,
-            val allInnerCalls: Collection<CompletedKotlinCall>
-    ): ResolvedKotlinCall()
+            val allInnerCalls: Collection<CompletedKotlinCall>,
+            val lambdaArguments: List<PostponedLambdaArgument>
+    ): ResolvedKotlinCall() {
+        override val currentStatus get() = completedCall.resolutionStatus
+    }
 
-    class OnlyResolvedKotlinCall(
-            val candidate: KotlinResolutionCandidate
-    ) : ResolvedKotlinCall() {
-        val currentReturnType: UnwrappedType = candidate.lastCall.descriptorWithFreshTypes.returnTypeOrNothing
+    class OnlyResolvedKotlinCall(val candidate: KotlinResolutionCandidate) : ResolvedKotlinCall() {
+        override val currentStatus get() = candidate.status
     }
 }
 

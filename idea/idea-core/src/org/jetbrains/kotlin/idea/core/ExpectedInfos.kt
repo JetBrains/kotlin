@@ -590,7 +590,7 @@ class ExpectedInfos(
         if (expressionWithType != forExpression.loopRange) return null
 
         val loopVar = forExpression.loopParameter
-        val loopVarType = if (loopVar != null && loopVar.typeReference != null)
+        val loopVarType = if (loopVar?.typeReference != null)
             (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, loopVar] as VariableDescriptor).type.takeUnless { it.isError }
         else
             null

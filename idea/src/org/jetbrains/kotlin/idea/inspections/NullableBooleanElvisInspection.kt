@@ -50,11 +50,13 @@ class NullableBooleanElvisInspection : AbstractKotlinInspection(), CleanupLocalI
                             is KtWhileExpressionBase -> parentIfOrWhile.condition
                             else -> null
                         }
-                        val highlightType =
-                                if (condition != null && condition in expression.parentsWithSelf) GENERIC_ERROR_OR_WARNING else INFORMATION
+                        val (highlightType, verb) = if (condition != null && condition in expression.parentsWithSelf)
+                            GENERIC_ERROR_OR_WARNING to "should"
+                        else
+                            INFORMATION to "can"
 
                         holder.registerProblem(expression,
-                                               "Equality check can be used instead of elvis",
+                                               "Equality check $verb be used instead of elvis for nullable boolean check",
                                                highlightType,
                                                ReplaceWithEqualityCheckFix())
                     }

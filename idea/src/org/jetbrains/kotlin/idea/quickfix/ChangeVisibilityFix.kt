@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.resolve.ExposedVisibilityChecker
 
 open class ChangeVisibilityFix(
         element: KtModifierListOwner,
-        protected val elementName: String,
-        protected val visibilityModifier: KtModifierKeywordToken
+        private val elementName: String,
+        private val visibilityModifier: KtModifierKeywordToken
 ) : KotlinQuickFixAction<KtModifierListOwner>(element) {
 
     override fun getText() = "Make '$elementName' $visibilityModifier"

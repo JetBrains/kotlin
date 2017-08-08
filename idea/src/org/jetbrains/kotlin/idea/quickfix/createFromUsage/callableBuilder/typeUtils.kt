@@ -222,7 +222,13 @@ fun KtExpression.guessTypes(
                 parent is KtNamedFunction && parent.name == null -> parent
                 else -> null
             }
-            if (functionalExpression == null) return arrayOf()
+            if (functionalExpression == null) {
+                functionDescriptor.overriddenDescriptors
+                        .mapNotNull { it.returnType }
+                        .firstOrNull { isAcceptable(it) }
+                        ?.let { return arrayOf(it) }
+                return arrayOf()
+            }
             val lambdaTypes = functionalExpression.guessTypes(context, module, pseudocode?.parent, coerceUnusedToUnit)
             lambdaTypes.mapNotNull { it.getFunctionType()?.arguments?.lastOrNull()?.type }.toTypedArray()
         }

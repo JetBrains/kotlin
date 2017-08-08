@@ -230,7 +230,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             List<File> sourceRoots
     ) throws MojoExecutionException {
         for (File sourceRoot : sourceRoots) {
-            arguments.freeArgs.add(sourceRoot.getPath());
+            arguments.getFreeArgs().add(sourceRoot.getPath());
         }
         return compiler.exec(messageCollector, Services.EMPTY, arguments);
     }
@@ -439,16 +439,16 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     private void configureCompilerArguments(@NotNull A arguments, @NotNull CLICompiler<A> compiler, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         if (getLog().isDebugEnabled()) {
-            arguments.verbose = true;
+            arguments.setVerbose(true);
         }
 
-        arguments.suppressWarnings = nowarn;
-        arguments.languageVersion = languageVersion;
-        arguments.apiVersion = apiVersion;
-        arguments.multiPlatform = multiPlatform;
+        arguments.setSuppressWarnings(nowarn);
+        arguments.setLanguageVersion(languageVersion);
+        arguments.setApiVersion(apiVersion);
+        arguments.setMultiPlatform(multiPlatform);
 
         if (experimentalCoroutines != null) {
-            arguments.coroutinesState = experimentalCoroutines;
+            arguments.setCoroutinesState(experimentalCoroutines);
         }
 
         configureSpecificCompilerArguments(arguments, sourceRoots);
@@ -460,16 +460,26 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             throw new MojoExecutionException(e.getMessage());
         }
 
-        if (arguments.noInline) {
+        if (arguments.getNoInline()) {
             getLog().info("Method inlining is turned off");
         }
 
         List<String> pluginClassPaths = getCompilerPluginClassPaths();
         if (pluginClassPaths != null && !pluginClassPaths.isEmpty()) {
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Plugin classpaths are: " + Joiner.on(", ").join(pluginClassPaths));
+            if (arguments.getPluginClasspaths() == null || arguments.getPluginClasspaths().length == 0) {
+                arguments.setPluginClasspaths(pluginClassPaths.toArray(new String[pluginClassPaths.size()]));
+            } else {
+                for (String path : pluginClassPaths) {
+                    if (ArrayUtil.indexOf(arguments.getPluginClasspaths(), path) < 0) {
+                        arguments.setPluginClasspaths(ArrayUtil.append(arguments.getPluginClasspaths(), path));
+                    }
+                }
             }
-            arguments.pluginClasspaths = pluginClassPaths.toArray(new String[pluginClassPaths.size()]);
+
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Plugin classpaths are: " + Joiner.on(", ").join(arguments.getPluginClasspaths()));
+            }
+
         }
 
         List<String> pluginArguments;
@@ -484,7 +494,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                 getLog().debug("Plugin options are: " + Joiner.on(", ").join(pluginArguments));
             }
 
-            arguments.pluginOptions = pluginArguments.toArray(new String[pluginArguments.size()]);
+            arguments.setPluginOptions(pluginArguments.toArray(new String[pluginArguments.size()]));
         }
     }
 

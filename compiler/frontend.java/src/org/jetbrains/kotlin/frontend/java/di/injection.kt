@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.frontend.java.di
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
-import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -103,7 +103,7 @@ fun createContainerForLazyResolveWithJava(
 
     useInstance(languageVersionSettings)
 
-    if (languageVersionSettings.isFlagEnabled(AnalysisFlags.loadJsr305Annotations)) {
+    if (languageVersionSettings.getFlag(AnalysisFlag.loadJsr305Annotations).shouldReportError) {
         useImpl<AnnotationTypeQualifierResolverImpl>()
     }
     else {

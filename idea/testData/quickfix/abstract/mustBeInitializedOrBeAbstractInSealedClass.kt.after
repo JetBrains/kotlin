@@ -1,0 +1,4 @@
+// "Make 'i' abstract" "true"
+sealed class A() {
+    abstract fun <caret>i() : Int
+}

@@ -45,9 +45,9 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
             if (useJavac) {
                 put(JVMConfigurationKeys.USE_JAVAC, true)
             }
-            languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE).apply {
-                switchFlag(AnalysisFlags.loadJsr305Annotations, true)
-            }
+            languageVersionSettings = LanguageVersionSettingsImpl(
+                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.loadJsr305Annotations to Jsr305State.ENABLE)
+            )
             configurator(this)
         }
         val environment =

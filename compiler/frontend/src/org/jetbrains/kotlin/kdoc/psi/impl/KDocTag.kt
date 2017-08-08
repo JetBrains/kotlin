@@ -150,7 +150,7 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
         return processedLines.joinToString("\n")
     }
 
-    fun String.calcIndent() = indexOfFirst { !it.isWhitespace() }
+    private fun String.calcIndent() = indexOfFirst { !it.isWhitespace() }
 
     companion object {
         val indentationWhiteSpaces = " ".repeat(4)

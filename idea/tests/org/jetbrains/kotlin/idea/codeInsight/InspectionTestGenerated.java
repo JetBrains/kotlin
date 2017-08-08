@@ -227,6 +227,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt18195/inspectionData/inspections.test")
+        public void testKt18195_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/kt18195/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("leakingThis/inspectionData/inspections.test")
         public void testLeakingThis_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/leakingThis/inspectionData/inspections.test");

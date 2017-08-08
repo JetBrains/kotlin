@@ -141,7 +141,7 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
         return splitPair
     }
 
-    fun getInterval(curIns: LabelNode, isOpen: Boolean) =
+    private fun getInterval(curIns: LabelNode, isOpen: Boolean) =
             if (isOpen) intervalStarts.get(curIns) else intervalEnds.get(curIns)
 }
 

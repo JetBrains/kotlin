@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,20 +25,20 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.PopupHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtilsKt;
+import org.jetbrains.kotlin.psi.KtElement;
 
 import javax.swing.*;
 import java.util.Comparator;
 import java.util.Map;
 
 public class KotlinCallHierarchyBrowser extends CallHierarchyBrowserBase {
-    public KotlinCallHierarchyBrowser(@NotNull Project project, @NotNull PsiElement element) {
-        super(project, element);
+    public KotlinCallHierarchyBrowser(@NotNull PsiElement element) {
+        super(element.getProject(), element);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class KotlinCallHierarchyBrowser extends CallHierarchyBrowserBase {
 
     private static PsiElement getTargetElement(@NotNull HierarchyNodeDescriptor descriptor) {
         if (descriptor instanceof KotlinCallHierarchyNodeDescriptor) {
-            return ((KotlinCallHierarchyNodeDescriptor) descriptor).getTargetElement();
+            return descriptor.getPsiElement();
         }
         return null;
     }
@@ -76,17 +76,19 @@ public class KotlinCallHierarchyBrowser extends CallHierarchyBrowserBase {
     @Override
     protected boolean isApplicableElement(@NotNull PsiElement element) {
         if (element instanceof PsiClass) return false; // PsiClass is not allowed at the hierarchy root
-        return HierarchyUtilsKt.isCallHierarchyElement(element);
+        return CallHierarchyUtilsKt.isCallHierarchyElement(element);
     }
 
     @Override
     protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String typeName, @NotNull PsiElement psiElement) {
+        if (!(psiElement instanceof KtElement)) return null;
+
         if (typeName.equals(CALLER_TYPE)) {
-            return new KotlinCallerMethodsTreeStructure(myProject, psiElement, getCurrentScopeType());
+            return new KotlinCallerTreeStructure((KtElement) psiElement, getCurrentScopeType());
         }
 
         if (typeName.equals(CALLEE_TYPE)) {
-            return new KotlinCalleeMethodsTreeStructure(myProject, psiElement, getCurrentScopeType());
+            return new KotlinCalleeTreeStructure((KtElement) psiElement, getCurrentScopeType());
         }
 
         return null;

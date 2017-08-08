@@ -146,6 +146,10 @@
                 text="Local scenario"/>
       </group>
 
+      <action id="CompletionBindingContextCachingToggleAction"
+              class="org.jetbrains.kotlin.idea.actions.internal.CompletionBindingContextCachingToggleAction"
+              text="Enable completion binding context caching"/>
+
       <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
               text="Check Component Functions Usage Search"/>
 
@@ -284,6 +288,12 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdater"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdater"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.script.ScriptReportSink"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink"/>
 
@@ -329,9 +339,6 @@
 
     <projectService serviceInterface="org.jetbrains.kotlin.console.KotlinConsoleKeeper"
                     serviceImplementation="org.jetbrains.kotlin.console.KotlinConsoleKeeper"/>
-
-    <projectService serviceInterface="org.jetbrains.kotlin.analyzer.LanguageSettingsProvider"
-                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.LanguageVersionSettingsProviderImpl"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IdeLightClassInheritanceHelper"/>
@@ -484,6 +491,7 @@
     <completion.confidence language="kotlin"
                            implementationClass="org.jetbrains.kotlin.idea.completion.confidence.UnfocusedPossibleFunctionParameter"/>
     <completion.confidence language="kotlin" implementationClass="com.intellij.codeInsight.completion.AlwaysFocusLookup" order="last"/>
+    <completion.confidence language="kotlin" implementationClass="org.jetbrains.kotlin.idea.completion.confidence.EnableAutopopupInStringTemplate"/>
     <completion.confidence language="kotlin" implementationClass="com.intellij.codeInsight.completion.SkipAutopopupInStrings"/>
 
     <lookup.charFilter implementation="org.jetbrains.kotlin.idea.completion.KotlinCompletionCharFilter"/>
@@ -790,6 +798,7 @@
 
     <joinLinesHandler implementation="org.jetbrains.kotlin.idea.joinLines.JoinDeclarationAndAssignmentHandler"/>
     <joinLinesHandler implementation="org.jetbrains.kotlin.idea.joinLines.JoinBlockIntoSingleStatementHandler"/>
+    <joinLinesHandler implementation="org.jetbrains.kotlin.idea.joinLines.JoinStatementsAddSemicolonHandler"/>
 
     <targetElementEvaluator
         language="kotlin"
@@ -1399,11 +1408,6 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.IntroduceVariableIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.RemoveAtFromAnnotationArgumentIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -2028,15 +2032,6 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveAtFromAnnotationArgumentInspection"
-                     displayName="Unnecessary @"
-                     groupPath="Kotlin"
-                     groupName="Probable bugs"
-                     enabledByDefault="true"
-                     level="WARNING"
-                     language="kotlin"
-    />
-
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertLambdaToReferenceInspection"
                      displayName="Can be replaced with function reference"
                      groupPath="Kotlin"
@@ -2309,7 +2304,7 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NullableBooleanElvisInspection"
-                     displayName="Equality check can be used instead of elvis"
+                     displayName="Equality check can be used instead of elvis for nullable boolean check"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
@@ -2427,6 +2422,33 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnnecessaryVariableInspection"
                      displayName="Unnecessary local variable"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinDoubleNegationInspection"
+                     displayName="Redundant double negation"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.WhenWithOnlyElseInspection"
+                     displayName="'when' has only 'else' branch and can be simplified"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantLambdaArrowInspection"
+                     displayName="Redundant lambda arrow"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="KotlinCommonCompilerArguments">
-    <option name="languageVersion" value="1.1" />
-    <option name="apiVersion" value="1.1" />
+  <component name="Kotlin2JsCompilerArguments">
+    <option name="sourceMapPrefix" value="" />
+    <option name="sourceMapEmbedSources" value="inlining" />
+  </component>
+  <component name="Kotlin2JvmCompilerArguments">
+    <option name="jvmTarget" value="1.8" />
   </component>
   <component name="KotlinCompilerSettings">
     <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />

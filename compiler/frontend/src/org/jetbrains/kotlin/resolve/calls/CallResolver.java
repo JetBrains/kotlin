@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls;
 
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
@@ -247,14 +248,36 @@ public class CallResolver {
             @NotNull ExpressionTypingContext context,
             @NotNull KtCollectionLiteralExpression expression,
             @NotNull Call call,
-            @NotNull FunctionDescriptor functionDescriptor
+            @NotNull Collection<FunctionDescriptor> functionDescriptors
     ) {
         BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
-        ResolutionCandidate<FunctionDescriptor> candidate = ResolutionCandidate.create(
-                call, functionDescriptor, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
+        List<ResolutionCandidate<FunctionDescriptor>> candidates = CollectionsKt.map(functionDescriptors, descriptor ->
+                ResolutionCandidate.create(
+                        call,
+                        descriptor,
+                        null,
+                        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                        null));
 
         return computeTasksFromCandidatesAndResolvedCall(
-                callResolutionContext, Collections.singleton(candidate), TracingStrategyImpl.create(expression, call));
+                callResolutionContext, candidates, TracingStrategyImpl.create(expression, call));
+    }
+
+    @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> resolveEqualsCallWithGivenDescriptors(
+            @NotNull ExpressionTypingContext context,
+            @NotNull KtReferenceExpression expression,
+            @NotNull ExpressionReceiver receiver,
+            @NotNull Call call,
+            @NotNull Collection<FunctionDescriptor> functionDescriptors
+    ) {
+        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
+        List<ResolutionCandidate<FunctionDescriptor>> resolutionCandidates = CollectionsKt.map(functionDescriptors, descriptor ->
+                ResolutionCandidate.create(
+                        call, descriptor, receiver, ExplicitReceiverKind.DISPATCH_RECEIVER, null));
+
+        return computeTasksFromCandidatesAndResolvedCall(
+                callResolutionContext, resolutionCandidates, TracingStrategyImpl.create(expression, call));
     }
 
     @NotNull

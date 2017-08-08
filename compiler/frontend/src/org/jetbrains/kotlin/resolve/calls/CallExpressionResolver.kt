@@ -285,7 +285,7 @@ class CallExpressionResolver(
                 }
             }
 
-    fun resolveSimpleName(
+    private fun resolveSimpleName(
             context: ExpressionTypingContext, expression: KtSimpleNameExpression
     ): OverloadResolutionResults<VariableDescriptor> {
         val temporaryForVariable = TemporaryTraceAndCache.create(context, "trace to resolve as local variable or property", expression)

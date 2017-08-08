@@ -1,6 +1,6 @@
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class ParameterAnnotation(val a: Int = 0)
 
-class TestClass(vararg @ParameterAnnotation(42) words: String = arrayOf()) {
+class TestClass(@ParameterAnnotation(42) vararg words: String = arrayOf()) {
     private val words = words
 }

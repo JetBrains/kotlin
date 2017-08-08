@@ -21,10 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtTypeArgumentList
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 open class RemovePsiElementSimpleFix(element: PsiElement, private val text: String) : KotlinQuickFixAction<PsiElement>(element) {
@@ -65,7 +62,7 @@ open class RemovePsiElementSimpleFix(element: PsiElement, private val text: Stri
             return object : RemovePsiElementSimpleFix(expression, "Remove variable '${expression.name}'") {
                 override fun invoke(project: Project, editor: Editor?, file: KtFile) {
                     val initializer = expression.initializer
-                    if (initializer != null) {
+                    if (initializer != null && initializer !is KtConstantExpression) {
                         expression.replace(initializer)
                     }
                     else {

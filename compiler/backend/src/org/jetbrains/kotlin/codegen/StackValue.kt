@@ -21,7 +21,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class CoercionValue(
         val value: StackValue,
-        val castType: Type
+        private val castType: Type
 ) : StackValue(castType, value.canHaveSideEffects()) {
 
     override fun putSelector(type: Type, v: InstructionAdapter) {

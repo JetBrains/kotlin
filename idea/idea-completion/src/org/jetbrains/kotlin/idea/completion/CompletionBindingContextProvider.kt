@@ -27,6 +27,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -58,6 +59,8 @@ class CompletionBindingContextProvider(project: Project) {
     companion object {
         fun getInstance(project: Project): CompletionBindingContextProvider
                 = project.getComponent(CompletionBindingContextProvider::class.java)
+
+        var ENABLED = true
     }
 
     private class CompletionData(
@@ -65,6 +68,7 @@ class CompletionBindingContextProvider(project: Project) {
             val prevStatement: KtExpression?,
             val psiElementsBeforeAndAfter: List<PsiElementData>,
             val bindingContext: BindingContext,
+            val moduleDescriptor: ModuleDescriptor,
             val statementResolutionScope: LexicalScope,
             val statementDataFlowInfo: DataFlowInfo,
             val debugText: String
@@ -86,6 +90,15 @@ class CompletionBindingContextProvider(project: Project) {
 
 
     fun getBindingContext(position: PsiElement, resolutionFacade: ResolutionFacade): BindingContext {
+        return if (ENABLED) {
+            _getBindingContext(position, resolutionFacade)
+        }
+        else {
+            resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<KtElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
+        }
+    }
+
+    private fun _getBindingContext(position: PsiElement, resolutionFacade: ResolutionFacade): BindingContext {
         assert(!position.isPhysical) // position is in synthetic file
 
         val inStatement = position.findStatementInBlock()
@@ -105,6 +118,8 @@ class CompletionBindingContextProvider(project: Project) {
                 log("Previous statement is not the same\n")
             psiElementsBeforeAndAfter != prevCompletionData.psiElementsBeforeAndAfter ->
                 log("PSI-tree has changed inside current scope\n")
+            prevCompletionData.moduleDescriptor != resolutionFacade.moduleDescriptor ->
+                log("ModuleDescriptor has been reset")
             inStatement.isTooComplex() ->
                 log("Current statement is too complex to use optimization\n")
             else -> {
@@ -125,7 +140,7 @@ class CompletionBindingContextProvider(project: Project) {
         prevCompletionDataCache.value.data = if (block != null && modificationScope != null) {
             val resolutionScope = inStatement.getResolutionScope(bindingContext, resolutionFacade)
             val dataFlowInfo = bindingContext.getDataFlowInfoBefore(inStatement)
-            CompletionData(block, prevStatement, psiElementsBeforeAndAfter!!, bindingContext, resolutionScope, dataFlowInfo,
+            CompletionData(block, prevStatement, psiElementsBeforeAndAfter!!, bindingContext, resolutionFacade.moduleDescriptor, resolutionScope, dataFlowInfo,
                            debugText = position.text)
         }
         else {

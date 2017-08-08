@@ -167,7 +167,7 @@ class GenericCandidateResolver(
         })
     }
 
-    fun addConstraintForValueArgument(
+    private fun addConstraintForValueArgument(
             valueArgument: ValueArgument,
             valueParameterDescriptor: ValueParameterDescriptor,
             substitutor: TypeSubstitutor,

@@ -1,6 +1,5 @@
 package org.jetbrains
 
-import org.junit.*
 import kotlin.test.*
 
 class JSSpecificTest {

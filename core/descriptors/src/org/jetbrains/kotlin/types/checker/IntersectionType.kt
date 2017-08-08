@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ fun intersectTypes(types: List<UnwrappedType>): UnwrappedType {
         when (it) {
             is SimpleType -> it
             is FlexibleType -> {
+                if (it.isDynamic()) return it
+
                 hasFlexibleTypes = true
                 it.lowerBound
             }
@@ -97,20 +99,35 @@ object TypeIntersector {
 
     // nullability here is correct
     private fun intersectTypesWithoutIntersectionType(inputTypes: Set<SimpleType>): SimpleType {
+        if (inputTypes.size == 1) return inputTypes.single()
+
         // Any and Nothing should leave
         // Note that duplicates should be dropped because we have Set here.
-        val filteredSupertypes = inputTypes.filterNot { upper ->
-            inputTypes.any { upper != it && NewKotlinTypeChecker.isSubtypeOf(it, upper) }
+        val filteredSuperAndEqualTypes = ArrayList(inputTypes)
+        val iterator = filteredSuperAndEqualTypes.iterator()
+        while (iterator.hasNext()) {
+            val upper = iterator.next()
+            val strictSupertypeOrHasEqual = filteredSuperAndEqualTypes.any { lower ->
+                lower !== upper && (isStrictSupertype(lower, upper) || NewKotlinTypeChecker.equalTypes(lower, upper))
+            }
+
+            if (strictSupertypeOrHasEqual) iterator.remove()
         }
 
-        assert(filteredSupertypes.isNotEmpty()) {
+        assert(filteredSuperAndEqualTypes.isNotEmpty()) {
             "This collections cannot be empty! input types: ${inputTypes.joinToString()}"
         }
 
-        if (filteredSupertypes.size < 2) return filteredSupertypes.single()
+        if (filteredSuperAndEqualTypes.size < 2) return filteredSuperAndEqualTypes.single()
 
         val constructor = IntersectionTypeConstructor(inputTypes)
         return KotlinTypeFactory.simpleType(Annotations.EMPTY, constructor, listOf(), false, constructor.createScopeForKotlinType())
+    }
+
+    private fun isStrictSupertype(subtype: KotlinType, supertype: KotlinType): Boolean {
+        return with(NewKotlinTypeChecker) {
+            isSubtypeOf(subtype, supertype) && !isSubtypeOf(supertype, subtype)
+        }
     }
 
     /**

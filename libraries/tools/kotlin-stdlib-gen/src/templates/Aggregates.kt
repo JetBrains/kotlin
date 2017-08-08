@@ -10,8 +10,13 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
         doc { f -> "Returns `true` if all ${f.element.pluralize()} match the given [predicate]." }
         returns("Boolean")
-        body {
+        body { f ->
             """
+            ${when (f) {
+                Iterables -> "if (this is Collection && isEmpty()) return true"
+                Maps -> "if (isEmpty()) return true"
+                else -> ""
+            }}
             for (element in this) if (!predicate(element)) return false
             return true
             """
@@ -24,8 +29,13 @@ fun aggregates(): List<GenericFunction> {
 
         doc { f -> "Returns `true` if no ${f.element.pluralize()} match the given [predicate]." }
         returns("Boolean")
-        body {
+        body { f ->
             """
+            ${when (f) {
+                Iterables -> "if (this is Collection && isEmpty()) return true"
+                Maps -> "if (isEmpty()) return true"
+                else -> ""
+            }}
             for (element in this) if (predicate(element)) return false
             return true
             """
@@ -37,10 +47,16 @@ fun aggregates(): List<GenericFunction> {
         doc { f -> "Returns `true` if the ${f.collection} has no ${f.element.pluralize()}." }
         returns("Boolean")
         body {
+            "return !iterator().hasNext()"
+        }
+        body(Iterables) {
             """
-            for (element in this) return false
-            return true
+            if (this is Collection) return isEmpty()
+            return !iterator().hasNext()
             """
+        }
+        body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+            "return isEmpty()"
         }
         include(Maps, CharSequences)
     }
@@ -50,8 +66,13 @@ fun aggregates(): List<GenericFunction> {
 
         doc { f -> "Returns `true` if at least one ${f.element} matches the given [predicate]." }
         returns("Boolean")
-        body {
+        body { f ->
             """
+            ${when (f) {
+                Iterables -> "if (this is Collection && isEmpty()) return false"
+                Maps -> "if (isEmpty()) return false"
+                else -> ""
+            }}
             for (element in this) if (predicate(element)) return true
             return false
             """
@@ -63,10 +84,16 @@ fun aggregates(): List<GenericFunction> {
         doc { f -> "Returns `true` if ${f.collection} has at least one ${f.element}." }
         returns("Boolean")
         body {
+            "return iterator().hasNext()"
+        }
+        body(Iterables) {
             """
-            for (element in this) return true
-            return false
+            if (this is Collection) return !isEmpty()
+            return iterator().hasNext()
             """
+        }
+        body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+            "return !isEmpty()"
         }
         include(Maps, CharSequences)
     }
@@ -76,8 +103,13 @@ fun aggregates(): List<GenericFunction> {
 
         doc { f -> "Returns the number of ${f.element.pluralize()} matching the given [predicate]." }
         returns("Int")
-        body {
+        body { f ->
             """
+            ${when (f) {
+                Iterables -> "if (this is Collection && isEmpty()) return 0"
+                Maps -> "if (isEmpty()) return 0"
+                else -> ""
+            }}
             var count = 0
             for (element in this) if (predicate(element)) count++
             return count
@@ -89,8 +121,9 @@ fun aggregates(): List<GenericFunction> {
     templates add f("count()") {
         doc { f -> "Returns the number of ${f.element.pluralize()} in this ${f.collection}." }
         returns("Int")
-        body {
+        body { f ->
             """
+            ${if (f == Iterables) "if (this is Collection) return size" else "" }
             var count = 0
             for (element in this) count++
             return count

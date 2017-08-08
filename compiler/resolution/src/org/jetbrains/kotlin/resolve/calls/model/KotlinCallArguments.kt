@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateWithBoundDispatchReceiver
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.UnwrappedType
 
 
@@ -38,6 +39,8 @@ interface KotlinCallArgument {
     val argumentName: Name?
 }
 
+interface PostponableKotlinCallArgument : KotlinCallArgument
+
 interface SimpleKotlinCallArgument : KotlinCallArgument, ReceiverKotlinCallArgument {
     override val receiver: ReceiverValueWithSmartCastInfo
 
@@ -50,7 +53,7 @@ interface SubKotlinCallArgument : SimpleKotlinCallArgument {
     val resolvedCall: ResolvedKotlinCall.OnlyResolvedKotlinCall
 }
 
-interface LambdaKotlinCallArgument : KotlinCallArgument {
+interface LambdaKotlinCallArgument : PostponableKotlinCallArgument {
     override val isSpread: Boolean
         get() = false
 
@@ -71,22 +74,54 @@ interface FunctionExpression : LambdaKotlinCallArgument {
     val returnType: UnwrappedType?
 }
 
-interface CallableReferenceKotlinCallArgument : KotlinCallArgument {
+/**
+ * cases: class A {}, class B { companion object }, object C, enum class D { E }
+ * A::foo <-> Type
+ * a::foo <-> Expression
+ * B::foo <-> Type
+ * C::foo <-> Object
+ * D.E::foo <-> Expression
+ */
+sealed class LHSResult {
+    class Type(val qualifier: QualifierReceiver, resolvedType: UnwrappedType): LHSResult() {
+        val unboundDetailedReceiver: ReceiverValueWithSmartCastInfo
+
+        init {
+            assert(qualifier.descriptor is ClassDescriptor) {
+                "Should be ClassDescriptor: ${qualifier.descriptor}"
+            }
+
+            val unboundReceiver = TransientReceiver(resolvedType)
+            unboundDetailedReceiver = ReceiverValueWithSmartCastInfo(unboundReceiver, emptySet(), isStable = true)
+        }
+    }
+
+    class Object(val qualifier: QualifierReceiver): LHSResult() {
+        val objectValueReceiver: ReceiverValueWithSmartCastInfo
+
+        init {
+            assert(DescriptorUtils.isObject(qualifier.descriptor)) {
+                "Should be object descriptor: ${qualifier.descriptor}"
+            }
+            objectValueReceiver = qualifier.classValueReceiverWithSmartCastInfo ?: error("class value should be not null for $qualifier")
+        }
+    }
+    class Expression(val lshCallArgument: SimpleKotlinCallArgument): LHSResult()
+
+    // todo this case is forbid for now
+    object Empty: LHSResult()
+}
+
+interface CallableReferenceKotlinCallArgument : PostponableKotlinCallArgument {
     override val isSpread: Boolean
         get() = false
 
-    // Foo::bar lhsType = Foo. For a::bar where a is expression, this type is null
-    val lhsType: UnwrappedType?
+    val lhsResult: LHSResult
 
-    val constraintStorage: ConstraintStorage
+    val rhsName: Name
 }
 
-interface ChosenCallableReferenceDescriptor : CallableReferenceKotlinCallArgument {
-    val candidate: CandidateWithBoundDispatchReceiver
-
-    val extensionReceiver: ReceiverValueWithSmartCastInfo?
-}
-
+interface CollectionLiteralKotlinCallArgument : PostponableKotlinCallArgument
 
 interface TypeArgument
 

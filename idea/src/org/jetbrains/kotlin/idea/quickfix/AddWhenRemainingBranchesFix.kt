@@ -20,10 +20,11 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.cfg.WhenChecker
-import org.jetbrains.kotlin.cfg.hasUnknown
+import org.jetbrains.kotlin.cfg.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtWhenExpression
@@ -49,7 +50,18 @@ class AddWhenRemainingBranchesFix(expression: KtWhenExpression) : KotlinQuickFix
         val psiFactory = KtPsiFactory(file)
 
         for (case in missingCases) {
-            val entry = psiFactory.createWhenEntry("${case.branchConditionText} -> TODO()")
+            val branchConditionText = when (case) {
+                UnknownMissingCase, NullMissingCase, is BooleanMissingCase ->
+                    case.branchConditionText
+                is ClassMissingCase ->
+                    if (case.classIsSingleton) {
+                        case.classFqName.quoteIfNeeded().asString()
+                    }
+                    else {
+                        "is " + case.classFqName.quoteIfNeeded().asString()
+                    }
+            }
+            val entry = psiFactory.createWhenEntry("$branchConditionText -> TODO()")
             element.addBefore(entry, whenCloseBrace)
         }
     }

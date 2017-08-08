@@ -20,11 +20,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.types.checker.prepareArgumentTypeRegardingCaptureTypes
+import org.jetbrains.kotlin.resolve.scopes.receivers.prepareReceiverRegardingCaptureTypes
 
 
 class FakeKotlinCallArgumentForCallableReference(
-        val callableReference: ChosenCallableReferenceDescriptor,
         val index: Int
 ) : KotlinCallArgument {
     override val isSpread: Boolean get() = false
@@ -46,20 +45,6 @@ class ReceiverExpressionKotlinCallArgument private constructor(
                 receiver: ReceiverValueWithSmartCastInfo,
                    isSafeCall: Boolean = false,
                    isVariableReceiverForInvoke: Boolean = false
-        ): ReceiverExpressionKotlinCallArgument {
-            val newType = prepareArgumentTypeRegardingCaptureTypes(receiver.receiverValue.type.unwrap())
-            val newReceiver = if (newType != null) {
-                ReceiverValueWithSmartCastInfo(receiver.receiverValue.replaceType(newType), receiver.possibleTypes, receiver.isStable)
-            } else receiver
-
-            return ReceiverExpressionKotlinCallArgument(newReceiver, isSafeCall, isVariableReceiverForInvoke)
-        }
+        ) = ReceiverExpressionKotlinCallArgument(receiver.prepareReceiverRegardingCaptureTypes(), isSafeCall, isVariableReceiverForInvoke)
     }
-}
-
-class EmptyLabeledReturn(builtIns: KotlinBuiltIns) : ExpressionKotlinCallArgument {
-    override val isSpread: Boolean get() = false
-    override val argumentName: Name? get() = null
-    override val receiver = ReceiverValueWithSmartCastInfo(TransientReceiver(builtIns.unitType), emptySet(), true)
-    override val isSafeCall: Boolean get() = false
 }

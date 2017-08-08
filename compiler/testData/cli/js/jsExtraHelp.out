@@ -1,19 +1,19 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
-  -Xtyped-arrays             Translate primitive arrays to JS typed arrays
-  -Xfriend-modules-disabled  Disable internal declaration export
   -Xfriend-modules=<path>    Paths to friend modules
-  -Xno-inline                Disable method inlining
-  -Xrepeat=<count>           Repeat compilation (for performance analysis)
-  -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
+  -Xfriend-modules-disabled  Disable internal declaration export
+  -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin'
-  -Xreport-output-files      Report source to output files mapping
-  -Xplugin=<path>            Load plugins from the given classpath
-  -Xmulti-platform           Enable experimental language support for multi-platform projects
-  -Xno-check-impl            Do not check presence of 'impl' modifier in multi-platform projects
-  -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
+  -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
+  -Xmulti-platform           Enable experimental language support for multi-platform projects
+  -Xno-check-impl            Do not check presence of 'impl' modifier in multi-platform projects
+  -Xno-inline                Disable method inlining
+  -Xplugin=<path>            Load plugins from the given classpath
+  -Xrepeat=<count>           Repeat compilation (for performance analysis)
+  -Xreport-output-files      Report source to output files mapping
+  -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

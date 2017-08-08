@@ -40,7 +40,9 @@ fun prepareArgumentTypeRegardingCaptureTypes(argumentType: UnwrappedType): Unwra
     }
     if (simpleType is NewCapturedType) {
         // todo may be we should respect flexible capture types also...
-        return simpleType.constructor.supertypes.takeIf { it.isNotEmpty() }?.let{ intersectTypes(it) } ?: argumentType.builtIns.nullableAnyType
+        return simpleType.constructor.supertypes.takeIf { it.isNotEmpty() }?.let {
+            intersectTypes(it).makeNullableAsSpecified(simpleType.isMarkedNullable)
+        } ?: argumentType.builtIns.nullableAnyType
     }
     return captureFromExpression(simpleType)
 }
@@ -70,6 +72,8 @@ fun captureFromArguments(
         status: CaptureStatus,
         acceptNewCapturedType: ((argumentIndex: Int, NewCapturedType) -> Unit) = DO_NOTHING_2
 ): SimpleType? {
+    if (type.arguments.size != type.constructor.parameters.size) return null
+
     val arguments = type.arguments
     if (arguments.all { it.projectionKind == Variance.INVARIANT }) return null
 

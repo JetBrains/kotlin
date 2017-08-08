@@ -49,7 +49,8 @@ class KotlinJsDcePlugin : Plugin<Project> {
             val outputDir = File(kotlinTask.outputFile).parentFile
 
             val dependenciesDir = File(outputDir, "dependencies")
-            copyDependencies(project, sourceSet, dependenciesDir, dceTask)
+            val dependenciesTemporaryDir = File(outputDir, "dependencies-tmp")
+            copyDependencies(project, sourceSet, dependenciesDir, dependenciesTemporaryDir, dceTask)
 
             val dceInputTrees = listOf(project.fileTree(kotlinTask.outputFile), project.fileTree(dependenciesDir))
             val dceInputFiles = UnionFileTree("dce-input", dceInputTrees)
@@ -62,28 +63,34 @@ class KotlinJsDcePlugin : Plugin<Project> {
         }
     }
 
-    private fun copyDependencies(project: Project, sourceSet: SourceSet, outputDir: File, dceTask: Task) {
+    private fun copyDependencies(project: Project, sourceSet: SourceSet, outputDir: File, tmpDir: File, dceTask: Task) {
         val configuration = project.configurations.findByName(sourceSet.compileConfigurationName) ?: return
 
-        val files = UnionFileCollection(configuration.map { project.zipTree(it) })
+        val zippedFiles = UnionFileCollection(configuration.map { project.zipTree(it) })
+        val files = project.fileTree(tmpDir)
                 .filter { it.path.endsWith(".js") }
                 .filter { File(it.path.removeSuffix(".js") + ".meta.js").exists() }
+
+        // This intermediate task is needed due to bug in Gradle that causes infinite loops in continuous build mode
+        val unpackName = sourceSet.getTaskName(UNPACK_DEPENDENCIES_TASK_PREFIX, TASK_SUFFIX)
+        val unpackTask = project.tasks.create(unpackName, Copy::class.java).apply {
+            from(zippedFiles)
+            into(tmpDir)
+        }
 
         val name = sourceSet.getTaskName(DEPENDENCIES_TASK_PREFIX, TASK_SUFFIX)
         with(project.tasks.create(name, Copy::class.java)) {
             from(files)
             into(outputDir)
             includeEmptyDirs = true
-            include {
-                it.path.let { it.endsWith(".js") && !it.endsWith(".meta.js") }
-            }
-
             dceTask.dependsOn(this)
+            dependsOn(unpackTask)
         }
     }
 
     companion object {
         private const val TASK_SUFFIX = "kotlinJs"
+        private const val UNPACK_DEPENDENCIES_TASK_PREFIX = "unpackDependencies"
         private const val DEPENDENCIES_TASK_PREFIX = "copyDependencies"
         private const val DCE_TASK_PREFIX = "runDce"
     }

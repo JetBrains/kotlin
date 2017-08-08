@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
@@ -68,9 +69,9 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         KotlinTestUtils.assertEqualsToFile(File(root, "output.txt"), result.replace('\\', '/'))
     }
 
-    private fun CLICompiler<*>.compileBothWays(commonSource: File, platformSource: File, vararg additionalArguments: String): String {
-        val platformFirst = compile(listOf(platformSource, commonSource), *additionalArguments)
-        val commonFirst = compile(listOf(commonSource, platformSource), *additionalArguments)
+    private fun CLICompiler<*>.compileBothWays(commonSource: File, platformSource: File, vararg mainArguments: String): String {
+        val platformFirst = compile(listOf(platformSource, commonSource), *mainArguments)
+        val commonFirst = compile(listOf(commonSource, platformSource), *mainArguments)
         if (platformFirst != commonFirst) {
             assertEquals(
                     "Compilation results are different when compiling [platform-specific, common] compared to when compiling [common, platform-specific]",
@@ -81,13 +82,17 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         return platformFirst
     }
 
-    private fun CLICompiler<*>.compile(sources: List<File>, vararg additionalArguments: String): String = buildString {
+    private fun CLICompiler<*>.compile(sources: List<File>, vararg mainArguments: String): String = buildString {
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
                 this@compile,
-                sources.map(File::getAbsolutePath) + listOf("-Xmulti-platform") + additionalArguments
+                sources.map(File::getAbsolutePath) + listOf("-Xmulti-platform") + mainArguments + loadExtraArguments(sources)
         )
         appendln("Exit code: $exitCode")
         appendln("Output:")
         appendln(output)
     }.trimTrailingWhitespacesAndAddNewlineAtEOF().trimEnd('\r', '\n')
+
+    private fun loadExtraArguments(sources: List<File>): List<String> = sources.flatMap { source ->
+        InTextDirectivesUtils.findListWithPrefixes(source.readText(), "// ADDITIONAL_COMPILER_ARGUMENTS:")
+    }
 }

@@ -36,7 +36,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class FunctionCodegen(val irFunction: IrFunction, val classCodegen: ClassCodegen) {
+class FunctionCodegen(private val irFunction: IrFunction, private val classCodegen: ClassCodegen) {
 
     val state = classCodegen.state
 

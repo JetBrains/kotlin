@@ -329,7 +329,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             }
         }
 
-        fun String.htmlEscape(): String = HtmlEscapers.htmlEscaper().escape(this)
+        private fun String.htmlEscape(): String = HtmlEscapers.htmlEscaper().escape(this)
 
         private inline fun StringBuilder.wrap(prefix: String, postfix: String, crossinline body: () -> Unit) {
             this.append(prefix)

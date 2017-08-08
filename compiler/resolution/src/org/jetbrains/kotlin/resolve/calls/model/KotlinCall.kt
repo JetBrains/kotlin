@@ -34,10 +34,6 @@ interface KotlinCall {
     val argumentsInParenthesis: List<KotlinCallArgument>
 
     val externalArgument: KotlinCallArgument?
-
-    val isInfixCall: Boolean
-    val isOperatorCall: Boolean
-    val isSuperOrDelegatingConstructorCall: Boolean
 }
 
 private fun SimpleKotlinCallArgument.checkReceiverInvariants() {

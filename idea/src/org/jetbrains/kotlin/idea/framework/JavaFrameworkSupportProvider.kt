@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import javax.swing.JComponent
 
 internal class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
-    override fun getFrameworkType(): FrameworkTypeEx = JavaFrameworkType.getInstance()
+    override fun getFrameworkType(): FrameworkTypeEx = JavaFrameworkType.instance
 
     override fun createConfigurable(model: FrameworkSupportModel): FrameworkSupportInModuleConfigurable {
         return object : FrameworkSupportInModuleConfigurable() {
@@ -53,14 +53,14 @@ internal class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider()
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                         rootModel,
                         JSLibraryStdDescription.SUITABLE_LIBRARY_KINDS,
-                        JSFrameworkType.getInstance())
+                        JSFrameworkType.instance)
 
                 description!!.finishLibConfiguration(module, rootModel)
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {
                 if (selected) {
-                    val providerId = JSFrameworkType.getInstance().id
+                    val providerId = JSFrameworkType.instance.id
                     if (model.isFrameworkSelected(providerId)) {
                         model.setFrameworkComponentEnabled(providerId, false)
                     }

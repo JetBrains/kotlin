@@ -3,6 +3,7 @@ Buildfile: [TestData]/build.xml
 
 build:
 [kotlin2js] Compiling [[TestData]/root1] => [[Temp]/out.js]
+[kotlin2js] logging: using Kotlin home directory [KotlinProjectHome]/dist/kotlinc
 [kotlin2js] logging: compiling source files: [TestData]/root1/foo.kt
 
 BUILD SUCCESSFUL

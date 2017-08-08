@@ -24,6 +24,7 @@ import java.io.PrintStream
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.withNullability
 
 // Additional properties that should be included in interface
 @Suppress("unused")
@@ -271,7 +272,8 @@ private val KProperty1<*, *>.gradleDefaultValue: String
 
 private val KProperty1<*, *>.gradleReturnType: String
         get() {
-            var type = returnType.toString().substringBeforeLast("!")
+            // Set nullability based on Gradle default value
+            var type = returnType.withNullability(false).toString().substringBeforeLast("!")
             if (gradleDefaultValue == "null") {
                 type += "?"
             }

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import java.util.*
 
@@ -153,6 +152,10 @@ class ArgumentsToParametersMapper {
             result[parameter.original] = ResolvedCallArgument.SimpleArgument(argument)
         }
 
+        private fun ValueParameterDescriptor.getOverriddenParameterWithOtherName() = overriddenDescriptors.firstOrNull {
+            it.containingDeclaration.hasStableParameterNames() && it.name != name
+        }
+
         private fun findParameterByName(argument: KotlinCallArgument, name: Name): ValueParameterDescriptor? {
             val parameter = getParameterByName(name)
 
@@ -258,71 +261,6 @@ class ArgumentsToParametersMapper {
             }
         }
     }
-
 }
 
-class TooManyArguments(val argument: KotlinCallArgument, val descriptor: CallableDescriptor) :
-        KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
-}
 
-class NonVarargSpread (val argument: KotlinCallArgument, val parameterDescriptor: ValueParameterDescriptor) :
-        KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentSpread(argument, this)
-}
-
-class MixingNamedAndPositionArguments(val argument: KotlinCallArgument) :
-        KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
-}
-
-class NamedArgumentNotAllowed(val argument: KotlinCallArgument, val descriptor: CallableDescriptor) :
-        KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentName(argument, this)
-}
-
-class NameNotFound(val argument: KotlinCallArgument, val descriptor: CallableDescriptor) :
-        KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentName(argument, this)
-}
-
-class NoValueForParameter(val parameterDescriptor: ValueParameterDescriptor,
-                          val descriptor: CallableDescriptor) :
-        KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
-}
-
-class ArgumentPassedTwice(val argument: KotlinCallArgument,
-                          val parameterDescriptor: ValueParameterDescriptor,
-                          val firstOccurrence: ResolvedCallArgument) :
-        KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentName(argument, this)
-}
-
-class VarargArgumentOutsideParentheses(
-        val argument: KotlinCallArgument,
-        val parameterDescriptor: ValueParameterDescriptor) :
-        KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
-}
-
-class NameForAmbiguousParameter(
-        val argument: KotlinCallArgument,
-        val parameterDescriptor: ValueParameterDescriptor,
-        val overriddenParameterWithOtherName: ValueParameterDescriptor
-) : KotlinCallDiagnostic(CONVENTION_ERROR) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentName(argument, this)
-}
-
-class NamedArgumentReference(
-        val argument: KotlinCallArgument,
-        val parameterDescriptor: ValueParameterDescriptor
-) : KotlinCallDiagnostic(RESOLVED) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentName(argument, this)
-}
-
-val ValueParameterDescriptor.isVararg: Boolean get() = varargElementType != null
-
-fun ValueParameterDescriptor.getOverriddenParameterWithOtherName() = overriddenDescriptors.firstOrNull {
-    it.containingDeclaration.hasStableParameterNames() && it.name != name
-}

@@ -1,0 +1,8 @@
+pluginManagement {
+    repositories {
+        maven { url '<mavenLocalUrl>' }
+        gradlePluginPortal()
+    }
+}
+
+include 'subproject'

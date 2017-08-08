@@ -366,7 +366,7 @@ class CompileServiceImpl(
         } as CLICompiler<CommonCompilerArguments>
 
         val k2PlatformArgs = compiler.createArguments()
-        parseCommandLineArguments(compilerArguments, k2PlatformArgs)
+        parseCommandLineArguments(compilerArguments.asList(), k2PlatformArgs)
         val argumentParseError = validateArguments(k2PlatformArgs.errors)
         if (argumentParseError != null) {
             messageCollector.report(CompilerMessageSeverity.ERROR, argumentParseError)
@@ -376,9 +376,11 @@ class CompileServiceImpl(
             CompilerMode.JPS_COMPILER -> {
                 val jpsServicesFacade = servicesFacade as JpsCompilerServicesFacade
 
-                doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
-                    val services = createCompileServices(jpsServicesFacade, eventManger, profiler)
-                    compiler.exec(messageCollector, services, k2PlatformArgs)
+                withIC(enabled = servicesFacade.hasIncrementalCaches()) {
+                    doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
+                        val services = createCompileServices(jpsServicesFacade, eventManger, profiler)
+                        compiler.exec(messageCollector, services, k2PlatformArgs)
+                    }
                 }
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
@@ -426,7 +428,7 @@ class CompileServiceImpl(
             val bytesOut = ByteArrayOutputStream()
             val printStream = PrintStream(bytesOut)
             val mc = PrintingMessageCollector(printStream, MessageRenderer.PLAIN_FULL_PATHS, false)
-            val parsedModule = ModuleXmlParser.parseModuleScript(k2jvmArgs.buildFile, mc)
+            val parsedModule = ModuleXmlParser.parseModuleScript(k2jvmArgs.buildFile!!, mc)
             if (mc.hasErrors()) {
                 daemonMessageReporter.report(ReportSeverity.ERROR, bytesOut.toString("UTF8"))
             }
@@ -609,7 +611,7 @@ class CompileServiceImpl(
 
         if (state.delayedShutdownQueued.get()) return
 
-        val anyDead = state.sessions.cleanDead() && state.cleanDeadClients()
+        val anyDead = state.sessions.cleanDead() || state.cleanDeadClients()
 
         ifAliveUnit(minAliveness = Aliveness.LastSession) {
             when {
@@ -619,7 +621,7 @@ class CompileServiceImpl(
                     shutdownWithDelay()
                     return
                 }
-                state.aliveClientsCount == 0 && compilationsCounter.get() > 0 -> {
+                state.aliveClientsCount == 0 -> {
                     log.info("No more clients left")
                     shutdownWithDelay()
                     return

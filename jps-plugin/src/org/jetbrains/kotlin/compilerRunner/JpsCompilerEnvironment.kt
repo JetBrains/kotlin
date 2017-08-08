@@ -16,28 +16,18 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.PathUtil
 
 class JpsCompilerEnvironment(
         val kotlinPaths: KotlinPaths,
         services: Services,
         val classesToLoadByParent: ClassCondition,
         messageCollector: MessageCollector,
-        override val outputItemsCollector: OutputItemsCollectorImpl
+        outputItemsCollector: OutputItemsCollectorImpl
 ) : CompilerEnvironment(services, messageCollector, outputItemsCollector) {
-    fun success(): Boolean {
-        return kotlinPaths.homePath.exists()
-    }
-
-    fun reportErrorsTo(messageCollector: MessageCollector) {
-        if (!kotlinPaths.homePath.exists()) {
-            messageCollector.report(ERROR, "Cannot find kotlinc home: " + kotlinPaths.homePath + ". Make sure plugin is properly installed, " +
-                                           "or specify " + PathUtil.JPS_KOTLIN_HOME_PROPERTY + " system property")
-        }
-    }
+    override val outputItemsCollector: OutputItemsCollectorImpl
+        get() = super.outputItemsCollector as OutputItemsCollectorImpl
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.config
 import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_1
 import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_2
 import org.jetbrains.kotlin.utils.DescriptionAware
+import java.util.*
 
 enum class LanguageFeature(
         val sinceVersion: LanguageVersion?,
@@ -115,7 +116,7 @@ interface LanguageVersionSettings {
     fun supportsFeature(feature: LanguageFeature): Boolean =
             getFeatureSupport(feature).let { it == LanguageFeature.State.ENABLED || it == LanguageFeature.State.ENABLED_WITH_WARNING }
 
-    fun isFlagEnabled(flag: AnalysisFlag): Boolean
+    fun <T> getFlag(flag: AnalysisFlag<T>): T
 
     val apiVersion: ApiVersion
 
@@ -126,20 +127,14 @@ interface LanguageVersionSettings {
 class LanguageVersionSettingsImpl @JvmOverloads constructor(
         override val languageVersion: LanguageVersion,
         override val apiVersion: ApiVersion,
-        private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
+        analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
+        specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
 ) : LanguageVersionSettings {
-    private val enabledFlags = hashSetOf<AnalysisFlag>()
+    private val analysisFlags: Map<AnalysisFlag<*>, *> = Collections.unmodifiableMap(analysisFlags)
+    private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = Collections.unmodifiableMap(specificFeatures)
 
-    override fun isFlagEnabled(flag: AnalysisFlag): Boolean = flag in enabledFlags
-
-    fun switchFlag(flag: AnalysisFlag, enable: Boolean) {
-        if (enable) {
-            enabledFlags.add(flag)
-        }
-        else {
-            enabledFlags.remove(flag)
-        }
-    }
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> getFlag(flag: AnalysisFlag<T>): T = analysisFlags[flag] as T? ?: flag.defaultValue
 
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State {
         specificFeatures[feature]?.let { return it }

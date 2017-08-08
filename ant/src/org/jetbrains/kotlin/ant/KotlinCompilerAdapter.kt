@@ -39,9 +39,7 @@ class KotlinCompilerAdapter : Javac13() {
         return argument
     }
 
-    override fun getSupportedFileExtensions(): Array<String> {
-        return super.getSupportedFileExtensions() + KOTLIN_EXTENSIONS
-    }
+    override fun getSupportedFileExtensions(): Array<String> = super.getSupportedFileExtensions() + KOTLIN_EXTENSIONS
 
     @Throws(BuildException::class)
     override fun execute(): Boolean {

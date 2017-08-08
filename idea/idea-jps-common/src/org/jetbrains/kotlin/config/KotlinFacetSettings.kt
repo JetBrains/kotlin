@@ -84,7 +84,13 @@ class KotlinFacetSettings {
     var useProjectSettings: Boolean = true
 
     var compilerArguments: CommonCompilerArguments? = null
+        set(value) {
+            field = value?.unfrozen() as CommonCompilerArguments?
+        }
     var compilerSettings: CompilerSettings? = null
+        set(value) {
+            field = value?.unfrozen() as CompilerSettings?
+        }
 
     var languageLevel: LanguageVersion?
         get() = compilerArguments?.languageVersion?.let { LanguageVersion.fromFullVersionString(it) }
@@ -123,12 +129,6 @@ class KotlinFacetSettings {
                 LanguageFeature.State.ENABLED_WITH_WARNING -> CommonCompilerArguments.WARN
                 LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> CommonCompilerArguments.ERROR
             }
-        }
-
-    var skipMetadataVersionCheck: Boolean
-        get() = compilerArguments?.skipMetadataVersionCheck == true
-        set(value) {
-            compilerArguments!!.skipMetadataVersionCheck = value
         }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -89,6 +87,16 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
     override fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition) =
             constraintInjector.addInitialEqualityConstraint(apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }, a, b, position)
 
+    override fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor> {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        val variableWithConstraints = notFixedTypeVariables[type.constructor] ?: return listOf(type.constructor)
+
+        return variableWithConstraints.constraints.mapNotNull {
+            if (it.kind == ConstraintKind.LOWER) return@mapNotNull null
+            it.type.constructor.takeUnless { allTypeVariables.containsKey(it) }
+        }
+    }
+
     // ConstraintSystemBuilder
     private fun transactionRegisterVariable(variable: NewTypeVariable) {
         if (state != State.TRANSACTION) return
@@ -135,17 +143,20 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         return false
     }
 
-    override fun addLambdaArgument(resolvedLambdaArgument: ResolvedLambdaArgument) {
+    override fun addPostponedArgument(postponedArgument: PostponedKotlinCallArgument) {
         checkState(State.BUILDING, State.COMPLETION)
-        storage.lambdaArguments.add(resolvedLambdaArgument)
+        storage.postponedArguments.add(postponedArgument)
     }
 
     private fun getVariablesForFixation(): Map<NewTypeVariable, UnwrappedType> {
         val fixedVariables = LinkedHashMap<NewTypeVariable, UnwrappedType>()
 
         for (variableWithConstrains in storage.notFixedTypeVariables.values) {
-            val resultType = resultTypeResolver.findResultIfThereIsEqualsConstraint(apply { checkState(State.BUILDING) }, variableWithConstrains,
-                                                                                                allowedFixToNotProperType = false)
+            val resultType = resultTypeResolver.findResultIfThereIsEqualsConstraint(
+                    apply { checkState(State.BUILDING) },
+                    variableWithConstrains,
+                    allowedFixToNotProperType = false
+            )
             if (resultType != null) {
                 fixedVariables[variableWithConstrains.typeVariable] = resultType
             }
@@ -184,7 +195,7 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         storage.maxTypeDepthFromInitialConstraints = Math.max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
         storage.errors.addAll(otherSystem.errors)
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
-        storage.lambdaArguments.addAll(otherSystem.lambdaArguments)
+        storage.postponedArguments.addAll(otherSystem.postponedArguments)
         storage.innerCalls.addAll(otherSystem.innerCalls)
     }
 
@@ -227,11 +238,15 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         storage.errors.add(error)
     }
 
-    // FixationOrderCalculator.Context, KotlinCallCompleter.Context
-    override val lambdaArguments: List<ResolvedLambdaArgument> get() {
+    //  KotlinCallCompleter.Context, FixationOrderCalculator.Context
+    override val lambdaArguments: List<PostponedLambdaArgument> get() {
         checkState(State.COMPLETION)
-        return storage.lambdaArguments
+        return storage.postponedArguments.filterIsInstance<PostponedLambdaArgument>()
     }
+
+    // FixationOrderCalculator.Context
+    override val postponedArguments: List<PostponedKotlinCallArgument>
+        get() = storage.postponedArguments
 
     // KotlinCallCompleter.Context
     override fun asResultTypeResolverContext() = apply { checkState(State.COMPLETION) }

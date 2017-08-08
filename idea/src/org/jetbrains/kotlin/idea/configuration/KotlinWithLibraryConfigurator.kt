@@ -51,7 +51,8 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
 
     protected  val libraryKind: PersistentLibraryKind<*>? = libraryType?.kind
 
-    override fun getStatus(module: Module): ConfigureKotlinStatus {
+    override fun getStatus(moduleSourceRootGroup: ModuleSourceRootGroup): ConfigureKotlinStatus {
+        val module = moduleSourceRootGroup.baseModule
         if (!isApplicable(module)) {
             return ConfigureKotlinStatus.NON_APPLICABLE
         }
@@ -121,9 +122,23 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
             pathFromDialog: String?,
             collector: NotificationMessageCollector
     ) {
+        val classesPath =  getPathToCopyFileTo(module.project, OrderRootType.CLASSES, defaultPath, pathFromDialog)
+        val sourcesPath =  getPathToCopyFileTo(module.project, OrderRootType.SOURCES, defaultPath, pathFromDialog)
+        configureModuleWithLibrary(module, classesPath, sourcesPath, collector, useBundled = pathFromDialog == null)
+    }
+
+     fun configureModuleWithLibrary(
+            module: Module,
+            classesPath: String,
+            sourcesPath: String,
+            collector: NotificationMessageCollector,
+            forceJarState: FileState? = null,
+            useBundled: Boolean = false
+    ) {
         val project = module.project
 
-        val library = getKotlinLibrary(module)
+        val library = findAndFixBrokenKotlinLibrary(module, collector)
+                      ?: getKotlinLibrary(module)
                       ?: getKotlinLibrary(project)
                       ?: createNewLibrary(project, collector)
 
@@ -131,10 +146,14 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         val model = library.modifiableModel
 
         for (descriptor in getLibraryJarDescriptors(sdk)) {
-            val dirToCopyJar = getPathToCopyFileTo(project, descriptor.orderRootType, defaultPath, pathFromDialog)
-            val runtimeState = getJarState(project,
-                                           File(dirToCopyJar, descriptor.jarName),
-                                           descriptor.orderRootType, pathFromDialog == null)
+            val dirToCopyJar = if (descriptor.orderRootType == OrderRootType.SOURCES)
+                sourcesPath
+            else
+                classesPath
+
+            val runtimeState = forceJarState ?: getJarState(project,
+                                                            File(dirToCopyJar, descriptor.jarName),
+                                                            descriptor.orderRootType, useBundled)
 
             configureLibraryJar(model, runtimeState, dirToCopyJar, descriptor, collector)
         }
@@ -298,14 +317,16 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
     protected open fun configureKotlinSettings(modules: List<Module>) {
     }
 
+    protected open fun findAndFixBrokenKotlinLibrary(module: Module, collector: NotificationMessageCollector): Library? = null
+
+    protected open fun isApplicable(module: Module): Boolean {
+        return !KotlinPluginUtil.isAndroidGradleModule(module) &&
+               !KotlinPluginUtil.isMavenModule(module) &&
+               !KotlinPluginUtil.isGradleModule(module)
+    }
+
     companion object {
         val DEFAULT_LIBRARY_DIR = "lib"
-
-        protected fun isApplicable(module: Module): Boolean {
-            return !KotlinPluginUtil.isAndroidGradleModule(module) &&
-                   !KotlinPluginUtil.isMavenModule(module) &&
-                   !KotlinPluginUtil.isGradleModule(module)
-        }
 
         fun getPathFromLibrary(library: Library?, type: OrderRootType): String? {
             if (library == null) return null

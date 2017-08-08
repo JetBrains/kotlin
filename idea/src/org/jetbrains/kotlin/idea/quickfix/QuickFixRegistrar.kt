@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementAsConstructorPa
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.*
 import org.jetbrains.kotlin.idea.intentions.AddValVarToConstructorParameterAction
+import org.jetbrains.kotlin.idea.intentions.ConvertPropertyInitializerToGetterIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory
@@ -68,7 +69,7 @@ class QuickFixRegistrar : QuickFixContributor {
         ABSTRACT_PROPERTY_WITH_GETTER.registerFactory(removeAbstractModifierFactory, RemovePartsFromPropertyFix)
         ABSTRACT_PROPERTY_WITH_SETTER.registerFactory(removeAbstractModifierFactory, RemovePartsFromPropertyFix)
 
-        PROPERTY_INITIALIZER_IN_INTERFACE.registerFactory(RemovePartsFromPropertyFix)
+        PROPERTY_INITIALIZER_IN_INTERFACE.registerFactory(RemovePartsFromPropertyFix, ConvertPropertyInitializerToGetterIntention)
 
         MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(addAbstractModifierFactory)
         ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
@@ -98,6 +99,8 @@ class QuickFixRegistrar : QuickFixContributor {
         VIRTUAL_MEMBER_HIDDEN.registerFactory(AddModifierFix.createFactory(OVERRIDE_KEYWORD))
 
         USELESS_CAST.registerFactory(RemoveUselessCastFix)
+
+        USELESS_IS_CHECK.registerFactory(RemoveUselessIsCheckFix, RemoveUselessIsCheckFixForWhen)
 
         WRONG_SETTER_PARAMETER_TYPE.registerFactory(ChangeAccessorTypeFix)
         WRONG_GETTER_RETURN_TYPE.registerFactory(ChangeAccessorTypeFix)
@@ -393,6 +396,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         DEPRECATION.registerFactory(DeprecatedSymbolUsageFix, DeprecatedSymbolUsageInWholeProjectFix, MigrateExternalExtensionFix)
         DEPRECATION_ERROR.registerFactory(DeprecatedSymbolUsageFix, DeprecatedSymbolUsageInWholeProjectFix, MigrateExternalExtensionFix)
+        TYPEALIAS_EXPANSION_DEPRECATION.registerFactory(DeprecatedSymbolUsageFix, DeprecatedSymbolUsageInWholeProjectFix, MigrateExternalExtensionFix)
+        TYPEALIAS_EXPANSION_DEPRECATION_ERROR.registerFactory(DeprecatedSymbolUsageFix, DeprecatedSymbolUsageInWholeProjectFix, MigrateExternalExtensionFix)
         PROTECTED_CALL_FROM_PUBLIC_INLINE.registerFactory(ReplaceProtectedToPublishedApiCallFix)
 
         POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION.registerFactory(ReplaceJavaAnnotationPositionedArgumentsFix)
@@ -505,5 +510,7 @@ class QuickFixRegistrar : QuickFixContributor {
         INAPPLICABLE_RECEIVER_TARGET.registerFactory(MoveReceiverAnnotationFix)
 
         NO_CONSTRUCTOR.registerFactory(RemoveNoConstructorFix)
+
+        ANNOTATION_USED_AS_ANNOTATION_ARGUMENT.registerFactory(RemoveAtFromAnnotationArgument)
     }
 }

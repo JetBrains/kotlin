@@ -40,8 +40,8 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int): String {
 }
 
 class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
-    val printer = Printer(out, "  ")
-    val elementRenderer = RenderIrElementVisitor()
+    private val printer = Printer(out, "  ")
+    private val elementRenderer = RenderIrElementVisitor()
 
     companion object {
         val ANNOTATIONS_RENDERER = DescriptorRenderer.withOptions {
@@ -223,10 +223,10 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
 
 class DumpTreeFromSourceLineVisitor(
         val fileEntry: SourceManager.FileEntry,
-        val lineNumber: Int,
+        private val lineNumber: Int,
         out: Appendable
 ): IrElementVisitorVoid {
-    val dumper = DumpIrTreeVisitor(out)
+    private val dumper = DumpIrTreeVisitor(out)
 
     override fun visitElement(element: IrElement) {
         if (fileEntry.getLineNumber(element.startOffset) == lineNumber) {

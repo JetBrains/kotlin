@@ -90,14 +90,14 @@ object ModifierCheckerCore {
             IMPL_KEYWORD      to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS)
     )
 
-    val featureDependencies = mapOf(
+    private val featureDependencies = mapOf(
             SUSPEND_KEYWORD   to LanguageFeature.Coroutines,
             INLINE_KEYWORD    to LanguageFeature.InlineProperties,
             HEADER_KEYWORD    to LanguageFeature.MultiPlatformProjects,
             IMPL_KEYWORD      to LanguageFeature.MultiPlatformProjects
     )
 
-    val featureDependenciesTargets = mapOf(
+    private val featureDependenciesTargets = mapOf(
             LanguageFeature.InlineProperties to setOf(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
     )
 

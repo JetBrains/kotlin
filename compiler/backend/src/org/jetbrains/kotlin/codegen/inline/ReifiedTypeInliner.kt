@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.generateAsCast
 import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
-import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
@@ -34,7 +32,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 
 class ReificationArgument(
-        val parameterName: String, val nullable: Boolean, val arrayDepth: Int
+        val parameterName: String, val nullable: Boolean, private val arrayDepth: Int
 ) {
     fun asString() = "[".repeat(arrayDepth) + parameterName + (if (nullable) "?" else "")
     fun combine(replacement: ReificationArgument) =
@@ -302,7 +300,7 @@ class TypeParameterMapping(
 )
 
 class ReifiedTypeParametersUsages {
-    val usedTypeParameters: MutableSet<String> = hashSetOf()
+    private val usedTypeParameters: MutableSet<String> = hashSetOf()
 
     fun wereUsedReifiedParameters(): Boolean = usedTypeParameters.isNotEmpty()
 

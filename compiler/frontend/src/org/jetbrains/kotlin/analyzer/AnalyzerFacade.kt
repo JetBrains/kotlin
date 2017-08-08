@@ -75,8 +75,8 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
 
 class ResolverForProjectImpl<M : ModuleInfo>(
         private val debugName: String,
-        val descriptorByModule: Map<M, ModuleDescriptorImpl>,
-        val delegateResolver: ResolverForProject<M> = EmptyResolverForProject()
+        private val descriptorByModule: Map<M, ModuleDescriptorImpl>,
+        private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject()
 ) : ResolverForProject<M>() {
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
         if (!isCorrectModuleInfo(moduleInfo)) {
@@ -164,6 +164,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
                 analyzerFacade: (M) -> AnalyzerFacade<P>,
                 modulesContent: (M) -> ModuleContent,
                 platformParameters: P,
+                languageSettingsProvider: LanguageSettingsProvider = LanguageSettingsProvider.Default,
                 targetEnvironment: TargetEnvironment = CompilerEnvironment,
                 builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
                 delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
@@ -220,7 +221,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
 
                     analyzerFacade(module).createResolverForModule(
                             module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
-                            platformParameters, targetEnvironment, resolverForProject,
+                            platformParameters, targetEnvironment, resolverForProject, languageSettingsProvider,
                             packagePartProviderFactory(module, content)
                     )
                 }
@@ -243,6 +244,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             platformParameters: P,
             targetEnvironment: TargetEnvironment,
             resolverForProject: ResolverForProject<M>,
+            languageSettingsProvider: LanguageSettingsProvider,
             packagePartProvider: PackagePartProvider
     ): ResolverForModule
 
@@ -300,10 +302,6 @@ interface LanguageSettingsProvider {
         override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project) = LanguageVersionSettingsImpl.DEFAULT
 
         override fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion = TargetPlatformVersion.NoVersion
-    }
-
-    companion object {
-        fun getInstance(project: Project) = ServiceManager.getService(project, LanguageSettingsProvider::class.java) ?: Default
     }
 }
 

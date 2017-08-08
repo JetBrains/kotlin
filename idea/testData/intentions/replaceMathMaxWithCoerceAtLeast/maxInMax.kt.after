@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+import java.lang.Math.max
+
+fun foo() {
+    Math.max(1.coerceAtLeast(3), max(2, 4))
+}

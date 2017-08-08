@@ -23,6 +23,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.TuplesKt;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -43,6 +45,7 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
+import org.jetbrains.kotlin.resolve.calls.KotlinResolutionConfigurationKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.checkers.*;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
@@ -823,7 +826,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         // See also CallExpressionResolver.getSimpleNameExpressionTypeInfo, .getQualifiedExpressionTypeInfo
         Call call = createCallForSpecialConstruction(
                 expression, expression.getOperationReference(), Collections.singletonList(baseExpression));
-        components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
+        ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 call, ResolveConstruct.EXCL_EXCL, Collections.singletonList("baseExpr"), Collections.singletonList(true), context, null);
         KotlinTypeInfo baseTypeInfo = BindingContextUtils.getRecordedTypeInfo(baseExpression, context.trace.getBindingContext());
 
@@ -852,7 +855,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.nullValue(components.builtIns),
                                                                                    components.languageVersionSettings));
         }
-        KotlinType resultingType = TypeUtils.makeNotNullable(baseType);
+        KotlinType resultingType = KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE()
+                                   ? resolvedCall.getResultingDescriptor().getReturnType()
+                                   : TypeUtils.makeNotNullable(baseType);
         if (context.contextDependency == DEPENDENT) {
             return baseTypeInfo.replaceType(resultingType);
         }
@@ -1110,20 +1115,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo dataFlowInfo = leftTypeInfo.getDataFlowInfo();
         ExpressionTypingContext contextWithDataFlow = context.replaceDataFlowInfo(dataFlowInfo);
 
-        KotlinTypeInfo rightTypeInfo = facade.getTypeInfo(right, contextWithDataFlow);
+        ExpressionReceiver receiver = createReceiverForEquals(left, contextWithDataFlow);
+        Collection<FunctionDescriptor> equalsFunctions = findEqualsWithNullableAnyParameter(receiver, left);
 
-        TemporaryBindingTrace traceInterpretingRightAsNullableAny = TemporaryBindingTrace.create(
-                context.trace, "trace to resolve 'equals(Any?)' interpreting as of type Any? an expression:", right);
-        traceInterpretingRightAsNullableAny.recordType(right, components.builtIns.getNullableAnyType());
-
-        // Nothing? has no members, and `equals()` would be unresolved on it
-        KotlinType leftType = leftTypeInfo.getType();
-        if (leftType != null && KotlinBuiltIns.isNothingOrNullableNothing(leftType)) {
-            traceInterpretingRightAsNullableAny.recordType(left, components.builtIns.getNullableAnyType());
-        }
-
-        ExpressionTypingContext newContext = context.replaceBindingTrace(traceInterpretingRightAsNullableAny);
-        ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, newContext);
         Call call = CallMaker.makeCallWithExpressions(
                 expression,
                 receiver,
@@ -1132,19 +1126,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 operationSign,
                 Collections.singletonList(right)
         );
-        OverloadResolutionResults<FunctionDescriptor> resolutionResults =
-                components.callResolver.resolveCallWithGivenName(newContext, call, operationSign, OperatorNameConventions.EQUALS);
 
-        traceInterpretingRightAsNullableAny.commit((slice, key) -> {
-            // the type of the right (and sometimes left) expression isn't 'Any?' actually
-            if ((key == right || key == left) && slice == EXPRESSION_TYPE_INFO) return false;
-            return true;
-        }, true);
+        OverloadResolutionResults<FunctionDescriptor> resolutionResults =
+                components.callResolver.resolveEqualsCallWithGivenDescriptors(contextWithDataFlow, operationSign, receiver, call, equalsFunctions);
 
         if (resolutionResults.isSuccess()) {
             FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
-            if (ensureBooleanResult(operationSign, OperatorNameConventions.EQUALS, equals.getReturnType(), context)) {
-                ensureNonemptyIntersectionOfOperandTypes(expression, context);
+            if (ensureBooleanResult(operationSign, OperatorNameConventions.EQUALS, equals.getReturnType(), contextWithDataFlow)) {
+                ensureNonemptyIntersectionOfOperandTypes(expression, contextWithDataFlow);
             }
         }
         else {
@@ -1155,7 +1144,35 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(EQUALS_MISSING.on(operationSign));
             }
         }
+        KotlinTypeInfo rightTypeInfo = facade.getTypeInfo(right, contextWithDataFlow);
         return rightTypeInfo.replaceType(components.builtIns.getBooleanType());
+    }
+
+    private ExpressionReceiver createReceiverForEquals(KtExpression left, ExpressionTypingContext context) {
+        KotlinType leftType = ExpressionTypingUtils.safeGetType(facade.safeGetTypeInfo(left, context));
+        KotlinType receiverType = KotlinBuiltIns.isNothingOrNullableNothing(leftType) ?
+                                  components.builtIns.getNullableAnyType() :
+                                  leftType;
+        return ExpressionReceiver.Companion.create(left, receiverType, context.trace.getBindingContext());
+    }
+
+    private List<FunctionDescriptor> findEqualsWithNullableAnyParameter(
+            @NotNull ExpressionReceiver receiver,
+            @NotNull KtExpression left
+    ) {
+        KotlinType refinedType = KotlinBuiltIns.isNothingOrNullableNothing(receiver.getType()) ?
+                                 components.builtIns.getNullableAnyType() :
+                                 receiver.getType();
+        Collection<SimpleFunctionDescriptor> equalsMembers =
+                refinedType.getMemberScope().getContributedFunctions(OperatorNameConventions.EQUALS, new KotlinLookupLocation(left));
+
+        return CollectionsKt.filter(equalsMembers, descriptor -> {
+            if (ErrorUtils.isError(descriptor)) return true;
+
+            if (descriptor.getValueParameters().size() != 1) return false;
+            ValueParameterDescriptor valueParameter = descriptor.getValueParameters().get(0);
+            return KotlinBuiltIns.isNullableAny(valueParameter.getType());
+        });
     }
 
     @NotNull

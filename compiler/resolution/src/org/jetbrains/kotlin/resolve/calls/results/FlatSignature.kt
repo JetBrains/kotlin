@@ -51,6 +51,23 @@ class FlatSignature<out T> private constructor(
     val isGeneric = typeParameters.isNotEmpty()
 
     companion object {
+        fun <T> createFromReflectionType(
+                origin: T,
+                descriptor: CallableDescriptor,
+                numDefaults: Int,
+                reflectionType: UnwrappedType
+        ): FlatSignature<T> {
+            return FlatSignature(origin,
+                                 descriptor.typeParameters,
+                                 reflectionType.arguments.map { it.type }, // should we drop return type?
+                                 hasExtensionReceiver = false,
+                                 hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
+                                 numDefaults = numDefaults,
+                                 isHeader = descriptor is MemberDescriptor && descriptor.isHeader,
+                                 isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+                                 )
+        }
+
         fun <T> create(
                 origin: T,
                 descriptor: CallableDescriptor,

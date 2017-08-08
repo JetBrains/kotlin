@@ -430,7 +430,7 @@ fun postProcessMoveUsages(
 
 var KtFile.updatePackageDirective: Boolean? by UserDataProperty(Key.create("UPDATE_PACKAGE_DIRECTIVE"))
 
-sealed class OuterInstanceReferenceUsageInfo(element: PsiElement, val isIndirectOuter: Boolean) : UsageInfo(element) {
+sealed class OuterInstanceReferenceUsageInfo(element: PsiElement, private val isIndirectOuter: Boolean) : UsageInfo(element) {
     open fun reportConflictIfAny(conflicts: MultiMap<PsiElement, String>): Boolean {
         val element = element ?: return false
 
@@ -453,7 +453,7 @@ sealed class OuterInstanceReferenceUsageInfo(element: PsiElement, val isIndirect
     class ImplicitReceiver(
             callElement: KtElement,
             isIndirectOuter: Boolean,
-            val isDoubleReceiver: Boolean
+            private val isDoubleReceiver: Boolean
     ) : OuterInstanceReferenceUsageInfo(callElement, isIndirectOuter) {
         val callElement: KtElement?
             get() = element as? KtElement
