@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
-internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
+class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
                                              val context: CommonBackendContext) {
 
     private val descriptorSubstituteMap: MutableMap<DeclarationDescriptor, DeclarationDescriptor> = mutableMapOf()
@@ -553,9 +553,9 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
 }
 
-internal class SubstitutedDescriptor(val inlinedFunction: FunctionDescriptor, val descriptor: DeclarationDescriptor)
+class SubstitutedDescriptor(val inlinedFunction: FunctionDescriptor, val descriptor: DeclarationDescriptor)
 
-internal class DescriptorSubstitutorForExternalScope(val globalSubstituteMap: MutableMap<DeclarationDescriptor, SubstitutedDescriptor>)
+class DescriptorSubstitutorForExternalScope(val globalSubstituteMap: MutableMap<DeclarationDescriptor, SubstitutedDescriptor>)
     : IrElementTransformerVoidWithContext() {
 
     override fun visitCall(expression: IrCall): IrExpression {

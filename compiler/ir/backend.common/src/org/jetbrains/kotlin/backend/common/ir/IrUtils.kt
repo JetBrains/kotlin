@@ -65,7 +65,7 @@ fun DeclarationDescriptor.createFakeOverrideDescriptor(owner: ClassDescriptor): 
     }
 }
 
-internal fun FunctionDescriptor.createOverriddenDescriptor(owner: ClassDescriptor, final: Boolean = true): FunctionDescriptor {
+fun FunctionDescriptor.createOverriddenDescriptor(owner: ClassDescriptor, final: Boolean = true): FunctionDescriptor {
     return this.newCopyBuilder()
             .setOwner(owner)
             .setCopyOverrides(true)
@@ -76,7 +76,7 @@ internal fun FunctionDescriptor.createOverriddenDescriptor(owner: ClassDescripto
     }
 }
 
-internal fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superConstructorDescriptor: ClassConstructorDescriptor, isPrimary: Boolean = false)
+fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superConstructorDescriptor: ClassConstructorDescriptor, isPrimary: Boolean = false)
         : ClassConstructorDescriptor {
     val constructorDescriptor = ClassConstructorDescriptorImpl.createSynthesized(
             /* containingDeclaration = */ this,
@@ -91,7 +91,7 @@ internal fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superCo
     return constructorDescriptor
 }
 
-internal fun IrClass.addSimpleDelegatingConstructor(superConstructorSymbol: IrConstructorSymbol,
+fun IrClass.addSimpleDelegatingConstructor(superConstructorSymbol: IrConstructorSymbol,
                                                     constructorDescriptor: ClassConstructorDescriptor,
                                                     origin: IrDeclarationOrigin)
         : IrConstructor {
@@ -117,7 +117,7 @@ internal fun IrClass.addSimpleDelegatingConstructor(superConstructorSymbol: IrCo
     }
 }
 
-internal fun CommonBackendContext.createArrayOfExpression(arrayElementType: KotlinType,
+fun CommonBackendContext.createArrayOfExpression(arrayElementType: KotlinType,
                                              arrayElements: List<IrExpression>,
                                              startOffset: Int, endOffset: Int): IrExpression {
 

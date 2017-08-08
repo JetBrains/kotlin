@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.KotlinType
 /**
  * This lowering pass replaces [IrStringConcatenation]s with StringBuilder appends.
  */
-internal class StringConcatenationLowering(val context: CommonBackendContext) : FileLoweringPass {
+class StringConcatenationLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(StringConcatenationTransformer(this))
     }
