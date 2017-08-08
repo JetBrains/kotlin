@@ -164,6 +164,9 @@ For this project the task graph will be the following:
              
              // Print all parameters during the build.
              dumpParameters(true)
+             
+             // Add the `anotherTask` to the compilation task dependencies.
+             dependsOn anotherTask
         }
      }
 
@@ -182,6 +185,9 @@ For this project the task graph will be the following:
 
              link <files which will be linked with native stubs>    // Additional files to link with native stubs.
              
-             dumpParameters(true)                                   // Print all parameters during the build.                       
+             dumpParameters(true)                                   // Print all parameters during the build.
+             
+             // Add the `anotherTask` to the stub generation task dependencies.
+             dependsOn anotherTask
          }
      }

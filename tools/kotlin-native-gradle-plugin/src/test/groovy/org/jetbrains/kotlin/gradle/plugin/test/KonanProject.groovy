@@ -5,6 +5,8 @@ import org.junit.rules.TemporaryFolder
 
 class KonanProject {
 
+    static String DEFAULT_ARTIFACT_NAME = 'main'
+
     TemporaryFolder projectDir
 
     File getProjectDirRoot() { return projectDir.root }
@@ -55,11 +57,11 @@ class KonanProject {
             plugins { id 'konan' }
             
             konanArtifacts {
-                main { }
+                $DEFAULT_ARTIFACT_NAME { }
             }
             """.stripIndent()
         )
-        compilationTasks = [":compileKonanMain", ":compileKonan", ":build"]
+        compilationTasks = [":compileKonan${DEFAULT_ARTIFACT_NAME.capitalize()}".toString(), ":compileKonan", ":build"]
         return result
     }
 
@@ -99,11 +101,11 @@ class KonanProject {
         addSetting(container, section, parameter, "'${value.canonicalPath.replace('\\', '\\\\')}'")
     }
 
-    void addCompilationSetting(String artifactName, String parameter, String value) {
+    void addCompilationSetting(String artifactName = DEFAULT_ARTIFACT_NAME, String parameter, String value) {
         addSetting("konanArtifacts", artifactName, parameter, value)
     }
 
-    void addCompilationSetting(String artifactName, String parameter, File value) {
+    void addCompilationSetting(String artifactName = DEFAULT_ARTIFACT_NAME, String parameter, File value) {
         addSetting("konanArtifacts", artifactName, parameter, value)
     }
 
@@ -139,6 +141,8 @@ class KonanProject {
 
 class KonanInteropProject extends KonanProject {
 
+    static String DEFAULT_INTEROP_NAME = "stdio"
+
     Set<File> defFiles = []
 
     List<String> interopTasks = []
@@ -157,16 +161,17 @@ class KonanInteropProject extends KonanProject {
             plugins { id 'konan' }
             
             konanInterop {
-                stdio { }
+                $DEFAULT_INTEROP_NAME { }
             }
             
             konanArtifacts {
-                main { useInterop 'stdio' }
+                $DEFAULT_ARTIFACT_NAME { useInterop '$DEFAULT_INTEROP_NAME' }
             }
             """.stripIndent()
         )
-        interopTasks = [":genStdioInteropStubs", ":compileStdioInteropStubs"]
-        compilationTasks = [":compileKonanMain", ":compileKonan", ":build"]
+        interopTasks = [":gen${DEFAULT_INTEROP_NAME.capitalize()}InteropStubs".toString(),
+                        ":compile${DEFAULT_INTEROP_NAME.capitalize()}InteropStubs".toString()]
+        compilationTasks = [":compileKonan${DEFAULT_ARTIFACT_NAME.capitalize()}".toString(), ":compileKonan", ":build"]
         return result
     }
 
@@ -184,18 +189,18 @@ class KonanInteropProject extends KonanProject {
         )
     }
 
-    void addInteropSetting(String interopName, String parameter, String value) {
+    void addInteropSetting(String interopName = DEFAULT_INTEROP_NAME, String parameter, String value) {
         addSetting("konanInterop", interopName, parameter, value)
     }
 
-    void addInteropSetting(String interopName, String parameter, File value) {
+    void addInteropSetting(String interopName = DEFAULT_INTEROP_NAME, String parameter, File value) {
         addSetting("konanInterop", interopName, parameter, value)
     }
 
     static KonanInteropProject create(TemporaryFolder projectDir) {
         return createEmpty(projectDir) {
             it.generateSrcFile("main.kt")
-            it.generateDefFile("stdio.def")
+            it.generateDefFile("${DEFAULT_INTEROP_NAME}.def")
         }
     }
 

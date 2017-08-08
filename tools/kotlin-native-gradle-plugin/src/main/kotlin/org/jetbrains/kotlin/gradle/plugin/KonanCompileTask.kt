@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Named
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
@@ -333,4 +334,6 @@ open class KonanCompileConfig(
     fun dumpParameters(value: Boolean) = with(compilationTask) {
         dumpParameters = value
     }
+
+    fun dependsOn(task: Task) = compilationTask.dependsOn(task)
 }
