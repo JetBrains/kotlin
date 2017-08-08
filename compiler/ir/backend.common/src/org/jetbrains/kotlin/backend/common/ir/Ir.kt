@@ -28,10 +28,10 @@ abstract class Ir<out T: CommonBackendContext>(val context: T, val irModule: IrM
 
 abstract class Symbols<out T: CommonBackendContext>(val context: T, private val symbolTable: SymbolTable) {
 
-    private val builtIns
+    protected val builtIns
         get() = context.builtIns
 
-    private fun builtInsPackage(vararg packageNameSegments: String) =
+    protected fun builtInsPackage(vararg packageNameSegments: String) =
             context.builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
 
     val refClass = symbolTable.referenceClass(context.getInternalClass("Ref"))
@@ -121,7 +121,7 @@ abstract class Symbols<out T: CommonBackendContext>(val context: T, private val 
     }
 
 
-    private val arrayTypes = arrayOf(
+    protected val arrayTypes = arrayOf(
             builtIns.getPrimitiveArrayKotlinType(PrimitiveType.BYTE),
             builtIns.getPrimitiveArrayKotlinType(PrimitiveType.CHAR),
             builtIns.getPrimitiveArrayKotlinType(PrimitiveType.SHORT),
