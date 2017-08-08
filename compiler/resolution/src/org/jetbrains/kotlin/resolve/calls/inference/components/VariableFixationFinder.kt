@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompleter.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompleter.ConstraintSystemCompletionMode.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -23,7 +25,6 @@ import org.jetbrains.kotlin.resolve.calls.model.PostponedKotlinCallArgument
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.contains
-import java.util.*
 
 class VariableFixationFinder {
     interface Context {
@@ -35,45 +36,44 @@ class VariableFixationFinder {
 
     fun findFirstVariableForFixation(
             c: Context,
-            type: ConstraintSystemCompleter.CompletionType,
+            completionMode: ConstraintSystemCompletionMode,
             topLevelType: UnwrappedType
-    ): VariableForFixation? = c.findTypeVariableForFixation(type, topLevelType)
+    ): VariableForFixation? = c.findTypeVariableForFixation(completionMode, topLevelType)
+
+    private enum class TypeVariableFixationReadiness {
+        FORBIDDEN,
+        WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
+        RELATED_TO_ANY_OUTPUT_TYPE,
+        WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
+        READY_FOR_FIXATION,
+    }
+
+    private fun Context.getTypeVariableReadiness(
+            variable: TypeConstructor,
+            dependencyProvider: TypeVariableDependencyInformationProvider
+    ): TypeVariableFixationReadiness = when {
+        dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
+        !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+        dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
+        hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
+        else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
+    }
 
     private fun Context.findTypeVariableForFixation(
-            type: ConstraintSystemCompleter.CompletionType,
+            completionMode: ConstraintSystemCompletionMode,
             topLevelType: UnwrappedType
     ): VariableForFixation? {
-        val edgesProvider = EdgesProvider(notFixedTypeVariables)
+        val dependencyProvider = TypeVariableDependencyInformationProvider(notFixedTypeVariables, postponedArguments,
+                                                                           topLevelType.takeIf { completionMode == PARTIAL })
 
-        val forbiddenForFixation = findAllForbiddenForFixation(edgesProvider, postponedArguments, type, topLevelType)
-        val relatedToAllOutputTypes = findAllRelatedToAllOutputTypes(edgesProvider, postponedArguments)
-
-        // first node not related to all output node (available for fixation) if there is one.
-        // otherwise first node available for fixation
         val initialOrder = notFixedTypeVariables.keys.sortByInitialOrder()
-
-        // not related to output types and allowed for fixations
-        var nodeForFixation = initialOrder.firstOrNull { !forbiddenForFixation.contains(it) && !relatedToAllOutputTypes.contains(it) }
-
-        if (nodeForFixation == null) {
-            nodeForFixation = initialOrder.firstOrNull { !forbiddenForFixation.contains(it) }
+        val candidate = initialOrder.maxBy { getTypeVariableReadiness(it, dependencyProvider) } ?: return null
+        val candidateReadiness = getTypeVariableReadiness(candidate, dependencyProvider)
+        return when (candidateReadiness) {
+            TypeVariableFixationReadiness.FORBIDDEN -> null
+            TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> VariableForFixation(candidate, false)
+            else -> VariableForFixation(candidate, true)
         }
-
-        if (nodeForFixation == null) return null
-
-        val relatedNodes = edgesProvider.computeAllRelatedTypeVariables(nodeForFixation).sortByInitialOrder()
-        // we can fix nodeForFixation, because it is the first node from all relatedNodes via initial order
-        // but now we try to sort them respectfully to nodes like T <: Foo<S>, so S is going before T
-
-        // noDependencyAndHasProperConstraints
-        relatedNodes.firstOrNull { !hasDependencyToOtherTypeVariables(it) && variableHasProperConstraints(it) }?.let {
-            return VariableForFixation(it, true)
-        }
-
-        // hasProperConstraint
-        relatedNodes.firstOrNull { variableHasProperConstraints(it) }?.let { return VariableForFixation(it, true) }
-
-        return VariableForFixation(relatedNodes.first(), false)
     }
 
     private fun Context.hasDependencyToOtherTypeVariables(typeVariable: TypeConstructor): Boolean {
@@ -85,7 +85,7 @@ class VariableFixationFinder {
         return false
     }
 
-    private fun Context.variableHasProperConstraints(variable: TypeConstructor): Boolean =
+    private fun Context.variableHasProperArgumentConstraints(variable: TypeConstructor): Boolean =
             notFixedTypeVariables[variable]?.constraints?.any { isProperArgumentConstraint(it) } ?: false
 
     private fun Context.isProperArgumentConstraint(c: Constraint) =
@@ -96,117 +96,5 @@ class VariableFixationFinder {
 
     private fun Collection<TypeConstructor>.sortByInitialOrder(): List<TypeConstructor> =
             sortedBy { toString() } // todo
-
-    private fun findAllRelatedToAllOutputTypes(
-            edgesProvider: EdgesProvider,
-            postponedArguments: Collection<PostponedKotlinCallArgument>
-    ): Set<TypeConstructor> =
-            postponedArguments.filterNot { it.analyzed }.flatMapTo(hashSetOf<TypeConstructor>()) {
-                it.outputType?.let { edgesProvider.computeAllRelatedTypeVariables(it) } ?: emptyList()
-            }
-
-
-    private fun findAllForbiddenForFixation(
-            edgesProvider: EdgesProvider,
-            postponedArguments: Collection<PostponedKotlinCallArgument>,
-            completionType: ConstraintSystemCompleter.CompletionType,
-            topLevelType: UnwrappedType
-    ): Set<TypeConstructor> {
-        if (completionType == ConstraintSystemCompleter.CompletionType.FULL) return emptySet()
-
-        val initialNodes = edgesProvider.computeAllRelatedTypeVariables(topLevelType)
-        if (initialNodes.isEmpty()) return emptySet()
-
-        val result = HashSet(initialNodes) // this set always is closed set by related edges
-        val notProcessedNodes = Stack<TypeConstructor>().apply { addAll(initialNodes) }
-
-        while (notProcessedNodes.isNotEmpty()) {
-            val startNode = notProcessedNodes.pop()
-
-            for (postponeArgument in postponedArguments) {
-                val resultType = postponeArgument.outputType ?: continue
-                val resultIsDependedFromStartNode = postponeArgument.inputTypes.any { it.contains { it.constructor == startNode } }
-
-                if (resultIsDependedFromStartNode) {
-                    edgesProvider.forAllMyNodes(resultType) { newNode ->
-                        if (!result.contains(newNode)) {
-                            val newRelatedNodes = edgesProvider.computeAllRelatedTypeVariables(startNode)
-                            notProcessedNodes.addAll(newRelatedNodes)
-                            result.addAll(newRelatedNodes)
-                        }
-                    }
-                }
-            }
-        }
-
-        return result
-    }
-
-    /**
-     * Direct edges it is edge from type variable to type variables inside constraints on current type variable.
-     * Such edges can be calculated explicitly only via VariablesWithConstraints.
-     * Reversed edges should be cached, because it isn't trivial to calculate them. Such edges called "indirect edges"
-     *
-     * In future we can do not recreate this after type variable fixation, because edges cannot be deleted ->
-     * we should add new edges and filter fixed type variables
-     */
-    private class EdgesProvider(
-            val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints>
-    ) {
-        private val indirectEdges: MutableMap<TypeConstructor, MutableSet<TypeConstructor>> = hashMapOf()
-        private val directEdges: MutableMap<TypeConstructor, MutableSet<TypeConstructor>> = hashMapOf()
-
-        init {
-            fun addDirectEdge(from: TypeConstructor, to: TypeConstructor) {
-                directEdges.getOrPut(from) { hashSetOf() }.add(to)
-                indirectEdges.getOrPut(to) { hashSetOf() }.add(from)
-            }
-
-            for (variableWithConstraints in notFixedTypeVariables.values) {
-                val from = variableWithConstraints.typeVariable.freshTypeConstructor
-
-                for (constraint in variableWithConstraints.constraints) {
-                    constraint.type.contains {
-                        if (notFixedTypeVariables.containsKey(it.constructor)) {
-                            addDirectEdge(from, it.constructor)
-                        }
-
-                        false
-                    }
-                }
-            }
-        }
-
-        private fun getDirectEdges(from: TypeConstructor): Set<TypeConstructor> = directEdges[from] ?: emptySet()
-        private fun getIndirectEdges(from: TypeConstructor): Set<TypeConstructor> = indirectEdges[from] ?: emptySet()
-
-        private fun getAllEdges(from: TypeConstructor): Set<TypeConstructor> = getDirectEdges(from) + getIndirectEdges(from)
-
-        fun computeAllRelatedTypeVariables(startType: UnwrappedType): Set<TypeConstructor> =
-                HashSet<TypeConstructor>().apply {
-                    forAllMyNodes(startType) { addAllRelatedNodes(this, it) }
-                }
-
-        fun computeAllRelatedTypeVariables(startNode: TypeConstructor): Set<TypeConstructor> = HashSet<TypeConstructor>().apply {
-            if (isMyTypeVariable(startNode)) addAllRelatedNodes(this, startNode)
-        }
-
-        private fun isMyTypeVariable(typeConstructor: TypeConstructor) = notFixedTypeVariables.containsKey(typeConstructor)
-
-        private fun addAllRelatedNodes(to: MutableSet<TypeConstructor>, node: TypeConstructor) {
-            if (to.add(node)) {
-                for (relatedNode in getAllEdges(node)) {
-                    addAllRelatedNodes(to, relatedNode)
-                }
-            }
-        }
-
-        fun forAllMyNodes(startType: UnwrappedType, action: (TypeConstructor) -> Unit) = startType.contains {
-            if (isMyTypeVariable(it.constructor)) action(it.constructor)
-
-            false
-        }
-    }
-
 
 }
