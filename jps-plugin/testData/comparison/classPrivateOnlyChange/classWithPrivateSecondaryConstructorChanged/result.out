@@ -1,0 +1,3 @@
+PROTO DIFFERENCE in test/ClassWithPrivateSecondaryConstructorsAdded: CONSTRUCTOR_LIST
+PROTO DIFFERENCE in test/ClassWithPrivateSecondaryConstructorsAdded2: CONSTRUCTOR_LIST
+PROTO DIFFERENCE in test/ClassWithPrivateSecondaryConstructorsRemoved: CONSTRUCTOR_LIST

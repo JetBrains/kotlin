@@ -2,9 +2,9 @@ PROTO DIFFERENCE in test/AbstractFlagAdded: FLAGS
 CHANGES in test/AbstractFlagAdded: CLASS_SIGNATURE
 PROTO DIFFERENCE in test/AbstractFlagRemoved: FLAGS
 CHANGES in test/AbstractFlagRemoved: CLASS_SIGNATURE
-PROTO DIFFERENCE in test/AnnotationFlagAdded: CONSTRUCTOR_LIST, FLAGS, SUPERTYPE_LIST
+PROTO DIFFERENCE in test/AnnotationFlagAdded: FLAGS, SUPERTYPE_LIST
 CHANGES in test/AnnotationFlagAdded: CLASS_SIGNATURE
-PROTO DIFFERENCE in test/AnnotationFlagRemoved: CONSTRUCTOR_LIST, FLAGS, SUPERTYPE_LIST
+PROTO DIFFERENCE in test/AnnotationFlagRemoved: FLAGS, SUPERTYPE_LIST
 CHANGES in test/AnnotationFlagRemoved: CLASS_SIGNATURE
 PROTO DIFFERENCE in test/DataFlagAdded: FLAGS, FUNCTION_LIST
 CHANGES in test/DataFlagAdded: CLASS_SIGNATURE, MEMBERS
@@ -16,9 +16,9 @@ PROTO DIFFERENCE in test/EnumFlagAdded: CONSTRUCTOR_LIST, FLAGS, SUPERTYPE_LIST
 CHANGES in test/EnumFlagAdded: CLASS_SIGNATURE
 PROTO DIFFERENCE in test/EnumFlagRemoved: CONSTRUCTOR_LIST, FLAGS, SUPERTYPE_LIST
 CHANGES in test/EnumFlagRemoved: CLASS_SIGNATURE
-PROTO DIFFERENCE in test/InnerClassHolder.InnerFlagAdded: CONSTRUCTOR_LIST, FLAGS
+PROTO DIFFERENCE in test/InnerClassHolder.InnerFlagAdded: FLAGS
 CHANGES in test/InnerClassHolder.InnerFlagAdded: CLASS_SIGNATURE
-PROTO DIFFERENCE in test/InnerClassHolder.InnerFlagRemoved: CONSTRUCTOR_LIST, FLAGS
+PROTO DIFFERENCE in test/InnerClassHolder.InnerFlagRemoved: FLAGS
 CHANGES in test/InnerClassHolder.InnerFlagRemoved: CLASS_SIGNATURE
 PROTO DIFFERENCE in test/InternalFlagAdded: FLAGS
 CHANGES in test/InternalFlagAdded: CLASS_SIGNATURE
