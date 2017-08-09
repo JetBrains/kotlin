@@ -1,0 +1,3 @@
+PROTO DIFFERENCE in test/MainKt: FUNCTION_LIST
+CHANGES in test/MainKt: MEMBERS
+    [annotationListBecameEmpty, annotationListBecameNotEmpty]
