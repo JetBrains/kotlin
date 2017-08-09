@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.sure
 
 abstract class ConstantValue<out T>(open val value: T) {
     abstract val type: KotlinType
@@ -139,7 +138,7 @@ class EnumValue(
 ) : ConstantValue<ClassDescriptor>(value) {
 
     override val type: KotlinType
-        get() = value.classValueType.sure { "Enum entry must have a class object type: " + value }
+        get() = value.classValueType ?: ErrorUtils.createErrorType("Containing class for error-class based enum entry $value")
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitEnumValue(this, data)
 

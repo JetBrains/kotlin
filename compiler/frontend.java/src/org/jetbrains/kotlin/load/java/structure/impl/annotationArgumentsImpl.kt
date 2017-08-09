@@ -72,6 +72,9 @@ class JavaEnumValueAnnotationArgumentImpl(
             else -> throw IllegalStateException("Reference argument should be an enum value, but was $element: ${element.text}")
         }
     }
+
+    override val entryName: Name?
+        get() = psiReference.referenceName?.let(Name::identifier)
 }
 
 class JavaClassObjectAnnotationArgumentImpl(

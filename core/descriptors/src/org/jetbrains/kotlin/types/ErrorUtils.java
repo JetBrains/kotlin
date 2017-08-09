@@ -290,11 +290,11 @@ public class ErrorUtils {
         }
     }
 
-    private static final ErrorClassDescriptor ERROR_CLASS = new ErrorClassDescriptor(null);
+    private static final ErrorClassDescriptor ERROR_CLASS = new ErrorClassDescriptor(Name.special("<ERROR CLASS>"));
 
     private static class ErrorClassDescriptor extends ClassDescriptorImpl {
-        public ErrorClassDescriptor(@Nullable String name) {
-            super(getErrorModule(), Name.special(name == null ? "<ERROR CLASS>" : "<ERROR CLASS: " + name + ">"),
+        public ErrorClassDescriptor(@NotNull Name name) {
+            super(getErrorModule(), name,
                   Modality.OPEN, ClassKind.CLASS, Collections.<KotlinType>emptyList(), SourceElement.NO_SOURCE,
                   /* isExternal = */ false
             );
@@ -340,7 +340,12 @@ public class ErrorUtils {
 
     @NotNull
     public static ClassDescriptor createErrorClass(@NotNull String debugMessage) {
-        return new ErrorClassDescriptor(debugMessage);
+        return new ErrorClassDescriptor(Name.special("<ERROR CLASS: " + debugMessage + ">"));
+    }
+
+    @NotNull
+    public static ClassDescriptor createErrorClassWithExactName(@NotNull Name name) {
+        return new ErrorClassDescriptor(name);
     }
 
     @NotNull

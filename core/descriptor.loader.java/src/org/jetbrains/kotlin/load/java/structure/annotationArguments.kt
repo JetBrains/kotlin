@@ -31,6 +31,7 @@ interface JavaArrayAnnotationArgument : JavaAnnotationArgument {
 }
 
 interface JavaEnumValueAnnotationArgument : JavaAnnotationArgument {
+    val entryName: Name?
     fun resolve(): JavaField?
 }
 
