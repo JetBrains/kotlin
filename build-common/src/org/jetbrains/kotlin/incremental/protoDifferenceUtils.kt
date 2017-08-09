@@ -249,12 +249,12 @@ private class DifferenceCalculatorForClass(
                 ProtoBufClassKind.FQ_NAME,
                 ProtoBufClassKind.TYPE_PARAMETER_LIST,
                 ProtoBufClassKind.SUPERTYPE_LIST,
-                ProtoBufClassKind.SUPERTYPE_ID_LIST-> {
+                ProtoBufClassKind.SUPERTYPE_ID_LIST,
+                ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST -> {
                     isClassAffected = true
                     areSubclassesAffected = true
                 }
                 ProtoBufClassKind.JVM_EXT_CLASS_MODULE_NAME,
-                ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST,
                 ProtoBufClassKind.JS_EXT_CLASS_CONTAINING_FILE_ID -> {
                    // TODO
                 }
