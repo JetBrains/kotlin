@@ -66,6 +66,14 @@ function stackTop() {
     return new Uint32Array(fourBytes)[0];
 }
 
+function runGlobalInitializers(exports) {
+    for (var property in exports) {
+        if (property.startsWith("Konan_global_ctor_")) {
+            exports[property]();
+        }
+    }
+}
+
 var konan_dependencies = {
     env: {
         abort: function() {
@@ -134,11 +142,12 @@ heap = new Uint8Array(konan_dependencies.env.memory.buffer);
 konanStackTop = stackTop();
 
 try {
-  exit_status = instance.exports.Konan_js_main(arguments.length);
+    runGlobalInitializers(instance.exports);
+    exit_status = instance.exports.Konan_js_main(arguments.length);
 } catch (e) {
-  print("Exception executing Konan_js_main: " + e);
-  print(e.stack);
-  exit_status = 1;
+    print("Exception executing Konan_js_main: " + e);
+    print(e.stack);
+    exit_status = 1;
 }
 
 quit(exit_status); // TODO: d8 specific.

@@ -820,92 +820,77 @@ task classDelegation_withBridge(type: RunKonanTest) {
 }
 
 task delegatedProperty_simpleVal(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails: not global_ctros support.
     goldValue = "x\n42\n"
     source = "codegen/delegatedProperty/simpleVal.kt"
 }
 
 task delegatedProperty_simpleVar(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "get x\n42\nset x\nget x\n117\n"
     source = "codegen/delegatedProperty/simpleVar.kt"
 }
 
 task delegatedProperty_packageLevel(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "x\n42\n"
     source = "codegen/delegatedProperty/packageLevel.kt"
 }
 
 task delegatedProperty_local(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "x\n42\n"
     source = "codegen/delegatedProperty/local.kt"
 }
 
 task delegatedProperty_delegatedOverride(type: LinkKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "156\nx\n117\n42\n"
     source = "codegen/delegatedProperty/delegatedOverride_main.kt"
     lib = "codegen/delegatedProperty/delegatedOverride_lib.kt"
 }
 
 task delegatedProperty_lazy(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "computed!\nHello\nHello\n"
     source = "codegen/delegatedProperty/lazy.kt"
 }
 
 task delegatedProperty_observable(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "<no name> -> first\nfirst -> second\n"
     source = "codegen/delegatedProperty/observable.kt"
 }
 
 task delegatedProperty_map(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "John Doe\n25\n"
     source = "codegen/delegatedProperty/map.kt"
 }
 
 task propertyCallableReference_valClass(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "42\n117\n"
     source = "codegen/propertyCallableReference/valClass.kt"
 }
 
 task propertyCallableReference_valModule(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "42\n"
     source = "codegen/propertyCallableReference/valModule.kt"
 }
 
 task propertyCallableReference_varClass(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // RuntimeError: memory access out of bounds
     goldValue = "117\n117\n42\n42\n"
     source = "codegen/propertyCallableReference/varClass.kt"
 }
 
 task propertyCallableReference_varModule(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "117\n117\n"
     source = "codegen/propertyCallableReference/varModule.kt"
 }
 
 task propertyCallableReference_valExtension(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "42\n117\n"
     source = "codegen/propertyCallableReference/valExtension.kt"
 }
 
 task propertyCallableReference_varExtension(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "117\n117\n42\n42\n"
     source = "codegen/propertyCallableReference/varExtension.kt"
 }
 
 task propertyCallableReference_linkTest(type: LinkKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
     goldValue = "42\n117\n"
     source = "codegen/propertyCallableReference/linkTest_main.kt"
     lib = "codegen/propertyCallableReference/linkTest_lib.kt"
@@ -1701,7 +1686,6 @@ task objectExpression3(type: RunKonanTest) {
 }
 
 task initializers2(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails on wasm32.
     goldValue = "init globalValue2\n" +
                 "init globalValue3\n" +
                 "1\n" +
@@ -1712,13 +1696,11 @@ task initializers2(type: RunKonanTest) {
 }
 
 task initializers3(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails on wasm32.
     goldValue = "42\n"
     source = "runtime/basic/initializers3.kt"
 }
 
 task initializers4(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails on wasm32.
     goldValue = "1073741824\ntrue\n"
     source = "runtime/basic/initializers4.kt"
 }

@@ -401,7 +401,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val fileName = declaration.name.takeLastWhile { it != '/' }.dropLastWhile { it != '.' }.dropLast(1)
             val initName = "${fileName}_init_${context.llvm.globalInitIndex}"
             val nodeName = "${fileName}_node_${context.llvm.globalInitIndex}"
-            val ctorName = "${fileName}_ctor_${context.llvm.globalInitIndex++}"
+            // Make the name prefix easily parsable for the platforms lacking 
+            // llvm.global_ctors mechanism (such as wasm).
+            val ctorName = "Konan_global_ctor_${fileName}_${context.llvm.globalInitIndex++}"
 
             val initFunction = createInitBody(initName)
             val initNode = createInitNode(initFunction, nodeName)
