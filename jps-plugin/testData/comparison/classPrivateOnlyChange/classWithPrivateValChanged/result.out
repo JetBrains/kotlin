@@ -1,0 +1,4 @@
+PROTO DIFFERENCE in test/ClassWithGetterForPrivateValChanged: PROPERTY_LIST
+PROTO DIFFERENCE in test/ClassWithPrivateValAdded: PROPERTY_LIST
+PROTO DIFFERENCE in test/ClassWithPrivateValRemoved: PROPERTY_LIST
+PROTO DIFFERENCE in test/ClassWithPrivateValSignatureChanged: PROPERTY_LIST

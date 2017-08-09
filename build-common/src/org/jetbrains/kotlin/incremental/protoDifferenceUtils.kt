@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufClassKind
 import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufPackageKind
@@ -31,7 +32,9 @@ import java.util.*
 data class Difference(
         val isClassAffected: Boolean = false,
         val areSubclassesAffected: Boolean = false,
-        val changedMembersNames: Set<String> = emptySet()
+        val changedMembersNames: Set<String> = emptySet(),
+        @TestOnly
+        val rawProtoDifference: EnumSet<*>? = null
 )
 
 sealed class ProtoData
@@ -261,7 +264,7 @@ private class DifferenceCalculatorForClass(
             }
         }
 
-        return Difference(isClassAffected, areSubclassesAffected, names)
+        return Difference(isClassAffected, areSubclassesAffected, names, rawProtoDifference = diff)
     }
 }
 
@@ -306,7 +309,7 @@ private class DifferenceCalculatorForPackageFacade(
             }
         }
 
-        return Difference(changedMembersNames = names)
+        return Difference(changedMembersNames = names, rawProtoDifference = diff)
     }
 }
 
