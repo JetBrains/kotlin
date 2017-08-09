@@ -491,6 +491,53 @@ compileTestKotlin {
     }
 
     @Test
+    fun testJsImportTransitive() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                }
+            }
+
+            apply plugin: 'kotlin2js'
+
+            repositories {
+                mavenCentral()
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-test-js:1.1.0"
+            }
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
+        }
+
+        val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
+        val stdlib = rootManager.orderEntries
+                .filterIsInstance<LibraryOrderEntry>()
+                .map { it.library as LibraryEx }
+                .first { "kotlin-stdlib-js" in it.name!! }
+        assertEquals(JSLibraryKind, stdlib.kind)
+
+        assertAllModulesConfigured()
+    }
+
+    @Test
     fun testJsImportWithCustomSourceSets() {
         createProjectSubFile("build.gradle", """
             group 'Again'
