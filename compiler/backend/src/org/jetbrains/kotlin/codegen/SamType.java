@@ -50,7 +50,7 @@ public class SamType {
     @NotNull
     public KotlinType getKotlinFunctionType() {
         //noinspection ConstantConditions
-        return getJavaClassDescriptor().getFunctionTypeForSamInterface();
+        return getJavaClassDescriptor().getDefaultFunctionTypeForSamInterface();
     }
 
     @NotNull
