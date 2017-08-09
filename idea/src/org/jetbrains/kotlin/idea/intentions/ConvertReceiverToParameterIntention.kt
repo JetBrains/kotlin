@@ -26,9 +26,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getOrCreateValueParameterList
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
+import org.jetbrains.kotlin.idea.refactoring.resolveToHeaderDescriptorIfPossible
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -61,7 +61,7 @@ class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntent
 
     override fun applyTo(element: KtTypeReference, editor: Editor?) {
         val function = element.parent as? KtNamedFunction ?: return
-        val descriptor = function.resolveToDescriptor() as FunctionDescriptor
+        val descriptor = function.resolveToHeaderDescriptorIfPossible() as FunctionDescriptor
 
         val project = function.project
 
@@ -102,7 +102,7 @@ class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntent
                                 if (!brokenOff) {
                                     runChangeSignature(
                                             element.project,
-                                            function.resolveToDescriptor() as FunctionDescriptor,
+                                            function.resolveToHeaderDescriptorIfPossible() as FunctionDescriptor,
                                             configureChangeSignature(newName),
                                             function.receiverTypeReference!!,
                                             text

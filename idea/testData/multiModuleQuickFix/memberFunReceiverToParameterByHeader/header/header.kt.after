@@ -1,0 +1,9 @@
+// "Convert receiver to parameter" "true"
+
+header class Foo {
+    fun foo(s: String, n: Int)
+}
+
+fun Foo.test() {
+    foo("1", 2)
+}

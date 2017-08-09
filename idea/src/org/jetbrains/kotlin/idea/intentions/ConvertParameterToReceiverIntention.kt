@@ -19,15 +19,14 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
+import org.jetbrains.kotlin.idea.refactoring.resolveToHeaderDescriptorIfPossible
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
 
 class ConvertParameterToReceiverIntention : SelfTargetingIntention<KtParameter>(KtParameter::class.java, "Convert parameter to receiver") {
     override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean {
@@ -53,8 +52,7 @@ class ConvertParameterToReceiverIntention : SelfTargetingIntention<KtParameter>(
     override fun applyTo(element: KtParameter, editor: Editor?) {
         val function = element.getStrictParentOfType<KtNamedFunction>() ?: return
         val parameterIndex = function.valueParameters.indexOf(element)
-        val context = function.analyze()
-        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return
+        val descriptor = function.resolveToHeaderDescriptorIfPossible() as? FunctionDescriptor ?: return
         runChangeSignature(element.project, descriptor, configureChangeSignature(parameterIndex), element, text)
     }
 }

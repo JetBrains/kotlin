@@ -129,4 +129,16 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testAddOperatorByImpl() = doTestHeaderWithJvmAndJs()
+
+    @Test
+    fun testMemberFunReceiverToParameterByHeader() = doTestHeaderWithJvmAndJs()
+
+    @Test
+    fun testMemberFunReceiverToParameterByImpl() = doTestHeaderWithJvmAndJs()
+
+    @Test
+    fun testMemberFunParameterToReceiverByHeader() = doTestHeaderWithJvmAndJs()
+
+    @Test
+    fun testMemberFunParameterToReceiverByImpl() = doTestHeaderWithJvmAndJs()
 }
