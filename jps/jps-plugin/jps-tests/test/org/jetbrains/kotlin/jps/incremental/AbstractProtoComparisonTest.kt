@@ -48,11 +48,19 @@ abstract class AbstractProtoComparisonTest<PROTO_DATA> : TestWithWorkingDir() {
         }
 
         (oldClassMap.keys.intersect(newClassMap.keys)).sortedBy { it.toString() }.forEach { classId ->
-            val diff = difference(oldClassMap[classId]!!, newClassMap[classId]!!)
+            val oldData = oldClassMap[classId]!!
+            val newData = newClassMap[classId]!!
+            val diff = difference(oldData, newData)
 
             if (diff == null) {
                 p.println("SKIPPED $classId")
                 return@forEach
+            }
+
+            diff.rawProtoDifference?.let {
+                if (it.isNotEmpty()) {
+                    p.println("PROTO DIFFERENCE in $classId: ${it.sortedBy { it.name }.joinToString()}")
+                }
             }
 
             val changes = arrayListOf<String>()

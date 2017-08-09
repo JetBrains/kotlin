@@ -1,6 +1,11 @@
+PROTO DIFFERENCE in test/A: FUNCTION_LIST
 CHANGES in test/A: MEMBERS
     [argumentAdded, argumentRemoved, valueAdded, valueRemoved]
+PROTO DIFFERENCE in test/ConstructorArgumentAdded: CONSTRUCTOR_LIST
 CHANGES in test/ConstructorArgumentAdded: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ConstructorArgumentRemoved: CONSTRUCTOR_LIST
 CHANGES in test/ConstructorArgumentRemoved: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ConstructorValueAdded: CONSTRUCTOR_LIST
 CHANGES in test/ConstructorValueAdded: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ConstructorValueRemoved: CONSTRUCTOR_LIST
 CHANGES in test/ConstructorValueRemoved: CLASS_SIGNATURE
