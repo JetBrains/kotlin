@@ -20,6 +20,7 @@ import com.intellij.util.io.PersistentEnumeratorBase
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
+import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -59,7 +60,9 @@ fun makeIncrementally(
     val kotlinFiles = sourceFiles.filter { it.extension.toLowerCase() in kotlinExtensions }
 
     withIC {
-        val compiler = IncrementalJvmCompilerRunner(cachesDir, /* javaSourceRoots = */sourceRoots.toSet(), versions, reporter)
+        val compiler = IncrementalJvmCompilerRunner(cachesDir,
+                                                    sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
+                                                    versions, reporter)
         compiler.compile(kotlinFiles, args, messageCollector) {
             it.incrementalCache.sourceSnapshotMap.compareAndUpdate(sourceFiles)
         }
@@ -85,7 +88,7 @@ inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
 
 class IncrementalJvmCompilerRunner(
         workingDir: File,
-        private val javaSourceRoots: Set<File>,
+        private val javaSourceRoots: Set<JvmSourceRoot>,
         private val cacheVersions: List<CacheVersion>,
         private val reporter: ICReporter,
         private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,

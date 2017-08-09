@@ -232,6 +232,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     val kaptOptions = KaptOptions()
 
+    /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
+     *
+     * Example: a Java source file with `package com.example.my.package` is located in directory `src/main/java/my/package`.
+     * Then, for the Kotlin compilation to locate the source file, use package prefix `"com.example"` */
+    @Input
+    var javaPackagePrefix: String? = null
+
     internal val pluginOptions = CompilerPluginOptions()
     internal var artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null
     internal var artifactFile: File? = null
@@ -302,7 +309,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         }
 
         try {
-            val exitCode = compilerRunner.runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, environment)
+            val exitCode = compilerRunner.runJvmCompiler(
+                    sourceRoots.kotlinSourceFiles,
+                    sourceRoots.javaSourceRoots,
+                    javaPackagePrefix,
+                    args,
+                    environment)
+
             processCompilerExitCode(exitCode)
             artifactDifferenceRegistryProvider?.withRegistry(reporter) {
                 it.flush(true)
