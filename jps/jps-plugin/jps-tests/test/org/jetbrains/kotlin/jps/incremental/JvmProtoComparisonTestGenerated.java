@@ -67,6 +67,42 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged/");
             doTest(fileName);
         }
+
+        @TestMetadata("nestedClassSignatureChanged")
+        public void testNestedClassSignatureChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/nestedClassSignatureChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassImplAdded")
+        public void testSealedClassImplAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/sealedClassImplAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassImplRemoved")
+        public void testSealedClassImplRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/sealedClassImplRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassNestedImplAdded")
+        public void testSealedClassNestedImplAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassNestedImplAddedDeep")
+        public void testSealedClassNestedImplAddedDeep() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAddedDeep/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassNestedImplRemoved")
+        public void testSealedClassNestedImplRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplRemoved/");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange")
@@ -155,6 +191,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         @TestMetadata("membersFlagsChanged")
         public void testMembersFlagsChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/membersFlagsChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedClassMembersChanged")
+        public void testNestedClassMembersChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/nestedClassMembersChanged/");
             doTest(fileName);
         }
 

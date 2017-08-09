@@ -1,8 +1,8 @@
 ================ Step #1 =================
 
 Cleaning output files:
-  out/production/module/A.class
-  out/production/module/B.class
+  out/production/module/Base$A.class
+  out/production/module/Base$B.class
   out/production/module/Base.class
 End of files
 Compiling files:
@@ -27,10 +27,10 @@ COMPILATION FAILED
 ================ Step #2 =================
 
 Cleaning output files:
-  out/production/module/A.class
-  out/production/module/B.class
+  out/production/module/Base$A.class
+  out/production/module/Base$B.class
+  out/production/module/Base$C.class
   out/production/module/Base.class
-  out/production/module/C.class
 End of files
 Compiling files:
   src/Base.kt

@@ -1580,6 +1580,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("sealedClassIndirectImplAdded")
+        public void testSealedClassIndirectImplAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/sealedClassIndirectImplAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassNestedImplAdded")
+        public void testSealedClassNestedImplAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/sealedClassNestedImplAdded/");
+            doTest(fileName);
+        }
+
         @TestMetadata("secondaryConstructorAdded")
         public void testSecondaryConstructorAdded() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/secondaryConstructorAdded/");
