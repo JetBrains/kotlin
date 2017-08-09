@@ -1,9 +1,9 @@
 ================ Step #1 =================
 
 Cleaning output files:
-  out/production/module/A.class
-  out/production/module/B.class
   out/production/module/Base.class
+  out/production/module/Impl1.class
+  out/production/module/Intermediate.class
 End of files
 Compiling files:
   src/Base.kt
@@ -22,15 +22,15 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-'when' expression must be exhaustive, add necessary 'is C' branch or 'else' branch instead
+'when' expression must be exhaustive, add necessary 'is Impl2' branch or 'else' branch instead
 
 ================ Step #2 =================
 
 Cleaning output files:
-  out/production/module/A.class
-  out/production/module/B.class
   out/production/module/Base.class
-  out/production/module/C.class
+  out/production/module/Impl1.class
+  out/production/module/Impl2.class
+  out/production/module/Intermediate.class
 End of files
 Compiling files:
   src/Base.kt

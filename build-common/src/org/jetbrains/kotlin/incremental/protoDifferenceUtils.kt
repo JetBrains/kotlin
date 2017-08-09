@@ -236,7 +236,15 @@ private class DifferenceCalculatorForClass(
                     isClassAffected = true
                 }
                 ProtoBufClassKind.SEALED_SUBCLASS_FQ_NAME_LIST -> {
-                    // TODO
+                    isClassAffected = true
+                    // Subclasses are considered to be affected to fix the case where
+                    // an implementation is added to an nth-level (n > 1) sealed class.
+                    // In case of the following hierarchy:
+                    //     Base <- Intermediate <- Impl
+                    // the change of the SEALED_SUBCLASS_FQ_NAME_LIST will be detected in the Intermediate,
+                    // but there can be usages, that should be rebuilt, without direct references to the Intermediate:
+                    //     when (x as Base) { is Impl -> ... }
+                    areSubclassesAffected = true
                 }
                 ProtoBufClassKind.TYPE_TABLE -> {
                     // TODO
