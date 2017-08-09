@@ -102,7 +102,7 @@ class ResolvedAtomCompleter(
                                 .replaceBindingTrace(trace)
 
                 val argumentExpression = resultValueArgument.valueArgument.getArgumentExpression() ?: continue
-                kotlinToResolvedCallTransformer.updateRecordedType(argumentExpression, newContext)
+                kotlinToResolvedCallTransformer.updateRecordedType(argumentExpression, newContext, true)
             }
     }
 

@@ -361,7 +361,8 @@ public class ControlStructureTypingUtils {
                                 .replaceExpectedType(c.expectedType)
                                 .replaceDataFlowInfo(typeInfo.getDataFlowInfo())
                                 .replaceBindingTrace(c.trace),
-                        hasError
+                        hasError,
+                        true
                 );
                 return hasError.get();
             }
