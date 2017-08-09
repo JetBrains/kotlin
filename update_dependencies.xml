@@ -7,8 +7,11 @@
     <property name="ideaVersion" value="171-SNAPSHOT"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
-    <property name="android.studio.version" value="3.0.0.7"/>
-    <property name="android.studio.build.number" value="171.4195411"/>
+    <property name="android.studio.major.version" value="3.0"/>
+
+    <!-- Uncomment this to download fixed version of Android Studio-->
+    <!--<property name="android.studio.version" value="3.0.0.7"/>-->
+    <!--<property name="android.studio.build.number" value="171.4195411"/>-->
 
     <!-- how to find this version in AndroidStudioApplicationInfo.xml: https://jetbrains.quip.com/4IQyAOhyghPb -->
     <property name="android.studio.intellij-core.build.number" value="171.4249.39"/>
@@ -813,7 +816,7 @@
                     <tokenfilter>
                         <filetokenizer/>
                         <replaceregex
-                            pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/([\d\.]+)/android-studio-ide(.*)$"
+                            pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/(${android.studio.major.version}\.[\d\.]+)/android-studio-ide(.*)$"
                             replace="\2" flags="s"/>
                     </tokenfilter>
                 </filterchain>
@@ -824,7 +827,7 @@
                     <tokenfilter>
                         <filetokenizer/>
                         <replaceregex
-                            pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/[\d\.]+/android-studio-ide-([\d\.]+)-(.*)$"
+                            pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/${android.studio.major.version}\.[\d\.]+/android-studio-ide-([\d\.]+)-(.*)$"
                             replace="\2" flags="s"/>
                     </tokenfilter>
                 </filterchain>
