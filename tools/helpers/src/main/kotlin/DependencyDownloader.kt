@@ -163,6 +163,9 @@ class DependencyDownloader(dependenciesRoot: File,
                             currentBytes += read
                             read = from.read(buffer)
                         }
+                        if (currentBytes != totalBytes) {
+                            throw EOFException("The stream closed before end of downloading.")
+                        }
                     }
                 }
             } catch (e: Throwable) {
@@ -179,7 +182,7 @@ class DependencyDownloader(dependenciesRoot: File,
         println("Done.")
         if (downloadError != null) {
             tmpFile.delete()
-            throw RuntimeException("Cannot download dependency: $url", downloadError)
+            throw IOException("Cannot download dependency: $url", downloadError)
         }
         Files.move(
                 tmpFile.toPath(),
