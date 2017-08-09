@@ -188,6 +188,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             doTest(fileName);
         }
 
+        @TestMetadata("membersAnnotationListChanged")
+        public void testMembersAnnotationListChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/membersAnnotationListChanged/");
+            doTest(fileName);
+        }
+
         @TestMetadata("membersFlagsChanged")
         public void testMembersFlagsChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/membersFlagsChanged/");
@@ -218,6 +224,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         @TestMetadata("defaultValues")
         public void testDefaultValues() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/defaultValues/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("membersAnnotationListChanged")
+        public void testMembersAnnotationListChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/membersAnnotationListChanged/");
             doTest(fileName);
         }
 
