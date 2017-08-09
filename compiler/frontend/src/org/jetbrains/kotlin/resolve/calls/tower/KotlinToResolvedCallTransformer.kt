@@ -343,7 +343,8 @@ class KotlinToResolvedCallTransformer(
             completedCall: CompletedKotlinCall.Simple
     ) {
         val trackingTrace = TrackingBindingTrace(trace)
-        val diagnosticReporter = DiagnosticReporterByTrackingStrategy(constantExpressionEvaluator, context, trackingTrace, completedCall.kotlinCall.psiKotlinCall)
+        val newContext = context.replaceBindingTrace(trackingTrace)
+        val diagnosticReporter = DiagnosticReporterByTrackingStrategy(constantExpressionEvaluator, newContext, completedCall.kotlinCall.psiKotlinCall)
 
         for (diagnostic in completedCall.resolutionStatus.diagnostics) {
             trackingTrace.reported = false
