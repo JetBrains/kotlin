@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import javax.lang.model.element.TypeElement
 import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.*
 
@@ -108,8 +107,8 @@ class SymbolBasedClassifierType<out T : TypeMirror>(
     override val isRaw: Boolean
         get() = when {
             typeMirror !is DeclaredType -> false
-            (typeMirror.asElement() as TypeElement).typeParameters.isEmpty() -> false
-            else -> typeMirror.typeArguments.isEmpty() || (typeMirror.asElement() as TypeElement).typeParameters.size != typeMirror.typeArguments.size
+            (classifier as? JavaClass)?.typeParameters?.isEmpty() == true -> false
+            else -> typeMirror.typeArguments.isEmpty() || (classifier as? JavaClass)?.typeParameters?.size != typeMirror.typeArguments.size
         }
 
     override val classifierQualifiedName: String

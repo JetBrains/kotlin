@@ -16,28 +16,39 @@
 
 package org.jetbrains.kotlin.cli.jvm.javac
 
-import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.findFacadeClass
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.javac.JavacWrapperKotlinResolver
 import org.jetbrains.kotlin.javac.resolve.MockKotlinField
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: LightClassGenerationSupport) : JavacWrapperKotlinResolver {
 
-    private val cache = hashMapOf<KtClassOrObject, KtLightClass>()
+    private val supersCache = hashMapOf<KtClassOrObject, List<ClassId>>()
 
     override fun resolveSupertypes(classOrObject: KtClassOrObject): List<ClassId> {
-        val lightClass = classOrObject.getLightClass() ?: return emptyList()
+        if (supersCache.containsKey(classOrObject)) {
+            return supersCache[classOrObject]!!
+        }
 
-        return lightClass.superTypes
-                .mapNotNull { it.resolve()?.computeClassId() }
+        val classDescriptor = lightClassGenerationSupport.analyze(classOrObject).get(BindingContext.CLASS, classOrObject)
+        return classDescriptor?.let {
+            val classIds = it.defaultType.constructor.supertypes
+                    .filterNot { KotlinBuiltIns.isAnyOrNullableAny(it) }
+                    .mapNotNull {
+                        (it.constructor.declarationDescriptor as? ClassDescriptor)?.classId
+                    }
+            supersCache[classOrObject] = classIds
+            classIds
+        } ?: emptyList()
     }
 
     override fun findField(classOrObject: KtClassOrObject, name: String): JavaField? {
@@ -52,10 +63,8 @@ class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: Li
         return lightClass.allFields.find { it.name == name}?.let(::MockKotlinField)
     }
 
-    private fun KtClassOrObject.getLightClass(): KtLightClass? =
-        cache[this] ?: lightClassGenerationSupport.getLightClass(this)?.also { cache[this] = it }
-
-    private fun PsiClass.computeClassId(): ClassId? =
-            containingClass?.computeClassId()?.createNestedClassId(Name.identifier(name!!)) ?: qualifiedName?.let { ClassId.topLevel(FqName(it)) }
+    private fun KtClassOrObject.getLightClass(): KtLightClass? {
+        return lightClassGenerationSupport.getLightClass(this)
+    }
 
 }

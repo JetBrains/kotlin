@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.trees
 
-import com.sun.source.util.TreePath
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.name.Name
 
 class TreeBasedField(
         tree: JCTree.JCVariableDecl,
-        treePath: TreePath,
+        compilationUnit: CompilationUnitTree,
         containingClass: JavaClass,
         javac: JavacWrapper
-) : TreeBasedMember<JCTree.JCVariableDecl>(tree, treePath, containingClass, javac), JavaField {
+) : TreeBasedMember<JCTree.JCVariableDecl>(tree, compilationUnit, containingClass, javac), JavaField {
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())
@@ -54,11 +54,11 @@ class TreeBasedField(
         get() = tree.modifiers.flags and Flags.ENUM.toLong() != 0L
 
     override val type: JavaType
-        get() = TreeBasedType.create(tree.getType(), treePath, javac, annotations)
+        get() = TreeBasedType.create(tree.getType(), compilationUnit, javac, annotations, containingClass)
 
     override val initializerValue: Any?
         get() = tree.init?.let { initExpr ->
-            if (hasConstantNotNullInitializer) ConstantEvaluator(containingClass, javac, treePath).getValue(initExpr) else null
+            if (hasConstantNotNullInitializer) ConstantEvaluator(containingClass, javac, compilationUnit).getValue(initExpr) else null
         }
 
     override val hasConstantNotNullInitializer: Boolean

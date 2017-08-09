@@ -24,8 +24,6 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.sun.source.tree.CompilationUnitTree
-import com.sun.source.util.TreePath
-import com.sun.tools.javac.api.JavacTrees
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.code.Symbol
 import com.sun.tools.javac.code.Symtab
@@ -34,7 +32,6 @@ import com.sun.tools.javac.jvm.ClassReader
 import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.model.JavacTypes
-import com.sun.tools.javac.tree.DCTree
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Log
@@ -126,7 +123,6 @@ class JavacWrapper(
 
     private val names = Names.instance(context)
     private val symbols = Symtab.instance(context)
-    private val trees = JavacTrees.instance(context)
     private val elements = JavacElements.instance(context)
     private val types = JavacTypes.instance(context)
     private val fileObjects = fileManager.getJavaFileObjectsFromFiles(javaFiles).toJavacList()
@@ -137,15 +133,15 @@ class JavacWrapper(
             val packageName = unit.packageName?.toString() ?: ""
             val className = (classDeclaration as JCTree.JCClassDecl).simpleName.toString()
             val classId = classId(packageName, className)
-            classId to TreeBasedClass(classDeclaration, trees.getPath(unit, classDeclaration), this, unit.sourceFile, classId)
+            classId to TreeBasedClass(classDeclaration, unit, this, classId, null)
         }
     }.toMap()
 
     private val javaPackages = compilationUnits
             .mapTo(hashSetOf<TreeBasedPackage>()) { unit ->
                 unit.packageName?.toString()?.let { packageName ->
-                    TreeBasedPackage(packageName, this, unit.sourcefile)
-                } ?: TreeBasedPackage("<root>", this, unit.sourcefile)
+                    TreeBasedPackage(packageName, this, unit)
+                } ?: TreeBasedPackage("<root>", this, unit)
             }
             .associateBy(TreeBasedPackage::fqName)
 
@@ -154,7 +150,7 @@ class JavacWrapper(
                 it.sourceFile.isNameCompatible("package-info", JavaFileObject.Kind.SOURCE) &&
                 it.packageName != null
             }.associateBy({ FqName(it.packageName!!.toString()) }) { compilationUnit ->
-        compilationUnit.packageAnnotations.map { TreeBasedAnnotation(it, getTreePath(it, compilationUnit), this) }
+        compilationUnit.packageAnnotations/*.map { TreeBasedAnnotation(it, compilationUnit, this) }*/
     }
 
     val classifierResolver = ClassifierResolver(this)
@@ -236,7 +232,7 @@ class JavacWrapper(
                     .filterKeys { it.isSubpackageOf(fqName) && it != fqName }
                     .map { it.value }
 
-    fun getPackageAnnotationsFromSources(fqName: FqName): List<JavaAnnotation> =
+    fun getPackageAnnotationsFromSources(fqName: FqName): List<JCTree.JCAnnotation> =
             packageSourceAnnotations[fqName] ?: emptyList()
 
     fun findClassesFromPackage(fqName: FqName): List<JavaClass> =
@@ -261,9 +257,6 @@ class JavacWrapper(
                     ?.map { it.name.toString() }
                     .orEmpty()
 
-    fun getTreePath(tree: JCTree, compilationUnit: CompilationUnitTree): TreePath =
-            trees.getPath(compilationUnit, tree)
-
     fun getKotlinClassifier(classId: ClassId): JavaClass? =
             kotlinClassifiersCache.getKotlinClassifier(classId)
 
@@ -271,11 +264,11 @@ class JavacWrapper(
 
     fun isDeprecated(typeMirror: TypeMirror) = isDeprecated(types.asElement(typeMirror))
 
-    fun resolve(treePath: TreePath): JavaClassifier? =
-            classifierResolver.resolve(treePath)
+    fun resolve(tree: JCTree, compilationUnit: CompilationUnitTree, containingElement: JavaElement): JavaClassifier? =
+            classifierResolver.resolve(tree, compilationUnit, containingElement)
 
-    fun resolveField(treePath: TreePath, containingClass: JavaClass): JavaField? =
-            identifierResolver.resolve(treePath, containingClass)
+    fun resolveField(tree: JCTree, compilationUnit: CompilationUnitTree, containingClass: JavaClass): JavaField? =
+            identifierResolver.resolve(tree, compilationUnit, containingClass)
 
     fun toVirtualFile(javaFileObject: JavaFileObject): VirtualFile? =
             javaFileObject.toUri().let { uri ->
@@ -295,8 +288,8 @@ class JavacWrapper(
                 null
             }
 
-    fun isDeprecatedInJavaDoc(treePath: TreePath) =
-            (trees.getDocCommentTree(treePath) as? DCTree.DCDocComment)?.comment?.isDeprecated ?: false
+    fun isDeprecatedInJavaDoc(tree: JCTree, compilationUnit: CompilationUnitTree) =
+            (compilationUnit as JCTree.JCCompilationUnit).docComments?.getCommentTree(tree)?.comment?.isDeprecated == true
 
     private inline fun <reified T> Iterable<T>.toJavacList() = JavacList.from(this)
 

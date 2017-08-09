@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.SearchScope
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.source.tree.Tree
-import com.sun.source.util.TreePath
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeInfo
@@ -31,28 +31,27 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import javax.tools.JavaFileObject
 
 class TreeBasedClass(
         tree: JCTree.JCClassDecl,
-        treePath: TreePath,
+        compilationUnit: CompilationUnitTree,
         javac: JavacWrapper,
-        val file: JavaFileObject,
-        override val classId: ClassId?
-) : TreeBasedElement<JCTree.JCClassDecl>(tree, treePath, javac), JavaClassWithClassId {
+        override val classId: ClassId?,
+        override val outerClass: JavaClass?
+) : TreeBasedElement<JCTree.JCClassDecl>(tree, compilationUnit, javac), JavaClassWithClassId {
 
     override val name: Name
         get() = Name.identifier(tree.simpleName.toString())
 
     override val annotations: Collection<JavaAnnotation> by lazy {
-        tree.annotations().map { annotation -> TreeBasedAnnotation(annotation, treePath, javac) }
+        tree.annotations().map { annotation -> TreeBasedAnnotation(annotation, compilationUnit, javac, this) }
     }
 
     override fun findAnnotation(fqName: FqName) =
             annotations.find { it.classId?.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc: Boolean
-        get() = javac.isDeprecatedInJavaDoc(treePath)
+        get() = javac.isDeprecatedInJavaDoc(tree, compilationUnit)
 
     override val isAbstract: Boolean
         get() = tree.modifiers.isAbstract || ((isAnnotationType || isEnum) && methods.any { it.isAbstract })
@@ -68,7 +67,7 @@ class TreeBasedClass(
 
     override val typeParameters: List<JavaTypeParameter>
         get() = tree.typeParameters.map { parameter ->
-            TreeBasedTypeParameter(parameter, TreePath(treePath, parameter), javac)
+            TreeBasedTypeParameter(parameter, compilationUnit, javac, this)
         }
 
     override val fqName: FqName
@@ -78,22 +77,23 @@ class TreeBasedClass(
             by lazy {
                 arrayListOf<JavaClassifierType>().also { list ->
                     if (isEnum) {
-                        createEnumSupertype(this, javac).let { list.add(it) }
+                        EnumSupertype(this, javac).let { list.add(it) }
                     }
                     else if (isAnnotationType) {
                         javac.JAVA_LANG_ANNOTATION_ANNOTATION?.let { list.add(it) }
                     }
 
                     tree.extending?.let {
-                        (TreeBasedType.create(it, javac.getTreePath(it, treePath.compilationUnit), javac, emptyList()) as? JavaClassifierType)
+                        (TreeBasedType.create(it, compilationUnit, javac, emptyList(), this) as? JavaClassifierType)
                                 ?.let { list.add(it) }
                     }
-                    tree.implementing?.mapNotNull {
-                        TreeBasedType.create(it, javac.getTreePath(it, treePath.compilationUnit), javac, emptyList()) as? JavaClassifierType
-                    }?.let { list.addAll(it) }
 
-                    if (list.isEmpty()) {
+                    if (list.isEmpty() && !isInterface) {
                         javac.JAVA_LANG_OBJECT?.let { list.add(it) }
+                    }
+
+                    tree.implementing?.mapNotNullTo(list) {
+                        TreeBasedType.create(it, compilationUnit, javac, emptyList(), this) as? JavaClassifierType
                     }
                 }
             }
@@ -101,15 +101,8 @@ class TreeBasedClass(
     val innerClasses: Map<Name, TreeBasedClass> by lazy {
         tree.members
                 .filterIsInstance(JCTree.JCClassDecl::class.java)
-                .map { TreeBasedClass(it, TreePath(treePath, it), javac, file, classId?.createNestedClassId(Name.identifier(it.simpleName.toString()))) }
+                .map { TreeBasedClass(it, compilationUnit, javac, classId?.createNestedClassId(Name.identifier(it.simpleName.toString())), this) }
                 .associateBy(JavaClass::name)
-    }
-
-    override val outerClass: JavaClass? by lazy {
-        (treePath.parentPath.leaf as? JCTree.JCClassDecl)?.let { classDecl ->
-            javac.findClass(classId!!.outerClassId!!)
-            ?: TreeBasedClass(classDecl, treePath.parentPath, javac, file, classId.outerClassId)
-        }
     }
 
     override val isInterface: Boolean
@@ -127,25 +120,25 @@ class TreeBasedClass(
     override val methods: Collection<JavaMethod>
         get() = tree.members
                 .filter { it.kind == Tree.Kind.METHOD && !TreeInfo.isConstructor(it) }
-                .map { TreeBasedMethod(it as JCTree.JCMethodDecl, TreePath(treePath, it), this, javac) }
+                .map { TreeBasedMethod(it as JCTree.JCMethodDecl, compilationUnit,this, javac) }
 
     override val fields: Collection<JavaField>
         get() = tree.members
                 .filterIsInstance(JCTree.JCVariableDecl::class.java)
-                .map { TreeBasedField(it, TreePath(treePath, it), this, javac) }
+                .map { TreeBasedField(it, compilationUnit, this, javac) }
 
     override val constructors: Collection<JavaConstructor>
         get() = tree.members
                 .filter { member -> TreeInfo.isConstructor(member) }
                 .map { constructor ->
-                    TreeBasedConstructor(constructor as JCTree.JCMethodDecl, TreePath(treePath, constructor), this, javac)
+                    TreeBasedConstructor(constructor as JCTree.JCMethodDecl, compilationUnit, this, javac)
                 }
 
     override val innerClassNames: Collection<Name>
         get() = innerClasses.keys
 
     override val virtualFile: VirtualFile? by lazy {
-        javac.toVirtualFile(file)
+        javac.toVirtualFile(compilationUnit.sourceFile)
     }
 
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = true
@@ -154,8 +147,9 @@ class TreeBasedClass(
 
 }
 
-private fun createEnumSupertype(javaClass: JavaClass,
-                                javac: JavacWrapper) = object : JavaClassifierType {
+private class EnumSupertype(private val javaClass: JavaClass,
+                            private val javac: JavacWrapper) : JavaClassifierType {
+
     override val classifier: JavaClass?
         get() = javac.JAVA_LANG_ENUM
 
@@ -177,7 +171,7 @@ private fun createEnumSupertype(javaClass: JavaClass,
 
     private inner class TypeArgument : JavaClassifierType {
         override val classifier: JavaClassifier?
-            get() = javaClass
+            get() = this@EnumSupertype.javaClass
         override val typeArguments: List<JavaType>
             get() = emptyList()
         override val isRaw: Boolean
@@ -185,7 +179,7 @@ private fun createEnumSupertype(javaClass: JavaClass,
         override val annotations: Collection<JavaAnnotation>
             get() = emptyList()
         override val classifierQualifiedName: String
-            get() = javaClass.fqName!!.asString()
+            get() = this@EnumSupertype.javaClass.fqName!!.asString()
         override val presentableText: String
             get() = classifierQualifiedName
         override val isDeprecatedInJavaDoc: Boolean
@@ -194,5 +188,4 @@ private fun createEnumSupertype(javaClass: JavaClass,
         override fun findAnnotation(fqName: FqName) = null
 
     }
-
 }
