@@ -159,8 +159,9 @@ class DiagnosticReporterByTrackingStrategy(
                                ?: (position as? ReceiverConstraintPosition)?.argument
                 argument?.let {
                     val expression = it.psiExpression ?: return
-                    if (reportConstantTypeMismatch(constraintError, expression)) return
-                    trace.report(Errors.TYPE_MISMATCH.on(expression, constraintError.upperType, constraintError.lowerType))
+                    val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
+                    if (reportConstantTypeMismatch(constraintError, deparenthesized)) return
+                    trace.report(Errors.TYPE_MISMATCH.on(deparenthesized, constraintError.upperType, constraintError.lowerType))
                 }
                 (position as? ExplicitTypeParameterConstraintPosition)?.let {
                     val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
