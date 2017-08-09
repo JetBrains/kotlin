@@ -971,3 +971,8 @@ internal fun KtDeclaration.withHeaderImplementations(): List<KtDeclaration> {
     val implementations = header.headerImplementations() ?: emptySet()
     return listOf(header) + implementations
 }
+
+internal fun KtDeclaration.resolveToHeaderDescriptorIfPossible(): DeclarationDescriptor {
+    val descriptor = resolveToDescriptor()
+    return descriptor.liftToHeader() ?: descriptor
+}

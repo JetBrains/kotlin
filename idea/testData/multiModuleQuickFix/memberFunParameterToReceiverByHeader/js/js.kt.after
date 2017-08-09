@@ -1,0 +1,9 @@
+impl class Foo {
+    impl fun String.foo(n: Int) {
+
+    }
+}
+
+fun Foo.test() {
+    "2".foo(1)
+}

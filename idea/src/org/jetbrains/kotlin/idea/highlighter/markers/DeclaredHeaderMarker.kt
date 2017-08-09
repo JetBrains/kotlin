@@ -68,7 +68,7 @@ internal fun KtDeclaration.headerDeclarationIfAny(): KtDeclaration? {
 internal fun KtDeclaration.isHeaderOrHeaderClassMember() =
         hasModifier(KtTokens.HEADER_KEYWORD) || (containingClassOrObject?.hasModifier(KtTokens.HEADER_KEYWORD) ?: false)
 
-private fun DeclarationDescriptor.liftToHeader(): DeclarationDescriptor? {
+internal fun DeclarationDescriptor.liftToHeader(): DeclarationDescriptor? {
     if (this is MemberDescriptor) {
         return when {
             isHeader -> this
