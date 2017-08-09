@@ -35,8 +35,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
+import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
+import org.jetbrains.kotlin.idea.highlighter.markers.isHeaderOrHeaderClassMember
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -48,9 +52,12 @@ import java.util.*
 
 abstract class CallableRefactoring<out T: CallableDescriptor>(
         val project: Project,
-        val callableDescriptor: T,
+        callableDescriptor: T,
         val commandName: String) {
     private val LOG = Logger.getInstance(CallableRefactoring::class.java)
+
+    @Suppress("UNCHECKED_CAST")
+    val callableDescriptor = callableDescriptor.liftToHeader() as? T ?: callableDescriptor
 
     private val kind = (callableDescriptor as? CallableMemberDescriptor)?.kind ?: CallableMemberDescriptor.Kind.DECLARATION
 
@@ -69,7 +76,7 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
             else -> {
                 throw IllegalStateException("Unexpected callable kind: $kind")
             }
-        }
+        }.map { it.liftToHeader() as? CallableDescriptor ?: it }
     }
 
     private fun showSuperFunctionWarningDialog(superCallables: Collection<CallableDescriptor>,
@@ -176,9 +183,16 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
 
 fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): List<PsiElement> {
     val baseCallables = descriptorsForChange.mapNotNull { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-    return baseCallables + baseCallables.flatMap { it.toLightMethods() }.flatMapTo(HashSet<PsiElement>()) { psiMethod ->
-        val overrides = OverridingMethodsSearch.search(psiMethod).findAll()
-        overrides.map { method -> method.namedUnwrappedElement ?: method}
+    return baseCallables + baseCallables.flatMapTo(HashSet<PsiElement>()) { callable ->
+        if (callable is KtDeclaration && callable.isHeaderOrHeaderClassMember()) {
+            callable.headerImplementations()
+        }
+        else {
+            callable.toLightMethods().flatMap { psiMethod ->
+                val overrides = OverridingMethodsSearch.search(psiMethod).findAll()
+                overrides.map { method -> method.namedUnwrappedElement ?: method}
+            }
+        }
     }
 }
 

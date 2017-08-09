@@ -21,11 +21,9 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -38,6 +36,7 @@ import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
 import org.jetbrains.kotlin.idea.references.KtSimpleReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.search.usagesSearch.searchReferencesOrMethodReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
@@ -135,8 +134,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
                             conflicts.putValue(callable, "Can't modify $renderedCallable")
                         }
 
-                        val references = callable.toLightMethods().flatMapTo(LinkedHashSet()) { MethodReferencesSearch.search(it) }
-                        for (ref in references) {
+                        for (ref in callable.searchReferencesOrMethodReferences()) {
                             if (ref !is KtSimpleReference<*>) continue
                             processExternalUsage(ref, usages)
                         }
