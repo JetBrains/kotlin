@@ -184,12 +184,14 @@ class PlainJavaAnnotationAsAnnotationArgument(
 class PlainJavaEnumValueAnnotationArgument(
         name: String?,
         private val desc: String,
-        private val entryName: String,
+        entryName: String,
         private val context: ClassifierResolutionContext
 ) : PlainJavaAnnotationArgument(name), JavaEnumValueAnnotationArgument {
+    override val entryName = Name.identifier(entryName)
+
     override fun resolve(): JavaField? {
         val javaClass = context.resolveByInternalName(Type.getType(desc).internalName).classifier as? JavaClass ?: return null
-        return javaClass.fields.singleOrNull { it.name.asString() == entryName }
+        return javaClass.fields.singleOrNull { it.name == entryName }
     }
 }
 

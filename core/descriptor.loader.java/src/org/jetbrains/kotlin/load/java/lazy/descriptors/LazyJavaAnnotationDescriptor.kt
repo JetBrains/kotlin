@@ -69,7 +69,7 @@ class LazyJavaAnnotationDescriptor(
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): ConstantValue<*>? {
         return when (argument) {
             is JavaLiteralAnnotationArgument -> factory.createConstantValue(argument.value)
-            is JavaEnumValueAnnotationArgument -> resolveFromEnumValue(argument.resolve())
+            is JavaEnumValueAnnotationArgument -> resolveFromEnumValue(argument.resolve(), argument.entryName)
             is JavaArrayAnnotationArgument -> resolveFromArray(argument.name ?: DEFAULT_ANNOTATION_MEMBER_NAME, argument.getElements())
             is JavaAnnotationAsAnnotationArgument -> resolveFromAnnotation(argument.getAnnotation())
             is JavaClassObjectAnnotationArgument -> resolveFromJavaClassObjectType(argument.getReferencedType())
@@ -84,16 +84,26 @@ class LazyJavaAnnotationDescriptor(
     private fun resolveFromArray(argumentName: Name, elements: List<JavaAnnotationArgument>): ConstantValue<*>? {
         if (type.isError) return null
 
-        val valueParameter = DescriptorResolverUtils.getAnnotationParameterByName(argumentName, annotationClass!!) ?: return null
+        val arrayType =
+                DescriptorResolverUtils.getAnnotationParameterByName(argumentName, annotationClass!!)?.type
+                 // Try to load annotation arguments even if the annotation class is not found
+                 ?: c.components.module.builtIns.getArrayType(
+                        Variance.INVARIANT,
+                        ErrorUtils.createErrorType("Unknown array element type")
+                    )
 
         val values = elements.map {
             argument -> resolveAnnotationArgument(argument) ?: factory.createNullValue()
         }
-        return factory.createArrayValue(values, valueParameter.type)
+
+        return factory.createArrayValue(values, arrayType)
     }
 
-    private fun resolveFromEnumValue(element: JavaField?): ConstantValue<*>? {
-        if (element == null || !element.isEnumEntry) return null
+    private fun resolveFromEnumValue(element: JavaField?, entryName: Name?): ConstantValue<*>? {
+        if (element == null || !element.isEnumEntry) {
+            if (entryName == null) return null
+            return factory.createEnumValue(ErrorUtils.createErrorClassWithExactName(entryName))
+        }
 
         val containingJavaClass = element.containingClass
 
