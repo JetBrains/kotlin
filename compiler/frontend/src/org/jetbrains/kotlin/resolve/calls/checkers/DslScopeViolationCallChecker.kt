@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -30,6 +31,9 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.getAbbreviation
+import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object DslScopeViolationCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -70,6 +74,13 @@ object DslScopeViolationCallChecker : CallChecker {
         val result = mutableSetOf<FqName>()
 
         result.addAll(annotations.extractDslMarkerFqNames())
+
+        getAbbreviation()?.constructor?.declarationDescriptor?.run {
+            result.addAll(annotations.extractDslMarkerFqNames())
+            safeAs<TypeAliasDescriptor>()?.run {
+                result.addAll(underlyingType.extractDslMarkerFqNames())
+            }
+        }
 
         constructor.declarationDescriptor?.getAllSuperClassifiers()?.asIterable()
                 ?.flatMapTo(result) { it.annotations.extractDslMarkerFqNames() }

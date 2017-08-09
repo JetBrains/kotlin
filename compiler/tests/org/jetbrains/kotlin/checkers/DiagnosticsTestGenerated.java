@@ -17595,6 +17595,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("dslMarkerOnTypealias.kt")
+                public void testDslMarkerOnTypealias() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/dslMarkerOnTypealias.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("dslMarkerWithTypealiasRecursion.kt")
+                public void testDslMarkerWithTypealiasRecursion() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/dslMarkerWithTypealiasRecursion.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inheritedMarker.kt")
                 public void testInheritedMarker() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/inheritedMarker.kt");
