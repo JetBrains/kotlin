@@ -135,7 +135,7 @@ class LazyJavaClassDescriptor(
 
     override fun getDeclaredTypeParameters() = declaredParameters()
 
-    override fun getFunctionTypeForSamInterface(): SimpleType? = c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this)
+    override fun getDefaultFunctionTypeForSamInterface(): SimpleType? = c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this)
 
     override fun isDefinitelyNotSamInterface(): Boolean {
         if (kind != ClassKind.INTERFACE) return true

@@ -232,10 +232,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             val samAdapterOriginalFunction = SamCodegenUtil.getOriginalIfSamAdapter(samAdapter)?.original
             if (samAdapterOriginalFunction != originalFunction) return false
 
-            val parametersWithSamTypeCount = originalFunction.valueParameters.count {
-                SingleAbstractMethodUtils.getFunctionTypeForSamType(it.type) != null
-            }
-
+            val parametersWithSamTypeCount = originalFunction.valueParameters.count { SingleAbstractMethodUtils.isSamType(it.type) }
             return parametersWithSamTypeCount == samConstructorsCount
         }
 
