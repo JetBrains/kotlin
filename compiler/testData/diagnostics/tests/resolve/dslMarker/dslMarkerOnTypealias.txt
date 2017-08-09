@@ -1,0 +1,29 @@
+package
+
+public fun test(): kotlin.Unit
+public fun Foo.foo(/*0*/ body: Foo.() -> kotlin.Unit): kotlin.Unit
+public fun Foo.xbar(/*0*/ body: XBar /* = Bar */.() -> kotlin.Unit): kotlin.Unit
+public fun Foo.xxbar(/*0*/ body: XXBar /* = Bar */.() -> kotlin.Unit): kotlin.Unit
+
+public final class Bar {
+    public constructor Bar()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@XMarker public final class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.DslMarker @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS}) public final annotation class XMarker : kotlin.Annotation {
+    public constructor XMarker()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+@XMarker public typealias XBar = Bar
+public typealias XXBar = XBar
