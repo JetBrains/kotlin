@@ -272,4 +272,19 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             doTest(fileName);
         }
     }
+
+    @TestMetadata("jps-plugin/testData/comparison/jsOnly")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JsOnly extends AbstractJsProtoComparisonTest {
+        public void testAllFilesPresentInJsOnly() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/jsOnly"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("externals")
+        public void testExternals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/jsOnly/externals/");
+            doTest(fileName);
+        }
+    }
 }
