@@ -8,10 +8,7 @@ import spock.lang.IgnoreIf
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class IncrementalSpecification extends Specification {
-
-    @Rule
-    TemporaryFolder tmpFolder = new TemporaryFolder()
+class IncrementalSpecification extends BaseKonanSpecification {
 
     Tuple buildTwice(KonanInteropProject project, Closure change) {
         def runner = project.createRunner().withArguments('build')
@@ -22,11 +19,11 @@ class IncrementalSpecification extends Specification {
     }
 
     Tuple buildTwice(Closure change) {
-        return buildTwice(KonanInteropProject.create(tmpFolder), change)
+        return buildTwice(KonanInteropProject.create(projectDirectory), change)
     }
 
     Tuple buildTwiceEmpty(Closure change) {
-        def project = KonanInteropProject.createEmpty(tmpFolder)
+        def project = KonanInteropProject.createEmpty(projectDirectory)
         project.generateSrcFile("main.kt")
         return buildTwice(project, change)
     }
@@ -120,10 +117,10 @@ class IncrementalSpecification extends Specification {
 
     def 'inputFiles change for a compilation task should cause only recompilation'() {
         when:
-        def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
+        def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
-            it.newFolder('src', 'foo', 'kotlin')
-            it.generateSrcFile('src/foo/kotlin/', 'bar.kt', """
+            it.createSubDir('src', 'foo', 'kotlin')
+            it.generateSrcFile(["src", "foo", "kotlin"], 'bar.kt', """
                 fun main(args: Array<String>) { println("Hello!") }
             """.stripIndent())
         }
@@ -138,10 +135,10 @@ class IncrementalSpecification extends Specification {
     @Unroll("#parameter change for a compilation task should cause only recompilation")
     def 'Library changes should cause only recompilaton'() {
         when:
-        def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
+        def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
-            it.newFolder('src', 'lib', 'kotlin')
-            it.generateSrcFile("src/lib/kotlin", "lib.kt", "fun bar() { println(\"Hello!\") }")
+            it.createSubDir('src', 'lib', 'kotlin')
+            it.generateSrcFile(["src", "lib", "kotlin"], "lib.kt", "fun bar() { println(\"Hello!\") }")
             it.buildFile.append("""
                 konanArtifacts {
                     lib {
@@ -166,7 +163,7 @@ class IncrementalSpecification extends Specification {
 
     def 'useInterop change for a compilation task should cause only recompilation'() {
         when:
-        def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
+        def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
             it.buildFile.append("konanInterop { foo {} }\n")
         }
@@ -180,7 +177,7 @@ class IncrementalSpecification extends Specification {
 
     def 'manifest parameter change for a compilation task should cause only recompilation'() {
         when:
-        def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
+        def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
         }
         def results = buildTwice(project) { KonanInteropProject it ->
@@ -195,7 +192,7 @@ class IncrementalSpecification extends Specification {
     def 'manifest file change should cause only recompilation'() {
         when:
         def manifest
-        def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
+        def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
             manifest = it.generateSrcFile('manifest', "#some manifest file\n")
             it.addCompilationSetting("main", "manifest", manifest)
@@ -228,7 +225,7 @@ class IncrementalSpecification extends Specification {
 
     def 'defFile change for an interop task should cause recompilation and interop reprocessing'() {
         when:
-        def project = KonanInteropProject.createEmpty(tmpFolder)
+        def project = KonanInteropProject.createEmpty(projectDirectory)
         project.generateSrcFile('main.kt')
         def defFile = project.generateDefFile("foo.def", "#some content")
         def results = buildTwice(project) { KonanInteropProject it ->
@@ -241,7 +238,7 @@ class IncrementalSpecification extends Specification {
 
     def 'header change for an interop task should cause recompilation and interop reprocessing'() {
         when:
-        def project = KonanInteropProject.createEmpty(tmpFolder)
+        def project = KonanInteropProject.createEmpty(projectDirectory)
         project.generateSrcFile('main.kt')
         def header = project.generateSrcFile('header.h', "#define CONST 1")
         def results = buildTwice(project) { KonanInteropProject it ->
@@ -254,10 +251,10 @@ class IncrementalSpecification extends Specification {
 
     def 'link change for an interop task should cause recompilation and interop reprocessing'() {
         when:
-        def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
+        def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
-            it.newFolder('src', 'lib', 'kotlin')
-            it.generateSrcFile('src/lib/kotlin', 'lib.kt', 'fun foo() { println(42) }')
+            it.createSubDir('src', 'lib', 'kotlin')
+            it.generateSrcFile(["src", "lib", "kotlin"], 'lib.kt', 'fun foo() { println(42) }')
             it.buildFile.append("""
                 konanArtifacts {
                     lib {
@@ -279,7 +276,7 @@ class IncrementalSpecification extends Specification {
 
     def 'konan version change should cause recompilation and interop reprocessing'() {
         when:
-        def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
+        def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
             it.propertiesFile.append("konan.version=0.3\n")
         }
@@ -303,7 +300,7 @@ class IncrementalSpecification extends Specification {
         } else {
             throw new IllegalStateException("Unknown host platform")
         }
-        def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
+        def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
             it.propertiesFile.append("konan.build.targets=all\n")
         }

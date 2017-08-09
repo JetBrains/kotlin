@@ -6,14 +6,11 @@ import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 
-class TaskSpecification extends Specification {
-
-    @Rule
-    TemporaryFolder tmpFolder = new TemporaryFolder()
+class TaskSpecification extends BaseKonanSpecification {
 
     def 'Configs should allow user to add dependencies to them'() {
         when:
-        def project = KonanInteropProject.createEmpty(tmpFolder) { KonanInteropProject it ->
+        def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile("main.kt")
         }
         project.buildFile.append("""

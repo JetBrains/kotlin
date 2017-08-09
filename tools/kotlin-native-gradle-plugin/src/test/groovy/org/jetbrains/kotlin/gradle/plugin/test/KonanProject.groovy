@@ -1,22 +1,24 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.rules.TemporaryFolder
+
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 class KonanProject {
 
     static String DEFAULT_ARTIFACT_NAME = 'main'
 
-    TemporaryFolder projectDir
-
-    File getProjectDirRoot() { return projectDir.root }
+    File projectDir
+    Path projectPath
 
     String konanHome
 
     File         buildFile
     File         propertiesFile
 
-    Set<File>   srcFiles = []
+    Set<File>    srcFiles = []
 
     List<String> compilationTasks = []
     String       downloadTask = ":downloadKonanCompiler"
@@ -24,12 +26,9 @@ class KonanProject {
     List<String> getBuildingTasks() { return compilationTasks }
     List<String> getKonanTasks()    { return getBuildingTasks() + downloadTask }
 
-    GradleRunner createRunner(boolean withDebug = true) {
-        return GradleRunner.create().withProjectDir(projectDirRoot).withPluginClasspath().withDebug(withDebug)
-    }
-
-    protected KonanProject(TemporaryFolder projectDir) {
+    protected KonanProject(File projectDir) {
         this.projectDir = projectDir
+        projectPath = projectDir.toPath()
         def konanHome = System.getProperty("konan.home")
         if (konanHome == null) {
             throw new IllegalStateException("konan.home isn't specified")
@@ -42,16 +41,58 @@ class KonanProject {
         this.konanHome = konanHomeDir.canonicalPath.replace('\\', '\\\\')
     }
 
-    void generateFolders() {
-        projectDir.newFolder("src", "main", "kotlin")
+    GradleRunner createRunner(boolean withDebug = true) {
+        return GradleRunner.create().withProjectDir(projectDir).withPluginClasspath().withDebug(withDebug)
     }
 
+    /** Creates a subdirectory specified by the given path. */
+    File createSubDir(String ... path) {
+        return createSubDir(Paths.get(*path))
+    }
+
+    /** Creates a subdirectory specified by the given path. */
+    File createSubDir(Path path) {
+        return Files.createDirectories(projectPath.resolve(path)).toFile()
+    }
+
+    /** Creates a file with the given content in project subdirectory specified by parentDirectory. */
+    File createFile(Path parentDirectory, String fileName, String content) {
+        def result = Files.createFile(projectPath.resolve(parentDirectory).resolve(fileName)).toFile()
+        result.write(content)
+        return result
+    }
+
+    /** Creates a file with the given content in project subdirectory specified by parentPath. */
+    File createFile(List<String> parentPath, String fileName, String content) {
+        return createFile(Paths.get(*parentPath), fileName, content)
+    }
+
+    /** Creates a file with the given content in project root directory. */
+    File createFile(String fileName, String content) {
+        return createFile(projectPath, fileName, content)
+    }
+
+    /** Creates a folder for project source files (src/main/kotlin). */
+    void generateFolders() {
+        createSubDir("src", "main", "kotlin")
+    }
+
+    /** Generates a build.gradle file in root project directory with the given content. */
     File generateBuildFile(String content) {
-        buildFile = projectDir.newFile("build.gradle")
-        buildFile.write(content)
+        buildFile = createFile(projectPath, "build.gradle", content)
         return buildFile
     }
 
+    /**
+     * Generates a build.gradle file in root project directory with the default content (see below)
+     * and fills the compilationTasks array.
+     *
+     *  plugins { id 'konan' }
+     *
+     *  konanArtifacts {
+     *      $DEFAULT_ARTIFACT_NAME { }
+     *  }
+     */
     File generateBuildFile() {
         def result = generateBuildFile("""
             plugins { id 'konan' }
@@ -65,17 +106,31 @@ class KonanProject {
         return result
     }
 
-    File generateSrcFile(String directoryPath, String fileName, String content) {
-        def result = projectDir.newFile("$directoryPath/$fileName")
-        result.write(content)
+    /** Generates a source file with the given name and content in the given directory and adds it into srcFiles */
+    File generateSrcFile(Path parentDirectory, String fileName, String content) {
+        def result = createFile(parentDirectory, fileName, content)
         srcFiles.add(result)
         return result
     }
 
-    File generateSrcFile(String fileName, String content) {
-        return generateSrcFile("src/main/kotlin",fileName, content)
+    /** Generates a source file with the given name and content in the given directory and adds it into srcFiles */
+    File generateSrcFile(List<String> parentPath, String fileName, String content) {
+        return generateSrcFile(Paths.get(*parentPath), fileName, content)
     }
 
+    /** Generates a source file with the given name and content in 'src/main/kotlin' and adds it into srcFiles */
+    File generateSrcFile(String fileName, String content) {
+        return generateSrcFile(["src", "main", "kotlin"], fileName, content)
+    }
+
+    /**
+     * Generates a source file with the given name and default content (see below) in src/main/kotlin
+     * and adds it into srcFiles.
+     *
+     *  fun main(args: Array<String>) {
+     *      println(42)
+     *  }
+     */
     File generateSrcFile(String fileName) {
         return generateSrcFile(fileName, """           
             fun main(args: Array<String>) {
@@ -85,43 +140,58 @@ class KonanProject {
         )
     }
 
+    /** Generates gradle.properties file with the konan.home property set. */
     File generatePropertiesFile(String konanHome) {
-        propertiesFile = projectDir.newFile("gradle.properties")
-        propertiesFile.write("konan.home=$konanHome\n")
+        propertiesFile = createFile(projectPath, "gradle.properties", "konan.home=$konanHome\n")
         return propertiesFile
     }
 
-    File newFolder(String... path) { return projectDir.newFolder(path) }
-
+    /**
+     * Sets the given setting of the given project extension.
+     * In other words adds the following string in the build file:
+     *
+     *  $container['$section'].$parameter $value
+     */
     protected void addSetting(String container, String section, String parameter, String value) {
         buildFile.append("$container['$section'].$parameter $value\n")
     }
 
+    /**
+     * Sets the given setting of the given project extension using the path of the file as a value.
+     * In other words adds the following string in the build file:
+     *
+     *  $container['$section'].$parameter ${value.canonicalPath.replace(\, \\)}
+     */
     protected void addSetting(String container, String section, String parameter, File value) {
         addSetting(container, section, parameter, "'${value.canonicalPath.replace('\\', '\\\\')}'")
     }
 
+    /** Sets the given setting of the given konanArtifact */
     void addCompilationSetting(String artifactName = DEFAULT_ARTIFACT_NAME, String parameter, String value) {
         addSetting("konanArtifacts", artifactName, parameter, value)
     }
 
+    /** Sets the given setting of the given konanArtifact using the path of the file as a value. */
     void addCompilationSetting(String artifactName = DEFAULT_ARTIFACT_NAME, String parameter, File value) {
         addSetting("konanArtifacts", artifactName, parameter, value)
     }
 
-    static KonanProject create(TemporaryFolder projectDir) {
+    /** Creates a project with default build and source files. */
+    static KonanProject create(File projectDir) {
         return createEmpty(projectDir) {
             it.generateSrcFile("main.kt")
         }
     }
 
-    static KonanProject create(TemporaryFolder projectDir, Closure config) {
+    /** Creates a project with default build and source files. */
+    static KonanProject create(File projectDir, Closure config) {
         def result = create(projectDir)
         config(result)
         return result
     }
 
-    static KonanProject createEmpty(TemporaryFolder projectDir) {
+    /** Creates a project with the default build file and without any source files. */
+    static KonanProject createEmpty(File projectDir) {
         def result = new KonanProject(projectDir)
         result.with {
             generateFolders()
@@ -131,7 +201,8 @@ class KonanProject {
         return result
     }
 
-    static KonanProject createEmpty(TemporaryFolder projectDir, Closure config) {
+    /** Creates a project with the default build file and without any source files. */
+    static KonanProject createEmpty(File projectDir, Closure config) {
         def result = createEmpty(projectDir)
         config(result)
         return result
@@ -147,15 +218,30 @@ class KonanInteropProject extends KonanProject {
 
     List<String> interopTasks = []
 
-    protected KonanInteropProject(TemporaryFolder projectDir) { super(projectDir) }
+    protected KonanInteropProject(File projectDir) { super(projectDir) }
 
     List<String> getBuildingTasks() { return interopTasks + compilationTasks }
 
+    /** Creates a folder for project source files (src/main/kotlin) and a folder for def-files (src/main/c_interop). */
     void generateFolders() {
         super.generateFolders()
-        projectDir.newFolder("src", "main", "c_interop")
+        createSubDir("src", "main", "c_interop")
     }
 
+    /**
+     * Generates a build.gradle file in root project directory with the default content (see below)
+     * and fills compilationTasks and interopTasks arrays.
+     *
+     *  plugins { id 'konan' }
+     *
+     *  konanInterop {
+     *      $DEFAULT_INTEROP_NAME { }
+     *  }
+     *
+     *  konanArtifacts {
+     *      $DEFAULT_ARTIFACT_NAME { useInterop '$DEFAULT_INTEROP_NAME' }
+        }
+     */
     File generateBuildFile() {
         def result = generateBuildFile("""
             plugins { id 'konan' }
@@ -175,13 +261,19 @@ class KonanInteropProject extends KonanProject {
         return result
     }
 
+    /** Creates a def-file with the given name and content in src/main/c_interop directory and adds it to defFiles. */
     File generateDefFile(String fileName, String content) {
-        def result = projectDir.newFile("src/main/c_interop/$fileName")
-        result.write(content)
+        def result = createFile(["src", "main", "c_interop"], fileName, content)
         defFiles.add(result)
         return result
     }
 
+    /**
+     * Creates a def-file with the given name and the default content (see below) in src/main/c_interop directory
+     * and adds it to defFiles.
+     *
+     *  headers = stdio.h stdlib.h string.h
+     */
     File generateDefFile(String fileName) {
         return generateDefFile(fileName, """
             headers = stdio.h stdlib.h string.h
@@ -189,28 +281,33 @@ class KonanInteropProject extends KonanProject {
         )
     }
 
+    /** Sets the given setting of the given konanInterop */
     void addInteropSetting(String interopName = DEFAULT_INTEROP_NAME, String parameter, String value) {
         addSetting("konanInterop", interopName, parameter, value)
     }
 
+    /** Sets the given setting of the given konanInterop using the path of the file as a value. */
     void addInteropSetting(String interopName = DEFAULT_INTEROP_NAME, String parameter, File value) {
         addSetting("konanInterop", interopName, parameter, value)
     }
 
-    static KonanInteropProject create(TemporaryFolder projectDir) {
+    /** Creates a project with default build, source and def files. */
+    static KonanInteropProject create(File projectDir) {
         return createEmpty(projectDir) {
             it.generateSrcFile("main.kt")
             it.generateDefFile("${DEFAULT_INTEROP_NAME}.def")
         }
     }
 
-    static KonanInteropProject create(TemporaryFolder projectDir, Closure config) {
+    /** Creates a project with default build, source and def files. */
+    static KonanInteropProject create(File projectDir, Closure config) {
         def result = create(projectDir)
         config(result)
         return result
     }
 
-    static KonanInteropProject createEmpty(TemporaryFolder projectDir) {
+    /** Creates a project with the default build file and without any source or def files. */
+    static KonanInteropProject createEmpty(File projectDir) {
         def result = new KonanInteropProject(projectDir)
         result.with {
             generateFolders()
@@ -220,7 +317,8 @@ class KonanInteropProject extends KonanProject {
         return result
     }
 
-    static KonanInteropProject createEmpty(TemporaryFolder projectDir, Closure config) {
+    /** Creates a project with the default build file and without any source or def files. */
+    static KonanInteropProject createEmpty(File projectDir, Closure config) {
         def result = createEmpty(projectDir)
         config(result)
         return result

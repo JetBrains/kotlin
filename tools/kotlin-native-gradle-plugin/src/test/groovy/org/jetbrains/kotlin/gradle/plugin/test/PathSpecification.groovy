@@ -6,17 +6,15 @@ import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 
-class PathSpecification extends Specification {
-    @Rule
-    TemporaryFolder tmpFolder = new TemporaryFolder()
+class PathSpecification extends BaseKonanSpecification {
 
     def 'Plugin should create all necessary directories'() {
         when:
-        def project = KonanInteropProject.create(tmpFolder)
+        def project = KonanInteropProject.create(projectDirectory)
         def result = project.createRunner().withArguments('build').build()
 
         then:
-        def konan = "${tmpFolder.root}/build/konan"
+        def konan = "$projectDirectory/build/konan"
         new File("$konan/bin").listFiles().findAll {
             File it -> it.file && it.name.matches('^main\\.[^.]+')
         }.size() > 0
@@ -32,8 +30,8 @@ class PathSpecification extends Specification {
 
     def 'Plugin should stop building if the compiler classpath is empty'() {
         when:
-        def project = KonanProject.createEmpty(tmpFolder)
-        project.propertiesFile.write("konan.home=${tmpFolder.root.canonicalPath}}")
+        def project = KonanProject.createEmpty(projectDirectory)
+        project.propertiesFile.write("konan.home=${projectDirectory.canonicalPath}}")
         def result = project.createRunner().withArguments('build').buildAndFail()
 
         then:
@@ -42,8 +40,8 @@ class PathSpecification extends Specification {
 
     def 'Plugin should stop building if the stub generator classpath is empty'() {
         when:
-        def project = KonanInteropProject.createEmpty(tmpFolder)
-        project.propertiesFile.write("konan.home=${tmpFolder.root.canonicalPath}}")
+        def project = KonanInteropProject.createEmpty(projectDirectory)
+        project.propertiesFile.write("konan.home=${projectDirectory.canonicalPath}}")
         def result = project.createRunner().withArguments('build').buildAndFail()
 
         then:

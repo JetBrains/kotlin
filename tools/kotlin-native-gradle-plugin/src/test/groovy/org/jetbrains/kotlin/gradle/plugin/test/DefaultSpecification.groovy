@@ -6,14 +6,11 @@ import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 
-class DefaultSpecification extends Specification {
-
-    @Rule
-    TemporaryFolder tmpFolder = new TemporaryFolder()
+class DefaultSpecification extends BaseKonanSpecification {
 
     def 'Plugin should build a project without additional settings'() {
         when:
-        def project = KonanInteropProject.create(tmpFolder) { KonanInteropProject it ->
+        def project = KonanInteropProject.create(projectDirectory) { KonanInteropProject it ->
             it.buildFile.write("""
             plugins { id 'konan' }
             konanInterop { stdio {} }
