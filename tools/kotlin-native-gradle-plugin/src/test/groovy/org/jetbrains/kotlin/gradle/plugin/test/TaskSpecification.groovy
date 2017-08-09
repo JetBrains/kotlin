@@ -28,4 +28,30 @@ class TaskSpecification extends BaseKonanSpecification {
         beforeCompilation != null && beforeCompilation.outcome == TaskOutcome.SUCCESS
     }
 
+    def 'Compilation config should work with konanInterop from another project'() {
+        when:
+        def rootProject = KonanProject.create(projectDirectory) { KonanProject it ->
+            it.buildFile.append("evaluationDependsOn(':interop')\n")
+            it.createFile("settings.gradle", "include ':interop'")
+            it.addCompilationSetting("useInterop", "project(':interop').konanInterop['interop']")
+        }
+        def interopProjectDir = rootProject.createSubDir("interop")
+        def interopProject = KonanInteropProject.createEmpty(interopProjectDir) { KonanInteropProject it ->
+            it.generateBuildFile("""
+                apply plugin: 'konan'
+
+                konanInterop {
+                    interop { }
+                }
+            """.stripIndent())
+            it.interopTasks = [":interop:genInteropInteropStubs", ":interop:compileInteropInteropStubs"]
+            it.generateDefFile("interop.def")
+        }
+        def result = rootProject.createRunner().withArguments("build").build()
+
+        then:
+        result.taskPaths(TaskOutcome.SUCCESS).containsAll(rootProject.compilationTasks + interopProject.interopTasks)
+
+    }
+
 }

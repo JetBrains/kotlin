@@ -221,7 +221,7 @@ open class KonanCompileConfig(
         if (anotherTask.enableAssertions) enableAssertions()
     }
 
-    private fun useInteropFromConfig(interopConfig: KonanInteropConfig) {
+    fun useInterop(interopConfig: KonanInteropConfig) {
         val generateStubsTask = interopConfig.generateStubsTask
         val compileStubsTask  = interopConfig.compileStubsTask
 
@@ -237,12 +237,18 @@ open class KonanCompileConfig(
         generateStubsTask.manifest ?.let {manifest(it)}
     }
 
-    fun useInterops(interops: ArrayList<String>) {
-        interops.forEach { useInteropFromConfig(project.konanInteropContainer.getByName(it)) }
+    fun useInterop(interop: String) {
+        useInterop(project.konanInteropContainer.getByName(interop))
     }
 
-    fun useInterop(interop: String) {
-        useInteropFromConfig(project.konanInteropContainer.getByName(interop))
+    fun useInterops(interops: Collection<Any>) {
+        interops.forEach {
+            when(it) {
+                is String -> useInterop(project.konanInteropContainer.getByName(it))
+                is KonanInteropConfig -> useInterop(it)
+                else -> throw IllegalArgumentException("Cannot convert the object to an interop description: $it")
+            }
+        }
     }
 
     // DSL. Input/output files

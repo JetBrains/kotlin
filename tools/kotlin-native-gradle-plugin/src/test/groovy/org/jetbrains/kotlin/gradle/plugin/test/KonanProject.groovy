@@ -56,8 +56,9 @@ class KonanProject {
     }
 
     /** Creates a file with the given content in project subdirectory specified by parentDirectory. */
-    File createFile(Path parentDirectory, String fileName, String content) {
-        def result = Files.createFile(projectPath.resolve(parentDirectory).resolve(fileName)).toFile()
+    File createFile(Path parentDirectory = projectPath, String fileName, String content) {
+        def result = projectPath.resolve(parentDirectory).resolve(fileName).toFile()
+        result.createNewFile()
         result.write(content)
         return result
     }
@@ -65,11 +66,6 @@ class KonanProject {
     /** Creates a file with the given content in project subdirectory specified by parentPath. */
     File createFile(List<String> parentPath, String fileName, String content) {
         return createFile(Paths.get(*parentPath), fileName, content)
-    }
-
-    /** Creates a file with the given content in project root directory. */
-    File createFile(String fileName, String content) {
-        return createFile(projectPath, fileName, content)
     }
 
     /** Creates a folder for project source files (src/main/kotlin). */
@@ -274,7 +270,7 @@ class KonanInteropProject extends KonanProject {
      *
      *  headers = stdio.h stdlib.h string.h
      */
-    File generateDefFile(String fileName) {
+    File generateDefFile(String fileName = "${DEFAULT_INTEROP_NAME}.def") {
         return generateDefFile(fileName, """
             headers = stdio.h stdlib.h string.h
             """.stripIndent()
