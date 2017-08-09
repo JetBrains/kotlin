@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.*
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
-import org.jetbrains.kotlin.idea.framework.libraryKind
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.inspections.gradle.getResolvedKotlinStdlibVersionByModuleData
@@ -107,17 +106,18 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
             project: Project,
             modelsProvider: IdeModifiableModelsProvider
     ) {
-        for (libraryDataNode in toImport) {
-            val ideLibrary = modelsProvider.findIdeLibrary(libraryDataNode.data) ?: continue
+        if (toImport.isEmpty()) return
+        val projectDataNode = toImport.first().parent!! as DataNode<ProjectData>
+        val moduleDataNodes = projectDataNode.children.filter { it.data is ModuleData } as List<DataNode<ModuleData>>
+        if (moduleDataNodes.any { detectPlatformByPlugin(it) != null}) {
+            for (libraryDataNode in toImport) {
+                val ideLibrary = modelsProvider.findIdeLibrary(libraryDataNode.data) ?: continue
 
-            val projectDataNode = libraryDataNode.parent!! as DataNode<ProjectData>
-            val ownerModule = findOwnerModule(libraryDataNode.data, projectDataNode) ?: continue
-            val targetLibraryKind = detectPlatformByPlugin(ownerModule)?.libraryKind
-            if (targetLibraryKind != null) {
                 val modifiableModel = modelsProvider.getModifiableLibraryModel(ideLibrary) as LibraryEx.ModifiableModelEx
                 detectLibraryKind(modifiableModel.getFiles(OrderRootType.CLASSES))?.let { modifiableModel.kind = it }
             }
         }
+
     }
 }
 
