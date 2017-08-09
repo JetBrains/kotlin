@@ -33,6 +33,7 @@ val NULLABLE_ANNOTATIONS = listOf(
 )
 
 val JAVAX_NONNULL_ANNOTATION = FqName("javax.annotation.Nonnull")
+val JAVAX_CHECKFORNULL_ANNOTATION = FqName("javax.annotation.CheckForNull")
 
 val NOT_NULL_ANNOTATIONS = listOf(
         JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION,

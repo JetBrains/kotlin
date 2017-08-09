@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -121,5 +122,7 @@ class AnnotationTypeQualifierResolverImpl(storageManager: StorageManager) : Anno
         }
 }
 
+val BUILT_IN_TYPE_QUALIFIER_FQ_NAMES = setOf(JAVAX_NONNULL_ANNOTATION, JAVAX_CHECKFORNULL_ANNOTATION)
+
 private val ClassDescriptor.isAnnotatedWithTypeQualifier: Boolean
-    get() = annotations.hasAnnotation(TYPE_QUALIFIER_FQNAME)
+    get() = fqNameSafe in BUILT_IN_TYPE_QUALIFIER_FQ_NAMES || annotations.hasAnnotation(TYPE_QUALIFIER_FQNAME)

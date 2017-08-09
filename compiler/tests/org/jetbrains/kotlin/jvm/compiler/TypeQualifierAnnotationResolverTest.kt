@@ -56,7 +56,7 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
         assertMethodHasUnwrappedAnnotation(
                 aClass, typeQualifierResolver,
                 "checkForNull",
-                "@javax.annotation.Nonnull(when = When.MAYBE)"
+                "@javax.annotation.CheckForNull()"
         )
 
         assertMethodHasUnwrappedAnnotation(
@@ -78,7 +78,7 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
         assertMethodHasUnwrappedAnnotation(
                 aClass, typeQualifierResolver,
                 "myNullable",
-                "@javax.annotation.Nonnull(when = When.MAYBE)"
+                "@javax.annotation.CheckForNull()"
         )
     }
 
