@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 class DiagnosticReporterByTrackingStrategy(
         val constantExpressionEvaluator: ConstantExpressionEvaluator,
         val context: BasicCallResolutionContext,
-        val trace: TrackingBindingTrace,
         val psiKotlinCall: PSIKotlinCall
 ): DiagnosticReporter {
+    private val trace = context.trace as TrackingBindingTrace
     private val tracingStrategy: TracingStrategy get() = psiKotlinCall.tracingStrategy
     private val call: Call get() = psiKotlinCall.psiCall
 
