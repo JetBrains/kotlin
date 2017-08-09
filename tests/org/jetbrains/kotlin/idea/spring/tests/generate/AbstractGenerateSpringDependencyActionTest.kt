@@ -36,16 +36,17 @@ abstract class AbstractGenerateSpringDependencyActionTest : AbstractCodeInsightA
         TestFixtureExtension.loadFixture<SpringTestFixtureExtension>(myModule)
     }
 
-    override fun configureExtra(mainFilePath: String, mainFileText: String) {
+    override fun configure(mainFilePath: String, mainFileText: String) {
         val packagePath = mainFileText.lines().let { it.find { it.trim().startsWith("package") } }
                                   ?.removePrefix("package")
                                   ?.trim()?.replace(".", "/") ?: ""
         val mainFilePathInProject = packagePath + "/" + File(mainFilePath).name
-        myFixture.addFileToProject(mainFilePathInProject, mainFileText)
+        val mainFileVirtualFile = myFixture.copyFileToProject(mainFilePath, mainFilePathInProject)
 
         configFilePath = InTextDirectivesUtils.findStringWithPrefixes(mainFileText, "// CONFIG_FILE: ")?.let {
             "${PathUtil.getParentPath(mainFilePath)}/$it"
         } ?: mainFilePathInProject
+
         val springFileSet = TestFixtureExtension
                 .getFixture<SpringTestFixtureExtension>()!!
                 .configureFileSet(myFixture, listOf(configFilePath!!))
@@ -55,6 +56,8 @@ abstract class AbstractGenerateSpringDependencyActionTest : AbstractCodeInsightA
 
         val beansToChoose = InTextDirectivesUtils.findListWithPrefixes(mainFileText, "// CHOOSE_BEAN: ")
         project.beanFilter = { it.name in beansToChoose }
+
+        myFixture.configureFromExistingVirtualFile(mainFileVirtualFile)
     }
 
     override fun checkExtra() {
