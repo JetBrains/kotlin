@@ -395,7 +395,7 @@ task unchecked_cast2(type: RunKonanTest) {
 }
 
 task unchecked_cast3(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "Ok\n"
     source = "codegen/basics/unchecked_cast3.kt"
 }
@@ -485,19 +485,19 @@ task empty_substring(type: RunKonanTest) {
 }
 
 task worker0(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
+    disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
     goldValue = "Got Input processed\nOK\n"
     source = "runtime/workers/worker0.kt"
 }
 
 task worker1(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
+    disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
     goldValue = "OK\n"
     source = "runtime/workers/worker1.kt"
 }
 
 task worker2(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
+    disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
     goldValue = "OK\n"
     source = "runtime/workers/worker2.kt"
 }
@@ -907,7 +907,7 @@ task lateinit_initialized(type: RunKonanTest) {
 }
 
 task lateinit_notInitialized(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails.
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "OK\n"
     source = "codegen/lateinit/notInitialized.kt"
 }
@@ -1348,7 +1348,7 @@ task moderately_large_array1(type: RunKonanTest) {
 }
 
 task string_builder0(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails on wasm32.
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "OK\n"
     source = "runtime/text/string_builder0.kt"
 }
@@ -1711,7 +1711,7 @@ task initializers5(type: RunKonanTest) {
 }
 
 task expression_as_statement(type: RunKonanTest) {
-    expectedFail = (project.testTarget == 'wasm32') // The test fails on wasm32.
+    expectedFail = (project.testTarget == 'wasm32') // uses exceptions.
     goldValue = "Ok\n"
     source = "codegen/basics/expression_as_statement.kt"
 }
