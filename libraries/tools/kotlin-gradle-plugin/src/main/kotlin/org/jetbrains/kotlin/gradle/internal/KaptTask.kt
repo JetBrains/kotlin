@@ -3,7 +3,9 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.GradleException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
@@ -67,7 +69,12 @@ open class KaptTask : ConventionTask() {
         }
 
         val compilerRunner = GradleCompilerRunner(project)
-        val exitCode = compilerRunner.runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, environment)
+        val exitCode = compilerRunner.runJvmCompiler(
+                sourceRoots.kotlinSourceFiles,
+                sourceRoots.javaSourceRoots,
+                kotlinCompileTask.javaPackagePrefix,
+                args,
+                environment)
         throwGradleExceptionIfError(exitCode)
     }
 
