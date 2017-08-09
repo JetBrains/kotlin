@@ -16,82 +16,20 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
-import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrBindableSymbolBase
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.konan.file.*
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.types.KotlinType
-
-//-----------------------------------------------------------------------------//
-
-interface IrReturnableBlockSymbol : IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrReturnableBlock>
-
-interface IrReturnableBlock: IrBlock, IrSymbolOwner {
-    override val symbol: IrReturnableBlockSymbol
-    val descriptor: FunctionDescriptor
-    val sourceFileName: String
-}
-
-class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor) :
-        IrBindableSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor),
-        IrReturnableBlockSymbol
-
-class IrReturnableBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType,
-                            override val symbol: IrReturnableBlockSymbol, origin: IrStatementOrigin? = null, override val sourceFileName: String = "no source file")
-    : IrContainerExpressionBase(startOffset, endOffset, type, origin), IrReturnableBlock {
-    override val descriptor = symbol.descriptor
-
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType,
-                symbol: IrReturnableBlockSymbol, origin: IrStatementOrigin?, statements: List<IrStatement>, sourceFileName: String = "no source file") :
-            this(startOffset, endOffset, type, symbol, origin, sourceFileName) {
-        this.statements.addAll(statements)
-    }
-
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType,
-                descriptor: FunctionDescriptor, origin: IrStatementOrigin? = null, sourceFileName: String = "no source file") :
-            this(startOffset, endOffset, type, IrReturnableBlockSymbolImpl(descriptor), origin, sourceFileName)
-
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType,
-                descriptor: FunctionDescriptor, origin: IrStatementOrigin?, statements: List<IrStatement>, sourceFileName: String = "no source file") :
-        this(startOffset, endOffset, type, descriptor, origin, sourceFileName) {
-        this.statements.addAll(statements)
-    }
-
-    init {
-        symbol.bind(this)
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitBlock(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        statements.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        statements.forEachIndexed { i, irStatement ->
-            statements[i] = irStatement.transform(transformer, data)
-        }
-    }
-}
 
 //-----------------------------------------------------------------------------//
 /**
