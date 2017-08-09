@@ -6619,6 +6619,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typealiasCompanionObject.kt")
+            public void testTypealiasCompanionObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/typealiasCompanionObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typealiasConstructor.kt")
             public void testTypealiasConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/typealiasConstructor.kt");

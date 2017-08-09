@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.DescriptorDerivedFromTypeAlias
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -253,7 +254,7 @@ private fun DeclarationDescriptor.getOwnDeprecations(languageVersionSettings: La
         is TypeAliasDescriptor -> {
             expandedType.deprecationsByConstituentTypes(languageVersionSettings).mapTo(result) { it.wrapInTypeAliasExpansion(this) }
         }
-        is TypeAliasConstructorDescriptor -> {
+        is DescriptorDerivedFromTypeAlias -> {
             result.addAll(typeAliasDescriptor.getOwnDeprecations(languageVersionSettings))
         }
         is ConstructorDescriptor -> {
