@@ -1,0 +1,10 @@
+PROTO DIFFERENCE in test/ClassBecameExternal: FLAGS
+CHANGES in test/ClassBecameExternal: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ClassBecameNonExternal: FLAGS
+CHANGES in test/ClassBecameNonExternal: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ExternalClass: FUNCTION_LIST, PROPERTY_LIST
+CHANGES in test/ExternalClass: MEMBERS
+    [addedExternalFun, addedExternalVal, removedExternalFun, removedExternalVal]
+PROTO DIFFERENCE in test/MainKt: FUNCTION_LIST, PROPERTY_LIST
+CHANGES in test/MainKt: MEMBERS
+    [addedExternalFun, addedExternalVal, funBecameExternal, funBecameNonExternal, removedExternalFun, removedExternalVal]

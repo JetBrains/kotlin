@@ -1232,6 +1232,7 @@ fun main(args: Array<String>) {
 
         testClass<AbstractJsProtoComparisonTest> {
             commonProtoComparisonTests()
+            model("comparison/jsOnly", extension = null, excludeParentDirs = true)
         }
     }
 
