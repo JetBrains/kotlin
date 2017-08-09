@@ -58,7 +58,7 @@ class SymbolBasedClass(
         get() = element.getVisibility()
 
     override val typeParameters: List<JavaTypeParameter>
-        get() = element.typeParameters.map { SymbolBasedTypeParameter(it, javac) }
+        by lazy { element.typeParameters.map { SymbolBasedTypeParameter(it, javac) } }
 
     override val fqName: FqName
         get() = FqName(element.qualifiedName.toString())

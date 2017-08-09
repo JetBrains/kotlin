@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.javac.resolve
 
-import com.sun.source.util.TreePath
+import com.sun.source.tree.CompilationUnitTree
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 internal class ResolveHelper(private val javac: JavacWrapper,
-                             private val treePath: TreePath) {
+                             private val compilationUnit: CompilationUnitTree) {
 
     fun getJavaClassFromPathSegments(javaClass: JavaClass,
                                                pathSegments: List<String>) =
@@ -83,7 +83,7 @@ internal class ResolveHelper(private val javac: JavacWrapper,
             Visibilities.PRIVATE -> null
             JavaVisibilities.PACKAGE_VISIBILITY -> {
                 val classId = (innerOrNestedClass as? JavaClassWithClassId)?.classId
-                if (classId?.packageFqName?.asString() == (treePath.compilationUnit.packageName?.toString() ?: "")) innerOrNestedClass else null
+                if (classId?.packageFqName?.asString() == (compilationUnit.packageName?.toString() ?: "")) innerOrNestedClass else null
             }
             else -> innerOrNestedClass
         }

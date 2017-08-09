@@ -138,8 +138,7 @@ class MockKotlinClassifier(override val classId: ClassId,
     override val innerClassNames
         get() = innerClasses.map(JavaClass::name)
 
-    override fun findInnerClass(name: Name) =
-            innerClasses.find { it.name == name }
+    override fun findInnerClass(name: Name) = innerClasses.find { it.name == name }
 
     val typeParametersNumber: Int
         get() = classOrObject?.typeParameters?.size ?: 0
@@ -149,51 +148,30 @@ class MockKotlinClassifier(override val classId: ClassId,
 
     fun findField(name: String) = classOrObject?.let { javac.kotlinResolver.findField(it, name) } ?: javac.kotlinResolver.findField(ktFile, name)
 
-    override val isAbstract: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isStatic: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isFinal: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val typeParameters: List<JavaTypeParameter>
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val outerClass: JavaClass?
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isInterface: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isAnnotationType: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isEnum: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val methods: Collection<JavaMethod>
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val fields: Collection<JavaField>
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val constructors: Collection<JavaConstructor>
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val annotations
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isDeprecatedInJavaDoc: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override fun findAnnotation(fqName: FqName) =
-            throw UnsupportedOperationException("Should not be called")
+    override val isAbstract get() = shouldNotBeCalled()
+    override val isStatic get() = shouldNotBeCalled()
+    override val isFinal get() = shouldNotBeCalled()
+    override val typeParameters get() = shouldNotBeCalled()
+    override val outerClass get() = shouldNotBeCalled()
+    override val isInterface get() = shouldNotBeCalled()
+    override val isAnnotationType get() = shouldNotBeCalled()
+    override val isEnum get() = shouldNotBeCalled()
+    override val methods get() = shouldNotBeCalled()
+    override val fields get() = shouldNotBeCalled()
+    override val constructors get() = shouldNotBeCalled()
+    override val annotations get() = shouldNotBeCalled()
+    override val isDeprecatedInJavaDoc get() = shouldNotBeCalled()
+    override fun findAnnotation(fqName: FqName) = shouldNotBeCalled()
 }
 
 class MockKotlinClassifierType(override val classifier: JavaClassifier) : JavaClassifierType {
-    override val typeArguments: List<JavaType>
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isRaw: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val annotations: Collection<JavaAnnotation>
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val classifierQualifiedName: String
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val presentableText: String
-        get() = throw UnsupportedOperationException("Should not be called")
-    override fun findAnnotation(fqName: FqName) =
-            throw UnsupportedOperationException("Should not be called")
-    override val isDeprecatedInJavaDoc: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
+    override val typeArguments get() = shouldNotBeCalled()
+    override val isRaw get() = shouldNotBeCalled()
+    override val annotations get() = shouldNotBeCalled()
+    override val classifierQualifiedName get() = shouldNotBeCalled()
+    override val presentableText get() = shouldNotBeCalled()
+    override fun findAnnotation(fqName: FqName) = shouldNotBeCalled()
+    override val isDeprecatedInJavaDoc get() = shouldNotBeCalled()
 }
 
 class MockKotlinField(private val psiField: PsiField) : JavaField {
@@ -201,30 +179,21 @@ class MockKotlinField(private val psiField: PsiField) : JavaField {
     override val initializerValue: Any?
         get() = (psiField.initializer as? PsiLiteralExpression)?.value
 
-    override val name: Name
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val annotations: Collection<JavaAnnotation>
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isDeprecatedInJavaDoc: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isAbstract: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isStatic: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isFinal: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val visibility: Visibility
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val containingClass: JavaClass
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val isEnumEntry: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val type: JavaType
-        get() = throw UnsupportedOperationException("Should not be called")
-    override val hasConstantNotNullInitializer: Boolean
-        get() = throw UnsupportedOperationException("Should not be called")
-    override fun findAnnotation(fqName: FqName) = throw UnsupportedOperationException("Should not be called")
+    override val name get() = shouldNotBeCalled()
+    override val annotations get() = shouldNotBeCalled()
+    override val isDeprecatedInJavaDoc get() = shouldNotBeCalled()
+    override val isAbstract get() = shouldNotBeCalled()
+    override val isStatic get() = shouldNotBeCalled()
+    override val isFinal get() = shouldNotBeCalled()
+    override val visibility get() = shouldNotBeCalled()
+    override val containingClass get() = shouldNotBeCalled()
+    override val isEnumEntry get() = shouldNotBeCalled()
+    override val type get() = shouldNotBeCalled()
+    override val hasConstantNotNullInitializer get() = shouldNotBeCalled()
+    override fun findAnnotation(fqName: FqName) = shouldNotBeCalled()
 }
 
 private fun KtClassOrObject.computeClassId(): ClassId? =
         containingClassOrObject?.computeClassId()?.createNestedClassId(nameAsSafeName) ?: fqName?.let { ClassId.topLevel(it) }
+
+private fun shouldNotBeCalled(): Nothing = throw UnsupportedOperationException("Should not be called")

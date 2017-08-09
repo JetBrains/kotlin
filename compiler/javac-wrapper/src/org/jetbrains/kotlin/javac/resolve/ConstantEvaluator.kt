@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.javac.resolve
 
-import com.sun.source.util.TreePath
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -25,7 +25,7 @@ import kotlin.experimental.inv
 
 class ConstantEvaluator(private val containingClass: JavaClass,
                         private val javac: JavacWrapper,
-                        private val treePath: TreePath) {
+                        private val compilationUnit: CompilationUnitTree) {
     fun getValue(expr: JCTree.JCExpression): Any? {
         return when (expr) {
             is JCTree.JCLiteral -> {
@@ -35,7 +35,7 @@ class ConstantEvaluator(private val containingClass: JavaClass,
                 else expr.value
             }
             is JCTree.JCIdent,
-            is JCTree.JCFieldAccess -> javac.resolveField(javac.getTreePath(expr, treePath.compilationUnit), containingClass)?.initializerValue
+            is JCTree.JCFieldAccess -> javac.resolveField(expr, compilationUnit, containingClass)?.initializerValue
             is JCTree.JCBinary -> binaryInitializerValue(expr)
             is JCTree.JCParens -> getValue(expr.expr)
             is JCTree.JCUnary -> unaryInitializerValue(expr)
