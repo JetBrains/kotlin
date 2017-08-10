@@ -3,6 +3,20 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.1.4-EAP-76
+
+### Compiler
+
+- [`KT-18867`](https://youtrack.jetbrains.com/issue/KT-18867) Getting constant "VerifyError: Operand stack underflow" from Kotlin plugin
+
+### IDE
+
+- [`KT-18842`](https://youtrack.jetbrains.com/issue/KT-18842) Very slow typing in certain files of Kotlin project
+
+### Tools. Gradle
+
+- [`KT-17035`](https://youtrack.jetbrains.com/issue/KT-17035) Gradle Kotlin Plugin can not compile tests calling source internal fields/variables if compileJava dumps classes to a different directory and then copied classes are moved to sourceSets.main.output.classesDir by a different task
+
 ## 1.1.4-EAP-69
 
 ### Android
