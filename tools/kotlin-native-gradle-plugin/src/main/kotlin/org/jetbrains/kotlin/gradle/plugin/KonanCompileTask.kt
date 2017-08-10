@@ -201,26 +201,6 @@ open class KonanCompileConfig(
 
     // DSL methods --------------------------------------------------
 
-    // TODO: Check if we copied all data or not
-    fun extendsFrom(anotherConfig: KonanCompileConfig) = with(compilationTask) {
-        val anotherTask = anotherConfig.compilationTask
-
-        outputDir(anotherTask.outputDir.absolutePath)
-
-        linkerOpts(anotherTask.linkerOpts)
-
-        anotherTask.target?.let { target(it) }
-        anotherTask.languageVersion?.let { languageVersion(it) }
-        anotherTask.apiVersion?.let { apiVersion(it) }
-        anotherTask.produce.let { produce(it) }
-
-        enableDebug(anotherTask.enableDebug)
-        if (anotherTask.noStdLib) noStdLib()
-        if (anotherTask.noMain) noMain()
-        if (anotherTask.enableOptimization) enableOptimization()
-        if (anotherTask.enableAssertions) enableAssertions()
-    }
-
     fun useInterop(interopConfig: KonanInteropConfig) {
         val generateStubsTask = interopConfig.generateStubsTask
         val compileStubsTask  = interopConfig.compileStubsTask
