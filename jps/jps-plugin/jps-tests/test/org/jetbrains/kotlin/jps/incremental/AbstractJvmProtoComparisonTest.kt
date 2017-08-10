@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.kotlin.incremental.Difference
-import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
-import org.jetbrains.kotlin.incremental.difference
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -36,25 +34,20 @@ abstract class AbstractJvmProtoComparisonTest : AbstractProtoComparisonTest<Loca
         return localClassFiles.associateBy { it.classId }
     }
 
-    override fun difference(oldData: LocalFileKotlinClass, newData: LocalFileKotlinClass): Difference? {
-        val oldProto = oldData.readProto() ?: return null
-        val newProto = newData.readProto() ?: return null
-        return difference(oldProto, newProto)
-    }
-
-    private fun KotlinJvmBinaryClass.readProto(): ProtoMapValue? {
+    override fun LocalFileKotlinClass.toProtoData(): ProtoData? {
         assert(classHeader.metadataVersion.isCompatible()) { "Incompatible class ($classHeader): $location" }
 
         val bytes by lazy { BitEncoding.decodeBytes(classHeader.data!!) }
         val strings by lazy { classHeader.strings!! }
+        val packageFqName = classId.packageFqName
 
         return when (classHeader.kind) {
             KotlinClassHeader.Kind.CLASS -> {
-                ProtoMapValue(false, bytes, strings)
+                ProtoMapValue(false, bytes, strings).toProtoData(packageFqName)
             }
             KotlinClassHeader.Kind.FILE_FACADE,
             KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-                ProtoMapValue(true, bytes, strings)
+                ProtoMapValue(true, bytes, strings).toProtoData(packageFqName)
             }
             else -> {
                 null

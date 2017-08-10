@@ -21,11 +21,8 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.incremental.ClassProtoData
-import org.jetbrains.kotlin.incremental.Difference
-import org.jetbrains.kotlin.incremental.difference as differenceImpl
-import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.ProtoData
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
@@ -72,28 +69,33 @@ abstract class AbstractJsProtoComparisonTest : AbstractProtoComparisonTest<Proto
         val classes = hashMapOf<ClassId, ProtoData>()
 
         for ((sourceFile, protoBytes, _) in incrementalResults.packageParts) {
-            val proto = ProtoBuf.PackageFragment.parseFrom(protoBytes, JsSerializerProtocol.extensionRegistry)
-            val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
-
-            proto.class_List.forEach {
-                val classId = nameResolver.getClassId(it.fqName)
-                classes[classId] = ClassProtoData(it, nameResolver)
-            }
-
-            proto.`package`.apply {
-                val packageFqName = if (hasExtension(JsProtoBuf.packageFqName)) {
-                    nameResolver.getPackageFqName(getExtension(JsProtoBuf.packageFqName))
-                }
-                else FqName.ROOT
-
-                val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalize() + "Kt"))
-                classes[packagePartClassId] = PackagePartProtoData(this, nameResolver)
-            }
+            classes.putAll(getProtoData(sourceFile, protoBytes))
         }
 
         return classes
     }
 
-    override fun difference(oldData: ProtoData, newData: ProtoData): Difference? =
-            differenceImpl(oldData, newData)
+    override fun ProtoData.toProtoData(): ProtoData? = this
+}
+
+fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>  {
+    val classes = hashMapOf<ClassId, ProtoData>()
+    val proto = ProtoBuf.PackageFragment.parseFrom(metadata, JsSerializerProtocol.extensionRegistry)
+    val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
+
+    proto.class_List.forEach {
+        val classId = nameResolver.getClassId(it.fqName)
+        classes[classId] = ClassProtoData(it, nameResolver)
+    }
+
+    proto.`package`.apply {
+        val packageFqName = if (hasExtension(JsProtoBuf.packageFqName)) {
+            nameResolver.getPackageFqName(getExtension(JsProtoBuf.packageFqName))
+        }
+        else FqName.ROOT
+
+        val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalize() + "Kt"))
+        classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
+    }
+    return classes
 }
