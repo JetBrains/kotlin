@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class PreliminaryDeclarationVisitor(val declaration: KtDeclaration): AssignedVariablesSearcher() {
 
-    override fun writers(variableDescriptor: VariableDescriptor): MutableSet<KtDeclaration?> {
+    override fun writers(variableDescriptor: VariableDescriptor): MutableSet<Writer> {
         lazyTrigger
         return super.writers(variableDescriptor)
     }

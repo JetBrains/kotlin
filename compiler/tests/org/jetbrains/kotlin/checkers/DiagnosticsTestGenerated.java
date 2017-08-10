@@ -21309,6 +21309,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("capturedInClosureModifiedBefore.kt")
+                public void testCapturedInClosureModifiedBefore() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/capturedInClosureModifiedBefore.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("capturedInClosureOff.kt")
+                public void testCapturedInClosureOff() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/capturedInClosureOff.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("doWhileWithBreak.kt")
                 public void testDoWhileWithBreak() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/doWhileWithBreak.kt");

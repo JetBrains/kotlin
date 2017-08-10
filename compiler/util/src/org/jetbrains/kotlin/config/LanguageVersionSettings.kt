@@ -56,6 +56,7 @@ enum class LanguageFeature(
     DeprecatedFieldForInvisibleCompanionObject(KOTLIN_1_2),
     SafeCastCheckBoundSmartCasts(KOTLIN_1_2),
     BooleanElvisBoundSmartCasts(KOTLIN_1_2),
+    CapturedInClosureSmartCasts(KOTLIN_1_2),
 
     // Experimental features
 
