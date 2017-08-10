@@ -132,6 +132,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal var friendTaskName: String? = null
     internal var javaOutputDir: File? = null
     internal var sourceSetName: String by Delegates.notNull()
+
+    @get:Input
     internal val moduleName: String
         get() {
             val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
