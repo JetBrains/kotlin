@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.openapi.util.io.FileUtil;
 import kotlin.collections.CollectionsKt;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -80,7 +83,22 @@ public class CodegenTestUtil {
             @NotNull List<String> additionalOptions
     ) {
         try {
-            File javaClassesTempDirectory = KotlinTestUtils.tmpDir("java-classes");
+            File directory = KotlinTestUtils.tmpDir("java-classes");
+            compileJava(fileNames, additionalClasspath, additionalOptions, directory);
+            return directory;
+        }
+        catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+    }
+
+    public static void compileJava(
+            @NotNull List<String> fileNames,
+            @NotNull List<String> additionalClasspath,
+            @NotNull List<String> additionalOptions,
+            @NotNull File outDirectory
+    ) {
+        try {
             List<String> classpath = new ArrayList<>();
             classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
             classpath.add(ForTestCompileRuntime.reflectJarForTests().getPath());
@@ -89,13 +107,11 @@ public class CodegenTestUtil {
 
             List<String> options = new ArrayList<>(Arrays.asList(
                     "-classpath", StringsKt.join(classpath, File.pathSeparator),
-                    "-d", javaClassesTempDirectory.getPath()
+                    "-d", outDirectory.getPath()
             ));
             options.addAll(additionalOptions);
 
             KotlinTestUtils.compileJavaFiles(CollectionsKt.map(fileNames, File::new), options);
-
-            return javaClassesTempDirectory;
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
@@ -130,5 +146,19 @@ public class CodegenTestUtil {
         catch (Exception e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
+    }
+
+    @NotNull
+    public static List<String> findJavaSourcesInDirectory(@NotNull File directory) {
+        List<String> javaFilePaths = new ArrayList<>(1);
+
+        FileUtil.processFilesRecursively(directory, file -> {
+            if (file.isFile() && FilesKt.getExtension(file).equals(JavaFileType.DEFAULT_EXTENSION)) {
+                javaFilePaths.add(file.getPath());
+            }
+            return true;
+        });
+
+        return javaFilePaths;
     }
 }

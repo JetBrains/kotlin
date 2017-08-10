@@ -232,6 +232,14 @@ fun main(args: Array<String>) {
             model("foreignAnnotations/tests")
         }
 
+        testClass<AbstractForeignAnnotationsNoAnnotationInClasspathTest> {
+            model("foreignAnnotations/tests")
+        }
+
+        testClass<AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest> {
+            model("foreignAnnotations/tests")
+        }
+
         testClass<AbstractResolveTest> {
             model("resolve", extension = "resolve")
         }

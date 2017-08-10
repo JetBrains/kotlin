@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase {
-    private File javaFilesDir;
+    protected File javaFilesDir;
     private File kotlinSourceRoot;
 
     @Override
@@ -78,13 +78,28 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
                 getConfigurationKind(),
                 getTestJdkKind(),
                 CollectionsKt.plus(Collections.singletonList(KotlinTestUtils.getAnnotationsJar()), getExtraClasspath()),
-                Collections.singletonList(javaFilesDir)
+                isJavaSourceRootNeeded() ? Collections.singletonList(javaFilesDir) : Collections.emptyList()
         );
         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition.INSTANCE);
         if (isKotlinSourceRootNeeded()) {
             ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
         }
-        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, getEnvironmentConfigFiles());
+
+        KotlinCoreEnvironment environment =
+                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, getEnvironmentConfigFiles());
+        performCustomConfiguration(
+                environment
+        );
+
+        return environment;
+    }
+
+    protected boolean isJavaSourceRootNeeded() {
+        return true;
+    }
+
+    protected void performCustomConfiguration(@NotNull KotlinCoreEnvironment environment) {
+
     }
 
     @NotNull

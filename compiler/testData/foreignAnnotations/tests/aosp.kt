@@ -21,6 +21,7 @@ public class A<T> {
 }
 
 // FILE: main.kt
+// SOURCE_RETENTION_ANNOTATIONS
 
 fun main(a: A<String>, a1: A<String?>) {
     a.foo("", null)?.length

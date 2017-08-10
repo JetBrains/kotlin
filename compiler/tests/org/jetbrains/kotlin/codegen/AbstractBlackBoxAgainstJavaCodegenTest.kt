@@ -24,7 +24,7 @@ import java.io.File
 abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenTest() {
     override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
         javaClassesOutputDirectory = javaFilesDir!!.let { directory ->
-            CodegenTestUtil.compileJava(findJavaSourcesInDirectory(directory), emptyList(), extractJavacOptions(files))
+            CodegenTestUtil.compileJava(CodegenTestUtil.findJavaSourcesInDirectory(directory), emptyList(), extractJavacOptions(files))
         }
 
         super.doMultiFileTest(wholeFile, files, null)
