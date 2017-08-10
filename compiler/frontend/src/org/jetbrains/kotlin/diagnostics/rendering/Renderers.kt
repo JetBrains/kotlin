@@ -204,29 +204,37 @@ object Renderers {
     }
 
     @JvmField val SORTED_CONSTRAINTS_RENDERER = Renderer<SortedConstraints> {
-        buildString {
-            appendIfNotEmpty(it.upper, "should be a subtype of: ")
-            appendIfNotEmpty(it.equality, "should be equal to: ")
-            appendIfNotEmpty(it.lower, "should be a supertype of: ", false)
-        }
+        renderSortedConstraints(it, false)
     }
 
     @JvmField val SORTED_CONSTRAINTS_FOR_SPECIAL_CALL_RENDERER = Renderer<SortedConstraints> {
-        buildString {
-            appendIfNotEmpty(it.upper, "should be conformed to: ")
-            appendIfNotEmpty(it.equality, "should be equal to: ")
-            appendIfNotEmpty(it.lower, "should be a supertype of: ", false)
+        renderSortedConstraintsForSpecialCall(it, false)
+    }
+
+    fun renderSortedConstraintsForSpecialCall(constraints: SortedConstraints, isHtml: Boolean): String {
+        return buildString {
+            appendIfNotEmpty(constraints.upper, "should be conformed to: ", isHtml = isHtml)
+            appendIfNotEmpty(constraints.equality, "should be equal to: ", isHtml = isHtml)
+            appendIfNotEmpty(constraints.lower, "should be a supertype of: ", false, isHtml)
         }
     }
 
-    private fun StringBuilder.appendIfNotEmpty(constraints: List<Constraint>, prefix: String, newLine: Boolean = true) {
+    fun renderSortedConstraints(constraints: SortedConstraints, isHtml: Boolean): String {
+        return buildString {
+            appendIfNotEmpty(constraints.upper, "should be a subtype of: ", isHtml = isHtml)
+            appendIfNotEmpty(constraints.equality, "should be equal to: ", isHtml = isHtml)
+            appendIfNotEmpty(constraints.lower, "should be a supertype of: ", false, isHtml)
+        }
+    }
+
+    private fun StringBuilder.appendIfNotEmpty(constraints: List<Constraint>, prefix: String, newLine: Boolean = true, isHtml: Boolean = false) {
         if (constraints.isEmpty()) return
         append(prefix)
         append(constraints.joinToString {
             val from = it.position.from.message?.let { " ($it)" } ?: ""
             "${it.type}$from"
         }) // Render properly
-        if (newLine) append("\n")
+        if (newLine) append(if (isHtml) "<br>" else "\n")
     }
 
     @JvmStatic fun renderConflictingSubstitutionsInferenceError(

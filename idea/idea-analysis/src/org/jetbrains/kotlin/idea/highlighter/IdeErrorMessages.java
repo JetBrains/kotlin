@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallDataHtmlRenderer;
 import java.net.URL;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
-import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING;
+import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TextElementType;
 import static org.jetbrains.kotlin.idea.highlighter.HtmlTabledDescriptorRenderer.tableForTypes;
 import static org.jetbrains.kotlin.idea.highlighter.IdeRenderers.*;
@@ -92,6 +91,14 @@ public class IdeErrorMessages {
                                                                      "required: ", TextElementType.STRONG,
                                                                      "found: ", TextElementType.ERROR), HTML_RENDER_TYPE, HTML_RENDER_TYPE);
         MAP.put(TYPE_INFERENCE_UPPER_BOUND_VIOLATED, "<html>{0}</html>", HTML_TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER);
+
+        MAP.put(CONTRADICTION_IN_CONSTRAINT_SYSTEM,
+                "<html>Contradictory requirements for type variable ''{0}'':<br>{1}</html>",
+                NEW_TYPE_VARIABLE_RENDERER, HTML_SORTED_CONSTRAINTS_RENDERER);
+
+        MAP.put(CONTRADICTION_FOR_SPECIAL_CALL,
+                "<html>Result type for ''{1}'' expression cannot be inferred:<br>{0}</html>",
+                HTML_SORTED_CONSTRAINTS_FOR_SPECIAL_CALL_RENDERER, SPECIAL_VARIABLE_KIND_RENDERER);
 
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "<html>Setter parameter type must be equal to the type of the property." +
                                              "<table><tr><td>Expected:</td><td>{0}</td></tr>" +

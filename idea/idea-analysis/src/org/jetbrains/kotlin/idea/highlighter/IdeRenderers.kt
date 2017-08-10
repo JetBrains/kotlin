@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.idea.highlighter.renderersUtil.renderResolvedCall
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.calls.components.SortedConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
@@ -62,6 +63,15 @@ object IdeRenderers {
     @JvmField val HTML_TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER = Renderer<InferenceErrorData> {
         Renderers.renderUpperBoundViolatedInferenceError(it, HtmlTabledDescriptorRenderer.create()).toString()
     }
+
+    @JvmField val HTML_SORTED_CONSTRAINTS_RENDERER = Renderer<SortedConstraints> {
+        Renderers.renderSortedConstraints(it, true)
+    }
+
+    @JvmField val HTML_SORTED_CONSTRAINTS_FOR_SPECIAL_CALL_RENDERER = Renderer<SortedConstraints> {
+        Renderers.renderSortedConstraintsForSpecialCall(it, true)
+    }
+
 
     @JvmField val HTML_RENDER_RETURN_TYPE = ContextDependentRenderer<CallableMemberDescriptor> {
         member, context ->
