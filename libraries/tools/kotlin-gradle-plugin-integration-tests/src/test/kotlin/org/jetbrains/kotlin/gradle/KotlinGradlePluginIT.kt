@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
+import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.modify
@@ -580,6 +581,19 @@ class KotlinGradleIT: BaseGradleIT() {
             // Main source set should have a *.kotlin_module file without '_main'
             assertFileExists("build/classes/kotlin/main/META-INF/$archivesBaseName.kotlin_module")
             assertFileExists("build/classes/kotlin/deploy/META-INF/${archivesBaseName}_deploy.kotlin_module")
+        }
+    }
+
+    @Test
+    fun testJavaPackagePrefix() {
+        val project = Project("javaPackagePrefix", "4.0")
+        project.build("build") {
+            assertSuccessful()
+
+            // Check that the Java source in a non-full-depth package structure was located correctly:
+            checkBytecodeContains(
+                    File(project.projectDir, "build/classes/kotlin/main/my/pack/name/app/MyApp.class"),
+                    "my/pack/name/util/JUtil.util")
         }
     }
 }
