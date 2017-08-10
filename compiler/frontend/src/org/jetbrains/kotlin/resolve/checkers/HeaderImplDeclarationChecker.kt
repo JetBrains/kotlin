@@ -181,7 +181,10 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
                 listOf(module.getPackage(containingDeclaration.fqName).memberScope)
             }
             is ClassDescriptor -> {
-                containingDeclaration.findClassifiersFromModule(module).mapNotNull { (it as? ClassDescriptor)?.unsubstitutedMemberScope }
+                val classes = containingDeclaration.findClassifiersFromModule(module).filterIsInstance<ClassDescriptor>()
+                if (this is ConstructorDescriptor) return classes.flatMap { it.constructors }
+
+                classes.map { it.unsubstitutedMemberScope }
             }
             else -> return emptyList()
         }

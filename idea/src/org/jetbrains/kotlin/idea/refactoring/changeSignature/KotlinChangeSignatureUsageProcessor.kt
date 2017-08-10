@@ -229,8 +229,6 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         for (reference in findReferences(functionPsi)) {
             val element = reference.element
 
-            if (functionPsi is KtClass && reference.resolve() !== functionPsi) continue
-
             if (element is KtReferenceExpression) {
                 var parent = element.parent
 
