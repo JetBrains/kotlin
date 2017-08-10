@@ -81,7 +81,6 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
     }
 
     private fun <D : CallableMemberDescriptor> D.enhanceSignature(c: LazyJavaResolverContext): D {
-        val outerScopeQualifiers = c.computeNewDefaultTypeQualifiers(annotations)
         // TODO type parameters
         // TODO use new type parameters while enhancing other types
         // TODO Propagation into generic type arguments
@@ -91,6 +90,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
         // Fake overrides with one overridden has been enhanced before
         if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE && original.overriddenDescriptors.size == 1) return this
 
+        val outerScopeQualifiers = c.computeNewDefaultTypeQualifiers(annotations)
         val receiverTypeEnhancement =
                 if (extensionReceiverParameter != null)
                     parts(
