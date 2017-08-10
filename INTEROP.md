@@ -24,12 +24,13 @@ Build the dependencies and the compiler (see `README.md`).
 Prepare stubs for the system sockets library:
 
     cd samples/socket
-    ../../dist/bin/cinterop -def sockets.def -o sockets
+    ../../dist/bin/cinterop -def src/main/c_interop/sockets.def \
+     -o sockets
 
 Compile the echo server:
 
-    ../../dist/bin/kotlinc EchoServer.kt -library sockets \
-     -o EchoServer
+    ../../dist/bin/kotlinc src/main/kotlin/EchoServer.kt \
+     -library sockets -o EchoServer
 
 This whole process is automated in `build.sh` script, which also support cross-compilation
 to supported cross-targets with `TARGET=raspberrypi ./build.sh` (`cross_dist` target must
