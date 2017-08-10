@@ -22,6 +22,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
@@ -155,7 +156,7 @@ public class DataFlowAnalyzer {
                     }
                     result.set(dataFlowInfo);
                 }
-                else  {
+                else {
                     DataFlowInfo expressionFlowInfo = facade.getTypeInfo(expression, context).getDataFlowInfo();
                     KtExpression left = expression.getLeft();
                     if (left == null) return;
@@ -176,6 +177,13 @@ public class DataFlowAnalyzer {
                     }
                     else if (operationToken == KtTokens.EXCLEQ || operationToken == KtTokens.EXCLEQEQEQ) {
                         equals = false;
+                    }
+                    else if (operationToken == KtTokens.ELVIS &&
+                             languageVersionSettings.supportsFeature(LanguageFeature.BooleanElvisBoundSmartCasts) &&
+                             right instanceof KtConstantExpression &&
+                             KotlinBuiltIns.isBoolean(rhsType)) {
+                        // ?: false is equivalent to == true, ?: true is equivalent to != false
+                        equals = KtPsiUtil.isFalseConstant(right);
                     }
                     if (equals != null) {
                         if (equals == conditionValue) { // this means: equals && conditionValue || !equals && !conditionValue
