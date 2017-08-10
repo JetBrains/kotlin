@@ -544,7 +544,7 @@ class TypeResolver(
         }
         else {
             val typeAliasExpansion = TypeAliasExpansion.create(null, descriptor, arguments)
-            val expandedType = TypeAliasExpander(reportStrategy).expand(typeAliasExpansion, annotations)
+            val expandedType = TypeAliasExpander(reportStrategy, c.checkBounds).expand(typeAliasExpansion, annotations)
             type(expandedType)
         }
     }
