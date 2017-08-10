@@ -148,12 +148,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         if (element !is KtCallableDeclaration) return
         if (element is KtConstructor<*>) return
 
-        val returnTypeIsNeeded = if (element is KtFunction) {
-            element !is KtFunctionLiteral && (changeInfo.isRefactoringTarget(originalCallableDescriptor) || element.typeReference != null)
-        }
-        else {
-            element is KtProperty || element is KtParameter
-        }
+        val returnTypeIsNeeded = (element is KtFunction && element !is KtFunctionLiteral) || element is KtProperty || element is KtParameter
 
         if (changeInfo.isReturnTypeChanged && returnTypeIsNeeded) {
             element.typeReference = null

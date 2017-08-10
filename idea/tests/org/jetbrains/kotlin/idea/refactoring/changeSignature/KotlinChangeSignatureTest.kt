@@ -956,4 +956,8 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         newName = "bar"
         newReturnTypeInfo = resolveType("A<T, U>", true, true)
     }
+
+    fun testChangeReturnTypeToNonUnit() = doTest {
+        newReturnTypeInfo = KotlinTypeInfo(true, BUILT_INS.intType)
+    }
 }
