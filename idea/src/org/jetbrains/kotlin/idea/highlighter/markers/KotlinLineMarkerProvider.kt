@@ -90,19 +90,21 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
                     }
                 }
             }
-
-            if (element is KtNamedDeclaration) {
-                if (element.hasModifier(KtTokens.HEADER_KEYWORD)) {
-                    collectImplementationMarkers(element, result)
-                }
-                else if (element.hasModifier(KtTokens.IMPL_KEYWORD)) {
-                    collectHeaderMarkers(element, result)
-                }
-            }
         }
 
         collectOverriddenFunctions(functions, result)
         collectOverriddenPropertyAccessors(properties, result)
+
+        for (element in elements) {
+            if (element !is KtNamedDeclaration) continue
+
+            if (element.hasModifier(KtTokens.HEADER_KEYWORD)) {
+                collectImplementationMarkers(element, result)
+            }
+            else if (element.hasModifier(KtTokens.IMPL_KEYWORD)) {
+                collectHeaderMarkers(element, result)
+            }
+        }
     }
 }
 
