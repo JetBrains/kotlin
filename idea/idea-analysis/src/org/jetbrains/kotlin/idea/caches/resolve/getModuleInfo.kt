@@ -88,6 +88,8 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
 
     val module = projectFileIndex.getModuleForFile(virtualFile)
     if (module != null) {
+        if (module.isDisposed) return null
+
         fun warnIfDecompiled() {
             if (treatAsLibrarySource) {
                 LOG.warn("Decompiled file for ${virtualFile.canonicalPath} is in content of $module")
