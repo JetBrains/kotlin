@@ -3503,6 +3503,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("quoted.kt")
+        public void testQuoted() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/quoted.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("rightHandOverride.kt")
         public void testRightHandOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/rightHandOverride.kt");
