@@ -13,7 +13,7 @@ fun myTest() {
         val someExpr = ""
         <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'if' expression cannot be inferred:
 should be conformed to: Number
-should be a supertype of: String (for parameter 'thenBranch'), {Int & Byte & Short & Long} (for parameter 'elseBranch')">if (true) someExpr else 2</error>
+should be a supertype of: String (for parameter 'thenBranch'), integral type (for parameter 'elseBranch')">if (true) someExpr else 2</error>
     }
 }
 
@@ -22,7 +22,7 @@ fun testLambdaLastExpression() {
         val longLongLambda = ""
         <error descr="[CONTRADICTION_IN_CONSTRAINT_SYSTEM] Contradictory requirements for type variable 'T':
 should be a subtype of: Number (declared upper bound T)
-should be a supertype of: {Int & Byte & Short & Long} (for parameter 'x'), String">longLongLambda</error>
+should be a supertype of: integral type (for parameter 'x'), String">longLongLambda</error>
     }
 
     fooReturn(<error descr="[CONTRADICTION_IN_CONSTRAINT_SYSTEM] Contradictory requirements for type variable 'T':
@@ -49,13 +49,13 @@ fun testLambdaWithReturnIfExpression(): Int {
         if (3 > 2) {
             return@onlyLambda <error descr="[CONTRADICTION_IN_CONSTRAINT_SYSTEM] Contradictory requirements for type variable 'T':
 should be a subtype of: Number (declared upper bound T)
-should be a supertype of: String, {Int & Byte & Short & Long}">"not a number"</error>
+should be a supertype of: String, integral type">"not a number"</error>
         }
         if (3 < 2) {
             <error descr="[RETURN_NOT_ALLOWED] 'return' is not allowed here">return</error> <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is String but Int was expected">"also not an int"</error>
         }
         <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'if' expression cannot be inferred:
 should be conformed to: Number
-should be a supertype of: String (for parameter 'thenBranch'), {Int & Byte & Short & Long} (for parameter 'elseBranch')">if (true) "" else 123</error>
+should be a supertype of: String (for parameter 'thenBranch'), integral type (for parameter 'elseBranch')">if (true) "" else 123</error>
     }</error>
 }

@@ -1022,6 +1022,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("intersectedIntegralTypes.kt")
+        public void testIntersectedIntegralTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/intersectedIntegralTypes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nArgumentsExpectedMessage.kt")
         public void testNArgumentsExpectedMessage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/nArgumentsExpectedMessage.kt");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,7 +122,8 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             }
 
             is IntegerValueTypeConstructor -> {
-                val newConstructor = IntersectionTypeConstructor(constructor.supertypes.map { TypeUtils.makeNullableAsSpecified(it, type.isMarkedNullable) })
+                val supertypes = constructor.supertypes.map { TypeUtils.makeNullableAsSpecified(it, type.isMarkedNullable) }
+                val newConstructor = IntersectionTypeConstructor.createIntersectionTypeConstructor(supertypes, "integral type")
                 return KotlinTypeFactory.simpleType(type.annotations, newConstructor, listOf(), false, type.memberScope)
             }
 

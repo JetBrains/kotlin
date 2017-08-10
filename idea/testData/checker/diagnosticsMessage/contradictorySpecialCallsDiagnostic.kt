@@ -29,7 +29,7 @@ should be a supertype of: String? (for parameter 'entry0'), Int (for parameter '
 
 val test: Int = if (true) <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'when' expression cannot be inferred:
 should be conformed to: Int (for parameter 'thenBranch')
-should be a supertype of: {Int & Byte & Short & Long} (for parameter 'entry0'), Nothing? (for parameter 'entry1')">{
+should be a supertype of: integral type (for parameter 'entry0'), Nothing? (for parameter 'entry1')">{
 when (2) {
     1 -> 1
     else -> null

@@ -24,6 +24,6 @@ fun testSpecialCall(): Int {
     return <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Int was expected">foo {
         <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'if' expression cannot be inferred:
 should be conformed to: Int
-should be a supertype of: {Int & Byte & Short & Long} (for parameter 'thenBranch'), String (for parameter 'elseBranch')">if (true) 123 else "abc"</error>
+should be a supertype of: integral type (for parameter 'thenBranch'), String (for parameter 'elseBranch')">if (true) 123 else "abc"</error>
     }</error>
 }
