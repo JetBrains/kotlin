@@ -181,8 +181,8 @@ fun Converter.convertParameterList(
 ): ParameterList {
     val parameterList = method.parameterList
     val params = parameterList.parameters
-    val lParen = parameterList.node.findChildByType(JavaTokenType.LPARENTH)?.psi
-    val rParen = parameterList.node.findChildByType(JavaTokenType.RPARENTH)?.psi
+    val lParen = parameterList.node?.findChildByType(JavaTokenType.LPARENTH)?.psi
+    val rParen = parameterList.node?.findChildByType(JavaTokenType.RPARENTH)?.psi
     return ParameterList(
             params.indices.map { i ->
                 val parameter = params[i]
