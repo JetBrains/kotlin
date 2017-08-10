@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.collect.Sets;
 import com.intellij.util.containers.MultiMap;
+import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
@@ -66,13 +66,13 @@ public class KotlinCodegenFacade {
         }
 
         Set<FqName> obsoleteMultifileClasses = new HashSet<>(state.getObsoleteMultifileClasses());
-        for (FqName multifileClassFqName : Sets.union(filesInMultifileClasses.keySet(), obsoleteMultifileClasses)) {
+        for (FqName multifileClassFqName : SetsKt.plus(filesInMultifileClasses.keySet(), obsoleteMultifileClasses)) {
             doCheckCancelled(state);
             generateMultifileClass(state, multifileClassFqName, filesInMultifileClasses.get(multifileClassFqName), errorHandler);
         }
 
         Set<FqName> packagesWithObsoleteParts = new HashSet<>(state.getPackagesWithObsoleteParts());
-        for (FqName packageFqName : Sets.union(packagesWithObsoleteParts, filesInPackages.keySet())) {
+        for (FqName packageFqName : SetsKt.plus(packagesWithObsoleteParts, filesInPackages.keySet())) {
             doCheckCancelled(state);
             generatePackage(state, packageFqName, filesInPackages.get(packageFqName), errorHandler);
         }
