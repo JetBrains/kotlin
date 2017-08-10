@@ -233,7 +233,7 @@
         <get-maven-library prefix="com/google/guava" lib="guava" version="21.0" bin="false"/>
 
         <!-- ASM -->
-        <get src="https://raw.github.com/JetBrains/intellij-community/171/lib/src/asm-src.zip"
+        <get src="https://raw.github.com/JetBrains/intellij-community/172/lib/src/asm-src.zip"
              dest="${dependencies}/asm-src.zip"/>
 
         <!-- Junit Sources -->
