@@ -190,6 +190,19 @@ object DataFlowValueFactory {
                 IdentifierInfo.qualified(receiverInfo, bindingContext.getType(receiverExpression),
                                          selectorInfo, expression.operationSign === KtTokens.SAFE_ACCESS)
             }
+            is KtBinaryExpressionWithTypeRHS -> {
+                val subjectExpression = expression.left
+                val targetTypeReference = expression.right
+                val operationToken = expression.operationReference.getReferencedNameElementType()
+                if (operationToken == KtTokens.IS_KEYWORD || operationToken == KtTokens.AS_KEYWORD) {
+                    IdentifierInfo.NO
+                }
+                else {
+                    IdentifierInfo.SafeCast(getIdForStableIdentifier(subjectExpression, bindingContext, containingDeclarationOrModule),
+                                            bindingContext.getType(subjectExpression),
+                                            bindingContext[BindingContext.TYPE, targetTypeReference])
+                }
+            }
             is KtSimpleNameExpression ->
                 getIdForSimpleNameExpression(expression, bindingContext, containingDeclarationOrModule)
             is KtThisExpression -> {

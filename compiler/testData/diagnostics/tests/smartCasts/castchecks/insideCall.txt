@@ -1,0 +1,5 @@
+package
+
+public fun foo(/*0*/ a: kotlin.Any): kotlin.Unit
+public fun kotlin.String.indexOf(/*0*/ arg: kotlin.String): kotlin.Int
+public fun kotlin.String.toLowerCase(): kotlin.String

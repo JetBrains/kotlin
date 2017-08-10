@@ -90,11 +90,14 @@ internal class DelegatingDataFlowInfo private constructor(
                 nullabilityInfo[key] ?: parent?.getCollectedNullability(key) ?: key.immanentNullability
             }
 
-    private fun putNullability(map: MutableMap<DataFlowValue, Nullability>,
-                               value: DataFlowValue,
-                               nullability: Nullability,
-                               languageVersionSettings: LanguageVersionSettings,
-                               affectReceiver: Boolean = true): Boolean {
+    private fun putNullabilityAndTypeInfo(
+            map: MutableMap<DataFlowValue, Nullability>,
+            value: DataFlowValue,
+            nullability: Nullability,
+            languageVersionSettings: LanguageVersionSettings,
+            typeInfo: SetMultimap<DataFlowValue, KotlinType>? = null,
+            affectReceiver: Boolean = true
+    ): Boolean {
         map.put(value, nullability)
 
         val identifierInfo = value.identifierInfo
@@ -104,11 +107,23 @@ internal class DelegatingDataFlowInfo private constructor(
                 is IdentifierInfo.Qualified -> {
                     val receiverType = identifierInfo.receiverType
                     if (identifierInfo.safe && receiverType != null) {
-                        putNullability(map, DataFlowValue(identifierInfo.receiverInfo, receiverType), nullability, languageVersionSettings)
+                        val receiverValue = DataFlowValue(identifierInfo.receiverInfo, receiverType)
+                        putNullabilityAndTypeInfo(map, receiverValue, nullability, languageVersionSettings, typeInfo)
+                    }
+                }
+                is IdentifierInfo.SafeCast -> {
+                    val targetType = identifierInfo.targetType
+                    val subjectType = identifierInfo.subjectType
+                    if (targetType != null && subjectType != null &&
+                        languageVersionSettings.supportsFeature(LanguageFeature.SafeCastCheckBoundSmartCasts)) {
+
+                        val subjectValue = DataFlowValue(identifierInfo.subjectInfo, subjectType)
+                        putNullabilityAndTypeInfo(map, subjectValue, nullability, languageVersionSettings, typeInfo)
+                        typeInfo?.put(subjectValue, targetType)
                     }
                 }
                 is IdentifierInfo.Variable -> identifierInfo.bound?.let {
-                    putNullability(map, it, nullability, languageVersionSettings)
+                    putNullabilityAndTypeInfo(map, it, nullability, languageVersionSettings, typeInfo)
                 }
             }
         }
@@ -149,14 +164,14 @@ internal class DelegatingDataFlowInfo private constructor(
      */
     override fun clearValueInfo(value: DataFlowValue, languageVersionSettings: LanguageVersionSettings): DataFlowInfo {
         val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
-        putNullability(resultNullabilityInfo, value, value.immanentNullability, languageVersionSettings)
+        putNullabilityAndTypeInfo(resultNullabilityInfo, value, value.immanentNullability, languageVersionSettings)
         return create(this, resultNullabilityInfo, EMPTY_TYPE_INFO, value)
     }
 
     override fun assign(a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings): DataFlowInfo {
         val nullability = hashMapOf<DataFlowValue, Nullability>()
         val nullabilityOfB = getStableNullability(b)
-        putNullability(nullability, a, nullabilityOfB, languageVersionSettings, affectReceiver = false)
+        putNullabilityAndTypeInfo(nullability, a, nullabilityOfB, languageVersionSettings, affectReceiver = false)
 
         val newTypeInfo = newTypeInfo()
         var typesForB = getStableTypes(b)
@@ -179,11 +194,12 @@ internal class DelegatingDataFlowInfo private constructor(
         val nullabilityOfA = getStableNullability(a)
         val nullabilityOfB = getStableNullability(b)
 
-        var changed = putNullability(resultNullabilityInfo, a, nullabilityOfA.refine(nullabilityOfB), languageVersionSettings) or
-                      putNullability(resultNullabilityInfo, b, nullabilityOfB.refine(nullabilityOfA), languageVersionSettings)
+        val newTypeInfo = newTypeInfo()
+        var changed =
+                putNullabilityAndTypeInfo(resultNullabilityInfo, a, nullabilityOfA.refine(nullabilityOfB), languageVersionSettings, newTypeInfo) or
+                putNullabilityAndTypeInfo(resultNullabilityInfo, b, nullabilityOfB.refine(nullabilityOfA), languageVersionSettings, newTypeInfo)
 
         // NB: == has no guarantees of type equality, see KT-11280 for the example
-        val newTypeInfo = newTypeInfo()
         if (identityEquals || !nullabilityOfA.canBeNonNull() || !nullabilityOfB.canBeNonNull()) {
             newTypeInfo.putAll(a, getStableTypes(b, false))
             newTypeInfo.putAll(b, getStableTypes(a, false))
@@ -199,12 +215,7 @@ internal class DelegatingDataFlowInfo private constructor(
             changed = changed or !newTypeInfo.isEmpty
         }
 
-        return if (!changed) {
-            this
-        }
-        else {
-            create(this, resultNullabilityInfo, if (newTypeInfo.isEmpty) EMPTY_TYPE_INFO else newTypeInfo)
-        }
+        return if (changed) create(this, resultNullabilityInfo, if (newTypeInfo.isEmpty) EMPTY_TYPE_INFO else newTypeInfo) else this
     }
 
     private fun collectTypesFromMeAndParents(value: DataFlowValue): Set<KotlinType> {
@@ -232,9 +243,13 @@ internal class DelegatingDataFlowInfo private constructor(
         val nullabilityOfA = getStableNullability(a)
         val nullabilityOfB = getStableNullability(b)
 
-        val changed = putNullability(resultNullabilityInfo, a, nullabilityOfA.refine(nullabilityOfB.invert()), languageVersionSettings) or
-                      putNullability(resultNullabilityInfo, b, nullabilityOfB.refine(nullabilityOfA.invert()), languageVersionSettings)
-        return if (changed) create(this, resultNullabilityInfo, EMPTY_TYPE_INFO) else this
+        val newTypeInfo = newTypeInfo()
+        val changed =
+                putNullabilityAndTypeInfo(resultNullabilityInfo, a, nullabilityOfA.refine(nullabilityOfB.invert()), languageVersionSettings, newTypeInfo) or
+                putNullabilityAndTypeInfo(resultNullabilityInfo, b, nullabilityOfB.refine(nullabilityOfA.invert()), languageVersionSettings, newTypeInfo)
+
+        return if (changed) create(this, resultNullabilityInfo, if (newTypeInfo.isEmpty) EMPTY_TYPE_INFO else newTypeInfo) else this
+
     }
 
     override fun establishSubtyping(
@@ -247,7 +262,7 @@ internal class DelegatingDataFlowInfo private constructor(
         newTypeInfo.put(value, type)
         val nullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
         if (!type.isMarkedNullable) {
-            putNullability(nullabilityInfo, value, NOT_NULL, languageVersionSettings)
+            putNullabilityAndTypeInfo(nullabilityInfo, value, NOT_NULL, languageVersionSettings)
         }
         return create(this, if (type.isMarkedNullable) emptyMap() else nullabilityInfo, newTypeInfo)
     }

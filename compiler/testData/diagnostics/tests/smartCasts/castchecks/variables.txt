@@ -1,0 +1,28 @@
+package
+
+public fun f(/*0*/ a: SomeClass?): kotlin.Unit
+public fun g(/*0*/ a: SomeClass?): kotlin.Unit
+
+public object Impl : SomeSubClass {
+    private constructor Impl()
+    public open override /*1*/ val data: kotlin.String = ""
+    public open override /*1*/ val foo: kotlin.Int = 42
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SomeClass {
+    public abstract val data: kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SomeSubClass : SomeClass {
+    public abstract override /*1*/ /*fake_override*/ val data: kotlin.Any?
+    public abstract val foo: kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
