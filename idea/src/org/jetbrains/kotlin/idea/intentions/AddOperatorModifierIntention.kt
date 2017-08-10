@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.refactoring.withHeaderImplementations
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.util.OperatorChecks
@@ -33,7 +34,7 @@ class AddOperatorModifierIntention : SelfTargetingRangeIntention<KtNamedFunction
     }
 
     override fun applyTo(element: KtNamedFunction, editor: Editor?) {
-        element.addModifier(KtTokens.OPERATOR_KEYWORD)
+        element.withHeaderImplementations().forEach { it.addModifier(KtTokens.OPERATOR_KEYWORD) }
     }
 }
 

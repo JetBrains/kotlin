@@ -123,4 +123,10 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testMemberValToExtensionByImpl() = doTestHeaderWithJvmAndJs()
+
+    @Test
+    fun testAddOperatorByHeader() = doTestHeaderWithJvmAndJs()
+
+    @Test
+    fun testAddOperatorByImpl() = doTestHeaderWithJvmAndJs()
 }
