@@ -135,7 +135,12 @@ abstract class IncrementalCompilerRunner<
         caches.platformCache.markDirty(dirtySources)
     }
 
-    protected abstract fun compareAndUpdateCache(services: Services, caches: CacheManager, generatedFiles: List<GeneratedFile>): CompilationResult
+    protected abstract fun updateCaches(
+            services: Services,
+            caches: CacheManager,
+            generatedFiles: List<GeneratedFile>,
+            changesCollector: ChangesCollector
+    )
 
     protected open fun preBuildHook(args: Args, compilationMode: CompilationMode) {}
     protected open fun postCompilationHook(exitCode: ExitCode) {}
@@ -226,11 +231,12 @@ abstract class IncrementalCompilerRunner<
             allGeneratedFiles.addAll(generatedFiles)
             caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
             caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
-            val compilationResult = compareAndUpdateCache(services, caches, generatedFiles)
+            val changesCollector = ChangesCollector()
+            updateCaches(services, caches, generatedFiles, changesCollector)
 
             if (compilationMode is CompilationMode.Rebuild) break
 
-            val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(listOf(caches.platformCache), reporter)
+            val (dirtyLookupSymbols, dirtyClassFqNames) = changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
 
             with (dirtySources) {

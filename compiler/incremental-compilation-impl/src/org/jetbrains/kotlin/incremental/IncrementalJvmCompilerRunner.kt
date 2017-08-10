@@ -211,8 +211,14 @@ class IncrementalJvmCompilerRunner(
         }
     }
 
-    override fun compareAndUpdateCache(services: Services, caches: IncrementalJvmCachesManager, generatedFiles: List<GeneratedFile>): CompilationResult =
-        updateIncrementalCache(generatedFiles, caches.platformCache)
+    override fun updateCaches(
+            services: Services,
+            caches: IncrementalJvmCachesManager,
+            generatedFiles: List<GeneratedFile>,
+            changesCollector: ChangesCollector
+    ) {
+        updateIncrementalCache(generatedFiles, caches.platformCache, changesCollector)
+    }
 
     override fun additionalDirtyFiles(
             caches: IncrementalJvmCachesManager,

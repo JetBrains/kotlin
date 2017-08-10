@@ -314,8 +314,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         context.checkCanceled()
 
-        val changesInfo = generatedFiles.entries.fold(CompilationResult.NO_CHANGES) { acc, (target, files) ->
-            acc + updateIncrementalCache(files, incrementalCaches[target]!!)
+        val changesCollector = ChangesCollector()
+        for ((target, files) in generatedFiles) {
+            updateIncrementalCache(files, incrementalCaches[target]!!, changesCollector)
         }
         updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
 
@@ -323,7 +324,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return OK
         }
 
-        changesInfo.processChangesUsingLookups(filesToCompile.values().toSet(), dataManager, fsOperations, incrementalCaches.values)
+        changesCollector.processChangesUsingLookups(filesToCompile.values().toSet(), dataManager, fsOperations, incrementalCaches.values)
 
         return OK
     }
@@ -432,7 +433,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             for (target in chunk.targets) {
                 val cache = incrementalCaches[target]!!
                 val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map(::File)
-                cache.markOutputClassesDirty(removedAndDirtyFiles)
+                cache.markDirty(removedAndDirtyFiles)
             }
         }
 
@@ -774,7 +775,7 @@ private class JpsICReporter : ICReporter {
     }
 }
 
-private fun CompilationResult.processChangesUsingLookups(
+private fun ChangesCollector.processChangesUsingLookups(
         compiledFiles: Set<File>,
         dataManager: BuildDataManager,
         fsOperations: FSOperationsHelper,

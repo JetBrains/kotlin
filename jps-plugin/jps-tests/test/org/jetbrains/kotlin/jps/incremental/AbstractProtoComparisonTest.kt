@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.kotlin.TestWithWorkingDir
-import org.jetbrains.kotlin.incremental.Difference
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
@@ -25,7 +25,7 @@ import java.io.File
 
 abstract class AbstractProtoComparisonTest<PROTO_DATA> : TestWithWorkingDir() {
     protected abstract fun compileAndGetClasses(sourceDir: File, outputDir: File): Map<ClassId, PROTO_DATA>
-    protected abstract fun difference(oldData: PROTO_DATA, newData: PROTO_DATA): Difference?
+    protected abstract fun PROTO_DATA.toProtoData(): ProtoData?
 
     protected open fun expectedOutputFile(testDir: File): File =
         File(testDir, "result.out")
@@ -48,31 +48,40 @@ abstract class AbstractProtoComparisonTest<PROTO_DATA> : TestWithWorkingDir() {
         }
 
         (oldClassMap.keys.intersect(newClassMap.keys)).sortedBy { it.toString() }.forEach { classId ->
-            val oldData = oldClassMap[classId]!!
-            val newData = newClassMap[classId]!!
-            val diff = difference(oldData, newData)
+            val oldData = oldClassMap[classId]!!.toProtoData()
+            val newData = newClassMap[classId]!!.toProtoData()
 
-            if (diff == null) {
+            if (oldData == null || newData == null) {
                 p.println("SKIPPED $classId")
                 return@forEach
             }
 
-            diff.rawProtoDifference?.let {
+            val rawProtoDifference = when {
+                oldData is ClassProtoData && newData is ClassProtoData -> {
+                    ProtoCompareGenerated(oldData.nameResolver, newData.nameResolver).difference(oldData.proto, newData.proto)
+                }
+                oldData is PackagePartProtoData && newData is PackagePartProtoData -> {
+                    ProtoCompareGenerated(oldData.nameResolver, newData.nameResolver).difference(oldData.proto, newData.proto)
+                }
+                else -> null
+            }
+            rawProtoDifference?.let {
                 if (it.isNotEmpty()) {
                     p.println("PROTO DIFFERENCE in $classId: ${it.sortedBy { it.name }.joinToString()}")
                 }
             }
 
-            val changes = arrayListOf<String>()
-            if (diff.isClassAffected) {
-                changes.add("CLASS_SIGNATURE")
-            }
-            if (diff.changedMembersNames.isNotEmpty()) {
-                changes.add("MEMBERS\n    ${diff.changedMembersNames.sorted()}")
-            }
-            if (changes.isEmpty()) {
+            val changesInfo = ChangesCollector().apply { collectProtoChanges(oldData, newData) }.changes()
+            if (changesInfo.isEmpty()) {
                 return@forEach
             }
+
+            val changes = changesInfo.map {
+                when (it) {
+                    is ChangeInfo.SignatureChanged -> "CLASS_SIGNATURE"
+                    is ChangeInfo.MembersChanged -> "MEMBERS\n    ${it.names.sorted()}"
+                }
+            }.sorted()
 
             p.println("CHANGES in $classId: ${changes.joinToString()}")
         }

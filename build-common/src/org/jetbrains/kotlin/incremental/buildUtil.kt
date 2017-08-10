@@ -78,20 +78,17 @@ fun makeCompileServices(
 
 fun updateIncrementalCache(
         generatedFiles: Iterable<GeneratedFile>,
-        cache: IncrementalCacheImpl
-): CompilationResult {
-    var changesInfo = CompilationResult.NO_CHANGES
+        cache: IncrementalCacheImpl,
+        changesCollector: ChangesCollector
+) {
     for (generatedFile in generatedFiles) {
         when {
-            generatedFile is GeneratedJvmClass -> changesInfo += cache.saveFileToCache(generatedFile)
-            generatedFile.outputFile.isModuleMappingFile() -> changesInfo += cache.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
+            generatedFile is GeneratedJvmClass -> cache.saveFileToCache(generatedFile, changesCollector)
+            generatedFile.outputFile.isModuleMappingFile() -> cache.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
         }
     }
 
-    val newChangesInfo = cache.clearCacheForRemovedClasses()
-    changesInfo += newChangesInfo
-
-    return changesInfo
+    cache.clearCacheForRemovedClasses(changesCollector)
 }
 
 fun LookupStorage.update(
@@ -111,14 +108,14 @@ data class DirtyData(
         val dirtyClassesFqNames: Collection<FqName> = emptyList()
 )
 
-fun CompilationResult.getDirtyData(
+fun ChangesCollector.getDirtyData(
         caches: Iterable<IncrementalCacheCommon>,
         reporter: ICReporter
 ): DirtyData {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val dirtyClassesFqNames = HashSet<FqName>()
 
-    for (change in changes) {
+    for (change in changes()) {
         reporter.report { "Process $change" }
 
         if (change is ChangeInfo.SignatureChanged) {
