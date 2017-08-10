@@ -1,0 +1,3 @@
+header class Foo {
+    operator fun unaryMinus()
+}
