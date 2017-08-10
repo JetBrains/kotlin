@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.konan.target
 
-enum class Family(name:String, val exeSuffix:String) {
-    OSX("osx", "kexe"),
-    IOS("ios", "kexe"),
-    LINUX("linux", "kexe"),
-    WINDOWS("windows", "exe"),
-    ANDROID("android", "so"),
-    WASM("wasm", "wasm")
+enum class Family(name:String, val exeSuffix:String, val dynamicSuffix: String?) {
+    OSX("osx", "kexe", "dylib"),
+    IOS("ios", "kexe", "dylib"),
+    LINUX("linux", "kexe", "so"),
+    WINDOWS("windows", "exe", "dll"),
+    ANDROID("android", "so", "so"),
+    WASM("wasm", "wasm", "wasm")
 }
 
 enum class Architecture(val bitness: Int) {
@@ -50,7 +50,6 @@ enum class KonanTarget(val family: Family, val architecture: Architecture, val d
     LINUX_MIPSEL32( Family.LINUX,       Architecture.MIPSEL32,  "linux_mipsel32"),
     WASM32(         Family.WASM,        Architecture.WASM32,    "wasm32");
 
-
     val userName get() = name.toLowerCase()
 }
 
@@ -61,9 +60,12 @@ enum class CompilerOutputKind {
     PROGRAM {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.exeSuffix}"
     },
+    DYNAMIC {
+        override fun suffix(target: KonanTarget?) = ".${target!!.family.dynamicSuffix!!}"
+    },
     LIBRARY {
         override fun suffix(target: KonanTarget?) = ".klib"
-    } ,
+    },
     BITCODE {
         override fun suffix(target: KonanTarget?) = ".bc"
     };
