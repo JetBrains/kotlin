@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.idea.highlighter.renderersUtil.renderResolvedCall
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
-import org.jetbrains.kotlin.resolve.calls.components.SortedConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
+import org.jetbrains.kotlin.resolve.calls.inference.model.AggregatedConstraintError
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
 
@@ -64,12 +64,12 @@ object IdeRenderers {
         Renderers.renderUpperBoundViolatedInferenceError(it, HtmlTabledDescriptorRenderer.create()).toString()
     }
 
-    @JvmField val HTML_SORTED_CONSTRAINTS_RENDERER = Renderer<SortedConstraints> {
-        Renderers.renderSortedConstraints(it, true)
+    @JvmField val HTML_CONSTRAINT_ERROR_RENDERER = Renderer<AggregatedConstraintError> {
+        Renderers.renderConstraintError(it, HtmlTabledDescriptorRenderer.create()).toString()
     }
 
-    @JvmField val HTML_SORTED_CONSTRAINTS_FOR_SPECIAL_CALL_RENDERER = Renderer<SortedConstraints> {
-        Renderers.renderSortedConstraintsForSpecialCall(it, true)
+    @JvmField val HTML_CONSTRAINT_ERROR_FOR_SPECIAL_CALL_RENDERER = Renderer<AggregatedConstraintError> {
+        Renderers.renderConstraintErrorForSpecialCall(it, HtmlTabledDescriptorRenderer.create()).toString()
     }
 
 

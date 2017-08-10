@@ -22,7 +22,11 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
 
-fun handleDiagnostics(c: Context, status: ResolutionCandidateStatus, isOuterCall: Boolean): List<AggregatedConstraintError> {
+fun handleDiagnostics(
+        c: Context,
+        status: ResolutionCandidateStatus,
+        isOuterCall: Boolean
+): List<AggregatedConstraintError> {
     val positionErrors = groupErrorsByPosition(c, status, isOuterCall)
     val constraintSystemDiagnostics = mutableListOf<AggregatedConstraintError>()
     for ((position, incorporationPositionsWithTypeVariables) in positionErrors) {
