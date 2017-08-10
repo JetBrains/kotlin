@@ -123,7 +123,11 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                     for (ref in ReferencesSearch.search(parameterToConvert, LocalSearchScope(expression))) {
                         (ref.element as? KtSimpleNameExpression)?.replace(thisRefExpr)
                     }
-                    expression.functionLiteral.valueParameterList!!.removeParameter(parameterToConvert)
+                    val lambda = expression.functionLiteral
+                    lambda.valueParameterList!!.removeParameter(parameterToConvert)
+                    if (lambda.valueParameters.isEmpty()) {
+                        lambda.arrow?.delete()
+                    }
                 }
                 return
             }

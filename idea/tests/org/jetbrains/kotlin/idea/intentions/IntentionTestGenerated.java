@@ -4570,6 +4570,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/overrides.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("singleExplicitParameter.kt")
+        public void testSingleExplicitParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/singleExplicitParameter.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/convertFunctionTypeReceiverToParameter")
