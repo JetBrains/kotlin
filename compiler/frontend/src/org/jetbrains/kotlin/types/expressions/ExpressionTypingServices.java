@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import com.intellij.psi.tree.IElementType;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
@@ -66,6 +66,11 @@ public class ExpressionTypingServices {
         this.annotationChecker = annotationChecker;
         this.statementFilter = statementFilter;
         this.expressionTypingFacade = facade;
+    }
+
+    @NotNull
+    public LanguageVersionSettings getLanguageVersionSettings() {
+        return expressionTypingComponents.languageVersionSettings;
     }
 
     @NotNull public StatementFilter getStatementFilter() {

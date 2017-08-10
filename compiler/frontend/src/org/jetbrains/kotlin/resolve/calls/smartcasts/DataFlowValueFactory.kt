@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableNothing
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
@@ -378,7 +379,8 @@ object DataFlowValueFactory {
         val variableContainingDeclaration = variableDescriptor.containingDeclaration
         if (isAccessedInsideClosure(variableContainingDeclaration, bindingContext, accessElement)) {
             // stable iff we have no writers in closures AND this closure is AFTER all writers
-            return if (hasNoWritersInClosures(variableContainingDeclaration, writers, bindingContext) &&
+            return if (preliminaryVisitor.languageVersionSettings.supportsFeature(LanguageFeature.CapturedInClosureSmartCasts) &&
+                       hasNoWritersInClosures(variableContainingDeclaration, writers, bindingContext) &&
                        isAccessedInsideClosureAfterAllWriters(writers, accessElement)) {
                 STABLE_VARIABLE
             }

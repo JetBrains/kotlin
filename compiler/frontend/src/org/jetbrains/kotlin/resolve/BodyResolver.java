@@ -608,7 +608,7 @@ public class BodyResolver {
         KtExpression body = anonymousInitializer.getBody();
         if (body != null) {
             PreliminaryDeclarationVisitor.Companion.createForDeclaration(
-                    (KtDeclaration) anonymousInitializer.getParent().getParent(), trace);
+                    (KtDeclaration) anonymousInitializer.getParent().getParent(), trace, languageVersionSettings);
             expressionTypingServices.getTypeInfo(
                     scopeForInitializers, body, NO_EXPECTED_TYPE, outerDataFlowInfo, trace, /*isStatement = */true
             );
@@ -680,7 +680,7 @@ public class BodyResolver {
     ) {
         computeDeferredType(propertyDescriptor.getReturnType());
 
-        PreliminaryDeclarationVisitor.Companion.createForDeclaration(property, trace);
+        PreliminaryDeclarationVisitor.Companion.createForDeclaration(property, trace, languageVersionSettings);
         KtExpression initializer = property.getInitializer();
         LexicalScope propertyHeaderScope = ScopeUtils.makeScopeForPropertyHeader(getScopeForProperty(c, property), propertyDescriptor);
 
@@ -851,7 +851,7 @@ public class BodyResolver {
             // Creates wrapper scope for header resolution if necessary (see resolveSecondaryConstructorBody)
             @Nullable Function1<LexicalScope, LexicalScope> headerScopeFactory
     ) {
-        PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace);
+        PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace, languageVersionSettings);
         LexicalScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace, overloadChecker);
         List<KtParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();

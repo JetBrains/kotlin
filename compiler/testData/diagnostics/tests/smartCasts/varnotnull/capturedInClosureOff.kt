@@ -9,7 +9,7 @@ fun foo(s: String?) {
     }
     if (x != null) {
         run {
-            <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
         }
     }
 }

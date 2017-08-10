@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
         contextDependency: ContextDependency = ContextDependency.INDEPENDENT,
         expressionTypingServices: ExpressionTypingServices = contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
 ): KotlinTypeInfo {
-    PreliminaryDeclarationVisitor.createForExpression(this, trace)
+    PreliminaryDeclarationVisitor.createForExpression(this, trace, expressionTypingServices.languageVersionSettings)
     return  expressionTypingServices.getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement, contextExpression, contextDependency)
 }
 
