@@ -130,6 +130,11 @@ class CodeConverter(
                     }
                     convertedExpression = LiteralExpression(text)
                 }
+                else if (expectedTypeStr == "long") {
+                    if (expression.parent is PsiBinaryExpression) {
+                        convertedExpression = LiteralExpression("${convertedExpression.canonicalCode()}L")
+                    }
+                }
                 else if (expectedTypeStr == "char") {
                     convertedExpression = MethodCallExpression.buildNonNull(convertedExpression, "toChar")
                 }
