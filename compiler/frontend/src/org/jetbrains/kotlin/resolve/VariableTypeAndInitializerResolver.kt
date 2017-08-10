@@ -84,7 +84,8 @@ class VariableTypeAndInitializerResolver(
                     wrappedTypeFactory.createRecursionIntolerantDeferredType(
                             trace
                     ) {
-                        PreliminaryDeclarationVisitor.createForDeclaration(variable, trace)
+                        PreliminaryDeclarationVisitor.createForDeclaration(variable, trace,
+                                                                           expressionTypingServices.languageVersionSettings)
                         val initializerType = resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace, local)
                         transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace)
                     }
