@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import java.lang.AssertionError
+import java.math.BigInteger
 
 interface ExpressionConverter {
     fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression
@@ -298,18 +299,24 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             }
 
             fun isHexLiteral(text: String) = text.startsWith("0x") || text.startsWith("0X")
-            fun isLongField(element: PsiElement): Boolean {
-                val fieldType = (element as? PsiVariable)?.type ?: return false
-                return when (fieldType) {
-                    is PsiPrimitiveType -> fieldType.canonicalText == "long"
-                    else -> PsiPrimitiveType.getUnboxedType(fieldType)?.canonicalText == "long"
+
+            if ((typeStr == "long" || typeStr == "int") && isHexLiteral(text)) {
+                val v = BigInteger(text.substring(2).replace("L", ""), 16)
+                if (text.contains("L")) {
+                    if (v.bitLength() > 63) {
+                        text = v.toLong().toString()
+                    }
+                }
+                else {
+                    if (v.bitLength() > 31) {
+                        text = v.toInt().toString()
+                    }
                 }
             }
-
-            if (typeStr == "int") {
-                val toIntIsNeeded = value != null && value.toString().toInt() < 0 && !isLongField(expression.parent)
-                text = if (value != null && !isHexLiteral(text)) value.toString() else text + (if (toIntIsNeeded) ".toInt()" else "")
+            else if (typeStr == "int" && value != null) {
+                text = value.toString()
             }
+
             if (typeStr == "char") {
                 text = text.replace("\\\\([0-3]?[0-7]{1,2})".toRegex()) {
                     String.format("\\u%04x", Integer.parseInt(it.groupValues[1], 8))

@@ -9,5 +9,6 @@ class Test {
     long l1 = 0xffffffff;
     Long l2 = 0xffffffffl;
     long l3 = 0xffffffffffL;
+    long l4 = 0xFFFFFFFFFFFFFFFFL;
   }
 }
