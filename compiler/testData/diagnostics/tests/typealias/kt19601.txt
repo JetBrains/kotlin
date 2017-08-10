@@ -1,0 +1,29 @@
+package
+
+public interface Num</*0*/ T : kotlin.Number> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Order</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Test1</*0*/ T1 : Ord<T1> /* = Order<T1> */> {
+    public constructor Test1</*0*/ T1 : Ord<T1> /* = Order<T1> */>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Test2</*0*/ T : N<kotlin.String> /* = Num<kotlin.String> */> {
+    public constructor Test2</*0*/ T : N<kotlin.String> /* = Num<kotlin.String> */>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias N</*0*/ T>  = Num<T>
+public typealias Ord</*0*/ T>  = Order<T>

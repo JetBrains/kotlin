@@ -237,7 +237,7 @@ class DeclarationsChecker(
     private fun checkTypeAliasExpansion(declaration: KtTypeAlias, typeAliasDescriptor: TypeAliasDescriptor) {
         val typeAliasExpansion = TypeAliasExpansion.createWithFormalArguments(typeAliasDescriptor)
         val reportStrategy = TypeAliasDeclarationCheckingReportStrategy(trace, typeAliasDescriptor, declaration)
-        TypeAliasExpander(reportStrategy).expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)
+        TypeAliasExpander(reportStrategy, true).expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)
     }
 
     private fun checkConstructorDeclaration(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
