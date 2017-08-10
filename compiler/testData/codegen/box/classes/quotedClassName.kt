@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JS
+
 class `A!u00A0`() {
     val ok = "OK"
 }
