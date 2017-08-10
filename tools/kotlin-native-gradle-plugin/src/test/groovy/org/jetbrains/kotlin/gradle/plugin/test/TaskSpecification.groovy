@@ -51,7 +51,38 @@ class TaskSpecification extends BaseKonanSpecification {
 
         then:
         result.taskPaths(TaskOutcome.SUCCESS).containsAll(rootProject.compilationTasks + interopProject.interopTasks)
+    }
 
+    def 'Compilation should support interop parameters changing after `useInterop` call'() {
+        when:
+        def project = KonanInteropProject.create(projectDirectory)
+        project.addInteropSetting("linkerOpts", "'-lpthread'")
+        project.buildFile.append("""
+            task printArgs {
+                dependsOn 'build'
+                doLast {
+                    println(konanArtifacts['$project.DEFAULT_ARTIFACT_NAME'].compilationTask.linkerOpts)
+                    konanArtifacts['$project.DEFAULT_ARTIFACT_NAME'].compilationTask.libraries.each { println it.files }
+                    konanArtifacts['$project.DEFAULT_ARTIFACT_NAME'].compilationTask.nativeLibraries.each { println it.files }
+                }
+            }
+        """.stripIndent())
+        def result = project.createRunner().withArguments('printArgs').build()
+
+        then:
+        result.task(":printArgs") != null
+        result.task(":printArgs").outcome == TaskOutcome.SUCCESS
+        def expectedKlibPath = project.konanBuildDir.toPath()
+                .resolve("interopCompiledStubs/stdioInteropStubs/stdioInteropStubs.klib")
+                .toFile().canonicalPath
+        def expectedBcPath = project.konanBuildDir.toPath()
+                .resolve("nativelibs/genStdioInteropStubs/stdiostubs.bc")
+                .toFile().canonicalPath
+        result.output.contains("""
+            [-lpthread]
+            [$expectedKlibPath]
+            [$expectedBcPath]
+        """.stripIndent().trim())
     }
 
 }

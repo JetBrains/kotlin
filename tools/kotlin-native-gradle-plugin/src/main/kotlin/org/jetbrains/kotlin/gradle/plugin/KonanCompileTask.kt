@@ -191,6 +191,8 @@ open class KonanCompileConfig(
 
     override fun getName() = configName
 
+    val interops = mutableSetOf<KonanInteropConfig>()
+
     val compilationTask: KonanCompileTask = project.tasks.create(
             "$taskNamePrefix${configName.capitalize()}",
             KonanCompileTask::class.java) {
@@ -199,11 +201,9 @@ open class KonanCompileConfig(
         it.description = "Compiles the Kotlin/Native artifact '${this@KonanCompileConfig.name}'"
     }
 
-    // DSL methods --------------------------------------------------
-
-    fun useInterop(interopConfig: KonanInteropConfig) {
-        val generateStubsTask = interopConfig.generateStubsTask
-        val compileStubsTask  = interopConfig.compileStubsTask
+    protected fun addInteropParameters(interop: KonanInteropConfig) {
+        val generateStubsTask = interop.generateStubsTask
+        val compileStubsTask  = interop.compileStubsTask
 
         compilationTask.dependsOn(compileStubsTask)
         compilationTask.dependsOn(generateStubsTask)
@@ -217,6 +217,14 @@ open class KonanCompileConfig(
         generateStubsTask.manifest ?.let {manifest(it)}
     }
 
+    internal fun processInterops() = interops.forEach(this::addInteropParameters)
+
+    // DSL methods --------------------------------------------------
+
+    fun useInterop(interopConfig: KonanInteropConfig) {
+        interops.add(interopConfig)
+    }
+
     fun useInterop(interop: String) {
         useInterop(project.konanInteropContainer.getByName(interop))
     }
@@ -224,7 +232,7 @@ open class KonanCompileConfig(
     fun useInterops(interops: Collection<Any>) {
         interops.forEach {
             when(it) {
-                is String -> useInterop(project.konanInteropContainer.getByName(it))
+                is String -> useInterop(it)
                 is KonanInteropConfig -> useInterop(it)
                 else -> throw IllegalArgumentException("Cannot convert the object to an interop description: $it")
             }

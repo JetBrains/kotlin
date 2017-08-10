@@ -14,7 +14,7 @@ class PathSpecification extends BaseKonanSpecification {
         def result = project.createRunner().withArguments('build').build()
 
         then:
-        def konan = "$projectDirectory/build/konan"
+        def konan = project.konanBuildDir
         new File("$konan/bin").listFiles().findAll {
             File it -> it.file && it.name.matches('^main\\.[^.]+')
         }.size() > 0

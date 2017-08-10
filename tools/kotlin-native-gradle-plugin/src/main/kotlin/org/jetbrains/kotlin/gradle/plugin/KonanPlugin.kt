@@ -282,6 +282,11 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         // Add default source paths after project evaluation.
         project.afterEvaluate(::setDefaultInputs)
 
+        // Set compilation parameters for artifacts using interop.
+        project.afterEvaluate { prj ->
+            prj.konanArtifactsContainer.forEach { it.processInterops() }
+        }
+
         // Create task to run supported executables.
         project.getOrCreateTask("run").apply {
             dependsOn(project.getTask("build"))
@@ -301,5 +306,4 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             }
         }
     }
-
 }

@@ -12,6 +12,7 @@ class KonanProject {
 
     File projectDir
     Path projectPath
+    File konanBuildDir
 
     String konanHome
 
@@ -29,6 +30,7 @@ class KonanProject {
     protected KonanProject(File projectDir) {
         this.projectDir = projectDir
         projectPath = projectDir.toPath()
+        konanBuildDir = projectPath.resolve('build/konan').toFile()
         def konanHome = System.getProperty("konan.home")
         if (konanHome == null) {
             throw new IllegalStateException("konan.home isn't specified")
