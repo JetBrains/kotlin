@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -585,20 +584,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                     findJavaSourcesInDirectory(javaSourceDir), Collections.singletonList(kotlinOut.getPath()), javacOptions
             );
         }
-    }
-
-    @NotNull
-    protected static List<String> findJavaSourcesInDirectory(@NotNull File directory) {
-        List<String> javaFilePaths = new ArrayList<>(1);
-
-        FileUtil.processFilesRecursively(directory, file -> {
-            if (file.isFile() && FilesKt.getExtension(file).equals(JavaFileType.DEFAULT_EXTENSION)) {
-                javaFilePaths.add(file.getPath());
-            }
-            return true;
-        });
-
-        return javaFilePaths;
     }
 
 
