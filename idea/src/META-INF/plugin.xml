@@ -6,7 +6,7 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="172.1" until-build="172.*"/>
+  <idea-version since-build="171.1" until-build="172.*"/>
 
   <depends>com.intellij.modules.platform</depends>
 
@@ -613,7 +613,6 @@
     <elementDescriptionProvider
         implementation="org.jetbrains.kotlin.idea.findUsages.KotlinNonCodeSearchElementDescriptionProvider"/>
     <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightExitPointsHandlerFactory"/>
-    <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightImplicitItHandlerFactory"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory"/>
     <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinUsageTypeProvider"/>
 
@@ -775,8 +774,6 @@
 
     <usageContextPanelProvider implementation="org.jetbrains.kotlin.idea.slicer.KotlinUsageContextDataInflowPanel$Provider"/>
     <usageContextPanelProvider implementation="org.jetbrains.kotlin.idea.slicer.KotlinUsageContextDataOutflowPanel$Provider"/>
-
-    <gotoRelatedProvider implementation="org.jetbrains.kotlin.idea.goto.KotlinExpectOrActualGotoRelatedProvider"/>
 
     <declarationRangeHandler key="org.jetbrains.kotlin.psi.KtClassOrObject"
                              implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinClassDeclarationRangeHandler"/>
@@ -2624,7 +2621,7 @@
                      level="WARNING"
                      language="kotlin"
     />
-    
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SortModifiersInspection"
                      displayName="Non-canonical modifier order"
                      groupPath="Kotlin"
