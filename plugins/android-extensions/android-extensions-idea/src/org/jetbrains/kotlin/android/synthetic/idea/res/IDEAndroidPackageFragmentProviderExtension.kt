@@ -21,7 +21,6 @@ import com.intellij.openapi.module.ModuleServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider
-import org.jetbrains.kotlin.android.model.isAndroidModule
 import org.jetbrains.kotlin.android.synthetic.idea.androidExtensionsIsEnabled
 import org.jetbrains.kotlin.android.synthetic.idea.androidExtensionsIsExperimental
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
