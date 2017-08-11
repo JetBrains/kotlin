@@ -1508,6 +1508,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("DataClassWithAnnotations.java")
+        public void testDataClassWithAnnotations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DataClassWithAnnotations.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("DataClassWithMutableField.java")
         public void testDataClassWithMutableField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DataClassWithMutableField.java");

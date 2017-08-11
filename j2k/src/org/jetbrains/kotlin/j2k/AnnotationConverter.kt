@@ -112,7 +112,7 @@ class AnnotationConverter(private val converter: Converter) {
 
     private fun effectiveAnnotationUseTarget(name: String, target: AnnotationUseTarget?): AnnotationUseTarget? =
             when (name) {
-                "Deprecated" -> if (target == AnnotationUseTarget.Param) null else target
+                "Deprecated" -> if (target in listOf(AnnotationUseTarget.Param, AnnotationUseTarget.Field)) null else target
                 else -> target
             }
 

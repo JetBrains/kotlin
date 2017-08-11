@@ -196,10 +196,18 @@ class ConstructorConverter(
                     else {
                         val (field, type) = parameterToField[parameter]!!
                         val propertyInfo = fieldToPropertyInfo(field)
+
+                        var paramAnnotations = converter.convertAnnotations(parameter, AnnotationUseTarget.Param) +
+                                               converter.convertAnnotations(field, AnnotationUseTarget.Field)
+                        if (propertyInfo.getMethod != null)
+                            paramAnnotations += converter.convertAnnotations(propertyInfo.getMethod, AnnotationUseTarget.Get)
+                        if (propertyInfo.setMethod != null)
+                            paramAnnotations += converter.convertAnnotations(propertyInfo.setMethod, AnnotationUseTarget.Set)
+
                         FunctionParameter(propertyInfo.identifier,
                                           type,
                                           if (propertyInfo.isVar) FunctionParameter.VarValModifier.Var else FunctionParameter.VarValModifier.Val,
-                                          converter.convertAnnotations(parameter, AnnotationUseTarget.Param) + converter.convertAnnotations(field),
+                                          paramAnnotations,
                                           propertyInfo.modifiers,
                                           default)
                                 .assignPrototypes(
