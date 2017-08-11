@@ -3,7 +3,7 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
-## 1.1.4-EAP-76
+## 1.1.4-EAP-77
 
 ### Compiler
 
