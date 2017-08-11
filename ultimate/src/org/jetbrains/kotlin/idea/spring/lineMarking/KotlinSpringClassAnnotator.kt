@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.spring.lineMarking
 
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.navigation.GotoRelatedItem
@@ -106,7 +105,6 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
                 else -> return@mapNotNullTo item
             }
             if (elementToAnnotate == null) return@mapNotNullTo null
-            if (alreadyMarked(result, elementToAnnotate, item.navigationHandler)) return@mapNotNullTo null
 
             @Suppress("UNCHECKED_CAST")
             RelatedItemLineMarkerInfo<PsiElement>(
@@ -121,16 +119,4 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
             )
         }
     }
-
-    private fun alreadyMarked(result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>,
-                              elementToAnnotate: PsiElement,
-                              navigationHandler: GutterIconNavigationHandler<*>?) =
-            result.any {
-                when (it) {
-                    is RelatedItemLineMarkerInfo<*> -> {
-                        it.element == elementToAnnotate && it.navigationHandler == navigationHandler
-                    }
-                    else -> false
-                }
-            }
 }
