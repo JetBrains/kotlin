@@ -1,0 +1,25 @@
+package
+
+public var A: kotlin.String!
+public var B: kotlin.String!
+public var C: kotlin.String!
+
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface DP {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public abstract operator fun getValue(/*0*/ a: kotlin.Any!, /*1*/ b: kotlin.Any!): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract operator fun setValue(/*0*/ a: kotlin.Any!, /*1*/ b: kotlin.Any!, /*2*/ c: kotlin.Any!): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final var staticJ: J.DP!
+    @MyNullable public final var staticN: J.DP!
+    @MyNonnull public final var staticNN: J.DP!
+}
