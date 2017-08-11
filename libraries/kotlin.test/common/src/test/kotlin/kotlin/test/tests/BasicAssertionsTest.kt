@@ -1,9 +1,13 @@
 package kotlin.test.tests
 
 import kotlin.test.*
-import org.junit.Test
 
 class BasicAssertionsTest {
+    @Ignore
+    fun testIgnore() {
+        throw Exception("Should have been ignored")
+    }
+
     @Test
     fun testAssertEquals() {
         assertEquals(1, 1)
