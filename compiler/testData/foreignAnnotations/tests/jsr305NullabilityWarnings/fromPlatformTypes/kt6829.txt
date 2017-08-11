@@ -1,0 +1,12 @@
+package
+
+public fun foo(/*0*/ collection: kotlin.collections.Collection<J>): kotlin.Unit
+public fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.collections.List<R>
+
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @MyNullable public open fun method(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

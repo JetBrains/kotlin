@@ -1,0 +1,23 @@
+package
+
+public fun test(): kotlin.Unit
+
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface Multi {
+        public abstract operator fun component1(): kotlin.String!
+        public abstract operator fun component2(): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final var staticJ: J.Multi!
+    @MyNullable public final var staticN: J.Multi!
+    @MyNonnull public final var staticNN: J.Multi!
+}

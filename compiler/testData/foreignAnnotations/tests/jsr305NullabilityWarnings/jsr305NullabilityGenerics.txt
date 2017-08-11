@@ -1,0 +1,21 @@
+package
+
+public fun test(): kotlin.Unit
+
+public open class A</*0*/ T : kotlin.Any!> {
+    public constructor A</*0*/ T : kotlin.Any!>()
+    @MyNullable public open fun bam(): T!
+    @MyNullable public open fun bar(): kotlin.String!
+    @MyNullable public open fun </*0*/ X : kotlin.Any!> baz(): X!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ @MyNonnull t: T!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class X</*0*/ T> {
+    public constructor X</*0*/ T>(/*0*/ t: T?)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
