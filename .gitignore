@@ -7,7 +7,7 @@
 /gh-pages
 /ideaSDK
 /android-studio/sdk
-/out
+out/
 /tmp
 workspace.xml
 *.versionsBackup
