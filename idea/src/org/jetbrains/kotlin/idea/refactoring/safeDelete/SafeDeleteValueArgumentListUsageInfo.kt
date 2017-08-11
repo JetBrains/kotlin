@@ -20,18 +20,24 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtValueArgumentList
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 
 class SafeDeleteValueArgumentListUsageInfo(
-        valueArgument: KtValueArgument, parameter: PsiElement
-) : SafeDeleteReferenceSimpleDeleteUsageInfo(valueArgument, parameter, true) {
+        parameter: PsiElement,
+        vararg valueArguments: KtValueArgument
+) : SafeDeleteReferenceSimpleDeleteUsageInfo(valueArguments.first(), parameter, true) {
+    private val valueArgumentPointers = valueArguments.map { it.createSmartPointer() }
+
     override fun deleteElement() {
-        val element = element as? KtValueArgument ?: return
-        val parent = element.parent
-        if (parent is KtValueArgumentList) {
-            parent.removeArgument(element)
-        }
-        else {
-            element.delete()
+        for (valueArgumentPointer in valueArgumentPointers) {
+            val valueArgument = valueArgumentPointer.element ?: return
+            val parent = valueArgument.parent
+            if (parent is KtValueArgumentList) {
+                parent.removeArgument(valueArgument)
+            }
+            else {
+                valueArgument.delete()
+            }
         }
     }
 }

@@ -1,0 +1,5 @@
+{
+  "mainFile": "JS/src/test/test.kt",
+  "elementClass": "org.jetbrains.kotlin.psi.KtParameter",
+  "liftParameterToHeader": "false"
+}

@@ -131,6 +131,7 @@ import org.jetbrains.kotlin.idea.refactoring.pullUp.AbstractPullUpTest
 import org.jetbrains.kotlin.idea.refactoring.pushDown.AbstractPushDownTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractMultiModuleRenameTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
+import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractMultiModuleSafeDeleteTest
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.idea.repl.AbstractIdeReplCompletionTest
 import org.jetbrains.kotlin.idea.resolve.*
@@ -792,6 +793,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractMultiModuleCopyTest> {
             model("refactoring/copyMultiModule", extension = "test", singleClass = true)
+        }
+
+        testClass<AbstractMultiModuleSafeDeleteTest> {
+            model("refactoring/safeDeleteMultiModule", extension = "test", singleClass = true)
         }
 
         testClass<AbstractMultiFileIntentionTest> {

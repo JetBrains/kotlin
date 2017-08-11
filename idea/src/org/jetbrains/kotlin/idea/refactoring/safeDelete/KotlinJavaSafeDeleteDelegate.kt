@@ -58,7 +58,7 @@ class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
 
         val namedArguments = args.filter { arg -> arg is KtValueArgument && arg.getArgumentName()?.text == parameter.name }
         if (!namedArguments.isEmpty()) {
-            usages.add(SafeDeleteValueArgumentListUsageInfo(namedArguments.first(), parameter))
+            usages.add(SafeDeleteValueArgumentListUsageInfo(parameter, namedArguments.first()))
             return
         }
 
@@ -69,7 +69,7 @@ class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
 
         val argCount = args.size
         if (parameterIndex < argCount) {
-            usages.add(SafeDeleteValueArgumentListUsageInfo((args[parameterIndex] as KtValueArgument), parameter))
+            usages.add(SafeDeleteValueArgumentListUsageInfo(parameter, args[parameterIndex] as KtValueArgument))
         } else {
             val lambdaArgs = callExpression.lambdaArguments
             val lambdaIndex = parameterIndex - argCount
