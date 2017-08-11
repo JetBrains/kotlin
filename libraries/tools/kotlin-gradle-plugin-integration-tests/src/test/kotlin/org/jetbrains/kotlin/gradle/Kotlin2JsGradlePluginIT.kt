@@ -160,7 +160,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
     @Test
     fun testKotlinJsBuiltins() {
-        val project = Project("kotlinBuiltins", "3.2")
+        val project = Project("kotlinBuiltins", "4.0")
 
         project.setupWorkingDir()
         val buildGradle = File(project.projectDir, "app").getFileByName("build.gradle")

@@ -6,7 +6,7 @@ import java.io.File
 
 class Kapt3Android30IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: String
-        get() = "3.0.0-alpha8"
+        get() = "3.0.0-beta1"
 }
 
 open class Kapt3AndroidIT : Kapt3BaseIT() {

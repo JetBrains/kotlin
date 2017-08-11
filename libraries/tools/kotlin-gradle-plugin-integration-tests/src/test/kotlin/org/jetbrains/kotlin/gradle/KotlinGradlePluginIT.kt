@@ -347,7 +347,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testKotlinBuiltins() {
-        val project = Project("kotlinBuiltins", "3.2")
+        val project = Project("kotlinBuiltins", "4.0")
 
         project.build("build") {
             assertSuccessful()
