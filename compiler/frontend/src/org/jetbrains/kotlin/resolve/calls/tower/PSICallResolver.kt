@@ -313,7 +313,7 @@ class PSICallResolver(
             val variableCallArgument = createReceiverCallArgument(variable)
 
             val explicitReceiver = kotlinCall.explicitReceiver
-            val callForInvoke = if (useExplicitReceiver && explicitReceiver is SimpleKotlinCallArgument) {
+            val callForInvoke = if (useExplicitReceiver && explicitReceiver != null) {
                 PSIKotlinCallForInvoke(kotlinCall, variable, explicitReceiver, variableCallArgument)
             }
             else {
