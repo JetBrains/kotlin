@@ -83,11 +83,9 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
         }
 
         val parameterInfoUIContext = MockParameterInfoUIContext(parameterOwner, updateContext.currentParameter)
-
-        mockCreateParameterInfoContext.itemsToShow?.forEach {
-            handler.updateUI(it, parameterInfoUIContext)
+        for (item in mockCreateParameterInfoContext.itemsToShow) {
+            handler.updateUI(item, parameterInfoUIContext)
         }
-
         Assert.assertEquals(expectedResultText, parameterInfoUIContext.resultText)
     }
 }
