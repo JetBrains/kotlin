@@ -7,10 +7,10 @@ import org.junit.Test
 import java.io.File
 
 
-class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.0")
-class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.+")
+class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "3.4", androidGradlePluginVersion = "2.3.0")
+class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.4", androidGradlePluginVersion = "2.3.+")
 
-class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "4.1-rc-1", androidGradlePluginVersion = "3.0.0-alpha8") {
+class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "4.1-rc-1", androidGradlePluginVersion = "3.0.0-beta1") {
 
     @Test
     fun testApplyWithFeaturePlugin() {
@@ -19,7 +19,9 @@ class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion =
         project.setupWorkingDir()
         File(project.projectDir, "Lib/build.gradle").modify { text ->
             // Change the applied plugin to com.android.feature
-            text.replace("com.android.library", "com.android.feature").apply { assert(!equals(text)) }
+            text.replace("com.android.library", "com.android.feature")
+                    .replace("compileSdkVersion 22", "compileSdkVersion 26")
+                    .apply { assert(!equals(text)) }
         }
 
         // Check that Kotlin tasks were created for both lib and feature variants:
