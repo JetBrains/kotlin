@@ -70,6 +70,8 @@ internal fun convertUnqualifiedPrimitiveType(type: CValue<CXType>): Type = when 
             spelling = clang_getTypeSpelling(type).convertAndDispose()
     )
 
+    CXTypeKind.CXType_Bool -> BoolType
+
     else -> UnsupportedType
 }
 
