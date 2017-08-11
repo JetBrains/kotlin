@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,12 +39,6 @@ public class SpringClassAnnotatorTestGenerated extends AbstractSpringClassAnnota
     @TestMetadata("autowiredBeanCandidates/autowiredBeanCandidates.test")
     public void testAutowiredBeanCandidates_AutowiredBeanCandidates() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/gutter/autowiredBeanCandidates/autowiredBeanCandidates.test");
-        doTest(fileName);
-    }
-
-    @TestMetadata("autowiredConstructor/autowiredConstructor.test")
-    public void testAutowiredConstructor_AutowiredConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/gutter/autowiredConstructor/autowiredConstructor.test");
         doTest(fileName);
     }
 
