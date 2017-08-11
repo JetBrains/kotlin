@@ -1,0 +1,198 @@
+package test;
+
+@kotlin.Metadata()
+public final class A$B {
+    @org.jetbrains.annotations.NotNull()
+    public test.A$B.C c;
+    @org.jetbrains.annotations.NotNull()
+    public test.A$B.D$E de;
+    @org.jetbrains.annotations.NotNull()
+    public test.J$B.C jc;
+    @org.jetbrains.annotations.NotNull()
+    public test.J$B.D$E jde;
+    @org.jetbrains.annotations.NotNull()
+    public test.A$B.D$$E dee;
+    @org.jetbrains.annotations.NotNull()
+    public test.A$B.D$$$E deee;
+    @org.jetbrains.annotations.NotNull()
+    public test.J$B.D$$E jdee;
+    @org.jetbrains.annotations.NotNull()
+    public test.J$B.D$$$E jdeee;
+
+    public A$B() {
+        super();
+    }
+
+    @kotlin.Metadata()
+    public static final class C {
+
+        public C() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class D$E {
+        @org.jetbrains.annotations.NotNull()
+        public test.A$B.D$E.F f;
+        @org.jetbrains.annotations.NotNull()
+        public test.A$B.D$E.F$G fg;
+        @org.jetbrains.annotations.NotNull()
+        public test.J$B.D$E.F jf;
+        @org.jetbrains.annotations.NotNull()
+        public test.J$B.D$E.F$G jfg;
+
+        public D$E() {
+            super();
+        }
+
+        @kotlin.Metadata()
+        public static final class F {
+
+            public F() {
+                super();
+            }
+        }
+
+        @kotlin.Metadata()
+        public static final class F$G {
+
+            public F$G() {
+                super();
+            }
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class D$$E {
+
+        public D$$E() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class D$$$E {
+
+        public D$$$E() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.Metadata()
+public final class Experiment {
+
+    public Experiment() {
+        super();
+    }
+
+    @kotlin.Metadata()
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+    public static abstract @interface Type {
+    }
+
+    @kotlin.Metadata()
+    @test.Experiment.Type()
+    public static final class Group {
+
+        public Group(@org.jetbrains.annotations.NotNull()
+        java.lang.String s) {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final test.Experiment.Group copy(@org.jetbrains.annotations.NotNull()
+        java.lang.String s) {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.Metadata()
+public final class Foo {
+
+    public Foo() {
+        super();
+    }
+
+    @kotlin.Metadata()
+    public static class Bar {
+
+        public Bar() {
+            super();
+        }
+
+        @kotlin.Metadata()
+        public static final class Zoo {
+            public static final test.Foo.Bar.Zoo INSTANCE = null;
+
+            private Zoo() {
+                super();
+            }
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.Metadata()
+public abstract interface IFoo {
+
+    @kotlin.Metadata()
+    public static abstract interface IBar {
+
+        @kotlin.Metadata()
+        @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+        public static abstract @interface Anno {
+
+            public abstract java.lang.Class<?>[] value();
+        }
+
+        @kotlin.Metadata()
+        @test.IFoo.IBar.Anno(value = {test.IFoo.IBar.IZoo.class})
+        public static abstract interface IZoo {
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.Metadata()
+@test.IFoo.IBar.Anno(value = {test.IFoo.IBar.IZoo.class, test.Foo.Bar.class})
+public final class Test1 extends test.Foo.Bar implements test.IFoo.IBar, test.IFoo.IBar.IZoo {
+    @org.jetbrains.annotations.NotNull()
+    private final test.Foo.Bar.Zoo zoo = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Thread.State a() {
+        return null;
+    }
+
+    public final void b(@org.jetbrains.annotations.NotNull()
+    test.JavaClass.Foo foo, @org.jetbrains.annotations.NotNull()
+    test.JavaClass.Foo.Bar bar) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final test.Foo.Bar.Zoo getZoo() {
+        return null;
+    }
+
+    public Test1(@org.jetbrains.annotations.NotNull()
+    test.Foo.Bar.Zoo zoo) {
+        super();
+    }
+}
