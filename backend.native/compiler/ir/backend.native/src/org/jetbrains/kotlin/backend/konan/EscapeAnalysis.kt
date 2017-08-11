@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.*
@@ -631,7 +632,7 @@ internal object EscapeAnalysis {
 
     private class InterproceduralAnalysisResult(val functionEscapeAnalysisResults: Map<FunctionDescriptor, FunctionEscapeAnalysisResult>)
 
-    private class InterproceduralAnalysis(context: Context,
+    private class InterproceduralAnalysis(val context: Context,
                                           val runtimeAware: RuntimeAware,
                                           val externalFunctionEscapeAnalysisResults: Map<String, FunctionEscapeAnalysisResult>,
                                           val intraproceduralAnalysisResult: IntraproceduralAnalysisResult,
@@ -884,25 +885,36 @@ internal object EscapeAnalysis {
                 NAME_POINTS_TO, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
         private val pointsToOnWhomDescriptor = pointsToAnnotationDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters.single()
 
+        private fun getConservativeFunctionEAResult(descriptor: FunctionDescriptor): FunctionEscapeAnalysisResult {
+            val parameters = descriptor.allParameters
+            return FunctionEscapeAnalysisResult((0..parameters.size).map {
+                val type = if (it < parameters.size)
+                    parameters[it].type
+                else {
+                    if (descriptor is ConstructorDescriptor)
+                        context.builtIns.unitType
+                    else descriptor.returnType
+                }
+                ParameterEscapeAnalysisResult(
+                        escapes  = runtimeAware.isInteresting(type), // Conservatively assume all references escape.
+                        pointsTo = IntArray(0)
+                )
+            }.toTypedArray())
+        }
+
         private fun getExternalFunctionEAResult(callSite: CallSite): FunctionEscapeAnalysisResult {
             val callee = callSite.actualCallee
 
             DEBUG_OUTPUT(0) { println("External callee: $callee") }
 
-            val parameters = callee.allParameters
+            val staticCall = !callee.isOverridable || callSite.expression !is IrCall || callSite.expression.superQualifier != null
             val calleeEAResult =
-                    if (!callee.isOverridable || callSite.expression !is IrCall || callSite.expression.superQualifier != null) {
+                    if (staticCall) {
                         getExternalFunctionEAResult(callee)
                     } else {
-                        DEBUG_OUTPUT(0) { println("A virtual call") }
+                        DEBUG_OUTPUT(0) { println(if (staticCall) "Unknown function from module ${callee.module}" else "A virtual call") }
 
-                        FunctionEscapeAnalysisResult((0..parameters.size).map {
-                            val type = if (it < parameters.size) parameters[it].type else callee.returnType
-                            ParameterEscapeAnalysisResult(
-                                    escapes  = runtimeAware.isInteresting(type), // Conservatively assume all references escape.
-                                    pointsTo = IntArray(0)
-                            )
-                        }.toTypedArray())
+                        getConservativeFunctionEAResult(callee)
                     }
 
             DEBUG_OUTPUT(0) {
@@ -923,9 +935,11 @@ internal object EscapeAnalysis {
             val escapesBitMask = (escapesAnnotation?.allValueArguments?.get(escapesWhoDescriptor.name) as? ConstantValue<Int>)?.value
             @Suppress("UNCHECKED_CAST")
             val pointsToBitMask = (pointsToAnnotation?.allValueArguments?.get(pointsToOnWhomDescriptor.name) as? ConstantValue<List<IntValue>>)?.value
-            return FunctionEscapeAnalysisResult.fromBits(
-                    escapesBitMask ?: 0,
-                    (0..function.allParameters.size).map { pointsToBitMask?.elementAtOrNull(it)?.value ?: 0 }
+            return if (escapesBitMask == null)
+                       getConservativeFunctionEAResult(function)
+                   else FunctionEscapeAnalysisResult.fromBits(
+                           escapesBitMask,
+                           (0..function.allParameters.size).map { pointsToBitMask?.elementAtOrNull(it)?.value ?: 0 }
             )
         }
 
@@ -974,6 +988,11 @@ internal object EscapeAnalysis {
             fun addIncomingParameter(parameter: Int) {
                 if (kind == PointsToGraphNodeKind.ESCAPES)
                     return
+                if (kind == PointsToGraphNodeKind.RETURN_VALUE) {
+                    kind = PointsToGraphNodeKind.ESCAPES
+                    parameterPointingOnUs = null
+                    return
+                }
                 if (parameterPointingOnUs == null)
                     parameterPointingOnUs = parameter
                 else {
@@ -1004,8 +1023,6 @@ internal object EscapeAnalysis {
 
                     PointsToGraphNodeKind.RETURN_VALUE -> {
                         when {
-                            // If a value is stored into a parameter field and into the return value - consider it escapes.
-                            it.parameterPointingOnUs != null -> Lifetime.GLOBAL
                             // If a value is explicitly returned.
                             returnValues.contains(node) -> Lifetime.RETURN_VALUE
                             // A value is stored into a field of the return value.
@@ -1302,7 +1319,6 @@ internal object EscapeAnalysis {
                 externalFunctionEAResults, intraproceduralAnalysisResult, lifetimes).analyze(irModule)
         if (isStdlib) { // Save only for stdlib for now.
             interproceduralAnalysisResult.functionEscapeAnalysisResults
-                    .filterNot { it.value.isTrivial }
                     .filter { it.key.isExported() }
                     .forEach { functionDescriptor, functionEAResult ->
                         val functionEAResultBuilder = ModuleEscapeAnalysisResult.FunctionEAResult.newBuilder()
