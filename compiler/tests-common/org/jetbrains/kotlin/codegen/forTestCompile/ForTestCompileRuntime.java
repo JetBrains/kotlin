@@ -76,6 +76,11 @@ public class ForTestCompileRuntime {
         return assertExists(new File("dist/kotlinc/lib/kotlin-annotations-jvm.jar"));
     }
 
+    @NotNull
+    public static File androidAnnotationsForTests() {
+        return assertExists(new File("dist/kotlinc/lib/android-annotations.jar"));
+    }
+
     // TODO: Do not use these classes, remove them after stdlib tests are merged in the same build as the compiler
     @NotNull
     @Deprecated

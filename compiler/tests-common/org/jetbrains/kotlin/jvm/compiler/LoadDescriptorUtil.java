@@ -19,7 +19,11 @@ package org.jetbrains.kotlin.jvm.compiler;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.text.StringKt;
 import kotlin.collections.CollectionsKt;
+import kotlin.io.FilesKt;
+import kotlin.sequences.SequencesKt;
+import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
@@ -39,6 +43,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -49,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LoadDescriptorUtil {
     @NotNull
@@ -103,10 +109,21 @@ public class LoadDescriptorUtil {
     }
 
     public static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
-        String classPath = ForTestCompileRuntime.runtimeJarForTests() + File.pathSeparator +
-                           KotlinTestUtils.getAnnotationsJar().getPath();
+        List<File> classpath = new ArrayList<>();
+
+        classpath.add(ForTestCompileRuntime.runtimeJarForTests());
+        classpath.add(KotlinTestUtils.getAnnotationsJar());
+
+        for (File test: javaFiles) {
+            String content = FilesKt.readText(test, Charsets.UTF_8);
+
+            if (InTextDirectivesUtils.isDirectiveDefined(content, "ANDROID_ANNOTATIONS")) {
+                classpath.add(ForTestCompileRuntime.androidAnnotationsForTests());
+            }
+        }
+
         KotlinTestUtils.compileJavaFiles(javaFiles, Arrays.asList(
-                "-classpath", classPath,
+                "-classpath", classpath.stream().map(File::getPath).collect(Collectors.joining(File.pathSeparator)),
                 "-sourcepath", "compiler/testData/loadJava/include",
                 "-d", outDir.getPath()
         ));

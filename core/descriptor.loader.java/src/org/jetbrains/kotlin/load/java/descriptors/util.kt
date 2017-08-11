@@ -19,14 +19,18 @@ package org.jetbrains.kotlin.load.java.descriptors
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaStaticClassScope
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun copyValueParameters(
         newValueParametersTypes: Collection<KotlinType>,
@@ -71,3 +75,13 @@ fun DeserializedMemberDescriptor.getImplClassNameForDeserialized(): JvmClassName
 
 fun DeserializedMemberDescriptor.isFromJvmPackagePart(): Boolean =
         containerSource is JvmPackagePartSource
+
+fun ValueParameterDescriptor.getParameterNameAnnotation(): AnnotationDescriptor? {
+    val annotation = annotations.findAnnotation(JvmAnnotationNames.PARAMETER_NAME_FQ_NAME) ?: return null
+    if (annotation.firstArgumentValue()?.safeAs<String>()?.isEmpty() != false) {
+        return null
+    }
+
+    return annotation
+}
+

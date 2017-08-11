@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
@@ -35,10 +36,7 @@ import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase {
     protected File javaFilesDir;
@@ -78,7 +76,7 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(
                 getConfigurationKind(),
                 getTestJdkKind(file),
-                CollectionsKt.plus(Collections.singletonList(KotlinTestUtils.getAnnotationsJar()), getExtraClasspath()),
+                getClasspath(file),
                 isJavaSourceRootNeeded() ? Collections.singletonList(javaFilesDir) : Collections.emptyList()
         );
         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition.INSTANCE);
@@ -108,6 +106,22 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
         return InTextDirectivesUtils.isDirectiveDefined(FilesKt.readText(file, Charsets.UTF_8), "FULL_JDK")
                ? TestJdkKind.FULL_JDK
                : TestJdkKind.MOCK_JDK;
+    }
+
+    private List<File> getClasspath(File file) {
+        List<File> result = new ArrayList<>();
+        result.add(KotlinTestUtils.getAnnotationsJar());
+        result.addAll(getExtraClasspath());
+
+        boolean loadAndroidAnnotations = InTextDirectivesUtils.isDirectiveDefined(
+                FilesKt.readText(file, Charsets.UTF_8), "ANDROID_ANNOTATIONS"
+        );
+
+        if (loadAndroidAnnotations) {
+            result.add(ForTestCompileRuntime.androidAnnotationsForTests());
+        }
+
+        return result;
     }
 
     @NotNull

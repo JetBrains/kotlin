@@ -132,6 +132,7 @@ include ":kotlin-build-common",
         ":ultimate",
         ":ultimate:ultimate-runner",
         ":kotlin-annotations-jvm",
+        ":android-annotations",
 
         // plugin markers:
         ':kotlin-gradle-plugin:plugin-marker',
@@ -201,6 +202,7 @@ project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt3" a
 project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-local-example" as File
 project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
+project(':android-annotations').projectDir = "$rootDir/libraries/tools/android-annotations" as File
 
 // plugin markers:
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")

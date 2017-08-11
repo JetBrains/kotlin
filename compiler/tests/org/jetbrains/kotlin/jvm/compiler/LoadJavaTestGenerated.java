@@ -1604,6 +1604,21 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             }
         }
 
+        @TestMetadata("compiler/testData/loadJava/compiledJava/signatureAnnotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SignatureAnnotations extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInSignatureAnnotations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signatureAnnotations"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("StableName.java")
+            public void testStableName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signatureAnnotations/StableName.java");
+                doTestCompiledJava(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

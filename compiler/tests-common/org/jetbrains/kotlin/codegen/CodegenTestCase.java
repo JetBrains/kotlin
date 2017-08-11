@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
@@ -555,12 +556,21 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             @Nullable File javaSourceDir
     ) {
         configurationKind = extractConfigurationKind(files);
+        boolean loadAndroidAnnotations = files.stream().anyMatch(it ->
+                InTextDirectivesUtils.isDirectiveDefined(it.content, "ANDROID_ANNOTATIONS")
+        );
 
         List<String> javacOptions = extractJavacOptions(files);
+        List<File> classpath = new ArrayList<>();
+        classpath.add(getAnnotationsJar());
+
+        if (loadAndroidAnnotations) {
+            classpath.add(ForTestCompileRuntime.androidAnnotationsForTests());
+        }
 
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind, getJdkKind(files),
-                Collections.singletonList(getAnnotationsJar()),
+                classpath,
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files
         );
@@ -586,8 +596,15 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
             OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
 
+            List<String> javaClasspath = new ArrayList<>();
+            javaClasspath.add(kotlinOut.getPath());
+
+            if (loadAndroidAnnotations) {
+                javaClasspath.add(ForTestCompileRuntime.androidAnnotationsForTests().getPath());
+            }
+
             javaClassesOutputDirectory = CodegenTestUtil.compileJava(
-                    findJavaSourcesInDirectory(javaSourceDir), Collections.singletonList(kotlinOut.getPath()), javacOptions
+                    findJavaSourcesInDirectory(javaSourceDir), javaClasspath, javacOptions
             );
         }
     }
