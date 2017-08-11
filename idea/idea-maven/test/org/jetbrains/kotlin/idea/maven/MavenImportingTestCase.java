@@ -89,7 +89,7 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
             VfsRootAccess.disallowRootAccess(PathManager.getConfigPath());
             Messages.setTestDialog(TestDialog.DEFAULT);
             removeFromLocalRepository("test");
-            FileUtil.delete(BuildManager.getInstance().getBuildSystemDirectory().toFile());
+            FileUtil.delete(BuildManager.getInstance().getBuildSystemDirectory());
         }
         finally {
             super.tearDown();
