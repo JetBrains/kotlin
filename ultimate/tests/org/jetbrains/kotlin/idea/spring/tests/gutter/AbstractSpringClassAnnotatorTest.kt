@@ -23,7 +23,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import icons.SpringApiIcons
 import junit.framework.Assert
-import junit.framework.AssertionFailedError
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
@@ -55,12 +54,14 @@ abstract class AbstractSpringClassAnnotatorTest : KotlinLightCodeInsightFixtureT
 
         try {
             val springConfigFiles = (config["springConfig"] as JsonArray).map { it.asString }
+
             myFixture.testDataPath = testRoot.absolutePath
+            TestFixtureExtension.getFixture<SpringTestFixtureExtension>()!!.configureFileSet(myFixture, springConfigFiles)
             for (file in testRoot.listFiles()) {
                 val name = file.name
-                if (file.isDirectory) myFixture.copyDirectoryToProject(name, name) else myFixture.configureByFile(name)
+                if (name in springConfigFiles) continue
+                if (file.isDirectory) myFixture.copyDirectoryToProject(name, name) else myFixture.copyFileToProject(name)
             }
-            TestFixtureExtension.getFixture<SpringTestFixtureExtension>()!!.configureFileSet(myFixture, springConfigFiles)
 
             val fileName = config.getString("file")
             val iconName = config.getString("icon")
@@ -68,10 +69,7 @@ abstract class AbstractSpringClassAnnotatorTest : KotlinLightCodeInsightFixtureT
 
             val gutterMark = myFixture.findGutter(fileName)!!.let {
                 if (it.icon == icon) it
-                else myFixture.findGuttersAtCaret().let { gutters ->
-                    gutters.firstOrNull() { it.icon == icon }
-                    ?: throw AssertionFailedError("no $icon in gutters: ${gutters.map { it.icon }}")
-                }
+                else myFixture.findGuttersAtCaret().first { it.icon == icon }
             }
 
             val tooltip = config.getString("tooltip")
