@@ -52,6 +52,8 @@ internal object CheckVisibility : ResolutionPart() {
         val containingDescriptor = scopeTower.lexicalScope.ownerDescriptor
         val dispatchReceiverArgument = resolvedCall.dispatchReceiverArgument
 
+        if (scopeTower.isDebuggerContext) return
+
         val receiverValue = dispatchReceiverArgument?.receiver?.receiverValue ?: Visibilities.ALWAYS_SUITABLE_RECEIVER
         val invisibleMember = Visibilities.findInvisibleMember(receiverValue, resolvedCall.candidateDescriptor, containingDescriptor) ?: return
 
