@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import com.google.common.collect.SetMultimap
 import com.google.common.collect.LinkedHashMultimap
+import com.google.common.collect.Sets
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
