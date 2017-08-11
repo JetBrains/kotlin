@@ -1,5 +1,5 @@
 // ACTION_CLASS: org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinAutowiredDependencyAction
-// CONFIG_FILE: spring-config.xml
+// CONFIG_FILE:
 // CHOOSE_BEAN: barBean
 package a
 
