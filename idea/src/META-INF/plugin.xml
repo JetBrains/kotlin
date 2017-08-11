@@ -6,7 +6,7 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="172.1" until-build="172.*"/>
+  <idea-version since-build="171.1" until-build="172.*"/>
 
   <depends>com.intellij.modules.java</depends>
 
@@ -655,7 +655,6 @@
     <elementDescriptionProvider
         implementation="org.jetbrains.kotlin.idea.findUsages.KotlinNonCodeSearchElementDescriptionProvider"/>
     <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightExitPointsHandlerFactory"/>
-    <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightImplicitItHandlerFactory"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory"/>
     <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinUsageTypeProvider"/>
 
@@ -852,8 +851,6 @@
 
     <library.type implementation="org.jetbrains.kotlin.idea.framework.JSLibraryType"/>
     <library.type implementation="org.jetbrains.kotlin.idea.framework.CommonLibraryType"/>
-
-    <gotoRelatedProvider implementation="org.jetbrains.kotlin.idea.goto.KotlinExpectOrActualGotoRelatedProvider"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
@@ -2635,7 +2632,7 @@
                      language="kotlin"
     />
 
-	<localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ExplicitThisInspection"
+	  <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ExplicitThisInspection"
                      displayName="Redundant explicit 'this'"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
