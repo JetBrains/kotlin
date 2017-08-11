@@ -135,10 +135,11 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             ReferencesSearch.search(declaration, declaration.useScope)
                     .asSequence()
                     .filterNot { reference -> getIgnoranceCondition().value(reference.element) }
-                    .mapTo(usages) { reference ->
-                        reference.element.getNonStrictParentOfType<KtImportDirective>()?.let { importDirective ->
+                    .mapNotNullTo(usages) { reference ->
+                        val refElement = reference.element ?: return@mapNotNullTo null
+                        refElement.getNonStrictParentOfType<KtImportDirective>()?.let { importDirective ->
                             SafeDeleteImportDirectiveUsageInfo(importDirective, element)
-                        } ?: SafeDeleteReferenceSimpleDeleteUsageInfo(element, declaration, false)
+                        } ?: SafeDeleteReferenceSimpleDeleteUsageInfo(refElement, declaration, false)
                     }
 
             return getSearchInfo(declaration)
@@ -185,10 +186,6 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
         return when (element) {
             is KtClassOrObject -> {
-                if (element is KtEnumEntry) {
-                    LightClassUtil.getLightClassBackingField(element)?.let { findUsagesByJavaProcessor(it, false) }
-                }
-
                 element.toLightClass()?.let { klass ->
                     findDelegationCallUsages(klass)
                     findUsagesByJavaProcessor(klass, false)

@@ -503,6 +503,12 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
             doPropertyTest(fileName);
         }
 
+        @TestMetadata("localVar.kt")
+        public void testLocalVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/localVar.kt");
+            doPropertyTest(fileName);
+        }
+
         @TestMetadata("noUsages.kt")
         public void testNoUsages() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/noUsages.kt");
