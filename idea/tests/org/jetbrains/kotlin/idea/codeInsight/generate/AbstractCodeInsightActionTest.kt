@@ -43,8 +43,8 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
         return Class.forName(actionClassName).newInstance() as CodeInsightAction
     }
 
-    protected open fun configure(mainFilePath: String, mainFileText: String) {
-        myFixture.configureByFile(mainFilePath) as KtFile
+    protected open fun configureExtra(mainFilePath: String, mainFileText: String) {
+
     }
 
     protected open fun checkExtra() {
@@ -82,9 +82,8 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
                     .forEach {
                         myFixture.configureByFile(File(rootDir, it).path.replace(File.separator, "/"))
                     }
-
-            configure(path, fileText)
-            mainPsiFile = myFixture.file as KtFile
+            configureExtra(path, fileText)
+            mainPsiFile = myFixture.configureByFile(path) as KtFile
 
             val targetPlatformName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// PLATFORM: ")
             if (targetPlatformName != null) {
