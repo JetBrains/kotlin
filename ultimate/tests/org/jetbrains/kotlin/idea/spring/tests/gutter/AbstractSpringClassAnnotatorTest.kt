@@ -22,7 +22,6 @@ import com.google.gson.JsonParser
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import icons.SpringApiIcons
-import junit.framework.Assert
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
@@ -73,7 +72,7 @@ abstract class AbstractSpringClassAnnotatorTest : KotlinLightCodeInsightFixtureT
             }
 
             val tooltip = config.getString("tooltip")
-            Assert.assertEquals(tooltip, gutterMark.tooltipText)
+            assert(gutterMark.tooltipText == tooltip)
 
             val naming = config.getString("naming")
             val targets = (config["targets"] as JsonArray).map { it.asString }
