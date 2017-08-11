@@ -9,7 +9,6 @@ import com.android.ide.common.res2.ResourceFile;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.sdklib.repository.AndroidSdkHandler;
 import com.android.tools.idea.gradle.util.Projects;
-import com.android.tools.idea.project.AndroidProjectInfo;
 import com.android.tools.idea.res.AppResourceRepository;
 import com.android.tools.idea.res.LocalResourceRepository;
 import com.android.tools.idea.sdk.IdeSdks;
@@ -330,7 +329,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
       }
     }
 
-    return IdeSdks.getInstance().getAndroidSdkPath();
+    return IdeSdks.getAndroidSdkPath();
   }
 
   @Nullable
@@ -381,7 +380,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
       AndroidFacet facet = AndroidFacet.getInstance(module);
       return facet != null && facet.requiresAndroidModel();
     }
-    return AndroidProjectInfo.getInstance(this.myProject).requiresAndroidModel();
+    return Projects.requiresAndroidModel(myProject);
   }
 
   // Overridden such that lint doesn't complain about missing a bin dir property in the event
