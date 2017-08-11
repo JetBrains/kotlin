@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.codeInsight.ExternalAnnotationsManager
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 
 class MockExternalAnnotationsManager : ExternalAnnotationsManager() {
@@ -39,10 +38,6 @@ class MockExternalAnnotationsManager : ExternalAnnotationsManager() {
     }
 
     override fun editExternalAnnotation(listOwner: PsiModifierListOwner, annotationFQN: String, value: Array<out PsiNameValuePair>?): Boolean {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-    override fun hasAnnotationRootsForFile(file: VirtualFile): Boolean {
         throw UnsupportedOperationException("not implemented")
     }
 }
