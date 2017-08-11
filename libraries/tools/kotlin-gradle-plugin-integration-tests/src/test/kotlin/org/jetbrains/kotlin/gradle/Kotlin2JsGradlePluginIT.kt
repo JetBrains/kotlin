@@ -68,8 +68,8 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             val jarPath = "build/libs/kotlin2JsNoOutputFileProject.jar"
             assertFileExists(jarPath)
             val jar = ZipFile(fileInWorkingDir(jarPath))
-            assertEquals(1, jar.entries().asSequence().count { it.name == "kotlin2JsNoOutputFileProject_main.js" },
-                         "The jar should contain an entry `kotlin2JsNoOutputFileProject_main.js` with no duplicates")
+            assertEquals(1, jar.entries().asSequence().count { it.name == "kotlin2JsNoOutputFileProject.js" },
+                         "The jar should contain an entry `kotlin2JsNoOutputFileProject.js` with no duplicates")
         }
     }
 
@@ -104,7 +104,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertFileExists("build/classes/main/kotlin2JsNoOutputFileProject_main.js")
+            assertFileExists("build/classes/main/kotlin2JsNoOutputFileProject.js")
             assertFileExists("build/classes/test/kotlin2JsNoOutputFileProject_test.js")
         }
     }
@@ -205,7 +205,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
 
-            val mapFilePath = "app/build/classes/main/app_main.js.map"
+            val mapFilePath = "app/build/classes/main/app.js.map"
             assertFileExists(mapFilePath)
             val map = fileInWorkingDir(mapFilePath).readText()
 

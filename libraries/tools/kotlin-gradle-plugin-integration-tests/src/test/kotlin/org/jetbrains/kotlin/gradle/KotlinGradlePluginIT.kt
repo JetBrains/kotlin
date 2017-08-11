@@ -80,7 +80,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertFileExists("build/classes/main/META-INF/kotlinProject_main.kotlin_module")
+            assertFileExists("build/classes/main/META-INF/kotlinProject.kotlin_module")
             assertReportExists()
             assertContains(":compileKotlin", ":compileTestKotlin")
             assertNotContains("Forcing System.gc")
@@ -388,7 +388,7 @@ class KotlinGradleIT: BaseGradleIT() {
             assertFileExists("lib/build/classes/test/foo/PlatformTest.kotlin_metadata")
             assertFileExists("libJvm/build/classes/main/foo/PlatformClass.class")
             assertFileExists("libJvm/build/classes/test/foo/PlatformTest.class")
-            assertFileExists("libJs/build/classes/main/libJs_main.js")
+            assertFileExists("libJs/build/classes/main/libJs.js")
             assertFileExists("libJs/build/classes/test/libJs_test.js")
         }
     }
