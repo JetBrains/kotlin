@@ -11,7 +11,7 @@ internal class Test : Base() {
         return super.equals(o)
     }
 
-    @Throws(CloneNotSupportedException::class)
+    @JvmThrows(CloneNotSupportedException::class)
     override fun clone(): Any {
         return super.clone()
     }
@@ -20,7 +20,7 @@ internal class Test : Base() {
         return super.toString()
     }
 
-    @Throws(Throwable::class)
+    @JvmThrows(Throwable::class)
     override fun finalize() {
         super.finalize()
     }
@@ -35,7 +35,7 @@ internal open class Base {
         return super.equals(o)
     }
 
-    @Throws(CloneNotSupportedException::class)
+    @JvmThrows(CloneNotSupportedException::class)
     protected open fun clone(): Any {
         return super.clone()
     }
@@ -44,7 +44,7 @@ internal open class Base {
         return super.toString()
     }
 
-    @Throws(Throwable::class)
+    @JvmThrows(Throwable::class)
     protected open fun finalize() {
         super.finalize()
     }

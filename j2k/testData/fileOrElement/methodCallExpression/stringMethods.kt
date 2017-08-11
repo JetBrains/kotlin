@@ -4,7 +4,7 @@ import java.nio.charset.Charset
 import java.util.*
 
 internal class A {
-    @Throws(Exception::class)
+    @JvmThrows(Exception::class)
     fun constructors() {
         String()
         // TODO: new String("original");
@@ -64,7 +64,7 @@ internal class A {
         s.toCharArray()
     }
 
-    @Throws(Exception::class)
+    @JvmThrows(Exception::class)
     fun specialMethods() {
         val s = "test string"
         s == "test"

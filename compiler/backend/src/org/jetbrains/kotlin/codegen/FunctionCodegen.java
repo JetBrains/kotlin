@@ -886,6 +886,9 @@ public class FunctionCodegen {
     public static String[] getThrownExceptions(@NotNull FunctionDescriptor function, @NotNull KotlinTypeMapper mapper) {
         AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.throws"));
         if (annotation == null) {
+            annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.jvm.JvmThrows"));
+        }
+        if (annotation == null) {
             annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.jvm.Throws"));
         }
 

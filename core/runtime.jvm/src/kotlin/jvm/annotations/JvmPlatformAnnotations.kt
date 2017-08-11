@@ -84,9 +84,30 @@ public annotation class JvmSynthetic
  *
  * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */
+@Deprecated("Use @JvmThrows instead.", replaceWith = ReplaceWith("JvmThrows"))
+public typealias Throws = JvmThrows
+
+/**
+ * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method.
+ *
+ * Example:
+ *
+ * ```
+ * @JvmThrows(IOException::class)
+ * fun readFile(name: String): String {...}
+ * ```
+ *
+ * will be translated to
+ *
+ * ```
+ * String readFile(String name) throws IOException {...}
+ * ```
+ *
+ * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
+ */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
+public annotation class JvmThrows(vararg val exceptionClasses: KClass<out Throwable>)
 
 
 /**
