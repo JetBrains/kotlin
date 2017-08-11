@@ -335,6 +335,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("reformat/inspectionData/inspections.test")
+        public void testReformat_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/reformat/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeSetterParameterType/inspectionData/inspections.test")
         public void testRemoveSetterParameterType_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/removeSetterParameterType/inspectionData/inspections.test");

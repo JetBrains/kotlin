@@ -1648,6 +1648,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReformatInspection"
+                     displayName="File is not formatted according to project settings"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="false"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithInspection"
                      displayName="@Deprecated annotation without 'replaceWith' argument"
                      groupPath="Kotlin"
