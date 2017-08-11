@@ -19,7 +19,7 @@
                        groupBundle="resources.messages.SpringBundle"
                        groupKey="inspection.group.code"
                        groupPath="Spring,Spring Core"
-                       enabledByDefault="false"
+                       enabledByDefault="true"
                        level="WARNING"/>
       <localInspection language="kotlin"
                        displayName="Spring Facet Code Configuration (Kotlin)"
