@@ -117,8 +117,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     override fun chunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
         super.chunkBuildStarted(context, chunk)
 
-        if (chunk.isDummy(context)) return
-
         context.testingContext?.buildLogger?.buildStarted(context, chunk)
 
         if (JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)) return
@@ -176,10 +174,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         applyActionsOnCacheVersionChange(actions, cacheVersionsProvider, context, dataManager, targets, fsOperations)
     }
 
-    override fun chunkBuildFinished(context: CompileContext, chunk: ModuleChunk) {
+    override fun chunkBuildFinished(context: CompileContext?, chunk: ModuleChunk?) {
         super.chunkBuildFinished(context, chunk)
-
-        if (chunk.isDummy(context)) return
 
         LOG.debug("------------------------------------------")
     }
@@ -190,8 +186,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             outputConsumer: ModuleLevelBuilder.OutputConsumer
     ): ModuleLevelBuilder.ExitCode {
-        if (chunk.isDummy(context)) return NOTHING_DONE
-
         val messageCollector = MessageCollectorAdapter(context)
         val fsOperations = FSOperationsHelper(context, chunk, LOG)
 
