@@ -399,7 +399,7 @@
                 <zipfileset src="${basedir}/ideaSDK/core/xstream-1.4.8.jar"/>
                 <zipfileset src="${idea.sdk}/lib/jna-platform.jar"/>
                 <zipfileset src="${idea.sdk}/lib/oromatcher.jar" excludes="META-INF/jb/** META-INF/LICENSE"/>
-                <zipfileset src="${idea.sdk}/jps/jps-model.jar" excludes="META-INF/services/**"/>
+                <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>
                 <zipfileset src="${dependencies}/jline3.jar"/>
                 <zipfileset src="${dependencies}/jansi.jar"/>
                 <zipfileset src="${dependencies}/javaslang-2.0.6.jar"/>
