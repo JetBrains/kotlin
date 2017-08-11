@@ -24,7 +24,7 @@ task runRhino(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     workingDir = "${buildDir}/classes/"
     main = 'org.mozilla.javascript.tools.shell.Main'
-    args = ["-opt", "-1", "-f", "kotlin.js", "-f", "main/kotlin2JsInternalTest_main.js", "-f", "test/kotlin2JsInternalTest_test.js", "-f", "check.js"]
+    args = ["-opt", "-1", "-f", "kotlin.js", "-f", "main/kotlin2JsInternalTest.js", "-f", "test/kotlin2JsInternalTest_test.js", "-f", "check.js"]
 }
 
 build.doLast {
