@@ -94,8 +94,14 @@ class DiagnosticReporterByTrackingStrategy(
         when (diagnostic.javaClass) {
             SmartCastDiagnostic::class.java -> reportSmartCast(diagnostic as SmartCastDiagnostic)
             UnstableSmartCast::class.java -> reportUnstableSmartCast(diagnostic as UnstableSmartCast)
-            TooManyArguments::class.java ->
-                trace.report(TOO_MANY_ARGUMENTS.on(callArgument.psiExpression!!, (diagnostic as TooManyArguments).descriptor))
+            TooManyArguments::class.java -> {
+                val psiExpression = callArgument.psiExpression
+                if (psiExpression != null) {
+                    trace.report(TOO_MANY_ARGUMENTS.on(psiExpression, (diagnostic as TooManyArguments).descriptor))
+                }
+
+                trace.markAsReported()
+            }
             VarargArgumentOutsideParentheses::class.java ->
                 trace.report(VARARG_OUTSIDE_PARENTHESES.on(callArgument.psiExpression!!))
         }
