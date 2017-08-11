@@ -47,7 +47,8 @@ internal class UnsafeVarianceTypeSubstitution(builtIns: KotlinBuiltIns) : TypeSu
             is FlexibleType ->
                 KotlinTypeFactory.flexibleType(
                         lowerBound.annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 0)),
-                        upperBound.annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 1)))
+                        upperBound.annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 1))
+                    ).inheritEnhancement(this)
             is SimpleType -> annotatePartsWithUnsafeVariance(unsafeVariancePaths)
         }
     }

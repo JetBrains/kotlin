@@ -415,6 +415,8 @@ fun ClassDescriptor.isSubclassOf(superclass: ClassDescriptor): Boolean = Descrip
 val AnnotationDescriptor.annotationClass: ClassDescriptor?
     get() = type.constructor.declarationDescriptor as? ClassDescriptor
 
+fun AnnotationDescriptor.firstArgumentValue() = allValueArguments.values.firstOrNull()?.value
+
 fun MemberDescriptor.isEffectivelyExternal(): Boolean {
     if (isExternal) return true
 

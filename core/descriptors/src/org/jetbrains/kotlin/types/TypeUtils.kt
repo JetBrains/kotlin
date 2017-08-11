@@ -165,7 +165,7 @@ fun KotlinType.replaceArgumentsWithStarProjections(): KotlinType {
                 unwrapped.upperBound.replaceArgumentsWithStarProjections()
         )
         is SimpleType -> unwrapped.replaceArgumentsWithStarProjections()
-    }
+    }.inheritEnhancement(unwrapped)
 }
 
 private fun SimpleType.replaceArgumentsWithStarProjections(): SimpleType {

@@ -8,8 +8,8 @@ where advanced options include:
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
   -Xjavac-arguments=<option[,]> Java compiler arguments
-  -Xjsr305-annotations={ignore|enable}
-                             Specify global behavior for JSR-305 nullability annotations: ignore, or treat as other supported nullability annotations
+  -Xjsr305-annotations={ignore|enable|warn}
+                             Specify global behavior for JSR-305 nullability annotations: ignore, treat as other supported nullability annotations, or report a warning
   -Xload-builtins-from-dependencies
                              Load definitions of built-in declarations from module dependencies, instead of from the compiler
   -Xno-call-assertions       Don't generate not-null assertion after each invocation of method returning not-null
