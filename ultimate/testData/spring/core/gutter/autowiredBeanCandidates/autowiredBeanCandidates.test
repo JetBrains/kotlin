@@ -5,5 +5,5 @@
     icon: "ShowAutowiredDependencies",
     tooltip: "Navigate to autowired candidates",
     naming: "generic",
-    targets: ["autowiredProp", "collab", "prop2"]
+    targets: ["myBean(String)", "prop2", "setProp1(String)"]
 }
