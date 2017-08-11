@@ -311,6 +311,7 @@ class KonanInteropProject extends KonanProject {
             generateFolders()
             generateBuildFile()
             generatePropertiesFile(konanHome)
+            generateDefFile("${DEFAULT_INTEROP_NAME}.def", "")
         }
         return result
     }

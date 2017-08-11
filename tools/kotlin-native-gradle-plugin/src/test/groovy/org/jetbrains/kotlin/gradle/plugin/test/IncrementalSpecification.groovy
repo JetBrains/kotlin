@@ -166,6 +166,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
         def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
             it.buildFile.append("konanInterop { foo {} }\n")
+            it.generateDefFile("foo.def", "")
         }
         def results = buildTwice(project) { KonanInteropProject it ->
             it.addCompilationSetting("main", "useInterop", "'foo'")

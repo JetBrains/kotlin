@@ -57,8 +57,8 @@ internal val Project.konanInteropCompiledStubsDir get() = "${konanBuildRoot}/int
 internal val Project.konanInteropLibsOutputDir    get() = "${konanBuildRoot}/nativelibs"
 
 internal val Project.konanDefaultSrcDir           get() = file("${projectDir.canonicalPath}/src/main/kotlin")
-internal fun Project.konanDefaultDefFile(interopName: String)
-        = file("${projectDir.canonicalPath}/src/main/c_interop/$interopName.def")
+internal fun Project.konanDefaultDefFile(libName: String)
+        = file("${projectDir.canonicalPath}/src/main/c_interop/$libName.def")
 
 internal val Project.konanInteropClasspath
     get() = project.fileTree("${project.konanHome}/konan/lib/").apply { include("*.jar")  }
@@ -157,8 +157,10 @@ internal fun dumpProperties(task: Task) {
             println()
             println("Compilation task: ${task.name}")
             println("outputDir          : ${task.outputDir}")
+            println("artifact           : ${task.artifact}")
             println("artifactPath       : ${task.artifactPath}")
             println("inputFiles         : ${task.inputFiles.joinToString(prefix = "[", separator = ", ", postfix = "]")}")
+            println("produce            : ${task.produce}")
             println("libraries          : ${task.libraries}")
             println("nativeLibraries    : ${task.nativeLibraries}")
             println("linkerOpts         : ${task.linkerOpts}")
@@ -180,7 +182,6 @@ internal fun dumpProperties(task: Task) {
             println("defFile            : ${task.defFile}")
             println("target             : ${task.target}")
             println("pkg                : ${task.pkg}")
-            println("linker             : ${task.linker}")
             println("compilerOpts       : ${task.compilerOpts}")
             println("linkerOpts         : ${task.linkerOpts}")
             println("headers            : ${task.headers.joinToString(prefix = "[", separator = ", ", postfix = "]")}")
@@ -197,7 +198,7 @@ internal fun setDefaultInputs(project: Project) {
     project.konanArtifactsContainer.asSequence()
             .filter { it.compilationTask.inputFiles.isEmpty() }
             .forEach { config ->
-                project.konanDefaultSrcDir?.takeIf { it.exists() }?.let {
+                project.konanDefaultSrcDir.takeIf { it.exists() }?.let {
                     config.inputDir(it.canonicalPath)
                 }
             }

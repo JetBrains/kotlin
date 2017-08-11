@@ -70,13 +70,13 @@ open class KonanInteropTask: KonanTargetableTask() {
 
     // Interop stub generator parameters -------------------------------------
 
-    @Optional @InputFile var defFile: File? = null
+    @InputFile var defFile: File? = null
         internal set
+
     @Optional @Input var pkg: String? = null
         internal set
-    @Input lateinit var libName: String
 
-    @Optional @Input var linker: String? = null
+    @Input lateinit var libName: String
         internal set
 
     @Optional @Input var manifest: String? = null
@@ -123,7 +123,6 @@ open class KonanInteropTask: KonanTargetableTask() {
         addArgIfNotNull("-target", target)
         addArgIfNotNull("-def", defFile?.canonicalPath)
         addArg("-pkg", pkg ?: libName)
-        addArgIfNotNull("-linker", linker)
 
         addFileArgs("-h", headers)
 
@@ -175,7 +174,11 @@ open class KonanInteropConfig(
     // DSL methods ------------------------------------------------------------
 
     fun defFile(file: Any) = with(generateStubsTask) {
-        defFile = project.file(file)
+        defFile = project.file(file).also {
+            if (!it.exists()) {
+                throw NoSuchFileException(it, reason = "No def-file by the specified path.")
+            }
+        }
     }
 
     fun pkg(value: String) = with(generateStubsTask) {
@@ -202,10 +205,6 @@ open class KonanInteropConfig(
 
     fun includeDirs(vararg values: String) = with(generateStubsTask) {
         compilerOpts.addAll(values.map { "-I$it" })
-    }
-
-    fun linker(value: String) = with(generateStubsTask) {
-        linker = value
     }
 
     fun linkerOpts(vararg values: String) = linkerOpts(values.toList())

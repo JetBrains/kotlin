@@ -65,7 +65,6 @@ import java.io.File
  */
 
 
-// TODO: form groups for tasks
 // TODO: Make the task class nested for config with properties accessible for outer users.
 open class KonanCompileTask: KonanTargetableTask() {
 
