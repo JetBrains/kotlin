@@ -29,7 +29,8 @@ enum class MutabilityQualifier {
 class JavaTypeQualifiers internal constructor(
         val nullability: NullabilityQualifier?,
         val mutability: MutabilityQualifier?,
-        internal val isNotNullTypeParameter: Boolean
+        internal val isNotNullTypeParameter: Boolean,
+        internal val isNullabilityQualifierForWarning: Boolean = false
 ) {
     companion object {
         val NONE = JavaTypeQualifiers(null, null, false)

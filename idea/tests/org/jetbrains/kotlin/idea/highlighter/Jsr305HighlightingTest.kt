@@ -46,7 +46,7 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
                 super.configureModule(module, model)
                 module.createFacet(TargetPlatformKind.Jvm(JvmTarget.JVM_1_8))
                 val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(module)
-                (facetSettings.compilerArguments as K2JVMCompilerArguments).jsr305GlobalReportLevel = Jsr305State.ENABLE.description
+                (facetSettings.compilerArguments as K2JVMCompilerArguments).jsr305GlobalState = Jsr305State.ENABLE.description
             }
         }
     }

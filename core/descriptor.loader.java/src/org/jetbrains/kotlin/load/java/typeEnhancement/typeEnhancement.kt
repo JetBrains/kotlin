@@ -71,17 +71,15 @@ private fun UnwrappedType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQ
             }
 
             val wereChanges = lowerResult.wereChanges || upperResult.wereChanges
+            val enhancement = lowerResult.type.getEnhancement() ?: upperResult.type.getEnhancement()
+            val type = if (!wereChanges) this@enhancePossiblyFlexible
+                else when {
+                    this is RawTypeImpl -> RawTypeImpl(lowerResult.type, upperResult.type)
+                    else -> KotlinTypeFactory.flexibleType(lowerResult.type, upperResult.type)
+                }.wrapEnhancement(enhancement)
+
             Result(
-                if (wereChanges) {
-                    if (this is RawTypeImpl) {
-                        RawTypeImpl(lowerResult.type, upperResult.type)
-                    }
-                    else {
-                        KotlinTypeFactory.flexibleType(lowerResult.type, upperResult.type)
-                    }
-                }
-                else
-                    this@enhancePossiblyFlexible,
+                type,
                 lowerResult.subtreeSize,
                 wereChanges
             )
@@ -137,8 +135,11 @@ private fun SimpleType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
             enhancedNullability
     )
 
-    val result = if (effectiveQualifiers.isNotNullTypeParameter) NotNullTypeParameter(enhancedType) else enhancedType
-    return SimpleResult(result, subtreeSize, wereChanges = true)
+    val enhancement = if (effectiveQualifiers.isNotNullTypeParameter) NotNullTypeParameter(enhancedType) else enhancedType
+    val nullabilityForWarning = enhancedNullabilityAnnotations != null && effectiveQualifiers.isNullabilityQualifierForWarning
+    val result = if (nullabilityForWarning) wrapEnhancement(enhancement) else enhancement
+
+    return SimpleResult(result as SimpleType, subtreeSize, wereChanges = true)
 }
 
 private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
@@ -225,8 +226,10 @@ internal class NotNullTypeParameter(override val delegate: SimpleType) : CustomT
 
         return when (unwrappedType) {
             is SimpleType -> unwrappedType.prepareReplacement()
-            is FlexibleType -> KotlinTypeFactory.flexibleType(unwrappedType.lowerBound.prepareReplacement(),
-                                                                    unwrappedType.upperBound.prepareReplacement())
+            is FlexibleType -> KotlinTypeFactory.flexibleType(
+                    unwrappedType.lowerBound.prepareReplacement(),
+                    unwrappedType.upperBound.prepareReplacement()
+            ).wrapEnhancement(unwrappedType.getEnhancement())
             else -> error("Incorrect type: $unwrappedType")
         }
     }

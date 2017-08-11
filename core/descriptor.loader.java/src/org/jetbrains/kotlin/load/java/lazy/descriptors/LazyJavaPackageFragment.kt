@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.childForClassOrPackage
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
@@ -56,7 +55,7 @@ class LazyJavaPackageFragment(
 
     override val annotations =
             // Do not resolve package annotations if JSR-305 is disabled
-            if (c.components.annotationTypeQualifierResolver == AnnotationTypeQualifierResolver.Empty) Annotations.EMPTY
+            if (c.components.annotationTypeQualifierResolver.jsr305State.isIgnored()) Annotations.EMPTY
             else c.resolveAnnotations(jPackage)
 
     internal fun getSubPackageFqNames(): List<FqName> = subPackages()

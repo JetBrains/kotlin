@@ -52,6 +52,6 @@ class AnalysisFlag<out T> internal constructor(
         val multiPlatformDoNotCheckImpl by Flag.Boolean
 
         @JvmStatic
-        val loadJsr305Annotations by Flag.Jsr305StateIgnoreByDefault
+        val jsr305GlobalState by Flag.Jsr305StateIgnoreByDefault
     }
 }

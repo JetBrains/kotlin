@@ -25,8 +25,17 @@ import java.io.File
 abstract class AbstractForeignAnnotationsNoAnnotationInClasspathTest : AbstractForeignAnnotationsTest() {
     private val compiledJavaPath = KotlinTestUtils.tmpDir("java-compiled-files")
     override fun getExtraClasspath(): List<File> {
-        compileJavaFiles()
-        return listOf(compiledJavaPath)
+        val foreignAnnotations = createJarWithForeignAnnotations()
+        val testAnnotations = compileTestAnnotations(foreignAnnotations)
+
+        val additionalClasspath = (foreignAnnotations + testAnnotations).map { it.path }
+        CodegenTestUtil.compileJava(
+                CodegenTestUtil.findJavaSourcesInDirectory(javaFilesDir),
+                additionalClasspath, emptyList(),
+                compiledJavaPath
+        )
+
+        return listOf(compiledJavaPath) + testAnnotations
     }
 
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
@@ -39,12 +48,4 @@ abstract class AbstractForeignAnnotationsNoAnnotationInClasspathTest : AbstractF
 
     private fun createJarWithForeignAnnotations(): List<File> =
             listOf(MockLibraryUtil.compileJvmLibraryToJar(annotationsPath, "foreign-annotations"))
-
-    private fun compileJavaFiles() {
-        CodegenTestUtil.compileJava(
-                CodegenTestUtil.findJavaSourcesInDirectory(javaFilesDir),
-                createJarWithForeignAnnotations().map { it.path }, emptyList(),
-                compiledJavaPath
-        )
-    }
 }

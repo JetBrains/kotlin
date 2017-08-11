@@ -149,7 +149,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
                         type
                     }
                 }
-            }
+            }.inheritEnhancement(type)
 
     private fun TypeCheckerContext.checkSubtypeForSpecialCases(subType: SimpleType, superType: SimpleType): Boolean? {
         if (subType.isError || superType.isError) {

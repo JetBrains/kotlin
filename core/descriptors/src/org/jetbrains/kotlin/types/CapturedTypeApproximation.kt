@@ -112,8 +112,14 @@ fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> 
         val boundsForFlexibleUpper = approximateCapturedTypes(type.upperIfFlexible())
 
         return ApproximationBounds(
-                KotlinTypeFactory.flexibleType(boundsForFlexibleLower.lower.lowerIfFlexible(), boundsForFlexibleUpper.lower.upperIfFlexible()),
-                KotlinTypeFactory.flexibleType(boundsForFlexibleLower.upper.lowerIfFlexible(), boundsForFlexibleUpper.upper.upperIfFlexible()))
+                KotlinTypeFactory.flexibleType(
+                        boundsForFlexibleLower.lower.lowerIfFlexible(),
+                        boundsForFlexibleUpper.lower.upperIfFlexible()
+                ).inheritEnhancement(type),
+                KotlinTypeFactory.flexibleType(
+                        boundsForFlexibleLower.upper.lowerIfFlexible(),
+                       boundsForFlexibleUpper.upper.upperIfFlexible()
+                ).inheritEnhancement(type))
     }
 
     val typeConstructor = type.constructor

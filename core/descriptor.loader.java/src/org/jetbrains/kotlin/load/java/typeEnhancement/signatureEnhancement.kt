@@ -35,42 +35,53 @@ import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
+data class NullabilityQualifierWithMigrationStatus(
+        val qualifier: NullabilityQualifier,
+        val isForWarningOnly: Boolean = false
+)
+
 class SignatureEnhancement(private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver) {
 
-    fun extractNullability(annotationDescriptor: AnnotationDescriptor): NullabilityQualifier? {
-        val annotationFqName = annotationDescriptor.fqName ?: return null
-        when (annotationFqName) {
-            in NULLABLE_ANNOTATIONS -> return NullabilityQualifier.NULLABLE
-            in NOT_NULL_ANNOTATIONS -> return NullabilityQualifier.NOT_NULL
-        }
-
-        val typeQualifier =
-                when {
-                    annotationFqName == JAVAX_NONNULL_ANNOTATION -> annotationDescriptor
-                    else -> annotationTypeQualifierResolver.resolveTypeQualifierAnnotation(annotationDescriptor)
-                            ?.takeIf { it.fqName == JAVAX_NONNULL_ANNOTATION }
-                } ?: return null
-
-        val enumEntryDescriptor =
-                typeQualifier.allValueArguments.values.singleOrNull()?.value
-                // if no argument is specified, use default value: NOT_NULL
-                ?: return NullabilityQualifier.NOT_NULL
+    private fun AnnotationDescriptor.extractNullabilityTypeFromArgument(): NullabilityQualifierWithMigrationStatus? {
+        val enumEntryDescriptor = firstArgumentValue()
+            // if no argument is specified, use default value: NOT_NULL
+            ?: return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
 
         if (enumEntryDescriptor !is ClassDescriptor) return null
 
         return when (enumEntryDescriptor.name.asString()) {
-            "ALWAYS" -> NullabilityQualifier.NOT_NULL
-            "MAYBE" -> NullabilityQualifier.NULLABLE
+            "ALWAYS" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+            "MAYBE" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
             else -> null
+        }
+    }
+
+    fun extractNullability(annotationDescriptor: AnnotationDescriptor): NullabilityQualifierWithMigrationStatus? {
+        val annotationFqName = annotationDescriptor.fqName ?: return null
+
+        return when (annotationFqName) {
+            in NULLABLE_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
+            in NOT_NULL_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+            JAVAX_NONNULL_ANNOTATION -> annotationDescriptor.extractNullabilityTypeFromArgument()
+            else -> {
+                val forWarning = annotationTypeQualifierResolver.jsr305State.isWarning()
+
+                annotationTypeQualifierResolver
+                        .resolveTypeQualifierAnnotation(annotationDescriptor)
+                        ?.takeIf { it.fqName == JAVAX_NONNULL_ANNOTATION }
+                        ?.extractNullabilityTypeFromArgument()
+                        ?.copy(isForWarningOnly = forWarning)
+            }
         }
     }
 
@@ -217,12 +228,17 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             fun <T: Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
 
             val defaultTypeQualifier = defaultTopLevelQualifiers?.takeIf { isHeadTypeConstructor }
-            val nullability =
+            val nullabilityInfo =
                     composedAnnotation.extractNullability()
-                    ?: defaultTypeQualifier?.nullability
+                    ?: defaultTypeQualifier?.nullability?.let {
+                        NullabilityQualifierWithMigrationStatus(
+                                defaultTypeQualifier.nullability,
+                                defaultTypeQualifier.isNullabilityQualifierForWarning
+                        )
+                    }
 
             return JavaTypeQualifiers(
-                    nullability,
+                    nullabilityInfo?.qualifier,
                     uniqueNotNull(
                             READ_ONLY_ANNOTATIONS.ifPresent(
                                     MutabilityQualifier.READ_ONLY
@@ -231,11 +247,12 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                                     MutabilityQualifier.MUTABLE
                             )
                     ),
-                    isNotNullTypeParameter = nullability == NullabilityQualifier.NOT_NULL && isTypeParameter()
+                    isNotNullTypeParameter = nullabilityInfo?.qualifier == NullabilityQualifier.NOT_NULL && isTypeParameter(),
+                    isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true
             )
         }
 
-        private fun Annotations.extractNullability(): NullabilityQualifier? =
+        private fun Annotations.extractNullability(): NullabilityQualifierWithMigrationStatus? =
                 this.firstNotNullResult(this@SignatureEnhancement::extractNullability)
 
         private fun computeIndexedQualifiersForOverride(): (Int) -> JavaTypeQualifiers {
@@ -288,49 +305,57 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 fromSupertypes: Collection<KotlinType>, isCovariant: Boolean,
                 isHeadTypeConstructor: Boolean
         ): JavaTypeQualifiers {
-            val nullabilityFromSupertypes = fromSupertypes.mapNotNull { it.extractQualifiers().nullability }.toSet()
-            val mutabilityFromSupertypes = fromSupertypes.mapNotNull { it.extractQualifiers().mutability }.toSet()
+            val superQualifiers = fromSupertypes.map { it.extractQualifiers() }
+            val mutabilityFromSupertypes = superQualifiers.mapNotNull { it.mutability }.toSet()
+            val nullabilityFromSupertypes = superQualifiers.mapNotNull { it.nullability }.toSet()
+            val nullabilityFromSupertypesWithWarning = fromSupertypes
+                    .mapNotNull { it.unwrapEnhancement().extractQualifiers().nullability }
+                    .toSet()
+                    .takeIf { it != nullabilityFromSupertypes }
 
             val own = extractQualifiersFromAnnotations(isHeadTypeConstructor)
+            val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || superQualifiers.any { it.isNotNullTypeParameter }
 
-            val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || fromSupertypes.any { it.extractQualifiers().isNotNullTypeParameter }
-
-            fun createJavaTypeQualifiers(nullability: NullabilityQualifier?, mutability: MutabilityQualifier?): JavaTypeQualifiers {
+            fun createJavaTypeQualifiers(
+                    nullability: NullabilityQualifier?,
+                    mutability: MutabilityQualifier?,
+                    forWarning: Boolean
+            ): JavaTypeQualifiers {
                 if (!isAnyNonNullTypeParameter || nullability != NullabilityQualifier.NOT_NULL) {
-                    return JavaTypeQualifiers(nullability, mutability, false)
+                    return JavaTypeQualifiers(nullability, mutability, false, forWarning)
                 }
-                return JavaTypeQualifiers(
-                        nullability, mutability,
-                        isNotNullTypeParameter = true)
+                return JavaTypeQualifiers(nullability, mutability, true, forWarning)
             }
 
-            if (isCovariant) {
-                fun <T : Any> Set<T>.selectCovariantly(low: T, high: T, own: T?): T? {
+            fun <T : Any> Set<T>.select(low: T, high: T, own: T?): T? {
+                if (isCovariant) {
                     val supertypeQualifier = if (low in this) low else if (high in this) high else null
                     return if (supertypeQualifier == low && own == high) null else own ?: supertypeQualifier
                 }
-                return createJavaTypeQualifiers(
-                        nullabilityFromSupertypes.selectCovariantly(
-                                NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own.nullability
-                        ),
-                        mutabilityFromSupertypes.selectCovariantly(
-                                MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability
-                        )
-                )
+
+                // isInvariant
+                val effectiveSet = own?.let { (this + own).toSet() } ?: this
+                // if this set contains exactly one element, it is the qualifier everybody agrees upon,
+                // otherwise (no qualifiers, or multiple qualifiers), there's no single such qualifier
+                // and all qualifiers are discarded
+                return effectiveSet.singleOrNull()
             }
-            else {
-                fun <T : Any> Set<T>.selectInvariantly(own: T?): T? {
-                    val effectiveSet = own?.let { (this + own).toSet() } ?: this
-                    // if this set contains exactly one element, it is the qualifier everybody agrees upon,
-                    // otherwise (no qualifiers, or multiple qualifiers), there's no single such qualifier
-                    // and all qualifiers are discarded
-                    return effectiveSet.singleOrNull()
-                }
-                return createJavaTypeQualifiers(
-                        nullabilityFromSupertypes.selectInvariantly(own.nullability),
-                        mutabilityFromSupertypes.selectInvariantly(own.mutability)
-                )
+
+            val ownNullability = own.takeIf { !it.isNullabilityQualifierForWarning }?.nullability
+            val ownNullabilityForWarning = own.nullability
+
+            val nullability = nullabilityFromSupertypes.select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, ownNullability)
+            val mutability = mutabilityFromSupertypes.select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability)
+
+            val canChange = ownNullabilityForWarning != ownNullability || nullabilityFromSupertypesWithWarning != null
+            if (nullability == null && canChange) {
+                val nullabilityWithWarning = (nullabilityFromSupertypesWithWarning ?: nullabilityFromSupertypes)
+                        .select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, ownNullabilityForWarning)
+
+                return createJavaTypeQualifiers(nullabilityWithWarning, mutability, true)
             }
+
+            return createJavaTypeQualifiers(nullability, mutability,nullability == null)
         }
     }
 
