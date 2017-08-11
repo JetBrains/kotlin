@@ -59,7 +59,9 @@ class KonanProject {
 
     /** Creates a file with the given content in project subdirectory specified by parentDirectory. */
     File createFile(Path parentDirectory = projectPath, String fileName, String content) {
-        def result = projectPath.resolve(parentDirectory).resolve(fileName).toFile()
+        def parent = projectPath.resolve(parentDirectory)
+        Files.createDirectories(parent)
+        def result = parent.resolve(fileName).toFile()
         result.createNewFile()
         result.write(content)
         return result
@@ -304,7 +306,7 @@ class KonanInteropProject extends KonanProject {
         return result
     }
 
-    /** Creates a project with the default build file and without any source or def files. */
+    /** Creates a project with the default build file, without any source and with an empty def file. */
     static KonanInteropProject createEmpty(File projectDir) {
         def result = new KonanInteropProject(projectDir)
         result.with {
@@ -316,7 +318,7 @@ class KonanInteropProject extends KonanProject {
         return result
     }
 
-    /** Creates a project with the default build file and without any source or def files. */
+    /** Creates a project with the default build file, without any source and with an empty def file. */
     static KonanInteropProject createEmpty(File projectDir, Closure config) {
         def result = createEmpty(projectDir)
         config(result)

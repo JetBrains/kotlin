@@ -119,7 +119,6 @@ class IncrementalSpecification extends BaseKonanSpecification {
         when:
         def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
-            it.createSubDir('src', 'foo', 'kotlin')
             it.generateSrcFile(["src", "foo", "kotlin"], 'bar.kt', """
                 fun main(args: Array<String>) { println("Hello!") }
             """.stripIndent())
@@ -137,7 +136,6 @@ class IncrementalSpecification extends BaseKonanSpecification {
         when:
         def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
-            it.createSubDir('src', 'lib', 'kotlin')
             it.generateSrcFile(["src", "lib", "kotlin"], "lib.kt", "fun bar() { println(\"Hello!\") }")
             it.buildFile.append("""
                 konanArtifacts {
@@ -254,7 +252,6 @@ class IncrementalSpecification extends BaseKonanSpecification {
         when:
         def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
             it.generateSrcFile('main.kt')
-            it.createSubDir('src', 'lib', 'kotlin')
             it.generateSrcFile(["src", "lib", "kotlin"], 'lib.kt', 'fun foo() { println(42) }')
             it.buildFile.append("""
                 konanArtifacts {
