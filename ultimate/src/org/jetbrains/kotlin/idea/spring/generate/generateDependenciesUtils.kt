@@ -24,7 +24,6 @@ import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.TextResult
 import com.intellij.codeInspection.SmartHashMap
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
@@ -440,13 +439,11 @@ private fun generateDependency(
         dependency: SpringBeanPointer<CommonSpringBean>,
         injectionKind: SpringDependencyInjectionKind
 ): BatchTemplateRunner? {
-    return runWriteAction {
-        if (injectionKind.isSetter) {
-            createSetterDependency(springBean, dependency, injectionKind)
-        }
-        else {
-            createConstructorDependency(springBean, dependency)
-        }
+    return if (injectionKind.isSetter) {
+        createSetterDependency(springBean, dependency, injectionKind)
+    }
+    else {
+        createConstructorDependency(springBean, dependency)
     }
 }
 
