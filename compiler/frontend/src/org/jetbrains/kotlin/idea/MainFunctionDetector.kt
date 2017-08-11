@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 
 class MainFunctionDetector {
-    private val getFunctionDescriptor: (KtNamedFunction) -> FunctionDescriptor
+    private val getFunctionDescriptor: (KtNamedFunction) -> FunctionDescriptor?
 
     /** Assumes that the function declaration is already resolved and the descriptor can be found in the `bindingContext`.  */
     constructor(bindingContext: BindingContext) {
@@ -38,7 +38,7 @@ class MainFunctionDetector {
         }
     }
 
-    constructor(functionResolver: (KtNamedFunction) -> FunctionDescriptor) {
+    constructor(functionResolver: (KtNamedFunction) -> FunctionDescriptor?) {
         this.getFunctionDescriptor = functionResolver
     }
 
@@ -74,7 +74,8 @@ class MainFunctionDetector {
             return false
         }
 
-        return isMain(getFunctionDescriptor(function), checkJvmStaticAnnotation)
+        val functionDescriptor = getFunctionDescriptor(function) ?: return false
+        return isMain(functionDescriptor, checkJvmStaticAnnotation)
     }
 
     fun getMainFunction(module: ModuleDescriptor): FunctionDescriptor? = getMainFunction(module, module.getPackage(FqName.ROOT))
