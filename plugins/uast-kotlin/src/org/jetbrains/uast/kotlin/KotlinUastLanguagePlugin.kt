@@ -168,7 +168,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
 
                 is KtFile -> el<UFile> { KotlinUFile(original, this@KotlinUastLanguagePlugin) }
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement, this@KotlinUastLanguagePlugin) }
-
+                is KtAnnotationEntry -> el<UAnnotation>(build(::KotlinUAnnotation))
                 else -> null
             }
         }
@@ -200,6 +200,7 @@ internal object KotlinConverter {
     internal tailrec fun unwrapElements(element: PsiElement?): PsiElement? = when (element) {
         is KtValueArgumentList -> unwrapElements(element.parent)
         is KtValueArgument -> unwrapElements(element.parent)
+        is KtDeclarationModifierList -> unwrapElements(element.parent)
         else -> element
     }
 
