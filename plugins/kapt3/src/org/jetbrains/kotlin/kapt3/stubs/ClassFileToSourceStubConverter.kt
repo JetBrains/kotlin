@@ -204,7 +204,7 @@ class ClassFileToSourceStubConverter(
                 if (isEnum) ElementKind.ENUM else ElementKind.CLASS,
                 packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations)
 
-        val isDefaultImpls = clazz.name.endsWith("${descriptor.name.asString()}/DefaultImpls")
+        val isDefaultImpls = clazz.name.endsWith("${descriptor.name.asString()}\$DefaultImpls")
                              && isPublic(clazz.access) && isFinal(clazz.access)
                              && descriptor is ClassDescriptor
                              && descriptor.kind == ClassKind.INTERFACE
@@ -218,10 +218,10 @@ class ClassFileToSourceStubConverter(
 
         val interfaces = mapJList(clazz.interfaces) {
             if (isAnnotation && it == "java/lang/annotation/Annotation") return@mapJList null
-            treeMaker.FqName(it)
+            treeMaker.FqName(treeMaker.getQualifiedName(it))
         }
 
-        val superClass = treeMaker.FqName(clazz.superName)
+        val superClass = treeMaker.FqName(treeMaker.getQualifiedName(clazz.superName))
 
         val hasSuperClass = clazz.superName != "java/lang/Object" && !isEnum
         val genericType = signatureParser.parseClassSignature(clazz.signature, superClass, interfaces)
@@ -322,14 +322,11 @@ class ClassFileToSourceStubConverter(
             outerClass: ClassNode? = findContainingClassNode(clazz)
     ): Boolean {
         if (outerClass == null) return false
-        if (clazz.simpleName == outerClass.simpleName) return true
+        if (treeMaker.getSimpleName(clazz) == treeMaker.getSimpleName(outerClass)) return true
         // Try to find the containing class for outerClassNode (to check the whole tree recursively)
         val containingClassForOuterClass = findContainingClassNode(outerClass) ?: return false
         return checkIfInnerClassNameConflictsWithOuter(clazz, containingClassForOuterClass)
     }
-
-    private val ClassNode.simpleName: String
-        get() = name.substringAfterLast(".").substringAfterLast("/")
 
     private fun getClassAccessFlags(clazz: ClassNode, descriptor: DeclarationDescriptor, isInner: Boolean, isNested: Boolean) = when {
         (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE -> {
@@ -373,7 +370,7 @@ class ClassFileToSourceStubConverter(
 
         // Enum type must be an identifier (Javac requirement)
         val typeExpression = if (isEnum(field.access))
-            treeMaker.SimpleName(type.className.substringAfterLast('.'))
+            treeMaker.SimpleName(treeMaker.getQualifiedName(type).substringAfterLast('.'))
         else
             anonymousTypeHandler.getNonAnonymousType(descriptor) {
                 getNonErrorType((descriptor as? CallableDescriptor)?.returnType,
@@ -606,7 +603,7 @@ class ClassFileToSourceStubConverter(
 
     private fun convertAnnotation(annotation: AnnotationNode, packageFqName: String? = "", filtered: Boolean = true): JCAnnotation? {
         val annotationType = Type.getType(annotation.desc)
-        val fqName = annotationType.className
+        val fqName = treeMaker.getQualifiedName(annotationType)
 
         if (filtered) {
             if (BLACKLISTED_ANNOTATIONS.any { fqName.startsWith(it) }) return null
