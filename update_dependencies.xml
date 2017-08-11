@@ -4,7 +4,7 @@
     <import file="node_utils.xml" optional="false"/>
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="172-SNAPSHOT"/>
+    <property name="ideaVersion" value="171-SNAPSHOT"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
 
@@ -32,6 +32,8 @@
     <condition property="kotlinc.executable.path" value="kotlinc.bat" else="kotlinc">
         <os family="windows"/>
     </condition>
+
+    <property name="uast.version" value="1.0.12"/>
 
     <property name="kotlinx.coroutines.version" value="0.14.1"/>
 
@@ -228,11 +230,11 @@
         <!-- jansi -->
         <get-maven-library prefix="org/fusesource/jansi" lib="jansi" version="1.16" target.jar.name.base="jansi"/>
 
-        <!-- Guava 21 sources-->
-        <get-maven-library prefix="com/google/guava" lib="guava" version="21.0" bin="false"/>
+        <!-- Guava 19 sources-->
+        <get-maven-library prefix="com/google/guava" lib="guava" version="19.0" bin="false"/>
 
         <!-- ASM -->
-        <get src="https://raw.github.com/JetBrains/intellij-community/172/lib/src/asm-src.zip"
+        <get src="https://raw.github.com/JetBrains/intellij-community/171/lib/src/asm-src.zip"
              dest="${dependencies}/asm-src.zip"/>
 
         <!-- Junit Sources -->
@@ -244,6 +246,12 @@
 
         <!-- Javaslang -->
         <get-maven-library prefix="io/javaslang" lib="javaslang" version="2.0.6"/>
+
+        <!-- Uast -->
+        <property name="uast.server" value="http://dl.bintray.com/kotlin/uast"/>
+        <get-maven-library prefix="org/jetbrains/uast" lib="uast-common" version="${uast.version}" target.jar.name.base="uast-common" server="${uast.server}"/>
+        <get-maven-library prefix="org/jetbrains/uast" lib="uast-java" version="${uast.version}" target.jar.name.base="uast-java" server="${uast.server}"/>
+        <get-maven-library prefix="org/jetbrains/uast" lib="uast-tests" version="${uast.version}" target.jar.name.base="uast-tests" server="${uast.server}"/>
 
         <get-maven-library-with-dependencies
             group="org.robolectric"
@@ -555,7 +563,7 @@
                     <resources>
                         <file file="@{download.dir.intellij-core}/intellij-core.jar"/>
                         <file file="@{download.dir.intellij-core}/annotations.jar"/>
-                        <file file="@{download.dir.intellij-core}/guava-21.0.jar"/>
+                        <file file="@{download.dir.intellij-core}/guava-19.0.jar"/>
                         <file file="@{download.dir.intellij-core}/picocontainer.jar"/>
                         <file file="@{download.dir.intellij-core}/trove4j.jar"/>
 
@@ -566,7 +574,6 @@
                         <file file="@{idea.dir}/lib/xpp3-1.1.4-min.jar"/>
                         <file file="@{idea.dir}/lib/asm-all.jar"/>
                         <file file="@{idea.dir}/lib/snappy-in-java-0.5.1.jar"/>
-                        <file file="@{idea.dir}/lib/streamex-0.6.2.jar"/>
 
                         <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
                         <file file="@{idea.dir}/lib/util.jar"/>
@@ -689,7 +696,7 @@
                 <mkdir dir="${core.dir}"/>
                 <get src="${content.base.url}/core/intellij-core.jar" dest="${core.dir}/intellij-core.jar"/>
                 <get src="${content.base.url}/core/annotations.jar" dest="${core.dir}/annotations.jar"/>
-                <get src="${content.base.url}/core/guava-21.0.jar" dest="${core.dir}/guava-21.0.jar"/>
+                <get src="${content.base.url}/core/guava-19.0.jar" dest="${core.dir}/guava-19.0.jar"/>
                 <get src="${content.base.url}/core/picocontainer.jar" dest="${core.dir}/picocontainer.jar"/>
                 <get src="${content.base.url}/core/trove4j.jar" dest="${core.dir}/trove4j.jar"/>
 
