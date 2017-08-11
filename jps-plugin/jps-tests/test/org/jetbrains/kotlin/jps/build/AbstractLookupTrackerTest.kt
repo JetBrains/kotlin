@@ -184,7 +184,8 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
                     lookupsFromFile.isEmpty() -> "(no lookups)"
                     else -> ""
                 }
-                sb.indentln("${compiledFile.toRelativeString(workingDir)}$lookupStatus")
+                val relativePath = compiledFile.toRelativeString(workingDir).replace("\\", "/")
+                sb.indentln("$relativePath$lookupStatus")
             }
 
             sb.appendln("Exit code: $exitCode")
