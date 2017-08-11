@@ -6301,6 +6301,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("methodToProtected.kt")
+            public void testMethodToProtected() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/invisibleFake/methodToProtected.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("methodToPublic.kt")
             public void testMethodToPublic() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/invisibleFake/methodToPublic.kt");
@@ -6310,6 +6316,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("propertyToInternal.kt")
             public void testPropertyToInternal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/invisibleFake/propertyToInternal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyToProtected.kt")
+            public void testPropertyToProtected() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/invisibleFake/propertyToProtected.kt");
                 doTest(fileName);
             }
 

@@ -44,7 +44,7 @@ object MakeVisibleFactory  : KotlinIntentionActionsFactory() {
 
         val module = DescriptorUtils.getContainingModule(descriptor)
         val targetVisibilities = when (descriptor.visibility) {
-            PRIVATE, INVISIBLE_FAKE -> if (module != usageModule) listOf(PUBLIC) else listOf(PUBLIC, INTERNAL)
+            PRIVATE, INVISIBLE_FAKE -> if (module != usageModule) listOf(PUBLIC) else listOf(PUBLIC, INTERNAL, PROTECTED)
             else -> listOf(PUBLIC)
         }
 
