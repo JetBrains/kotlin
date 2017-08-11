@@ -99,20 +99,6 @@ public class KotlinTypeMapper {
     private final boolean isJvm8TargetWithDefaults;
 
     private final TypeMappingConfiguration<Type> typeMappingConfiguration = new TypeMappingConfiguration<Type>() {
-        private final Function2<String, String, String> defaultClassNameFactory
-                = TypeMappingConfiguration.Companion.getDEFAULT_INNER_CLASS_NAME_FACTORY();
-
-        private final Function2<String, String, String> innerClassNameFactory = new Function2<String, String, String>() {
-            @Override
-            public String invoke(String outer, String inner) {
-                if (classBuilderMode == ClassBuilderMode.KAPT3) {
-                    return outer + '/' + inner;
-                }
-
-                return defaultClassNameFactory.invoke(outer, inner);
-            }
-        };
-
         @NotNull
         @Override
         public KotlinType commonSupertype(@NotNull Collection<KotlinType> types) {
@@ -122,7 +108,7 @@ public class KotlinTypeMapper {
         @NotNull
         @Override
         public Function2<String, String, String> getInnerClassNameFactory() {
-            return innerClassNameFactory;
+            return TypeMappingConfiguration.DefaultImpls.getInnerClassNameFactory(this);
         }
 
         @Nullable

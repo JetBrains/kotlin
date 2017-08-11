@@ -47,8 +47,8 @@ private fun <T : Any> JvmTypeFactory<T>.boxTypeIfNeeded(possiblyPrimitiveType: T
         if (needBoxedType) boxType(possiblyPrimitiveType) else possiblyPrimitiveType
 
 interface TypeMappingConfiguration<out T : Any> {
-    companion object {
-        val DEFAULT_INNER_CLASS_NAME_FACTORY = fun(outer: String, inner: String) = outer + "$" + inner
+    private companion object {
+        private val DEFAULT_INNER_CLASS_NAME_FACTORY = fun(outer: String, inner: String) = outer + "$" + inner
     }
 
     val innerClassNameFactory: (outer: String, inner: String) -> String

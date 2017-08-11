@@ -52,10 +52,10 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest() {
         assert(!File(stubsOutputDir, "test/Simple/InnerClass.java").exists())
 
         assert(File(incrementalDataOutputDir, "test/Simple.class").exists())
-        assert(File(incrementalDataOutputDir, "test/Simple/Companion.class").exists())
-        assert(File(incrementalDataOutputDir, "test/Simple/InnerClass.class").exists())
-        assert(File(incrementalDataOutputDir, "test/Simple/NestedClass.class").exists())
-        assert(File(incrementalDataOutputDir, "test/Simple/NestedClass/NestedNestedClass.class").exists())
+        assert(File(incrementalDataOutputDir, "test/Simple\$Companion.class").exists())
+        assert(File(incrementalDataOutputDir, "test/Simple\$InnerClass.class").exists())
+        assert(File(incrementalDataOutputDir, "test/Simple\$NestedClass.class").exists())
+        assert(File(incrementalDataOutputDir, "test/Simple\$NestedClass\$NestedNestedClass.class").exists())
 
         assert(bindings.any { it.key == "test/Simple" && it.value.name == "test/Simple.java" })
         assert(bindings.none { it.key.contains("Companion") })

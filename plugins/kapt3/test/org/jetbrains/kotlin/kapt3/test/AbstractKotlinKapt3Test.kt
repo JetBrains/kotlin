@@ -61,7 +61,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val generationState = GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, classBuilderFactory)
 
         val logger = KaptLogger(isVerbose = true, messageCollector = messageCollector)
-        val kaptContext = KaptContext(logger, generationState.bindingContext, classBuilderFactory.compiledClasses,
+        val kaptContext = KaptContext(logger, generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,
                                       classBuilderFactory.origins, generationState, processorOptions = emptyMap())
         try {
             check(kaptContext, txtFile, wholeFile)

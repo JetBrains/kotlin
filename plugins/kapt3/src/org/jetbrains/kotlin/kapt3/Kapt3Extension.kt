@@ -186,7 +186,7 @@ abstract class AbstractKapt3Extension(
 
     private fun generateStubs(project: Project, module: ModuleDescriptor, context: BindingContext, files: Collection<KtFile>): KaptContext<*> {
         if (!aptMode.generateStubs) {
-            return KaptContext(logger, BindingContext.EMPTY, emptyList(), emptyMap(), null, options, javacOptions)
+            return KaptContext(logger, project, BindingContext.EMPTY, emptyList(), emptyMap(), null, options, javacOptions)
         }
 
         logger.info { "Kotlin files to compile: " + files.map { it.virtualFile?.name ?: "<in memory ${it.hashCode()}>" } }
@@ -241,7 +241,7 @@ abstract class AbstractKapt3Extension(
         logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
         logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-        return KaptContext(logger, bindingContext, compiledClasses, origins, generationState, options, javacOptions)
+        return KaptContext(logger, project, bindingContext, compiledClasses, origins, generationState, options, javacOptions)
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContext<GenerationState>) {

@@ -74,7 +74,7 @@ private fun convertUserType(type: KtUserType, converter: ClassFileToSourceStubCo
         // This could be List<SomeErrorType> or similar. List should be converted to java.util.List in this case.
         val referenceTarget = converter.kaptContext.bindingContext[BindingContext.REFERENCE_TARGET, type.referenceExpression]
         if (referenceTarget is ClassDescriptor) {
-            treeMaker.FqName(converter.kaptContext.generationState.typeMapper.mapType(referenceTarget.defaultType).className)
+            treeMaker.FqName(converter.kaptContext.generationState.typeMapper.mapType(referenceTarget.defaultType).internalName)
         }
         else {
             treeMaker.SimpleName(referencedName)

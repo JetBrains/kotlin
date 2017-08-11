@@ -203,7 +203,7 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
                 val innerClasses = mutableListOf<SignatureNode>()
                 node.split(typeArgs, TypeArgument, innerClasses, InnerClass)
 
-                var expression = makeExpressionForClassTypeWithArguments(treeMaker.FqName(node.name!!.replace('/', '.')), typeArgs)
+                var expression = makeExpressionForClassTypeWithArguments(treeMaker.FqName(node.name!!), typeArgs)
                 if (innerClasses.isEmpty()) return expression
 
                 for (innerClass in innerClasses) {
