@@ -1,5 +1,5 @@
 <project xmlns:if="ant:if" xmlns:unless="ant:unless" name="Update Dependencies" default="update">
-    <!--171 -> base_16x-->
+    <!--base_as23_162 -> as23-->
     <import file="common.xml" optional="false"/>
     <import file="node_utils.xml" optional="false"/>
 
