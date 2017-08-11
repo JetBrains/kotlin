@@ -22,7 +22,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.isProjectOrWorkspaceFile
+import com.intellij.openapi.project.ProjectUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
@@ -267,7 +267,7 @@ class ScriptDependenciesUpdater(
                         // the isUnitTestMode check fixes ScriptConfigurationHighlighting & Navigation tests, since they are not trigger proper update mechanims
                         // TODO: find out the reason, then consider to fix tests and remove this check
                         (application.isUnitTestMode ||
-                                scriptDefinitionProvider.isScript(it.name) && projectFileIndex.isInContent(it)) && !isProjectOrWorkspaceFile(it)
+                                scriptDefinitionProvider.isScript(it.name) && projectFileIndex.isInContent(it)) && !ProjectUtil.isProjectOrWorkspaceFile(it)
                     }
                 }
                 requestUpdate(modifiedScripts)
