@@ -129,7 +129,6 @@ open class AddModifierFix(
             }
             return AddModifierFix(modifierListOwner, modifier)
         }
-
     }
 
     object MakeClassOpenFactory : KotlinSingleIntentionActionFactory() {
