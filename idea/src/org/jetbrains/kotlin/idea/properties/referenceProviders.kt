@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.name.FqName
@@ -64,7 +64,7 @@ private fun KtExpression.getBundleNameByContext(): String? {
     val expression = KtPsiUtil.safeDeparenthesize(this)
     val parent = expression.parent
 
-    (parent as? KtProperty)?.let { return it.resolveToDescriptor(BodyResolveMode.PARTIAL).getBundleNameByAnnotation() }
+    (parent as? KtProperty)?.let { return it.resolveToDescriptorIfAny()?.getBundleNameByAnnotation() }
 
     val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
     val resolvedCall =
