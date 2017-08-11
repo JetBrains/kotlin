@@ -17365,6 +17365,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("propertyWithExtensionTypeInvoke.kt")
+            public void testPropertyWithExtensionTypeInvoke() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/propertyWithExtensionTypeInvoke.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("resolveSubclassOfList.kt")
             public void testResolveSubclassOfList() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/resolveSubclassOfList.kt");

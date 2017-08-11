@@ -28,9 +28,13 @@ import org.jetbrains.kotlin.types.UnwrappedType
 
 interface ReceiverKotlinCallArgument {
     val receiver: DetailedReceiver
+    val isSafeCall: Boolean
 }
 
 class QualifierReceiverKotlinCallArgument(override val receiver: QualifierReceiver) : ReceiverKotlinCallArgument {
+    override val isSafeCall: Boolean
+        get() = false // TODO: add warning
+
     override fun toString() = "$receiver"
 }
 
@@ -43,8 +47,6 @@ interface PostponableKotlinCallArgument : KotlinCallArgument
 
 interface SimpleKotlinCallArgument : KotlinCallArgument, ReceiverKotlinCallArgument {
     override val receiver: ReceiverValueWithSmartCastInfo
-
-    val isSafeCall: Boolean
 }
 
 interface ExpressionKotlinCallArgument : SimpleKotlinCallArgument

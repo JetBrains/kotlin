@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyForInvoke
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 val KotlinCall.psiKotlinCall: PSIKotlinCall get() {
@@ -79,7 +80,7 @@ class PSIKotlinCallForVariable(
 
 class PSIKotlinCallForInvoke(
         val baseCall: PSIKotlinCallImpl,
-        override val explicitReceiver: SimpleKotlinCallArgument,
+        override val explicitReceiver: ReceiverKotlinCallArgument,
         override val dispatchReceiverForInvokeExtension: SimpleKotlinCallArgument?
 ) : PSIKotlinCall() {
     override val callKind: KotlinCallKind get() = KotlinCallKind.FUNCTION
@@ -100,8 +101,15 @@ class PSIKotlinCallForInvoke(
         val calleeExpression = baseCall.psiCall.calleeExpression!!
 
         psiCall = CallTransformer.CallForImplicitInvoke(
-                explicitExtensionReceiver?.receiver?.receiverValue,
-                variableReceiver.receiver.receiverValue as ExpressionReceiver, baseCall.psiCall, true)
-        tracingStrategy = TracingStrategyForInvoke(calleeExpression, psiCall, variableReceiver.receiver.receiverValue.type)
+                explicitExtensionReceiver?.receiverValue,
+                variableReceiver.receiverValue as ExpressionReceiver, baseCall.psiCall, true)
+        tracingStrategy = TracingStrategyForInvoke(calleeExpression, psiCall, variableReceiver.receiverValue!!.type) // check for type parameters
     }
 }
+
+val ReceiverKotlinCallArgument.receiverValue: ReceiverValue?
+    get() = when (this) {
+        is SimpleKotlinCallArgument -> this.receiver.receiverValue
+        is QualifierReceiverKotlinCallArgument -> this.receiver.classValueReceiver
+        else -> null
+    }
