@@ -10,8 +10,7 @@ import org.springframework.context.annotation.ComponentScan
 
 @Component
 open class FooBean {
-    @Qualifier("barBean")
-    @Autowired lateinit var barBean<caret>: BarBean
+    @Qualifier("barBean") @Autowired lateinit var barBean<caret>: BarBean
 
 }
 
