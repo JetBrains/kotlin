@@ -21,6 +21,7 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.SettingsStep
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import javax.swing.Icon
 
@@ -31,6 +32,7 @@ class KotlinModuleBuilder(
     override fun getName() = builderName
     override fun getPresentableName() = builderName
     override fun getDescription() = builderDescription
+    override fun getBigIcon() = KotlinIcons.KOTLIN_LOGO_24
     override fun getNodeIcon() = icon
     override fun getGroupName() = KotlinTemplatesFactory.KOTLIN_GROUP_NAME
     override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider) = ModuleWizardStep.EMPTY_ARRAY
