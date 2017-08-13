@@ -11,10 +11,10 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
 
 
-fun Project.testsJar(body: Jar.() -> Unit): Jar {
+fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testCompile"])
 
-    return task<Jar>("testJar") {
+    return task<Jar>("testsJar") {
         dependsOn("testClasses")
         pluginManager.withPlugin("java") {
             from(project.the<JavaPluginConvention>().sourceSets.getByName("test").output)

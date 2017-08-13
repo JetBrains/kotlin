@@ -11,6 +11,7 @@ dependencies {
     val testRuntime by configurations
     compile(project(":core"))
     compile(project(":idea"))
+    compile(project(":j2k"))
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))
     compile(project(":compiler:backend"))
@@ -26,6 +27,7 @@ dependencies {
     compile(projectTests(":compiler:tests-java8"))
     compile(projectTests(":compiler:container"))
     compile(projectTests(":idea"))
+    compile(projectTests(":j2k"))
     compile(projectTests(":idea:idea-android"))
     compile(projectTests(":jps-plugin"))
     compile(projectTests(":plugins:plugins-tests"))

@@ -54,3 +54,5 @@ tasks.withType<Test> {
     environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
     ignoreFailures = true
 }
+
+testsJar()
