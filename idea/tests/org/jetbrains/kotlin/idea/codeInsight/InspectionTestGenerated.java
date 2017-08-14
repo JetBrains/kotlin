@@ -377,6 +377,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("suspiciousEqualsCombination/inspectionData/inspections.test")
+        public void testSuspiciousEqualsCombination_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/suspiciousEqualsCombination/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("twoSetOfTypeparameters/inspectionData/inspections.test")
         public void testTwoSetOfTypeparameters_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/twoSetOfTypeparameters/inspectionData/inspections.test");
