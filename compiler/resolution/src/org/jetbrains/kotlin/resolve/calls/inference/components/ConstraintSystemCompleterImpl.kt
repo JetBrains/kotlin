@@ -43,6 +43,9 @@ class KotlinConstraintSystemCompleter(
         // mutable operations
         fun addError(error: KotlinCallDiagnostic)
         fun fixVariable(variable: NewTypeVariable, resultType: UnwrappedType)
+
+        // for diagnostics
+        fun variableConstraints(variable: NewTypeVariable): VariableWithConstraints?
     }
 
     fun runCompletion(

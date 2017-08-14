@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter.Context
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 fun handleDiagnostics(
-        c: Context,
+        c: KotlinConstraintSystemCompleter.Context,
         status: ResolutionCandidateStatus,
         isOuterCall: Boolean
 ): List<AggregatedConstraintError> {
@@ -88,7 +89,7 @@ private fun divideByConstraints(constraints: List<Constraint>): SortedConstraint
 
 private fun List<Constraint>.getWith(kind: ConstraintKind) = filter { it.kind == kind }
 
-private fun groupErrorsByPosition(c: Context, status: ResolutionCandidateStatus, isOuterCall: Boolean): Map<ConstraintPosition, List<PositionWithTypeVariable>> {
+private fun groupErrorsByPosition(c: KotlinConstraintSystemCompleter.Context, status: ResolutionCandidateStatus, isOuterCall: Boolean): Map<ConstraintPosition, List<PositionWithTypeVariable>> {
     val errorsFromConstraintSystem = if (c is NewConstraintSystem && isOuterCall) c.diagnostics else emptyList()
     return (status.diagnostics + errorsFromConstraintSystem)
             .filterIsInstance<NewConstraintError>()

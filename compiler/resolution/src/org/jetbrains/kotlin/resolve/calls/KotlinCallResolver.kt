@@ -109,15 +109,18 @@ class KotlinCallResolver(
             candidates: Collection<KotlinResolutionCandidate>,
             collectAllCandidates: Boolean
     ): Collection<ResolvedKotlinCall> {
+        val isDebuggerContext = (candidates.firstOrNull() ?: return emptyList()).lastCall.scopeTower.isDebuggerContext
 
-val isDebuggerContext = (candidates.firstOrNull() ?: return emptyList()).lastCall.scopeTower.isDebuggerContext        val maximallySpecificCandidates = if (collectAllCandidates) {
+        val maximallySpecificCandidates = if (collectAllCandidates) {
             candidates
         }
-        else {overloadingConflictResolver.chooseMaximallySpecificCandidates(
+        else {
+            overloadingConflictResolver.chooseMaximallySpecificCandidates(
                 candidates,
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                 discriminateGenerics = true, // todo
-                isDebuggerContext = isDebuggerContext)}
+                isDebuggerContext = isDebuggerContext)
+        }
 
         val singleResult = maximallySpecificCandidates.singleOrNull()?.let {
             kotlinCallCompleter.completeCallIfNecessary(it, expectedType, resolutionCallbacks)

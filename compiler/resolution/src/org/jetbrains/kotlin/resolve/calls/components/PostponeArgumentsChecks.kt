@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.*
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
@@ -30,10 +29,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 fun createPostponedArgumentAndPerformInitialChecks(
         csBuilder: ConstraintSystemBuilder,
         argument: PostponableKotlinCallArgument,
-        expectedType: UnwrappedType
+        expectedType: UnwrappedType,
+        parameterName: Name? = null
 ): KotlinCallDiagnostic? {
     val (postponedArgument, diagnostic) =  when (argument) {
-        is LambdaKotlinCallArgument -> preprocessLambdaArgument(csBuilder, argument, expectedType, parameterDescriptor.name)
+        is LambdaKotlinCallArgument -> preprocessLambdaArgument(csBuilder, argument, expectedType, parameterName)
         is CallableReferenceKotlinCallArgument -> preprocessCallableReference(csBuilder, argument, expectedType)
         is CollectionLiteralKotlinCallArgument -> preprocessCollectionLiteralArgument(csBuilder, argument, expectedType)
         else -> unexpectedArgument(argument)

@@ -49,7 +49,7 @@ internal object CheckInstantiationOfAbstractClass : ResolutionPart {
 
 internal object CheckVisibility : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (callContext.scopeTower.isDebuggerContext) return emptyList()
+        if (scopeTower.isDebuggerContext) return emptyList()
 
         val receiverValue = dispatchReceiverArgument?.receiver?.receiverValue ?: Visibilities.ALWAYS_SUITABLE_RECEIVER
         val invisibleMember = Visibilities.findInvisibleMember(receiverValue, candidateDescriptor, containingDescriptor) ?: return emptyList()
@@ -239,9 +239,9 @@ internal object CheckArguments : ResolutionPart {
                 val expectedType = argument.getExpectedType(parameterDescriptor)
                 val diagnostic = when (argument) {
                     is SimpleKotlinCallArgument ->
-                        checkSimpleArgument(csBuilder, argument, expectedType, , parameterName = parameterName)
+                        checkSimpleArgument(csBuilder, argument, expectedType, parameterName = parameterName)
                     is PostponableKotlinCallArgument ->
-                        createPostponedArgumentAndPerformInitialChecks(csBuilder, argument, expectedType)
+                        createPostponedArgumentAndPerformInitialChecks(csBuilder, argument, expectedType, parameterName)
                     else -> unexpectedArgument(argument)
                 }
                 diagnostics.addIfNotNull(diagnostic)

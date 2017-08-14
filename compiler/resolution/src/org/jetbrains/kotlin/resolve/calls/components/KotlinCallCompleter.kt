@@ -50,7 +50,11 @@ class KotlinCallCompleter(
     }
 
     fun transformWhenAmbiguity(candidate: KotlinResolutionCandidate, resolutionCallbacks: KotlinResolutionCallbacks): ResolvedKotlinCall =
-            toCompletedBaseResolvedCall(candidate.lastCall.constraintSystem.asCallCompleterContext(), candidate, resolutionCallbacks)
+            toCompletedBaseResolvedCall(
+                    candidate.lastCall.constraintSystem.asCallCompleterContext(),
+                    candidate.lastCall.constraintSystem.asConstraintSystemCompleterContext(),
+                    candidate,
+                    resolutionCallbacks)
 
     // todo investigate variable+function calls
     fun completeCallIfNecessary(
@@ -75,7 +79,11 @@ class KotlinCallCompleter(
         }
 
         return when (completionType) {
-            ConstraintSystemCompletionMode.FULL -> toCompletedBaseResolvedCall(lastCall.constraintSystem.asCallCompleterContext(), candidate, resolutionCallbacks)
+            ConstraintSystemCompletionMode.FULL -> toCompletedBaseResolvedCall(
+                    lastCall.constraintSystem.asCallCompleterContext(),
+                    lastCall.constraintSystem.asConstraintSystemCompleterContext(),
+                    candidate,
+                    resolutionCallbacks)
             ConstraintSystemCompletionMode.PARTIAL -> ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
         }
     }
@@ -90,13 +98,14 @@ class KotlinCallCompleter(
 
     private fun toCompletedBaseResolvedCall(
             c: Context,
+            completeContext: KotlinConstraintSystemCompleter.Context,
             candidate: KotlinResolutionCandidate,
             resolutionCallbacks: KotlinResolutionCallbacks
     ): ResolvedKotlinCall.CompletedResolvedKotlinCall {
         val currentSubstitutor = c.buildResultingSubstitutor()
-        val completedCall = candidate.toCompletedCall(c, currentSubstitutor, true)
+        val completedCall = candidate.toCompletedCall(completeContext, currentSubstitutor, true)
         val competedCalls = c.innerCalls.map {
-            it.candidate.toCompletedCall(c, currentSubstitutor, false)
+            it.candidate.toCompletedCall(completeContext, currentSubstitutor, false)
         }
         for (postponedArgument in c.postponedArguments) {
             when (postponedArgument) {
@@ -116,7 +125,7 @@ class KotlinCallCompleter(
         return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls, c.lambdaArguments)
     }
 
-    private fun KotlinResolutionCandidate.toCompletedCall(c: Context, substitutor: NewTypeSubstitutor, isOuterCall: Boolean): CompletedKotlinCall {
+    private fun KotlinResolutionCandidate.toCompletedCall(c: KotlinConstraintSystemCompleter.Context, substitutor: NewTypeSubstitutor, isOuterCall: Boolean): CompletedKotlinCall {
         if (this is VariableAsFunctionKotlinResolutionCandidate) {
             val variable = resolvedVariable.toCompletedCall(c, substitutor, isOuterCall)
             val invoke = invokeCandidate.toCompletedCall(c, substitutor, isOuterCall)
@@ -126,7 +135,7 @@ class KotlinCallCompleter(
         return (this as SimpleKotlinResolutionCandidate).toCompletedCall(c, substitutor, isOuterCall)
     }
 
-    private fun SimpleKotlinResolutionCandidate.toCompletedCall(c: Context, substitutor: NewTypeSubstitutor, isOuterCall: Boolean): CompletedKotlinCall.Simple {
+    private fun SimpleKotlinResolutionCandidate.toCompletedCall(c: KotlinConstraintSystemCompleter.Context, substitutor: NewTypeSubstitutor, isOuterCall: Boolean): CompletedKotlinCall.Simple {
         val containsCapturedTypes = descriptorWithFreshTypes.returnType?.contains { it is NewCapturedType } ?: false
         val resultingDescriptor = when {
             descriptorWithFreshTypes is FunctionDescriptor ||
@@ -149,7 +158,7 @@ class KotlinCallCompleter(
     }
 
     private fun computeStatus(
-            c: Context,
+            c: KotlinConstraintSystemCompleter.Context,
             candidate: SimpleKotlinResolutionCandidate,
             resultingDescriptor: CallableDescriptor,
             isOuterCall: Boolean
