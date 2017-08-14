@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.maven
 import com.intellij.codeInspection.CommonProblemDescriptor
 import com.intellij.codeInspection.ProblemDescriptorBase
 import com.intellij.codeInspection.QuickFix
+import com.intellij.codeInspection.reference.RefEntity
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.Result
@@ -64,10 +65,11 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
 
         val matcher = "<!--\\s*problem:\\s*on\\s*([^,]+),\\s*title\\s*(.+)\\s*-->".toRegex()
         val expected = pomText.lines().mapNotNull { matcher.find(it) }.map { SimplifiedProblemDescription(it.groups[2]!!.value.trim(), it.groups[1]!!.value.trim()) }
-        val actual = runInspection(inspectionClass, myProject)
-                .problemElements
-                .filter { it.key.name == "pom.xml" }
-                .values
+        val problemElements = runInspection(inspectionClass, myProject).problemElements
+        val actual = problemElements
+                .keys()
+                .filter { it.name == "pom.xml" }
+                .map { problemElements.get(it) }
                 .flatMap { it.toList() }
                 .mapNotNull { it as? ProblemDescriptorBase }
                 .map { SimplifiedProblemDescription(it.descriptionTemplate, it.psiElement.text.replace("\\s+".toRegex(), "")) to it }
