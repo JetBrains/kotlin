@@ -7,10 +7,13 @@
     <property name="ideaVersion" value="162.2946"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
-    <property name="android.studio.version" value="2.3.1.0"/>
-    <property name="android.studio.build.number" value="162.3871768"/>
+    <property name="android.studio.major.version" value="2.3"/>
 
-    <!-- how to find this version: https://jetbrains.quip.com/4IQyAOhyghPb -->
+    <!-- Uncomment this to download fixed version of Android Studio-->
+    <!--<property name="android.studio.version" value="2.3.3.0"/>-->
+    <!--<property name="android.studio.build.number" value="162.4069837"/>-->
+
+    <!-- how to find this version in AndroidStudioApplicationInfo.xml: https://jetbrains.quip.com/4IQyAOhyghPb -->
     <property name="android.studio.intellij-core.build.number" value="162.2228.14"/>
 
     <property name="kotlin.bootstrap.branch" value=""/>
@@ -59,9 +62,9 @@
             description="Update dependencies and Android Studio"/>
 
     <!--<target name="update_teamcity" depends="fetch-third-party,fetch-annotations">-->
-        <!--<execute_update_with_idea_teamcity_artifacts-->
-            <!--teamcity.server.url="https://teamcity.jetbrains.com"-->
-            <!--build.locator.request="buildType:bt410,status:SUCCESS,branch:idea/${ideaVersion}-${idea.kotlin.branch}"/>-->
+    <!--<execute_update_with_idea_teamcity_artifacts-->
+    <!--teamcity.server.url="https://teamcity.jetbrains.com"-->
+    <!--build.locator.request="buildType:bt410,status:SUCCESS,branch:idea/${ideaVersion}-${idea.kotlin.branch}"/>-->
     <!--</target>-->
 
     <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies for JB local network">
@@ -815,7 +818,7 @@
                     <tokenfilter>
                         <filetokenizer/>
                         <replaceregex
-                            pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/([\d\.]+)/android-studio-ide(.*)$"
+                            pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/(${android.studio.major.version}\.[\d\.]+)/android-studio-ide(.*)$"
                             replace="\2" flags="s"/>
                     </tokenfilter>
                 </filterchain>
@@ -826,7 +829,7 @@
                     <tokenfilter>
                         <filetokenizer/>
                         <replaceregex
-                            pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/[\d\.]+/android-studio-ide-([\d\.]+)-(.*)$"
+                            pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/${android.studio.major.version}\.[\d\.]+/android-studio-ide-([\d\.]+)-(.*)$"
                             replace="\2" flags="s"/>
                     </tokenfilter>
                 </filterchain>
@@ -865,11 +868,14 @@
         </condition>
 
         <exec executable="chmod" if:set="android.studio.mac">
+            <arg value="-R"/>
             <arg value="a+x"/>
-            <arg path="${android.destination.dir}/bin/fsnotifier"/>
-            <arg path="${android.destination.dir}/bin/inspect.sh"/>
-            <arg path="${android.destination.dir}/bin/printenv.py"/>
-            <arg path="${android.destination.dir}/bin/restarter"/>
+            <arg path="${android.destination.dir}/bin/"/>
+            <!-- Needed to run gradle -->
+            <arg path="${android.destination.dir}/jre/jdk/Contents/Home/bin/"/>
+            <arg path="${android.destination.dir}/jre/jdk/Contents/Home/lib/"/>
+            <arg path="${android.destination.dir}/jre/jdk/Contents/Home/jre/bin/"/>
+            <arg path="${android.destination.dir}/jre/jdk/Contents/Home/jre/lib/"/>
         </exec>
 
         <exec executable="chmod" if:set="android.studio.linux">
