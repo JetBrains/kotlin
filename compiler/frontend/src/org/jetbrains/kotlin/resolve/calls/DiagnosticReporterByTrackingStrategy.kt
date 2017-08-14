@@ -167,10 +167,7 @@ class DiagnosticReporterByTrackingStrategy(
                     val expression = it.psiExpression ?: return
                     val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
                     if (reportConstantTypeMismatch(constraintError, deparenthesized)) return
-                    if (constraintError.typeVariable == null) {
-                        trace.report(Errors.TYPE_MISMATCH.on(deparenthesized, constraintError.upperType, constraintError.lowerType))
-                    }
-                    trace.markAsReported()
+                    trace.report(Errors.TYPE_MISMATCH.on(deparenthesized, constraintError.upperType, constraintError.lowerType))
                 }
                 (position as? ExplicitTypeParameterConstraintPosition)?.let {
                     val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
@@ -185,18 +182,20 @@ class DiagnosticReporterByTrackingStrategy(
                 }
             }
             AggregatedConstraintError::class.java -> {
-                val constraintError = diagnostic as AggregatedConstraintError
-                val position = constraintError.constraintPosition
-                (position as? ArgumentConstraintPosition)?.let {
-                    val expression = it.argument.psiExpression ?: return
-                    val specialTypeVariableKind = constraintError.specialTypeVariableKind
-                    if (specialTypeVariableKind != null) {
-                        trace.report(CONTRADICTION_FOR_SPECIAL_CALL.on(expression, constraintError, specialTypeVariableKind))
-                    }
-                    else {
-                        trace.report(CONTRADICTION_IN_CONSTRAINT_SYSTEM.on(expression, constraintError.typeVariable, constraintError))
-                    }
-                }
+                trace.markAsReported()
+
+//                val constraintError = diagnostic as AggregatedConstraintError
+//                val position = constraintError.constraintPosition
+//                (position as? ArgumentConstraintPosition)?.let {
+//                    val expression = it.argument.psiExpression ?: return
+//                    val specialTypeVariableKind = constraintError.specialTypeVariableKind
+//                    if (specialTypeVariableKind != null) {
+//                        trace.report(CONTRADICTION_FOR_SPECIAL_CALL.on(expression, constraintError, specialTypeVariableKind))
+//                    }
+//                    else {
+//                        trace.report(CONTRADICTION_IN_CONSTRAINT_SYSTEM.on(expression, constraintError.typeVariable, constraintError))
+//                    }
+//                }
             }
         }
     }
