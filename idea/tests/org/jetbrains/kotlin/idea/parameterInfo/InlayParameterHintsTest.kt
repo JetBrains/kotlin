@@ -140,6 +140,17 @@ class X {
 """)
     }
 
+    fun `test invoke`() {
+        check("""
+  fun main() {
+    val x = X()
+    x(<hint text="a:"/>10, x);
+  }
+}
 
-
+class X {
+  operator fun invoke(a: Int, bI: Int) {}
+}
+""")
+    }
 }
