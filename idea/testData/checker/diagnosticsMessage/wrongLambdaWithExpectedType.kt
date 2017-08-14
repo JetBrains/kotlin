@@ -29,6 +29,6 @@ fun testSpecialCall(): Int {
         <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'if' expression cannot be inferred:
 should be conformed to: Int
 should be a supertype of: String (for parameter 'elseBranch')
-">if (true) 123 else "abc"</error>
+">if</error> (true) 123 else "abc"
     }</error>
 }

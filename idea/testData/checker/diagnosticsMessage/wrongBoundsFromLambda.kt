@@ -16,7 +16,7 @@ fun myTest() {
         <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'if' expression cannot be inferred:
 should be conformed to: Number
 should be a supertype of: String (for parameter 'thenBranch')
-">if (true) someExpr else 2</error>
+">if</error> (true) someExpr else 2
     }
 }
 
@@ -68,6 +68,6 @@ should be a supertype of: String
         <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'if' expression cannot be inferred:
 should be conformed to: Number
 should be a supertype of: String (for parameter 'thenBranch')
-">if (true) "" else 123</error>
+">if</error> (true) "" else 123
     }</error>
 }

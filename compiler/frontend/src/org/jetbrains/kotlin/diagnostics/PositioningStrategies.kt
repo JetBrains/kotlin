@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.utils.sure
 
 object PositioningStrategies {
@@ -355,7 +356,12 @@ object PositioningStrategies {
                     is KtWhenExpression -> markElement(element.whenKeyword)
                     is KtIfExpression -> markElement(element.ifKeyword)
                     is KtOperationExpression -> markElement(element.operationReference)
-                    else -> error("Expression is not an if, when or operation expression: ${element.getElementTextWithContext()}")
+                    else -> {
+                        if (!USE_NEW_INFERENCE) {
+                            error("Expression is not an if, when or operation expression: ${element.getElementTextWithContext()}")
+                        }
+                        markElement(element)
+                    }
                 }
     }
 

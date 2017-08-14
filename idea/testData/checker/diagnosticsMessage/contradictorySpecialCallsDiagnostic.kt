@@ -5,16 +5,16 @@ fun testIf(i: Int) {
         <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'if' expression cannot be inferred:
 should be conformed to: Number
 should be a supertype of: String (for parameter 'thenBranch')
-">if (true) "" else i</error>
+">if</error> (true) "" else i
     }
 }
 
 fun testElvis(i: Int, s: String?) {
     foo(i) {
-        <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'elvis' expression cannot be inferred:
+        s <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'elvis' expression cannot be inferred:
 should be conformed to: Number
 should be a supertype of: String (for parameter 'left')
-">s ?: i</error>
+">?:</error> i
     }
 }
 
@@ -23,10 +23,10 @@ fun testWhen(i: Int, s: String?) {
         <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'when' expression cannot be inferred:
 should be conformed to: Number
 should be a supertype of: String? (for parameter 'entry0')
-">when (true) {
+">when</error> (true) {
         true -> s
         else -> i
-    }</error>
+    }
 }
 }
 
