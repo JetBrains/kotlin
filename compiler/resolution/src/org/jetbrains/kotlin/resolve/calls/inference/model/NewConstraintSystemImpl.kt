@@ -75,7 +75,7 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         return this
     }
 
-    override fun asConstraintSystemCompleterContext() = apply { checkState(State.BUILDING) }
+    override fun asConstraintSystemCompleterContext() = apply { checkState(State.BUILDING, State.COMPLETION) }
 
     override fun asPostponedArgumentsAnalyzerContext() = apply { checkState(State.BUILDING) }
 
