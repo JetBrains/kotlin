@@ -17,11 +17,11 @@ L0:
     w(b|<v1>)                                  INIT: in: {a=ID, b=D} out: {a=ID, b=ID}     USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
     r(42) -> <v2>                              INIT: in: {a=ID, b=ID} out: {a=ID, b=ID}
 L1:
-  1 <END>                                      INIT: in: {} out: {}
+  1 <END>                                      INIT: in: {} out: {}                        USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                                 USE: in: {} out: {}
+    <SINK>                                     INIT: in: {} out: {}                        USE: in: {} out: {}
 =====================
 == bar ==
 fun bar(foo: Foo) {
@@ -44,11 +44,11 @@ L0:
     w(foo.c|<v3>, <v4>)                                                              USE: in: {} out: {c=ONLY_WRITTEN_NEVER_READ}
     r(42) -> <v5>
 L1:
-  1 <END>
+  1 <END>                                                                            USE: in: {} out: {}
 error:
-    <ERROR>                                      INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                       INIT: in: {foo=I?} out: {foo=I?}    USE: in: {} out: {}
+    <SINK>                                       INIT: in: {foo=ID} out: {foo=ID}    USE: in: {} out: {}
 =====================
 == Foo ==
 interface Foo {
@@ -59,9 +59,9 @@ L0:
   1 <START>          INIT: in: {} out: {}
     v(var c: Int)    INIT: in: {} out: {c=D}
 L1:
-    <END>            INIT: in: {c=D} out: {c=D}
+    <END>            INIT: in: {c=D} out: {c=D}    USE: in: {} out: {}
 error:
-    <ERROR>          INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>           INIT: in: {c=-} out: {c=-}    USE: in: {} out: {}
+    <SINK>           INIT: in: {c=D} out: {c=D}    USE: in: {} out: {}
 =====================

@@ -28,7 +28,7 @@ L3 ['if' expression result]:
 L1:
   1 <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+-   <ERROR>                                    PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<END>]
 =====================

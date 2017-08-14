@@ -8,9 +8,9 @@ L0:
 L1:
   1 <END>          NEXT:[<SINK>]
 error:
-    <ERROR>        PREV:[]
+-   <ERROR>        PREV:[]
 sink:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<END>]
 =====================
 == bar ==
 fun bar(): Nothing = throw Exception()
@@ -22,11 +22,11 @@ L0:
     call(Exception(), <init>) -> <v0>
     throw (throw Exception()|<v0>)       NEXT:[<ERROR>]
 L1:
-    <END>                                NEXT:[<SINK>]                               PREV:[]
+-   <END>                                NEXT:[<SINK>]                               PREV:[]
 error:
     <ERROR>                              PREV:[throw (throw Exception()|<v0>)]
 sink:
-    <SINK>                               PREV:[<ERROR>, <END>]
+    <SINK>
 =====================
 == foo ==
 fun foo() {
@@ -50,9 +50,9 @@ L0:
 -   mark(doSomething())                                   PREV:[]
 -   call(doSomething(), doSomething|!<v3>) -> <v4>        PREV:[]
 L1:
-  1 <END>                                                 NEXT:[<SINK>]                                                PREV:[]
+- 1 <END>                                                 NEXT:[<SINK>]                                                PREV:[]
 error:
     <ERROR>                                               PREV:[jmp(error)]
 sink:
-    <SINK>                                                PREV:[<ERROR>, <END>]
+    <SINK>
 =====================

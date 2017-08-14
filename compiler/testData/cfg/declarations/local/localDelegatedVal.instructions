@@ -8,9 +8,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == getValue ==
 operator fun getValue(t: Any?, p: KProperty<*>): Int = 1
@@ -28,9 +28,9 @@ L0:
 L1:
     <END>                                               NEXT:[<SINK>]
 error:
-    <ERROR>                                             PREV:[]
+-   <ERROR>                                             PREV:[]
 sink:
-    <SINK>                                              PREV:[<ERROR>, <END>]
+    <SINK>                                              PREV:[<END>]
 =====================
 == foo ==
 fun foo(): Int {
@@ -54,7 +54,7 @@ L0:
 L1:
   1 <END>                                                                 NEXT:[<SINK>]
 error:
-    <ERROR>                                                               PREV:[]
+-   <ERROR>                                                               PREV:[]
 sink:
-    <SINK>                                                                PREV:[<ERROR>, <END>]
+    <SINK>                                                                PREV:[<END>]
 =====================

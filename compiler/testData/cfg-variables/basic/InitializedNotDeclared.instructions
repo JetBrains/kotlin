@@ -14,9 +14,9 @@ L0:
     w(x|<v0>, <v1>)                        INIT: in: {} out: {x=I}         USE: in: {} out: {x=ONLY_WRITTEN_NEVER_READ}
   1 v(val x: Int)                          INIT: in: {x=I} out: {x=ID}
 L1:
-    <END>                                  INIT: in: {x=ID} out: {x=ID}
+    <END>                                  INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
 error:
-    <ERROR>                                INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                 INIT: in: {x=I?} out: {x=I?}    USE: in: {} out: {}
+    <SINK>                                 INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
 =====================

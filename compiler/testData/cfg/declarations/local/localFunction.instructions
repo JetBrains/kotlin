@@ -20,9 +20,9 @@ L2 [after local declaration]:
 L1:
   1 <END>                                                 NEXT:[<SINK>]
 error:
-    <ERROR>                                               PREV:[]
+-   <ERROR>                                               PREV:[]
 sink:
-    <SINK>                                                PREV:[<ERROR>, <END>, d(fun local() = 1)]
+    <SINK>                                                PREV:[<END>, d(fun local() = 1)]
 =====================
 == local ==
 fun local() = 1
@@ -34,7 +34,7 @@ L3:
 L4:
     <END>             NEXT:[<SINK>]
 error:
-    <ERROR>           PREV:[]
+-   <ERROR>           PREV:[]
 sink:
-    <SINK>            PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<END>]
 =====================

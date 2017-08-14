@@ -8,9 +8,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == getArray ==
 abstract fun getArray() : Array<Int>
@@ -20,9 +20,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == test ==
 fun test(ab: Ab) {
@@ -46,7 +46,7 @@ L0:
 L1:
   1 <END>                                             NEXT:[<SINK>]
 error:
-    <ERROR>                                           PREV:[]
+-   <ERROR>                                           PREV:[]
 sink:
-    <SINK>                                            PREV:[<ERROR>, <END>]
+    <SINK>                                            PREV:[<END>]
 =====================

@@ -14,9 +14,9 @@ L0:
 L1:
     <END>                                           NEXT:[<SINK>]
 error:
-    <ERROR>                                         PREV:[]
+-   <ERROR>                                         PREV:[]
 sink:
-    <SINK>                                          PREV:[<ERROR>, <END>]
+    <SINK>                                          PREV:[<END>]
 =====================
 == bar ==
 fun bar(): Int = 1
@@ -28,9 +28,9 @@ L0:
 L1:
     <END>             NEXT:[<SINK>]
 error:
-    <ERROR>           PREV:[]
+-   <ERROR>           PREV:[]
 sink:
-    <SINK>            PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<END>]
 =====================
 == foo ==
 fun foo(n: Int): Int {
@@ -171,9 +171,9 @@ L29 [copy of L8, body exit point]:
 L1:
   1 <END>                                                                                                                 NEXT:[<SINK>]                                                                                                    PREV:[ret(*|<v12>) L1, ret(*|<v12>) L1, ret(*|<v12>) L1, ret(*|<v12>) L1]
 error:
-    <ERROR>                                                                                                               PREV:[]
+-   <ERROR>                                                                                                               PREV:[]
 sink:
-    <SINK>                                                                                                                PREV:[<ERROR>, <END>, d({ return it })]
+    <SINK>                                                                                                                PREV:[<END>, d({ return it })]
 =====================
 == anonymous_0 ==
 { return it }
@@ -213,9 +213,9 @@ L18 [copy of L8, body exit point]:
 - 5 ret(*|<v0>) L1                                      NEXT:[<END>]                                               PREV:[]
 - 4 ret(*|!<v1>) L14                                    PREV:[]
 L14:
-    <END>                                               NEXT:[<SINK>]                                              PREV:[]
+-   <END>                                               NEXT:[<SINK>]                                              PREV:[]
 error:
-    <ERROR>                                             PREV:[]
+-   <ERROR>                                             PREV:[]
 sink:
-    <SINK>                                              PREV:[<ERROR>, <END>]
+-   <SINK>                                              PREV:[]
 =====================

@@ -9,9 +9,9 @@ L0:
 L1:
     <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+-   <ERROR>                                    PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<END>]
 =====================
 == A ==
 class A : B {
@@ -52,9 +52,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == A ==
 constructor(): super(11) {
@@ -93,9 +93,9 @@ L0:
 L1:
   1 <END>                                   NEXT:[<SINK>]
 error:
-    <ERROR>                                 PREV:[]
+-   <ERROR>                                 PREV:[]
 sink:
-    <SINK>                                  PREV:[<ERROR>, <END>]
+    <SINK>                                  PREV:[<END>]
 =====================
 == A ==
 constructor(a: Int, b: Int = 3): super(b) {
@@ -145,9 +145,9 @@ L2 [after default value for parameter b]:
 L1:
   1 <END>                                          NEXT:[<SINK>]
 error:
-    <ERROR>                                        PREV:[]
+-   <ERROR>                                        PREV:[]
 sink:
-    <SINK>                                         PREV:[<ERROR>, <END>]
+    <SINK>                                         PREV:[<END>]
 =====================
 == A ==
 constructor(a: String, b: Int = 4): this() {
@@ -175,9 +175,9 @@ L2 [after default value for parameter b]:
 L1:
   1 <END>                                          NEXT:[<SINK>]
 error:
-    <ERROR>                                        PREV:[]
+-   <ERROR>                                        PREV:[]
 sink:
-    <SINK>                                         PREV:[<ERROR>, <END>]
+    <SINK>                                         PREV:[<END>]
 =====================
 == A ==
 constructor(a: Double, b: Int = 6): this(a.toInt()) {
@@ -209,7 +209,7 @@ L2 [after default value for parameter b]:
 L1:
   1 <END>                                          NEXT:[<SINK>]
 error:
-    <ERROR>                                        PREV:[]
+-   <ERROR>                                        PREV:[]
 sink:
-    <SINK>                                         PREV:[<ERROR>, <END>]
+    <SINK>                                         PREV:[<END>]
 =====================

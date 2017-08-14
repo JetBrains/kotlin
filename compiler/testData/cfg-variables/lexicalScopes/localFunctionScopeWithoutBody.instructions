@@ -15,16 +15,16 @@ L0:
     r(1) -> <v1>                                                      INIT: in: {b=D} out: {b=D}
     w(b|<v1>)                                                         INIT: in: {b=D} out: {b=ID}
     jmp?(L2)                                                          INIT: in: {b=ID} out: {b=ID}
-    d(fun local(x: Int) = x + b)                                      INIT: in: {b=I} out: {b=I}      USE: in: {b=READ} out: {b=READ}
+    d(fun local(x: Int) = x + b)                                                                      USE: in: {b=READ} out: {b=READ}
 L2 [after local declaration]:
-    mark("after")                                                     INIT: in: {b=ID} out: {b=ID}
+    mark("after")
     r("after") -> <v2>
 L1:
-  1 <END>                                                             INIT: in: {} out: {}
+  1 <END>                                                             INIT: in: {} out: {}            USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                                            USE: in: {} out: {}
+    <SINK>                                                            INIT: in: {} out: {}            USE: in: {} out: {}
 =====================
 == local ==
 fun local(x: Int) = x + b
@@ -40,9 +40,9 @@ L3:
     call(x + b, plus|<v1>, <v2>) -> <v3>
     ret(*|<v3>) L4
 L4:
-    <END>
+    <END>                                                                                  USE: in: {} out: {}
 error:
-    <ERROR>                                    INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                     INIT: in: {b=I, x=I?} out: {b=I, x=I?}      USE: in: {} out: {}
+    <SINK>                                     INIT: in: {b=ID, x=ID} out: {b=ID, x=ID}    USE: in: {} out: {}
 =====================

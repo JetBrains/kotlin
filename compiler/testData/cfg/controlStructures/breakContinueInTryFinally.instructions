@@ -64,9 +64,9 @@ L5 [body exit point]:
 L1:
   1 <END>                                                                                                       NEXT:[<SINK>]
 error:
-    <ERROR>                                                                                                     PREV:[]
+-   <ERROR>                                                                                                     PREV:[]
 sink:
-    <SINK>                                                                                                      PREV:[<ERROR>, <END>]
+    <SINK>                                                                                                      PREV:[<END>]
 =====================
 == bar ==
 fun bar(): String {
@@ -135,9 +135,9 @@ L5 [body exit point]:
 L1:
   1 <END>                                                                                               NEXT:[<SINK>]                                                                                              PREV:[ret(*|<v4>) L1, ret(*|<v4>) L1]
 error:
-    <ERROR>                                                                                             PREV:[]
+-   <ERROR>                                                                                             PREV:[]
 sink:
-    <SINK>                                                                                              PREV:[<ERROR>, <END>]
+    <SINK>                                                                                              PREV:[<END>]
 =====================
 == baz ==
 fun baz(): String {
@@ -203,7 +203,7 @@ L5 [body exit point]:
 L1:
   1 <END>                                                                                                     NEXT:[<SINK>]                                                                                                    PREV:[ret(*|<v6>) L1]
 error:
-    <ERROR>                                                                                                   PREV:[]
+-   <ERROR>                                                                                                   PREV:[]
 sink:
-    <SINK>                                                                                                    PREV:[<ERROR>, <END>]
+    <SINK>                                                                                                    PREV:[<END>]
 =====================

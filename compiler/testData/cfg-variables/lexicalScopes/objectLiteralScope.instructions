@@ -24,18 +24,18 @@ L0:
     r(1) -> <v1>                                                                                  INIT: in: {bar=D, x=D} out: {bar=D, x=D}
     w(x|<v1>)                                                                                     INIT: in: {bar=D, x=D} out: {bar=D, x=ID}
   2 jmp?(L2)                                                                                      INIT: in: {bar=D} out: {bar=D}
-    d(fun foo() { val a = 2 })                                                                    INIT: in: {bar=I?} out: {bar=I?}
+    d(fun foo() { val a = 2 })
 L2 [after local declaration]:
-    r(object { init { val x = 1 } fun foo() { val a = 2 } }) -> <v2>                              INIT: in: {bar=D} out: {bar=D}
+    r(object { init { val x = 1 } fun foo() { val a = 2 } }) -> <v2>
     w(bar|<v2>)                                                                                   INIT: in: {bar=D} out: {bar=ID}
     mark("after")                                                                                 INIT: in: {bar=ID} out: {bar=ID}
     r("after") -> <v3>
 L1:
-  1 <END>                                                                                         INIT: in: {} out: {}
+  1 <END>                                                                                         INIT: in: {} out: {}                         USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                                                                                     USE: in: {} out: {}
+    <SINK>                                                                                        INIT: in: {} out: {}                         USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {
@@ -49,9 +49,9 @@ L3:
     r(2) -> <v0>           INIT: in: {a=D, bar=D} out: {a=D, bar=D}
     w(a|<v0>)              INIT: in: {a=D, bar=D} out: {a=ID, bar=D}
 L4:
-  3 <END>                  INIT: in: {bar=D} out: {bar=D}
+  3 <END>                  INIT: in: {bar=D} out: {bar=D}               USE: in: {} out: {}
 error:
-    <ERROR>                INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                 INIT: in: {bar=I?} out: {bar=I?}             USE: in: {} out: {}
+    <SINK>                 INIT: in: {bar=D} out: {bar=D}               USE: in: {} out: {}
 =====================

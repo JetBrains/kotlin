@@ -35,9 +35,9 @@ L6 [condition entry point]:
 L3 [loop exit point]:
     read (Unit)
 L1:
-  1 <END>
+  1 <END>                                                                                                                               USE: in: {} out: {}
 error:
-    <ERROR>                                                                 INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                                                  INIT: in: {cond1=I?} out: {cond1=I?}                        USE: in: {} out: {}
+    <SINK>                                                                  INIT: in: {cond1=ID} out: {cond1=ID}                        USE: in: {} out: {}
 =====================

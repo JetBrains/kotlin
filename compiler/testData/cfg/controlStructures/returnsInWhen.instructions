@@ -27,7 +27,7 @@ L4 [next 'when' entry]:
 L1:
   1 <END>                                                  NEXT:[<SINK>]                                                               PREV:[ret(*|<v3>) L1, merge(when(a) { is Int -> return a }|!<v4>) -> <v5>]
 error:
-    <ERROR>                                                PREV:[]
+-   <ERROR>                                                PREV:[]
 sink:
-    <SINK>                                                 PREV:[<ERROR>, <END>]
+    <SINK>                                                 PREV:[<END>]
 =====================

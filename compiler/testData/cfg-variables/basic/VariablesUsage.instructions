@@ -21,11 +21,11 @@ L0:
     mark(use(a))
     call(use(a), use|<v4>) -> <v5>
 L1:
-  1 <END>                                      INIT: in: {} out: {}
+  1 <END>                                      INIT: in: {} out: {}            USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                     USE: in: {} out: {}
+    <SINK>                                     INIT: in: {} out: {}            USE: in: {} out: {}
 =====================
 == bar ==
 fun bar() {
@@ -40,11 +40,11 @@ L0:
     r(3) -> <v0>                  INIT: in: {b=D} out: {b=D}     USE: in: {b=ONLY_WRITTEN_NEVER_READ} out: {b=ONLY_WRITTEN_NEVER_READ}
     w(b|<v0>)                     INIT: in: {b=D} out: {b=ID}    USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
 L1:
-  1 <END>                         INIT: in: {} out: {}
+  1 <END>                         INIT: in: {} out: {}           USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                       USE: in: {} out: {}
+    <SINK>                        INIT: in: {} out: {}           USE: in: {} out: {}
 =====================
 == use ==
 fun use(a: Int) = a
@@ -57,9 +57,9 @@ L0:
     r(a) -> <v1>                               INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
     ret(*|<v1>) L1
 L1:
-    <END>
+    <END>                                                                      USE: in: {} out: {}
 error:
-    <ERROR>                                    INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                     INIT: in: {a=I?} out: {a=I?}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
 =====================

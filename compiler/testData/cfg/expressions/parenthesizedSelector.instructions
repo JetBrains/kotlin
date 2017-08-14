@@ -20,9 +20,9 @@ L0:
 L1:
   1 <END>                                                NEXT:[<SINK>]
 error:
-    <ERROR>                                              PREV:[]
+-   <ERROR>                                              PREV:[]
 sink:
-    <SINK>                                               PREV:[<ERROR>, <END>]
+    <SINK>                                               PREV:[<END>]
 =====================
 == foo ==
 val Int.foo: String.() -> Unit get() = {}
@@ -33,9 +33,9 @@ L0:
 L1:
     <END>                                           NEXT:[<SINK>]
 error:
-    <ERROR>                                         PREV:[]
+-   <ERROR>                                         PREV:[]
 sink:
-    <SINK>                                          PREV:[<ERROR>, <END>]
+    <SINK>                                          PREV:[<END>]
 =====================
 == bar ==
 fun bar() {
@@ -58,9 +58,9 @@ L2 [after local declaration]:
 L1:
   1 <END>                                                    NEXT:[<SINK>]
 error:
-    <ERROR>                                                  PREV:[]
+-   <ERROR>                                                  PREV:[]
 sink:
-    <SINK>                                                   PREV:[<ERROR>, <END>, d({ "".(foo)() })]
+    <SINK>                                                   PREV:[<END>, d({ "".(foo)() })]
 =====================
 == anonymous_0 ==
 {
@@ -81,7 +81,7 @@ L3:
 L4:
   3 <END>                                       NEXT:[<SINK>]
 error:
-    <ERROR>                                     PREV:[]
+-   <ERROR>                                     PREV:[]
 sink:
-    <SINK>                                      PREV:[<ERROR>, <END>]
+    <SINK>                                      PREV:[<END>]
 =====================

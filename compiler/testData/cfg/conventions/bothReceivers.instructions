@@ -7,9 +7,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == Foo ==
 class Foo() {
@@ -21,9 +21,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == invoke ==
 fun Bar.invoke() {}
@@ -35,9 +35,9 @@ L0:
 L1:
   1 <END>          NEXT:[<SINK>]
 error:
-    <ERROR>        PREV:[]
+-   <ERROR>        PREV:[]
 sink:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<END>]
 =====================
 == foobar ==
 fun Foo.foobar(bar: Bar) {
@@ -57,7 +57,7 @@ L0:
 L1:
   1 <END>                                        NEXT:[<SINK>]
 error:
-    <ERROR>                                      PREV:[]
+-   <ERROR>                                      PREV:[]
 sink:
-    <SINK>                                       PREV:[<ERROR>, <END>]
+    <SINK>                                       PREV:[<END>]
 =====================

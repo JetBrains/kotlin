@@ -161,9 +161,9 @@ L7 ['if' expression result]:
 L5:
   4 <END>                                           NEXT:[<SINK>]                                          PREV:[ret L5, merge(if (2 > 3) { return@l }|!<v3>) -> <v4>]
 error:
-    <ERROR>                                         PREV:[]
+-   <ERROR>                                         PREV:[]
 sink:
-    <SINK>                                          PREV:[<ERROR>, <END>]
+    <SINK>                                          PREV:[<END>]
 =====================
 == t4 ==
 fun t4() {
@@ -191,9 +191,9 @@ L2 [after local declaration]:
 L1:
   1 <END>                                                                 NEXT:[<SINK>]
 error:
-    <ERROR>                                                               PREV:[]
+-   <ERROR>                                                               PREV:[]
 sink:
-    <SINK>                                                                PREV:[<ERROR>, <END>, d({ -> try { 1 if (2 > 3) { return@l } } finally { 2 } })]
+    <SINK>                                                                PREV:[<END>, d({ -> try { 1 if (2 > 3) { return@l } } finally { 2 } })]
 =====================
 == anonymous_1 ==
 { ->
@@ -737,9 +737,9 @@ L5 [skipFinallyToErrorBlock]:
 L1:
   1 <END>                                                         NEXT:[<SINK>]                                             PREV:[ret(*|<v1>) L1, ret(*|<v1>) L1]
 error:
-    <ERROR>                                                       PREV:[]
+-   <ERROR>                                                       PREV:[]
 sink:
-    <SINK>                                                        PREV:[<ERROR>, <END>]
+    <SINK>                                                        PREV:[<END>]
 =====================
 == t12 ==
 fun t12() : Int {
@@ -885,9 +885,9 @@ L3 [afterCatches]:
 L1:
   1 <END>                                                                                                 NEXT:[<SINK>]                                                                                                PREV:[ret(*|<v0>) L1, merge(try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }|!<v1>, <v4>) -> <v5>]
 error:
-    <ERROR>                                                                                               PREV:[]
+-   <ERROR>                                                                                               PREV:[]
 sink:
-    <SINK>                                                                                                PREV:[<ERROR>, <END>]
+    <SINK>                                                                                                PREV:[<END>]
 =====================
 == t15 ==
 fun t15() : Int {
@@ -1030,7 +1030,7 @@ L0:
 L1:
   1 <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+-   <ERROR>                                    PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<END>]
 =====================

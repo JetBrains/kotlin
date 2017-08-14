@@ -41,9 +41,9 @@ L5 [body exit point]:
 L1:
   1 <END>                                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                                PREV:[]
+-   <ERROR>                                                PREV:[]
 sink:
-    <SINK>                                                 PREV:[<ERROR>, <END>, d({ break })]
+    <SINK>                                                 PREV:[<END>, d({ break })]
 =====================
 == anonymous_0 ==
 {
@@ -57,7 +57,7 @@ L8:
 L9:
     <END>              NEXT:[<SINK>]
 error:
-    <ERROR>            PREV:[]
+-   <ERROR>            PREV:[]
 sink:
-    <SINK>             PREV:[<ERROR>, <END>]
+    <SINK>             PREV:[<END>]
 =====================

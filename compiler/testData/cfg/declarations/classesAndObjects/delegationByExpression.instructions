@@ -6,9 +6,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == A ==
 class A(a: Int, b: Int): T
@@ -24,9 +24,9 @@ L0:
 L1:
     <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+-   <ERROR>                                    PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<END>]
 =====================
 == B ==
 class B(a: Int, b: Int): T by A(a + b, a - b)
@@ -53,7 +53,7 @@ L0:
 L1:
     <END>                                                       NEXT:[<SINK>]
 error:
-    <ERROR>                                                     PREV:[]
+-   <ERROR>                                                     PREV:[]
 sink:
-    <SINK>                                                      PREV:[<ERROR>, <END>]
+    <SINK>                                                      PREV:[<END>]
 =====================

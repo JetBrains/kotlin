@@ -11,11 +11,11 @@ L0:
     call(f(), invoke|<v1>) -> <v2>
     ret(*|<v2>) L1
 L1:
-    <END>
+    <END>                                                                             USE: in: {} out: {}
 error:
-    <ERROR>                                           INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                            INIT: in: {f=I?} out: {f=I?}    USE: in: {} out: {}
+    <SINK>                                            INIT: in: {f=ID} out: {f=ID}    USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {
@@ -24,22 +24,22 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                         INIT: in: {} out: {}            USE: in: {} out: {}
+  1 <START>                                         INIT: in: {} out: {}          USE: in: {} out: {}
   2 mark({ var v: Any bar { v.hashCode() } })
     v(var v: Any)                                   INIT: in: {} out: {v=D}
     mark({ v.hashCode() })                          INIT: in: {v=D} out: {v=D}
     jmp?(L2)
-    d({ v.hashCode() })                             INIT: in: {v=I?} out: {v=I?}    USE: in: {v=READ} out: {v=READ}
+    d({ v.hashCode() })                                                           USE: in: {v=READ} out: {v=READ}
 L2 [after local declaration]:
-    r({ v.hashCode() }) -> <v0>                     INIT: in: {v=D} out: {v=D}
+    r({ v.hashCode() }) -> <v0>
     mark(bar { v.hashCode() })
     call(bar { v.hashCode() }, bar|<v0>) -> <v1>
 L1:
-  1 <END>                                           INIT: in: {} out: {}
+  1 <END>                                           INIT: in: {} out: {}          USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                          USE: in: {} out: {}
+    <SINK>                                          INIT: in: {} out: {}          USE: in: {} out: {}
 =====================
 == anonymous_0 ==
 { v.hashCode() }
@@ -47,14 +47,14 @@ sink:
 L3:
   3 <START>                                    INIT: in: {v=D} out: {v=D}
   4 mark(v.hashCode())
-    mark(v.hashCode())                                                         USE: in: {v=READ} out: {v=READ}
-    r(v) -> <v0>                                                               USE: in: {} out: {v=READ}
+    mark(v.hashCode())                                                       USE: in: {v=READ} out: {v=READ}
+    r(v) -> <v0>                                                             USE: in: {} out: {v=READ}
     mark(hashCode())
     call(hashCode(), hashCode|<v0>) -> <v1>
 L4:
-  3 <END>
+  3 <END>                                                                    USE: in: {} out: {}
 error:
-    <ERROR>                                    INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                     INIT: in: {v=I?} out: {v=I?}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {v=D} out: {v=D}    USE: in: {} out: {}
 =====================

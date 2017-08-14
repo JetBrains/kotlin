@@ -8,9 +8,9 @@ L0:
 L1:
     <END>             NEXT:[<SINK>]
 error:
-    <ERROR>           PREV:[]
+-   <ERROR>           PREV:[]
 sink:
-    <SINK>            PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<END>]
 =====================
 == foo ==
 fun foo(): Any = ::bar
@@ -23,7 +23,7 @@ L0:
 L1:
     <END>                                               NEXT:[<SINK>]
 error:
-    <ERROR>                                             PREV:[]
+-   <ERROR>                                             PREV:[]
 sink:
-    <SINK>                                              PREV:[<ERROR>, <END>]
+    <SINK>                                              PREV:[<END>]
 =====================

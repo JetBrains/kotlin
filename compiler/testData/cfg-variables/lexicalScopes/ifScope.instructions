@@ -33,9 +33,9 @@ L3 ['if' expression result]:
     mark("after")
     r("after") -> <v7>
 L1:
-  1 <END>
+  1 <END>                                                                                                    USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                                                   USE: in: {} out: {}
+    <SINK>                                                                    INIT: in: {} out: {}           USE: in: {} out: {}
 =====================

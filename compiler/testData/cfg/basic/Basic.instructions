@@ -68,9 +68,9 @@ L6 [result of boolean operation]:
 L1:
   1 <END>                                                                                                           NEXT:[<SINK>]
 error:
-    <ERROR>                                                                                                         PREV:[]
+-   <ERROR>                                                                                                         PREV:[]
 sink:
-    <SINK>                                                                                                          PREV:[<ERROR>, <END>, d({1})]
+    <SINK>                                                                                                          PREV:[<END>, d({1})]
 =====================
 == anonymous_0 ==
 {1}
@@ -83,9 +83,9 @@ L3:
 L4:
     <END>             NEXT:[<SINK>]
 error:
-    <ERROR>           PREV:[]
+-   <ERROR>           PREV:[]
 sink:
-    <SINK>            PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<END>]
 =====================
 == foo ==
 fun foo(a : Boolean, b : Int) : Unit {}
@@ -103,9 +103,9 @@ L0:
 L1:
   1 <END>                                           NEXT:[<SINK>]
 error:
-    <ERROR>                                         PREV:[]
+-   <ERROR>                                         PREV:[]
 sink:
-    <SINK>                                          PREV:[<ERROR>, <END>]
+    <SINK>                                          PREV:[<END>]
 =====================
 == genfun ==
 fun <T> genfun() : Unit {}
@@ -117,9 +117,9 @@ L0:
 L1:
   1 <END>          NEXT:[<SINK>]
 error:
-    <ERROR>        PREV:[]
+-   <ERROR>        PREV:[]
 sink:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<END>]
 =====================
 == flfun ==
 fun flfun(f : () -> Any) : Unit {}
@@ -134,7 +134,7 @@ L0:
 L1:
   1 <END>                                             NEXT:[<SINK>]
 error:
-    <ERROR>                                           PREV:[]
+-   <ERROR>                                           PREV:[]
 sink:
-    <SINK>                                            PREV:[<ERROR>, <END>]
+    <SINK>                                            PREV:[<END>]
 =====================

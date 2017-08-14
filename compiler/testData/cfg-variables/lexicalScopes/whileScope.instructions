@@ -27,9 +27,9 @@ L5 [body exit point]:
 -   mark("after")
 -   r("after") -> <v3>
 L1:
-  1 <END>                                                     INIT: in: {} out: {}
+- 1 <END>
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                               USE: in: {} out: {}
+-   <SINK>                                                                               USE: in: {} out: {}
 =====================

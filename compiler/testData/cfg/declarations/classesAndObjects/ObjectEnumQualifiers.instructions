@@ -11,9 +11,9 @@ L0:
 L1:
     <END>           NEXT:[<SINK>]
 error:
-    <ERROR>         PREV:[]
+-   <ERROR>         PREV:[]
 sink:
-    <SINK>          PREV:[<ERROR>, <END>]
+    <SINK>          PREV:[<END>]
 =====================
 == E ==
 enum class E(val x: Int) {
@@ -34,9 +34,9 @@ L0:
 L1:
     <END>                                          NEXT:[<SINK>]
 error:
-    <ERROR>                                        PREV:[]
+-   <ERROR>                                        PREV:[]
 sink:
-    <SINK>                                         PREV:[<ERROR>, <END>]
+    <SINK>                                         PREV:[<END>]
 =====================
 == C ==
 class C {
@@ -50,9 +50,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == foo ==
 fun foo() = E1.x + O.y + C.z
@@ -79,7 +79,7 @@ L0:
 L1:
     <END>                                              NEXT:[<SINK>]
 error:
-    <ERROR>                                            PREV:[]
+-   <ERROR>                                            PREV:[]
 sink:
-    <SINK>                                             PREV:[<ERROR>, <END>]
+    <SINK>                                             PREV:[<END>]
 =====================

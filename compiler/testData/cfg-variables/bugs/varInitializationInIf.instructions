@@ -34,9 +34,9 @@ L3 ['if' expression result]:
     mark(use(b))
     magic[UNRESOLVED_CALL](use(b)|<v8>, !<v9>) -> <v10>
 L1:
-  1 <END>                                                                         INIT: in: {} out: {}
+  1 <END>                                                                         INIT: in: {} out: {}            USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                                                        USE: in: {} out: {}
+    <SINK>                                                                        INIT: in: {} out: {}            USE: in: {} out: {}
 =====================
