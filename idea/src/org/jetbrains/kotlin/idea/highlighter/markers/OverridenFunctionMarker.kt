@@ -136,7 +136,7 @@ private class OverridingMethodsUpdater(
     override fun run(indicator: ProgressIndicator) {
         super.run(indicator)
         val processor = object : CommonProcessors.CollectProcessor<PsiMethod>() {
-            override fun process(psiMethod: PsiMethod?): Boolean {
+            override fun process(psiMethod: PsiMethod): Boolean {
                 if (!updateComponent(psiMethod, myRenderer.comparator)) {
                     indicator.cancel()
                 }

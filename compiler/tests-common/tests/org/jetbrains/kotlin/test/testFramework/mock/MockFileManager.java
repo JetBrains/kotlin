@@ -30,14 +30,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 public class MockFileManager implements FileManager {
   private final PsiManagerEx myManager;
   // in mock tests it's LightVirtualFile, they're only alive when they're referenced,
   // and there can not be several instances representing the same file
-  private final FactoryMap<VirtualFile, FileViewProvider> myViewProviders = new ConcurrentWeakFactoryMap<VirtualFile, FileViewProvider>() {
+  private final ConcurrentMap<VirtualFile, FileViewProvider> myViewProviders = new ConcurrentWeakFactoryMap<VirtualFile, FileViewProvider>() {
     @Override
-    protected Map<VirtualFile, FileViewProvider> createMap() {
+    protected ConcurrentMap<VirtualFile, FileViewProvider> createMap() {
       return ContainerUtil.createConcurrentWeakKeyWeakValueMap();
     }
 
