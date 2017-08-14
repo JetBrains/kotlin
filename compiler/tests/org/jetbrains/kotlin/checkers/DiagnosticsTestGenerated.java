@@ -16597,6 +16597,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("delegationWithReceiver.kt")
+            public void testDelegationWithReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/delegationWithReceiver.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("DoubleDefine.kt")
             public void testDoubleDefine() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/DoubleDefine.kt");
