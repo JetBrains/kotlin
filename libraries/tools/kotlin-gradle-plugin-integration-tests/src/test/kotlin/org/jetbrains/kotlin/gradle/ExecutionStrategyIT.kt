@@ -3,11 +3,12 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
+import java.io.File
 
 class ExecutionStrategyJsIT : ExecutionStrategyIT() {
     override fun setupProject(project: Project) {
         project.setupWorkingDir()
-        val buildGradle = project.projectDir.getFileByName("build.gradle")
+        val buildGradle = File(project.projectDir, "app/build.gradle")
         buildGradle.modify { it.replace("apply plugin: \"kotlin\"", "apply plugin: \"kotlin2js\"") +
                 "\ncompileKotlin2Js.kotlinOptions.outputFile = \"web/js/out.js\"" }
     }
