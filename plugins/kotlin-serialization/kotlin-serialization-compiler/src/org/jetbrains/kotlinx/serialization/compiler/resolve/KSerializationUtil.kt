@@ -58,12 +58,12 @@ internal val javaSerializableFqName = javaIOPackageFqName.child(javaSerializable
 fun isJavaSerializable(type: KotlinType?): Boolean =
         type != null && KotlinBuiltIns.isConstructedFromGivenClass(type, javaSerializableFqName)
 
-fun ClassDescriptor.getJavaSerializableDescriptor(): ClassDescriptor =
-        module.findClassAcrossModuleDependencies(ClassId(javaIOPackageFqName, javaSerializableName))!!
+fun ClassDescriptor.getJavaSerializableDescriptor(): ClassDescriptor? =
+        module.findClassAcrossModuleDependencies(ClassId(javaIOPackageFqName, javaSerializableName))
 
-fun ClassDescriptor.getJavaSerializableType(): SimpleType {
-    return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, getJavaSerializableDescriptor(), emptyList())
-}
+// null on JS frontend
+fun ClassDescriptor.getJavaSerializableType(): SimpleType? =
+        getJavaSerializableDescriptor()?.let { KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, it, emptyList()) }
 
 // ---- kotlin.serialization.Serializable(with=xxx)
 

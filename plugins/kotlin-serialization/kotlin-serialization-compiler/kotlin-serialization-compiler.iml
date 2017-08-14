@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="frontend.java" scope="PROVIDED" />
     <orderEntry type="module" module-name="util" scope="PROVIDED" />
     <orderEntry type="module" module-name="backend" scope="PROVIDED" />
+    <orderEntry type="module" module-name="js.translator" scope="PROVIDED" />
   </component>
 </module>

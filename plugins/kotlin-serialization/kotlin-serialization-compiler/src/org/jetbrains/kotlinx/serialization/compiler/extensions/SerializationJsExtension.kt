@@ -16,17 +16,20 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
-import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator
 import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
-import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
+import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializerJsTranslator
 
-class SerializationComponentRegistrar : ComponentRegistrar {
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        ExpressionCodegenExtension.registerExtension(project, SerializationCodegenExtension())
-        SyntheticResolveExtension.registerExtension(project, SerializationResolveExtension())
-        JsSyntheticTranslateExtension.registerExtension(project, SerializationJsExtension())
+/**
+ *  @author Leonid Startsev
+ *          sandwwraith@gmail.com
+ */
+
+class SerializationJsExtension: JsSyntheticTranslateExtension {
+    override fun generateClassSyntheticParts(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: ClassTranslator, context: TranslationContext) {
+        SerializerJsTranslator.translate(declaration, descriptor, translator, context)
     }
 }
