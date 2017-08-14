@@ -36,14 +36,14 @@ class ConstantEvaluator(private val containingClass: JavaClass,
             }
             is JCTree.JCIdent,
             is JCTree.JCFieldAccess -> javac.resolveField(expr, compilationUnit, containingClass)?.initializerValue
-            is JCTree.JCBinary -> binaryInitializerValue(expr)
+            is JCTree.JCBinary -> evaluateBinaryExpression(expr)
             is JCTree.JCParens -> getValue(expr.expr)
-            is JCTree.JCUnary -> unaryInitializerValue(expr)
+            is JCTree.JCUnary -> evaluateUnaryExpression(expr)
             else -> null
         }
     }
 
-    private fun unaryInitializerValue(value: JCTree.JCUnary): Any? {
+    private fun evaluateUnaryExpression(value: JCTree.JCUnary): Any? {
         val argValue = getValue(value.arg)
         return when (value.tag) {
             JCTree.Tag.COMPL -> {
@@ -60,7 +60,7 @@ class ConstantEvaluator(private val containingClass: JavaClass,
         }
     }
 
-    private fun binaryInitializerValue(value: JCTree.JCBinary): Any? {
+    private fun evaluateBinaryExpression(value: JCTree.JCBinary): Any? {
         val lhsValue = getValue(value.lhs) ?: return null
         val rhsValue = getValue(value.rhs) ?: return null
 

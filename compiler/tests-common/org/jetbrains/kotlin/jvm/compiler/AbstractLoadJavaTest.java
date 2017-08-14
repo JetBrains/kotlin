@@ -256,8 +256,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
                 srcFiles, compiledDir, ConfigurationKind.ALL
         );
-
-        checkJavaPackage(getTxtFile(javaFileName), javaPackageAndContext.first, javaPackageAndContext.second, configuration);
+        checkJavaPackage(getExpectedFile(javaFileName.replaceFirst("\\.java$", ".txt")), javaPackageAndContext.first, javaPackageAndContext.second, configuration);
     }
 
     @NotNull
@@ -300,10 +299,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         }
     }
 
-    private static File getTxtFile(String javaFileName) {
+    private File getTxtFile(String javaFileName) {
         try {
             String fileText = FileUtil.loadFile(new File(javaFileName));
-            if (InTextDirectivesUtils.isDirectiveDefined(fileText, "// JAVAC_EXPECTED_FILE")) {
+            if (useJavacWrapper() && InTextDirectivesUtils.isDirectiveDefined(fileText, "// JAVAC_EXPECTED_FILE")) {
                 return new File(javaFileName.replaceFirst("\\.java$", ".javac.txt"));
             }
             else return new File(javaFileName.replaceFirst("\\.java$", ".txt"));
@@ -313,10 +312,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         }
     }
 
-    private static File getTxtFileFromKtFile(String ktFileName) {
+    private File getTxtFileFromKtFile(String ktFileName) {
         try {
             String fileText = FileUtil.loadFile(new File(ktFileName));
-            if (InTextDirectivesUtils.isDirectiveDefined(fileText, "// JAVAC_EXPECTED_FILE")) {
+            if (useJavacWrapper() && InTextDirectivesUtils.isDirectiveDefined(fileText, "// JAVAC_EXPECTED_FILE")) {
                 return new File(ktFileName.replaceFirst("\\.kt$", ".javac.txt"));
             }
             else return new File(ktFileName.replaceFirst("\\.kt$", ".txt"));

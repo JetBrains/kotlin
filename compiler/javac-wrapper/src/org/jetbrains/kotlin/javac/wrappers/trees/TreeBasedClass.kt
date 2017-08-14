@@ -77,7 +77,7 @@ class TreeBasedClass(
             by lazy {
                 arrayListOf<JavaClassifierType>().also { list ->
                     if (isEnum) {
-                        EnumSupertype(this, javac).let { list.add(it) }
+                        list.add(EnumSupertype(this, javac))
                     }
                     else if (isAnnotationType) {
                         javac.JAVA_LANG_ANNOTATION_ANNOTATION?.let { list.add(it) }

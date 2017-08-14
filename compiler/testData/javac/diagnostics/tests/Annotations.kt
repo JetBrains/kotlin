@@ -15,6 +15,25 @@ public class x {
 
     @ann3((1 + 1))
     public String method2() { return null; }
+
+    @def
+    public String method3() { return null; }
+
+    @def(1)
+    public String method4() { return null; }
+
+    @def(firstDefault = "f", 5)
+    public String method5() { return null; }
+
+    @def(secondDefault = "s", 14)
+    public String method6() { return null; }
+
+    @def(firstDefault = "f", secondDefault = "s", 17)
+    public String method7() { return null; }
+
+    @def("1", "2", 3)
+    public String method8() { return null; }
+
 }
 
 // FILE: a/ann1.java
@@ -49,4 +68,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @interface ann3 {
     public int value();
+}
+
+// FILE: a/def.java
+package a;
+
+public @interface def {
+    String firstDefault() default "firstDefault";
+    String secondDefault() default "secondDefault";
+    int notDefault();
 }

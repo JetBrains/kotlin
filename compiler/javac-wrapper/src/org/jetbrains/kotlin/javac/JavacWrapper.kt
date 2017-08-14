@@ -150,10 +150,10 @@ class JavacWrapper(
                 it.sourceFile.isNameCompatible("package-info", JavaFileObject.Kind.SOURCE) &&
                 it.packageName != null
             }.associateBy({ FqName(it.packageName!!.toString()) }) { compilationUnit ->
-        compilationUnit.packageAnnotations/*.map { TreeBasedAnnotation(it, compilationUnit, this) }*/
+        compilationUnit.packageAnnotations
     }
 
-    val classifierResolver = ClassifierResolver(this)
+    private val classifierResolver = ClassifierResolver(this)
     private val identifierResolver = IdentifierResolver(this)
     private val kotlinClassifiersCache by lazy { KotlinClassifiersCache(if (javaFiles.isNotEmpty()) kotlinFiles else emptyList(), this) }
     private val symbolBasedPackagesCache = hashMapOf<String, SymbolBasedPackage?>()

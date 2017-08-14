@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.jvm.compiler.javac
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 abstract class AbstractLoadJavaUsingJavacTest : AbstractLoadJavaTest() {
     override fun registerJavacIfNeeded(environment: KotlinCoreEnvironment) {
@@ -27,6 +29,12 @@ abstract class AbstractLoadJavaUsingJavacTest : AbstractLoadJavaTest() {
     }
 
     override fun useJavacWrapper() = true
+
+    override fun getExpectedFile(expectedFileName: String): File {
+        val differentResultFile = KotlinTestUtils.replaceExtension(File(expectedFileName), "javac.txt")
+        if (differentResultFile.exists()) return differentResultFile
+        return super.getExpectedFile(expectedFileName)
+    }
 
 }
 
