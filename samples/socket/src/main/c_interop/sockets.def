@@ -1,5 +1,6 @@
 headers = sys/socket.h sys/errno.h netdb.h stdio.h string.h unistd.h stdlib.h netinet/in.h
-compilerOpts.osx = -D_ANSI_SOURCE
+compilerOpts.osx = -D_ANSI_SOURCE -D_POSIX_SOURCE
+excludeFunctions.osx = addrsel_policy_init
 ---
 
 static int interop_errno() {
