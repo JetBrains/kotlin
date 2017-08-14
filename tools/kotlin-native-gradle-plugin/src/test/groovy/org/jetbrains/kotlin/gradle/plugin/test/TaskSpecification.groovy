@@ -73,16 +73,13 @@ class TaskSpecification extends BaseKonanSpecification {
         result.task(":printArgs") != null
         result.task(":printArgs").outcome == TaskOutcome.SUCCESS
         def expectedKlibPath = project.konanBuildDir.toPath()
-                .resolve("interopCompiledStubs/stdioInteropStubs/stdioInteropStubs.klib")
+                .resolve("interopCompiledStubs${File.separator}stdioInteropStubs${File.separator}stdioInteropStubs.klib")
                 .toFile().canonicalPath
         def expectedBcPath = project.konanBuildDir.toPath()
-                .resolve("nativelibs/genStdioInteropStubs/stdiostubs.bc")
+                .resolve("nativelibs${File.separator}genStdioInteropStubs${File.separator}stdiostubs.bc")
                 .toFile().canonicalPath
-        result.output.contains("""
-            [-lpthread]
-            [$expectedKlibPath]
-            [$expectedBcPath]
-        """.stripIndent().trim())
+        def ls = System.lineSeparator()
+        result.output.contains("[-lpthread]$ls[$expectedKlibPath]$ls[$expectedBcPath]".stripIndent().trim())
     }
 
 }
