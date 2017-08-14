@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.effectsystem.adapters
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.effectsystem.effects.ESCalls
@@ -37,56 +38,80 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 
-class EffectSystem {
+class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
     private val functorResolver = FunctorResolver()
 
     fun getResultDataFlowInfo(
             resolvedCall: ResolvedCall<*>,
             bindingTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings,
             moduleDescriptor: ModuleDescriptor
     ): DataFlowInfo {
-        val callExpression = resolvedCall.call.callElement as? KtCallExpression ?: return DataFlowInfo.EMPTY
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.ContractEffects)) return DataFlowInfo.EMPTY
+
         // Prevent launch of effect system machinery on pointless cases (constants/enums/constructors/etc.)
+        val callExpression = resolvedCall.call.callElement as? KtCallExpression ?: return DataFlowInfo.EMPTY
         if (callExpression is KtDeclaration) return DataFlowInfo.EMPTY
-        return getDataFlowInfoWhen(ESReturns(UNKNOWN_CONSTANT), callExpression,
-                                   bindingTrace, languageVersionSettings, moduleDescriptor)
+
+        val resultContextInfo = getContextInfoWhen(ESReturns(UNKNOWN_CONSTANT), callExpression, bindingTrace, moduleDescriptor)
+
+        return resultContextInfo.toDataFlowInfo(languageVersionSettings)
+    }
+
+    fun recordDefiniteInvocations(resolvedCall: ResolvedCall<*>, bindingTrace: BindingTrace, moduleDescriptor: ModuleDescriptor) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.CalledInPlaceEffect)) return
+
+        // Prevent launch of effect system machinery on pointless cases (constants/enums/constructors/etc.)
+        val callExpression = resolvedCall.call.callElement as? KtCallExpression ?: return
+        if (callExpression is KtDeclaration) return
+
+        val resultingContextInfo = getContextInfoWhen(ESReturns(UNKNOWN_CONSTANT), callExpression, bindingTrace, moduleDescriptor)
+        for (effect in resultingContextInfo.firedEffects) {
+            val callsEffect = effect as? ESCalls ?: continue
+            val id = callsEffect.callable.id as DataFlowValueID
+
+            // Could be also IdentifierInfo.Variable when call passes non-anonymous lambda for callable parameter
+            val lambdaExpr = (id.dfv.identifierInfo as? DataFlowValueFactory.ExpressionIdentifierInfo)?.expression ?: continue
+            assert(lambdaExpr is KtLambdaExpression) { "Unexpected argument of Calls-effect: expected KtLambdaExpression, got $lambdaExpr" }
+
+            bindingTrace.record(BindingContext.LAMBDA_INVOCATIONS, lambdaExpr as KtLambdaExpression, callsEffect.kind)
+        }
     }
 
     fun getConditionalInfoForThenBranch(
             condition: KtExpression?,
             bindingTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings,
             moduleDescriptor: ModuleDescriptor
     ): DataFlowInfo {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.ContractEffects)) return DataFlowInfo.EMPTY
         if (condition == null) return DataFlowInfo.EMPTY
-        return getDataFlowInfoWhen(ESReturns(true.lift()), condition, bindingTrace, languageVersionSettings, moduleDescriptor)
+
+        return getContextInfoWhen(ESReturns(true.lift()), condition, bindingTrace, moduleDescriptor)
+                .toDataFlowInfo(languageVersionSettings)
     }
 
     fun getConditionalInfoForElseBranch(
             condition: KtExpression?,
             bindingTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings,
             moduleDescriptor: ModuleDescriptor
     ): DataFlowInfo {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.ContractEffects)) return DataFlowInfo.EMPTY
         if (condition == null) return DataFlowInfo.EMPTY
-        return getDataFlowInfoWhen(ESReturns(false.lift()), condition, bindingTrace, languageVersionSettings, moduleDescriptor)
+
+        return getContextInfoWhen(ESReturns(false.lift()), condition, bindingTrace, moduleDescriptor)
+                .toDataFlowInfo(languageVersionSettings)
     }
 
-    private fun getDataFlowInfoWhen(
+    private fun getContextInfoWhen(
             observedEffect: ESEffect,
             expression: KtExpression,
             bindingTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings,
             moduleDescriptor: ModuleDescriptor
-    ): DataFlowInfo {
-        val schema = getSchema(expression, bindingTrace, moduleDescriptor) ?: return DataFlowInfo.EMPTY
+    ): MutableContextInfo {
+        val schema = getSchema(expression, bindingTrace, moduleDescriptor) ?: return MutableContextInfo.EMPTY
 
         val extractedContextInfo = InfoCollector(observedEffect).collectFromSchema(schema)
 
-        checkAndRecordDefiniteInvocations(bindingTrace, extractedContextInfo)
-
-        return extractedContextInfo.toDataFlowInfo(languageVersionSettings)
+        return extractedContextInfo
     }
 
     private fun getSchema(expression: KtExpression, bindingTrace: BindingTrace, moduleDescriptor: ModuleDescriptor): EffectSchema? {

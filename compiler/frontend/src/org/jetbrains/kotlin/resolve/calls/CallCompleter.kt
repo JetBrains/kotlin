@@ -403,10 +403,11 @@ class CallCompleter(
     }
 
     private fun MutableResolvedCall<*>.updateResultDataFlowInfoUsingEffects(bindingTrace: BindingTrace) {
-        val resultDFIfromES = effectSystem.getResultDataFlowInfo(
-                this, bindingTrace, languageVersionSettings,
-                DescriptorUtils.getContainingModule(this.resultingDescriptor?.containingDeclaration ?: return)
-        )
+        val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor?.containingDeclaration ?: return)
+
+        val resultDFIfromES = effectSystem.getResultDataFlowInfo(this, bindingTrace, moduleDescriptor)
         this.dataFlowInfoForArguments.updateResultInfo(resultDFIfromES)
+
+        effectSystem.recordDefiniteInvocations(this, bindingTrace, moduleDescriptor)
     }
 }

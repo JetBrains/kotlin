@@ -1,4 +1,4 @@
 package
 
-public fun </*0*/ T> myRun(/*0*/ @kotlin.internal.CalledInPlace block: () -> T): T
+public inline fun myRun(/*0*/ @kotlin.internal.CalledInPlace(count = InvocationCount.EXACTLY_ONCE) block: () -> kotlin.Unit): kotlin.Unit
 public fun throwInLambda(): kotlin.Int

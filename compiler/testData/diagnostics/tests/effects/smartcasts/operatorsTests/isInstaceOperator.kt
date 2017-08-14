@@ -1,4 +1,6 @@
 // !DIAGNOSTICS: -INVISIBLE_MEMBER -INVISIBLE_REFERENCE
+// !LANGUAGE: +ContractEffects
+
 package o
 
 import kotlin.internal.*

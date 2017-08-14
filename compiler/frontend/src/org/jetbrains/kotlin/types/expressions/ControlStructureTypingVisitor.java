@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.effectsystem.adapters.EffectSystem;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
@@ -108,14 +107,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         LexicalWritableScope elseScope = newWritableScopeImpl(context, LexicalScopeKind.ELSE, components.overloadChecker);
         DataFlowInfo basicThenInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, true, context).and(conditionDataFlowInfo);
         DataFlowInfo thenInfoFromES = components.effectSystem.getConditionalInfoForThenBranch(
-                condition, context.trace, components.languageVersionSettings,
+                condition, context.trace,
                 DescriptorUtilsKt.getModule(context.scope.getOwnerDescriptor())
         );
         DataFlowInfo thenInfo = basicThenInfo.and(thenInfoFromES);
 
         DataFlowInfo basicElseInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
         DataFlowInfo elseInfoFromES = components.effectSystem.getConditionalInfoForElseBranch(
-                condition, context.trace, components.languageVersionSettings,
+                condition, context.trace,
                 DescriptorUtilsKt.getModule(context.scope.getOwnerDescriptor())
         );
         DataFlowInfo elseInfo = basicElseInfo.and(elseInfoFromES);

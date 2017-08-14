@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -INVISIBLE_MEMBER -INVISIBLE_REFERENCE
+// !LANGUAGE: +CalledInPlaceEffect
 
 import kotlin.internal.*
 
