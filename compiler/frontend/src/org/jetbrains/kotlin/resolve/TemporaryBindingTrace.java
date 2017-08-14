@@ -28,7 +28,7 @@ public class TemporaryBindingTrace extends DelegatingBindingTrace {
 
     @NotNull
     public static TemporaryBindingTrace create(@NotNull BindingTrace trace, String debugName, BindingTraceFilter filter) {
-        return new TemporaryBindingTrace(trace, debugName, filter);
+        return create(trace, debugName, filter, false);
     }
 
     @NotNull
@@ -36,10 +36,15 @@ public class TemporaryBindingTrace extends DelegatingBindingTrace {
         return create(trace, AnalyzingUtils.formDebugNameForBindingTrace(debugName, resolutionSubjectForMessage));
     }
 
+    @NotNull
+    public static TemporaryBindingTrace create(@NotNull BindingTrace trace, String debugName, BindingTraceFilter filter, boolean allowSliceRewrite) {
+        return new TemporaryBindingTrace(trace, debugName, filter, allowSliceRewrite);
+    }
+
     protected final BindingTrace trace;
 
-    protected TemporaryBindingTrace(@NotNull BindingTrace trace, String debugName, BindingTraceFilter filter) {
-        super(trace.getBindingContext(), debugName, true, filter, false);
+    protected TemporaryBindingTrace(@NotNull BindingTrace trace, String debugName, BindingTraceFilter filter, boolean allowSliceRewrite) {
+        super(trace.getBindingContext(), debugName, true, filter, allowSliceRewrite);
         this.trace = trace;
     }
 
