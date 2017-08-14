@@ -55,6 +55,8 @@ class TreeBasedReferenceAnnotationArgument(name: Name,
                                            private val field: JCTree.JCFieldAccess,
                                            javac: JavacWrapper,
                                            private val onElement: JavaElement) : TreeBasedAnnotationArgument(name, javac), JavaEnumValueAnnotationArgument {
+    override val entryName: Name?
+        get() = name
 
     override fun resolve(): JavaField? {
         val javaClass = javac.resolve(field.selected, compilationUnit, onElement) as? JavaClass ?: return null
@@ -67,7 +69,7 @@ class TreeBasedReferenceAnnotationArgument(name: Name,
 
 class TreeBasedArrayAnnotationArgument(val args: List<JavaAnnotationArgument>,
                                        name: Name,
-                                       javac: JavacWrapper): TreeBasedAnnotationArgument(name, javac), JavaArrayAnnotationArgument {
+                                       javac: JavacWrapper) : TreeBasedAnnotationArgument(name, javac), JavaArrayAnnotationArgument {
     override fun getElements() = args
 
 }
@@ -76,10 +78,10 @@ class TreeBasedJavaClassObjectAnnotationArgument(private val type: JCTree.JCExpr
                                                  name: Name,
                                                  private val compilationUnit: CompilationUnitTree,
                                                  javac: JavacWrapper,
-                                                 private val onElement: JavaElement): TreeBasedAnnotationArgument(name, javac), JavaClassObjectAnnotationArgument {
+                                                 private val onElement: JavaElement) : TreeBasedAnnotationArgument(name, javac), JavaClassObjectAnnotationArgument {
 
     override fun getReferencedType(): JavaType =
-        TreeBasedType.create(type, compilationUnit, javac, emptyList(), onElement)
+            TreeBasedType.create(type, compilationUnit, javac, emptyList(), onElement)
 
 }
 
@@ -87,25 +89,19 @@ class TreeBasedAnnotationAsAnnotationArgument(private val annotation: JCTree.JCA
                                               name: Name,
                                               private val compilationUnit: CompilationUnitTree,
                                               javac: JavacWrapper,
-                                              private val onElement: JavaElement): TreeBasedAnnotationArgument(name, javac), JavaAnnotationAsAnnotationArgument {
+                                              private val onElement: JavaElement) : TreeBasedAnnotationArgument(name, javac), JavaAnnotationAsAnnotationArgument {
     override fun getAnnotation(): JavaAnnotation =
-        TreeBasedAnnotation(annotation, compilationUnit, javac, onElement)
+            TreeBasedAnnotation(annotation, compilationUnit, javac, onElement)
 
 }
 
 private fun createAnnotationArguments(annotation: TreeBasedAnnotation,
                                       javac: JavacWrapper,
-                                      onElement: JavaElement): Collection<JavaAnnotationArgument> {
-    val arguments = annotation.annotation.arguments
-    val javaClass = annotation.resolve() ?: return emptyList()
-    val methods = javaClass.methods
-
-    if (arguments.size != methods.size) return emptyList()
-
-    return methods.mapIndexedNotNull { index, it ->
-        createAnnotationArgument(arguments[index], it.name, annotation.compilationUnit, javac, annotation, onElement)
-    }
-}
+                                      onElement: JavaElement): Collection<JavaAnnotationArgument> =
+        annotation.annotation.arguments.mapNotNull {
+            val name = if (it is JCTree.JCAssign) Name.identifier(it.lhs.toString()) else Name.identifier("value")
+            createAnnotationArgument(it, name, annotation.compilationUnit, javac, annotation, onElement)
+        }
 
 private fun createAnnotationArgument(argument: JCTree.JCExpression,
                                      name: Name,
@@ -118,17 +114,18 @@ private fun createAnnotationArgument(argument: JCTree.JCExpression,
             is JCTree.JCFieldAccess -> {
                 if (argument.name.contentEquals("class")) {
                     TreeBasedJavaClassObjectAnnotationArgument(argument.selected, name, compilationUnit, javac, onElement)
-                } else {
+                }
+                else {
                     TreeBasedReferenceAnnotationArgument(name, compilationUnit, argument, javac, onElement)
                 }
             }
             is JCTree.JCAssign -> createAnnotationArgument(argument.rhs, name, compilationUnit, javac, annotation, onElement)
-            is JCTree.JCNewArray -> arrayAnnotationArguments(argument.elems, name, compilationUnit, javac, annotation, onElement)
+            is JCTree.JCNewArray -> TreeBasedArrayAnnotationArgument(argument.elems.mapNotNull { createAnnotationArgument(it, name, compilationUnit, javac, annotation, onElement) }, name, javac)
             is JCTree.JCAnnotation -> TreeBasedAnnotationAsAnnotationArgument(argument, name, compilationUnit, javac, onElement)
             is JCTree.JCParens -> createAnnotationArgument(argument.expr, name, compilationUnit, javac, annotation, onElement)
             is JCTree.JCBinary -> resolveArgumentValue(argument, annotation, name, compilationUnit, javac)
             is JCTree.JCUnary -> resolveArgumentValue(argument, annotation, name, compilationUnit, javac)
-            else -> null
+            else -> throw UnsupportedOperationException("Unknown annotation argument $argument")
         }
 
 private fun resolveArgumentValue(argument: JCTree.JCExpression,
@@ -141,18 +138,3 @@ private fun resolveArgumentValue(argument: JCTree.JCExpression,
 
     return evaluator.getValue(argument)?.let { TreeBasedLiteralAnnotationArgument(name, it, javac) }
 }
-
-private fun arrayAnnotationArguments(values: List<JCTree.JCExpression>,
-                                     name: Name,
-                                     compilationUnit: CompilationUnitTree,
-                                     javac: JavacWrapper,
-                                     annotation: TreeBasedAnnotation,
-                                     onElement: JavaElement): JavaArrayAnnotationArgument =
-        values.mapNotNull {
-            if (it is JCTree.JCNewArray) {
-                arrayAnnotationArguments(it.elems, name, compilationUnit, javac, annotation, onElement)
-            }
-            else {
-                createAnnotationArgument(it, name, compilationUnit, javac, annotation, onElement)
-            }
-        }.let { TreeBasedArrayAnnotationArgument(it, name, javac) }

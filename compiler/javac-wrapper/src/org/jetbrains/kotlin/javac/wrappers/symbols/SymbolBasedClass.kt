@@ -80,7 +80,7 @@ class SymbolBasedClass(
 
     val innerClasses: Map<Name, JavaClass>
             by lazy {
-                element.enclosedElements
+                enclosedElements
                         .filterIsInstance(TypeElement::class.java)
                         .map { SymbolBasedClass(it, javac, classId?.createNestedClassId(Name.identifier(it.simpleName.toString())), file) }
                         .associateBy(JavaClass::name)
@@ -106,7 +106,7 @@ class SymbolBasedClass(
         get() = null
 
     override val methods: Collection<JavaMethod>
-        get() = element.enclosedElements
+        get() = enclosedElements
                 .filter { it.kind == ElementKind.METHOD && !isEnumValuesOrValueOf(it as ExecutableElement) }
                 .map { SymbolBasedMethod(it as ExecutableElement, this, javac) }
 
@@ -119,12 +119,12 @@ class SymbolBasedClass(
     }
 
     override val fields: Collection<JavaField>
-        get() = element.enclosedElements
+        get() = enclosedElements
                 .filter { it.kind.isField && Name.isValidIdentifier(it.simpleName.toString()) }
                 .map { SymbolBasedField(it as VariableElement, this, javac) }
 
     override val constructors: Collection<JavaConstructor>
-        get() = element.enclosedElements
+        get() = enclosedElements
                 .filter { it.kind == ElementKind.CONSTRUCTOR }
                 .map { SymbolBasedConstructor(it as ExecutableElement, this, javac) }
 
@@ -138,5 +138,7 @@ class SymbolBasedClass(
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = false
 
     override fun findInnerClass(name: Name) = innerClasses[name]
+
+    private val enclosedElements by lazy { element.enclosedElements }
 
 }

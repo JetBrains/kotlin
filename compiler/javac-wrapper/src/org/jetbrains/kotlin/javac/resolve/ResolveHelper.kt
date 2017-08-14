@@ -30,7 +30,7 @@ internal class ResolveHelper(private val javac: JavacWrapper,
                              private val compilationUnit: CompilationUnitTree) {
 
     fun getJavaClassFromPathSegments(javaClass: JavaClass,
-                                               pathSegments: List<String>) =
+                                     pathSegments: List<String>) =
             if (pathSegments.size == 1) {
                 javaClass
             }
@@ -66,7 +66,8 @@ internal class ResolveHelper(private val javac: JavacWrapper,
                     (it.classifier as? JavaClass)?.let { supertype ->
                         if (supertype !in checkedSupertypes) {
                             findInnerOrNested(supertype, name, checkedSupertypes)
-                        } else null
+                        }
+                        else null
                     }
                 }.singleOrNull()
     }

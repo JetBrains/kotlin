@@ -35,7 +35,7 @@ class TreeBasedMethod(
         get() = Name.identifier(tree.name.toString())
 
     override val isAbstract: Boolean
-        get() = (containingClass.isInterface && !tree.modifiers.hasDefaultModifier) || tree.modifiers.isAbstract
+        get() = (containingClass.isInterface && !tree.modifiers.hasDefaultModifier && !isStatic) || tree.modifiers.isAbstract
 
     override val isStatic: Boolean
         get() = tree.modifiers.isStatic

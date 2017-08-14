@@ -64,7 +64,7 @@ class SymbolBasedReferenceAnnotationArgument(
         javac: JavacWrapper
 ) : SymbolBasedAnnotationArgument(name, javac), JavaEnumValueAnnotationArgument {
     override val entryName: Name?
-        get() = Name.identifier(name)
+        get() = name
 
     override fun resolve(): SymbolBasedField {
         val containingClass = (element.enclosingElement as Symbol.ClassSymbol).let {
