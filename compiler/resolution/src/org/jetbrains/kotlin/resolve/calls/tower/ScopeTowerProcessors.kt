@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
@@ -133,35 +132,6 @@ private class NoExplicitReceiverScopeTowerProcessor<C: Candidate>(
                 else -> emptyList()
             }
 
-}
-
-private fun <D : CallableDescriptor, C : Candidate> processCommonAndSyntheticMembers(
-        receiverForMember: ReceiverValueWithSmartCastInfo,
-        scopeTowerLevel: ScopeTowerLevel,
-        collectCandidates: CandidatesCollector,
-        candidateFactory: CandidateFactory<C>,
-        isExplicitReceiver: Boolean
-): List<C> {
-    val (members, syntheticExtension) =
-            scopeTowerLevel.collectCandidates(null)
-                    .filter {
-                        it.descriptor.dispatchReceiverParameter == null || it.descriptor.extensionReceiverParameter == null
-                    }.partition { !it.requiresExtensionReceiver }
-
-    return members.map {
-               candidateFactory.createCandidate(
-                       it,
-                       if (isExplicitReceiver) ExplicitReceiverKind.DISPATCH_RECEIVER else ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-                       extensionReceiver = null
-               )
-           } +
-           syntheticExtension.map {
-               candidateFactory.createCandidate(
-                       it,
-                       if (isExplicitReceiver) ExplicitReceiverKind.EXTENSION_RECEIVER else ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-                       extensionReceiver = receiverForMember
-               )
-           }
 }
 
 private fun <C : Candidate> createSimpleProcessorWithoutClassValueReceiver(
