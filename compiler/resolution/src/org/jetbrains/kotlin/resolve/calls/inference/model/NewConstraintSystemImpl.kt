@@ -38,7 +38,7 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         ConstraintInjector.Context,
         ResultTypeResolver.Context,
         KotlinCallCompleter.Context,
-        ConstraintSystemCompleter.Context,
+        KotlinConstraintSystemCompleter.Context,
         PostponedArgumentsAnalyzer.Context
 {
     private val storage = MutableConstraintStorage()
@@ -185,7 +185,7 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         return storage.buildCurrentSubstitutor()
     }
 
-    // ConstraintSystemBuilder, ConstraintSystemCompleter.Context
+    // ConstraintSystemBuilder, KotlinConstraintSystemCompleter.Context
     override val hasContradiction: Boolean
         get() = diagnostics.any { !it.candidateApplicability.isSuccess }.apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }
 
@@ -240,7 +240,7 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         return storage.notFixedTypeVariables
     }
 
-    // ConstraintInjector.Context, ConstraintSystemCompleter.Context
+    // ConstraintInjector.Context, KotlinConstraintSystemCompleter.Context
     override fun addError(error: KotlinCallDiagnostic) {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         storage.errors.add(error)
@@ -252,11 +252,11 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         return storage.postponedArguments.filterIsInstance<PostponedLambdaArgument>()
     }
 
-    // FixationOrderCalculator.Context, KotlinCallCompleter.Context, ConstraintSystemCompleter.Context
+    // FixationOrderCalculator.Context, KotlinCallCompleter.Context, KotlinConstraintSystemCompleter.Context
     override val postponedArguments: List<PostponedKotlinCallArgument>
         get() = storage.postponedArguments.apply { checkState(State.BUILDING, State.COMPLETION) }
 
-    // ConstraintSystemCompleter.Context
+    // KotlinConstraintSystemCompleter.Context
     override fun fixVariable(variable: NewTypeVariable, resultType: UnwrappedType) {
         checkState(State.BUILDING, State.COMPLETION)
 
@@ -278,7 +278,7 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         return storage.innerCalls
     }
 
-    // ConstraintSystemCompleter.Context, PostponedArgumentsAnalyzer.Context
+    // KotlinConstraintSystemCompleter.Context, PostponedArgumentsAnalyzer.Context
     override fun canBeProper(type: UnwrappedType): Boolean {
         checkState(State.BUILDING, State.COMPLETION)
         return !type.contains { storage.notFixedTypeVariables.containsKey(it.constructor) }
