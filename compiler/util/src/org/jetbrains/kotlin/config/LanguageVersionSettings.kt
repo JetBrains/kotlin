@@ -54,8 +54,8 @@ enum class LanguageFeature(
     InlineDefaultFunctionalParameters(KOTLIN_1_2),
     SoundSmartCastsAfterTry(KOTLIN_1_2),
     DeprecatedFieldForInvisibleCompanionObject(KOTLIN_1_2),
-    ContractEffects(KOTLIN_1_2),
-    CalledInPlaceEffect(KOTLIN_1_2),
+    ContractEffects(KOTLIN_1_1),
+    CalledInPlaceEffect(KOTLIN_1_1),
 
     // Experimental features
 
