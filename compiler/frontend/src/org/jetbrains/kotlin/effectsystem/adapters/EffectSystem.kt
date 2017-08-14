@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.effectsystem.adapters
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.effectsystem.effects.ESCalls
 import org.jetbrains.kotlin.effectsystem.effects.ESReturns
 import org.jetbrains.kotlin.effectsystem.factories.UNKNOWN_CONSTANT
 import org.jetbrains.kotlin.effectsystem.factories.lift
@@ -29,10 +30,12 @@ import org.jetbrains.kotlin.effectsystem.visitors.SchemaBuilder
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 
 class EffectSystem {
     private val functorResolver = FunctorResolver()
@@ -81,6 +84,8 @@ class EffectSystem {
 
         val extractedContextInfo = InfoCollector(observedEffect).collectFromSchema(schema)
 
+        checkAndRecordDefiniteInvocations(bindingTrace, extractedContextInfo)
+
         return extractedContextInfo.toDataFlowInfo(languageVersionSettings)
     }
 
@@ -103,5 +108,18 @@ class EffectSystem {
         val reducedSchema = Reducer().reduceSchema(schema)
 
         return reducedSchema
+    }
+
+    private fun checkAndRecordDefiniteInvocations(bindingTrace: BindingTrace, contextInfo: MutableContextInfo) {
+        for (effect in contextInfo.firedEffects) {
+            val callsEffect = effect as? ESCalls ?: continue
+            val id = callsEffect.callable.id as DataFlowValueID
+
+            // Could be also IdentifierInfo.Variable when call passes non-anonymous lambda for callable parameter
+            val lambdaExpr = (id.dfv.identifierInfo as? DataFlowValueFactory.ExpressionIdentifierInfo)?.expression ?: continue
+            assert(lambdaExpr is KtLambdaExpression) { "Unexpected argument of Calls-effect: expected KtLambdaExpression, got $lambdaExpr" }
+
+            bindingTrace.record(BindingContext.LAMBDA_INVOCATIONS, lambdaExpr as KtLambdaExpression, callsEffect.kind)
+        }
     }
 }

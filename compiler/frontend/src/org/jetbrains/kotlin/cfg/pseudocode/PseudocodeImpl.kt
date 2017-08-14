@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MergeInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.AbstractJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.NondeterministicJumpInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.BACKWARD
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.FORWARD
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraverseInstructionResult
@@ -216,36 +213,31 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         ) { arrayListOf() }.add(usage)
     }
 
-    fun postProcess() {
+    fun postProcess(globalReachableInstructionsSet: MutableSet<Instruction> = hashSetOf()) {
         if (postPrecessed) return
         postPrecessed = true
         errorInstruction.sink = sinkInstruction
         exitInstruction.sink = sinkInstruction
-        for ((index, instruction) in mutableInstructionList.withIndex()) {
-            //recursively invokes 'postProcess' for local declarations
-            instruction.processInstruction(index)
-        }
-        if (parent != null) return
 
-        // Collecting reachable instructions should be done after processing all instructions
-        // (including instructions in local declarations) to avoid being in incomplete state.
-        collectAndCacheReachableInstructions()
-        for (localFunctionDeclarationInstruction in localDeclarations) {
-            (localFunctionDeclarationInstruction.body as PseudocodeImpl).collectAndCacheReachableInstructions()
+        for ((index, instruction) in mutableInstructionList.withIndex()) {
+            //recursively invokes 'postProcess' for local declarations, thus it needs global set of reachable instructions
+            instruction.processInstruction(index, globalReachableInstructionsSet)
         }
+
+        collectAndCacheReachableInstructions(globalReachableInstructionsSet)
     }
 
-    private fun collectAndCacheReachableInstructions() {
-        val reachableInstructions = collectReachableInstructions()
+    private fun collectAndCacheReachableInstructions(alreadyVisited: MutableSet<Instruction>) {
+        collectReachableInstructions(alreadyVisited)
         for (instruction in mutableInstructionList) {
-            if (reachableInstructions.contains(instruction)) {
+            if (alreadyVisited.contains(instruction)) {
                 instructions.add(instruction)
             }
         }
         markDeadInstructions()
     }
 
-    private fun Instruction.processInstruction(currentPosition: Int) {
+    private fun Instruction.processInstruction(currentPosition: Int, visited: MutableSet<Instruction>) {
         accept(object : InstructionVisitor() {
             override fun visitInstructionWithNext(instruction: InstructionWithNext) {
                 instruction.next = getNextPosition(currentPosition)
@@ -280,8 +272,16 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
             override fun visitLocalFunctionDeclarationInstruction(instruction: LocalFunctionDeclarationInstruction) {
                 val body = instruction.body as PseudocodeImpl
                 body.parent = this@PseudocodeImpl
-                body.postProcess()
+                body.postProcess(visited)
                 instruction.next = sinkInstruction
+            }
+
+            override fun visitInlinedLocalFunctionDeclarationInstruction(instruction: InlinedLocalFunctionDeclarationInstruction) {
+                val body = instruction.body as PseudocodeImpl
+                body.parent = this@PseudocodeImpl
+                body.postProcess(visited)
+                // Don't add edge to next instruction if flow can't reach exit of inlined declaration
+                instruction.next = if (body.instructions.contains(body.exitInstruction)) getNextPosition(currentPosition) else sinkInstruction
             }
 
             override fun visitSubroutineExit(instruction: SubroutineExitInstruction) {
@@ -298,25 +298,14 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         })
     }
 
-    private fun collectReachableInstructions(): Set<Instruction> {
-        val visited = hashSetOf<Instruction>()
-        traverseFollowingInstructions(enterInstruction, visited, FORWARD
+    private fun collectReachableInstructions(alreadyVisited: MutableSet<Instruction>) {
+        traverseFollowingInstructions(enterInstruction, alreadyVisited, FORWARD
         ) { instruction ->
             if (instruction is MagicInstruction && instruction.kind === MagicKind.EXHAUSTIVE_WHEN_ELSE) {
                 return@traverseFollowingInstructions TraverseInstructionResult.SKIP
             }
             TraverseInstructionResult.CONTINUE
         }
-        if (!visited.contains(exitInstruction)) {
-            visited.add(exitInstruction)
-        }
-        if (!visited.contains(errorInstruction)) {
-            visited.add(errorInstruction)
-        }
-        if (!visited.contains(sinkInstruction)) {
-            visited.add(sinkInstruction)
-        }
-        return visited
     }
 
     private fun markDeadInstructions() {

@@ -195,6 +195,7 @@ enum class TraversalOrder {
     BACKWARD
 }
 
+
 fun Pseudocode.getStartInstruction(traversalOrder: TraversalOrder): Instruction =
         if (traversalOrder == FORWARD) enterInstruction else sinkInstruction
 
