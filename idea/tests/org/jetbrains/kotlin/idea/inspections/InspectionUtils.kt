@@ -17,13 +17,15 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.analysis.AnalysisScope
+import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.codeInspection.ui.InspectionToolPresentation
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.InspectionTestUtil
-import com.intellij.testFramework.createGlobalContextForTool
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.createGlobalContextForTool
 import com.intellij.util.xml.highlighting.DomElementsInspection
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
@@ -40,7 +42,8 @@ fun runInspection(
 
     val scope = if (files != null) AnalysisScope(project, files) else AnalysisScope(project)
     scope.invalidate()
-    val globalContext = createGlobalContextForTool(scope, project, listOf(wrapper))
+    val inspectionManager = InspectionManager.getInstance(project) as InspectionManagerEx
+    val globalContext = createGlobalContextForTool(scope, project, inspectionManager, wrapper)
     InspectionTestUtil.runTool(wrapper, scope, globalContext)
     if (withTestDir != null) {
         InspectionTestUtil.compareToolResults(globalContext, wrapper, false, withTestDir)
