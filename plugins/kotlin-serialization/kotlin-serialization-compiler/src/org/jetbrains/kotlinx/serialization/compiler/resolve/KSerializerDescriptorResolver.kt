@@ -50,7 +50,7 @@ object KSerializerDescriptorResolver {
 
     fun addSerializableSupertypes(classDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
         if (classDescriptor.isInternalSerializable && supertypes.none(::isJavaSerializable)) {
-            supertypes.add(classDescriptor.getJavaSerializableType())
+            classDescriptor.getJavaSerializableType()?.let { supertypes.add(it) }
         }
     }
 

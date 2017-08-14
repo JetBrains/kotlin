@@ -20,11 +20,13 @@ import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 
 class SerializationComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         ExpressionCodegenExtension.registerExtension(project, SerializationCodegenExtension())
         SyntheticResolveExtension.registerExtension(project, SerializationResolveExtension())
+        JsSyntheticTranslateExtension.registerExtension(project, SerializationJsExtension())
     }
 }

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.*
 
 internal val packageFqName = FqName("kotlinx.serialization")
+internal val internalPackageFqName = FqName("kotlinx.serialization.internal")
 
 // ---- kotlin.serialization.KSerializer
 
@@ -58,12 +59,12 @@ internal val javaSerializableFqName = javaIOPackageFqName.child(javaSerializable
 fun isJavaSerializable(type: KotlinType?): Boolean =
         type != null && KotlinBuiltIns.isConstructedFromGivenClass(type, javaSerializableFqName)
 
-fun ClassDescriptor.getJavaSerializableDescriptor(): ClassDescriptor =
-        module.findClassAcrossModuleDependencies(ClassId(javaIOPackageFqName, javaSerializableName))!!
+fun ClassDescriptor.getJavaSerializableDescriptor(): ClassDescriptor? =
+        module.findClassAcrossModuleDependencies(ClassId(javaIOPackageFqName, javaSerializableName))
 
-fun ClassDescriptor.getJavaSerializableType(): SimpleType {
-    return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, getJavaSerializableDescriptor(), emptyList())
-}
+// null on JS frontend
+fun ClassDescriptor.getJavaSerializableType(): SimpleType? =
+        getJavaSerializableDescriptor()?.let { KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, it, emptyList()) }
 
 // ---- kotlin.serialization.Serializable(with=xxx)
 
@@ -175,6 +176,9 @@ fun ClassDescriptor.getKSerializerConstructorMarker(): ClassDescriptor =
         module.findClassAcrossModuleDependencies(ClassId(packageFqName, kSerializerConstructorMarkerName))!!
 
 fun ClassDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
-        module.findClassAcrossModuleDependencies(ClassId(packageFqName, Name.identifier(classSimpleName)))!!
+        requireNotNull(module.findClassAcrossModuleDependencies(ClassId(packageFqName, Name.identifier(classSimpleName)))) {"Can't locate class $classSimpleName"}
+
+fun ClassDescriptor.getClassFromInternalSerializationPackage(classSimpleName: String) =
+        requireNotNull(module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, Name.identifier(classSimpleName)))) {"Can't locate class $classSimpleName"}
 
 fun ClassDescriptor.toSimpleType(nullable: Boolean = true) = KotlinTypeFactory.simpleType(Annotations.EMPTY, this.typeConstructor, emptyList(), nullable)

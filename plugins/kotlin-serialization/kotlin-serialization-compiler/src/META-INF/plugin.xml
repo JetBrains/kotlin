@@ -9,5 +9,6 @@
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <expressionCodegenExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationCodegenExtension"/>
         <syntheticResolveExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationResolveExtension"/>
+        <jsSyntheticTranslateExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationJsExtension"/>
     </extensions>
 </idea-plugin>
