@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 fun provideArgumentNameHints(element: KtCallExpression): List<InlayInfo> {
+    if (element.valueArguments.none { it.getArgumentExpression()?.isUnclearExpression() == true }) return emptyList()
     val ctx = element.analyze(BodyResolveMode.PARTIAL)
     val call = element.getCall(ctx) ?: return emptyList()
     val resolvedCall = call.getResolvedCall(ctx)
