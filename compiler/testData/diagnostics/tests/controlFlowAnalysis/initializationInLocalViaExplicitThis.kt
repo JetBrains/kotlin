@@ -4,12 +4,12 @@ class Test {
     val str: String
     init {
         run {
-            <!CAPTURED_MEMBER_VAL_INITIALIZATION!>this@Test.str<!> = "A"
+            this@Test.str = "A"
         }
 
         run {
             // Not sure do we need diagnostic also here
-            this@Test.str = "B"
+            <!VAL_REASSIGNMENT!>this@Test.str<!> = "B"
         }
 
         str = "C"

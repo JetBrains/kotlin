@@ -484,6 +484,6 @@ MODULE_FRAGMENT <dependencies of test-module>
         VALUE_PARAMETER value-parameter other: kotlin.Any?
       FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
       FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
-    FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.internal.InlineOnly public inline fun <T> T.apply(block: T.() -> kotlin.Unit): T
+    FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.internal.InlineOnly public inline fun <T> T.apply(@kotlin.internal.CalledInPlace block: T.() -> kotlin.Unit): T
       TYPE_PARAMETER <T>
-      VALUE_PARAMETER value-parameter block: T.() -> kotlin.Unit
+      VALUE_PARAMETER value-parameter @kotlin.internal.CalledInPlace block: T.() -> kotlin.Unit
