@@ -101,7 +101,7 @@ class PSICallResolver(
         val factoryProviderForInvoke = FactoryProviderForInvoke(context, callContext, kotlinCall)
 
         val expectedType = calculateExpectedType(context)
-        var result = kotlinCallResolver.resolveCall(callContext, kotlinCall, expectedType, factoryProviderForInvoke)
+        var result = kotlinCallResolver.resolveCall(callContext, kotlinCall, expectedType, factoryProviderForInvoke, context.collectAllCandidates)
 
         val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
         if (isBinaryRemOperator && shouldUseOperatorRem && (result.isEmpty() || result.areAllCompletedAndInapplicable())) {
@@ -134,9 +134,8 @@ class PSICallResolver(
                            it.knownTypeParametersResultingSubstitutor)
         }
 
-        val result = kotlinCallResolver.resolveGivenCandidates(callContext, kotlinCall, calculateExpectedType(context), givenCandidates)
+        val result = kotlinCallResolver.resolveGivenCandidates(callContext, kotlinCall, calculateExpectedType(context), givenCandidates, context.collectAllCandidates)
         return convertToOverloadResolutionResults(context, result, tracingStrategy)
-
     }
 
     private fun <D : CallableDescriptor> resolveToDeprecatedMod(
@@ -149,7 +148,7 @@ class PSICallResolver(
         val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[remOperatorName]!!
         val callWithDeprecatedName = toKotlinCall(context, resolutionKind.kotlinCallKind, context.call, deprecatedName, tracingStrategy)
         val refinedProviderForInvokeFactory = FactoryProviderForInvoke(context, callContext, callWithDeprecatedName)
-        return kotlinCallResolver.resolveCall(callContext, callWithDeprecatedName, expectedType, refinedProviderForInvokeFactory)
+        return kotlinCallResolver.resolveCall(callContext, callWithDeprecatedName, expectedType, refinedProviderForInvokeFactory, context.collectAllCandidates)
     }
 
     private fun refineNameForRemOperator(isBinaryRemOperator: Boolean, name: Name): Name {
@@ -185,6 +184,11 @@ class PSICallResolver(
             result: Collection<ResolvedKotlinCall>,
             tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
+        if (context.collectAllCandidates) {
+            val resolvedCalls = result.map { kotlinToResolvedCallTransformer.transformAndReport<D>(it, context, trace = null) }
+            return AllCandidates(resolvedCalls)
+        }
+
         val trace = context.trace
         when (result.size) {
             0 -> {

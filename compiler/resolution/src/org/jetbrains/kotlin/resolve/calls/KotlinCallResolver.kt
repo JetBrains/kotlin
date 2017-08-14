@@ -36,7 +36,8 @@ class KotlinCallResolver(
             callContext: KotlinCallContext,
             kotlinCall: KotlinCall,
             expectedType: UnwrappedType?,
-            factoryProviderForInvoke: CandidateFactoryProviderForInvoke<KotlinResolutionCandidate>
+            factoryProviderForInvoke: CandidateFactoryProviderForInvoke<KotlinResolutionCandidate>,
+            collectAllCandidates: Boolean
     ): Collection<ResolvedKotlinCall> {
         val scopeTower = callContext.scopeTower
 
@@ -53,16 +54,22 @@ class KotlinCallResolver(
             KotlinCallKind.UNSUPPORTED -> throw UnsupportedOperationException()
         }
 
-        val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = kotlinCall.callKind != KotlinCallKind.UNSUPPORTED)
+        val candidates = if (collectAllCandidates) {
+            towerResolver.collectAllCandidates(scopeTower, processor)
+        }
+        else {
+            towerResolver.runResolve(scopeTower, processor, useOrder = kotlinCall.callKind != KotlinCallKind.UNSUPPORTED)
+        }
 
-        return choseMostSpecific(callContext, expectedType, candidates)
+        return choseMostSpecific(callContext, expectedType, candidates, collectAllCandidates)
     }
 
     fun resolveGivenCandidates(
             callContext: KotlinCallContext,
             kotlinCall: KotlinCall,
             expectedType: UnwrappedType?,
-            givenCandidates: Collection<GivenCandidate>
+            givenCandidates: Collection<GivenCandidate>,
+            collectAllCandidates: Boolean
     ): Collection<ResolvedKotlinCall> {
         kotlinCall.checkCallInvariants()
 
@@ -79,23 +86,37 @@ class KotlinCallResolver(
                                             listOf()
             )
         }
-        val candidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
-                                                             TowerResolver.SuccessfulResultCollector { it.status },
-                                                             useOrder = true)
-        return choseMostSpecific(callContext, expectedType, candidates)
+
+        val candidates = if (collectAllCandidates) {
+            towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
+                                                TowerResolver.AllCandidatesCollector { it.status },
+                                                useOrder = false)
+        }
+        else {
+            towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
+                                                TowerResolver.SuccessfulResultCollector { it.status },
+                                                useOrder = true)
+        }
+
+        return choseMostSpecific(callContext, expectedType, candidates, collectAllCandidates)
     }
 
     private fun choseMostSpecific(
             callContext: KotlinCallContext,
             expectedType: UnwrappedType?,
-            candidates: Collection<KotlinResolutionCandidate>
+            candidates: Collection<KotlinResolutionCandidate>,
+            collectAllCandidates: Boolean
     ): Collection<ResolvedKotlinCall> {
-
-        val maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
-                candidates,
-                CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                discriminateGenerics = true, // todo
-                isDebuggerContext = callContext.scopeTower.isDebuggerContext)
+        val maximallySpecificCandidates = if (collectAllCandidates) {
+            candidates
+        }
+        else {
+            overloadingConflictResolver.chooseMaximallySpecificCandidates(
+                    candidates,
+                    CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                    discriminateGenerics = true, // todo
+                    isDebuggerContext = callContext.scopeTower.isDebuggerContext)
+        }
 
         val singleResult = maximallySpecificCandidates.singleOrNull()?.let {
             kotlinCallCompleter.completeCallIfNecessary(it, expectedType, callContext.resolutionCallbacks)

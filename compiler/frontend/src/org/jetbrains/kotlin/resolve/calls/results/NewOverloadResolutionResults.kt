@@ -67,8 +67,6 @@ class ManyCandidates<D : CallableDescriptor>(
             }
 }
 
-
-
 class AllCandidates<D :  CallableDescriptor>(private val allCandidates: Collection<ResolvedCall<D>>): NameNotFoundResolutionResult<D>() {
     override fun getAllCandidates() = allCandidates
 }
