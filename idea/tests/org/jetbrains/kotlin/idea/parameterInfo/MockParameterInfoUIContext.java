@@ -69,6 +69,11 @@ public class MockParameterInfoUIContext implements ParameterInfoUIContext {
     }
 
     @Override
+    public boolean isSingleParameterInfo() {
+        return false;
+    }
+
+    @Override
     public Color getDefaultParameterColor() {
         return null;
     }
