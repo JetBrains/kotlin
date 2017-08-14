@@ -40,6 +40,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 import kotlin.properties.Delegates
 
+fun canBePropertyAccessor(identifier: String): Boolean {
+    return identifier.startsWith("get") || identifier.startsWith("is") || identifier.startsWith("set")
+}
+
 interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     val getMethod: FunctionDescriptor
     val setMethod: FunctionDescriptor?
@@ -49,7 +53,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             val name = getterOrSetter.name
             if (name.isSpecial) return null
             val identifier = name.identifier
-            if (!identifier.startsWith("get") && !identifier.startsWith("is") && !identifier.startsWith("set")) return null // optimization
+            if (!canBePropertyAccessor(identifier)) return null  // optimization
 
             val classDescriptorOwner = getterOrSetter.containingDeclaration as? ClassDescriptor ?: return null
 
