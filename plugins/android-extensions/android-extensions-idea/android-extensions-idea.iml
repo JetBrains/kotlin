@@ -21,8 +21,7 @@
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="frontend.java" scope="TEST" />
     <orderEntry type="module" module-name="idea-live-templates" scope="TEST" />
-    <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
-    <orderEntry type="module" module-name="idea-jps-common" />
+    <orderEntry type="library" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="module" module-name="cli-common" />
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="android-extensions-runtime" />
