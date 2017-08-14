@@ -104,6 +104,8 @@ class CallTreeBuilder(
     override fun visitLabeledExpression(expression: KtLabeledExpression, data: Unit): CTNode = expression.baseExpression?.accept(this, data) ?: UNKNOWN_CALL
 
     override fun visitBinaryExpression(expression: KtBinaryExpression, data: Unit): CTCall {
+        tryGetCachedCall(expression)?.let { return it }
+
         val leftNode = expression.left?.accept(this, data) ?: return UNKNOWN_CALL
         val rightNode = expression.right?.accept(this, data) ?: return UNKNOWN_CALL
 
@@ -124,6 +126,8 @@ class CallTreeBuilder(
     }
 
     override fun visitCallExpression(expression: KtCallExpression, data: Unit): CTCall {
+        tryGetCachedCall(expression)?.let { return it }
+
         if (expression.parent is KtDotQualifiedExpression && expression.parent.cast<KtDotQualifiedExpression>().receiverExpression != expression) {
             // Don't analyze call alone without receiver
             return visitDotQualifiedExpression(expression.parent as KtDotQualifiedExpression, data)
@@ -144,6 +148,8 @@ class CallTreeBuilder(
     override fun visitReferenceExpression(expression: KtReferenceExpression, data: Unit?): CTNode = tryCreateVariable(expression)
 
     override fun visitIsExpression(expression: KtIsExpression, data: Unit): CTCall {
+        tryGetCachedCall(expression)?.let { return it }
+
         val leftNode = expression.leftHandSide.accept(this, data)
         val rightType: KotlinType = bindingContext.get(BindingContext.TYPE, expression.typeReference) ?: return UNKNOWN_CALL
         val functor = IsFunctor(rightType, expression.isNegated)
@@ -174,6 +180,14 @@ class CallTreeBuilder(
     private fun tryCreateVariable(expression: KtExpression): CTNode {
         val dfv = expression.createDataFlowValue() ?: return UNKNOWN_CALL
         return CTVariable(ValueIdsFactory.dfvBased(dfv), dfv.type)
+    }
+
+    private fun tryGetCachedCall(expression: KtExpression): CTCall? {
+        val cachedSchema = bindingContext[BindingContext.EXPRESSION_EFFECTS, expression] ?: return null
+        // return call with functor that just returns cached schema on 'apply'
+        return CTCall(object : ESFunctor {
+            override fun apply(arguments: List<EffectSchema>): EffectSchema? = cachedSchema
+        }, listOf())
     }
 
     private val UNKNOWN_CALL = CTCall(UnknownFunctor, listOf())

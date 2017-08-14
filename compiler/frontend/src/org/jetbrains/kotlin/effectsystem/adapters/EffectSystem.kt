@@ -77,11 +77,20 @@ class EffectSystem {
             languageVersionSettings: LanguageVersionSettings,
             moduleDescriptor: ModuleDescriptor
     ): DataFlowInfo {
-        val schema = evaluateSchema(expression, bindingTrace.bindingContext, moduleDescriptor) ?: return DataFlowInfo.EMPTY
+        val schema = getSchema(expression, bindingTrace, moduleDescriptor) ?: return DataFlowInfo.EMPTY
 
         val extractedContextInfo = InfoCollector(observedEffect).collectFromSchema(schema)
 
         return extractedContextInfo.toDataFlowInfo(languageVersionSettings)
+    }
+
+    private fun getSchema(expression: KtExpression, bindingTrace: BindingTrace, moduleDescriptor: ModuleDescriptor): EffectSchema? {
+        if (bindingTrace[BindingContext.EXPRESSION_EFFECTS, expression] == null) {
+            val evaluatedSchema = evaluateSchema(expression, bindingTrace.bindingContext, moduleDescriptor) ?: return null
+            bindingTrace.record(BindingContext.EXPRESSION_EFFECTS, expression, evaluatedSchema)
+        }
+
+        return bindingTrace[BindingContext.EXPRESSION_EFFECTS, expression]
     }
 
     private fun evaluateSchema(expression: KtExpression, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor): EffectSchema? {
