@@ -15,7 +15,7 @@ fun myTest() {
         val someExpr = ""
         <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'if' expression cannot be inferred:
 should be conformed to: Number
-should be a supertype of: String (for parameter 'thenBranch'), integral type (for parameter 'elseBranch')
+should be a supertype of: String (for parameter 'thenBranch')
 ">if (true) someExpr else 2</error>
     }
 }
@@ -26,14 +26,14 @@ fun testLambdaLastExpression() {
         <error descr="[CONTRADICTION_IN_CONSTRAINT_SYSTEM] Contradictory requirements for type variable 'T':
 fun <T : Number> fooReturn(x: T, l: () -> T): Unit
 should be a subtype of: Number (declared upper bound T)
-should be a supertype of: integral type (for parameter 'x'), String
+should be a supertype of: String
 ">longLongLambda</error>
     }
 
     fooReturn(<error descr="[CONTRADICTION_IN_CONSTRAINT_SYSTEM] Contradictory requirements for type variable 'T':
 fun <T : Number> fooReturn(x: T, l: () -> T): Unit
 should be a subtype of: Number (declared upper bound T)
-should be a supertype of: String (for parameter 'x'), Int
+should be a supertype of: String (for parameter 'x')
 ">""</error>) {
     val long = 3
     long
@@ -59,7 +59,7 @@ fun testLambdaWithReturnIfExpression(): Int {
             return@onlyLambda <error descr="[CONTRADICTION_IN_CONSTRAINT_SYSTEM] Contradictory requirements for type variable 'T':
 fun <T : Number> onlyLambda(x: () -> T): Unit
 should be a subtype of: Number (declared upper bound T)
-should be a supertype of: String, integral type
+should be a supertype of: String
 ">"not a number"</error>
         }
         if (3 < 2) {
@@ -67,7 +67,7 @@ should be a supertype of: String, integral type
         }
         <error descr="[CONTRADICTION_FOR_SPECIAL_CALL] Result type for 'if' expression cannot be inferred:
 should be conformed to: Number
-should be a supertype of: String (for parameter 'thenBranch'), integral type (for parameter 'elseBranch')
+should be a supertype of: String (for parameter 'thenBranch')
 ">if (true) "" else 123</error>
     }</error>
 }

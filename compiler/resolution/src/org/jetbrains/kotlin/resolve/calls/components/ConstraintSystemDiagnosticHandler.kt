@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 fun handleDiagnostics(
         c: Context,
@@ -43,7 +44,8 @@ fun handleDiagnostics(
         // Also, probably it's enough to show error only about one type parameter
         variablesWithConstraints.mapTo(constraintSystemDiagnostics) {
             val properConstraints = it.constraints.filter { constraint -> c.canBeProper(constraint.type) }
-            AggregatedConstraintError(position, it.typeVariable, extractKind(it.typeVariable), divideByConstraints(properConstraints))
+            val sortedConstraints = divideByConstraints(properConstraints)
+            AggregatedConstraintError(position, it.typeVariable, extractKind(it.typeVariable), simplify(sortedConstraints))
         }
     }
 
@@ -51,6 +53,17 @@ fun handleDiagnostics(
 }
 
 data class SortedConstraints(val upper: List<Constraint>, val equality: List<Constraint>, val lower: List<Constraint>)
+
+fun simplify(constraints: SortedConstraints): SortedConstraints {
+    if (constraints.equality.isNotEmpty()) return constraints
+
+    val onlyIncorrectConstraints = constraints.lower.filter { !it.isCorrect(constraints.upper) }
+    return SortedConstraints(constraints.upper, constraints.equality, onlyIncorrectConstraints)
+}
+
+private fun Constraint.isCorrect(upperConstraints: List<Constraint>): Boolean {
+    return upperConstraints.all { KotlinTypeChecker.DEFAULT.isSubtypeOf(this.type, it.type) }
+}
 
 private fun extractKind(typeVariable: NewTypeVariable): SpecialTypeVariableKind? {
     val freshTypeConstructor = typeVariable.freshTypeConstructor

@@ -4,7 +4,7 @@ fun test1(i: Int) {
     foo(i, <error descr="[CONTRADICTION_IN_CONSTRAINT_SYSTEM] Contradictory requirements for type variable 'S':
 fun <T : S, S : Number> foo(x: T, y: S): Unit
 should be a subtype of: Number (declared upper bound S)
-should be a supertype of: Int (for parameter 'x'), String (for parameter 'y')
+should be a supertype of: String (for parameter 'y')
 ">""</error>)
 }
 
