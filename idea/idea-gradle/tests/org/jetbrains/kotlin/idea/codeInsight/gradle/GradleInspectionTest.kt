@@ -197,7 +197,6 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
             val foundProblems = presentation.problemElements
                     .values
-                    .flatMap { it.toList() }
                     .mapNotNull { it as? ProblemDescriptorBase }
                     .map { it.descriptionTemplate }
 
