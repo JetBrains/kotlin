@@ -236,8 +236,10 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
      *
      * Example: a Java source file with `package com.example.my.package` is located in directory `src/main/java/my/package`.
      * Then, for the Kotlin compilation to locate the source file, use package prefix `"com.example"` */
-    @Input
     var javaPackagePrefix: String? = null
+
+    @get:Input
+    internal val javaPackagePrefixInputString get() = javaPackagePrefix ?: ""
 
     internal val pluginOptions = CompilerPluginOptions()
     internal var artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null
