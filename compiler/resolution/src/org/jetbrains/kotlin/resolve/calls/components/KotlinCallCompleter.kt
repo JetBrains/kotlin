@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompleter
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompleter.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 class KotlinCallCompleter(
         private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
         private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-        private val constraintSystemCompleter: ConstraintSystemCompleter
+        private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter
 ) {
 
     interface Context {
@@ -78,7 +78,7 @@ class KotlinCallCompleter(
     }
 
     private fun SimpleKotlinResolutionCandidate.runCompletion(completionMode: ConstraintSystemCompletionMode, resolutionCallbacks: KotlinResolutionCallbacks) {
-        constraintSystemCompleter.runCompletion(
+        kotlinConstraintSystemCompleter.runCompletion(
                 constraintSystem.asConstraintSystemCompleterContext(), completionMode, descriptorWithFreshTypes.returnTypeOrNothing
         ) {
             postponedArgumentsAnalyzer.analyze(constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it)

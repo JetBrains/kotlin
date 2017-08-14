@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class ConstraintSystemCompleter(
+class KotlinConstraintSystemCompleter(
         private val resultTypeResolver: ResultTypeResolver,
         private val variableFixationFinder: VariableFixationFinder
 ) {
