@@ -556,6 +556,14 @@ class DelegatedPropertyResolver(
                     isGet = true, isComplete = true
             )
 
+            if (variableDescriptor.isVar && variableDescriptor.returnType !is DeferredType) {
+                getGetSetValueMethod(
+                        variableDescriptor, delegateExpression, typeInfoForGetValueReceiver.type ?: return null,
+                        traceToResolveConventionMethods, scopeForDelegate, typeInfoForGetValueReceiver.dataFlowInfo,
+                        isGet = false, isComplete = true
+                )
+            }
+
             val call = delegateExpression.getCall(traceToResolveConventionMethods.bindingContext)
             val pretendReturnType = call.getResolvedCall(traceToResolveConventionMethods.bindingContext)?.resultingDescriptor?.returnType
             return pretendReturnType?.takeUnless { it.contains { it.constructor is TypeVariableTypeConstructor } }
