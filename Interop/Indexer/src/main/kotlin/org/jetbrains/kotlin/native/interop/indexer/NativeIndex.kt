@@ -50,7 +50,10 @@ abstract class NativeIndex {
 /**
  * C struct field.
  */
-class Field(val name: String, val type: Type, val offset: Long)
+class Field(val name: String, val type: Type, val offset: Long, val typeAlign: Long)
+
+val Field.isAligned: Boolean
+    get() = offset % (typeAlign * 8) == 0L
 
 /**
  * C struct declaration.
@@ -68,8 +71,7 @@ abstract class StructDecl(val spelling: String) {
  */
 abstract class StructDef(val size: Long, val align: Int,
                          val decl: StructDecl,
-                         val hasNaturalLayout: Boolean,
-                         val hasUnalignedFields: Boolean) {
+                         val hasNaturalLayout: Boolean) {
 
     abstract val fields: List<Field>
 }

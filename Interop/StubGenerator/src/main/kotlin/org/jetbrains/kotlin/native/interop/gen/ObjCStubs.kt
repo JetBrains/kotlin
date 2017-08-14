@@ -213,8 +213,11 @@ private fun Type.isLargeOrUnaligned(): Boolean {
 private fun Type.hasUnalignedMembers(): Boolean = when (this) {
     is Typedef -> this.def.aliased.hasUnalignedMembers()
     is RecordType -> this.decl.def!!.let { def ->
-        def.hasUnalignedFields || // Check members of fields too:
-                def.fields.any { it.type.hasUnalignedMembers() }
+        def.fields.any {
+            !it.isAligned ||
+                    // Check members of fields too:
+                    it.type.hasUnalignedMembers()
+        }
     }
     is ArrayType -> this.elemType.hasUnalignedMembers()
     else -> false

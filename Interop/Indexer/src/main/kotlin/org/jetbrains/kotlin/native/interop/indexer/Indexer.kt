@@ -27,10 +27,10 @@ private class StructDeclImpl(spelling: String) : StructDecl(spelling) {
 
 private class StructDefImpl(
         size: Long, align: Int, decl: StructDecl,
-        hasNaturalLayout: Boolean, hasUnalignedFields: Boolean
+        hasNaturalLayout: Boolean
 ) : StructDef(
         size, align, decl,
-        hasNaturalLayout = hasNaturalLayout, hasUnalignedFields = hasUnalignedFields
+        hasNaturalLayout = hasNaturalLayout
 ) {
 
     override val fields = mutableListOf<Field>()
@@ -140,20 +140,39 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
         val structDef = StructDefImpl(
                 size, align, structDecl,
-                hasNaturalLayout = structHasNaturalLayout(cursor),
-                hasUnalignedFields = structHasUnalignedFields(cursor)
+                hasNaturalLayout = structHasNaturalLayout(cursor)
         )
 
         structDecl.def = structDef
 
-        visitChildren(cursor) { childCursor: CValue<CXCursor>, _: CValue<CXCursor> ->
-            if (clang_getCursorKind(childCursor) == CXCursorKind.CXCursor_FieldDecl) {
-                val name = clang_getCursorSpelling(childCursor).convertAndDispose()
-                val fieldType = convertCursorType(childCursor)
-                val offset = clang_Cursor_getOffsetOfField(childCursor)
-                structDef.fields.add(Field(name, fieldType, offset))
+        addDeclaredFields(structDef, type, type)
+    }
+
+    private fun addDeclaredFields(structDef: StructDefImpl, structType: CValue<CXType>, containerType: CValue<CXType>) {
+        getFields(containerType).forEach { fieldCursor ->
+            val name = getCursorSpelling(fieldCursor)
+            if (name.isNotEmpty()) {
+                val fieldType = convertCursorType(fieldCursor)
+                val offset = clang_Type_getOffsetOf(structType, name)
+                if (clang_Cursor_isBitField(fieldCursor) == 0) {
+                    val typeAlign = clang_Type_getAlignOf(clang_getCursorType(fieldCursor))
+                    structDef.fields.add(Field(name, fieldType, offset, typeAlign))
+                } else {
+                    // Ignore bit fields for now.
+                }
+            } else {
+                // Unnamed field.
+                val fieldType = clang_getCursorType(fieldCursor)
+                when (fieldType.kind) {
+                    CXTypeKind.CXType_Record -> {
+                        // Unnamed struct fields also contribute their fields:
+                        addDeclaredFields(structDef, structType, fieldType)
+                    }
+                    else -> {
+                        // Nothing.
+                    }
+                }
             }
-            CXChildVisitResult.CXChildVisit_Continue
         }
     }
 
@@ -341,27 +360,6 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         }
     }
 
-    /**
-     * Computes [StructDef.hasUnalignedFields] property.
-     */
-    fun structHasUnalignedFields(structDefCursor: CValue<CXCursor>): Boolean {
-        var hasUnalignedFields = false
-        visitChildren(structDefCursor) { child, _ ->
-            if (clang_getCursorKind(child) == CXCursorKind.CXCursor_FieldDecl &&
-                    clang_Cursor_isBitField(child) == 0 &&
-                    clang_Cursor_getOffsetOfField(child) %
-                            (clang_Type_getAlignOf(clang_getCursorType(child)) * 8) != 0L) {
-
-                hasUnalignedFields = true
-                CXChildVisitResult.CXChildVisit_Break
-            } else {
-                CXChildVisitResult.CXChildVisit_Continue
-            }
-        }
-
-        return hasUnalignedFields
-    }
-
     private fun convertCursorType(cursor: CValue<CXCursor>) =
         convertType(clang_getCursorType(cursor), clang_getDeclTypeAttributes(cursor))
 
@@ -507,7 +505,12 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
         when (kind) {
             CXIdxEntity_Struct, CXIdxEntity_Union -> {
-                getStructDeclAt(cursor)
+                if (entityName == null) {
+                    // Skip anonymous struct.
+                    // (It gets included anyway if used as a named field type).
+                } else {
+                    getStructDeclAt(cursor)
+                }
             }
 
             CXIdxEntity_Typedef -> {

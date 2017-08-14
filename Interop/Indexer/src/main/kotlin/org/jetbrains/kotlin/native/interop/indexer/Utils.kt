@@ -137,16 +137,40 @@ internal typealias CursorVisitor = (cursor: CValue<CXCursor>, parent: CValue<CXC
 
 internal fun visitChildren(parent: CValue<CXCursor>, visitor: CursorVisitor) {
     val visitorPtr = StableObjPtr.create(visitor)
-    val clientData = visitorPtr.value
-    clang_visitChildren(parent, staticCFunction { cursor, parent, clientData ->
-        @Suppress("NAME_SHADOWING", "UNCHECKED_CAST")
-        val visitor = StableObjPtr.fromValue(clientData!!).get() as CursorVisitor
-        visitor(cursor, parent)
-    }, clientData)
+    try {
+        val clientData = visitorPtr.value
+        clang_visitChildren(parent, staticCFunction { cursor, parent, clientData ->
+            @Suppress("NAME_SHADOWING", "UNCHECKED_CAST")
+            val visitor = StableObjPtr.fromValue(clientData!!).get() as CursorVisitor
+            visitor(cursor, parent)
+        }, clientData)
+    } finally {
+        visitorPtr.dispose()
+    }
 }
 
 internal fun visitChildren(translationUnit: CXTranslationUnit, visitor: CursorVisitor) =
         visitChildren(clang_getTranslationUnitCursor(translationUnit), visitor)
+
+internal fun getFields(type: CValue<CXType>): List<CValue<CXCursor>> {
+    val result = mutableListOf<CValue<CXCursor>>()
+    val resultPtr = StableObjPtr.create(result)
+    try {
+        val clientData = resultPtr.value
+
+        @Suppress("NAME_SHADOWING", "UNCHECKED_CAST")
+        clang_Type_visitFields(type, staticCFunction { cursor, clientData ->
+            val result = StableObjPtr.fromValue(clientData!!).get() as MutableList<CValue<CXCursor>>
+            result.add(cursor)
+            CXVisitorResult.CXVisit_Continue
+        }, clientData)
+
+    } finally {
+        resultPtr.dispose()
+    }
+
+    return result
+}
 
 internal fun CValue<CXCursor>.isLeaf(): Boolean {
     var hasChildren = false

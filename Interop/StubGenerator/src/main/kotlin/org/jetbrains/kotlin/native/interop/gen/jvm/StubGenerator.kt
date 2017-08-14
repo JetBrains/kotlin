@@ -267,9 +267,9 @@ class StubGenerator(
             out("companion object : Type(${def.size}, ${def.align})") // FIXME: align
             out("")
             for (field in def.fields) {
-                if (field.name.isEmpty()) continue
-
                 try {
+                    assert(field.name.isNotEmpty())
+
                     if (field.offset < 0) throw NotImplementedError();
                     assert(field.offset % 8 == 0L)
                     val offset = field.offset / 8
