@@ -1,0 +1,63 @@
+== myRun ==
+inline fun myRun(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> Unit): Unit = block()
+---------------------
+L0:
+  1 <START>                                                                                            INIT: in: {} out: {}
+    v(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> Unit)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> Unit) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                                                      INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                                                   INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>                                                                                                                                      USE: in: {} out: {}
+error:
+-   <ERROR>
+sink:
+    <SINK>                                                                                             INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {}
+=====================
+== test ==
+fun test() {
+    myRun { throw java.lang.IllegalArgumentException() }
+    val x: Int = 42
+}
+---------------------
+L0:
+  1 <START>                                                                           INIT: in: {} out: {}
+  2 mark({ myRun { throw java.lang.IllegalArgumentException() } val x: Int = 42 })
+    mark({ throw java.lang.IllegalArgumentException() })
+    r({ throw java.lang.IllegalArgumentException() }) -> <v0>
+    mark(myRun { throw java.lang.IllegalArgumentException() })
+    call(myRun { throw java.lang.IllegalArgumentException() }, myRun|<v0>) -> <v1>
+L2 [before inlined declaration]:
+    inlined({ throw java.lang.IllegalArgumentException() })                                                   USE: in: {} out: {}
+L3 [after inlined declaration]:
+-   v(val x: Int = 42)
+-   r(42) -> <v2>
+-   w(x|<v2>)
+L1:
+- 1 <END>
+error:
+-   <ERROR>
+sink:
+    <SINK>                                                                            INIT: in: {} out: {}    USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{ throw java.lang.IllegalArgumentException() }
+---------------------
+L4:
+  3 <START>                                                    INIT: in: {} out: {}
+  4 mark(throw java.lang.IllegalArgumentException())
+    mark(throw java.lang.IllegalArgumentException())
+    mark(java.lang.IllegalArgumentException())
+    mark(IllegalArgumentException())
+    call(IllegalArgumentException(), <init>) -> <v0>
+    throw (throw java.lang.IllegalArgumentException()|<v0>)                            USE: in: {} out: {}
+L5:
+- 3 <END>
+error:
+    <ERROR>                                                    INIT: in: {} out: {}
+sink:
+    <SINK>                                                                             USE: in: {} out: {}
+=====================

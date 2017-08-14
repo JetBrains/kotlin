@@ -1,0 +1,25 @@
+== myRun ==
+inline fun myRun(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> Unit): Unit = block()
+---------------------
+          <v0>: {<: () -> Unit}   NEW: magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> Unit) -> <v0>
+block     <v1>: {<: () -> Unit}   NEW: r(block) -> <v1>
+block()   <v2>: Unit              NEW: call(block(), invoke|<v1>) -> <v2>
+=====================
+== test ==
+fun test() {
+    myRun { throw java.lang.IllegalArgumentException() }
+    val x: Int = 42
+}
+---------------------
+{ throw java.lang.IllegalArgumentException() }         <v0>: {<: () -> Unit}   NEW: r({ throw java.lang.IllegalArgumentException() }) -> <v0>
+myRun { throw java.lang.IllegalArgumentException() }   <v1>: *                 NEW: call(myRun { throw java.lang.IllegalArgumentException() }, myRun|<v0>) -> <v1>
+42                                                     <v2>: Int               NEW: r(42) -> <v2>
+=====================
+== anonymous_0 ==
+{ throw java.lang.IllegalArgumentException() }
+---------------------
+IllegalArgumentException()                   <v0>: {<: Throwable}   NEW: call(IllegalArgumentException(), <init>) -> <v0>
+java.lang.IllegalArgumentException()         <v0>: {<: Throwable}   COPY
+throw java.lang.IllegalArgumentException()   !<v1>: *
+throw java.lang.IllegalArgumentException()   !<v1>: *               COPY
+=====================

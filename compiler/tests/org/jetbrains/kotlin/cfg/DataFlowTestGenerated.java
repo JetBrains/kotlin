@@ -162,6 +162,51 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
         }
     }
 
+    @TestMetadata("compiler/testData/cfg-variables/effects")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Effects extends AbstractDataFlowTest {
+        public void testAllFilesPresentInEffects() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/effects"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("breakContinuesInInlinedLambda.kt")
+        public void testBreakContinuesInInlinedLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/breakContinuesInInlinedLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlinedLambdaAlwaysThrows.kt")
+        public void testInlinedLambdaAlwaysThrows() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/inlinedLambdaAlwaysThrows.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedTryCatchFinally.kt")
+        public void testNestedTryCatchFinally() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/nestedTryCatchFinally.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedTryCatchs.kt")
+        public void testNestedTryCatchs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/nestedTryCatchs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("tryCatch.kt")
+        public void testTryCatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/tryCatch.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("tryCatchFinally.kt")
+        public void testTryCatchFinally() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/tryCatchFinally.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/cfg-variables/lexicalScopes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

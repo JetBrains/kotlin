@@ -1,0 +1,17 @@
+package
+
+public fun branchingFlow(/*0*/ a: kotlin.Any?): kotlin.Unit
+public fun deeplyNestedDefiniteAssignment(): kotlin.Unit
+public fun initialization(): kotlin.Unit
+public fun </*0*/ T> myRun(/*0*/ @kotlin.internal.CalledInPlace(count = InvocationCount.EXACTLY_ONCE) block: () -> T): T
+public fun nestedDefiniteAssignment(): kotlin.Unit
+public fun returningValue(): kotlin.Unit
+public fun shadowing(): kotlin.Unit
+
+public final class DefiniteInitializationInInitSection {
+    public constructor DefiniteInitializationInInitSection()
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

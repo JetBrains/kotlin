@@ -1,0 +1,344 @@
+== myRun ==
+fun myRun(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> Unit) = block()
+---------------------
+L0:
+  1 <START>                                                                                            INIT: in: {} out: {}
+    v(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> Unit)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> Unit) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                                                      INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                                                   INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                                                                            INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                             INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== definiteVarInitialization ==
+fun definiteVarInitialization() {
+    var x: Int
+    myRun { x = 42 }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                          INIT: in: {} out: {}          USE: in: {} out: {}
+  2 mark({ var x: Int myRun { x = 42 } x.inc() })
+    v(var x: Int)                                    INIT: in: {} out: {x=D}
+    mark({ x = 42 })                                 INIT: in: {x=D} out: {x=D}
+    mark(myRun { x = 42 })
+    call(myRun { x = 42 }, myRun|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ x = 42 })                              INIT: in: {x=I} out: {x=I}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L3 [after inlined lambda]:
+    r({ x = 42 }) -> <v2>
+    mark(x.inc())                                                                  USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v3>                                                                   USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v3>) -> <v4>
+L1:
+  1 <END>                                            INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                         USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{ x = 42 }
+---------------------
+L4:
+  3 <START>          INIT: in: {x=D} out: {x=D}
+  4 mark(x = 42)
+    r(42) -> <v0>                                    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L5:
+  3 <END>            INIT: in: {x=ID} out: {x=ID}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {x=I} out: {x=I}      USE: in: {x=READ} out: {x=READ}
+=====================
+== definiteVarReassignment ==
+fun definiteVarReassignment() {
+    var x: Int
+    myRun { x = 42 }
+    x.inc()
+    myRun { x = 43 }
+    x.inc()
+    x = 44
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                  INIT: in: {} out: {}          USE: in: {} out: {}
+  2 mark({ var x: Int myRun { x = 42 } x.inc() myRun { x = 43 } x.inc() x = 44 x.inc() })
+    v(var x: Int)                                                                            INIT: in: {} out: {x=D}
+    mark({ x = 42 })                                                                         INIT: in: {x=D} out: {x=D}
+    mark(myRun { x = 42 })
+    call(myRun { x = 42 }, myRun|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ x = 42 })                                                                      INIT: in: {x=I} out: {x=I}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L3 [after inlined lambda]:
+    r({ x = 42 }) -> <v2>
+    mark(x.inc())                                                                                                          USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v3>                                                                                                           USE: in: {x=WRITTEN_AFTER_READ} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v3>) -> <v4>
+    mark({ x = 43 })
+    mark(myRun { x = 43 })
+    call(myRun { x = 43 }, myRun|!<v5>) -> <v6>
+L6 [before inlined lambda]:
+    inlined({ x = 43 })                                                                                                    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L7 [after inlined lambda]:
+    r({ x = 43 }) -> <v7>
+    mark(x.inc())                                                                                                          USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v8>                                                                                                           USE: in: {x=WRITTEN_AFTER_READ} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v8>) -> <v9>
+    r(44) -> <v10>                                                                                                         USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v10>)                                                                                                             USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+    mark(x.inc())                                                                                                          USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v11>                                                                                                          USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v11>) -> <v12>
+L1:
+  1 <END>                                                                                    INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                 USE: in: {} out: {}
+=====================
+== anonymous_1 ==
+{ x = 42 }
+---------------------
+L4:
+  3 <START>          INIT: in: {x=D} out: {x=D}
+  4 mark(x = 42)
+    r(42) -> <v0>                                    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L5:
+  3 <END>            INIT: in: {x=ID} out: {x=ID}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {x=I} out: {x=I}      USE: in: {x=READ} out: {x=READ}
+=====================
+== anonymous_2 ==
+{ x = 43 }
+---------------------
+L8:
+  3 <START>          INIT: in: {x=I} out: {x=I}
+  4 mark(x = 43)
+    r(43) -> <v0>                                  USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)                                      USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L9:
+  3 <END>
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {x=I} out: {x=I}    USE: in: {x=READ} out: {x=READ}
+=====================
+== nestedVarInitialization ==
+fun nestedVarInitialization() {
+    var x: Int
+    myRun { myRun { myRun { x = 42 } } }
+    x.inc()
+    myRun { myRun { myRun { x = 42 } } }
+}
+---------------------
+L0:
+  1 <START>                                                                                                   INIT: in: {} out: {}          USE: in: {} out: {}
+  2 mark({ var x: Int myRun { myRun { myRun { x = 42 } } } x.inc() myRun { myRun { myRun { x = 42 } } } })
+    v(var x: Int)                                                                                             INIT: in: {} out: {x=D}
+    mark({ myRun { myRun { x = 42 } } })                                                                      INIT: in: {x=D} out: {x=D}
+    mark(myRun { myRun { myRun { x = 42 } } })
+    call(myRun { myRun { myRun { x = 42 } } }, myRun|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ myRun { myRun { x = 42 } } })                                                                   INIT: in: {x=I} out: {x=I}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L3 [after inlined lambda]:
+    r({ myRun { myRun { x = 42 } } }) -> <v2>
+    mark(x.inc())                                                                                                                           USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v3>                                                                                                                            USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v3>) -> <v4>
+    mark({ myRun { myRun { x = 42 } } })
+    mark(myRun { myRun { myRun { x = 42 } } })
+    call(myRun { myRun { myRun { x = 42 } } }, myRun|!<v5>) -> <v6>
+L14 [before inlined lambda]:
+    inlined({ myRun { myRun { x = 42 } } })                                                                                                 USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
+L15 [after inlined lambda]:
+    r({ myRun { myRun { x = 42 } } }) -> <v7>
+L1:
+  1 <END>                                                                                                     INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                  USE: in: {} out: {}
+=====================
+== anonymous_3 ==
+{ myRun { myRun { x = 42 } } }
+---------------------
+L4:
+  3 <START>                                                  INIT: in: {x=D} out: {x=D}
+  4 mark(myRun { myRun { x = 42 } })
+    mark({ myRun { x = 42 } })
+    mark(myRun { myRun { x = 42 } })
+    call(myRun { myRun { x = 42 } }, myRun|!<v0>) -> <v1>
+L6 [before inlined lambda]:
+    inlined({ myRun { x = 42 } })                            INIT: in: {x=I} out: {x=I}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L7 [after inlined lambda]:
+    r({ myRun { x = 42 } }) -> <v2>
+L5:
+  3 <END>
+error:
+    <ERROR>                                                  INIT: in: {} out: {}
+sink:
+    <SINK>                                                   INIT: in: {x=I} out: {x=I}    USE: in: {x=READ} out: {x=READ}
+=====================
+== anonymous_4 ==
+{ myRun { x = 42 } }
+---------------------
+L8:
+  5 <START>                                        INIT: in: {x=D} out: {x=D}
+  6 mark(myRun { x = 42 })
+    mark({ x = 42 })
+    mark(myRun { x = 42 })
+    call(myRun { x = 42 }, myRun|!<v0>) -> <v1>
+L10 [before inlined lambda]:
+    inlined({ x = 42 })                            INIT: in: {x=I} out: {x=I}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L11 [after inlined lambda]:
+    r({ x = 42 }) -> <v2>
+L9:
+  5 <END>
+error:
+    <ERROR>                                        INIT: in: {} out: {}
+sink:
+    <SINK>                                         INIT: in: {x=I} out: {x=I}    USE: in: {x=READ} out: {x=READ}
+=====================
+== anonymous_5 ==
+{ x = 42 }
+---------------------
+L12:
+  7 <START>          INIT: in: {x=D} out: {x=D}
+  8 mark(x = 42)
+    r(42) -> <v0>                                    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L13:
+  7 <END>            INIT: in: {x=ID} out: {x=ID}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {x=I} out: {x=I}      USE: in: {x=READ} out: {x=READ}
+=====================
+== anonymous_6 ==
+{ myRun { myRun { x = 42 } } }
+---------------------
+L16:
+  3 <START>                                                  INIT: in: {x=I} out: {x=I}
+  4 mark(myRun { myRun { x = 42 } })
+    mark({ myRun { x = 42 } })
+    mark(myRun { myRun { x = 42 } })
+    call(myRun { myRun { x = 42 } }, myRun|!<v0>) -> <v1>
+L18 [before inlined lambda]:
+    inlined({ myRun { x = 42 } })                                                          USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
+L19 [after inlined lambda]:
+    r({ myRun { x = 42 } }) -> <v2>
+L17:
+  3 <END>
+error:
+    <ERROR>                                                  INIT: in: {} out: {}
+sink:
+    <SINK>                                                   INIT: in: {x=I} out: {x=I}    USE: in: {} out: {}
+=====================
+== anonymous_7 ==
+{ myRun { x = 42 } }
+---------------------
+L20:
+  5 <START>                                        INIT: in: {x=I} out: {x=I}
+  6 mark(myRun { x = 42 })
+    mark({ x = 42 })
+    mark(myRun { x = 42 })
+    call(myRun { x = 42 }, myRun|!<v0>) -> <v1>
+L22 [before inlined lambda]:
+    inlined({ x = 42 })                                                          USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
+L23 [after inlined lambda]:
+    r({ x = 42 }) -> <v2>
+L21:
+  5 <END>
+error:
+    <ERROR>                                        INIT: in: {} out: {}
+sink:
+    <SINK>                                         INIT: in: {x=I} out: {x=I}    USE: in: {} out: {}
+=====================
+== anonymous_8 ==
+{ x = 42 }
+---------------------
+L24:
+  7 <START>          INIT: in: {x=I} out: {x=I}
+  8 mark(x = 42)
+    r(42) -> <v0>                                  USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
+    w(x|<v0>)                                      USE: in: {} out: {x=ONLY_WRITTEN_NEVER_READ}
+L25:
+  7 <END>
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {x=I} out: {x=I}    USE: in: {} out: {}
+=====================
+== notAnExpression ==
+fun notAnExpression() {
+    var x: Int = 0
+    myRun { if (true) x = 42 }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                        INIT: in: {} out: {}            USE: in: {} out: {}
+  2 mark({ var x: Int = 0 myRun { if (true) x = 42 } x.inc() })
+    v(var x: Int = 0)                                              INIT: in: {} out: {x=D}
+    r(0) -> <v0>                                                   INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                                                      INIT: in: {x=D} out: {x=ID}
+    mark({ if (true) x = 42 })                                     INIT: in: {x=ID} out: {x=ID}
+    mark(myRun { if (true) x = 42 })
+    call(myRun { if (true) x = 42 }, myRun|!<v1>) -> <v2>
+L2 [before inlined lambda]:
+    inlined({ if (true) x = 42 })                                  INIT: in: {x=I} out: {x=I}
+L3 [after inlined lambda]:
+    r({ if (true) x = 42 }) -> <v3>
+    mark(x.inc())                                                                                  USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v4>                                                                                   USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v4>) -> <v5>
+L1:
+  1 <END>                                                          INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                         USE: in: {} out: {}
+=====================
+== anonymous_9 ==
+{ if (true) x = 42 }
+---------------------
+L4:
+  3 <START>                                  INIT: in: {x=ID} out: {x=ID}
+  4 mark(if (true) x = 42)
+    mark(if (true) x = 42)
+    r(true) -> <v0>
+    jf(L6|<v0>)                                                              USE: in: {x=READ} out: {x=READ}
+    r(42) -> <v1>                                                            USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v1>)                                                                USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+    jmp(L7)
+L6 [else branch]:
+    read (Unit)
+L7 ['if' expression result]:
+    merge(if (true) x = 42|!<v2>) -> <v3>
+L5:
+  3 <END>
+error:
+    <ERROR>                                  INIT: in: {} out: {}
+sink:
+    <SINK>                                   INIT: in: {x=I} out: {x=I}      USE: in: {x=READ} out: {x=READ}
+=====================

@@ -1,0 +1,127 @@
+== myLet ==
+inline fun <T, R> T.myLet(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: (T) -> R) = block(this)
+---------------------
+              <v0>: {<: (T) -> R}   NEW: magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: (T) -> R) -> <v0>
+block         <v1>: {<: (T) -> R}   NEW: r(block) -> <v1>
+this          <v2>: {<: T}          COPY
+this          <v2>: {<: T}          NEW: r(this, <this>) -> <v2>
+block(this)   <v3>: {<: R}          NEW: call(block(this), invoke|<v1>, <v2>) -> <v3>
+=====================
+== myRun ==
+inline fun myRun(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> Unit) = block()
+---------------------
+          <v0>: {<: () -> Unit}   NEW: magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> Unit) -> <v0>
+block     <v1>: {<: () -> Unit}   NEW: r(block) -> <v1>
+block()   <v2>: Unit              NEW: call(block(), invoke|<v1>) -> <v2>
+=====================
+== unknownRun ==
+inline fun unknownRun(block: () -> Unit) = block()
+---------------------
+          <v0>: {<: () -> Unit}   NEW: magic[FAKE_INITIALIZER](block: () -> Unit) -> <v0>
+block     <v1>: {<: () -> Unit}   NEW: r(block) -> <v1>
+block()   <v2>: Unit              NEW: call(block(), invoke|<v1>) -> <v2>
+=====================
+== getBool ==
+fun getBool(): Boolean = false
+---------------------
+false   <v0>: Boolean   NEW: r(false) -> <v0>
+=====================
+== threeLayersReturn ==
+fun threeLayersReturn(x: Int?): Int? {
+    // Inner always jumps to outer
+    // And middle always calls inner
+    // So, in fact, middle never finished normally
+    // Hence 'y = 54' in middle is unreachable, and middle doesn't performs definite initalization
+    // Hence, outer doesn't performs definite initialization
+    val y: Int
+    myRun outer@ {
+        myRun middle@ {
+            x.myLet inner@ {
+                if (it == null) {
+                    return@outer Unit
+                }
+                else {
+                    return@outer Unit
+                }
+            }
+        }
+        // Possible to report unreachable here
+        y = 54
+    }
+    return y.inc()
+}
+---------------------
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <v0>: {<: Int?}         NEW: magic[FAKE_INITIALIZER](x: Int?) -> <v0>
+{ myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } } // Possible to report unreachable here y = 54 }                                                                                                                                                                                                                                                                                                                     <v1>: {<: () -> Unit}   NEW: r({ myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } } // Possible to report unreachable here y = 54 }) -> <v1>
+outer@ { myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } } // Possible to report unreachable here y = 54 }                                                                                                                                                                                                                                                                                                              <v1>: {<: () -> Unit}   COPY
+myRun outer@ { myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } } // Possible to report unreachable here y = 54 }                                                                                                                                                                                                                                                                                                        <v2>: *                 NEW: call(myRun outer@ { myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } } // Possible to report unreachable here y = 54 }, myRun|<v1>) -> <v2>
+y                                                                                                                                                                                                                                                                                                                                                                                                                                                                           <v3>: Int               NEW: r(y) -> <v3>
+inc()                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <v4>: {<: Int?}         NEW: call(inc(), inc|<v3>) -> <v4>
+y.inc()                                                                                                                                                                                                                                                                                                                                                                                                                                                                     <v4>: {<: Int?}         COPY
+return y.inc()                                                                                                                                                                                                                                                                                                                                                                                                                                                              !<v5>: *
+{ // Inner always jumps to outer // And middle always calls inner // So, in fact, middle never finished normally // Hence 'y = 54' in middle is unreachable, and middle doesn't performs definite initalization // Hence, outer doesn't performs definite initialization val y: Int myRun outer@ { myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } } // Possible to report unreachable here y = 54 } return y.inc() }   !<v5>: *                COPY
+=====================
+== anonymous_0 ==
+{
+        myRun middle@ {
+            x.myLet inner@ {
+                if (it == null) {
+                    return@outer Unit
+                }
+                else {
+                    return@outer Unit
+                }
+            }
+        }
+        // Possible to report unreachable here
+        y = 54
+    }
+---------------------
+{ x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } }                                                               <v0>: {<: () -> Unit}   NEW: r({ x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } }) -> <v0>
+middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } }                                                       <v0>: {<: () -> Unit}   COPY
+myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } }                                                 <v1>: *                 NEW: call(myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } }, myRun|<v0>) -> <v1>
+54                                                                                                                                                    <v2>: Int               NEW: r(54) -> <v2>
+y = 54                                                                                                                                                !<v3>: *
+myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } } // Possible to report unreachable here y = 54   !<v3>: *                COPY
+=====================
+== anonymous_1 ==
+{
+            x.myLet inner@ {
+                if (it == null) {
+                    return@outer Unit
+                }
+                else {
+                    return@outer Unit
+                }
+            }
+        }
+---------------------
+x                                                                                     <v0>: {<: Int?}                NEW: r(x) -> <v0>
+{ if (it == null) { return@outer Unit } else { return@outer Unit } }                  <v1>: {<: (Int?) -> Nothing}   NEW: r({ if (it == null) { return@outer Unit } else { return@outer Unit } }) -> <v1>
+inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }           <v1>: {<: (Int?) -> Nothing}   COPY
+myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }     !<v2>: *
+x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }   !<v2>: *                       COPY
+x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }   !<v2>: *                       COPY
+=====================
+== anonymous_2 ==
+{
+                if (it == null) {
+                    return@outer Unit
+                }
+                else {
+                    return@outer Unit
+                }
+            }
+---------------------
+it                                                                 <v0>: *         NEW: r(it) -> <v0>
+null                                                               <v1>: *         NEW: r(null) -> <v1>
+it == null                                                         <v2>: Boolean   NEW: call(it == null, equals|<v0>, <v1>) -> <v2>
+Unit                                                               <v3>: Unit      NEW: r(Unit) -> <v3>
+return@outer Unit                                                  !<v4>: *
+{ return@outer Unit }                                              !<v4>: *        COPY
+Unit                                                               <v5>: Unit      NEW: r(Unit) -> <v5>
+return@outer Unit                                                  !<v6>: *
+{ return@outer Unit }                                              !<v6>: *        COPY
+if (it == null) { return@outer Unit } else { return@outer Unit }   <v7>: Nothing   NEW: merge(if (it == null) { return@outer Unit } else { return@outer Unit }|!<v4>, !<v6>) -> <v7>
+if (it == null) { return@outer Unit } else { return@outer Unit }   <v7>: Nothing   COPY
+=====================

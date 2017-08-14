@@ -1,0 +1,6 @@
+package
+
+public fun </*0*/ T> funWithUnknownInvocations(/*0*/ block: () -> T): T
+public fun indefiniteFlow(): kotlin.Unit
+public fun </*0*/ T> runTwice(/*0*/ @kotlin.internal.CalledInPlace(count = InvocationCount.AT_LEAST_ONCE) block: () -> T): T
+public fun shadowing(): kotlin.Unit

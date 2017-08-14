@@ -1,0 +1,73 @@
+== myLet ==
+inline fun <T, R> T.myLet(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: (T) -> R) = block(this)
+---------------------
+L0:
+  1 <START>                                                                                          INIT: in: {} out: {}
+    v(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: (T) -> R)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: (T) -> R) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                                                    INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                                                 INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    r(this, <this>) -> <v2>
+    mark(block(this))
+    call(block(this), invoke|<v1>, <v2>) -> <v3>
+    ret(*|<v3>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                                                                          INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                           INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== nonLocalReturnWithElvis ==
+fun nonLocalReturnWithElvis(x: Int?): Int? {
+    x?.myLet { return 42 }
+    return x?.inc()
+}
+---------------------
+L0:
+  1 <START>                                             INIT: in: {} out: {}
+    v(x: Int?)                                          INIT: in: {} out: {x=D}
+    magic[FAKE_INITIALIZER](x: Int?) -> <v0>            INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                                           INIT: in: {x=D} out: {x=ID}
+  2 mark({ x?.myLet { return 42 } return x?.inc() })    INIT: in: {x=ID} out: {x=ID}
+    mark(x?.myLet { return 42 })
+    jf(L2)                                                                              USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v1>                                                                        USE: in: {} out: {x=READ}
+    mark({ return 42 })
+    mark(myLet { return 42 })
+    call(myLet { return 42 }, myLet|<v1>, !<v2>)
+L3 [before inlined lambda]:
+    inlined({ return 42 })                              INIT: in: {} out: {}            USE: in: {} out: {}
+L4 [after inlined lambda]:
+    r({ return 42 }) -> <v3>
+L2 [result of call]:
+    mark(x?.inc())                                      INIT: in: {x=I?} out: {x=I?}
+    jf(L7)                                                                              USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v5>                                                                        USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v5>) -> <v6>
+L7 [result of call]:
+    ret(*|<v6>) L1
+L1:
+  1 <END>
+error:
+    <ERROR>                                             INIT: in: {} out: {}
+sink:
+    <SINK>                                              INIT: in: {x=I?} out: {x=I?}    USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{ return 42 }
+---------------------
+L5:
+  3 <START>            INIT: in: {x=ID} out: {x=ID}
+  4 mark(return 42)
+    r(42) -> <v0>
+    ret(*|<v0>) L1                                     USE: in: {} out: {}
+- 3 ret(*|!<v1>) L6
+L6:
+    <END>              INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                             USE: in: {x=READ} out: {x=READ}
+=====================

@@ -1,0 +1,6 @@
+package
+
+public fun functionWithSideEffects(/*0*/ x: kotlin.Int): kotlin.Int
+public fun implicitCastWithIf(/*0*/ s: kotlin.String): kotlin.Unit
+public fun log(/*0*/ s: kotlin.String): kotlin.Unit
+public fun </*0*/ T> myRun(/*0*/ @kotlin.internal.CalledInPlace block: () -> T): T

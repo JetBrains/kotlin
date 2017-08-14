@@ -1,0 +1,527 @@
+== myRun ==
+fun <T> myRun(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T) = block()
+---------------------
+L0:
+  1 <START>                                                                                         INIT: in: {} out: {}
+    v(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                                                   INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                                                INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                                                                         INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                          INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== initialization ==
+fun initialization() {
+    val x: Int
+    myRun {
+        x = 42
+    }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                          INIT: in: {} out: {}          USE: in: {} out: {}
+  2 mark({ val x: Int myRun { x = 42 } x.inc() })
+    v(val x: Int)                                    INIT: in: {} out: {x=D}
+    mark({ x = 42 })                                 INIT: in: {x=D} out: {x=D}
+    mark(myRun { x = 42 })
+    call(myRun { x = 42 }, myRun|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ x = 42 })                              INIT: in: {x=I} out: {x=I}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L3 [after inlined lambda]:
+    r({ x = 42 }) -> <v2>
+    mark(x.inc())                                                                  USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v3>                                                                   USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v3>) -> <v4>
+L1:
+  1 <END>                                            INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                         USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{
+        x = 42
+    }
+---------------------
+L4:
+  3 <START>          INIT: in: {x=D} out: {x=D}
+  4 mark(x = 42)
+    r(42) -> <v0>                                    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L5:
+  3 <END>            INIT: in: {x=ID} out: {x=ID}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {x=I} out: {x=I}      USE: in: {x=READ} out: {x=READ}
+=====================
+== shadowing ==
+fun shadowing() {
+    val x = 42
+    myRun {
+        val <!NAME_SHADOWING!>x<!> = 43
+        x.inc()
+    }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                           INIT: in: {} out: {}            USE: in: {} out: {}
+  2 mark({ val x = 42 myRun { val <!NAME_SHADOWING!>x<!> = 43 x.inc() } x.inc() })
+    v(val x = 42)                                                                     INIT: in: {} out: {x=D}
+    r(42) -> <v0>                                                                     INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                                                                         INIT: in: {x=D} out: {x=ID}
+    mark({ val <!NAME_SHADOWING!>x<!> = 43 x.inc() })                                 INIT: in: {x=ID} out: {x=ID}
+    mark(myRun { val <!NAME_SHADOWING!>x<!> = 43 x.inc() })
+    call(myRun { val <!NAME_SHADOWING!>x<!> = 43 x.inc() }, myRun|!<v1>) -> <v2>
+L2 [before inlined lambda]:
+    inlined({ val <!NAME_SHADOWING!>x<!> = 43 x.inc() })                              INIT: in: {x=I} out: {x=I}
+L3 [after inlined lambda]:
+    r({ val <!NAME_SHADOWING!>x<!> = 43 x.inc() }) -> <v3>
+    mark(x.inc())                                                                                                     USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v4>                                                                                                      USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v4>) -> <v5>
+L1:
+  1 <END>                                                                             INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                            USE: in: {} out: {}
+=====================
+== anonymous_1 ==
+{
+        val <!NAME_SHADOWING!>x<!> = 43
+        x.inc()
+    }
+---------------------
+L4:
+  3 <START>                                          INIT: in: {x=ID} out: {x=ID}
+  4 mark(val <!NAME_SHADOWING!>x<!> = 43 x.inc())
+    v(val <!NAME_SHADOWING)                          INIT: in: {x=ID} out: {NAME_SHADOWING=D, x=ID}
+    mark(x.inc())                                    INIT: in: {NAME_SHADOWING=D, x=ID} out: {NAME_SHADOWING=D, x=ID}
+    r(x) -> <v0>
+    mark(inc())
+    call(inc(), inc|<v0>) -> <v1>
+  3 ret(*|<v1>) L5                                   INIT: in: {x=ID} out: {x=ID}
+L5:
+    <END>
+error:
+    <ERROR>                                          INIT: in: {} out: {}
+sink:
+    <SINK>                                           INIT: in: {x=I} out: {x=I}                                          USE: in: {x=READ} out: {x=READ}
+=====================
+== nestedDefiniteAssignment ==
+fun nestedDefiniteAssignment() {
+    val x: Int
+    myRun {
+        val y = "Hello"
+        myRun {
+            x = 42
+        }
+        y.length
+    }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                             INIT: in: {} out: {}          USE: in: {length=READ} out: {length=READ}
+  2 mark({ val x: Int myRun { val y = "Hello" myRun { x = 42 } y.length } x.inc() })
+    v(val x: Int)                                                                       INIT: in: {} out: {x=D}
+    mark({ val y = "Hello" myRun { x = 42 } y.length })                                 INIT: in: {x=D} out: {x=D}
+    mark(myRun { val y = "Hello" myRun { x = 42 } y.length })
+    call(myRun { val y = "Hello" myRun { x = 42 } y.length }, myRun|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ val y = "Hello" myRun { x = 42 } y.length })                              INIT: in: {x=I} out: {x=I}    USE: in: {length=READ, x=WRITTEN_AFTER_READ} out: {length=READ, x=WRITTEN_AFTER_READ}
+L3 [after inlined lambda]:
+    r({ val y = "Hello" myRun { x = 42 } y.length }) -> <v2>
+    mark(x.inc())                                                                                                     USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v3>                                                                                                      USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v3>) -> <v4>
+L1:
+  1 <END>                                                                               INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                            USE: in: {} out: {}
+=====================
+== anonymous_2 ==
+{
+        val y = "Hello"
+        myRun {
+            x = 42
+        }
+        y.length
+    }
+---------------------
+L4:
+  3 <START>                                            INIT: in: {x=D} out: {x=D}                USE: in: {length=READ, x=WRITTEN_AFTER_READ} out: {length=READ, x=WRITTEN_AFTER_READ}
+  4 mark(val y = "Hello" myRun { x = 42 } y.length)
+    v(val y = "Hello")                                 INIT: in: {x=D} out: {x=D, y=D}
+    mark("Hello")                                      INIT: in: {x=D, y=D} out: {x=D, y=D}
+    r("Hello") -> <v0>
+    w(y|<v0>)                                          INIT: in: {x=D, y=D} out: {x=D, y=ID}
+    mark({ x = 42 })                                   INIT: in: {x=D, y=ID} out: {x=D, y=ID}
+    mark(myRun { x = 42 })
+    call(myRun { x = 42 }, myRun|!<v1>) -> <v2>
+L6 [before inlined lambda]:
+    inlined({ x = 42 })                                INIT: in: {x=I, y=I} out: {x=I, y=I}      USE: in: {length=READ, x=WRITTEN_AFTER_READ, y=READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=READ}
+L7 [after inlined lambda]:
+    r({ x = 42 }) -> <v3>
+    mark(y.length)                                                                               USE: in: {length=READ, x=READ, y=READ} out: {length=READ, x=READ, y=READ}
+    r(y) -> <v4>                                                                                 USE: in: {length=READ, x=READ} out: {length=READ, x=READ, y=READ}
+    r(length|<v4>) -> <v5>                                                                       USE: in: {x=READ} out: {length=READ, x=READ}
+  3 ret(*|<v5>) L5                                     INIT: in: {x=I} out: {x=I}
+L5:
+    <END>
+error:
+    <ERROR>                                            INIT: in: {} out: {}
+sink:
+    <SINK>                                             INIT: in: {x=I} out: {x=I}                USE: in: {x=READ} out: {x=READ}
+=====================
+== anonymous_3 ==
+{
+            x = 42
+        }
+---------------------
+L8:
+  5 <START>          INIT: in: {x=D, y=ID} out: {x=D, y=ID}
+  6 mark(x = 42)
+    r(42) -> <v0>                                                USE: in: {length=READ, x=WRITTEN_AFTER_READ, y=READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=READ}
+    w(x|<v0>)        INIT: in: {x=D, y=ID} out: {x=ID, y=ID}     USE: in: {length=READ, x=READ, y=READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=READ}
+L9:
+  5 <END>            INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {x=I, y=I} out: {x=I, y=I}        USE: in: {length=READ, x=READ, y=READ} out: {length=READ, x=READ, y=READ}
+=====================
+== deeplyNestedDefiniteAssignment ==
+fun deeplyNestedDefiniteAssignment() {
+    val x: Int
+    myRun {
+        val y: String
+        myRun {
+            val z: String
+            myRun {
+                z = "Hello"
+                y = "World"
+                x = 42
+            }
+            z.length
+        }
+        y.length
+    }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                    INIT: in: {} out: {}          USE: in: {length=READ} out: {length=READ}
+  2 mark({ val x: Int myRun { val y: String myRun { val z: String myRun { z = "Hello" y = "World" x = 42 } z.length } y.length } x.inc() })
+    v(val x: Int)                                                                                                                              INIT: in: {} out: {x=D}
+    mark({ val y: String myRun { val z: String myRun { z = "Hello" y = "World" x = 42 } z.length } y.length })                                 INIT: in: {x=D} out: {x=D}
+    mark(myRun { val y: String myRun { val z: String myRun { z = "Hello" y = "World" x = 42 } z.length } y.length })
+    call(myRun { val y: String myRun { val z: String myRun { z = "Hello" y = "World" x = 42 } z.length } y.length }, myRun|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ val y: String myRun { val z: String myRun { z = "Hello" y = "World" x = 42 } z.length } y.length })                              INIT: in: {x=I} out: {x=I}    USE: in: {length=READ, x=WRITTEN_AFTER_READ} out: {length=READ, x=WRITTEN_AFTER_READ}
+L3 [after inlined lambda]:
+    r({ val y: String myRun { val z: String myRun { z = "Hello" y = "World" x = 42 } z.length } y.length }) -> <v2>
+    mark(x.inc())                                                                                                                                                            USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v3>                                                                                                                                                             USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v3>) -> <v4>
+L1:
+  1 <END>                                                                                                                                      INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                                                   USE: in: {} out: {}
+=====================
+== anonymous_4 ==
+{
+        val y: String
+        myRun {
+            val z: String
+            myRun {
+                z = "Hello"
+                y = "World"
+                x = 42
+            }
+            z.length
+        }
+        y.length
+    }
+---------------------
+L4:
+  3 <START>                                                                                                   INIT: in: {x=D} out: {x=D}              USE: in: {length=READ, x=WRITTEN_AFTER_READ} out: {length=READ, x=WRITTEN_AFTER_READ}
+  4 mark(val y: String myRun { val z: String myRun { z = "Hello" y = "World" x = 42 } z.length } y.length)
+    v(val y: String)                                                                                          INIT: in: {x=D} out: {x=D, y=D}
+    mark({ val z: String myRun { z = "Hello" y = "World" x = 42 } z.length })                                 INIT: in: {x=D, y=D} out: {x=D, y=D}
+    mark(myRun { val z: String myRun { z = "Hello" y = "World" x = 42 } z.length })
+    call(myRun { val z: String myRun { z = "Hello" y = "World" x = 42 } z.length }, myRun|!<v0>) -> <v1>
+L6 [before inlined lambda]:
+    inlined({ val z: String myRun { z = "Hello" y = "World" x = 42 } z.length })                              INIT: in: {x=I, y=I} out: {x=I, y=I}    USE: in: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ}
+L7 [after inlined lambda]:
+    r({ val z: String myRun { z = "Hello" y = "World" x = 42 } z.length }) -> <v2>
+    mark(y.length)                                                                                                                                    USE: in: {length=READ, x=READ, y=READ} out: {length=READ, x=READ, y=READ}
+    r(y) -> <v3>                                                                                                                                      USE: in: {length=READ, x=READ} out: {length=READ, x=READ, y=READ}
+    r(length|<v3>) -> <v4>                                                                                                                            USE: in: {x=READ} out: {length=READ, x=READ}
+  3 ret(*|<v4>) L5                                                                                            INIT: in: {x=I} out: {x=I}
+L5:
+    <END>
+error:
+    <ERROR>                                                                                                   INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                                    INIT: in: {x=I} out: {x=I}              USE: in: {x=READ} out: {x=READ}
+=====================
+== anonymous_5 ==
+{
+            val z: String
+            myRun {
+                z = "Hello"
+                y = "World"
+                x = 42
+            }
+            z.length
+        }
+---------------------
+L8:
+  5 <START>                                                                  INIT: in: {x=D, y=D} out: {x=D, y=D}              USE: in: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ}
+  6 mark(val z: String myRun { z = "Hello" y = "World" x = 42 } z.length)
+    v(val z: String)                                                         INIT: in: {x=D, y=D} out: {x=D, y=D, z=D}
+    mark({ z = "Hello" y = "World" x = 42 })                                 INIT: in: {x=D, y=D, z=D} out: {x=D, y=D, z=D}
+    mark(myRun { z = "Hello" y = "World" x = 42 })
+    call(myRun { z = "Hello" y = "World" x = 42 }, myRun|!<v0>) -> <v1>
+L10 [before inlined lambda]:
+    inlined({ z = "Hello" y = "World" x = 42 })                              INIT: in: {x=I, y=I, z=I} out: {x=I, y=I, z=I}    USE: in: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ, z=WRITTEN_AFTER_READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ, z=WRITTEN_AFTER_READ}
+L11 [after inlined lambda]:
+    r({ z = "Hello" y = "World" x = 42 }) -> <v2>
+    mark(z.length)                                                                                                             USE: in: {length=READ, x=READ, y=READ, z=READ} out: {length=READ, x=READ, y=READ, z=READ}
+    r(z) -> <v3>                                                                                                               USE: in: {length=READ, x=READ, y=READ} out: {length=READ, x=READ, y=READ, z=READ}
+    r(length|<v3>) -> <v4>
+  5 ret(*|<v4>) L9                                                           INIT: in: {x=I, y=I} out: {x=I, y=I}
+L9:
+    <END>
+error:
+    <ERROR>                                                                  INIT: in: {} out: {}
+sink:
+    <SINK>                                                                   INIT: in: {x=I, y=I} out: {x=I, y=I}              USE: in: {length=READ, x=READ, y=READ} out: {length=READ, x=READ, y=READ}
+=====================
+== anonymous_6 ==
+{
+                z = "Hello"
+                y = "World"
+                x = 42
+            }
+---------------------
+L12:
+  7 <START>                                 INIT: in: {x=D, y=D, z=D} out: {x=D, y=D, z=D}
+  8 mark(z = "Hello" y = "World" x = 42)
+    mark("Hello")
+    r("Hello") -> <v0>                                                                              USE: in: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ, z=WRITTEN_AFTER_READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ, z=WRITTEN_AFTER_READ}
+    w(z|<v0>)                               INIT: in: {x=D, y=D, z=D} out: {x=D, y=D, z=ID}         USE: in: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ, z=READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ, z=WRITTEN_AFTER_READ}
+    mark("World")                           INIT: in: {x=D, y=D, z=ID} out: {x=D, y=D, z=ID}
+    r("World") -> <v1>                                                                              USE: in: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ, z=READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ, z=READ}
+    w(y|<v1>)                               INIT: in: {x=D, y=D, z=ID} out: {x=D, y=ID, z=ID}       USE: in: {length=READ, x=WRITTEN_AFTER_READ, y=READ, z=READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=WRITTEN_AFTER_READ, z=READ}
+    r(42) -> <v2>                           INIT: in: {x=D, y=ID, z=ID} out: {x=D, y=ID, z=ID}      USE: in: {length=READ, x=WRITTEN_AFTER_READ, y=READ, z=READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=READ, z=READ}
+    w(x|<v2>)                               INIT: in: {x=D, y=ID, z=ID} out: {x=ID, y=ID, z=ID}     USE: in: {length=READ, x=READ, y=READ, z=READ} out: {length=READ, x=WRITTEN_AFTER_READ, y=READ, z=READ}
+L13:
+  7 <END>                                   INIT: in: {x=ID, y=ID, z=ID} out: {x=ID, y=ID, z=ID}
+error:
+    <ERROR>                                 INIT: in: {} out: {}
+sink:
+    <SINK>                                  INIT: in: {x=I, y=I, z=I} out: {x=I, y=I, z=I}          USE: in: {length=READ, x=READ, y=READ, z=READ} out: {length=READ, x=READ, y=READ, z=READ}
+=====================
+== branchingFlow ==
+fun branchingFlow(a: Any?) {
+    val x: Int
+
+    if (a is String) {
+        myRun { x = 42 }
+    } else {
+        myRun { x = 43 }
+    }
+
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                         INIT: in: {} out: {}
+    v(a: Any?)                                                                                      INIT: in: {} out: {a=D}
+    magic[FAKE_INITIALIZER](a: Any?) -> <v0>                                                        INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                                                                                       INIT: in: {a=D} out: {a=ID}               USE: in: {a=READ} out: {a=READ}
+  2 mark({ val x: Int if (a is String) { myRun { x = 42 } } else { myRun { x = 43 } } x.inc() })    INIT: in: {a=ID} out: {a=ID}
+    v(val x: Int)                                                                                   INIT: in: {a=ID} out: {a=ID, x=D}
+    mark(if (a is String) { myRun { x = 42 } } else { myRun { x = 43 } })                           INIT: in: {a=ID, x=D} out: {a=ID, x=D}
+    mark(a is String)                                                                                                                         USE: in: {a=READ, x=WRITTEN_AFTER_READ} out: {a=READ, x=WRITTEN_AFTER_READ}
+    r(a) -> <v1>                                                                                                                              USE: in: {x=WRITTEN_AFTER_READ} out: {a=READ, x=WRITTEN_AFTER_READ}
+    magic[IS](a is String|<v1>) -> <v2>
+    jf(L2|<v2>)
+  3 mark({ myRun { x = 42 } })
+    mark({ x = 42 })
+    mark(myRun { x = 42 })
+    call(myRun { x = 42 }, myRun|!<v3>) -> <v4>
+L3 [before inlined lambda]:
+    inlined({ x = 42 })                                                                             INIT: in: {a=I, x=I} out: {a=I, x=I}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L4 [after inlined lambda]:
+    r({ x = 42 }) -> <v5>
+  2 jmp(L7)                                                                                                                                   USE: in: {x=READ} out: {x=READ}
+L2 [else branch]:
+  3 mark({ myRun { x = 43 } })                                                                      INIT: in: {a=ID, x=D} out: {a=ID, x=D}
+    mark({ x = 43 })
+    mark(myRun { x = 43 })
+    call(myRun { x = 43 }, myRun|!<v6>) -> <v7>
+L8 [before inlined lambda]:
+    inlined({ x = 43 })                                                                             INIT: in: {a=I, x=I} out: {a=I, x=I}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L9 [after inlined lambda]:
+    r({ x = 43 }) -> <v8>
+L7 ['if' expression result]:
+  2 merge(if (a is String) { myRun { x = 42 } } else { myRun { x = 43 } }|<v4>, <v7>) -> <v9>
+    mark(x.inc())                                                                                                                             USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v10>                                                                                                                             USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v10>) -> <v11>
+L1:
+  1 <END>                                                                                           INIT: in: {a=I} out: {a=I}
+error:
+    <ERROR>                                                                                         INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                          INIT: in: {a=I?} out: {a=I?}              USE: in: {} out: {}
+=====================
+== anonymous_7 ==
+{ x = 42 }
+---------------------
+L5:
+  4 <START>          INIT: in: {a=ID, x=D} out: {a=ID, x=D}
+  5 mark(x = 42)
+    r(42) -> <v0>                                                USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {a=ID, x=D} out: {a=ID, x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L6:
+  4 <END>            INIT: in: {a=ID, x=ID} out: {a=ID, x=ID}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {a=I, x=I} out: {a=I, x=I}        USE: in: {x=READ} out: {x=READ}
+=====================
+== anonymous_8 ==
+{ x = 43 }
+---------------------
+L10:
+  4 <START>          INIT: in: {a=ID, x=D} out: {a=ID, x=D}
+  5 mark(x = 43)
+    r(43) -> <v0>                                                USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {a=ID, x=D} out: {a=ID, x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L11:
+  4 <END>            INIT: in: {a=ID, x=ID} out: {a=ID, x=ID}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {a=I, x=I} out: {a=I, x=I}        USE: in: {x=READ} out: {x=READ}
+=====================
+== returningValue ==
+fun returningValue() {
+    val x: Int
+    val hello = myRun { x = 42; "hello" }
+    x.inc()
+    hello.length
+}
+---------------------
+L0:
+  1 <START>                                                                            INIT: in: {} out: {}                              USE: in: {length=READ} out: {length=READ}
+  2 mark({ val x: Int val hello = myRun { x = 42; "hello" } x.inc() hello.length })
+    v(val x: Int)                                                                      INIT: in: {} out: {x=D}
+    v(val hello = myRun { x = 42; "hello" })                                           INIT: in: {x=D} out: {hello=D, x=D}
+    mark({ x = 42; "hello" })                                                          INIT: in: {hello=D, x=D} out: {hello=D, x=D}
+    mark(myRun { x = 42; "hello" })
+    call(myRun { x = 42; "hello" }, myRun|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ x = 42; "hello" })                                                       INIT: in: {hello=I?, x=I} out: {hello=I?, x=I}    USE: in: {hello=READ, length=READ, x=WRITTEN_AFTER_READ} out: {hello=READ, length=READ, x=WRITTEN_AFTER_READ}
+L3 [after inlined lambda]:
+    r({ x = 42; "hello" }) -> <v2>
+    w(hello|<v1>)                                                                      INIT: in: {hello=I?, x=I} out: {hello=ID, x=I}
+    mark(x.inc())                                                                      INIT: in: {hello=ID, x=I} out: {hello=ID, x=I}    USE: in: {hello=READ, length=READ, x=READ} out: {hello=READ, length=READ, x=READ}
+    r(x) -> <v3>                                                                                                                         USE: in: {hello=READ, length=READ} out: {hello=READ, length=READ, x=READ}
+    mark(inc())
+    call(inc(), inc|<v3>) -> <v4>
+    mark(hello.length)                                                                                                                   USE: in: {hello=READ, length=READ} out: {hello=READ, length=READ}
+    r(hello) -> <v5>                                                                                                                     USE: in: {length=READ} out: {hello=READ, length=READ}
+    r(length|<v5>) -> <v6>                                                                                                               USE: in: {} out: {length=READ}
+L1:
+  1 <END>                                                                              INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                               USE: in: {} out: {}
+=====================
+== anonymous_9 ==
+{ x = 42; "hello" }
+---------------------
+L4:
+  3 <START>                  INIT: in: {hello=D, x=D} out: {hello=D, x=D}
+  4 mark(x = 42; "hello")
+    r(42) -> <v0>                                                              USE: in: {hello=READ, length=READ, x=WRITTEN_AFTER_READ} out: {hello=READ, length=READ, x=WRITTEN_AFTER_READ}
+    w(x|<v0>)                INIT: in: {hello=D, x=D} out: {hello=D, x=ID}     USE: in: {hello=READ, length=READ, x=READ} out: {hello=READ, length=READ, x=WRITTEN_AFTER_READ}
+    mark("hello")            INIT: in: {hello=D, x=ID} out: {hello=D, x=ID}
+    r("hello") -> <v1>
+  3 ret(*|<v1>) L5
+L5:
+    <END>
+error:
+    <ERROR>                  INIT: in: {} out: {}
+sink:
+    <SINK>                   INIT: in: {hello=I?, x=I} out: {hello=I?, x=I}    USE: in: {hello=READ, length=READ, x=READ} out: {hello=READ, length=READ, x=READ}
+=====================
+== DefiniteInitializationInInitSection ==
+class DefiniteInitializationInInitSection {
+    val x: Int
+
+    init {
+        myRun { x = 42 }
+    }
+}
+---------------------
+L0:
+  1 <START>                                        INIT: in: {} out: {}
+    v(val x: Int)                                  INIT: in: {} out: {x=D}
+  2 mark({ myRun { x = 42 } })                     INIT: in: {x=D} out: {x=D}
+    mark({ x = 42 })
+    mark(myRun { x = 42 })
+    call(myRun { x = 42 }, myRun|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ x = 42 })                            INIT: in: {x=I} out: {x=I}      USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
+L3 [after inlined lambda]:
+    r({ x = 42 }) -> <v2>
+L1:
+  1 <END>
+error:
+    <ERROR>                                        INIT: in: {} out: {}
+sink:
+    <SINK>                                         INIT: in: {x=I?} out: {x=I?}    USE: in: {} out: {}
+=====================
+== anonymous_10 ==
+{ x = 42 }
+---------------------
+L4:
+  3 <START>                                INIT: in: {x=D} out: {x=D}
+  4 mark(x = 42)
+    magic[IMPLICIT_RECEIVER](x) -> <v0>
+    r(42) -> <v1>                                                          USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
+    w(x|<v0>, <v1>)                        INIT: in: {x=D} out: {x=ID}     USE: in: {} out: {x=ONLY_WRITTEN_NEVER_READ}
+L5:
+  3 <END>                                  INIT: in: {x=ID} out: {x=ID}
+error:
+    <ERROR>                                INIT: in: {} out: {}
+sink:
+    <SINK>                                 INIT: in: {x=I} out: {x=I}      USE: in: {} out: {}
+=====================

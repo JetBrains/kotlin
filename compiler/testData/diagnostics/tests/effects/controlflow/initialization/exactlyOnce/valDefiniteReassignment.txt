@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ T> myRun(/*0*/ @kotlin.internal.CalledInPlace(count = InvocationCount.EXACTLY_ONCE) block: () -> T): T
+public fun reassignment(): kotlin.Unit
+public fun reassignmentInUsualFlow(): kotlin.Unit

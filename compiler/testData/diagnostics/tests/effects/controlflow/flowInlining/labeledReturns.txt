@@ -1,0 +1,8 @@
+package
+
+public fun getBool(): kotlin.Boolean
+public inline fun myRun(/*0*/ @kotlin.internal.CalledInPlace(count = InvocationCount.EXACTLY_ONCE) block: () -> kotlin.Unit): kotlin.Unit
+public fun threeLevelsReturnNoInitialization(/*0*/ x: kotlin.Int?): kotlin.Int?
+public fun threeLevelsReturnWithInitialization(/*0*/ x: kotlin.Int?): kotlin.Int?
+public inline fun unknownRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun </*0*/ T, /*1*/ R> T.myLet(/*0*/ @kotlin.internal.CalledInPlace(count = InvocationCount.EXACTLY_ONCE) block: (T) -> R): R

@@ -1,0 +1,168 @@
+== myLet ==
+fun <T, R> T.myLet(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: (T) -> R) = block(this)
+---------------------
+L0:
+  1 <START>                                                                                          INIT: in: {} out: {}
+    v(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: (T) -> R)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: (T) -> R) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                                                    INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                                                 INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    r(this, <this>) -> <v2>
+    mark(block(this))
+    call(block(this), invoke|<v1>, <v2>) -> <v3>
+    ret(*|<v3>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                                                                          INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                           INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== initializationWithReceiver ==
+fun initializationWithReceiver(y: String) {
+    val x: Int
+    y.myLet { x = 42 }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                              INIT: in: {} out: {}
+    v(y: String)                                         INIT: in: {} out: {y=D}
+    magic[FAKE_INITIALIZER](y: String) -> <v0>           INIT: in: {y=D} out: {y=D}
+    w(y|<v0>)                                            INIT: in: {y=D} out: {y=ID}               USE: in: {y=READ} out: {y=READ}
+  2 mark({ val x: Int y.myLet { x = 42 } x.inc() })      INIT: in: {y=ID} out: {y=ID}
+    v(val x: Int)                                        INIT: in: {y=ID} out: {x=D, y=ID}
+    mark(y.myLet { x = 42 })                             INIT: in: {x=D, y=ID} out: {x=D, y=ID}    USE: in: {x=WRITTEN_AFTER_READ, y=READ} out: {x=WRITTEN_AFTER_READ, y=READ}
+    r(y) -> <v1>                                                                                   USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ, y=READ}
+    mark({ x = 42 })
+    mark(myLet { x = 42 })
+    call(myLet { x = 42 }, myLet|<v1>, !<v2>) -> <v3>
+L2 [before inlined lambda]:
+    inlined({ x = 42 })                                  INIT: in: {x=I, y=I} out: {x=I, y=I}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L3 [after inlined lambda]:
+    r({ x = 42 }) -> <v4>
+    mark(x.inc())                                                                                  USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v5>                                                                                   USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v5>) -> <v6>
+L1:
+  1 <END>                                                INIT: in: {y=I} out: {y=I}
+error:
+    <ERROR>                                              INIT: in: {} out: {}
+sink:
+    <SINK>                                               INIT: in: {y=I?} out: {y=I?}              USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{ x = 42 }
+---------------------
+L4:
+  3 <START>          INIT: in: {x=D, y=ID} out: {x=D, y=ID}
+  4 mark(x = 42)
+    r(42) -> <v0>                                                USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {x=D, y=ID} out: {x=ID, y=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L5:
+  3 <END>            INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {x=I, y=I} out: {x=I, y=I}        USE: in: {x=READ} out: {x=READ}
+=====================
+== initializationWithElvis ==
+fun initializationWithElvis(y: String?) {
+    val x: Int
+    y?.myLet { x = 42 }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                              INIT: in: {} out: {}
+    v(y: String?)                                        INIT: in: {} out: {y=D}
+    magic[FAKE_INITIALIZER](y: String?) -> <v0>          INIT: in: {y=D} out: {y=D}
+    w(y|<v0>)                                            INIT: in: {y=D} out: {y=ID}               USE: in: {y=READ} out: {y=READ}
+  2 mark({ val x: Int y?.myLet { x = 42 } x.inc() })     INIT: in: {y=ID} out: {y=ID}
+    v(val x: Int)                                        INIT: in: {y=ID} out: {x=D, y=ID}
+    mark(y?.myLet { x = 42 })                            INIT: in: {x=D, y=ID} out: {x=D, y=ID}
+    jf(L2)                                                                                         USE: in: {x=READ, y=READ} out: {x=READ, y=READ}
+    r(y) -> <v1>                                                                                   USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ, y=READ}
+    mark({ x = 42 })
+    mark(myLet { x = 42 })
+    call(myLet { x = 42 }, myLet|<v1>, !<v2>) -> <v3>
+L3 [before inlined lambda]:
+    inlined({ x = 42 })                                  INIT: in: {x=I, y=I} out: {x=I, y=I}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L4 [after inlined lambda]:
+    r({ x = 42 }) -> <v4>
+L2 [result of call]:
+    mark(x.inc())                                        INIT: in: {x=I?, y=I} out: {x=I?, y=I}    USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v5>                                                                                   USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v5>) -> <v6>
+L1:
+  1 <END>                                                INIT: in: {y=I} out: {y=I}
+error:
+    <ERROR>                                              INIT: in: {} out: {}
+sink:
+    <SINK>                                               INIT: in: {y=I?} out: {y=I?}              USE: in: {} out: {}
+=====================
+== anonymous_1 ==
+{ x = 42 }
+---------------------
+L5:
+  3 <START>          INIT: in: {x=D, y=ID} out: {x=D, y=ID}
+  4 mark(x = 42)
+    r(42) -> <v0>                                                USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {x=D, y=ID} out: {x=ID, y=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L6:
+  3 <END>            INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {x=I, y=I} out: {x=I, y=I}        USE: in: {x=READ} out: {x=READ}
+=====================
+== sanityCheck ==
+fun sanityCheck(x: Int, y: String): Int {
+    y.let { return x }
+}
+---------------------
+L0:
+  1 <START>                                       INIT: in: {} out: {}
+    v(x: Int)                                     INIT: in: {} out: {x=D}
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>       INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                                     INIT: in: {x=D} out: {x=ID}
+    v(y: String)                                  INIT: in: {x=ID} out: {x=ID, y=D}
+    magic[FAKE_INITIALIZER](y: String) -> <v1>    INIT: in: {x=ID, y=D} out: {x=ID, y=D}
+    w(y|<v1>)                                     INIT: in: {x=ID, y=D} out: {x=ID, y=ID}
+  2 mark({ y.let { return x } })                  INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}
+    mark(y.let { return x })                                                                  USE: in: {x=READ, y=READ} out: {x=READ, y=READ}
+    r(y) -> <v2>                                                                              USE: in: {x=READ} out: {x=READ, y=READ}
+    mark({ return x })
+    jmp?(L2)
+    d({ return x })                               INIT: in: {} out: {}                        USE: in: {x=READ} out: {x=READ}
+L2 [after local declaration]:
+    r({ return x }) -> <v3>                       INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}
+    mark(let { return x })
+    call(let { return x }, let|<v2>, <v3>)
+    jmp(error)                                                                                USE: in: {} out: {}
+-   jmp(error)
+L1:
+  1 <END>                                         INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}
+error:
+    <ERROR>
+sink:
+    <SINK>                                        INIT: in: {x=I?, y=I?} out: {x=I?, y=I?}    USE: in: {} out: {}
+=====================
+== anonymous_2 ==
+{ return x }
+---------------------
+L3:
+  3 <START>            INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}
+  4 mark(return x)                                                 USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v0>                                                   USE: in: {} out: {x=READ}
+    ret(*|<v0>) L1                                                 USE: in: {} out: {}
+- 3 ret(*|!<v1>) L4
+L4:
+    <END>              INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                         USE: in: {} out: {}
+=====================

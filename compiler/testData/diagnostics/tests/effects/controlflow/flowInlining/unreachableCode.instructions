@@ -1,0 +1,65 @@
+== myRun ==
+fun <T> myRun(@CalledInPlace block: () -> T): T = block()
+---------------------
+L0:
+  1 <START>                                                           INIT: in: {} out: {}
+    v(@CalledInPlace block: () -> T)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace block: () -> T) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                     INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                  INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                                           INIT: in: {} out: {}
+sink:
+    <SINK>                                                            INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== throwInLambda ==
+fun throwInLambda(): Int {
+    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>x<!> =<!> myRun { throw java.lang.IllegalArgumentException() }
+    <!UNREACHABLE_CODE!>return x<!>
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                                INIT: in: {} out: {}
+  2 mark({ <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>x<!> =<!> myRun { throw java.lang.IllegalArgumentException() } <!UNREACHABLE_CODE!>return x<!> })
+    magic[UNRESOLVED_CALL](UNREACHABLE_CODE) -> <v0>
+    mark(!UNREACHABLE_CODE)
+    call(!UNREACHABLE_CODE, <ERROR FUNCTION>|<v0>) -> <v1>
+    mark({ throw java.lang.IllegalArgumentException() })
+    jmp?(L2)
+    d({ throw java.lang.IllegalArgumentException() })
+L2 [after local declaration]:
+    r({ throw java.lang.IllegalArgumentException() }) -> <v2>
+    magic[UNRESOLVED_CALL](UNREACHABLE_CODE) -> <v3>
+    mark(!UNREACHABLE_CODE)
+    call(!UNREACHABLE_CODE, <ERROR FUNCTION>|<v3>) -> <v4>
+L1:
+  1 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                                                         USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{ throw java.lang.IllegalArgumentException() }
+---------------------
+L3:
+  3 <START>                                                    INIT: in: {} out: {}
+  4 mark(throw java.lang.IllegalArgumentException())
+    mark(throw java.lang.IllegalArgumentException())
+    mark(java.lang.IllegalArgumentException())
+    mark(IllegalArgumentException())
+    call(IllegalArgumentException(), <init>) -> <v0>
+    throw (throw java.lang.IllegalArgumentException()|<v0>)                            USE: in: {} out: {}
+- 3 ret(*|!<v1>) L4
+L4:
+    <END>                                                      INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                             USE: in: {} out: {}
+=====================
