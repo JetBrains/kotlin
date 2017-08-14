@@ -2,7 +2,7 @@ package companionObjectUsedInJava
 
 class A {
     companion object {
-        val CONST = 42
+        @JvmField val CONST = 42
     }
 }
 
@@ -15,7 +15,7 @@ class B {
 
 class C {
     companion object Named {
-        val CONST = 42
+        @JvmField val CONST = 42
     }
 }
 

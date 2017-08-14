@@ -276,8 +276,10 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
         if (declaration is KtCallableDeclaration) {
             val lightMethods = declaration.toLightMethods()
-            for (method in lightMethods) {
-                if (!MethodReferencesSearch.search(method).forEach(::checkReference)) return true
+            if (lightMethods.isNotEmpty()) {
+                return lightMethods.any { method ->
+                    !MethodReferencesSearch.search(method).forEach(::checkReference)
+                }
             }
         }
 
