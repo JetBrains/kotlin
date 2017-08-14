@@ -93,7 +93,22 @@ class DependencyDownloader(dependenciesRoot: File,
         val archive = File(cacheDirectory.canonicalPath, "$depName.$archiveExtension")
         if (!archive.exists()) {
             if (!airplaneMode) {
-                download(depName, archive)
+                var attempt = 0
+                var done = false
+                do {
+                    try {
+                        download(depName, archive)
+                        done = true
+                    } catch (e: IOException) {
+                        if (attempt < MAX_ATTEMPTS) {
+                            attempt++
+                            val pauseTime = attempt * ATTEMPT_PAUSE_MS
+                            println("Downloading error: ${e.message}.\n" +
+                                    "Waiting ${pauseTime.toDouble() / 1000} sec and trying again (attempt: $attempt/$MAX_ATTEMPTS)")
+                            Thread.sleep(pauseTime)
+                        } else { throw e }
+                    }
+                } while (!done)
             } else {
                 throw RuntimeException("""
                     Cannot find a dependency locally: $dependency.
@@ -212,6 +227,9 @@ class DependencyDownloader(dependenciesRoot: File,
 
     companion object {
         val lock = ReentrantLock()
+
+        const val MAX_ATTEMPTS = 10
+        const val ATTEMPT_PAUSE_MS = 3000L
     }
 
     fun run() = lock.withLock {
