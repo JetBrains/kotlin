@@ -47,6 +47,7 @@ interface KotlinGradleModel : Serializable {
     val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet
     val coroutines: String?
     val platformPluginId: String?
+    val implements: String?
     val transitiveCommonDependencies: Set<String>
 }
 
@@ -55,6 +56,7 @@ class KotlinGradleModelImpl(
         override val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
         override val coroutines: String?,
         override val platformPluginId: String?,
+        override val implements: String?,
         override val transitiveCommonDependencies: Set<String>
 ) : KotlinGradleModel
 
@@ -191,13 +193,15 @@ class KotlinGradleModelBuilder : ModelBuilderService {
         }
 
         val platform = platformPluginId ?: pluginToPlatform.entries.singleOrNull { project.plugins.findPlugin(it.key) != null }?.value
-        val transitiveCommon = getImplements(project)?.let { transitiveCommonDependencies(it) } ?: emptySet()
+        val implementedProject = getImplements(project)
+        val transitiveCommon = implementedProject?.let { transitiveCommonDependencies(it) } ?: emptySet()
 
         return KotlinGradleModelImpl(
                 kotlinPluginId != null || platformPluginId != null,
                 compilerArgumentsBySourceSet,
                 getCoroutines(project),
                 platform,
+                implementedProject?.pathOrName(),
                 transitiveCommon
         )
     }

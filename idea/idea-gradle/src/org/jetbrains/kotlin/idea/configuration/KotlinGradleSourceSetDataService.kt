@@ -20,13 +20,13 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.LibraryData
-import com.intellij.openapi.externalSystem.model.project.LibraryDependencyData
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.isQualifiedModuleNamesEnabled
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
@@ -192,9 +192,9 @@ private fun configureFacetByGradleModule(
     val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
     kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
 
-    val sourceSetName = sourceSetNode?.data?.id?.let { it.substring(it.lastIndexOf(':') + 1) } ?: "main"
+    val sourceSetName = sourceSetNode?.data?.id?.let { it.substring(it.lastIndexOf(':') + 1) }
 
-    val argsInfo = moduleNode.compilerArgumentsBySourceSet?.get(sourceSetName)
+    val argsInfo = moduleNode.compilerArgumentsBySourceSet?.get(sourceSetName ?: "main")
     if (argsInfo != null) {
         val currentCompilerArguments = argsInfo.currentArguments
         val defaultCompilerArguments = argsInfo.defaultArguments
@@ -205,7 +205,16 @@ private fun configureFacetByGradleModule(
         adjustClasspath(kotlinFacet, dependencyClasspath)
     }
 
+    kotlinFacet.configuration.settings.implementedModuleName = getImplementedModuleName(moduleNode, sourceSetName)
+
     return kotlinFacet
+}
+
+private fun getImplementedModuleName(moduleNode: DataNode<ModuleData>, sourceSetName: String?): String? {
+    val baseModuleName = moduleNode.implementedModule?.data?.internalName
+    if (baseModuleName == null || sourceSetName == null) return baseModuleName
+    val delimiter = if(isQualifiedModuleNamesEnabled()) "." else "_"
+    return "$baseModuleName$delimiter$sourceSetName"
 }
 
 private fun adjustClasspath(kotlinFacet: KotlinFacet, dependencyClasspath: List<String>) {

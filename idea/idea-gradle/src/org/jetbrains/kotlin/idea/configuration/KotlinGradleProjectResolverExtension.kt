@@ -45,6 +45,8 @@ var DataNode<ModuleData>.coroutines
         by UserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
 var DataNode<ModuleData>.platformPluginId
         by UserDataProperty(Key.create<String>("PLATFORM_PLUGIN_ID"))
+var DataNode<ModuleData>.implementedModule
+        by UserDataProperty(Key.create<DataNode<ModuleData>>("IMPLEMENTS"))
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
@@ -68,6 +70,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet
         ideModule.coroutines = gradleModel.coroutines
         ideModule.platformPluginId = gradleModel.platformPluginId
+        ideModule.implementedModule = gradleModel.implements?.let { findModule(ideProject, it) }
 
         super.populateModuleDependencies(gradleModule, ideModule, ideProject)
     }

@@ -22,6 +22,7 @@ import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.DataConversionException
 import org.jdom.Element
+import org.jdom.Text
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.lang.reflect.Modifier
@@ -95,6 +96,9 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
         element.getAttributeValue("useProjectSettings")?.let { useProjectSettings = it.toBoolean() }
         val platformName = element.getAttributeValue("platform")
         val platformKind = TargetPlatformKind.ALL_PLATFORMS.firstOrNull { it.description == platformName } ?: TargetPlatformKind.DEFAULT_PLATFORM
+        element.getChild("implements")?.let {
+            implementedModuleName = (element.content.firstOrNull() as? Text)?.textTrim
+        }
         element.getChild("compilerSettings")?.let {
             compilerSettings = CompilerSettings()
             XmlSerializer.deserializeInto(compilerSettings!!, it)
@@ -223,6 +227,9 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
     if (!useProjectSettings) {
         element.setAttribute("useProjectSettings", useProjectSettings.toString())
+    }
+    implementedModuleName?.let {
+        element.addContent(Element("implements").apply { addContent(it) })
     }
     compilerSettings?.let { copyBean(it) }?.let {
         it.convertPathsToSystemIndependent()

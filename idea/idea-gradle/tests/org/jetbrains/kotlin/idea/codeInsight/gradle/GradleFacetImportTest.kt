@@ -1319,6 +1319,265 @@ compileTestKotlin {
         }
     }
 
+    @Test
+    fun testImplementsDependency() {
+        createProjectSubFile(
+                "build.gradle",
+                """
+                buildscript {
+                    repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+                    dependencies {
+                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                    }
+                }
+
+                apply plugin: 'kotlin-platform-common'
+
+                repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+
+                dependencies {
+                    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
+                }
+
+                """.trimIndent()
+        )
+        createProjectSubFile(
+                "settings.gradle",
+                """
+                    rootProject.name = 'MultiTest'
+                    include 'MultiTest-jvm', 'MultiTest-js'
+                """.trimIndent()
+        )
+        createProjectSubFile(
+                "MultiTest-js/build.gradle",
+                """
+                buildscript {
+                    repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+                    dependencies {
+                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                    }
+                }
+
+                apply plugin: 'kotlin-platform-js'
+
+                repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+
+                dependencies {
+                    compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
+                    implement project(":")
+                }
+
+                """.trimIndent()
+        )
+        createProjectSubFile(
+                "MultiTest-jvm/build.gradle",
+                """
+                buildscript {
+                    repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+                    dependencies {
+                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                    }
+                }
+
+                apply plugin: 'kotlin-platform-jvm'
+
+                repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+
+                dependencies {
+                    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
+                    implement project(":")
+                }
+
+                """.trimIndent()
+        )
+
+        importProject()
+
+        Assert.assertEquals("MultiTest_main", facetSettings("MultiTest-jvm_main").implementedModuleName)
+        Assert.assertEquals("MultiTest_test", facetSettings("MultiTest-jvm_test").implementedModuleName)
+        Assert.assertEquals("MultiTest_main", facetSettings("MultiTest-js_main").implementedModuleName)
+        Assert.assertEquals("MultiTest_test", facetSettings("MultiTest-js_test").implementedModuleName)
+    }
+
+    @Test
+    fun testImplementsDependencyWithCustomSourceSets() {
+        createProjectSubFile(
+                "build.gradle",
+                """
+                buildscript {
+                    repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+                    dependencies {
+                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                    }
+                }
+
+                apply plugin: 'kotlin-platform-common'
+
+                sourceSets {
+                    myMain {
+                        kotlin {
+                            srcDir 'src'
+                        }
+                    }
+                    myTest {
+                        kotlin {
+                            srcDir 'test'
+                        }
+                    }
+                }
+
+                repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+
+                dependencies {
+                    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
+                }
+
+                """.trimIndent()
+        )
+        createProjectSubFile(
+                "settings.gradle",
+                """
+                    rootProject.name = 'MultiTest'
+                    include 'MultiTest-jvm', 'MultiTest-js'
+                """.trimIndent()
+        )
+        createProjectSubFile(
+                "MultiTest-js/build.gradle",
+                """
+                buildscript {
+                    repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+                    dependencies {
+                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                    }
+                }
+
+                apply plugin: 'kotlin-platform-js'
+
+                sourceSets {
+                    myMain {
+                        kotlin {
+                            srcDir 'src'
+                        }
+                    }
+                    myTest {
+                        kotlin {
+                            srcDir 'test'
+                        }
+                    }
+                }
+
+                repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+
+                dependencies {
+                    compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
+                    implement project(":")
+                }
+
+                """.trimIndent()
+        )
+        createProjectSubFile(
+                "MultiTest-jvm/build.gradle",
+                """
+                buildscript {
+                    repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+                    dependencies {
+                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                    }
+                }
+
+                apply plugin: 'kotlin-platform-jvm'
+
+                sourceSets {
+                    myMain {
+                        kotlin {
+                            srcDir 'src'
+                        }
+                    }
+                    myTest {
+                        kotlin {
+                            srcDir 'test'
+                        }
+                    }
+                }
+
+                repositories {
+                        mavenCentral()
+                        maven {
+                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        }
+                    }
+
+                dependencies {
+                    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
+                    implement project(":")
+                }
+
+                """.trimIndent()
+        )
+
+        importProject()
+
+        Assert.assertEquals("MultiTest_myMain", facetSettings("MultiTest-jvm_myMain").implementedModuleName)
+        Assert.assertEquals("MultiTest_myTest", facetSettings("MultiTest-jvm_myTest").implementedModuleName)
+        Assert.assertEquals("MultiTest_myMain", facetSettings("MultiTest-js_myMain").implementedModuleName)
+        Assert.assertEquals("MultiTest_myTest", facetSettings("MultiTest-js_myTest").implementedModuleName)
+    }
+
     private fun assertAllModulesConfigured() {
         runReadAction {
             for (moduleGroup in ModuleSourceRootMap(myProject).groupByBaseModules(myProject.allModules())) {
