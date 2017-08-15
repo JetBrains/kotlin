@@ -149,6 +149,8 @@ class KotlinFacetSettings {
                 LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> CommonCompilerArguments.ERROR
             }
         }
+
+    var implementedModuleName: String? = null
 }
 
 fun TargetPlatformKind<*>.createCompilerArguments(init: CommonCompilerArguments.() -> Unit = {}): CommonCompilerArguments {
