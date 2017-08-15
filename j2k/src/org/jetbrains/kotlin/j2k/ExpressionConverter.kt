@@ -197,6 +197,8 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             is PsiPrimitiveType, is PsiArrayType -> return true
 
             is PsiClassType -> {
+                if (right?.type is PsiPrimitiveType) return true
+
                 val psiClass = type.resolve() ?: return false
                 if (!psiClass.hasModifierProperty(PsiModifier.FINAL)) return false
                 if (psiClass.isEnum) return true
