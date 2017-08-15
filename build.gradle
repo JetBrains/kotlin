@@ -306,6 +306,19 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
     }
 }
 
+task performance(type: GradleBuild) {
+    dependsOn 'dist'
+    dependsOn ':tools:kotlin-native-gradle-plugin:jar'
+
+    dir = 'performance'
+    tasks = ['build', 'run']
+
+    doFirst {
+        startParameter.projectProperties['konanPluginClasspath'] =
+                project(':tools:kotlin-native-gradle-plugin').tasks.getByName('jar').archivePath.canonicalPath
+    }
+}
+
 task clean {
     doLast {
         file('dist').traverse(type: FileType.ANY, excludeNameFilter: "dependencies", maxDepth: 0) {
