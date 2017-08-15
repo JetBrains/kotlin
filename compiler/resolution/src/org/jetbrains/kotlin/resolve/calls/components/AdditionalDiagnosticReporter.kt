@@ -42,7 +42,7 @@ class AdditionalDiagnosticReporter {
     }
 
     private fun reportSmartCastOnReceiver(
-            candidate: KotlinResolutionCandidate,
+            candidate: SimpleKotlinResolutionCandidate,
             receiver: SimpleKotlinCallArgument?,
             parameter: ReceiverParameterDescriptor?
     ): SmartCastDiagnostic? {
@@ -53,11 +53,11 @@ class AdditionalDiagnosticReporter {
 
         // todo may be we have smart cast to Int?
         return smartCastDiagnostic.takeIf {
-            candidate.status.diagnostics.filterIsInstance<UnsafeCallError>().none {
+            candidate.getCandidateDiagnostics().filterIsInstance<UnsafeCallError>().none {
                 it.receiver == receiver
             }
             &&
-            candidate.status.diagnostics.filterIsInstance<UnstableSmartCast>().none {
+            candidate.getCandidateDiagnostics().filterIsInstance<UnstableSmartCast>().none {
                 it.argument == receiver
             }
         }
@@ -72,7 +72,7 @@ class AdditionalDiagnosticReporter {
                     for (argument in candidate.argumentMappingByOriginal[parameter.original]?.arguments ?: continue) {
                         val smartCastDiagnostic = createSmartCastDiagnostic(argument, argument.getExpectedType(parameter)) ?: continue
 
-                        val thereIsUnstableSmartCastError = candidate.status.diagnostics.filterIsInstance<UnstableSmartCast>().any {
+                        val thereIsUnstableSmartCastError = candidate.getCandidateDiagnostics().filterIsInstance<UnstableSmartCast>().any {
                             it.argument == argument
                         }
 

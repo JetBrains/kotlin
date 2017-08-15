@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tower.Candidate
-import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
-import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.*
 
@@ -49,8 +46,8 @@ class VariableAsFunctionKotlinResolutionCandidate(
         val invokeCandidate: SimpleKotlinResolutionCandidate
 ) : KotlinResolutionCandidate() {
     override val isSuccessful: Boolean get() = resolvedVariable.isSuccessful && invokeCandidate.isSuccessful
-    override val status: ResolutionCandidateStatus
-        get() = ResolutionCandidateStatus(resolvedVariable.status.diagnostics + invokeCandidate.status.diagnostics)
+    override val resultingApplicability: ResolutionCandidateApplicability
+        get() = maxOf(resolvedVariable.resultingApplicability, invokeCandidate.resultingApplicability)
 
     override val lastCall: SimpleKotlinResolutionCandidate get() = invokeCandidate
 }
@@ -65,15 +62,10 @@ sealed class AbstractSimpleKotlinResolutionCandidate(
             return !hasErrors
         }
 
-    private var _status: ResolutionCandidateStatus? = null
-
-    override val status: ResolutionCandidateStatus
+    override val resultingApplicability: ResolutionCandidateApplicability
         get() {
-            if (_status == null) {
-                process(stopOnFirstError = false)
-                _status = ResolutionCandidateStatus(diagnostics + constraintSystem.diagnostics)
-            }
-            return _status!!
+            process(stopOnFirstError = false)
+            return getResultApplicability(diagnostics + constraintSystem.diagnostics)
         }
 
     private val diagnostics = ArrayList<KotlinCallDiagnostic>()
@@ -100,6 +92,7 @@ sealed class AbstractSimpleKotlinResolutionCandidate(
         addDiagnostics(initialDiagnostics)
     }
 
+    fun getCandidateDiagnostics(): List<KotlinCallDiagnostic> = diagnostics
 
     abstract val resolutionSequence: List<ResolutionPart>
 }
