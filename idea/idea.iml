@@ -69,5 +69,6 @@
     <orderEntry type="module" module-name="idea-maven" />
     <orderEntry type="module" module-name="backend.jvm" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
+    <orderEntry type="module" module-name="idea-gradle" scope="TEST" />
   </component>
 </module>

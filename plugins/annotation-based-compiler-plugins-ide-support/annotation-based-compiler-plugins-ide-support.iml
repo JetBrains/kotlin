@@ -17,5 +17,6 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="idea-jps-common" />
+    <orderEntry type="module" module-name="idea-gradle" exported="" />
   </component>
 </module>
