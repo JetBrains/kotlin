@@ -29,18 +29,16 @@ import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.analyzer.ResolverForProjectImpl
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.caches.resolve.IdePlatformSupport
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
-import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 fun createModuleResolverProvider(
         debugName: String,
@@ -76,7 +74,10 @@ fun createModuleResolverProvider(
 
     val resolverForProject = ResolverForProjectImpl(
             debugName, globalContext.withProject(project), modulesToCreateResolversFor,
-            { module -> AnalyzerFacadeProvider.getAnalyzerFacade(module.platform ?: analysisSettings.platform) },
+            { module ->
+                val platform = module.platform ?: analysisSettings.platform
+                IdePlatformSupport.facades[platform] ?: throw UnsupportedOperationException("Unsupported platform $platform")
+            },
             modulesContent, jvmPlatformParameters,
             IdeaEnvironment, builtIns,
             delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
@@ -123,11 +124,9 @@ fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
     return modulesSourcesInfos + librariesInfos + sdksInfos
 }
 
-private fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns = when {
-    settings.platform is JsPlatform -> JsPlatform.builtIns
-    settings.platform is JvmPlatform && settings.sdk != null -> JvmBuiltIns(sdkContext.storageManager)
-    else -> DefaultBuiltIns.Instance
-
+private fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns {
+    val supportInstance = IdePlatformSupport.platformSupport[settings.platform] ?: return DefaultBuiltIns.Instance
+    return supportInstance.createBuiltIns(settings, sdkContext)
 }
 
 fun getAllProjectSdks(): Collection<Sdk> {
