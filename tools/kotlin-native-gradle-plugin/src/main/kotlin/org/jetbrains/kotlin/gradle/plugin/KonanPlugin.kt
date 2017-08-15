@@ -56,7 +56,7 @@ internal val Project.konanInteropStubsOutputDir   get() = "${konanBuildRoot}/int
 internal val Project.konanInteropCompiledStubsDir get() = "${konanBuildRoot}/interopCompiledStubs"
 internal val Project.konanInteropLibsOutputDir    get() = "${konanBuildRoot}/nativelibs"
 
-internal val Project.konanDefaultSrcDir           get() = file("${projectDir.canonicalPath}/src/main/kotlin")
+internal val Project.konanDefaultSrcFiles         get() = fileTree("${projectDir.canonicalPath}/src/main/kotlin")
 internal fun Project.konanDefaultDefFile(libName: String)
         = file("${projectDir.canonicalPath}/src/main/c_interop/$libName.def")
 
@@ -194,24 +194,6 @@ internal fun dumpProperties(task: Task) {
     }
 }
 
-internal fun setDefaultInputs(project: Project) {
-    project.konanArtifactsContainer.asSequence()
-            .filter { it.compilationTask.inputFiles.isEmpty() }
-            .forEach { config ->
-                project.konanDefaultSrcDir.takeIf { it.exists() }?.let {
-                    config.inputDir(it.canonicalPath)
-                }
-            }
-
-    project.konanInteropContainer.asSequence()
-            .filter { it.generateStubsTask.defFile == null }
-            .forEach { config ->
-                project.konanDefaultDefFile(config.name).takeIf { it.exists() }?.let {
-                    config.defFile(it)
-                }
-            }
-}
-
 class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderRegistry)
     : Plugin<Project> {
 
@@ -278,14 +260,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         }
         project.getTask("build").apply {
             dependsOn(compileKonanTask)
-        }
-
-        // Add default source paths after project evaluation.
-        project.afterEvaluate(::setDefaultInputs)
-
-        // Set compilation parameters for artifacts using interop.
-        project.afterEvaluate { prj ->
-            prj.konanArtifactsContainer.forEach { it.processInterops() }
         }
 
         // Create task to run supported executables.

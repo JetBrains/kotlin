@@ -53,6 +53,7 @@ open class KonanInteropTask: KonanTargetableTask() {
     internal fun init(libName: String) {
         dependsOn(project.konanCompilerDownloadTask)
         this.libName = libName
+        this.defFile = project.konanDefaultDefFile(libName)
     }
 
     internal val INTEROP_JVM_ARGS: List<String>
@@ -70,7 +71,7 @@ open class KonanInteropTask: KonanTargetableTask() {
 
     // Interop stub generator parameters -------------------------------------
 
-    @InputFile var defFile: File? = null
+    @InputFile lateinit var defFile: File
         internal set
 
     @Optional @Input var pkg: String? = null
@@ -164,7 +165,7 @@ open class KonanInteropConfig(
         compilationTask.dependsOn(generateStubsTask)
         outputDir("${project.konanInteropCompiledStubsDir}/$name")
         produce("library")
-        inputFiles(project.fileTree(generateStubsTask.stubsDir).apply { builtBy(generateStubsTask) })
+        inputFiles(project.fileTree(generateStubsTask.stubsDir))
         manifest("${generateStubsTask.stubsDir.path}/manifest.properties")
         compilationTask.group = BasePlugin.BUILD_GROUP
         compilationTask.description = "Compiles stubs for the Kotlin/Native interop '${this@KonanInteropConfig.name}'"
@@ -174,11 +175,7 @@ open class KonanInteropConfig(
     // DSL methods ------------------------------------------------------------
 
     fun defFile(file: Any) = with(generateStubsTask) {
-        defFile = project.file(file).also {
-            if (!it.exists()) {
-                throw NoSuchFileException(it, reason = "No def-file by the specified path.")
-            }
-        }
+        defFile = project.file(file)
     }
 
     fun pkg(value: String) = with(generateStubsTask) {

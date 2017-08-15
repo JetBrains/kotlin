@@ -103,7 +103,9 @@ open class KonanCompileTask: KonanTargetableTask() {
 
     // Other compilation parameters -------------------------------------------
 
-    @InputFiles val inputFiles      = mutableSetOf<FileCollection>()
+    internal val _inputFiles = mutableSetOf<FileCollection>()
+    val inputFiles: Collection<FileCollection>
+        @InputFiles get() = _inputFiles.takeIf { !it.isEmpty() } ?: listOf(project.konanDefaultSrcFiles)
 
     @InputFiles val libraries       = mutableSetOf<FileCollection>()
     @InputFiles val nativeLibraries = mutableSetOf<FileCollection>()
@@ -111,8 +113,14 @@ open class KonanCompileTask: KonanTargetableTask() {
     @Input var produce              = "program"
         internal set
 
-    @Input var linkerOpts = mutableListOf<String>()
-        internal set
+    @Internal val interops = mutableSetOf<KonanInteropConfig>()
+
+    internal var _linkerOpts = mutableListOf<String>()
+    val linkerOpts: List<String>
+        @Input get() = mutableListOf<String>().apply {
+            addAll(_linkerOpts)
+            interops.flatMapTo(this) { it.generateStubsTask.linkerOpts }
+        }
 
     @Input var enableDebug        = project.properties.containsKey("enableDebug") && project.properties["enableDebug"].toString().toBoolean()
         internal set
@@ -151,6 +159,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         addArgIfNotNull("-target", target)
         addArgIfNotNull("-language-version", languageVersion)
         addArgIfNotNull("-api-version", apiVersion)
+        // TODO: Should we get manifests of the interops used?
         addArgIfNotNull("-manifest", manifest?.canonicalPath)
 
         addKey("-g", enableDebug)
@@ -178,7 +187,6 @@ open class KonanCompileTask: KonanTargetableTask() {
             }
         }
     }
-
 }
 
 // TODO: check debug outputs
@@ -190,8 +198,6 @@ open class KonanCompileConfig(
 
     override fun getName() = configName
 
-    val interops = mutableSetOf<KonanInteropConfig>()
-
     val compilationTask: KonanCompileTask = project.tasks.create(
             "$taskNamePrefix${configName.capitalize()}",
             KonanCompileTask::class.java) {
@@ -200,28 +206,20 @@ open class KonanCompileConfig(
         it.description = "Compiles the Kotlin/Native artifact '${this@KonanCompileConfig.name}'"
     }
 
-    protected fun addInteropParameters(interop: KonanInteropConfig) {
+    // DSL methods. Interop. --------------------------------------------------
+
+    fun useInterop(interop: KonanInteropConfig) = with(compilationTask) {
         val generateStubsTask = interop.generateStubsTask
-        val compileStubsTask  = interop.compileStubsTask
+        val compileStubsTask = interop.compileStubsTask
 
-        compilationTask.dependsOn(compileStubsTask)
-        compilationTask.dependsOn(generateStubsTask)
-
-        linkerOpts(generateStubsTask.linkerOpts)
-        library(compileStubsTask.artifact)
-        nativeLibraries(project.fileTree(generateStubsTask.libsDir).apply {
-            builtBy(generateStubsTask)
+        dependsOn(compileStubsTask)
+        dependsOn(generateStubsTask)
+        library(project.files(compileStubsTask.artifact))
+        nativeLibrary(project.fileTree(generateStubsTask.libsDir).apply {
             include("**/*.bc")
         })
-        generateStubsTask.manifest ?.let {manifest(it)}
-    }
 
-    internal fun processInterops() = interops.forEach(this::addInteropParameters)
-
-    // DSL methods --------------------------------------------------
-
-    fun useInterop(interopConfig: KonanInteropConfig) {
-        interops.add(interopConfig)
+        interops.add(interop)
     }
 
     fun useInterop(interop: String) {
@@ -241,13 +239,13 @@ open class KonanCompileConfig(
     // DSL. Input/output files
 
     fun inputDir(dir: String) = with(compilationTask) {
-        inputFiles.add(project.fileTree(dir))
+        _inputFiles.add(project.fileTree(dir))
     }
     fun inputFiles(vararg files: Any) = with(compilationTask) {
-        inputFiles.add(project.files(files))
+        _inputFiles.add(project.files(files))
     }
-    fun inputFiles(files: FileCollection) = compilationTask.inputFiles.add(files)
-    fun inputFiles(files: Collection<FileCollection>) = compilationTask.inputFiles.addAll(files)
+    fun inputFiles(files: FileCollection) = compilationTask._inputFiles.add(files)
+    fun inputFiles(files: Collection<FileCollection>) = compilationTask._inputFiles.addAll(files)
 
 
     fun outputDir(dir: Any) = with(compilationTask) {
@@ -280,7 +278,7 @@ open class KonanCompileConfig(
 
     fun linkerOpts(args: List<String>) = linkerOpts(*args.toTypedArray())
     fun linkerOpts(vararg args: String) = with(compilationTask) {
-        linkerOpts.addAll(args)
+        _linkerOpts.addAll(args)
     }
 
     fun manifest(arg: Any) = with(compilationTask) {

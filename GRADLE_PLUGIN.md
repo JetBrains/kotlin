@@ -116,6 +116,7 @@ You may get this task using the `compilationTask` property of an artifact or by 
     |`inputFiles        `|`Collection<FileCollection>`|Compiled files                                    |
     |`libraries         `|`Collection<FileCollection>`|*.klib libraries used by the artifact             |
     |`nativeLibraries   `|`Collection<FileCollection>`|*.bc libraries used by the artifact               |
+    |`interops          `|`Collection<Interop>`       |All the interops used by the artifact             |
     |`linkerOpts        `|`List<String>`              |Additional options passed to the linker           |
     |`enableDebug       `|`boolean`                   |Is the debugging support enabled                  |
     |`noStdLib          `|`boolean`                   |Is the artifact not linked with stdlib            |
