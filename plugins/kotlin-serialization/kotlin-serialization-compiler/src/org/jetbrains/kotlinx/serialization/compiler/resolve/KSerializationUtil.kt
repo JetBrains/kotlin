@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.*
 
 internal val packageFqName = FqName("kotlinx.serialization")
+internal val internalPackageFqName = FqName("kotlinx.serialization.internal")
 
 // ---- kotlin.serialization.KSerializer
 
@@ -176,5 +177,8 @@ fun ClassDescriptor.getKSerializerConstructorMarker(): ClassDescriptor =
 
 fun ClassDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
         module.findClassAcrossModuleDependencies(ClassId(packageFqName, Name.identifier(classSimpleName)))!!
+
+fun ClassDescriptor.getClassFromInternalSerializationPackage(classSimpleName: String) =
+        module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, Name.identifier(classSimpleName)))!!
 
 fun ClassDescriptor.toSimpleType(nullable: Boolean = true) = KotlinTypeFactory.simpleType(Annotations.EMPTY, this.typeConstructor, emptyList(), nullable)

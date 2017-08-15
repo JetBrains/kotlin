@@ -18,7 +18,7 @@ package org.jetbrains.kotlinx.serialization.compiler.extensions
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator
+import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
 import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializerJsTranslator
@@ -29,7 +29,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializerJsTrans
  */
 
 class SerializationJsExtension: JsSyntheticTranslateExtension {
-    override fun generateClassSyntheticParts(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: ClassTranslator, context: TranslationContext) {
+    override fun generateClassSyntheticParts(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: DeclarationBodyVisitor, context: TranslationContext) {
         SerializerJsTranslator.translate(declaration, descriptor, translator, context)
     }
 }

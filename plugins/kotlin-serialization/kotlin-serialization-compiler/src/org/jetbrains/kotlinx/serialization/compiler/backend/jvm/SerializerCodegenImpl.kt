@@ -243,7 +243,7 @@ class SerializerCodegenImpl(
                     val sti = getSerialTypeInfo(property, propertyType)
                     val useSerializer = stackValueSerializerInstance(codegen, sti)
                     invokevirtual(kInputType.internalName,
-                                  "read" + sti.nn + (if (useSerializer) "Serializable" else "") + "ElementValue",
+                                  "read" + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + "ElementValue",
                                   "(" + descType.descriptor + "I" +
                                   (if (useSerializer) kSerialLoaderType.descriptor else "")
                                   + ")" + (if (sti.unit) "V" else sti.type.descriptor), false)

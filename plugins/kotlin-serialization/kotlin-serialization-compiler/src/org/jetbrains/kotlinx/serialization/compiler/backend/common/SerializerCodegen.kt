@@ -45,6 +45,8 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
             generateSerialDesc()
     }
 
+    protected val serialDescPropertyDescriptor = getPropertyToGenerate(serializerDescriptor, KSerializerDescriptorResolver.SERIAL_DESC_FIELD,
+                                                                       serializerDescriptor::checkSerializableClassPropertyResult)
     protected abstract fun generateSerialDesc()
 
     protected abstract fun generateSerializableClassProperty(property: PropertyDescriptor)
@@ -54,8 +56,7 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
     protected abstract fun generateLoad(function: FunctionDescriptor)
 
     private fun generateSerializableClassPropertyIfNeeded() {
-        val property = getPropertyToGenerate(serializerDescriptor, KSerializerDescriptorResolver.SERIAL_DESC_FIELD,
-                                             serializerDescriptor::checkSerializableClassPropertyResult)
+        val property = serialDescPropertyDescriptor
                        ?: return
         generateSerializableClassProperty(property)
     }
