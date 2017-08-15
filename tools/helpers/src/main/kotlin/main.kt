@@ -20,13 +20,20 @@ import java.io.File
 import java.util.*
 
 // TODO: Add command line keys
-// Args: dependencies directory, dependencies url, dependencies list
+// Args: dependencies directory, dependencies url, max attempts, attempt pause, dependencies list
 fun main(args: Array<String>) {
-    if (args.size < 2) {
+    if (args.size < 5) {
         System.exit(1)
     }
     val dependenciesDir = File(args[0])
     val dependenciesUrl = args[1]
-    val dependencies = List<String>(args.size - 2) { args[2 + it] }
-    DependencyDownloader(dependenciesDir, dependenciesUrl, dependencies).run()
+    val maxAttempts = args[2].toInt()
+    val attemptPause = args[3].toLong()
+    val dependencies = List<String>(args.size - 4) { args[4 + it] }
+    DependencyDownloader(dependenciesDir,
+            dependenciesUrl,
+            dependencies,
+            maxAttempts = maxAttempts,
+            attemptPauseMs = attemptPause
+    ).run()
 }

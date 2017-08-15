@@ -165,6 +165,11 @@ class TgzNativeDep extends NativeDep {
 
 class HelperNativeDep extends TgzNativeDep {
 
+    int maxAttempts = Integer.parseInt(
+            project.rootProject.ext.konanProperties['downloadingAttempts'].toString())
+    long attemptPauseMs = Long.parseLong(
+            project.rootProject.ext.konanProperties['downloadingAttemptPauseMs'].toString())
+
     public HelperNativeDep() {
         dependsOn(':tools:helpers:jar')
     }
@@ -175,7 +180,7 @@ class HelperNativeDep extends TgzNativeDep {
             main = "org.jetbrains.kotlin.konan.MainKt"
             classpath += project.findProject(':tools:helpers').getConfigurations().getByName("runtime")
             classpath += project.findProject(':tools:helpers').getConfigurations().getByName("runtime").artifacts.files
-            args baseOutDir.canonicalPath, baseUrl, baseName
+            args baseOutDir.canonicalPath, baseUrl, maxAttempts, attemptPauseMs, baseName
         }
     }
 }

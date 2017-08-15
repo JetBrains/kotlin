@@ -32,7 +32,9 @@ import kotlin.concurrent.withLock
 class DependencyDownloader(dependenciesRoot: File,
                            val dependenciesUrl: String,
                            val dependencies: List<String>,
-                           val airplaneMode: Boolean = false) {
+                           val airplaneMode: Boolean = false,
+                           val maxAttempts: Int = DEFAULT_MAX_ATTEMPTS,
+                           val attemptPauseMs: Long = DEFAULT_ATTEMPT_PAUSE_MS) {
 
     val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
     val cacheDirectory = System.getProperty("user.home")?.let {
@@ -94,21 +96,20 @@ class DependencyDownloader(dependenciesRoot: File,
         if (!archive.exists()) {
             if (!airplaneMode) {
                 var attempt = 0
-                var done = false
-                do {
+                while(true) {
                     try {
                         download(depName, archive)
-                        done = true
+                        break
                     } catch (e: IOException) {
-                        if (attempt < MAX_ATTEMPTS) {
+                        if (attempt < maxAttempts) {
                             attempt++
-                            val pauseTime = attempt * ATTEMPT_PAUSE_MS
+                            val pauseTime = attempt * attemptPauseMs
                             println("Downloading error: ${e.message}.\n" +
-                                    "Waiting ${pauseTime.toDouble() / 1000} sec and trying again (attempt: $attempt/$MAX_ATTEMPTS)")
+                                    "Waiting ${pauseTime.toDouble() / 1000} sec and trying again (attempt: $attempt/$maxAttempts)")
                             Thread.sleep(pauseTime)
                         } else { throw e }
                     }
-                } while (!done)
+                }
             } else {
                 throw RuntimeException("""
                     Cannot find a dependency locally: $dependency.
@@ -228,8 +229,8 @@ class DependencyDownloader(dependenciesRoot: File,
     companion object {
         val lock = ReentrantLock()
 
-        const val MAX_ATTEMPTS = 10
-        const val ATTEMPT_PAUSE_MS = 3000L
+        const val DEFAULT_MAX_ATTEMPTS = 10
+        const val DEFAULT_ATTEMPT_PAUSE_MS = 3000L
     }
 
     fun run() = lock.withLock {

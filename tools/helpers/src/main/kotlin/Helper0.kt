@@ -28,7 +28,11 @@ class Helper0(val dependenciesDir: String,
                 File(dependenciesDir),
                 properties.getProperty("dependenciesUrl", "https://download.jetbrains.com/kotlin/native"),
                 dependencies,
-                airplaneMode = properties.getProperty("airplaneMode")?.toBoolean() ?: false
+                airplaneMode = properties.getProperty("airplaneMode")?.toBoolean() ?: false,
+                maxAttempts = properties.getProperty("downloadingAttempts")?.toInt()
+                        ?: DependencyDownloader.DEFAULT_MAX_ATTEMPTS,
+                attemptPauseMs = properties.getProperty("downloadingAttemptPauseMs")?.toLong()
+                        ?: DependencyDownloader.DEFAULT_ATTEMPT_PAUSE_MS
         ).run()
     }
 }
