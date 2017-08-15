@@ -156,4 +156,7 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testImplementMembersInHeaderClass() = doMultiPlatformTest(impls = *arrayOf())
+
+    @Test
+    fun testImplementMembersInImplClassNonImplInheritor() = doMultiPlatformTest()
 }

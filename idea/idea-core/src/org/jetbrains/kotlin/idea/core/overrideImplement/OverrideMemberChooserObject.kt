@@ -110,6 +110,10 @@ fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, cop
         else -> error("Unknown member to override: $descriptor")
     }
 
+    if (!targetClass.hasModifier(KtTokens.IMPL_KEYWORD)) {
+        newMember.removeModifier(KtTokens.IMPL_KEYWORD)
+    }
+
     if (copyDoc) {
         val superDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)?.navigationElement
         val kDoc = when (superDeclaration) {
