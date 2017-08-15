@@ -22,16 +22,15 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import java.util.*
 
 class SuspiciousEqualsCombination : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
             object : KtVisitorVoid() {
                 override fun visitBinaryExpression(expression: KtBinaryExpression) {
                     if (expression.parent is KtBinaryExpression) return
-                    val (first, second) = expression.parseBinary()
-                    val eqeq = first.map { it.text }
-                    val eqeqeq = second.map { it.text }
+                    val operands = expression.parseBinary()
+                    val eqeq = operands.eqEqOperands.map { it.text }
+                    val eqeqeq = operands.eqEqEqOperands.map { it.text }
                     if (eqeq.fold(false) { acc, it -> acc || eqeqeq.contains(it) }) {
                         holder.registerProblem(expression, "Suspicious combination of == and ===",
                                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
@@ -39,16 +38,15 @@ class SuspiciousEqualsCombination : AbstractKotlinInspection(), CleanupLocalInsp
                 }
             }
 
-    private fun KtBinaryExpression.parseBinary(pair: Pair<MutableList<KtExpression>, MutableList<KtExpression>>
-                                               = Pair(LinkedList(), LinkedList())): Pair<MutableList<KtExpression>, MutableList<KtExpression>> {
+    private fun KtBinaryExpression.parseBinary(pair: ComparisonOperands = ComparisonOperands()): ComparisonOperands {
         when (operationToken) {
             KtTokens.EQEQ, KtTokens.EXCLEQ -> {
-                left?.let(pair.first::add)
-                right?.let(pair.first::add)
+                (left as? KtNameReferenceExpression)?.let(pair.eqEqOperands::add)
+                (right as? KtNameReferenceExpression)?.let(pair.eqEqOperands::add)
             }
             KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ -> {
-                left?.let(pair.second::add)
-                right?.let(pair.second::add)
+                (left as? KtNameReferenceExpression)?.let(pair.eqEqEqOperands::add)
+                (right as? KtNameReferenceExpression)?.let(pair.eqEqEqOperands::add)
             }
             KtTokens.ANDAND, KtTokens.OROR -> {
                 right?.parseExpression(pair)
@@ -58,7 +56,7 @@ class SuspiciousEqualsCombination : AbstractKotlinInspection(), CleanupLocalInsp
         return pair
     }
 
-    private fun KtExpression.parseExpression(pair: Pair<MutableList<KtExpression>, MutableList<KtExpression>>) {
+    private fun KtExpression.parseExpression(pair: ComparisonOperands) {
         when (this) {
             is KtBinaryExpression -> parseBinary(pair)
             is KtParenthesizedExpression -> expression?.parseExpression(pair)
@@ -66,3 +64,6 @@ class SuspiciousEqualsCombination : AbstractKotlinInspection(), CleanupLocalInsp
         }
     }
 }
+
+private data class ComparisonOperands(val eqEqOperands: MutableList<KtExpression> = mutableListOf(),
+                                      val eqEqEqOperands: MutableList<KtExpression> = mutableListOf())
