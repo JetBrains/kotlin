@@ -11,7 +11,7 @@
     <orderEntry type="library" exported="" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="descriptors" exported="" />
     <orderEntry type="module" module-name="deserialization" exported="" />
-    <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="util" exported="" />
     <orderEntry type="module" module-name="container" exported="" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="resolution" exported="" />
