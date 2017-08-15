@@ -51,22 +51,38 @@ node {
 
 task testJest(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
     args = ['run', 'test-jest']
+    execOverrides {
+        it.standardOutput = new FileOutputStream("$buildDir/test-jest.log")
+        it.errorOutput = new FileOutputStream("$buildDir/test-jest.err.log")
+    }
 }
 
 task testJasmine(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
     args = ['run', 'test-jasmine']
+    execOverrides {
+        it.standardOutput = new FileOutputStream("$buildDir/test-jasmine.log")
+    }
 }
 
 task testMocha(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
     args = ['run', 'test-mocha']
+    execOverrides {
+        it.standardOutput = new FileOutputStream("$buildDir/test-mocha.log")
+    }
 }
 
 task testQunit(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
     args = ['run', 'test-qunit']
+    execOverrides {
+        it.standardOutput = new FileOutputStream("$buildDir/test-qunit.log")
+    }
 }
 
 task testTape(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
     args = ['run', 'test-tape']
+    execOverrides {
+        it.standardOutput = new FileOutputStream("$buildDir/test-tape.log")
+    }
 }
 
 [testJest, testJasmine, testMocha, testQunit, testTape].each {
