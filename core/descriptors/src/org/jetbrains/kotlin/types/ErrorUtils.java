@@ -220,6 +220,11 @@ public class ErrorUtils {
         }
 
         @Override
+        public boolean definitelyDoesNotContainName(@NotNull Name name) {
+            return false;
+        }
+
+        @Override
         public String toString() {
             return "ErrorScope{" + debugMessage + '}';
         }
@@ -277,6 +282,11 @@ public class ErrorUtils {
         @Override
         public Set<Name> getVariableNames() {
             throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean definitelyDoesNotContainName(@NotNull Name name) {
+            return false;
         }
 
         @Override

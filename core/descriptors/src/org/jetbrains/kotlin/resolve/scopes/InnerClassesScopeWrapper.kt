@@ -40,5 +40,7 @@ class InnerClassesScopeWrapper(val workerScope: MemberScope) : MemberScopeImpl()
         workerScope.printScopeStructure(p)
     }
 
+    override fun definitelyDoesNotContainName(name: Name) = workerScope.definitelyDoesNotContainName(name)
+
     override fun toString() = "Classes from $workerScope"
 }

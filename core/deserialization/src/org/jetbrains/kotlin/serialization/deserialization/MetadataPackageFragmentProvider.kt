@@ -106,6 +106,7 @@ class MetadataPackageFragment(
                 containerSource = null, components = components, classNames = { emptyList() }
         ) {
             override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
+            override fun definitelyDoesNotContainName(name: Name) = false
         })
 
         return ChainedMemberScope.create("Metadata scope", scopes)
