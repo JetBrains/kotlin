@@ -247,6 +247,9 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         val codegenForCreator = ImplementationBodyCodegen(
                 codegen.myClass, classContextForCreator, classBuilderForCreator, codegen.state, codegen.parentCodegen, false)
 
+        codegen.v.visitInnerClass(creatorAsmType.internalName, containerAsmType.internalName, "Creator", ACC_PUBLIC or ACC_STATIC)
+        codegenForCreator.v.visitInnerClass(creatorAsmType.internalName, containerAsmType.internalName, "Creator", ACC_PUBLIC or ACC_STATIC)
+
         classBuilderForCreator.defineClass(null, V1_6, ACC_PUBLIC or ACC_STATIC,
                               creatorAsmType.internalName, null, "java/lang/Object",
                               arrayOf("android/os/Parcelable\$Creator"))
