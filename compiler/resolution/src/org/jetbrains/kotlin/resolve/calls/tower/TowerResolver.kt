@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
@@ -118,8 +119,11 @@ class TowerResolver {
         val hidesMembersLevel = HidesMembersTowerLevel(this)
         val syntheticLevel = SyntheticScopeBasedTowerLevel(this, syntheticScopes)
 
-        // hides members extensions for explicit receiver
-        TowerData.TowerLevel(hidesMembersLevel).process()?.let { return it }
+        if (name in HIDES_MEMBERS_NAME_LIST) {
+            // hides members extensions for explicit receiver
+            TowerData.TowerLevel(hidesMembersLevel).process()?.let { return it }
+        }
+
         // possibly there is explicit member
         TowerData.Empty.process()?.let { return it }
         // synthetic property for explicit receiver
@@ -144,8 +148,10 @@ class TowerResolver {
 
                 val implicitReceiver = getImplicitReceiver(scope)
                 if (implicitReceiver != null) {
-                    // hides members extensions
-                    TowerData.BothTowerLevelAndImplicitReceiver(hidesMembersLevel, implicitReceiver).process()?.let { return it }
+                    if (name in HIDES_MEMBERS_NAME_LIST) {
+                        // hides members extensions
+                        TowerData.BothTowerLevelAndImplicitReceiver(hidesMembersLevel, implicitReceiver).process()?.let { return it }
+                    }
 
                     // members of implicit receiver or member extension for explicit receiver
                     TowerData.TowerLevel(MemberScopeTowerLevel(this, implicitReceiver)).process()?.let { return it }
