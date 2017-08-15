@@ -70,8 +70,15 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         if (element is KtLightClassForFacade) return convertDeclaration(element, null, requiredType)
 
         val parentCallback = fun(): UElement? {
-            val parent = KotlinConverter.unwrapElements(element.parent) ?: return null
-            return convertElementWithParent(parent, null)
+            val parent = element.parent
+            val parentUnwrapped = KotlinConverter.unwrapElements(parent) ?: return null
+            if (parent is KtValueArgument && parentUnwrapped is KtAnnotationEntry) {
+                val argumentName = parent.getArgumentName()?.asName?.asString() ?: ""
+                return (convertElementWithParent(parentUnwrapped, null) as UAnnotation)
+                        .attributeValues.find { it.name == argumentName }
+            }
+            else
+                return convertElementWithParent(parentUnwrapped, null)
         }
         return convertDeclaration(element, parentCallback, requiredType)
                ?: KotlinConverter.convertPsiElement(element, parentCallback, requiredType)
