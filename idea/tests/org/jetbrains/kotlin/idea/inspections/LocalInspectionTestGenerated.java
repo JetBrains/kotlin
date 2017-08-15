@@ -1326,6 +1326,75 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/redundantOverride")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantOverride extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInRedundantOverride() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantOverride"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotated.kt")
+        public void testAnnotated() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/annotated.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("arguments.kt")
+        public void testArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/arguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("argumentsReplaced.kt")
+        public void testArgumentsReplaced() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/argumentsReplaced.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/basic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("callDifferentSuperMethod.kt")
+        public void testCallDifferentSuperMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/callDifferentSuperMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notCallSuper.kt")
+        public void testNotCallSuper() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/notCallSuper.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideModifireFinal.kt")
+        public void testOverrideModifireFinal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/overrideModifireFinal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideModifireVisibility.kt")
+        public void testOverrideModifireVisibility() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/overrideModifireVisibility.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("singleExpressionFunction.kt")
+        public void testSingleExpressionFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/singleExpressionFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("useGenericsSuper.kt")
+        public void testUseGenericsSuper() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/useGenericsSuper.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
