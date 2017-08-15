@@ -1334,6 +1334,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantOverride"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("annotated.kt")
+        public void testAnnotated() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/annotated.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("arguments.kt")
         public void testArguments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/arguments.kt");
@@ -1358,9 +1364,27 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("overrideModifireFinal.kt")
+        public void testOverrideModifireFinal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/overrideModifireFinal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideModifireVisibility.kt")
+        public void testOverrideModifireVisibility() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/overrideModifireVisibility.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("singleExpressionFunction.kt")
         public void testSingleExpressionFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/singleExpressionFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("useGenericsSuper.kt")
+        public void testUseGenericsSuper() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/useGenericsSuper.kt");
             doTest(fileName);
         }
     }

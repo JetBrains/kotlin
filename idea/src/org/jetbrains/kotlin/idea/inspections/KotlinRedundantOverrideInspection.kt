@@ -28,6 +28,8 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
                 override fun visitNamedFunction(function: KtNamedFunction) {
                     super.visitNamedFunction(function)
                     if (!function.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+                    if (function.containsOtherModifier()) return
+                    if (function.annotationEntries.size != 0) return
 
                     val bodyExpression = function.bodyExpression
                     bodyExpression ?: return
@@ -36,10 +38,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
                         bodyExpression
                     }
                     else {
-                        if (bodyExpression.children.size != 1) {
-                            return
-                        }
-                        bodyExpression.children[0]
+                        bodyExpression.children.singleOrNull() ?: return
                     }
 
                     val qualifiedExpression = if (body is KtReturnExpression) {
@@ -53,21 +52,21 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
 
                     if (qualifiedExpression.receiverExpression !is KtSuperExpression) return
 
-                    val superSelectorExpression = qualifiedExpression.selectorExpression
-                    val superCallElement = superSelectorExpression as? KtCallElement ?: return
+                    val superCallElement = qualifiedExpression.selectorExpression as? KtCallElement ?: return
 
-                    if (!isSameFunctionName(superSelectorExpression, function)) return
+                    if (qualifiedExpression.receiverExpression.children.size != 1) return
 
+                    if (!isSameFunctionName(superCallElement, function)) return
                     if (!isSameArguments(superCallElement, function)) return
 
                     holder.registerProblem(function,
                                            "Redundant override",
                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                            RedundantOverrideFix())
-
-
                 }
             }
+
+    private fun KtNamedFunction.containsOtherModifier(): Boolean = MODIFIER_EXCLUDE_OVERRIDE.any { hasModifier(it) }
 
     private fun isSameArguments(superCallElement: KtCallElement, function: KtNamedFunction): Boolean {
         val argumentList = superCallElement.valueArgumentList ?: return false
@@ -83,8 +82,8 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
         return diffArguments.isEmpty()
     }
 
-    private fun isSameFunctionName(superSelectorExpression: KtExpression?, function: KtNamedFunction): Boolean {
-        val superCallMethodName = (superSelectorExpression as KtCallElement).getCallNameExpression()?.text ?: return false
+    private fun isSameFunctionName(superSelectorExpression: KtCallElement, function: KtNamedFunction): Boolean {
+        val superCallMethodName = superSelectorExpression.getCallNameExpression()?.text ?: return false
         return function.name == superCallMethodName
     }
 
@@ -95,5 +94,9 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             descriptor.psiElement.delete()
         }
+    }
+
+    companion object {
+        private val MODIFIER_EXCLUDE_OVERRIDE = KtTokens.MODIFIER_KEYWORDS_ARRAY.asList() - KtTokens.OVERRIDE_KEYWORD
     }
 }
