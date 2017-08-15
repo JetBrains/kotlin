@@ -63,10 +63,8 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
                         is ReplEvalResult.ValueResult,
                         is ReplEvalResult.UnitResult ->
                             result
-                        else -> throw IllegalStateException("Unknown evaluator result type $compiled")
                     }
                 }
-                else -> throw IllegalStateException("Unknown compiler result type $compiled")
             }
         }
     }

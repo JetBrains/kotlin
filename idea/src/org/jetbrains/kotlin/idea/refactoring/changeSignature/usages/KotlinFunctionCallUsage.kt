@@ -334,7 +334,7 @@ class KotlinFunctionCallUsage(
             if (receiverValue is ExpressionReceiver && !receiverValue.expression.isValid) {
                 receiverValue = receiverValue.wrapInvalidated(element)
             }
-            ArgumentInfo(param, index, resolvedArgument, receiverValue as? ReceiverValue)
+            ArgumentInfo(param, index, resolvedArgument, receiverValue)
         }
 
         val lastParameterIndex = newParameters.lastIndex

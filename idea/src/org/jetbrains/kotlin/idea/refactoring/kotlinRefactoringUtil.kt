@@ -953,7 +953,7 @@ fun checkSuperMethodsWithPopup(
             .setResizable(false)
             .setRequestFocus(true)
             .setItemChoosenCallback {
-                val value = list.selectedValue as? String ?: return@setItemChoosenCallback
+                val value = list.selectedValue ?: return@setItemChoosenCallback
                 val chosenElements = if (value == renameBase) deepestSuperMethods + declaration else listOf(declaration)
                 action(chosenElements)
             }

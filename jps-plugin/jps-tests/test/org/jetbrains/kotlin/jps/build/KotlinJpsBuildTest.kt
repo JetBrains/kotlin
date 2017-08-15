@@ -1094,8 +1094,6 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                     touch(file)
                 Operation.DELETE ->
                     assertTrue("Can not delete file \"" + file.absolutePath + "\"", file.delete())
-                else ->
-                    fail("Unknown operation")
             }
         }
     }

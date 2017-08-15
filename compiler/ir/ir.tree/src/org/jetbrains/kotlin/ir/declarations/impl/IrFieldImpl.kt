@@ -59,6 +59,6 @@ class IrFieldImpl(
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        initializer = initializer?.transform(transformer, data) as? IrExpressionBody
+        initializer = initializer?.transform(transformer, data)
     }
 }

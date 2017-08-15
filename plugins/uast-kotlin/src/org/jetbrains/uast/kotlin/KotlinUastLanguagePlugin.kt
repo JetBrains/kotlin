@@ -59,13 +59,11 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     }
 
     override fun convertElement(element: PsiElement, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
-        if (element !is PsiElement) return null
         return convertDeclaration(element, parent.toCallback(), requiredType)
                ?: KotlinConverter.convertPsiElement(element, parent.toCallback(), requiredType)
     }
     
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
-        if (element !is PsiElement) return null
         if (element is PsiFile) return convertDeclaration(element, null, requiredType)
         if (element is KtLightClassForFacade) return convertDeclaration(element, null, requiredType)
 

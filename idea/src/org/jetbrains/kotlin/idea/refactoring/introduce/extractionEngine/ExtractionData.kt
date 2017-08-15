@@ -182,7 +182,7 @@ data class ExtractionData(
     fun getPossibleTypes(expression: KtExpression, resolvedCall: ResolvedCall<*>?, context: BindingContext): Set<KotlinType> {
         val dataFlowInfo = context.getDataFlowInfoAfter(expression)
 
-        (resolvedCall?.getImplicitReceiverValue() as? ImplicitReceiver)?.let {
+        resolvedCall?.getImplicitReceiverValue()?.let {
             return dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(it))
         }
 

@@ -282,7 +282,7 @@ open class KotlinIntroduceParameterHandler(
                             is KtExpression -> matchedElement
                             is KtStringTemplateEntryWithExpression -> matchedElement.expression
                             else -> null
-                        } as? KtExpression
+                        }
                         matchedExpr?.toRange()
                     }
         }

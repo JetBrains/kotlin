@@ -40,7 +40,7 @@ val KOTLIN_PLUGIN_CLASSPATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID}:$
 
 abstract class KotlinGradleInspectionVisitor : BaseInspectionVisitor() {
     override fun visitFile(file: GroovyFileBase) {
-        if (file == null || !FileUtilRt.extensionEquals(file.name, GradleConstants.EXTENSION)) return
+        if (!FileUtilRt.extensionEquals(file.name, GradleConstants.EXTENSION)) return
 
         val fileIndex = ProjectRootManager.getInstance(file.project).fileIndex
 

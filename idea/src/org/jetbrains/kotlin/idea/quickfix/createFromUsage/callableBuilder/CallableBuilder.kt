@@ -586,7 +586,6 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             if (returnTypeRefs.isNotEmpty()) {
                 val returnType = typeCandidates[callableInfo.returnTypeInfo]!!.getTypeByRenderedType(
                         returnTypeRefs.map { it.text }
-                        ?: throw AssertionError("Expression for return type shouldn't be empty: declaration = ${declaration.text}")
                 )
                 if (returnType != null) {
                     // user selected a given type
@@ -603,7 +602,6 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 if (parameterTypeRef != null) {
                     val parameterType = parameterTypeExpressions[i].typeCandidates.getTypeByRenderedType(
                             listOf(parameterTypeRef.text)
-                            ?: throw AssertionError("Expression for parameter type shouldn't be empty: declaration = ${declaration.text}")
                     )
                     if (parameterType != null) {
                         replaceWithLongerName(listOf(parameterTypeRef), parameterType)

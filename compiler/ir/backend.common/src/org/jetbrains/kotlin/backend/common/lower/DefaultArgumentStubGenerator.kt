@@ -195,7 +195,7 @@ private fun Scope.createTemporaryVariable(symbol: IrVariableSymbol, initializer:
         }
 
 private fun getDefaultParameterExpressionBody(irFunction: IrFunction, valueParameter: ValueParameterDescriptor):IrExpressionBody {
-    return irFunction.getDefault(valueParameter) as? IrExpressionBody ?: TODO("FIXME!!!")
+    return irFunction.getDefault(valueParameter) ?: TODO("FIXME!!!")
 }
 
 private fun maskParameterDescriptor(function: IrFunction, number: Int) =

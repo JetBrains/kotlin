@@ -62,7 +62,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
 
     class FunctionDefinitionInfo(element: KtFunction) : AbstractProcessableUsageInfo<KtFunction, ConversionData>(element) {
         override fun process(data: ConversionData, elementsToShorten: MutableList<KtElement>) {
-            val function = element as? KtFunction ?: return
+            val function = element ?: return
             val functionParameter = function.valueParameters.getOrNull(data.functionParameterIndex) ?: return
             val functionType = functionParameter.typeReference?.typeElement as? KtFunctionType ?: return
             val functionTypeParameterList = functionType.parameterList ?: return

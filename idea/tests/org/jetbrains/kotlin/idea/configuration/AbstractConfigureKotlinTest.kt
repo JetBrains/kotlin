@@ -153,13 +153,10 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
             collector.showNotification()
         }
 
-        private fun getPathToJar(runtimeState: FileState, jarFromDist: String, jarFromTemp: String): String {
-            when (runtimeState) {
-                KotlinWithLibraryConfigurator.FileState.EXISTS -> return jarFromDist
-                KotlinWithLibraryConfigurator.FileState.COPY -> return jarFromTemp
-                KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY -> return jarFromDist
-            }
-            return jarFromDist
+        private fun getPathToJar(runtimeState: FileState, jarFromDist: String, jarFromTemp: String) = when (runtimeState) {
+            KotlinWithLibraryConfigurator.FileState.EXISTS -> jarFromDist
+            KotlinWithLibraryConfigurator.FileState.COPY -> jarFromTemp
+            KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY -> jarFromDist
         }
 
         protected fun configure(module: Module, jarState: FileState, configurator: KotlinProjectConfigurator) {

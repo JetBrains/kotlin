@@ -211,7 +211,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                     actualExpression = reference!!
                     diff = actualExpression.textRange.startOffset - emptyBody.textRange.startOffset
                     actualExpressionText = actualExpression.text
-                    emptyBody = anchor!!.replace(emptyBody) as KtBlockExpression
+                    emptyBody = anchor.replace(emptyBody) as KtBlockExpression
                     elem = findElementByOffsetAndText(diff, actualExpressionText, emptyBody)
                     if (elem != null) {
                         reference = elem as KtExpression
@@ -335,7 +335,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                         is KtExpression -> candidate
                         is KtStringTemplateEntryWithExpression -> candidate.expression
                         else -> throw AssertionError("Unexpected candidate element: " + candidate.text)
-                    } as? KtExpression
+                    }
                 }
     }
 

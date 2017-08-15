@@ -72,7 +72,7 @@ private fun Converter.convertTypeParameter(typeParameter: PsiTypeParameter): Typ
 
 fun Converter.convertTypeParameterList(typeParameterList: PsiTypeParameterList?): TypeParameterList {
     return if (typeParameterList != null)
-        TypeParameterList(typeParameterList.typeParameters!!.toList().map { convertTypeParameter(it) }).assignPrototype(typeParameterList)
+        TypeParameterList(typeParameterList.typeParameters.toList().map { convertTypeParameter(it) }).assignPrototype(typeParameterList)
     else
         TypeParameterList.Empty
 }

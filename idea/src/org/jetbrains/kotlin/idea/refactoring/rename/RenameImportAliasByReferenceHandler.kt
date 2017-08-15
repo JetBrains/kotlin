@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 class RenameImportAliasByReferenceHandler : AbstractReferenceSubstitutionRenameHandler(VariableInplaceRenameHandler()) {
     override fun getElementToRename(dataContext: DataContext): PsiElement? {
-        val refExpr = getReferenceExpression(dataContext) as? KtSimpleNameExpression ?: return null
+        val refExpr = getReferenceExpression(dataContext) ?: return null
         return refExpr.mainReference.getImportAlias()
     }
 }
