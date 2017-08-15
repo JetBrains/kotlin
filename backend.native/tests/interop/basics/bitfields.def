@@ -1,0 +1,20 @@
+---
+enum B2 {
+    ZERO, ONE, TWO, THREE
+};
+
+struct __attribute__((packed)) S {
+    long long x1 : 1;
+    enum B2 x2 : 2;
+    unsigned short x3 : 3;
+    unsigned int x4 : 4;
+    int x5 : 5;
+    long long x6 : 63;
+};
+
+static long long getX1(struct S* s) { return s->x1; }
+static enum B2 getX2(struct S* s) { return s->x2; }
+static unsigned short getX3(struct S* s) { return s->x3; }
+static unsigned int getX4(struct S* s) { return s->x4; }
+static int getX5(struct S* s) { return s->x5; }
+static long long getX6(struct S* s) { return s->x6; }

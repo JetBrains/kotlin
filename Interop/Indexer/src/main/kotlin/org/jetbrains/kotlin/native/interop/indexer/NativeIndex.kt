@@ -55,6 +55,8 @@ class Field(val name: String, val type: Type, val offset: Long, val typeAlign: L
 val Field.isAligned: Boolean
     get() = offset % (typeAlign * 8) == 0L
 
+class BitField(val name: String, val type: Type, val offset: Long, val size: Int)
+
 /**
  * C struct declaration.
  */
@@ -74,6 +76,8 @@ abstract class StructDef(val size: Long, val align: Int,
                          val hasNaturalLayout: Boolean) {
 
     abstract val fields: List<Field>
+    // TODO: merge two lists to preserve declaration order.
+    abstract val bitFields: List<BitField>
 }
 
 /**

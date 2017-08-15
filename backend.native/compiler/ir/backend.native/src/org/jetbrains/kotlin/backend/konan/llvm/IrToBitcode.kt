@@ -1991,8 +1991,101 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 genGetObjCMessenger(args, isLU = true)
             }
 
+            interop.readBits -> genReadBits(args)
+            interop.writeBits -> genWriteBits(args)
+
             else -> TODO(callee.descriptor.original.toString())
         }
+    }
+
+    private fun genReadBits(args: List<LLVMValueRef>): LLVMValueRef {
+        val ptr = args[0]
+        assert(ptr.type == int8TypePtr)
+
+        val offset = extractConstUnsignedInt(args[1])
+        val size = extractConstUnsignedInt(args[2]).toInt()
+        val signed = extractConstUnsignedInt(args[3]) != 0L
+
+        val prefixBitsNum = (offset % 8).toInt()
+        val suffixBitsNum = (8 - ((size + offset) % 8).toInt()) % 8
+
+        // Note: LLVM allows to read without padding tail up to byte boundary, but the result seems to be incorrect.
+
+        val bitsWithPaddingNum = prefixBitsNum + size + suffixBitsNum
+        val bitsWithPaddingType = LLVMIntType(bitsWithPaddingNum)!!
+
+        with (functionGenerationContext) {
+            val bitsWithPaddingPtr = bitcast(pointerType(bitsWithPaddingType), gep(ptr, Int64(offset / 8).llvm))
+            val bitsWithPadding = load(bitsWithPaddingPtr).setUnaligned()
+
+            val bits = shr(
+                    shl(bitsWithPadding, suffixBitsNum),
+                    prefixBitsNum + suffixBitsNum, signed
+            )
+
+            return if (bitsWithPaddingNum == 64) {
+                bits
+            } else if (bitsWithPaddingNum > 64) {
+                trunc(bits, kInt64)
+            } else {
+                ext(bits, kInt64, signed)
+            }
+        }
+    }
+
+    private fun genWriteBits(args: List<LLVMValueRef>): LLVMValueRef {
+        val ptr = args[0]
+        assert(ptr.type == int8TypePtr)
+
+        val offset = extractConstUnsignedInt(args[1])
+        val size = extractConstUnsignedInt(args[2]).toInt()
+
+        val value = args[3]
+        assert(value.type == kInt64)
+
+        val bitsType = LLVMIntType(size)!!
+
+        val prefixBitsNum = (offset % 8).toInt()
+        val suffixBitsNum = (8 - ((size + offset) % 8).toInt()) % 8
+
+        val bitsWithPaddingNum = prefixBitsNum + size + suffixBitsNum
+        val bitsWithPaddingType = LLVMIntType(bitsWithPaddingNum)!!
+
+        // 0011111000:
+        val discardBitsMask = LLVMConstShl(
+                LLVMConstZExt(
+                        LLVMConstAllOnes(bitsType), // 11111
+                        bitsWithPaddingType
+                ), // 1111100000
+                LLVMConstInt(bitsWithPaddingType, prefixBitsNum.toLong(), 0)
+        )
+
+        val preservedBitsMask = LLVMConstNot(discardBitsMask)!!
+
+        with (functionGenerationContext) {
+            val bitsWithPaddingPtr = bitcast(pointerType(bitsWithPaddingType), gep(ptr, Int64(offset / 8).llvm))
+
+            val bits = trunc(value, bitsType)
+
+            val bitsToStore = if (prefixBitsNum == 0 && suffixBitsNum == 0) {
+                bits
+            } else {
+                val previousValue = load(bitsWithPaddingPtr).setUnaligned()
+                val preservedBits = and(previousValue, preservedBitsMask)
+                val bitsWithPadding = shl(zext(bits, bitsWithPaddingType), prefixBitsNum)
+
+                or(bitsWithPadding, preservedBits)
+            }
+
+            LLVMBuildStore(builder, bitsToStore, bitsWithPaddingPtr)!!.setUnaligned()
+        }
+
+        return codegen.theUnitInstanceRef.llvm
+    }
+
+    private fun extractConstUnsignedInt(value: LLVMValueRef): Long {
+        assert(LLVMIsConstant(value) != 0)
+        return LLVMConstIntGetZExtValue(value)
     }
 
     private fun genGetObjCClass(classDescriptor: ClassDescriptor): LLVMValueRef {

@@ -34,6 +34,7 @@ private class StructDefImpl(
 ) {
 
     override val fields = mutableListOf<Field>()
+    override val bitFields = mutableListOf<BitField>()
 }
 
 private class EnumDefImpl(spelling: String, type: Type) : EnumDef(spelling, type) {
@@ -158,7 +159,8 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                     val typeAlign = clang_Type_getAlignOf(clang_getCursorType(fieldCursor))
                     structDef.fields.add(Field(name, fieldType, offset, typeAlign))
                 } else {
-                    // Ignore bit fields for now.
+                    val size = clang_getFieldDeclBitWidth(fieldCursor)
+                    structDef.bitFields.add(BitField(name, fieldType, offset, size))
                 }
             } else {
                 // Unnamed field.

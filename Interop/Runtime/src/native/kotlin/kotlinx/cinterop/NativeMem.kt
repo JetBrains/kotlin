@@ -100,3 +100,6 @@ private external fun malloc(size: Long, align: Int): NativePtr
 
 @SymbolName("Kotlin_interop_free")
 private external fun cfree(ptr: NativePtr)
+
+@Intrinsic external fun readBits(ptr: NativePtr, offset: Long, size: Int, signed: Boolean): Long
+@Intrinsic external fun writeBits(ptr: NativePtr, offset: Long, size: Int, value: Long)

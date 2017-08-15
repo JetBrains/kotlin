@@ -126,6 +126,7 @@ internal val RuntimeAware.kTypeInfoPtr: LLVMTypeRef
     get() = pointerType(kTypeInfo)
 internal val kInt1         = LLVMInt1Type()!!
 internal val kBoolean      = kInt1
+internal val kInt64        = LLVMInt64Type()!!
 internal val kInt8Ptr      = pointerType(int8Type)
 internal val kInt8PtrPtr   = pointerType(kInt8Ptr)
 internal val kNullInt8Ptr  = LLVMConstNull(kInt8Ptr)!!
@@ -258,3 +259,5 @@ fun parseBitcodeFile(path: String): LLVMModuleRef = memScoped {
 
 internal fun String.mdString() = LLVMMDString(this, this.length)!!
 internal fun node(vararg it:LLVMValueRef) = LLVMMDNode(it.toList().toCValues(), it.size)
+
+internal fun LLVMValueRef.setUnaligned() = apply { LLVMSetAlignment(this, 1) }

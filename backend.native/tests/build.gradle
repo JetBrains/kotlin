@@ -1989,6 +1989,11 @@ kotlinNativeInterop {
         flavor 'native'
     }
 
+    bitfields {
+        defFile 'interop/basics/bitfields.def'
+        flavor 'native'
+    }
+
     if (isMac()) {
         opengl {
             defFile '../../samples/opengl/src/main/c_interop/opengl.def'
@@ -2046,6 +2051,12 @@ task interop4(type: RunInteropKonanTest) {
     interop = 'cstdio'
 }
 
+task interop_bitfields(type: RunInteropKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/bf.kt"
+    interop = 'bitfields'
+}
+
 task interop_echo_server(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     if (!isMac()) {
@@ -2066,6 +2077,7 @@ if (isMac()) {
     }
 
     task interop_objc_smoke(type: RunInteropKonanTest) {
+        disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
         goldValue = "Hello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\nDeallocated\nDeallocated\n"
 
         source = "interop/objc/smoke.kt"

@@ -303,7 +303,37 @@ class StubGenerator(
                     log("Warning: cannot generate definition for field ${decl.kotlinName}.${field.name}")
                 }
             }
+
+            if (platform == KotlinPlatform.NATIVE) {
+                for (field in def.bitFields) {
+                    val typeMirror = mirror(field.type)
+                    val typeInfo = typeMirror.info
+                    val kotlinType = typeMirror.argType
+                    val rawType = typeInfo.bridgedType
+
+                    out("var ${field.name.asSimpleName()}: $kotlinType")
+
+                    val signed = field.type.getUnderlyingIntegerType().isSigned
+
+                    val readBitsExpr =
+                            "readBits(this.rawPtr, ${field.offset}, ${field.size}, $signed).to${rawType.kotlinType}()"
+
+                    out("    get() = ${typeInfo.argFromBridged(readBitsExpr)}")
+
+                    val rawValue = typeInfo.argToBridged("value")
+                    val setExpr = "writeBits(this.rawPtr, ${field.offset}, ${field.size}, $rawValue.toLong())"
+                    out("    set(value) = $setExpr")
+                    out("")
+                }
+            }
         }
+    }
+
+    private tailrec fun Type.getUnderlyingIntegerType(): IntegerType = when (this) {
+        is IntegerType -> this
+        is EnumType -> this.def.baseType.getUnderlyingIntegerType()
+        is Typedef -> this.def.aliased.getUnderlyingIntegerType()
+        else -> error(this)
     }
 
     /**

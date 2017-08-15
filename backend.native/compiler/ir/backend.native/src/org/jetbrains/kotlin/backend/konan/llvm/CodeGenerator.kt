@@ -345,7 +345,37 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return LLVMBlockAddress(function, bbLabel)!!
     }
 
+    fun and(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildAnd(builder, arg0, arg1, name)!!
     fun or(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildOr(builder, arg0, arg1, name)!!
+
+    fun zext(arg: LLVMValueRef, type: LLVMTypeRef): LLVMValueRef =
+            LLVMBuildZExt(builder, arg, type, "")!!
+
+    fun sext(arg: LLVMValueRef, type: LLVMTypeRef): LLVMValueRef =
+            LLVMBuildSExt(builder, arg, type, "")!!
+
+    fun ext(arg: LLVMValueRef, type: LLVMTypeRef, signed: Boolean): LLVMValueRef =
+            if (signed) {
+                sext(arg, type)
+            } else {
+                zext(arg, type)
+            }
+
+    fun trunc(arg: LLVMValueRef, type: LLVMTypeRef): LLVMValueRef =
+            LLVMBuildTrunc(builder, arg, type, "")!!
+
+    private fun shift(op: LLVMOpcode, arg: LLVMValueRef, amount: Int) =
+            if (amount == 0) {
+                arg
+            } else {
+                LLVMBuildBinOp(builder, op, arg, LLVMConstInt(arg.type, amount.toLong(), 0), "")!!
+            }
+
+    fun shl(arg: LLVMValueRef, amount: Int) = shift(LLVMOpcode.LLVMShl, arg, amount)
+
+    fun shr(arg: LLVMValueRef, amount: Int, signed: Boolean) =
+            shift(if (signed) LLVMOpcode.LLVMAShr else LLVMOpcode.LLVMLShr,
+                    arg, amount)
 
     /* integers comparisons */
     fun icmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntEQ, arg0, arg1, name)!!

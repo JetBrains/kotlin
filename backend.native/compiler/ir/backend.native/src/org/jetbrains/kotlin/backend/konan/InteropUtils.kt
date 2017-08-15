@@ -102,6 +102,9 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val narrow = packageScope.getContributedFunctions("narrow").single()
 
+    val readBits = packageScope.getContributedFunctions("readBits").single()
+    val writeBits = packageScope.getContributedFunctions("writeBits").single()
+
     val objCObject = packageScope.getContributedClassifier("ObjCObject") as ClassDescriptor
     val objCPointerHolder = packageScope.getContributedClassifier("ObjCPointerHolder") as ClassDescriptor
 
