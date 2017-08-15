@@ -208,14 +208,7 @@ class TowerResolver {
 
         abstract fun getFinalCandidates(): Collection<C>
 
-        fun pushCandidates(candidates: Collection<C>) {
-            val filteredCandidates = candidates.filter {
-                it.resultingApplicability != ResolutionCandidateApplicability.HIDDEN
-            }
-            if (filteredCandidates.isNotEmpty()) addCandidates(filteredCandidates)
-        }
-
-        protected abstract fun addCandidates(candidates: Collection<C>)
+        abstract fun pushCandidates(candidates: Collection<C>)
     }
 
     class AllCandidatesCollector<C : Candidate>: ResultCollector<C>() {
@@ -225,33 +218,51 @@ class TowerResolver {
 
         override fun getFinalCandidates(): Collection<C> = allCandidates
 
-        override fun addCandidates(candidates: Collection<C>) {
-            allCandidates.addAll(candidates)
+        override fun pushCandidates(candidates: Collection<C>) {
+            candidates.filterNotTo(allCandidates) {
+                it.resultingApplicability == ResolutionCandidateApplicability.HIDDEN
+            }
         }
     }
 
-    class SuccessfulResultCollector<C : Candidate>: ResultCollector<C>() {
-        private var currentCandidates: Collection<C> = emptyList()
-        private var currentLevel: ResolutionCandidateApplicability? = null
+    class SuccessfulResultCollector<C : Candidate> : ResultCollector<C>() {
+        private var candidateGroups = arrayListOf<Collection<C>>()
+        private var isSuccessful = false
 
-        override fun getSuccessfulCandidates(): Collection<C>? = getResolved()
-
-        fun getResolved() = currentCandidates.takeIf { currentLevel == ResolutionCandidateApplicability.RESOLVED }
-
-        fun getResolvedLowPriority() = currentCandidates.takeIf { currentLevel == ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY }
-
-        fun getErrors() = currentCandidates.takeIf {
-            currentLevel == null || currentLevel!! > ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY
+        override fun getSuccessfulCandidates(): Collection<C>? {
+            if (!isSuccessful) return null
+            val firstGroupWithResolved = candidateGroups.firstOrNull {
+                it.any { it.resultingApplicability == ResolutionCandidateApplicability.RESOLVED }
+            } ?: return null
+            
+            return firstGroupWithResolved.filter { it.resultingApplicability == ResolutionCandidateApplicability.RESOLVED }
         }
 
-        override fun getFinalCandidates() = getResolved() ?: getResolvedLowPriority() ?: getErrors() ?: emptyList()
+        override fun pushCandidates(candidates: Collection<C>) {
+            val thereIsSuccessful = candidates.any { it.isSuccessful }
+            if (!isSuccessful && !thereIsSuccessful) {
+                candidateGroups.add(candidates)
+                return
+            }
 
-        override fun addCandidates(candidates: Collection<C>) {
-            val minimalLevel = candidates.map { it.resultingApplicability }.min()!!
-            if (currentLevel == null || currentLevel!! > minimalLevel) {
-                currentLevel = minimalLevel
-                currentCandidates = candidates.filter { it.resultingApplicability == minimalLevel }
+            if (!isSuccessful) {
+                candidateGroups.clear()
+                isSuccessful = true
+            }
+            if (thereIsSuccessful) {
+                candidateGroups.add(candidates.filter { it.isSuccessful })
             }
         }
+
+        override fun getFinalCandidates(): Collection<C> {
+            val moreSuitableGroup = candidateGroups.minBy { it.groupApplicability } ?: return emptyList()
+            val groupApplicability = moreSuitableGroup.groupApplicability
+            if (groupApplicability == ResolutionCandidateApplicability.HIDDEN) return emptyList()
+
+            return moreSuitableGroup.filter { it.resultingApplicability == groupApplicability }
+        }
+        
+        private val Collection<C>.groupApplicability get() = 
+            minBy { it.resultingApplicability }?.resultingApplicability ?: ResolutionCandidateApplicability.HIDDEN 
     }
 }
