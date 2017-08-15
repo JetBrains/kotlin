@@ -43,7 +43,7 @@ class KaptTreeMaker(context: Context, private val kaptContext: KaptContext<*>) :
     }
 
     fun FqName(internalOrFqName: String): JCTree.JCExpression {
-        val path = getQualifiedName(internalOrFqName.replace('/', '.')).convertSpecialFqName().split('.')
+        val path = getQualifiedName(internalOrFqName).convertSpecialFqName().split('.')
         assert(path.isNotEmpty())
         if (path.size == 1) return SimpleName(path.single())
 
