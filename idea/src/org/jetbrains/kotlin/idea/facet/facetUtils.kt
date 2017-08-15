@@ -38,11 +38,11 @@ import org.jetbrains.kotlin.idea.versions.*
 import kotlin.reflect.KProperty1
 
 private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): TargetPlatformKind<*> {
-    if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.JavaScript).isNotEmpty()) {
-        return TargetPlatformKind.JavaScript
-    }
-    if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.Common).isNotEmpty()) {
-        return TargetPlatformKind.Common
+    for (platform in TargetPlatformKind.ALL_PLATFORMS) {
+        if (platform.version == TargetPlatformVersion.NoVersion &&
+            getRuntimeLibraryVersions(module, rootModel, platform).isNotEmpty()) {
+            return platform
+        }
     }
 
     val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
