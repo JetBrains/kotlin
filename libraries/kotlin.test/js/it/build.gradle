@@ -10,46 +10,25 @@ dependencies {
     compile project(':kotlin-test:kotlin-test-js')
 }
 
-
-sourceSets {
-    main.kotlin.srcDirs += 'src'
-    test.kotlin.srcDirs += 'test'
+[compileKotlin2Js, compileTestKotlin2Js]*.configure {
+    kotlinOptions.moduleKind = "commonjs"
 }
 
+task populateNodeModules(type: Copy, dependsOn: compileKotlin2Js) {
+    from compileKotlin2Js.destinationDir
 
-compileKotlin2Js {
-    kotlinOptions {
-        moduleKind = "commonjs"
+    configurations.testCompile.each {
+        from zipTree(it.absolutePath).matching { include '*.js' }
     }
-}
 
-compileTestKotlin2Js {
-    kotlinOptions {
-        moduleKind = "commonjs"
-    }
-}
-
-compileKotlin2Js.doLast {
-    configurations.compile.each { File file ->
-        copy {
-            includeEmptyDirs = false
-
-            from zipTree(file.absolutePath)
-            into "${buildDir}/classes/"
-            include { fileTreeElement ->
-                def path = fileTreeElement.path
-                path.endsWith(".js") && (path.startsWith("META-INF/resources/") || !path.startsWith("META-INF/"))
-            }
-        }
-    }
+    into "${buildDir}/classes"
 }
 
 node {
-    version = '6.11.0'
     download = true
 }
 
-task testJest(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
+task testJest(type: NpmTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, npmInstall]) {
     args = ['run', 'test-jest']
     execOverrides {
         it.standardOutput = new FileOutputStream("$buildDir/test-jest.log")
@@ -57,28 +36,28 @@ task testJest(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin
     }
 }
 
-task testJasmine(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
+task testJasmine(type: NpmTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, npmInstall]) {
     args = ['run', 'test-jasmine']
     execOverrides {
         it.standardOutput = new FileOutputStream("$buildDir/test-jasmine.log")
     }
 }
 
-task testMocha(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
+task testMocha(type: NpmTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, npmInstall]) {
     args = ['run', 'test-mocha']
     execOverrides {
         it.standardOutput = new FileOutputStream("$buildDir/test-mocha.log")
     }
 }
 
-task testQunit(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
+task testQunit(type: NpmTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, npmInstall]) {
     args = ['run', 'test-qunit']
     execOverrides {
         it.standardOutput = new FileOutputStream("$buildDir/test-qunit.log")
     }
 }
 
-task testTape(type: NpmTask, dependsOn: [compileTestKotlin2Js, compileTestKotlin2Js, npmInstall]) {
+task testTape(type: NpmTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, npmInstall]) {
     args = ['run', 'test-tape']
     execOverrides {
         it.standardOutput = new FileOutputStream("$buildDir/test-tape.log")
