@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 internal class Kotlin2JsCompilerArgumentsSerializer : JpsProjectExtensionSerializer(KOTLIN_COMPILER_SETTINGS_FILE,
                                                                                     KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION) {
     override fun loadExtension(project: JpsProject, componentTag: Element) {
-        val settings = XmlSerializer.deserialize(componentTag, K2JSCompilerArguments::class.java) ?: K2JSCompilerArguments()
+        val settings = XmlSerializer.deserialize(componentTag, K2JSCompilerArguments::class.java)
         JpsKotlinCompilerSettings.setK2JsCompilerArguments(project, settings)
     }
 
