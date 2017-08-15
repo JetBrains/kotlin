@@ -26,12 +26,15 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.UnwrappedType
 
 
-interface ReceiverKotlinCallArgument {
+interface ReceiverKotlinCallArgument : KotlinCallArgument {
     val receiver: DetailedReceiver
 }
 
 class QualifierReceiverKotlinCallArgument(override val receiver: QualifierReceiver) : ReceiverKotlinCallArgument {
     override fun toString() = "$receiver"
+
+    override val isSpread get() = false
+    override val argumentName: Name? get() = null
 }
 
 interface KotlinCallArgument {
@@ -39,7 +42,7 @@ interface KotlinCallArgument {
     val argumentName: Name?
 }
 
-interface PostponableKotlinCallArgument : KotlinCallArgument
+interface PostponableKotlinCallArgument : KotlinCallArgument, ResolutionAtom
 
 interface SimpleKotlinCallArgument : KotlinCallArgument, ReceiverKotlinCallArgument {
     override val receiver: ReceiverValueWithSmartCastInfo
@@ -47,10 +50,10 @@ interface SimpleKotlinCallArgument : KotlinCallArgument, ReceiverKotlinCallArgum
     val isSafeCall: Boolean
 }
 
-interface ExpressionKotlinCallArgument : SimpleKotlinCallArgument
+interface ExpressionKotlinCallArgument : SimpleKotlinCallArgument, ResolutionAtom
 
 interface SubKotlinCallArgument : SimpleKotlinCallArgument {
-    val resolvedCall: ResolvedKotlinCall.OnlyResolvedKotlinCall
+    val callResult: CallResolutionResult
 }
 
 interface LambdaKotlinCallArgument : PostponableKotlinCallArgument {

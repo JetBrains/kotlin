@@ -52,8 +52,6 @@ interface ConstraintStorage {
     val maxTypeDepthFromInitialConstraints: Int
     val errors: List<KotlinCallDiagnostic>
     val fixedTypeVariables: Map<TypeConstructor, UnwrappedType>
-    val postponedArguments: List<PostponedKotlinCallArgument>
-    val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall>
 
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructor, NewTypeVariable> get() = emptyMap()
@@ -62,8 +60,6 @@ interface ConstraintStorage {
         override val maxTypeDepthFromInitialConstraints: Int get() = 1
         override val errors: List<KotlinCallDiagnostic> get() = emptyList()
         override val fixedTypeVariables: Map<TypeConstructor, UnwrappedType> get() = emptyMap()
-        override val postponedArguments: List<PostponedKotlinCallArgument> get() = emptyList()
-        override val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall> get() = emptyList()
     }
 }
 

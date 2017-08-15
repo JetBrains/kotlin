@@ -79,6 +79,7 @@ class PSIKotlinCallForVariable(
 
 class PSIKotlinCallForInvoke(
         val baseCall: PSIKotlinCallImpl,
+        val variableCall: KotlinResolutionCandidate,
         override val explicitReceiver: SimpleKotlinCallArgument,
         override val dispatchReceiverForInvokeExtension: SimpleKotlinCallArgument?
 ) : PSIKotlinCall() {

@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.*
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.PostponedKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -29,16 +29,17 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 class VariableFixationFinder {
     interface Context {
         val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints>
-        val postponedArguments: List<PostponedKotlinCallArgument>
     }
 
     data class VariableForFixation(val variable: TypeConstructor, val hasProperConstraint: Boolean)
 
     fun findFirstVariableForFixation(
             c: Context,
+            allTypeVariables: List<TypeConstructor>,
+            postponedKtPrimitives: List<PostponedResolvedAtom>,
             completionMode: ConstraintSystemCompletionMode,
             topLevelType: UnwrappedType
-    ): VariableForFixation? = c.findTypeVariableForFixation(completionMode, topLevelType)
+    ): VariableForFixation? = c.findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
 
     private enum class TypeVariableFixationReadiness {
         FORBIDDEN,
@@ -52,6 +53,7 @@ class VariableFixationFinder {
             variable: TypeConstructor,
             dependencyProvider: TypeVariableDependencyInformationProvider
     ): TypeVariableFixationReadiness = when {
+        !notFixedTypeVariables.contains(variable) ||
         dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
         dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
@@ -60,14 +62,15 @@ class VariableFixationFinder {
     }
 
     private fun Context.findTypeVariableForFixation(
+            allTypeVariables: List<TypeConstructor>,
+            postponedKtPrimitives: List<PostponedResolvedAtom>,
             completionMode: ConstraintSystemCompletionMode,
             topLevelType: UnwrappedType
     ): VariableForFixation? {
-        val dependencyProvider = TypeVariableDependencyInformationProvider(notFixedTypeVariables, postponedArguments,
+        val dependencyProvider = TypeVariableDependencyInformationProvider(notFixedTypeVariables, postponedKtPrimitives,
                                                                            topLevelType.takeIf { completionMode == PARTIAL })
 
-        val initialOrder = notFixedTypeVariables.keys.sortByInitialOrder()
-        val candidate = initialOrder.maxBy { getTypeVariableReadiness(it, dependencyProvider) } ?: return null
+        val candidate = allTypeVariables.maxBy { getTypeVariableReadiness(it, dependencyProvider) } ?: return null
         val candidateReadiness = getTypeVariableReadiness(candidate, dependencyProvider)
         return when (candidateReadiness) {
             TypeVariableFixationReadiness.FORBIDDEN -> null
@@ -93,8 +96,5 @@ class VariableFixationFinder {
 
     private fun Context.isProperType(type: UnwrappedType): Boolean =
             !type.contains { notFixedTypeVariables.containsKey(it.constructor) }
-
-    private fun Collection<TypeConstructor>.sortByInitialOrder(): List<TypeConstructor> =
-            sortedBy { toString() } // todo
 
 }

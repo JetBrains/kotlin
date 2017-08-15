@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.KotlinResolutionConfigurationKt;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.tower.StubOnlyResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.tower.StubOnlyVariableAsFunctionCall;
+import org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformerKt;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
@@ -61,7 +60,7 @@ public class OverloadResolutionResultsUtil {
                 }
             }
             else {
-                if (resultingCall instanceof StubOnlyResolvedCall || resultingCall instanceof StubOnlyVariableAsFunctionCall) {
+                if (KotlinToResolvedCallTransformerKt.isNewNotCompleted(resultingCall)) {
                     return null;
                 }
             }

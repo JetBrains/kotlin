@@ -17,12 +17,11 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemForArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceArgument
-import org.jetbrains.kotlin.resolve.calls.model.PostponedCollectionLiteralArgument
-import org.jetbrains.kotlin.resolve.calls.model.PostponedKotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.PostponedLambdaArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -36,34 +35,42 @@ class PostponedArgumentsAnalyzer(
         fun canBeProper(type: UnwrappedType): Boolean
 
         // mutable operations
+        fun addOtherSystem(otherSystem: ConstraintStorage)
         fun getBuilder(): ConstraintSystemBuilder
     }
 
-    fun analyze(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, argument: PostponedKotlinCallArgument) {
+    fun analyze(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, argument: ResolvedAtom) {
         when (argument) {
-            is PostponedLambdaArgument -> analyzeLambda(c, resolutionCallbacks, argument)
-            is PostponedCallableReferenceArgument -> callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), argument)
-            is PostponedCollectionLiteralArgument -> TODO("Not supported")
+            is ResolvedLambdaAtom -> analyzeLambda(c, resolutionCallbacks, argument)
+            is ResolvedCallableReferenceAtom -> callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), argument)
+            is ResolvedCollectionLiteralAtom -> TODO("Not supported")
+            else -> error("Unexpected resolved primitive: ${argument.javaClass.canonicalName}")
         }
     }
 
-    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: PostponedLambdaArgument) {
+    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: ResolvedLambdaAtom) {
         val currentSubstitutor = c.buildCurrentSubstitutor()
         fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type)
 
         val receiver = lambda.receiver?.let(::substitute)
         val parameters = lambda.parameters.map(::substitute)
         val expectedType = lambda.returnType.takeIf { c.canBeProper(it) }?.let(::substitute)
-        lambda.analyzed = true
-        lambda.resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(lambda.argument, lambda.isSuspend, receiver, parameters, expectedType)
 
-        for (resultLambdaArgument in lambda.resultArguments) {
-            checkSimpleArgument(c.getBuilder(), resultLambdaArgument, lambda.returnType.let(::substitute))
+        val resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(lambda.atom, lambda.isSuspend, receiver, parameters, expectedType)
+
+        resultArguments.forEach { c.addSubsystemForArgument(it) }
+
+        val diagnosticHolder = KotlinDiagnosticsHolder.SimpleHolder()
+
+        val subResolvedKtPrimitives = resultArguments.map {
+            checkSimpleArgument(c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, isReceiver = false)
         }
 
-        if (lambda.resultArguments.isEmpty()) {
+        if (resultArguments.isEmpty()) {
             val unitType = lambda.returnType.builtIns.unitType
             c.getBuilder().addSubtypeConstraint(lambda.returnType.let(::substitute), unitType, LambdaArgumentConstraintPosition(lambda))
         }
+
+        lambda.setAnalyzedResults(resultArguments, subResolvedKtPrimitives, diagnosticHolder.getDiagnostics())
     }
 }

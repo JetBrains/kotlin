@@ -16,152 +16,82 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
-import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.TypeApproximator
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.checker.NewCapturedType
-import org.jetbrains.kotlin.types.typeUtil.contains
 
 class KotlinCallCompleter(
-        private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
         private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
         private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter
 ) {
 
-    interface Context {
-        val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall>
-        fun buildResultingSubstitutor(): NewTypeSubstitutor
-        val postponedArguments: List<PostponedKotlinCallArgument>
-        val lambdaArguments: List<PostponedLambdaArgument>
-    }
-
-    fun transformWhenAmbiguity(candidate: KotlinResolutionCandidate, resolutionCallbacks: KotlinResolutionCallbacks): ResolvedKotlinCall =
-            toCompletedBaseResolvedCall(candidate.lastCall.constraintSystem.asCallCompleterContext(), candidate, resolutionCallbacks)
-
-    // todo investigate variable+function calls
-    fun completeCallIfNecessary(
-            candidate: KotlinResolutionCandidate,
+    fun runCompletion(
+            factory: SimpleCandidateFactory,
+            candidates: Collection<KotlinResolutionCandidate>,
             expectedType: UnwrappedType?,
             resolutionCallbacks: KotlinResolutionCallbacks
-    ): ResolvedKotlinCall {
-        resolutionCallbacks.bindStubResolvedCallForCandidate(candidate)
-        val topLevelCall =
-                when (candidate) {
-                    is VariableAsFunctionKotlinResolutionCandidate -> candidate.invokeCandidate
-                    else -> candidate as SimpleKotlinResolutionCandidate
-                }
+    ): CallResolutionResult {
+        val diagnosticHolder = KotlinDiagnosticsHolder.SimpleHolder()
+        if (candidates.isEmpty()) {
+            diagnosticHolder.addDiagnostic(NoneCandidatesCallDiagnostic(factory.kotlinCall))
+        }
+        if (candidates.size > 1) {
+            diagnosticHolder.addDiagnostic(ManyCandidatesCallDiagnostic(factory.kotlinCall, candidates))
+        }
+        val candidate = candidates.singleOrNull()
 
-        var completionType = topLevelCall.prepareForCompletion(expectedType)
-        val lastCall = candidate.lastCall
-        lastCall.runCompletion(completionType, resolutionCallbacks)
+        // this is needed at least for non-local return checker, because when we analyze lambda we should already bind descriptor for outer call
+        candidate?.resolvedCall?.let { resolutionCallbacks.bindStubResolvedCallForCandidate(it) }
 
-        if (lastCall.constraintSystem.asConstraintSystemCompleterContext().canBeProper(lastCall.descriptorWithFreshTypes.returnTypeOrNothing)) {
-            completionType = ConstraintSystemCompletionMode.FULL
-            lastCall.runCompletion(completionType, resolutionCallbacks)
+        if (candidate == null || candidate.csBuilder.hasContradiction) {
+            val candidateForCompletion = candidate ?: factory.createErrorCandidate().forceResolution()
+            candidateForCompletion.prepareForCompletion(expectedType)
+            runCompletion(candidateForCompletion.resolvedCall, ConstraintSystemCompletionMode.FULL, diagnosticHolder, candidateForCompletion.getSystem(), resolutionCallbacks)
+
+            return CallResolutionResult(CallResolutionResult.Type.ERROR, candidate?.resolvedCall, diagnosticHolder.getDiagnostics(), ConstraintStorage.Empty)
         }
 
-        return when (completionType) {
-            ConstraintSystemCompletionMode.FULL -> toCompletedBaseResolvedCall(lastCall.constraintSystem.asCallCompleterContext(), candidate, resolutionCallbacks)
-            ConstraintSystemCompletionMode.PARTIAL -> ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
+        val completionType = candidate.prepareForCompletion(expectedType)
+        val constraintSystem = candidate.getSystem()
+        runCompletion(candidate.resolvedCall, completionType, diagnosticHolder, constraintSystem, resolutionCallbacks)
+
+        return if (completionType == ConstraintSystemCompletionMode.FULL) {
+            CallResolutionResult(CallResolutionResult.Type.COMPLETED, candidate.resolvedCall, diagnosticHolder.getDiagnostics(), constraintSystem.asReadOnlyStorage())
         }
+        else {
+            CallResolutionResult(CallResolutionResult.Type.PARTIAL, candidate.resolvedCall, diagnosticHolder.getDiagnostics(), constraintSystem.asReadOnlyStorage())
+        }
+
     }
 
-    private fun SimpleKotlinResolutionCandidate.runCompletion(completionMode: ConstraintSystemCompletionMode, resolutionCallbacks: KotlinResolutionCallbacks) {
-        kotlinConstraintSystemCompleter.runCompletion(
-                constraintSystem.asConstraintSystemCompleterContext(), completionMode, descriptorWithFreshTypes.returnTypeOrNothing
-        ) {
+    private  fun runCompletion(
+            resolvedCallAtom: ResolvedCallAtom,
+            completionMode: ConstraintSystemCompletionMode,
+            diagnosticsHolder: KotlinDiagnosticsHolder,
+            constraintSystem: NewConstraintSystem,
+            resolutionCallbacks: KotlinResolutionCallbacks
+    ) {
+        val returnType = resolvedCallAtom.freshReturnType ?: constraintSystem.builtIns.unitType
+        kotlinConstraintSystemCompleter.runCompletion(constraintSystem.asConstraintSystemCompleterContext(), completionMode, resolvedCallAtom, returnType) {
             postponedArgumentsAnalyzer.analyze(constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it)
         }
+
+        constraintSystem.diagnostics.forEach(diagnosticsHolder::addDiagnostic)
     }
 
-    private fun toCompletedBaseResolvedCall(
-            c: Context,
-            candidate: KotlinResolutionCandidate,
-            resolutionCallbacks: KotlinResolutionCallbacks
-    ): ResolvedKotlinCall.CompletedResolvedKotlinCall {
-        val currentSubstitutor = c.buildResultingSubstitutor()
-        val completedCall = candidate.toCompletedCall(currentSubstitutor, isTopLevel = true)
-        val competedCalls = c.innerCalls.map {
-            it.candidate.toCompletedCall(currentSubstitutor, isTopLevel = false)
-        }
-        for (postponedArgument in c.postponedArguments) {
-            when (postponedArgument) {
-                is PostponedLambdaArgument -> {
-                    postponedArgument.finalReturnType = currentSubstitutor.safeSubstitute(postponedArgument.returnType)
-                }
-                is PostponedCallableReferenceArgument -> {
-                    val resultTypeParameters = postponedArgument.myTypeVariables.map { currentSubstitutor.safeSubstitute(it.defaultType) }
-                    resolutionCallbacks.completeCallableReference(postponedArgument, resultTypeParameters)
-                }
-                is PostponedCollectionLiteralArgument -> {
-                    resolutionCallbacks.completeCollectionLiteralCalls(postponedArgument)
-                }
-            }
-        }
-        return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls, c.lambdaArguments)
-    }
-
-    private fun KotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor, isTopLevel: Boolean): CompletedKotlinCall {
-        if (this is VariableAsFunctionKotlinResolutionCandidate) {
-            val variable = resolvedVariable.toCompletedCall(substitutor, isTopLevel = false)
-            val invoke = invokeCandidate.toCompletedCall(substitutor, isTopLevel)
-
-            return CompletedKotlinCall.VariableAsFunction(kotlinCall, variable, invoke)
-        }
-        return (this as SimpleKotlinResolutionCandidate).toCompletedCall(substitutor, isTopLevel)
-    }
-
-    private fun SimpleKotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor, isTopLevel: Boolean): CompletedKotlinCall.Simple {
-        val containsCapturedTypes = descriptorWithFreshTypes.returnType?.contains { it is NewCapturedType } ?: false
-        val resultingDescriptor = when {
-            descriptorWithFreshTypes is FunctionDescriptor ||
-            (descriptorWithFreshTypes is PropertyDescriptor && (descriptorWithFreshTypes.typeParameters.isNotEmpty() || containsCapturedTypes)) ->
-                // this code is very suspicious. Now it is very useful for BE, because they cannot do nothing with captured types,
-                // but it seems like temporary solution.
-                descriptorWithFreshTypes.substituteAndApproximateCapturedTypes(substitutor)
-            else ->
-                descriptorWithFreshTypes
-        }
-
-        val typeArguments = descriptorWithFreshTypes.typeParameters.map {
-            val substituted = substitutor.safeSubstitute(typeVariablesForFreshTypeParameters[it.index].defaultType)
-            TypeApproximator().approximateToSuperType(substituted, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: substituted
-        }
-
-        val diagnostics = computeDiagnostics(this, resultingDescriptor, isTopLevel)
-        return CompletedKotlinCall.Simple(kotlinCall, candidateDescriptor, resultingDescriptor, diagnostics, explicitReceiverKind,
-                                          dispatchReceiverArgument?.receiver, extensionReceiver?.receiver, typeArguments, argumentMappingByOriginal)
-    }
-
-    private fun computeDiagnostics(
-            candidate: SimpleKotlinResolutionCandidate,
-            resultingDescriptor: CallableDescriptor,
-            isTopLevel: Boolean
-    ): List<KotlinCallDiagnostic> {
-        var diagnostics = candidate.getCandidateDiagnostics()
-        if (isTopLevel) {
-            diagnostics += candidate.constraintSystem.diagnostics
-        }
-        diagnostics += additionalDiagnosticReporter.createAdditionalDiagnostics(candidate, resultingDescriptor)
-        return diagnostics
-    }
 
     // true if we should complete this call
-    private fun SimpleKotlinResolutionCandidate.prepareForCompletion(expectedType: UnwrappedType?): ConstraintSystemCompletionMode {
-        val returnType = descriptorWithFreshTypes.returnType?.unwrap() ?: return ConstraintSystemCompletionMode.PARTIAL
+    private fun KotlinResolutionCandidate.prepareForCompletion(expectedType: UnwrappedType?): ConstraintSystemCompletionMode {
+        val unsubstitutedReturnType = resolvedCall.candidateDescriptor.returnType?.unwrap() ?: return ConstraintSystemCompletionMode.PARTIAL
+        val returnType = resolvedCall.substitutor.safeSubstitute(unsubstitutedReturnType)
         if (expectedType != null && !TypeUtils.noExpectedType(expectedType)) {
-            csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(kotlinCall))
+            csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
         }
 
         return if (expectedType != null || csBuilder.isProperType(returnType)) {

@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 internal fun unexpectedArgument(argument: KotlinCallArgument): Nothing =
@@ -40,12 +42,12 @@ internal val ReceiverValueWithSmartCastInfo.stableType: UnwrappedType
         return intersectWrappedTypes(possibleTypes + receiverValue.type)
     }
 
-internal fun KotlinCallArgument.getExpectedType(parameter: ValueParameterDescriptor) =
+internal fun KotlinCallArgument.getExpectedType(parameter: ParameterDescriptor) =
         if (this.isSpread) {
             parameter.type.unwrap()
         }
         else {
-            parameter.varargElementType?.unwrap() ?: parameter.type.unwrap()
+            parameter.safeAs<ValueParameterDescriptor>()?.varargElementType?.unwrap() ?: parameter.type.unwrap()
         }
 
 val ValueParameterDescriptor.isVararg: Boolean get() = varargElementType != null

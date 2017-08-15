@@ -150,4 +150,8 @@ class FreshVariableNewTypeSubstitutor(val freshVariables: List<TypeVariableFromC
 
         return typeVariable.defaultType
     }
+
+    companion object {
+        val Empty = FreshVariableNewTypeSubstitutor(emptyList())
+    }
 }
