@@ -65,6 +65,41 @@ class FileScopeFactory(
         return FilesScopesBuilder(file, existingImports, packageFragment, packageView).result
     }
 
+    private fun createDefaultImportResolvers(extraImports: Collection<KtImportDirective>, aliasImportNames: Collection<FqName>): Pair<LazyImportResolver, LazyImportResolver> {
+        val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve", false)
+        val allImplicitImports = defaultImports concat extraImports
+
+        val defaultImportsFiltered = if (aliasImportNames.isEmpty()) { // optimization
+            allImplicitImports
+        }
+        else {
+            allImplicitImports.filter { it.isAllUnder || it.importedFqName !in aliasImportNames }
+        }
+
+        val defaultExplicitImportResolver = createImportResolver(ExplicitImportsIndexed(defaultImportsFiltered), tempTrace, packageFragment = null, aliasImportNames = aliasImportNames)
+        val defaultAllUnderImportResolver =
+                createImportResolver(AllUnderImportsIndexed(defaultImportsFiltered), tempTrace, packageFragment = null, aliasImportNames = aliasImportNames, excludedImports = defaultImportProvider.excludedImports)
+
+        return defaultExplicitImportResolver to defaultAllUnderImportResolver
+    }
+
+    private val defaultImportResolvers by storageManager.createLazyValue {
+        createDefaultImportResolvers(emptyList(), emptyList())
+    }
+
+    private fun createImportResolver(
+            indexedImports: IndexedImports,
+            trace: BindingTrace,
+            aliasImportNames: Collection<FqName>,
+            packageFragment: PackageFragmentDescriptor?,
+            excludedImports: List<FqName>? = null
+    ) = LazyImportResolver(
+                storageManager, qualifiedExpressionResolver, moduleDescriptor, platformToKotlinClassMap, languageVersionSettings,
+                indexedImports, aliasImportNames concat excludedImports, trace, packageFragment,
+                deprecationResolver
+        )
+
+
     private inner class FilesScopesBuilder(
             private val file: KtFile,
             private val existingImports: ImportingScope?,
@@ -74,8 +109,8 @@ class FileScopeFactory(
         val imports = file.importDirectives
         val aliasImportNames = imports.mapNotNull { if (it.aliasName != null) it.importedFqName else null }
 
-        val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace)
-        val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace) // TODO: should we count excludedImports here also?
+        val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace, aliasImportNames, packageFragment)
+        val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace, aliasImportNames, packageFragment) // TODO: should we count excludedImports here also?
 
         val lazyImportingScope = object : ImportingScope by ImportingScope.Empty {
             // avoid constructing the scope before we query it
@@ -104,33 +139,21 @@ class FileScopeFactory(
 
         val result = FileScopes(lexicalScope, lazyImportingScope, importResolver)
 
-        fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace, excludedImports: List<FqName>? = null) =
-                LazyImportResolver(
-                        storageManager, qualifiedExpressionResolver, moduleDescriptor, platformToKotlinClassMap, languageVersionSettings,
-                        indexedImports, aliasImportNames concat excludedImports, trace, packageFragment,
-                        deprecationResolver
-                )
-
-
-        fun createImportingScope(): LazyImportScope {
-            val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve", false)
-
+        private fun createDefaultImportResolversForFile(): Pair<LazyImportResolver, LazyImportResolver> {
             val extraImports = file.originalFile.virtualFile?.let { vFile ->
                 val scriptExternalDependencies = getScriptExternalDependencies(vFile, file.project)
                 ktImportsFactory.createImportDirectives(scriptExternalDependencies?.imports?.map { ImportPath.fromString(it) }.orEmpty())
+            }.orEmpty()
+
+            if (extraImports.isEmpty() && aliasImportNames.isEmpty()) {
+                return defaultImportResolvers
             }
 
-            val allImplicitImports = defaultImports concat extraImports
+            return createDefaultImportResolvers(extraImports, aliasImportNames)
+        }
 
-            val defaultImportsFiltered = if (aliasImportNames.isEmpty()) { // optimization
-                allImplicitImports
-            }
-            else {
-                allImplicitImports.filter { it.isAllUnder || it.importedFqName !in aliasImportNames }
-            }
-
-            val defaultExplicitImportResolver = createImportResolver(ExplicitImportsIndexed(defaultImportsFiltered), tempTrace)
-            val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImportsFiltered), tempTrace, defaultImportProvider.excludedImports)
+        fun createImportingScope(): LazyImportScope {
+            val (defaultExplicitImportResolver, defaultAllUnderImportResolver) = createDefaultImportResolversForFile()
 
             val dummyContainerDescriptor = DummyContainerDescriptor(file, packageFragment)
 
@@ -161,8 +184,6 @@ class FileScopeFactory(
             return LazyImportScope(scope, explicitImportResolver, LazyImportScope.FilteringKind.ALL, "Explicit imports in $debugName")
         }
 
-        private infix fun <T> Collection<T>.concat(other: Collection<T>?) =
-                if (other == null || other.isEmpty()) this else this + other
     }
 
     private enum class FilteringKind {
@@ -258,3 +279,6 @@ class FileScopeFactory(
         }
     }
 }
+
+private infix fun <T> Collection<T>.concat(other: Collection<T>?) =
+        if (other == null || other.isEmpty()) this else this + other
