@@ -20,127 +20,163 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import java.util.*
 
 
-interface ResolutionPart {
-    fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic>
+abstract class ResolutionPart {
+    abstract fun KotlinResolutionCandidate.process(workIndex: Int)
+
+    open fun KotlinResolutionCandidate.workCount(): Int = 1
+
+    // helper functions
+    protected inline val KotlinResolutionCandidate.candidateDescriptor get() = resolvedCall.candidateDescriptor
+    protected inline val KotlinResolutionCandidate.kotlinCall get() = resolvedCall.atom
 }
 
-sealed class KotlinResolutionCandidate : Candidate {
-    abstract val kotlinCall: KotlinCall
+interface KotlinDiagnosticsHolder {
+    fun addDiagnostic(diagnostic: KotlinCallDiagnostic)
 
-    abstract val lastCall: SimpleKotlinResolutionCandidate
-}
+    class SimpleHolder : KotlinDiagnosticsHolder {
+        private val diagnostics = arrayListOf<KotlinCallDiagnostic>()
 
-class VariableAsFunctionKotlinResolutionCandidate(
-        override val kotlinCall: KotlinCall,
-        val resolvedVariable: SimpleKotlinResolutionCandidate,
-        val invokeCandidate: SimpleKotlinResolutionCandidate
-) : KotlinResolutionCandidate() {
-    override val isSuccessful: Boolean get() = resolvedVariable.isSuccessful && invokeCandidate.isSuccessful
-    override val resultingApplicability: ResolutionCandidateApplicability
-        get() = maxOf(resolvedVariable.resultingApplicability, invokeCandidate.resultingApplicability)
-
-    override val lastCall: SimpleKotlinResolutionCandidate get() = invokeCandidate
-}
-
-sealed class AbstractSimpleKotlinResolutionCandidate(
-        val constraintSystem: NewConstraintSystem,
-        initialDiagnostics: Collection<KotlinCallDiagnostic> = emptyList()
-) : KotlinResolutionCandidate() {
-    override val isSuccessful: Boolean
-        get() {
-            process(stopOnFirstError = true)
-            return !hasErrors
+        override fun addDiagnostic(diagnostic: KotlinCallDiagnostic) {
+            diagnostics.add(diagnostic)
         }
 
-    override val resultingApplicability: ResolutionCandidateApplicability
-        get() {
-            process(stopOnFirstError = false)
-            return getResultApplicability(diagnostics + constraintSystem.diagnostics)
-        }
-
-    private val diagnostics = ArrayList<KotlinCallDiagnostic>()
-    protected var step = 0
-        private set
-
-    protected var hasErrors = false
-        private set
-
-    private fun process(stopOnFirstError: Boolean) {
-        while (step < resolutionSequence.size && (!stopOnFirstError || !hasErrors)) {
-            addDiagnostics(resolutionSequence[step].run { lastCall.process() })
-            step++
-        }
+        fun getDiagnostics(): List<KotlinCallDiagnostic> = diagnostics
     }
-
-    private fun addDiagnostics(diagnostics: Collection<KotlinCallDiagnostic>) {
-        hasErrors = hasErrors || diagnostics.any { !it.candidateApplicability.isSuccess } ||
-                    constraintSystem.diagnostics.any { !it.candidateApplicability.isSuccess }
-        this.diagnostics.addAll(diagnostics)
-    }
-
-    init {
-        addDiagnostics(initialDiagnostics)
-    }
-
-    fun getCandidateDiagnostics(): List<KotlinCallDiagnostic> = diagnostics
-
-    abstract val resolutionSequence: List<ResolutionPart>
 }
 
-open class SimpleKotlinResolutionCandidate(
+fun KotlinDiagnosticsHolder.addDiagnosticIfNotNull(diagnostic: KotlinCallDiagnostic?) {
+    diagnostic?.let { addDiagnostic(it) }
+}
+/**
+ * baseSystem contains all information from arguments, i.e. it is union of all system of arguments
+ * Also by convention we suppose that baseSystem has no contradiction
+ */
+class KotlinResolutionCandidate(
         val callComponents: KotlinCallComponents,
         val scopeTower: ImplicitScopeTower,
-        override val kotlinCall: KotlinCall,
-        val explicitReceiverKind: ExplicitReceiverKind,
-        val dispatchReceiverArgument: SimpleKotlinCallArgument?,
-        val extensionReceiver: SimpleKotlinCallArgument?,
-        val candidateDescriptor: CallableDescriptor,
-        val knownTypeParametersResultingSubstitutor: TypeSubstitutor?,
-        initialDiagnostics: Collection<KotlinCallDiagnostic>
-) : AbstractSimpleKotlinResolutionCandidate(NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.resultTypeResolver), initialDiagnostics) {
-    val csBuilder: ConstraintSystemBuilder get() = constraintSystem.getBuilder()
+        private val baseSystem: ConstraintStorage,
+        val resolvedCall: MutableResolvedCallAtom,
+        val knownTypeParametersResultingSubstitutor: TypeSubstitutor? = null,
+        private val resolutionSequence: List<ResolutionPart> = resolvedCall.atom.callKind.resolutionSequence
+) : Candidate, KotlinDiagnosticsHolder {
+    private var newSystem: NewConstraintSystemImpl? = null
+    private val diagnostics = arrayListOf<KotlinCallDiagnostic>()
+    private var currentApplicability = ResolutionCandidateApplicability.RESOLVED
+    private var subResolvedAtoms: MutableList<ResolvedAtom> = arrayListOf()
 
-    lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
-    lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
-    lateinit var descriptorWithFreshTypes: CallableDescriptor
-    lateinit var typeVariablesForFreshTypeParameters: List<NewTypeVariable>
+    private val stepCount = resolutionSequence.sumBy { it.run { workCount() } }
+    private var step = 0
 
-    override val lastCall: SimpleKotlinResolutionCandidate get() = this
-    override val resolutionSequence: List<ResolutionPart> get() = kotlinCall.callKind.resolutionSequence
+    fun getSystem(): NewConstraintSystem {
+        if (newSystem == null) {
+            newSystem = NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.builtIns)
+            newSystem!!.addOtherSystem(baseSystem)
+        }
+        return newSystem!!
+    }
+
+    internal val csBuilder get() = getSystem().getBuilder()
+
+    override fun addDiagnostic(diagnostic: KotlinCallDiagnostic) {
+        diagnostics.add(diagnostic)
+        currentApplicability = maxOf(diagnostic.candidateApplicability, currentApplicability)
+    }
+
+    fun addResolvedKtPrimitive(resolvedAtom: ResolvedAtom) {
+        subResolvedAtoms.add(resolvedAtom)
+    }
+
+    private fun processParts(stopOnFirstError: Boolean) {
+        if (stopOnFirstError && step > 0) return // error already happened
+        if (step == stepCount) return
+
+        var partIndex = 0
+        var workStep = step
+        while (workStep > 0) {
+            val workCount = resolutionSequence[partIndex].run { workCount() }
+            if (workStep >= workCount) {
+                partIndex++
+                workStep -= workCount
+            }
+        }
+        if (partIndex < resolutionSequence.size) {
+            if (processPart(resolutionSequence[partIndex], stopOnFirstError, workStep)) return
+            partIndex++
+        }
+
+        while (partIndex < resolutionSequence.size) {
+            if (processPart(resolutionSequence[partIndex], stopOnFirstError)) return
+            partIndex++
+        }
+        if (step == stepCount) {
+            resolvedCall.setAnalyzedResults(subResolvedAtoms, diagnostics + getSystem().diagnostics)
+        }
+    }
+
+    // true if part was interrupted
+    private fun processPart(part: ResolutionPart, stopOnFirstError: Boolean, startWorkIndex: Int = 0): Boolean {
+        for (workIndex in startWorkIndex until (part.run { workCount() })) {
+            if (stopOnFirstError && !currentApplicability.isSuccess) return true
+
+            part.run { process(workIndex) }
+            step++
+        }
+        return false
+    }
+
+    val variableCandidateIfInvoke: KotlinResolutionCandidate?
+        get() = callComponents.statelessCallbacks.getVariableCandidateIfInvoke(resolvedCall.atom)
+
+    private val variableApplicability
+        get() = variableCandidateIfInvoke?.resultingApplicability ?: ResolutionCandidateApplicability.RESOLVED
+
+    override val isSuccessful: Boolean
+        get() {
+            processParts(stopOnFirstError = true)
+            return currentApplicability.isSuccess && variableApplicability.isSuccess
+        }
+
+    override val resultingApplicability: ResolutionCandidateApplicability
+        get() {
+            processParts(stopOnFirstError = false)
+
+            val systemApplicability = getResultApplicability(getSystem().diagnostics)
+            return maxOf(currentApplicability, systemApplicability, variableApplicability)
+        }
 
     override fun toString(): String {
-        val descriptor = DescriptorRenderer.COMPACT.render(candidateDescriptor)
-        val okOrFail = if (hasErrors) "FAIL" else "OK"
-        val step = "$step/${resolutionSequence.size}"
+        val descriptor = DescriptorRenderer.COMPACT.render(resolvedCall.candidateDescriptor)
+        val okOrFail = if (currentApplicability.isSuccess) "OK" else "FAIL"
+        val step = "$step/$stepCount"
         return "$okOrFail($step): $descriptor"
     }
 }
 
-class ErrorKotlinResolutionCandidate(
-        callComponents: KotlinCallComponents,
-        scopeTower: ImplicitScopeTower,
-        kotlinCall: KotlinCall,
-        explicitReceiverKind: ExplicitReceiverKind,
-        dispatchReceiverArgument: SimpleKotlinCallArgument?,
-        extensionReceiver: SimpleKotlinCallArgument?,
-        candidateDescriptor: CallableDescriptor
-) : SimpleKotlinResolutionCandidate(callComponents, scopeTower, kotlinCall, explicitReceiverKind, dispatchReceiverArgument,
-                                    extensionReceiver, candidateDescriptor, null, listOf()) {
-    override val resolutionSequence: List<ResolutionPart> get() = emptyList()
+class MutableResolvedCallAtom(
+        override val atom: KotlinCall,
+        override val candidateDescriptor: CallableDescriptor, // original candidate descriptor
+        override val explicitReceiverKind: ExplicitReceiverKind,
+        override val dispatchReceiverArgument: SimpleKotlinCallArgument?,
+        override val extensionReceiverArgument: SimpleKotlinCallArgument?
+) : ResolvedCallAtom() {
+    override lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
+    override lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
+    override lateinit var substitutor: FreshVariableNewTypeSubstitutor
+    lateinit var argumentToCandidateParameter: Map<KotlinCallArgument, ValueParameterDescriptor>
 
-    init {
-        typeArgumentMappingByOriginal = TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
-        argumentMappingByOriginal = emptyMap()
-        descriptorWithFreshTypes = candidateDescriptor
+    override public fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>, diagnostics: Collection<KotlinCallDiagnostic>) {
+        super.setAnalyzedResults(subResolvedAtoms, diagnostics)
     }
+
+    override fun toString(): String = "$atom, candidate = $candidateDescriptor"
 }
+

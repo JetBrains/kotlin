@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -31,7 +32,8 @@ import org.jetbrains.kotlin.utils.SmartList
 private typealias Variable = VariableWithConstraints
 
 class TypeVariableDirectionCalculator(
-        val c: VariableFixationFinder.Context,
+        private val c: VariableFixationFinder.Context,
+        private val postponedKtPrimitives: List<PostponedResolvedAtom>,
         topLevelType: UnwrappedType
 ) {
     enum class ResolveDirection {
@@ -57,7 +59,7 @@ class TypeVariableDirectionCalculator(
         topReturnType.visitType(ResolveDirection.TO_SUBTYPE) { variableWithConstraints, direction ->
             enterToNode(variableWithConstraints, direction)
         }
-        for (postponedArgument in c.postponedArguments) {
+        for (postponedArgument in postponedKtPrimitives) {
             for (inputType in postponedArgument.inputTypes) {
                 inputType.visitType(ResolveDirection.TO_SUBTYPE) { variableWithConstraints, direction ->
                     enterToNode(variableWithConstraints, direction)

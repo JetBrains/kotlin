@@ -147,7 +147,7 @@ class SubKotlinCallArgumentImpl(
         override val dataFlowInfoBeforeThisArgument: DataFlowInfo,
         override val dataFlowInfoAfterThisArgument: DataFlowInfo,
         override val receiver: ReceiverValueWithSmartCastInfo,
-        override val resolvedCall: ResolvedKotlinCall.OnlyResolvedKotlinCall
+        override val callResult: CallResolutionResult
 ): SimplePSIKotlinCallArgument(), SubKotlinCallArgument {
     override val isSpread: Boolean get() = valueArgument.getSpreadElement() != null
     override val argumentName: Name? get() = valueArgument.getArgumentName()?.asName
@@ -216,7 +216,7 @@ internal fun createSimplePSICallArgument(
     }
     // todo hack for if expression: sometimes we not write properly type information for branches
     val baseType = typeInfoForArgument.type?.unwrap() ?:
-                   onlyResolvedCall?.candidate?.lastCall?.descriptorWithFreshTypes?.returnType?.unwrap() ?:
+                   onlyResolvedCall?.resultCallAtom?.freshReturnType ?:
                    return null
 
     // we should use DFI after this argument, because there can be some useful smartcast. Popular case: if branches.
@@ -232,5 +232,4 @@ internal fun createSimplePSICallArgument(
     else {
         SubKotlinCallArgumentImpl(valueArgument, dataFlowInfoBeforeThisArgument, typeInfoForArgument.dataFlowInfo, receiverToCast, onlyResolvedCall)
     }
-
 }

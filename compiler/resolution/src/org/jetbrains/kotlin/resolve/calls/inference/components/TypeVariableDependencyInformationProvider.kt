@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.PostponedKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.utils.SmartSet
 
 class TypeVariableDependencyInformationProvider(
         private val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints>,
-        private val postponedArguments: List<PostponedKotlinCallArgument>,
+        private val postponedKtPrimitives: List<PostponedResolvedAtom>,
         private val topLevelType: UnwrappedType?
 ) {
     // not oriented edges
@@ -71,7 +71,7 @@ class TypeVariableDependencyInformationProvider(
             postponeArgumentsEdges.getOrPut(from) { hashSetOf() }.add(to)
         }
 
-        for (argument in postponedArguments) {
+        for (argument in postponedKtPrimitives) {
             if (argument.analyzed) continue
 
             val typeVariablesInOutputType = SmartSet.create<TypeConstructor>()
@@ -89,7 +89,7 @@ class TypeVariableDependencyInformationProvider(
     }
 
     private fun computeRelatedToAllOutputTypes() {
-        for (argument in postponedArguments) {
+        for (argument in postponedKtPrimitives) {
             if (argument.analyzed) continue
             (argument.outputType ?: continue).forAllMyTypeVariables {
                 addAllRelatedNodes(relatedToAllOutputTypes, it, includePostponedEdges = false)

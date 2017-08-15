@@ -31,114 +31,127 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
-import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-internal object CheckInstantiationOfAbstractClass : ResolutionPart {
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (candidateDescriptor is ConstructorDescriptor && !callComponents.statelessCallbacks.isSuperOrDelegatingConstructorCall(kotlinCall)) {
+internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        val candidateDescriptor = resolvedCall.candidateDescriptor
+
+        if (candidateDescriptor is ConstructorDescriptor &&
+            !callComponents.statelessCallbacks.isSuperOrDelegatingConstructorCall(resolvedCall.atom)) {
             if (candidateDescriptor.constructedClass.modality == Modality.ABSTRACT) {
-                return listOf(InstantiationOfAbstractClass)
+                addDiagnostic(InstantiationOfAbstractClass)
             }
         }
-
-        return emptyList()
     }
 }
 
-internal object CheckVisibility : ResolutionPart {
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+internal object CheckVisibility : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        val containingDescriptor = scopeTower.lexicalScope.ownerDescriptor
+        val dispatchReceiverArgument = resolvedCall.dispatchReceiverArgument
+
         val receiverValue = dispatchReceiverArgument?.receiver?.receiverValue ?: Visibilities.ALWAYS_SUITABLE_RECEIVER
-        val invisibleMember = Visibilities.findInvisibleMember(receiverValue, candidateDescriptor, containingDescriptor) ?: return emptyList()
+        val invisibleMember = Visibilities.findInvisibleMember(receiverValue, resolvedCall.candidateDescriptor, containingDescriptor) ?: return
 
         if (dispatchReceiverArgument is ExpressionKotlinCallArgument) {
             val smartCastReceiver = getReceiverValueWithSmartCast(receiverValue, dispatchReceiverArgument.receiver.stableType)
             if (Visibilities.findInvisibleMember(smartCastReceiver, candidateDescriptor, containingDescriptor) == null) {
-                return listOf(SmartCastDiagnostic(dispatchReceiverArgument, dispatchReceiverArgument.receiver.stableType))
+                addDiagnostic(SmartCastDiagnostic(dispatchReceiverArgument, dispatchReceiverArgument.receiver.stableType))
+                return
             }
         }
 
-        return listOf(VisibilityError(invisibleMember))
-    }
-
-    private val SimpleKotlinResolutionCandidate.containingDescriptor: DeclarationDescriptor get() = scopeTower.lexicalScope.ownerDescriptor
-}
-
-internal object MapTypeArguments : ResolutionPart {
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        typeArgumentMappingByOriginal = callComponents.typeArgumentsToParametersMapper.mapTypeArguments(kotlinCall, candidateDescriptor.original)
-        return typeArgumentMappingByOriginal.diagnostics
+        addDiagnostic(VisibilityError(invisibleMember))
     }
 }
 
-internal object NoTypeArguments : ResolutionPart {
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+internal object MapTypeArguments : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        resolvedCall.typeArgumentMappingByOriginal =
+                callComponents.typeArgumentsToParametersMapper.mapTypeArguments(kotlinCall, candidateDescriptor.original).also {
+                    it.diagnostics.forEach(this@process::addDiagnostic)
+                }
+    }
+}
+
+internal object NoTypeArguments : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
         assert(kotlinCall.typeArguments.isEmpty()) {
             "Variable call cannot has explicit type arguments: ${kotlinCall.typeArguments}. Call: $kotlinCall"
         }
-        typeArgumentMappingByOriginal = NoExplicitArguments
-        return typeArgumentMappingByOriginal.diagnostics
+        resolvedCall.typeArgumentMappingByOriginal = NoExplicitArguments
     }
 }
 
-internal object MapArguments : ResolutionPart {
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+internal object MapArguments : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val mapping = callComponents.argumentsToParametersMapper.mapArguments(kotlinCall, candidateDescriptor)
-        argumentMappingByOriginal = mapping.parameterToCallArgumentMap
-        return mapping.diagnostics
+        mapping.diagnostics.forEach(this::addDiagnostic)
+
+        resolvedCall.argumentMappingByOriginal = mapping.parameterToCallArgumentMap
     }
 }
 
-internal object NoArguments : ResolutionPart {
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+internal object ArgumentsToCandidateParameterDescriptor : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        val map = hashMapOf<KotlinCallArgument, ValueParameterDescriptor>()
+        for ((originalValueParameter, resolvedCallArgument) in resolvedCall.argumentMappingByOriginal) {
+            val valueParameter = candidateDescriptor.valueParameters.getOrNull(originalValueParameter.index) ?: continue
+            for (argument in resolvedCallArgument.arguments) {
+                map[argument] = valueParameter
+            }
+        }
+        resolvedCall.argumentToCandidateParameter = map
+    }
+}
+
+internal object NoArguments : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
         assert(kotlinCall.argumentsInParenthesis.isEmpty()) {
             "Variable call cannot has arguments: ${kotlinCall.argumentsInParenthesis}. Call: $kotlinCall"
         }
         assert(kotlinCall.externalArgument == null) {
             "Variable call cannot has external argument: ${kotlinCall.externalArgument}. Call: $kotlinCall"
         }
-        argumentMappingByOriginal = emptyMap()
-        return emptyList()
+        resolvedCall.argumentMappingByOriginal = emptyMap()
+        resolvedCall.argumentToCandidateParameter = emptyMap()
     }
 }
 
-internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+
+internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
         if (candidateDescriptor.typeParameters.isEmpty()) {
-            descriptorWithFreshTypes = candidateDescriptor
-            return emptyList()
+            resolvedCall.substitutor = FreshVariableNewTypeSubstitutor.Empty
+            return
         }
         val toFreshVariables = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, csBuilder)
-        typeVariablesForFreshTypeParameters = toFreshVariables.freshVariables
+        resolvedCall.substitutor = toFreshVariables
 
         // bad function -- error on declaration side
-        if (csBuilder.hasContradiction) {
-            descriptorWithFreshTypes = candidateDescriptor
-            return emptyList()
-        }
+        if (csBuilder.hasContradiction) return
 
         // optimization
-        if (typeArgumentMappingByOriginal == NoExplicitArguments && knownTypeParametersResultingSubstitutor == null) {
-            descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables)
-            csBuilder.simplify().let { assert(it.isEmpty) { "Substitutor should be empty: $it, call: $kotlinCall" } }
-            return emptyList()
+        if (resolvedCall.typeArgumentMappingByOriginal == NoExplicitArguments && knownTypeParametersResultingSubstitutor == null) {
+            return
         }
 
         val typeParameters = candidateDescriptor.typeParameters
         for (index in typeParameters.indices) {
             val typeParameter = typeParameters[index]
+            val freshVariable = toFreshVariables.freshVariables[index]
+
             val knownTypeArgument = knownTypeParametersResultingSubstitutor?.substitute(typeParameter.defaultType)
             if (knownTypeArgument != null) {
-                val freshVariable = toFreshVariables.freshVariables[index]
                 csBuilder.addEqualityConstraint(freshVariable.defaultType, knownTypeArgument.unwrap(), KnownTypeParameterConstraintPosition(knownTypeArgument))
                 continue
             }
 
-            val typeArgument = typeArgumentMappingByOriginal.getTypeArgument(typeParameter)
+            val typeArgument = resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(typeParameter)
 
             if (typeArgument is SimpleTypeArgument) {
-                val freshVariable = toFreshVariables.freshVariables[index]
                 csBuilder.addEqualityConstraint(freshVariable.defaultType, typeArgument.type, ExplicitTypeParameterConstraintPosition(typeArgument))
             }
             else {
@@ -147,19 +160,6 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
                 }
             }
         }
-
-        /**
-         * Note: here we can fix also placeholders arguments.
-         * Example:
-         *  fun <X : Array<Y>, Y> foo()
-         *
-         *  foo<Array<String>, *>()
-         */
-        val toFixedTypeParameters = csBuilder.simplify()
-        // todo optimize -- composite substitutions before run safeSubstitute
-        descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables).substitute(toFixedTypeParameters)
-
-        return emptyList()
     }
 
     fun createToFreshVariableSubstitutorAndAddInitialConstraints(
@@ -189,98 +189,124 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
     }
 }
 
-internal object CheckExplicitReceiverKindConsistency : ResolutionPart {
-    private fun SimpleKotlinResolutionCandidate.hasError(): Nothing =
+internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
+    private fun KotlinResolutionCandidate.hasError(): Nothing =
             error("Inconsistent call: $kotlinCall. \n" +
-                  "Candidate: $candidateDescriptor, explicitReceiverKind: $explicitReceiverKind.\n" +
+                  "Candidate: $candidateDescriptor, explicitReceiverKind: ${resolvedCall.explicitReceiverKind}.\n" +
                   "Explicit receiver: ${kotlinCall.explicitReceiver}, dispatchReceiverForInvokeExtension: ${kotlinCall.dispatchReceiverForInvokeExtension}")
 
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        when (explicitReceiverKind) {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        when (resolvedCall.explicitReceiverKind) {
             NO_EXPLICIT_RECEIVER -> if (kotlinCall.explicitReceiver is SimpleKotlinCallArgument || kotlinCall.dispatchReceiverForInvokeExtension != null) hasError()
             DISPATCH_RECEIVER, EXTENSION_RECEIVER -> if (kotlinCall.explicitReceiver == null || kotlinCall.dispatchReceiverForInvokeExtension != null) hasError()
             BOTH_RECEIVERS -> if (kotlinCall.explicitReceiver == null || kotlinCall.dispatchReceiverForInvokeExtension == null) hasError()
         }
-        return emptyList()
     }
 }
 
-internal object CheckReceivers : ResolutionPart {
-    private fun SimpleKotlinResolutionCandidate.checkReceiver(
+private fun KotlinResolutionCandidate.resolveKotlinArgument(
+        argument: KotlinCallArgument,
+        candidateParameter: ParameterDescriptor?,
+        isReceiver: Boolean
+) {
+    val expectedType = candidateParameter?.let {
+        resolvedCall.substitutor.safeSubstitute(argument.getExpectedType(candidateParameter))
+    }
+    addResolvedKtPrimitive(resolveKtPrimitive(csBuilder, argument, expectedType, this, isReceiver))
+}
+
+internal object CheckReceivers : ResolutionPart() {
+    private fun KotlinResolutionCandidate.checkReceiver(
             receiverArgument: SimpleKotlinCallArgument?,
             receiverParameter: ReceiverParameterDescriptor?
-    ): KotlinCallDiagnostic? {
+    ) {
         if ((receiverArgument == null) != (receiverParameter == null)) {
             error("Inconsistency receiver state for call $kotlinCall and candidate descriptor: $candidateDescriptor")
         }
-        if (receiverArgument == null || receiverParameter == null) return null
+        if (receiverArgument == null || receiverParameter == null) return
 
-        val expectedType = receiverParameter.type.unwrap()
-
-        return checkSimpleArgument(csBuilder, receiverArgument, expectedType, isReceiver = true)
+        resolveKotlinArgument(receiverArgument, receiverParameter, isReceiver = true)
     }
 
-    override fun SimpleKotlinResolutionCandidate.process() =
-            listOfNotNull(checkReceiver(dispatchReceiverArgument, descriptorWithFreshTypes.dispatchReceiverParameter),
-                          checkReceiver(extensionReceiver, descriptorWithFreshTypes.extensionReceiverParameter))
-}
-
-internal object CheckArguments : ResolutionPart {
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        val diagnostics = SmartList<KotlinCallDiagnostic>()
-        for (parameterDescriptor in descriptorWithFreshTypes.valueParameters) {
-            // error was reported in ArgumentsToParametersMapper
-            val resolvedCallArgument = argumentMappingByOriginal[parameterDescriptor.original] ?: continue
-            for (argument in resolvedCallArgument.arguments) {
-
-                val expectedType = argument.getExpectedType(parameterDescriptor)
-                val diagnostic = when (argument) {
-                    is SimpleKotlinCallArgument ->
-                        checkSimpleArgument(csBuilder, argument, expectedType)
-                    is PostponableKotlinCallArgument ->
-                        createPostponedArgumentAndPerformInitialChecks(csBuilder, argument, expectedType)
-                    else -> unexpectedArgument(argument)
-                }
-                diagnostics.addIfNotNull(diagnostic)
-
-                if (diagnostic != null && !diagnostic.candidateApplicability.isSuccess) break
-            }
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        if (workIndex == 0) {
+            checkReceiver(resolvedCall.dispatchReceiverArgument, candidateDescriptor.dispatchReceiverParameter)
+        } else {
+            checkReceiver(resolvedCall.extensionReceiverArgument, candidateDescriptor.extensionReceiverParameter)
         }
-        return diagnostics
+    }
+
+    override fun KotlinResolutionCandidate.workCount() = 2
+}
+
+internal object CheckArguments : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        val argument = kotlinCall.argumentsInParenthesis[workIndex]
+        resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], isReceiver = false)
+    }
+
+    override fun KotlinResolutionCandidate.workCount() = kotlinCall.argumentsInParenthesis.size
+}
+
+internal object CheckExternalArgument : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        val argument = kotlinCall.externalArgument ?: return
+
+        resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], isReceiver = false)
     }
 }
 
-internal object CheckInfixResolutionPart : ResolutionPart {
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+internal object CheckInfixResolutionPart : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        val candidateDescriptor = resolvedCall.candidateDescriptor
         if (callComponents.statelessCallbacks.isInfixCall(kotlinCall) &&
             (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isInfix)) {
-            return listOf(InfixCallNoInfixModifier)
+            addDiagnostic(InfixCallNoInfixModifier)
         }
-
-        return emptyList()
     }
 }
 
-internal object CheckOperatorResolutionPart : ResolutionPart {
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+internal object CheckOperatorResolutionPart : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        val candidateDescriptor = resolvedCall.candidateDescriptor
         if (callComponents.statelessCallbacks.isOperatorCall(kotlinCall) &&
             (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isOperator)) {
-            return listOf(InvokeConventionCallNoOperatorModifier)
+            addDiagnostic(InvokeConventionCallNoOperatorModifier)
         }
-
-        return emptyList()
     }
 }
 
-internal object CheckAbstractSuperCallPart : ResolutionPart {
-    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (callComponents.statelessCallbacks.isSuperExpression(dispatchReceiverArgument)) {
+internal object CheckAbstractSuperCallPart : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        val candidateDescriptor = resolvedCall.candidateDescriptor
+
+        if (callComponents.statelessCallbacks.isSuperExpression(resolvedCall.dispatchReceiverArgument)) {
             if (candidateDescriptor is MemberDescriptor && candidateDescriptor.modality == Modality.ABSTRACT) {
-                return listOf(AbstractSuperCall)
+                addDiagnostic(AbstractSuperCall)
             }
         }
-
-        return emptyList()
     }
+}
 
+internal object ErrorDescriptorResolutionPart : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        assert(ErrorUtils.isError(candidateDescriptor)) {
+            "Should be error descriptor: $candidateDescriptor"
+        }
+        resolvedCall.typeArgumentMappingByOriginal = TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
+        resolvedCall.argumentMappingByOriginal = emptyMap()
+        resolvedCall.substitutor = FreshVariableNewTypeSubstitutor.Empty
+        resolvedCall.argumentToCandidateParameter = emptyMap()
+
+        kotlinCall.explicitReceiver?.safeAs<SimpleKotlinCallArgument>()?.let {
+            resolveKotlinArgument(it, null, isReceiver = true)
+        }
+        for (argument in kotlinCall.argumentsInParenthesis) {
+            resolveKotlinArgument(argument, null, isReceiver = true)
+        }
+
+        kotlinCall.externalArgument?.let {
+            resolveKotlinArgument(it, null, isReceiver = true)
+        }
+    }
 }

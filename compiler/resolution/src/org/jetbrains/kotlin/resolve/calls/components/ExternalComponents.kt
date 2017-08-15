@@ -31,6 +31,7 @@ interface KotlinResolutionStatelessCallbacks {
     fun isHiddenInResolution(descriptor: DeclarationDescriptor, kotlinCall: KotlinCall): Boolean
     fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean
     fun getScopeTowerForCallableReferenceArgument(argument: CallableReferenceKotlinCallArgument): ImplicitScopeTower
+    fun getVariableCandidateIfInvoke(functionCall: KotlinCall): KotlinResolutionCandidate?
 }
 
 // This components hold state (trace). Work with this carefully.
@@ -43,11 +44,5 @@ interface KotlinResolutionCallbacks {
             expectedReturnType: UnwrappedType? // null means, that return type is not proper i.e. it depends on some type variables
     ): List<SimpleKotlinCallArgument>
 
-    // todo this is hack for some client which try to read ResolvedCall from trace before all calls completed
-    fun bindStubResolvedCallForCandidate(candidate: KotlinResolutionCandidate)
-
-    fun completeCallableReference(callableReferenceArgument: PostponedCallableReferenceArgument,
-                                  resultTypeParameters: List<UnwrappedType>)
-
-    fun completeCollectionLiteralCalls(collectionLiteralArgument: PostponedCollectionLiteralArgument)
+    fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
 }

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.model
 import org.jetbrains.kotlin.name.Name
 
 
-interface KotlinCall {
+interface KotlinCall : ResolutionAtom {
     val callKind: KotlinCallKind
 
     val explicitReceiver: ReceiverKotlinCallArgument?
@@ -43,6 +43,18 @@ private fun SimpleKotlinCallArgument.checkReceiverInvariants() {
     assert(argumentName == null) {
         "Argument name should be null for receiver: $this, but it is $argumentName"
     }
+    checkArgumentInvariants()
+}
+
+private fun KotlinCallArgument.checkArgumentInvariants() {
+    if (this is SubKotlinCallArgument) {
+        assert(callResult.type == CallResolutionResult.Type.PARTIAL) {
+            "SubCall should has type PARTIAL: $callResult"
+        }
+        assert(callResult.resultCallAtom != null) {
+            "SubCall should has resultCallAtom: $callResult"
+        }
+    }
 }
 
 fun KotlinCall.checkCallInvariants() {
@@ -52,6 +64,8 @@ fun KotlinCall.checkCallInvariants() {
 
     (explicitReceiver as? SimpleKotlinCallArgument)?.checkReceiverInvariants()
     dispatchReceiverForInvokeExtension?.checkReceiverInvariants()
+    argumentsInParenthesis.forEach(KotlinCallArgument::checkArgumentInvariants)
+    externalArgument?.checkArgumentInvariants()
 
     if (callKind != KotlinCallKind.FUNCTION) {
         assert(externalArgument == null) {

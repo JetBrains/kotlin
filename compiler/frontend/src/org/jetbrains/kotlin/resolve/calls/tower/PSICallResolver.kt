@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.*
+import org.jetbrains.kotlin.resolve.calls.results.ManyCandidates
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
 
@@ -93,7 +95,7 @@ class PSICallResolver(
         var result = kotlinCallResolver.resolveCall(scopeTower, resolutionCallbacks, kotlinCall, expectedType, factoryProviderForInvoke)
 
         val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
-        if (isBinaryRemOperator && shouldUseOperatorRem && (result.isEmpty() || result.areAllCompletedAndInapplicable())) {
+        if (isBinaryRemOperator && shouldUseOperatorRem && (result.isEmpty() || result.areAllInapplicable())) {
             result = resolveToDeprecatedMod(name, context, resolutionKind, tracingStrategy, scopeTower, resolutionCallbacks, expectedType)
         }
 
@@ -117,12 +119,12 @@ class PSICallResolver(
         val resolutionCallbacks = createResolutionCallbacks(context)
 
         val givenCandidates = resolutionCandidates.map {
-            GivenCandidate(scopeTower, it.descriptor as FunctionDescriptor,
+            GivenCandidate(it.descriptor as FunctionDescriptor,
                            it.dispatchReceiver?.let { context.transformToReceiverWithSmartCastInfo(it) },
                            it.knownTypeParametersResultingSubstitutor)
         }
 
-        val result = kotlinCallResolver.resolveGivenCandidates(resolutionCallbacks, kotlinCall, calculateExpectedType(context), givenCandidates)
+        val result = kotlinCallResolver.resolveGivenCandidates(scopeTower, resolutionCallbacks, kotlinCall, calculateExpectedType(context), givenCandidates)
         return convertToOverloadResolutionResults(context, result, tracingStrategy)
 
     }
@@ -135,7 +137,7 @@ class PSICallResolver(
             scopeTower: ImplicitScopeTower,
             resolutionCallbacks: KotlinResolutionCallbacksImpl,
             expectedType: UnwrappedType?
-    ): Collection<ResolvedKotlinCall> {
+    ): CallResolutionResult {
         val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[remOperatorName]!!
         val callWithDeprecatedName = toKotlinCall(context, resolutionKind.kotlinCallKind, context.call, deprecatedName, tracingStrategy)
         val refinedProviderForInvokeFactory = FactoryProviderForInvoke(context, scopeTower, callWithDeprecatedName)
@@ -148,8 +150,8 @@ class PSICallResolver(
     }
 
     private fun createResolutionCallbacks(context: BasicCallResolutionContext) =
-            KotlinResolutionCallbacksImpl(context, expressionTypingServices, typeApproximator, kotlinToResolvedCallTransformer,
-                                          argumentTypeResolver, doubleColonExpressionResolver, languageVersionSettings)
+            KotlinResolutionCallbacksImpl(context, expressionTypingServices, typeApproximator,
+                                          argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer)
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
         val expectedType = context.expectedType.unwrap()
@@ -167,60 +169,67 @@ class PSICallResolver(
 
     private fun <D : CallableDescriptor> convertToOverloadResolutionResults(
             context: BasicCallResolutionContext,
-            result: Collection<ResolvedKotlinCall>,
+            result: CallResolutionResult,
             tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         val trace = context.trace
-        when (result.size) {
-            0 -> {
-                tracingStrategy.unresolvedReference(trace)
-                return OverloadResolutionResultsImpl.nameNotFound()
+
+        result.diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>()?.let {
+            tracingStrategy.unresolvedReference(trace)
+            return OverloadResolutionResultsImpl.nameNotFound()
+        }
+
+        result.diagnostics.firstIsInstanceOrNull<ManyCandidatesCallDiagnostic>()?.let {
+            val resolvedCalls = it.candidates.map { kotlinToResolvedCallTransformer.onlyTransform<D>(it.resolvedCall) }
+            if (it.candidates.areAllFailed()) {
+                tracingStrategy.noneApplicable(trace, resolvedCalls)
+                tracingStrategy.recordAmbiguity(trace, resolvedCalls)
             }
-            1 -> {
-                val singleCandidate = result.single()
-
-                val isInapplicableReceiver = singleCandidate.resultingApplicability == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
-
-                val resolvedCall = kotlinToResolvedCallTransformer.transformAndReport<D>(singleCandidate, context, trace.takeUnless { isInapplicableReceiver })
-
-                if (isInapplicableReceiver) {
-                    tracingStrategy.unresolvedReferenceWrongReceiver(trace, listOf(resolvedCall))
-                }
-                return SingleOverloadResolutionResult(resolvedCall)
-            }
-            else -> {
-                val resolvedCalls = result.map { kotlinToResolvedCallTransformer.transformAndReport<D>(it, context, trace = null) }
-                if (result.areAllCompletedAndFailed()) {
-                    tracingStrategy.noneApplicable(trace, resolvedCalls)
-                    tracingStrategy.recordAmbiguity(trace, resolvedCalls)
+            else {
+                tracingStrategy.recordAmbiguity(trace, resolvedCalls)
+                if (resolvedCalls.first().status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
+                    tracingStrategy.cannotCompleteResolve(trace, resolvedCalls)
                 }
                 else {
-                    tracingStrategy.recordAmbiguity(trace, resolvedCalls)
-                    if (resolvedCalls.first().status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
-                        tracingStrategy.cannotCompleteResolve(trace, resolvedCalls)
-                    }
-                    else {
-                        tracingStrategy.ambiguity(trace, resolvedCalls)
-                    }
+                    tracingStrategy.ambiguity(trace, resolvedCalls)
                 }
-                return ManyCandidates(resolvedCalls)
+            }
+            return ManyCandidates(resolvedCalls)
+        }
+
+        val singleCandidate = result.resultCallAtom ?: error("Should be not null for result: $result")
+        val isInapplicableReceiver = getResultApplicability(singleCandidate.diagnostics) == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+
+        val resolvedCall = if (isInapplicableReceiver) {
+            kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate).also {
+                tracingStrategy.unresolvedReferenceWrongReceiver(trace, listOf(it))
             }
         }
+        else {
+            kotlinToResolvedCallTransformer.transformAndReport<D>(result, context)
+        }
+        return SingleOverloadResolutionResult(resolvedCall)
     }
 
-    private fun Collection<ResolvedKotlinCall>.areAllCompletedAndFailed() =
+    private fun CallResolutionResult.isEmpty(): Boolean =
+            diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>() != null
+
+    private fun Collection<KotlinResolutionCandidate>.areAllFailed() =
             all {
-                it is ResolvedKotlinCall.CompletedResolvedKotlinCall &&
-                !it.completedCall.resultingApplicability.isSuccess
+                !it.resultingApplicability.isSuccess
             }
 
-    private fun Collection<ResolvedKotlinCall>.areAllCompletedAndInapplicable() =
-            all {
-                val applicability = it.resultingApplicability
-                applicability == ResolutionCandidateApplicability.INAPPLICABLE ||
-                applicability == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER ||
-                applicability == ResolutionCandidateApplicability.HIDDEN
-            }
+    private fun CallResolutionResult.areAllInapplicable(): Boolean {
+        val candidates = diagnostics.firstIsInstanceOrNull<ManyCandidatesCallDiagnostic>()?.candidates?.map { it.resolvedCall }
+                         ?: listOfNotNull(resultCallAtom)
+
+        return candidates.all {
+            val applicability = getResultApplicability(it.diagnostics)
+            applicability == ResolutionCandidateApplicability.INAPPLICABLE ||
+            applicability == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER ||
+            applicability == ResolutionCandidateApplicability.HIDDEN
+        }
+    }
 
     // true if we found something
     private fun reportAdditionalDiagnosticIfNoCandidates(
@@ -285,18 +294,9 @@ class PSICallResolver(
         override fun transformCandidate(
                 variable: KotlinResolutionCandidate,
                 invoke: KotlinResolutionCandidate
-        ): VariableAsFunctionKotlinResolutionCandidate {
-            assert(variable is SimpleKotlinResolutionCandidate) {
-                "VariableAsFunction variable is not allowed here: $variable"
-            }
-            assert(invoke is SimpleKotlinResolutionCandidate) {
-                "VariableAsFunction candidate is not allowed here: $invoke"
-            }
+        ) = invoke
 
-            return VariableAsFunctionKotlinResolutionCandidate(kotlinCall, variable as SimpleKotlinResolutionCandidate, invoke as SimpleKotlinResolutionCandidate)
-        }
-
-        override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<SimpleKotlinResolutionCandidate> {
+        override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<KotlinResolutionCandidate> {
             val explicitReceiver = if (stripExplicitReceiver) null else kotlinCall.explicitReceiver
             val variableCall = PSIKotlinCallForVariable(kotlinCall, explicitReceiver, kotlinCall.name)
             return SimpleCandidateFactory(callComponents, scopeTower, variableCall)
@@ -304,58 +304,59 @@ class PSICallResolver(
 
         override fun factoryForInvoke(variable: KotlinResolutionCandidate, useExplicitReceiver: Boolean):
                 Pair<ReceiverValueWithSmartCastInfo, CandidateFactory<KotlinResolutionCandidate>>? {
-            assert(variable is SimpleKotlinResolutionCandidate) {
-                "VariableAsFunction variable is not allowed here: $variable"
-            }
-            if (isRecursiveVariableResolution(variable as SimpleKotlinResolutionCandidate)) return null
+            if (isRecursiveVariableResolution(variable)) return null
 
             assert(variable.isSuccessful) {
                 "Variable call should be successful: $variable " +
-                "Descriptor: ${variable.descriptorWithFreshTypes}"
+                "Descriptor: ${variable.resolvedCall.candidateDescriptor}"
             }
             val variableCallArgument = createReceiverCallArgument(variable)
 
             val explicitReceiver = kotlinCall.explicitReceiver
             val callForInvoke = if (useExplicitReceiver && explicitReceiver is SimpleKotlinCallArgument) {
-                PSIKotlinCallForInvoke(kotlinCall, explicitReceiver, variableCallArgument)
+                PSIKotlinCallForInvoke(kotlinCall, variable, explicitReceiver, variableCallArgument)
             }
             else {
-                PSIKotlinCallForInvoke(kotlinCall, variableCallArgument, null)
+                PSIKotlinCallForInvoke(kotlinCall, variable, variableCallArgument, null)
             }
 
             return variableCallArgument.receiver to SimpleCandidateFactory(callComponents, scopeTower, callForInvoke)
         }
 
         // todo: create special check that there is no invoke on variable
-        private fun isRecursiveVariableResolution(variable: SimpleKotlinResolutionCandidate): Boolean {
-            val variableType = variable.candidateDescriptor.returnType
+        private fun isRecursiveVariableResolution(variable: KotlinResolutionCandidate): Boolean {
+            val variableType = variable.resolvedCall.candidateDescriptor.returnType
             return variableType is DeferredType && variableType.isComputing
         }
 
         // todo: review
-        private fun createReceiverCallArgument(variable: SimpleKotlinResolutionCandidate): SimpleKotlinCallArgument {
+        private fun createReceiverCallArgument(variable: KotlinResolutionCandidate): SimpleKotlinCallArgument {
+            variable.forceResolution()
             val variableReceiver = createReceiverValueWithSmartCastInfo(variable)
             if (variableReceiver.possibleTypes.isNotEmpty()) {
                 return ReceiverExpressionKotlinCallArgument(createReceiverValueWithSmartCastInfo(variable), isVariableReceiverForInvoke = true)
             }
 
-            val psiKotlinCall = variable.kotlinCall.psiKotlinCall
+            val psiKotlinCall = variable.resolvedCall.atom.psiKotlinCall
+
+            val variableResult = CallResolutionResult(CallResolutionResult.Type.PARTIAL, variable.resolvedCall, listOf(), variable.getSystem().asReadOnlyStorage())
             return SubKotlinCallArgumentImpl(CallMaker.makeExternalValueArgument((variableReceiver.receiverValue as ExpressionReceiver).expression),
                                       psiKotlinCall.resultDataFlowInfo, psiKotlinCall.resultDataFlowInfo, variableReceiver,
-                                      ResolvedKotlinCall.OnlyResolvedKotlinCall(variable))
+                                      variableResult)
         }
 
         // todo: decrease hacks count
-        private fun createReceiverValueWithSmartCastInfo(variable: SimpleKotlinResolutionCandidate): ReceiverValueWithSmartCastInfo {
-            val callForVariable = variable.kotlinCall as PSIKotlinCallForVariable
+        private fun createReceiverValueWithSmartCastInfo(variable: KotlinResolutionCandidate): ReceiverValueWithSmartCastInfo {
+            val callForVariable = variable.resolvedCall.atom as PSIKotlinCallForVariable
             val calleeExpression = callForVariable.baseCall.psiCall.calleeExpression as? KtReferenceExpression ?:
                                    error("Unexpected call : ${callForVariable.baseCall.psiCall}")
 
             val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Context for resolve candidate")
-            val type = variable.descriptorWithFreshTypes.returnType!!.unwrap()
+
+            val type = variable.resolvedCall.freshReturnType!!
             val variableReceiver = ExpressionReceiver.create(calleeExpression, type, temporaryTrace.bindingContext)
 
-            temporaryTrace.record(BindingContext.REFERENCE_TARGET, calleeExpression, variable.descriptorWithFreshTypes)
+            temporaryTrace.record(BindingContext.REFERENCE_TARGET, calleeExpression, variable.resolvedCall.candidateDescriptor)
             val dataFlowValue = DataFlowValueFactory.createDataFlowValue(variableReceiver, temporaryTrace.bindingContext, context.scope.ownerDescriptor)
             return ReceiverValueWithSmartCastInfo(variableReceiver, context.dataFlowInfo.getCollectedTypes(dataFlowValue), dataFlowValue.isStable)
         }

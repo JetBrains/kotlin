@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgum
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinResolutionStatelessCallbacksImpl(
         private val languageVersionSettings: LanguageVersionSettings
@@ -54,4 +55,7 @@ class KotlinResolutionStatelessCallbacksImpl(
 
     override fun getScopeTowerForCallableReferenceArgument(argument: CallableReferenceKotlinCallArgument): ImplicitScopeTower =
             (argument as CallableReferenceKotlinCallArgumentImpl).scopeTowerForResolution
+
+    override fun getVariableCandidateIfInvoke(functionCall: KotlinCall) =
+            functionCall.safeAs<PSIKotlinCallForInvoke>()?.variableCall
 }

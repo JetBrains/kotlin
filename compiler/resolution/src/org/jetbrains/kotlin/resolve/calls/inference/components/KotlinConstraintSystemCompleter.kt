@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraint
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinConstraintSystemCompleter(
         private val resultTypeResolver: ResultTypeResolver,
@@ -34,7 +36,6 @@ class KotlinConstraintSystemCompleter(
     }
 
     interface Context : VariableFixationFinder.Context, ResultTypeResolver.Context {
-        override val postponedArguments: List<PostponedKotlinCallArgument>
         override val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints>
 
         // type can be proper if it not contains not fixed type variables
@@ -48,23 +49,27 @@ class KotlinConstraintSystemCompleter(
     fun runCompletion(
             c: Context,
             completionMode: ConstraintSystemCompletionMode,
+            topLevelPrimitive: ResolvedAtom,
             topLevelType: UnwrappedType,
-            analyze: (PostponedKotlinCallArgument) -> Unit
+            analyze: (PostponedResolvedAtom) -> Unit
     ) {
         while (true) {
-            if (analyzePostponeArgumentIfPossible(c, analyze)) continue
+            if (analyzePostponeArgumentIfPossible(c, topLevelPrimitive, analyze)) continue
 
-            val variableForFixation = variableFixationFinder.findFirstVariableForFixation(c, completionMode, topLevelType)
+            val allTypeVariables = getOrderedAllTypeVariables(c, topLevelPrimitive)
+            val postponedKtPrimitives = getOrderedNotAnalyzedPostponedArguments(topLevelPrimitive)
+            val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
+                    c, allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
 
             if (shouldWeForceCallableReferenceResolution(completionMode, variableForFixation)) {
-                if (forceCallableReferenceResolution(c, analyze)) continue
+                if (forceCallableReferenceResolution(topLevelPrimitive, analyze)) continue
             }
 
             if (variableForFixation != null) {
                 if (variableForFixation.hasProperConstraint || completionMode == ConstraintSystemCompletionMode.FULL) {
                     val variableWithConstraints = c.notFixedTypeVariables[variableForFixation.variable]!!
 
-                    fixVariable(c, topLevelType, variableWithConstraints)
+                    fixVariable(c, topLevelType, variableWithConstraints, postponedKtPrimitives)
 
                     if (!variableForFixation.hasProperConstraint) {
                         c.addError(NotEnoughInformationForTypeParameter(variableWithConstraints.typeVariable))
@@ -77,7 +82,7 @@ class KotlinConstraintSystemCompleter(
 
         if (completionMode == ConstraintSystemCompletionMode.FULL) {
             // force resolution for all not-analyzed argument's
-            c.postponedArguments.filterNot { it.analyzed }.forEach(analyze)
+            getOrderedNotAnalyzedPostponedArguments(topLevelPrimitive).forEach(analyze)
         }
     }
 
@@ -92,8 +97,8 @@ class KotlinConstraintSystemCompleter(
     }
 
     // true if we do analyze
-    private fun analyzePostponeArgumentIfPossible(c: Context, analyze: (PostponedKotlinCallArgument) -> Unit): Boolean {
-        for (argument in getOrderedNotAnalyzedPostponedArguments(c)) {
+    private fun analyzePostponeArgumentIfPossible(c: Context, topLevelPrimitive: ResolvedAtom, analyze: (PostponedResolvedAtom) -> Unit): Boolean {
+        for (argument in getOrderedNotAnalyzedPostponedArguments(topLevelPrimitive)) {
             if (canWeAnalyzeIt(c, argument)) {
                 analyze(argument)
                 return true
@@ -103,24 +108,55 @@ class KotlinConstraintSystemCompleter(
     }
 
     // true if we find some callable reference and run resolution for it. Note that such resolution can be unsuccessful
-    private fun forceCallableReferenceResolution(c: Context, analyze: (PostponedKotlinCallArgument) -> Unit): Boolean {
-        val callableReferenceArgument = getOrderedNotAnalyzedPostponedArguments(c).
-                firstIsInstanceOrNull<PostponedCallableReferenceArgument>() ?: return false
+    private fun forceCallableReferenceResolution(topLevelPrimitive: ResolvedAtom, analyze: (PostponedResolvedAtom) -> Unit): Boolean {
+        val callableReferenceArgument = getOrderedNotAnalyzedPostponedArguments(topLevelPrimitive).
+                firstIsInstanceOrNull<ResolvedCallableReferenceAtom>() ?: return false
 
         analyze(callableReferenceArgument)
         return true
     }
 
-    private fun getOrderedNotAnalyzedPostponedArguments(c: Context): List<PostponedKotlinCallArgument> {
-        val notAnalyzedArguments = c.postponedArguments.filterNot { it.analyzed }
+    private fun getOrderedNotAnalyzedPostponedArguments(topLevelPrimitive: ResolvedAtom): List<PostponedResolvedAtom> {
+        fun ResolvedAtom.process(to: MutableList<PostponedResolvedAtom>) {
+            to.addIfNotNull(this.safeAs<PostponedResolvedAtom>()?.takeUnless { it.analyzed })
 
-        // todo insert logic here
-        return notAnalyzedArguments
+            if (analyzed) {
+                subResolvedAtoms.forEach { it.process(to) }
+            }
+        }
+        return arrayListOf<PostponedResolvedAtom>().apply { topLevelPrimitive.process(this) }
+    }
+
+    private fun getOrderedAllTypeVariables(c: Context, topLevelPrimitive: ResolvedAtom) : List<TypeConstructor> {
+        fun ResolvedAtom.process(to: MutableList<TypeConstructor>) {
+            val typeVariables = when (this) {
+                is ResolvedCallAtom -> substitutor.freshVariables
+                is ResolvedCallableReferenceAtom -> candidate?.freshSubstitutor?.freshVariables.orEmpty()
+                is ResolvedLambdaAtom -> listOfNotNull(typeVariableForLambdaReturnType)
+                else -> emptyList()
+            }
+            typeVariables.mapNotNullTo(to) {
+                val typeConstructor = it.freshTypeConstructor
+                typeConstructor.takeIf { c.notFixedTypeVariables.containsKey(typeConstructor) }
+            }
+
+            if (analyzed) {
+                subResolvedAtoms.forEach { it.process(to) }
+            }
+        }
+        val result = arrayListOf<TypeConstructor>().apply { topLevelPrimitive.process(this) }
+
+        assert(result.size == c.notFixedTypeVariables.size) {
+            val notFoundTypeVariables = c.notFixedTypeVariables.keys.toMutableSet().removeAll(result)
+            "Not all type variables found: $notFoundTypeVariables"
+        }
+
+        return result
     }
 
 
-    private fun canWeAnalyzeIt(c: Context, argument: PostponedKotlinCallArgument): Boolean {
-        if (argument is PostponedCollectionLiteralArgument || argument.analyzed) return false
+    private fun canWeAnalyzeIt(c: Context, argument: PostponedResolvedAtom): Boolean {
+        if (argument.analyzed) return false
 
         return argument.inputTypes.all { c.canBeProper(it) }
     }
@@ -128,9 +164,10 @@ class KotlinConstraintSystemCompleter(
     private fun fixVariable(
             c: Context,
             topLevelType: UnwrappedType,
-            variableWithConstraints: VariableWithConstraints
+            variableWithConstraints: VariableWithConstraints,
+            postponedResolveKtPrimitives: List<PostponedResolvedAtom>
     ) {
-        val direction = TypeVariableDirectionCalculator(c, topLevelType).getDirection(variableWithConstraints)
+        val direction = TypeVariableDirectionCalculator(c, postponedResolveKtPrimitives, topLevelType).getDirection(variableWithConstraints)
 
         val resultType = resultTypeResolver.findResultType(c, variableWithConstraints, direction)
 

@@ -60,7 +60,7 @@ interface CandidateWithBoundDispatchReceiver {
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?
 }
 
-fun getResultApplicability(diagnostics: List<KotlinCallDiagnostic>) = diagnostics.maxBy { it.candidateApplicability }?.candidateApplicability
+fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>) = diagnostics.maxBy { it.candidateApplicability }?.candidateApplicability
                                                                       ?: RESOLVED
 
 enum class ResolutionCandidateApplicability {
