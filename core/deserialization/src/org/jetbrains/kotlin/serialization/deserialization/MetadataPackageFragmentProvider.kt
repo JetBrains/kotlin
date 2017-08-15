@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -106,7 +107,7 @@ class MetadataPackageFragment(
                 containerSource = null, components = components, classNames = { emptyList() }
         ) {
             override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
-            override fun definitelyDoesNotContainName(name: Name) = false
+            override fun definitelyDoesNotContainName(name: Name, location: LookupLocation) = false
             override fun getClassifierNames(): Set<Name>? = null
         })
 

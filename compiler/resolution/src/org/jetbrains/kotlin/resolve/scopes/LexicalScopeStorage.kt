@@ -125,6 +125,6 @@ abstract class LexicalScopeStorage(
         return result
     }
 
-    override fun definitelyDoesNotContainName(name: Name) =
+    override fun definitelyDoesNotContainName(name: Name, location: LookupLocation) =
             functionsByName?.get(name) == null && variablesAndClassifiersByName?.get(name) == null
 }

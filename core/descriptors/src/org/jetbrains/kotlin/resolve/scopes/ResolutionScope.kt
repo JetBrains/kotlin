@@ -40,5 +40,5 @@ interface ResolutionScope {
             nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER
     ): Collection<DeclarationDescriptor>
 
-    fun definitelyDoesNotContainName(name: Name): Boolean = false
+    fun definitelyDoesNotContainName(name: Name, location: LookupLocation): Boolean = false
 }

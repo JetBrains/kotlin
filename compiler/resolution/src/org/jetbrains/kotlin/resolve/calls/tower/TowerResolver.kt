@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -131,7 +132,7 @@ class TowerResolver {
 
         val localLevels =
                 lexicalScope.parentsWithSelf.
-                        filterIsInstance<LexicalScope>().filter { it.kind.withLocalDescriptors && it.mayFitForName(name) }.
+                        filterIsInstance<LexicalScope>().filter { it.kind.withLocalDescriptors && it.mayFitForName(name, location) }.
                         map { ScopeBasedTowerLevel(this@run, it) }.toList()
 
         // local non-extensions or extension for explicit receiver
@@ -186,8 +187,8 @@ class TowerResolver {
         return resultCollector.getFinalCandidates()
     }
 
-    private fun ResolutionScope.mayFitForName(name: Name) =
-            !definitelyDoesNotContainName(name) || !definitelyDoesNotContainName(OperatorNameConventions.INVOKE)
+    private fun ResolutionScope.mayFitForName(name: Name, location: LookupLocation) =
+            !definitelyDoesNotContainName(name, location) || !definitelyDoesNotContainName(OperatorNameConventions.INVOKE, location)
 
     fun <C : Candidate> runWithEmptyTowerData(
             processor: ScopeTowerProcessor<C>,
