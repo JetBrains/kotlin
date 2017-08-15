@@ -43,6 +43,7 @@ class ChainedMemberScope(
 
     override fun getFunctionNames() = scopes.flatMapTo(mutableSetOf()) { it.getFunctionNames() }
     override fun getVariableNames() = scopes.flatMapTo(mutableSetOf()) { it.getVariableNames() }
+    override fun getClassifierNames(): Set<Name>? = scopes.flatMapClassifierNamesOrNull()
 
     override fun toString() = debugName
 

@@ -212,9 +212,11 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     private val functionNamesLazy by c.storageManager.createLazyValue { computeFunctionNames(DescriptorKindFilter.FUNCTIONS, null) }
     private val propertyNamesLazy by c.storageManager.createLazyValue { computePropertyNames(DescriptorKindFilter.VARIABLES, null) }
+    private val classNamesLazy by c.storageManager.createLazyValue { computeClassNames(DescriptorKindFilter.CLASSIFIERS, null) }
 
     override fun getFunctionNames() = functionNamesLazy
     override fun getVariableNames() = propertyNamesLazy
+    override fun getClassifierNames() = classNamesLazy
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
         if (name !in getFunctionNames()) return emptyList()
