@@ -22,15 +22,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.computeAllNames
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 
 class AllUnderImportScope(
         descriptor: DeclarationDescriptor,
         excludedImportNames: Collection<FqName>
 ) : BaseImportingScope(null) {
 
-    private val scopes: List<ResolutionScope> = if (descriptor is ClassDescriptor) {
+    private val scopes: List<MemberScope> = if (descriptor is ClassDescriptor) {
         listOf(descriptor.staticScope, descriptor.unsubstitutedInnerClassesScope)
     }
     else {
@@ -48,6 +50,8 @@ class AllUnderImportScope(
         // toSet() is used here instead mapNotNullTo(hashSetOf()) because it results in not keeping empty sets as separate instances
         excludedImportNames.mapNotNull { if (it.parent() == fqName) it.shortName() else null }.toSet()
     }
+
+    override fun computeImportedNames(): Set<Name>? = scopes.flatMapToNullable(hashSetOf(), MemberScope::computeAllNames)
 
     override fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter,

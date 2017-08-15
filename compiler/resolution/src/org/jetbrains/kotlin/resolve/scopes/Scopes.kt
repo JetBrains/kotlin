@@ -121,12 +121,15 @@ interface ImportingScope : HierarchicalScope {
         return getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased = false)
     }
 
+    fun computeImportedNames(): Set<Name>?
+
     object Empty : BaseImportingScope(null) {
         override fun printStructure(p: Printer) {
             p.println("ImportingScope.Empty")
         }
 
         override fun definitelyDoesNotContainName(name: Name) = true
+        override fun computeImportedNames() = emptySet<Name>()
     }
 }
 

@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportsFactory
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.SubpackagesImportingScope
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.script.getScriptExternalDependencies
 import org.jetbrains.kotlin.storage.StorageManager
@@ -219,6 +216,8 @@ class FileScopeFactory(
                         { name -> name !in excludedNames && nameFilter(name) }
                 ).filter { it !is PackageViewDescriptor } // subpackages of the current package not accessible by the short name
             }
+
+            override fun computeImportedNames() = packageView.memberScope.computeAllNames()
 
             override fun toString() = "Scope for current package (${filteringKind.name})"
 
