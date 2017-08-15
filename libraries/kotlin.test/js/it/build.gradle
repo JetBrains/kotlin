@@ -21,7 +21,7 @@ task populateNodeModules(type: Copy, dependsOn: compileKotlin2Js) {
         from zipTree(it.absolutePath).matching { include '*.js' }
     }
 
-    into "${buildDir}/classes"
+    into "${buildDir}/node_modules"
 }
 
 node {
