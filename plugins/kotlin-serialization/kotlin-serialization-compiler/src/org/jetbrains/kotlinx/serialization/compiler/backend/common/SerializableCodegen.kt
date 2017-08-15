@@ -25,11 +25,6 @@ import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 
-/**
- *  @author Leonid Startsev
- *          sandwwraith@gmail.com
- */
-
 abstract class SerializableCodegen(declaration: KtPureClassOrObject, private val bindingContext: BindingContext) {
     protected val serializableDescriptor: ClassDescriptor = declaration.findClassDescriptor(bindingContext)
     protected val properties = SerializableProperties(serializableDescriptor, bindingContext)

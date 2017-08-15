@@ -29,11 +29,6 @@ import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
-/**
- *  @author Leonid Startsev
- *          sandwwraith@gmail.com
- */
-
 class SerialInfoCodegenImpl(val codegen: ImplementationBodyCodegen, val thisClass: ClassDescriptor, val bindingContext: BindingContext) {
     val thisAsmType = codegen.typeMapper.mapClass(thisClass)
 

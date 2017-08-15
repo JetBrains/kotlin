@@ -23,11 +23,6 @@ import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtensio
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializerJsTranslator
 
-/**
- *  @author Leonid Startsev
- *          sandwwraith@gmail.com
- */
-
 class SerializationJsExtension: JsSyntheticTranslateExtension {
     override fun generateClassSyntheticParts(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: DeclarationBodyVisitor, context: TranslationContext) {
         SerializerJsTranslator.translate(declaration, descriptor, translator, context)

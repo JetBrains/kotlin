@@ -38,11 +38,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializ
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorBySerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toClassDescriptor
 
-/**
- *  @author Leonid Startsev
- *          sandwwraith@gmail.com
- */
-
 class SerializerJsTranslator(declaration: KtPureClassOrObject,
                              val translator: DeclarationBodyVisitor,
                              val context: TranslationContext) : SerializerCodegen(declaration, context.bindingContext()) {

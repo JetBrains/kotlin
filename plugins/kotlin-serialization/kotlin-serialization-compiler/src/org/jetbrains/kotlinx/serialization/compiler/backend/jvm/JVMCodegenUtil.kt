@@ -36,11 +36,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-/**
- *  @author Leonid Startsev
- *          sandwwraith@gmail.com
- */
-
 internal val descType = Type.getObjectType("kotlinx/serialization/KSerialClassDesc")
 internal val descImplType = Type.getObjectType("kotlinx/serialization/internal/SerialClassDescImpl")
 internal val kOutputType = Type.getObjectType("kotlinx/serialization/KOutput")

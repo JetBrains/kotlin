@@ -37,11 +37,6 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-/**
- *  @author Leonid Startsev
- *          sandwwraith@gmail.com
- */
-
 class SerializableCodegenImpl(
         private val classCodegen: ImplementationBodyCodegen,
         serializableClass: ClassDescriptor
