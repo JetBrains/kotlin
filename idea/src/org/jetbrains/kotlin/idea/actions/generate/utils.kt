@@ -79,8 +79,8 @@ fun confirmMemberRewrite(targetClass: KtClass, vararg descriptors: FunctionDescr
                                     Messages.getQuestionIcon()) == Messages.YES
 }
 
-fun generateFunctionSkeleton(descriptor: FunctionDescriptor, project: Project): KtNamedFunction {
+fun generateFunctionSkeleton(descriptor: FunctionDescriptor, targetClass: KtClassOrObject): KtNamedFunction {
     return OverrideMemberChooserObject
-            .create(project, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY)
-            .generateMember(project, false) as KtNamedFunction
+            .create(targetClass.project, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY)
+            .generateMember(targetClass, false) as KtNamedFunction
 }

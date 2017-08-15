@@ -164,7 +164,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             if (!needEquals) return null
 
             val superEquals = classDescriptor.getSuperClassOrAny().findDeclaredEquals(true)!!
-            val equalsFun = generateFunctionSkeleton(superEquals, project)
+            val equalsFun = generateFunctionSkeleton(superEquals, targetClass)
 
             val paramName = equalsFun.valueParameters.first().name!!.quoteIfNeeded()
             var typeForCast = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classDescriptor)
@@ -249,7 +249,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             if (!needHashCode) return null
 
             val superHashCode = classDescriptor.getSuperClassOrAny().findDeclaredHashCode(true)!!
-            val hashCodeFun = generateFunctionSkeleton(superHashCode, project)
+            val hashCodeFun = generateFunctionSkeleton(superHashCode, targetClass)
             val builtins = superHashCode.builtIns
 
             val propertyIterator = variablesForHashCode.iterator()

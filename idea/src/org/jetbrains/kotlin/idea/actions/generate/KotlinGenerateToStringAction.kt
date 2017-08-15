@@ -178,16 +178,16 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
                     project)
     }
 
-    private fun generateToString(project: Project, info: Info): KtNamedFunction? {
+    private fun generateToString(targetClass: KtClassOrObject, info: Info): KtNamedFunction? {
         val superToString = info.classDescriptor.getSuperClassOrAny().findDeclaredToString(true)!!
-        return generateFunctionSkeleton(superToString, project).apply {
-            bodyExpression!!.replace(KtPsiFactory(project).createExpression("{\n${info.generator.generate(info)}\n}"))
+        return generateFunctionSkeleton(superToString, targetClass).apply {
+            bodyExpression!!.replace(KtPsiFactory(targetClass).createExpression("{\n${info.generator.generate(info)}\n}"))
         }
     }
 
     override fun generateMembers(project: Project, editor: Editor?, info: Info): List<KtDeclaration> {
         val targetClass = info.classDescriptor.source.getPsi() as KtClass
-        val prototype = generateToString(project, info) ?: return emptyList()
+        val prototype = generateToString(targetClass, info) ?: return emptyList()
         val anchor = with(targetClass.declarations) { lastIsInstanceOrNull<KtNamedFunction>() ?: lastOrNull() }
         return insertMembersAfter(editor, targetClass, listOf(prototype), anchor)
     }
