@@ -347,7 +347,7 @@ class KotlinToResolvedCallTransformer(
         val newContext = context.replaceBindingTrace(trackingTrace)
         val diagnosticReporter = DiagnosticReporterByTrackingStrategy(constantExpressionEvaluator, newContext, completedCall.kotlinCall.psiKotlinCall)
 
-        for (diagnostic in completedCall.resolutionStatus.diagnostics) {
+        for (diagnostic in completedCall.diagnostics) {
             trackingTrace.reported = false
             diagnostic.report(diagnosticReporter)
 
@@ -464,7 +464,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 ): NewAbstractResolvedCall<D>() {
     override val kotlinCall: KotlinCall get() = completedCall.kotlinCall
 
-    override fun getStatus(): ResolutionStatus = completedCall.resolutionStatus.resultingApplicability.toResolutionStatus()
+    override fun getStatus(): ResolutionStatus = completedCall.resultingApplicability.toResolutionStatus()
 
     override val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
         get() = completedCall.argumentMappingByOriginal
@@ -496,7 +496,7 @@ class NewVariableAsFunctionResolvedCallImpl(
 ): VariableAsFunctionResolvedCall, ResolvedCall<FunctionDescriptor> by functionCall
 
 class StubOnlyResolvedCall<D : CallableDescriptor>(val candidate: SimpleKotlinResolutionCandidate): NewAbstractResolvedCall<D>() {
-    override fun getStatus() = candidate.status.resultingApplicability.toResolutionStatus()
+    override fun getStatus() = candidate.resultingApplicability.toResolutionStatus()
 
     override fun getCandidateDescriptor(): D = candidate.candidateDescriptor as D
     override fun getResultingDescriptor(): D = candidate.descriptorWithFreshTypes as D

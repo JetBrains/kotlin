@@ -82,7 +82,7 @@ class KotlinCallResolver(
             )
         }
         val candidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
-                                                             TowerResolver.SuccessfulResultCollector { it.status },
+                                                             TowerResolver.SuccessfulResultCollector(),
                                                              useOrder = true)
         return choseMostSpecific(resolutionCallbacks, expectedType, candidates)
     }

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.TypeUtils
@@ -104,9 +103,9 @@ class KotlinCallCompleter(
             resolutionCallbacks: KotlinResolutionCallbacks
     ): ResolvedKotlinCall.CompletedResolvedKotlinCall {
         val currentSubstitutor = c.buildResultingSubstitutor()
-        val completedCall = candidate.toCompletedCall(currentSubstitutor)
+        val completedCall = candidate.toCompletedCall(currentSubstitutor, isTopLevel = true)
         val competedCalls = c.innerCalls.map {
-            it.candidate.toCompletedCall(currentSubstitutor)
+            it.candidate.toCompletedCall(currentSubstitutor, isTopLevel = false)
         }
         for (postponedArgument in c.postponedArguments) {
             when (postponedArgument) {
@@ -125,17 +124,17 @@ class KotlinCallCompleter(
         return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls, c.lambdaArguments)
     }
 
-    private fun KotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor): CompletedKotlinCall {
+    private fun KotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor, isTopLevel: Boolean): CompletedKotlinCall {
         if (this is VariableAsFunctionKotlinResolutionCandidate) {
-            val variable = resolvedVariable.toCompletedCall(substitutor)
-            val invoke = invokeCandidate.toCompletedCall(substitutor)
+            val variable = resolvedVariable.toCompletedCall(substitutor, isTopLevel = false)
+            val invoke = invokeCandidate.toCompletedCall(substitutor, isTopLevel)
 
             return CompletedKotlinCall.VariableAsFunction(kotlinCall, variable, invoke)
         }
-        return (this as SimpleKotlinResolutionCandidate).toCompletedCall(substitutor)
+        return (this as SimpleKotlinResolutionCandidate).toCompletedCall(substitutor, isTopLevel)
     }
 
-    private fun SimpleKotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor): CompletedKotlinCall.Simple {
+    private fun SimpleKotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor, isTopLevel: Boolean): CompletedKotlinCall.Simple {
         val containsCapturedTypes = descriptorWithFreshTypes.returnType?.contains { it is NewCapturedType } ?: false
         val resultingDescriptor = when {
             descriptorWithFreshTypes is FunctionDescriptor ||
@@ -152,15 +151,22 @@ class KotlinCallCompleter(
             TypeApproximator().approximateToSuperType(substituted, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: substituted
         }
 
-        val status = computeStatus(this, resultingDescriptor)
-        return CompletedKotlinCall.Simple(kotlinCall, candidateDescriptor, resultingDescriptor, status, explicitReceiverKind,
+        val diagnostics = computeDiagnostics(this, resultingDescriptor, isTopLevel)
+        return CompletedKotlinCall.Simple(kotlinCall, candidateDescriptor, resultingDescriptor, diagnostics, explicitReceiverKind,
                                           dispatchReceiverArgument?.receiver, extensionReceiver?.receiver, typeArguments, argumentMappingByOriginal)
     }
 
-    private fun computeStatus(candidate: SimpleKotlinResolutionCandidate, resultingDescriptor: CallableDescriptor): ResolutionCandidateStatus {
-        val smartCasts = additionalDiagnosticReporter.createAdditionalDiagnostics(candidate, resultingDescriptor).takeIf { it.isNotEmpty() } ?:
-                         return candidate.status
-        return ResolutionCandidateStatus(candidate.status.diagnostics + smartCasts)
+    private fun computeDiagnostics(
+            candidate: SimpleKotlinResolutionCandidate,
+            resultingDescriptor: CallableDescriptor,
+            isTopLevel: Boolean
+    ): List<KotlinCallDiagnostic> {
+        var diagnostics = candidate.getCandidateDiagnostics()
+        if (isTopLevel) {
+            diagnostics += candidate.constraintSystem.diagnostics
+        }
+        diagnostics += additionalDiagnosticReporter.createAdditionalDiagnostics(candidate, resultingDescriptor)
+        return diagnostics
     }
 
     // true if we should complete this call

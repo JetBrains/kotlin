@@ -68,9 +68,10 @@ class CallableReferenceCandidate(
         val explicitReceiverKind: ExplicitReceiverKind,
         val reflectionCandidateType: UnwrappedType,
         val numDefaults: Int,
-        override val status: ResolutionCandidateStatus
+        val diagnostics: List<KotlinCallDiagnostic>
 ) : Candidate {
-    override val isSuccessful get() = status.resultingApplicability.isSuccess
+    override val resultingApplicability = getResultApplicability(diagnostics)
+    override val isSuccessful get() = resultingApplicability.isSuccess
 }
 
 /**
@@ -184,9 +185,9 @@ class CallableReferencesCandidateFactory(
         }
 
         if (candidateDescriptor !is CallableMemberDescriptor) {
-            val status = ResolutionCandidateStatus(listOf(NotCallableMemberReference(argument, candidateDescriptor)))
             return CallableReferenceCandidate(candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
-                                              explicitReceiverKind, reflectionCandidateType, defaults, status)
+                                              explicitReceiverKind, reflectionCandidateType, defaults,
+                                              listOf(NotCallableMemberReference(argument, candidateDescriptor)))
         }
 
         diagnostics.addAll(towerCandidate.diagnostics)
@@ -205,7 +206,7 @@ class CallableReferencesCandidateFactory(
         }
 
         return CallableReferenceCandidate(candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
-                                          explicitReceiverKind, reflectionCandidateType, defaults, ResolutionCandidateStatus(diagnostics))
+                                          explicitReceiverKind, reflectionCandidateType, defaults, diagnostics)
     }
 
     private fun getArgumentAndReturnTypeUseMappingByExpectedType(

@@ -28,7 +28,7 @@ interface Candidate {
     // this operation should be very fast
     val isSuccessful: Boolean
 
-    val status: ResolutionCandidateStatus
+    val resultingApplicability: ResolutionCandidateApplicability
 }
 
 interface CandidateFactory<out C: Candidate> {
@@ -75,13 +75,13 @@ class TowerResolver {
             scopeTower: ImplicitScopeTower,
             processor: ScopeTowerProcessor<C>,
             useOrder: Boolean
-    ): Collection<C> = scopeTower.run(processor, SuccessfulResultCollector { it.status }, useOrder)
+    ): Collection<C> = scopeTower.run(processor, SuccessfulResultCollector(), useOrder)
 
     fun <C: Candidate> collectAllCandidates(
             scopeTower: ImplicitScopeTower,
             processor: ScopeTowerProcessor<C>
     ): Collection<C>
-            = scopeTower.run(processor, AllCandidatesCollector { it.status }, false)
+            = scopeTower.run(processor, AllCandidatesCollector(), false)
 
     private fun ImplicitScopeTower.createNonLocalLevels(): List<ScopeTowerLevel> {
         val result = ArrayList<ScopeTowerLevel>()
@@ -100,7 +100,7 @@ class TowerResolver {
         return result
     }
 
-    private fun <C> ImplicitScopeTower.run(
+    private fun <C : Candidate> ImplicitScopeTower.run(
             processor: ScopeTowerProcessor<C>,
             resultCollector: ResultCollector<C>,
             useOrder: Boolean
@@ -173,13 +173,13 @@ class TowerResolver {
         return resultCollector.getFinalCandidates()
     }
 
-    fun <C> runWithEmptyTowerData(
+    fun <C : Candidate> runWithEmptyTowerData(
             processor: ScopeTowerProcessor<C>,
             resultCollector: ResultCollector<C>,
             useOrder: Boolean
     ): Collection<C> = processTowerData(processor, resultCollector, useOrder, TowerData.Empty) ?: resultCollector.getFinalCandidates()
 
-    private fun <C> processTowerData(
+    private fun <C : Candidate> processTowerData(
             processor: ScopeTowerProcessor<C>,
             resultCollector: ResultCollector<C>,
             useOrder: Boolean,
@@ -203,14 +203,14 @@ class TowerResolver {
     }
 
 
-    abstract class ResultCollector<C>(protected val getStatus: (C) -> ResolutionCandidateStatus) {
+    abstract class ResultCollector<C : Candidate> {
         abstract fun getSuccessfulCandidates(): Collection<C>?
 
         abstract fun getFinalCandidates(): Collection<C>
 
         fun pushCandidates(candidates: Collection<C>) {
             val filteredCandidates = candidates.filter {
-                getStatus(it).resultingApplicability != ResolutionCandidateApplicability.HIDDEN
+                it.resultingApplicability != ResolutionCandidateApplicability.HIDDEN
             }
             if (filteredCandidates.isNotEmpty()) addCandidates(filteredCandidates)
         }
@@ -218,7 +218,7 @@ class TowerResolver {
         protected abstract fun addCandidates(candidates: Collection<C>)
     }
 
-    class AllCandidatesCollector<C>(getStatus: (C) -> ResolutionCandidateStatus): ResultCollector<C>(getStatus) {
+    class AllCandidatesCollector<C : Candidate>: ResultCollector<C>() {
         private val allCandidates = ArrayList<C>()
 
         override fun getSuccessfulCandidates(): Collection<C>? = null
@@ -230,7 +230,7 @@ class TowerResolver {
         }
     }
 
-    class SuccessfulResultCollector<C>(getStatus: (C) -> ResolutionCandidateStatus): ResultCollector<C>(getStatus) {
+    class SuccessfulResultCollector<C : Candidate>: ResultCollector<C>() {
         private var currentCandidates: Collection<C> = emptyList()
         private var currentLevel: ResolutionCandidateApplicability? = null
 
@@ -247,10 +247,10 @@ class TowerResolver {
         override fun getFinalCandidates() = getResolved() ?: getResolvedLowPriority() ?: getErrors() ?: emptyList()
 
         override fun addCandidates(candidates: Collection<C>) {
-            val minimalLevel = candidates.map { getStatus(it).resultingApplicability }.min()!!
+            val minimalLevel = candidates.map { it.resultingApplicability }.min()!!
             if (currentLevel == null || currentLevel!! > minimalLevel) {
                 currentLevel = minimalLevel
-                currentCandidates = candidates.filter { getStatus(it).resultingApplicability == minimalLevel }
+                currentCandidates = candidates.filter { it.resultingApplicability == minimalLevel }
             }
         }
     }

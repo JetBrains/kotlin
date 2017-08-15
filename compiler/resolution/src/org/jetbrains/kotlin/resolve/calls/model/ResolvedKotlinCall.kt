@@ -19,49 +19,50 @@ package org.jetbrains.kotlin.resolve.calls.model
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.getResultApplicability
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
 
 sealed class ResolvedKotlinCall {
-    abstract val currentStatus: ResolutionCandidateStatus
+    abstract val resultingApplicability: ResolutionCandidateApplicability
 
     class CompletedResolvedKotlinCall(
             val completedCall: CompletedKotlinCall,
             val allInnerCalls: Collection<CompletedKotlinCall>,
             val lambdaArguments: List<PostponedLambdaArgument>
     ): ResolvedKotlinCall() {
-        override val currentStatus get() = completedCall.resolutionStatus
+        override val resultingApplicability get() = completedCall.resultingApplicability
     }
 
     class OnlyResolvedKotlinCall(val candidate: KotlinResolutionCandidate) : ResolvedKotlinCall() {
-        override val currentStatus get() = candidate.status
+        override val resultingApplicability get() = candidate.resultingApplicability
     }
 }
 
 sealed class CompletedKotlinCall {
-    abstract val resolutionStatus: ResolutionCandidateStatus
+    abstract val resultingApplicability: ResolutionCandidateApplicability
 
     class Simple(
             val kotlinCall: KotlinCall,
             val candidateDescriptor: CallableDescriptor,
             val resultingDescriptor: CallableDescriptor,
-            override val resolutionStatus: ResolutionCandidateStatus,
+            val diagnostics: List<KotlinCallDiagnostic>,
             val explicitReceiverKind: ExplicitReceiverKind,
             val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
             val extensionReceiver: ReceiverValueWithSmartCastInfo?,
             val typeArguments: List<UnwrappedType>,
             val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
-    ): CompletedKotlinCall()
+    ): CompletedKotlinCall() {
+        override val resultingApplicability = getResultApplicability(diagnostics)
+    }
 
     class VariableAsFunction(
             val kotlinCall: KotlinCall,
             val variableCall: Simple,
             val invokeCall: Simple
     ): CompletedKotlinCall() {
-
-        override val resolutionStatus: ResolutionCandidateStatus =
-                ResolutionCandidateStatus(variableCall.resolutionStatus.diagnostics + invokeCall.resolutionStatus.diagnostics)
+        override val resultingApplicability get() = maxOf(variableCall.resultingApplicability, invokeCall.resultingApplicability)
     }
 }
 

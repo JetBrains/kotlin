@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallKind
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isBinaryRemOperator
@@ -38,9 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSupport
-import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
@@ -176,7 +173,7 @@ class NewResolutionOldInference(
 
         // Temporary hack to resolve 'rem' as 'mod' if the first is do not present
         val emptyOrInapplicableCandidates = candidates.isEmpty() ||
-                                            candidates.all { it.candidateStatus.resultingApplicability.isInapplicable }
+                                            candidates.all { it.resultingApplicability.isInapplicable }
         if (isBinaryRemOperator && shouldUseOperatorRem && emptyOrInapplicableCandidates) {
             val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]
             val processorForDeprecatedName = kind.createTowerProcessor(this, deprecatedName!!, tracing, scopeTower, detailedReceiver, context)
@@ -204,7 +201,7 @@ class NewResolutionOldInference(
             val resolvedCall = ResolvedCallImpl.create(candidate, candidateTrace, tracing, basicCallContext.dataFlowInfoForArguments)
 
             if (candidate.descriptor.isHiddenInResolution(languageVersionSettings, basicCallContext.isSuperCall)) {
-                return@map MyCandidate(ResolutionCandidateStatus(listOf(HiddenDescriptor)), resolvedCall)
+                return@map MyCandidate(listOf(HiddenDescriptor), resolvedCall)
             }
 
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(
@@ -214,16 +211,16 @@ class NewResolutionOldInference(
             candidateResolver.performResolutionForCandidateCall(callCandidateResolutionContext, basicCallContext.checkArguments) // todo
 
             val diagnostics = listOfNotNull(createPreviousResolveError(resolvedCall.status))
-            MyCandidate(ResolutionCandidateStatus(diagnostics), resolvedCall)
+            MyCandidate(diagnostics, resolvedCall)
         }
         if (basicCallContext.collectAllCandidates) {
             val allCandidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolvedCandidates),
-                                                  TowerResolver.AllCandidatesCollector { it.candidateStatus }, useOrder = false)
+                                                  TowerResolver.AllCandidatesCollector(), useOrder = false)
             return allCandidatesResult(allCandidates)
         }
 
         val processedCandidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolvedCandidates),
-                                                    TowerResolver.SuccessfulResultCollector { it.candidateStatus }, useOrder = true)
+                                                    TowerResolver.SuccessfulResultCollector(), useOrder = true)
 
         return convertToOverloadResults(processedCandidates, tracing, basicCallContext, languageVersionSettings)
     }
@@ -240,7 +237,7 @@ class NewResolutionOldInference(
             languageVersionSettings: LanguageVersionSettings
     ): OverloadResolutionResultsImpl<D> {
         val resolvedCalls = candidates.map {
-            val (status, resolvedCall) = it
+            val (diagnostics, resolvedCall) = it
             if (resolvedCall is VariableAsFunctionResolvedCallImpl) {
                 // todo hacks
                 tracing.bindReference(resolvedCall.variableCall.trace, resolvedCall.variableCall)
@@ -256,7 +253,7 @@ class NewResolutionOldInference(
             }
 
             if (resolvedCall.status.possibleTransformToSuccess()) {
-                for (error in status.diagnostics) {
+                for (error in diagnostics) {
                     when (error) {
                         is UnsupportedInnerClassCall -> resolvedCall.trace.report(Errors.UNSUPPORTED.on(resolvedCall.call.callElement, error.message))
                         is NestedClassViaInstanceReference -> tracing.nestedClassAccessViaInstanceReference(resolvedCall.trace, error.classDescriptor, resolvedCall.explicitReceiverKind)
@@ -317,13 +314,11 @@ class NewResolutionOldInference(
     }
 
     internal data class MyCandidate(
-            val candidateStatus: ResolutionCandidateStatus,
+            val diagnostics: List<KotlinCallDiagnostic>,
             val resolvedCall: MutableResolvedCall<*>
     ) : Candidate {
-        override val isSuccessful: Boolean
-            get() = candidateStatus.resultingApplicability.isSuccess
-        override val status: ResolutionCandidateStatus
-            get() = candidateStatus
+        override val resultingApplicability: ResolutionCandidateApplicability = getResultApplicability(diagnostics)
+        override val isSuccessful get() = resultingApplicability.isSuccess
     }
 
     private inner class CandidateFactoryImpl(
@@ -358,12 +353,12 @@ class NewResolutionOldInference(
                 if (parameterIsDynamic != argumentIsDynamic ||
                     (parameterIsDynamic && !towerCandidate.descriptor.hasDynamicExtensionAnnotation())
                 ) {
-                    return MyCandidate(ResolutionCandidateStatus(listOf(HiddenExtensionRelatedToDynamicTypes)), candidateCall)
+                    return MyCandidate(listOf(HiddenExtensionRelatedToDynamicTypes), candidateCall)
                 }
             }
 
             if (towerCandidate.descriptor.isHiddenInResolution(languageVersionSettings, basicCallContext.isSuperCall)) {
-                return MyCandidate(ResolutionCandidateStatus(listOf(HiddenDescriptor)), candidateCall)
+                return MyCandidate(listOf(HiddenDescriptor), candidateCall)
             }
 
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(
@@ -375,7 +370,7 @@ class NewResolutionOldInference(
             val diagnostics = (towerCandidate.diagnostics +
                                checkInfixAndOperator(basicCallContext.call, towerCandidate.descriptor) +
                                createPreviousResolveError(candidateCall.status)).filterNotNull() // todo
-            return MyCandidate(ResolutionCandidateStatus(diagnostics), candidateCall)
+            return MyCandidate(diagnostics, candidateCall)
         }
 
         private fun checkInfixAndOperator(call: Call, descriptor: CallableDescriptor): List<ResolutionDiagnostic> {
@@ -403,11 +398,11 @@ class NewResolutionOldInference(
                     invoke.resolvedCall as MutableResolvedCall<FunctionDescriptor>,
                     variable.resolvedCall as MutableResolvedCall<VariableDescriptor>
             )
-            assert(variable.candidateStatus.resultingApplicability.isSuccess) {
+            assert(variable.resultingApplicability.isSuccess) {
                 "Variable call must be success: $variable"
             }
 
-            return MyCandidate(ResolutionCandidateStatus(variable.candidateStatus.diagnostics + invoke.candidateStatus.diagnostics), resolvedCallImpl)
+            return MyCandidate(variable.diagnostics + invoke.diagnostics, resolvedCallImpl)
         }
 
         override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<MyCandidate> {

@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -60,10 +60,8 @@ interface CandidateWithBoundDispatchReceiver {
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?
 }
 
-data class ResolutionCandidateStatus(val diagnostics: List<KotlinCallDiagnostic>) {
-    val resultingApplicability: ResolutionCandidateApplicability = diagnostics.asSequence().map { it.candidateApplicability }.max()
-                                                                   ?: RESOLVED
-}
+fun getResultApplicability(diagnostics: List<KotlinCallDiagnostic>) = diagnostics.maxBy { it.candidateApplicability }?.candidateApplicability
+                                                                      ?: RESOLVED
 
 enum class ResolutionCandidateApplicability {
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
