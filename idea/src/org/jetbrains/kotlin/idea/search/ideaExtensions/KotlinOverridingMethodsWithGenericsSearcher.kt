@@ -47,7 +47,7 @@ class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, Ove
         // we do additional search for such methods.
         if (!callDescriptor.valueParameters.any { it.type.constructor.declarationDescriptor is TypeParameterDescriptor }) return true
 
-        val parentClass = runReadAction { method.containingClass }!!
+        val parentClass = runReadAction { method.containingClass }
 
         return ClassInheritorsSearch.search(parentClass, p.scope, true).forEach(Processor { inheritor: PsiClass ->
             val found = runReadAction {

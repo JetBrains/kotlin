@@ -150,7 +150,7 @@ class ChangeSuspendInHierarchyFix(
 
             return DFS.dfs(
                     listOf(this),
-                    { (it as? FunctionDescriptor)?.getOverridables() ?: emptyList() },
+                    { it?.getOverridables() ?: emptyList() },
                     object : DFS.CollectingNodeHandler<FunctionDescriptor, FunctionDescriptor, ArrayList<FunctionDescriptor>>(ArrayList()) {
                         override fun afterChildren(current: FunctionDescriptor) {
                             if (current.getOverridables().isEmpty()) {
@@ -173,7 +173,7 @@ class ChangeSuspendInHierarchyFix(
                         containingClassDescriptor.defaultType,
                         currentClassDescriptor.defaultType
                 ) ?: return@filter false
-                val signatureInCurrentClass = it.substitute(substitutor) as? FunctionDescriptor ?: return@filter false
+                val signatureInCurrentClass = it.substitute(substitutor) ?: return@filter false
                 OverridingUtil.DEFAULT.isOverridableBy(signatureInCurrentClass, currentDescriptor, null).result ==
                         OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT
             }

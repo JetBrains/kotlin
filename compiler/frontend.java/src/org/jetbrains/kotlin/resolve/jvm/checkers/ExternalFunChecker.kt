@@ -51,8 +51,7 @@ class ExternalFunChecker : SimpleDeclarationChecker {
         if (DescriptorUtils.isInterface(descriptor.containingDeclaration)) {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE.on(declaration))
         }
-        else if (descriptor is CallableMemberDescriptor &&
-                 descriptor.modality == Modality.ABSTRACT) {
+        else if (descriptor.modality == Modality.ABSTRACT) {
             if (declaration is KtPropertyAccessor) {
                 diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration.property))
             }

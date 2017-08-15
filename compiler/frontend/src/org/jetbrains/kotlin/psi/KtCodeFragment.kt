@@ -163,7 +163,7 @@ abstract class KtCodeFragment(
     }
 
     fun getContextContainingFile(): KtFile? {
-        return (getOriginalContext() as? KtElement)?.containingKtFile
+        return getOriginalContext()?.containingKtFile
     }
 
     fun getOriginalContext(): KtElement? {

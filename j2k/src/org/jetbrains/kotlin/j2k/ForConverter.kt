@@ -235,7 +235,7 @@ class ForConverter(
         // check if it's iteration through list indices
         if (collectionSize is PsiMethodCallExpression && collectionSize.argumentList.expressions.isEmpty()) {
             val methodExpr = collectionSize.methodExpression
-            if (methodExpr is PsiReferenceExpression && methodExpr.referenceName == "size") {
+            if (methodExpr.referenceName == "size") {
                 val qualifier = methodExpr.qualifierExpression
                 if (qualifier is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */) {
                     val collectionType = PsiElementFactory.SERVICE.getInstance(project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_COLLECTION)

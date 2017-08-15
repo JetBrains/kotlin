@@ -40,7 +40,7 @@ class KtEnumEntrySuperclassReferenceExpression :
             get() = calcReferencedElement()!!
 
     private fun calcReferencedElement(): KtClass? {
-        val owner = this.getStrictParentOfType<KtEnumEntry>() as? KtEnumEntry
+        val owner = this.getStrictParentOfType<KtEnumEntry>()
         return owner?.parent?.parent as? KtClass
     }
 

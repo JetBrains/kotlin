@@ -73,7 +73,7 @@ fun ClassDescriptor.findCallableMemberBySignature(
                 if (it.containingDeclaration != this) return@firstOrNull false
                 val overridability = OverridingUtil.DEFAULT.isOverridableBy(it as CallableDescriptor, signature, null).result
                 overridability == OVERRIDABLE || (allowOverridabilityConflicts && overridability == CONFLICT)
-            } as? CallableMemberDescriptor
+            }
 }
 
 fun TypeConstructor.supertypesWithAny(): Collection<KotlinType> {

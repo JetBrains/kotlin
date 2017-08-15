@@ -76,7 +76,6 @@ fun markElements(
                                    ?: resolvedCall.extensionReceiver
                                    ?: resolvedCall.dispatchReceiver
                                    ?: return
-                    if (receiver !is ReceiverValue) return
 
                     val implicitThis = receiver.type.constructor.declarationDescriptor as? ClassDescriptor ?: return
                     if (implicitThis.isCompanionObject

@@ -196,7 +196,7 @@ class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeIntention<Kt
         val body = bodyExpression ?: return null
         if (!hasBlockBody()) return body
         val block = body as? KtBlockExpression ?: return null
-        val statement = block.statements.singleOrNull() as? KtExpression ?: return null
+        val statement = block.statements.singleOrNull() ?: return null
         val returnsUnit = (analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? FunctionDescriptor)?.returnType?.isUnit() ?: return null
         return when (statement) {
             is KtReturnExpression -> statement.returnedExpression

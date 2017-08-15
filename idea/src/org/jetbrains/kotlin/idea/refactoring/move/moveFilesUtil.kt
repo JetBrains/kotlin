@@ -50,7 +50,7 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
 
     project.executeCommand(MoveHandler.REFACTORING_NAME) {
         val selectedDir = (if (moveDialog != null) moveDialog.targetDirectory else initialTargetDirectory) ?: return@executeCommand
-        val updatePackageDirective = (moveDialog as? KotlinAwareMoveFilesOrDirectoriesDialog)?.updatePackageDirective
+        val updatePackageDirective = moveDialog?.updatePackageDirective
 
         try {
             val choice = if (elements.size > 1 || elements[0] is PsiDirectory) intArrayOf(-1) else null

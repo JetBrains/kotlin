@@ -272,7 +272,6 @@ class IncrementalJvmCompilerRunner(
                 // there is no point in updating annotation file since all files will be compiled anyway
                 kaptAnnotationsFileUpdater = null
             }
-            else -> throw IllegalStateException("Unknown CompilationMode ${compilationMode::class.java}")
         }
 
         val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())

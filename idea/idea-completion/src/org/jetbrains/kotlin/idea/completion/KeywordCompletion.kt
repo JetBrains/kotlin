@@ -254,14 +254,14 @@ object KeywordCompletion {
                 is KtDeclarationWithInitializer -> {
                     val initializer = parent.initializer
                     if (prevParent == initializer) {
-                        return buildFilterWithContext("val v = ", initializer!!, position)
+                        return buildFilterWithContext("val v = ", initializer, position)
                     }
                 }
 
                 is KtParameter -> {
                     val default = parent.defaultValue
                     if (prevParent == default) {
-                        return buildFilterWithContext("val v = ", default!!, position)
+                        return buildFilterWithContext("val v = ", default, position)
                     }
                 }
 

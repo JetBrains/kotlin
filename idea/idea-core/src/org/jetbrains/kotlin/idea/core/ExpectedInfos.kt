@@ -568,7 +568,6 @@ class ExpectedInfos(
             }
 
             is PropertyGetterDescriptor -> {
-                if (descriptor !is PropertyGetterDescriptor) return null
                 val property = descriptor.correspondingProperty
                 ExpectedInfo.createForReturnValue(returnTypeToUse(property, hasExplicitReturnType), property)
             }

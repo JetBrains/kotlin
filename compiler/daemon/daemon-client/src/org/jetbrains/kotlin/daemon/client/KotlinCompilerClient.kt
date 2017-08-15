@@ -325,7 +325,7 @@ object KotlinCompilerClient {
                 if (err != null) {
                     reportingTargets.report(DaemonReportCategory.INFO,
                                             (if (attempts >= DAEMON_CONNECT_CYCLE_ATTEMPTS || !autostart) "no more retries on: " else "retrying($attempts) on: ")
-                                            + err?.toString())
+                                            + err.toString())
                 }
 
                 if (attempts++ > DAEMON_CONNECT_CYCLE_ATTEMPTS || !autostart) {

@@ -128,7 +128,7 @@ private fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstruct
 }
 
 private fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescriptor? {
-    return getContainingScope(field)?.getContributedVariables(field.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(field) as? PropertyDescriptor
+    return getContainingScope(field)?.getContributedVariables(field.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(field)
 }
 
 private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): MemberScope? {

@@ -102,7 +102,7 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         val element = file.findElementForRename<KtNameReferenceExpression>(editor.caretModel.offset)!!
         assertNotNull(element)
 
-        val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.name, element!!,
+        val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.name, element,
                                                              getCurrentEditorDataContext())
         val handler = RenameKotlinImplicitLambdaParameter()
 

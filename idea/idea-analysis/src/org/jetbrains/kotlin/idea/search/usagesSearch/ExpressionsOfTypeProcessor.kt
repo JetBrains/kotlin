@@ -139,7 +139,7 @@ class ExpressionsOfTypeProcessor(
         if (runReadAction { searchScope is GlobalSearchScope && !FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, searchScope) }) return
 
         // for class from library always use plain search because we cannot search usages in compiled code (we could though)
-        if (classToSearch == null || !runReadAction { classToSearch.isValid && ProjectRootsUtil.isInProjectSource(classToSearch) }) {
+        if (!runReadAction { classToSearch.isValid && ProjectRootsUtil.isInProjectSource(classToSearch) }) {
             possibleMatchesInScopeHandler(searchScope)
             return
         }

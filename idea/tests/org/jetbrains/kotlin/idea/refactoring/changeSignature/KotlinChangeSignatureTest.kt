@@ -157,7 +157,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
             val message = when {
                 e is BaseRefactoringProcessor.ConflictsInTestsException -> StringUtil.join(e.messages.sorted(), "\n")
                 e is CommonRefactoringUtil.RefactoringErrorHintException -> e.message
-                e is RuntimeException && e.message!!.startsWith("Refactoring cannot be performed") -> e.message
+                e.message!!.startsWith("Refactoring cannot be performed") -> e.message
                 else -> throw e
             }
             val conflictsFile = File(testDataPath + getTestName(false) + "Messages.txt")

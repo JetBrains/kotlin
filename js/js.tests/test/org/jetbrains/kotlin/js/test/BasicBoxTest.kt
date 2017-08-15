@@ -397,9 +397,7 @@ abstract class BasicBoxTest(
                 FileUtil.writeToFile(File(incrementalDir, "$i.$METADATA_EXTENSION"), packagePart.proto)
             }
 
-            incrementalService.headerMetadata?.let {
-                FileUtil.writeToFile(File(incrementalDir, HEADER_FILE), it)
-            }
+            FileUtil.writeToFile(File(incrementalDir, HEADER_FILE), incrementalService.headerMetadata)
         }
 
         processJsProgram(translationResult.program, units.filterIsInstance<TranslationUnit.SourceFile>().map { it.file })
