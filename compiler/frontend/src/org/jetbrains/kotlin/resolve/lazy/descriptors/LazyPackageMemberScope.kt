@@ -58,6 +58,9 @@ class LazyPackageMemberScope(
         c.lookupTracker.record(from, thisDescriptor, name)
     }
 
+    override fun getFunctionNames() = declarationProvider.getDeclarationNames()
+    override fun getVariableNames() = declarationProvider.getDeclarationNames()
+
     // Do not add details here, they may compromise the laziness during debugging
     override fun toString() = "lazy scope for package " + thisDescriptor.name
 }

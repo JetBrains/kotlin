@@ -41,4 +41,6 @@ open class DelegatePackageMemberDeclarationProvider(var delegate: PackageMemberD
     override fun getClassOrObjectDeclarations(name: Name) = delegate.getClassOrObjectDeclarations(name)
 
     override fun getTypeAliasDeclarations(name: Name) = delegate.getTypeAliasDeclarations(name)
+
+    override fun getDeclarationNames() = delegate.getDeclarationNames()
 }
