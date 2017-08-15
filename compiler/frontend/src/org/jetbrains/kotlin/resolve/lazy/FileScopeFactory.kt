@@ -177,6 +177,7 @@ class FileScopeFactory(
             parentScope: ImportingScope
     ): ImportingScope {
         val scope = packageView.memberScope
+        val names by lazy(LazyThreadSafetyMode.PUBLICATION) { scope.computeAllNames () }
         val packageName = packageView.fqName
         val excludedNames = aliasImportNames.mapNotNull { if (it.parent() == packageName) it.shortName() else null }
 
@@ -218,6 +219,12 @@ class FileScopeFactory(
             }
 
             override fun computeImportedNames() = packageView.memberScope.computeAllNames()
+
+            override fun definitelyDoesNotContainName(name: Name, location: LookupLocation): Boolean {
+                if (names?.let { name in it } != false) return false
+                packageView.memberScope.recordLookup(name, location)
+                return true
+            }
 
             override fun toString() = "Scope for current package (${filteringKind.name})"
 

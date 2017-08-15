@@ -41,4 +41,8 @@ interface ResolutionScope {
     ): Collection<DeclarationDescriptor>
 
     fun definitelyDoesNotContainName(name: Name, location: LookupLocation): Boolean = false
+
+    fun recordLookup(name: Name, location: LookupLocation) {
+        getContributedFunctions(name, location)
+    }
 }

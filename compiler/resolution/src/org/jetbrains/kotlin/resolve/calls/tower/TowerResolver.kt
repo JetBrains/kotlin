@@ -178,7 +178,7 @@ class TowerResolver {
                     }
                 }
             }
-            else {
+            else if (scope.mayFitForName(name, location)) {
                 // functions with no receiver or extension for explicit receiver
                 TowerData.TowerLevel(ImportingScopeBasedTowerLevel(this, scope as ImportingScope)).process()?.let { return it }
             }

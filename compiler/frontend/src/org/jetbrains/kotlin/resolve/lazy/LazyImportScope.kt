@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import java.util.*
 
 interface IndexedImports {
@@ -81,7 +82,7 @@ class LazyImportResolver(
         val indexedImports: IndexedImports,
         excludedImportNames: Collection<FqName>,
         private val traceForImportResolve: BindingTrace,
-        private val packageFragment: PackageFragmentDescriptor,
+        private val packageFragment: PackageFragmentDescriptor?,
         val deprecationResolver: DeprecationResolver
 ) : ImportResolver {
     private val importedScopesProvider = storageManager.createMemoizedFunctionWithNullableValues {
@@ -191,6 +192,18 @@ class LazyImportResolver(
     fun getImportScope(directive: KtImportDirective): ImportingScope {
         return importedScopesProvider(directive) ?: ImportingScope.Empty
     }
+
+    val allNames: Set<Name>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        indexedImports.imports.flatMapToNullable(hashSetOf()) { getImportScope(it).computeImportedNames() }
+    }
+
+    fun definitelyDoesNotContainName(name: Name, location: LookupLocation): Boolean {
+        if (allNames?.let { name in it } != false) return false
+        indexedImports.importsForName(name).forEach {
+            getImportScope(it).recordLookup(name, location)
+        }
+        return true
+    }
 }
 
 class LazyImportScope(
@@ -269,4 +282,7 @@ class LazyImportScope(
         p.popIndent()
         p.println("}")
     }
+
+    override fun definitelyDoesNotContainName(name: Name, location: LookupLocation) = importResolver.definitelyDoesNotContainName(name, location)
+    override fun computeImportedNames() = importResolver.allNames
 }

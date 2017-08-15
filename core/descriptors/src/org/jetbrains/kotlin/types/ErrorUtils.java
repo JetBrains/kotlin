@@ -217,6 +217,11 @@ public class ErrorUtils {
             return emptySet();
         }
 
+        @Override
+        public void recordLookup(@NotNull Name name, @NotNull LookupLocation location) {
+
+        }
+
         @NotNull
         @Override
         public Collection<DeclarationDescriptor> getContributedDescriptors(
@@ -292,6 +297,11 @@ public class ErrorUtils {
 
         @Override
         public Set<Name> getClassifierNames() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public void recordLookup(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException();
         }
 

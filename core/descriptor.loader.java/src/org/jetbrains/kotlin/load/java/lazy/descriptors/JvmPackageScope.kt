@@ -47,7 +47,7 @@ class JvmPackageScope(
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        recordLookup(location, name)
+        recordLookup(name, location)
 
         val javaClassifier = javaScope.getContributedClassifier(name, location)
         if (javaClassifier != null) return javaClassifier
@@ -56,12 +56,12 @@ class JvmPackageScope(
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        recordLookup(location, name)
+        recordLookup(name, location)
         return getFromAllScopes(javaScope, kotlinScopes) { it.getContributedVariables(name, location) }
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
-        recordLookup(location, name)
+        recordLookup(name, location)
         return getFromAllScopes(javaScope, kotlinScopes) { it.getContributedFunctions(name, location) }
     }
 
@@ -96,7 +96,7 @@ class JvmPackageScope(
         p.println("}")
     }
 
-    private fun recordLookup(location: LookupLocation, name: Name) {
+    override fun recordLookup(name: Name, location: LookupLocation) {
         c.components.lookupTracker.record(location, packageFragment, name)
     }
 }
