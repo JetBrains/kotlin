@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.config
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
@@ -83,13 +80,35 @@ class KotlinFacetSettings {
     var version = CURRENT_VERSION
     var useProjectSettings: Boolean = true
 
+    var mergedCompilerArguments: CommonCompilerArguments? = null
+        private set
+
+    // TODO: Workaround for unwanted facet settings modification on code analysis
+    // To be replaced with proper API for settings update (see BaseKotlinCompilerSettings as an example)
+    fun updateMergedArguments() {
+        val compilerArguments = compilerArguments
+        val compilerSettings = compilerSettings
+
+        mergedCompilerArguments = if (compilerArguments != null) {
+            copyBean(compilerArguments).apply {
+                if (compilerSettings != null) {
+                    parseCommandLineArguments(compilerSettings.additionalArgumentsAsList, this)
+                }
+            }
+        }
+        else null
+    }
+
     var compilerArguments: CommonCompilerArguments? = null
         set(value) {
             field = value?.unfrozen() as CommonCompilerArguments?
+            updateMergedArguments()
         }
+
     var compilerSettings: CompilerSettings? = null
         set(value) {
             field = value?.unfrozen() as CompilerSettings?
+            updateMergedArguments()
         }
 
     var languageLevel: LanguageVersion?

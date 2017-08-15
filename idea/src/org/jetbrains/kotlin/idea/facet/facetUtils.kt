@@ -238,5 +238,7 @@ fun parseCompilerArgumentsToFacet(
         with(compilerArguments::class.java.newInstance()) {
             copyFieldsSatisfying(this, compilerArguments) { exposeAsAdditionalArgument(it) || it.name in ignoredFields }
         }
+
+        updateMergedArguments()
     }
 }
