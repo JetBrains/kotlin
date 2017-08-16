@@ -18,5 +18,28 @@ fun box(): String {
 
     val instance = Test.Test1::class.java.newInstance() // Error
 
+    Demo.Foo::class.java.newInstance()
+    Demo.Free::class.java.newInstance()
+
+    A.Free::class.java.newInstance()
+
     return "OK"
+}
+
+@NoArg
+sealed class Demo(val name : String) {
+    @NoArg
+    class Free(name: String)
+
+    @NoArg
+    class Foo(name: String) : Demo(name)
+
+    @NoArg
+    class Bar(name: String) : Demo(name)
+}
+
+@NoArg
+abstract class A(val name: String) {
+    @NoArg
+    class Free(name: String) : A(name)
 }
