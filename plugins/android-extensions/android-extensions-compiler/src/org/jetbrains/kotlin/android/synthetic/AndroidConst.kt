@@ -28,9 +28,8 @@ object AndroidConst {
         list
     }
 
-    val ANDROID_NAMESPACE: String = "android"
+    val ANDROID_NAMESPACE: String = "http://schemas.android.com/apk/res/android"
     val ID_ATTRIBUTE_NO_NAMESPACE: String = "id"
-    val ID_ATTRIBUTE: String = "$ANDROID_NAMESPACE:$ID_ATTRIBUTE_NO_NAMESPACE"
     val CLASS_ATTRIBUTE_NO_NAMESPACE: String = "class"
 
     val IDENTIFIER_REGEX = "^@(\\+)?(([A-Za-z0-9_\\.]+)\\:)?id\\/([A-Za-z0-9_]+)$".toRegex()
