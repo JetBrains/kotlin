@@ -4,6 +4,7 @@ import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.uast.*
 import org.jetbrains.uast.test.env.findElementByText
 import org.junit.Assert
@@ -18,7 +19,11 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         doTest("AnnotationParameters") { _, file ->
             val annotation = file.findElementByText<UAnnotation>("@IntRange(from = 10, to = 0)")
             assertEquals(annotation.findAttributeValue("from")?.evaluate(), 10)
-            assertEquals(annotation.findAttributeValue("to")?.evaluate(), 0)
+            val toAttribute = annotation.findAttributeValue("to")!!
+            assertEquals(toAttribute.evaluate(), 0)
+            KtUsefulTestCase.assertInstanceOf(annotation.psi.toUElement(), UAnnotation::class.java)
+            KtUsefulTestCase.assertInstanceOf(toAttribute.uastParent, UNamedExpression::class.java)
+            KtUsefulTestCase.assertInstanceOf(toAttribute.psi.toUElement()?.uastParent, UNamedExpression::class.java)
         }
     }
 
