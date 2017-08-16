@@ -23,9 +23,9 @@ L2 [after local class]:
     r(x) -> <v2>                                                                                      USE: in: {length=READ} out: {length=READ, x=READ}
     r(length|<v2>) -> <v3>                                                                            USE: in: {} out: {length=READ}
 L1:
-  1 <END>                                                           INIT: in: {} out: {}
+  1 <END>                                                           INIT: in: {} out: {}              USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                                            USE: in: {} out: {}
+    <SINK>                                                          INIT: in: {} out: {}              USE: in: {} out: {}
 =====================

@@ -17,9 +17,9 @@ L0:
 L1:
     <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+-   <ERROR>                                    PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<END>]
 =====================
 == bar ==
 fun bar(i: Int) {
@@ -41,7 +41,7 @@ L0:
 L1:
   1 <END>                                         NEXT:[<SINK>]
 error:
-    <ERROR>                                       PREV:[]
+-   <ERROR>                                       PREV:[]
 sink:
-    <SINK>                                        PREV:[<ERROR>, <END>]
+    <SINK>                                        PREV:[<END>]
 =====================

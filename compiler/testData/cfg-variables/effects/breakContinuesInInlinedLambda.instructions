@@ -1,0 +1,276 @@
+== myRun ==
+inline fun <T> myRun(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T): T = block()
+---------------------
+L0:
+  1 <START>                                                                                         INIT: in: {} out: {}
+    v(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                                                   INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                                                INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>                                                                                                                                   USE: in: {} out: {}
+error:
+-   <ERROR>
+sink:
+    <SINK>                                                                                          INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {}
+=====================
+== getBoolean ==
+fun getBoolean(): Boolean = false
+---------------------
+L0:
+  1 <START>             INIT: in: {} out: {}
+    r(false) -> <v0>
+    ret(*|<v0>) L1
+L1:
+    <END>                                       USE: in: {} out: {}
+error:
+-   <ERROR>
+sink:
+    <SINK>              INIT: in: {} out: {}    USE: in: {} out: {}
+=====================
+== getBoolean ==
+fun getBoolean() = false
+---------------------
+L0:
+  1 <START>             INIT: in: {} out: {}
+    r(false) -> <v0>
+    ret(*|<v0>) L1
+L1:
+    <END>                                       USE: in: {} out: {}
+error:
+-   <ERROR>
+sink:
+    <SINK>              INIT: in: {} out: {}    USE: in: {} out: {}
+=====================
+== test ==
+fun test() {
+    val x: Int
+
+    if (getBoolean())
+        run {
+            while (getBoolean()) {
+                do {
+                    run {
+                        if (getBoolean()) {
+                            x = 42
+                        } else {
+                            x = 43
+                        }
+                    }
+                    break
+                } while (getBoolean())
+                run { x.inc() }
+                run { x = 42 }
+                break
+            }
+            x = 42
+        }
+    else
+        run {
+            x = 42
+        }
+
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                                                                                                                   INIT: in: {} out: {}            USE: in: {} out: {}
+  2 mark({ val x: Int if (getBoolean()) run { while (getBoolean()) { do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) run { x.inc() } run { x = 42 } break } x = 42 } else run { x = 42 } x.inc() })
+    v(val x: Int)                                                                                                                                                                                                                             INIT: in: {} out: {x=D}
+    mark(if (getBoolean()) run { while (getBoolean()) { do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) run { x.inc() } run { x = 42 } break } x = 42 } else run { x = 42 })                           INIT: in: {x=D} out: {x=D}
+    mark(getBoolean())
+    magic[UNRESOLVED_CALL](getBoolean()|!<v0>) -> <v1>
+    jf(L2|<v1>)
+    mark({ while (getBoolean()) { do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) run { x.inc() } run { x = 42 } break } x = 42 })
+    r({ while (getBoolean()) { do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) run { x.inc() } run { x = 42 } break } x = 42 }) -> <v2>
+    mark(run { while (getBoolean()) { do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) run { x.inc() } run { x = 42 } break } x = 42 })
+    call(run { while (getBoolean()) { do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) run { x.inc() } run { x = 42 } break } x = 42 }, run|<v2>) -> <v3>
+L3 [before inlined declaration]:
+    inlined({ while (getBoolean()) { do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) run { x.inc() } run { x = 42 } break } x = 42 })                                                                  INIT: in: {x=ID} out: {x=ID}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L4 [after inlined declaration]:
+    jmp(L31)                                                                                                                                                                                                                                                                  USE: in: {x=READ} out: {x=READ}
+L2 [else branch]:
+    mark({ x = 42 })                                                                                                                                                                                                                          INIT: in: {x=D} out: {x=D}
+    r({ x = 42 }) -> <v4>
+    mark(run { x = 42 })
+    call(run { x = 42 }, run|<v4>) -> <v5>
+L32 [before inlined declaration]:
+    inlined({ x = 42 })                                                                                                                                                                                                                       INIT: in: {x=ID} out: {x=ID}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L31 ['if' expression result]:
+L33 [after inlined declaration]:
+    merge(if (getBoolean()) run { while (getBoolean()) { do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) run { x.inc() } run { x = 42 } break } x = 42 } else run { x = 42 }|<v3>, <v5>) -> <v6>
+    mark(x.inc())                                                                                                                                                                                                                                                             USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v7>                                                                                                                                                                                                                                                              USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v7>) -> <v8>
+L1:
+  1 <END>                                                                                                                                                                                                                                     INIT: in: {} out: {}            USE: in: {} out: {}
+error:
+-   <ERROR>
+sink:
+    <SINK>                                                                                                                                                                                                                                    INIT: in: {} out: {}            USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{
+            while (getBoolean()) {
+                do {
+                    run {
+                        if (getBoolean()) {
+                            x = 42
+                        } else {
+                            x = 43
+                        }
+                    }
+                    break
+                } while (getBoolean())
+                run { x.inc() }
+                run { x = 42 }
+                break
+            }
+            x = 42
+        }
+---------------------
+L5:
+  3 <START>                                                                                                                                                              INIT: in: {x=D} out: {x=D}
+  4 mark(while (getBoolean()) { do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) run { x.inc() } run { x = 42 } break } x = 42)
+L7 [loop entry point]:
+L11 [condition entry point]:
+    mark(getBoolean())
+    magic[UNRESOLVED_CALL](getBoolean()|!<v0>) -> <v1>
+    mark(while (getBoolean()) { do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) run { x.inc() } run { x = 42 } break })
+    jf(L8|<v1>)
+L9 [body entry point]:
+  5 mark({ do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) run { x.inc() } run { x = 42 } break })
+  6 mark(do { run { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()))
+L12 [loop entry point]:
+L14 [body entry point]:
+    mark({ run { if (getBoolean()) { x = 42 } else { x = 43 } } break })
+    mark({ if (getBoolean()) { x = 42 } else { x = 43 } })
+    r({ if (getBoolean()) { x = 42 } else { x = 43 } }) -> <v2>
+    mark(run { if (getBoolean()) { x = 42 } else { x = 43 } })
+    call(run { if (getBoolean()) { x = 42 } else { x = 43 } }, run|<v2>) -> <v3>
+L17 [before inlined declaration]:
+    inlined({ if (getBoolean()) { x = 42 } else { x = 43 } })                                                                                                            INIT: in: {x=ID} out: {x=ID}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L18 [after inlined declaration]:
+    jmp(L13)                                                                                                                                                                                               USE: in: {x=READ} out: {x=READ}
+L15 [body exit point]:
+L16 [condition entry point]:
+-   mark(getBoolean())
+-   magic[UNRESOLVED_CALL](getBoolean()|!<v5>) -> <v6>
+- 5 jt(L12|<v6>)
+L13 [loop exit point]:
+    read (Unit)                                                                                                                                                          INIT: in: {x=ID} out: {x=ID}
+    mark({ x.inc() })
+    r({ x.inc() }) -> <v7>
+    mark(run { x.inc() })
+    call(run { x.inc() }, run|<v7>) -> <v8>
+L23 [before inlined declaration]:
+    inlined({ x.inc() })                                                                                                                                                                                   USE: in: {x=READ} out: {x=READ}
+L24 [after inlined declaration]:
+    mark({ x = 42 })
+    r({ x = 42 }) -> <v9>
+    mark(run { x = 42 })
+    call(run { x = 42 }, run|<v9>) -> <v10>
+L27 [before inlined declaration]:
+    inlined({ x = 42 })
+L28 [after inlined declaration]:
+    jmp(L8)                                                                                                                                                                                                USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+- 4 jmp(L7)
+L8 [loop exit point]:
+L10 [body exit point]:
+    read (Unit)                                                                                                                                                          INIT: in: {x=I?D} out: {x=I?D}
+    r(42) -> <v12>                                                                                                                                                                                         USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v12>)                                                                                                                                                           INIT: in: {x=I?D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L6:
+  3 <END>                                                                                                                                                                INIT: in: {x=ID} out: {x=ID}      USE: in: {x=READ} out: {x=READ}
+error:
+-   <ERROR>
+sink:
+    <SINK>                                                                                                                                                               INIT: in: {x=ID} out: {x=ID}      USE: in: {x=READ} out: {x=READ}
+=====================
+== anonymous_1 ==
+{
+                        if (getBoolean()) {
+                            x = 42
+                        } else {
+                            x = 43
+                        }
+                    }
+---------------------
+L19:
+  7 <START>                                                                     INIT: in: {x=D} out: {x=D}
+  8 mark(if (getBoolean()) { x = 42 } else { x = 43 })
+    mark(if (getBoolean()) { x = 42 } else { x = 43 })
+    mark(getBoolean())
+    magic[UNRESOLVED_CALL](getBoolean()|!<v0>) -> <v1>
+    jf(L21|<v1>)
+  9 mark({ x = 42 })
+    r(42) -> <v2>                                                                                               USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v2>)                                                                   INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+  8 jmp(L22)                                                                    INIT: in: {x=ID} out: {x=ID}    USE: in: {x=READ} out: {x=READ}
+L21 [else branch]:
+  9 mark({ x = 43 })                                                            INIT: in: {x=D} out: {x=D}
+    r(43) -> <v4>                                                                                               USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v4>)                                                                   INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L22 ['if' expression result]:
+  8 merge(if (getBoolean()) { x = 42 } else { x = 43 }|!<v3>, !<v5>) -> <v6>    INIT: in: {x=ID} out: {x=ID}
+L20:
+  7 <END>                                                                                                       USE: in: {x=READ} out: {x=READ}
+error:
+-   <ERROR>
+sink:
+    <SINK>                                                                      INIT: in: {x=ID} out: {x=ID}    USE: in: {x=READ} out: {x=READ}
+=====================
+== anonymous_2 ==
+{ x.inc() }
+---------------------
+L25:
+  6 <START>                          INIT: in: {x=ID} out: {x=ID}
+  7 mark(x.inc())
+    mark(x.inc())                                                    USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v0>                                                     USE: in: {x=WRITTEN_AFTER_READ} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v0>) -> <v1>
+  6 ret(*|<v1>) L26
+L26:
+    <END>                                                            USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+error:
+-   <ERROR>
+sink:
+    <SINK>                           INIT: in: {x=ID} out: {x=ID}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+=====================
+== anonymous_3 ==
+{ x = 42 }
+---------------------
+L29:
+  6 <START>          INIT: in: {x=ID} out: {x=ID}
+  7 mark(x = 42)
+    r(42) -> <v0>
+    w(x|<v0>)
+L30:
+  6 <END>                                            USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+error:
+-   <ERROR>
+sink:
+    <SINK>           INIT: in: {x=ID} out: {x=ID}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+=====================
+== anonymous_4 ==
+{
+            x = 42
+        }
+---------------------
+L34:
+  3 <START>          INIT: in: {x=D} out: {x=D}
+  4 mark(x = 42)
+    r(42) -> <v0>                                    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L35:
+  3 <END>            INIT: in: {x=ID} out: {x=ID}    USE: in: {x=READ} out: {x=READ}
+error:
+-   <ERROR>
+sink:
+    <SINK>           INIT: in: {x=ID} out: {x=ID}    USE: in: {x=READ} out: {x=READ}
+=====================

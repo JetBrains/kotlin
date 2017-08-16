@@ -1,0 +1,7 @@
+package
+
+public fun definiteVarInitialization(): kotlin.Unit
+public fun definiteVarReassignment(): kotlin.Unit
+public fun myRun(/*0*/ @kotlin.internal.CalledInPlace(count = InvocationCount.EXACTLY_ONCE) block: () -> kotlin.Unit): kotlin.Unit
+public fun nestedVarInitialization(): kotlin.Unit
+public fun notAnExpression(): kotlin.Unit

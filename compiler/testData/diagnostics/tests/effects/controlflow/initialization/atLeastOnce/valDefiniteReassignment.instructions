@@ -1,0 +1,359 @@
+== runTwice ==
+fun <T> runTwice(@CalledInPlace(InvocationCount.AT_LEAST_ONCE) block: () -> T): T {
+    block()
+    return block();
+}
+---------------------
+L0:
+  1 <START>                                                                                          INIT: in: {} out: {}
+    v(@CalledInPlace(InvocationCount.AT_LEAST_ONCE) block: () -> T)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.AT_LEAST_ONCE) block: () -> T) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                                                    INIT: in: {block=D} out: {block=ID}
+  2 mark({ block() return block(); })                                                                INIT: in: {block=ID} out: {block=ID}
+    r(block) -> <v1>
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>                                                                                                       USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v3>                                                                                                                         USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v3>) -> <v4>
+    ret(*|<v4>) L1
+L1:
+  1 <END>
+error:
+    <ERROR>                                                                                          INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                           INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== runOnce ==
+fun <T> runOnce(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T): T {
+    block()
+    return block();
+}
+---------------------
+L0:
+  1 <START>                                                                                         INIT: in: {} out: {}
+    v(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                                                   INIT: in: {block=D} out: {block=ID}
+  2 mark({ block() return block(); })                                                               INIT: in: {block=ID} out: {block=ID}
+    r(block) -> <v1>
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>                                                                                                      USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v3>                                                                                                                        USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v3>) -> <v4>
+    ret(*|<v4>) L1
+L1:
+  1 <END>
+error:
+    <ERROR>                                                                                         INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                          INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== valueReassignment ==
+fun valueReassignment() {
+    val x: Int
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+    runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                         INIT: in: {} out: {}            USE: in: {} out: {}
+  2 mark({ val x: Int <!UNINITIALIZED_VARIABLE!>x<!>.inc() runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } x.inc() })
+    v(val x: Int <!)                                                                                                INIT: in: {} out: {x=D}
+    mark({ <!VAL_REASSIGNMENT!>x<!> = 42 })                                                                         INIT: in: {x=D} out: {x=D}
+    mark(runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 })
+    call(runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 }, runTwice|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ <!VAL_REASSIGNMENT!>x<!> = 42 })                                                                      INIT: in: {x=I?} out: {x=I?}
+    jmp?(L2)
+L3 [after inlined lambda]:
+    r({ <!VAL_REASSIGNMENT!>x<!> = 42 }) -> <v2>
+    mark(x.inc())                                                                                                                                   USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v3>                                                                                                                                    USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), <ERROR FUNCTION>|<v3>) -> <v4>
+L1:
+  1 <END>                                                                                                           INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                          USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{ <!VAL_REASSIGNMENT!>x<!> = 42 }
+---------------------
+L4:
+  3 <START>                                                   INIT: in: {x=I?} out: {x=I?}
+  4 mark(<!VAL_REASSIGNMENT!>x<!> = 42)
+    magic[UNRESOLVED_CALL](VAL_REASSIGNMENT) -> <v0>
+    mark(!VAL_REASSIGNMENT)
+    call(!VAL_REASSIGNMENT, <ERROR FUNCTION>|<v0>) -> <v1>
+  3 ret(*|<v1>) L5
+L5:
+    <END>
+error:
+    <ERROR>                                                   INIT: in: {} out: {}
+sink:
+    <SINK>                                                    INIT: in: {x=I?} out: {x=I?}    USE: in: {x=READ} out: {x=READ}
+=====================
+== shadowing ==
+fun shadowing() {
+    val x: Int
+    runTwice { val <!NAME_SHADOWING!>x<!>: Int; x = 42; x.inc() }
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                                    INIT: in: {} out: {}          USE: in: {} out: {}
+  2 mark({ val x: Int runTwice { val <!NAME_SHADOWING!>x<!>: Int; x = 42; x.inc() } <!UNINITIALIZED_VARIABLE!>x<!>.inc() })
+    v(val x: Int)                                                                                                              INIT: in: {} out: {x=D}
+    mark({ val <!NAME_SHADOWING!>x<!>: Int; x = 42; x.inc() })                                                                 INIT: in: {x=D} out: {x=D}
+    mark(runTwice { val <!NAME_SHADOWING!>x<!>: Int; x = 42; x.inc() })
+    call(runTwice { val <!NAME_SHADOWING!>x<!>: Int; x = 42; x.inc() }, runTwice|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ val <!NAME_SHADOWING!>x<!>: Int; x = 42; x.inc() })                                                              INIT: in: {x=I} out: {x=I}
+    jmp?(L2)                                                                                                                                                 USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L3 [after inlined lambda]:
+    r({ val <!NAME_SHADOWING!>x<!>: Int; x = 42; x.inc() }) -> <v2>
+    magic[UNRESOLVED_CALL](UNINITIALIZED_VARIABLE) -> <v3>
+    mark(!UNINITIALIZED_VARIABLE)
+    call(!UNINITIALIZED_VARIABLE, <ERROR FUNCTION>|<v3>) -> <v4>
+L1:
+  1 <END>                                                                                                                      INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                                   USE: in: {} out: {}
+=====================
+== anonymous_1 ==
+{ val <!NAME_SHADOWING!>x<!>: Int; x = 42; x.inc() }
+---------------------
+L4:
+  3 <START>                                                   INIT: in: {x=I?} out: {x=I?}
+  4 mark(val <!NAME_SHADOWING!>x<!>: Int; x = 42; x.inc())
+    v(val <!NAME_SHADOWING)                                   INIT: in: {x=I?} out: {NAME_SHADOWING=D, x=I?}
+    r(42) -> <v0>                                             INIT: in: {NAME_SHADOWING=D, x=I?} out: {NAME_SHADOWING=D, x=I?}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)                                                 INIT: in: {NAME_SHADOWING=D, x=I?} out: {NAME_SHADOWING=D, x=I}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+    mark(x.inc())                                             INIT: in: {NAME_SHADOWING=D, x=I} out: {NAME_SHADOWING=D, x=I}      USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v1>                                                                                                                  USE: in: {x=WRITTEN_AFTER_READ} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v1>) -> <v2>
+  3 ret(*|<v2>) L5                                            INIT: in: {x=I} out: {x=I}
+L5:
+    <END>
+error:
+    <ERROR>                                                   INIT: in: {} out: {}
+sink:
+    <SINK>                                                    INIT: in: {x=I} out: {x=I}                                          USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+=====================
+== branchingFlow ==
+fun branchingFlow(a: Any?) {
+    val x: Int
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+    if (a is String) {
+        runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 }
+    } else {
+        x = 43
+    }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                              INIT: in: {} out: {}
+    v(a: Any?)                                                                                                                                           INIT: in: {} out: {a=D}
+    magic[FAKE_INITIALIZER](a: Any?) -> <v0>                                                                                                             INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                                                                                                                                            INIT: in: {a=D} out: {a=ID}                USE: in: {a=READ} out: {a=READ}
+  2 mark({ val x: Int <!UNINITIALIZED_VARIABLE!>x<!>.inc() if (a is String) { runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } } else { x = 43 } x.inc() })    INIT: in: {a=ID} out: {a=ID}
+    v(val x: Int <!)                                                                                                                                     INIT: in: {a=ID} out: {a=ID, x=D}
+    mark(if (a is String) { runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } } else { x = 43 })                                                                INIT: in: {a=ID, x=D} out: {a=ID, x=D}
+    mark(a is String)                                                                                                                                                                               USE: in: {a=READ, x=READ} out: {a=READ, x=READ}
+    r(a) -> <v1>                                                                                                                                                                                    USE: in: {x=READ} out: {a=READ, x=READ}
+    magic[IS](a is String|<v1>) -> <v2>
+    jf(L2|<v2>)
+  3 mark({ runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } })
+    mark({ <!VAL_REASSIGNMENT!>x<!> = 42 })
+    mark(runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 })
+    call(runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 }, runTwice|!<v3>) -> <v4>
+L3 [before inlined lambda]:
+    inlined({ <!VAL_REASSIGNMENT!>x<!> = 42 })                                                                                                           INIT: in: {a=I, x=I?} out: {a=I, x=I?}
+    jmp?(L3)
+L4 [after inlined lambda]:
+    r({ <!VAL_REASSIGNMENT!>x<!> = 42 }) -> <v5>
+  2 jmp(L7)                                                                                                                                                                                         USE: in: {x=READ} out: {x=READ}
+L2 [else branch]:
+  3 mark({ x = 43 })                                                                                                                                     INIT: in: {a=ID, x=D} out: {a=ID, x=D}
+    r(43) -> <v6>                                                                                                                                                                                   USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v6>)                                                                                                                                            INIT: in: {a=ID, x=D} out: {a=ID, x=ID}    USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L7 ['if' expression result]:
+  2 merge(if (a is String) { runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } } else { x = 43 }|<v4>, !<v7>) -> <v8>                                           INIT: in: {a=I, x=I?} out: {a=I, x=I?}
+    mark(x.inc())                                                                                                                                                                                   USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v9>                                                                                                                                                                                    USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), <ERROR FUNCTION>|<v9>) -> <v10>
+L1:
+  1 <END>                                                                                                                                                INIT: in: {a=I} out: {a=I}
+error:
+    <ERROR>                                                                                                                                              INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                                                                               INIT: in: {a=I?} out: {a=I?}               USE: in: {} out: {}
+=====================
+== anonymous_2 ==
+{ <!VAL_REASSIGNMENT!>x<!> = 42 }
+---------------------
+L5:
+  4 <START>                                                   INIT: in: {a=I, x=I?} out: {a=I, x=I?}
+  5 mark(<!VAL_REASSIGNMENT!>x<!> = 42)
+    magic[UNRESOLVED_CALL](VAL_REASSIGNMENT) -> <v0>
+    mark(!VAL_REASSIGNMENT)
+    call(!VAL_REASSIGNMENT, <ERROR FUNCTION>|<v0>) -> <v1>
+  4 ret(*|<v1>) L6
+L6:
+    <END>
+error:
+    <ERROR>                                                   INIT: in: {} out: {}
+sink:
+    <SINK>                                                    INIT: in: {a=I, x=I?} out: {a=I, x=I?}    USE: in: {x=READ} out: {x=READ}
+=====================
+== branchingFlowWithMissingBranches ==
+fun branchingFlowWithMissingBranches(a: Any?) {
+    val x: Int
+    if (a is String) {
+        runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 }
+    }
+
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                                      INIT: in: {} out: {}
+    v(a: Any?)                                                                                                                   INIT: in: {} out: {a=D}
+    magic[FAKE_INITIALIZER](a: Any?) -> <v0>                                                                                     INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                                                                                                                    INIT: in: {a=D} out: {a=ID}
+  2 mark({ val x: Int if (a is String) { runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } } <!UNINITIALIZED_VARIABLE!>x<!>.inc() })    INIT: in: {a=ID} out: {a=ID}
+    v(val x: Int)                                                                                                                INIT: in: {a=ID} out: {a=ID, x=D}
+    mark(if (a is String) { runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } })                                                        INIT: in: {a=ID, x=D} out: {a=ID, x=D}
+    mark(a is String)                                                                                                                                                      USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v1>                                                                                                                                                           USE: in: {} out: {a=READ}
+    magic[IS](a is String|<v1>) -> <v2>
+    jf(L2|<v2>)
+  3 mark({ runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } })
+    mark({ <!VAL_REASSIGNMENT!>x<!> = 42 })
+    mark(runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 })
+    call(runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 }, runTwice|!<v3>) -> <v4>
+L3 [before inlined lambda]:
+    inlined({ <!VAL_REASSIGNMENT!>x<!> = 42 })                                                                                   INIT: in: {a=I, x=I?} out: {a=I, x=I?}
+    jmp?(L3)
+L4 [after inlined lambda]:
+    r({ <!VAL_REASSIGNMENT!>x<!> = 42 }) -> <v5>
+  2 jmp(L7)
+L2 [else branch]:
+    read (Unit)                                                                                                                  INIT: in: {a=ID, x=D} out: {a=ID, x=D}
+L7 ['if' expression result]:
+    merge(if (a is String) { runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } }|<v4>) -> <v6>                                          INIT: in: {a=I, x=I?} out: {a=I, x=I?}
+    magic[UNRESOLVED_CALL](UNINITIALIZED_VARIABLE) -> <v7>
+    mark(!UNINITIALIZED_VARIABLE)
+    call(!UNINITIALIZED_VARIABLE, <ERROR FUNCTION>|<v7>) -> <v8>
+L1:
+  1 <END>                                                                                                                        INIT: in: {a=I} out: {a=I}
+error:
+    <ERROR>                                                                                                                      INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                                                       INIT: in: {a=I?} out: {a=I?}              USE: in: {} out: {}
+=====================
+== anonymous_3 ==
+{ <!VAL_REASSIGNMENT!>x<!> = 42 }
+---------------------
+L5:
+  4 <START>                                                   INIT: in: {a=I, x=I?} out: {a=I, x=I?}
+  5 mark(<!VAL_REASSIGNMENT!>x<!> = 42)
+    magic[UNRESOLVED_CALL](VAL_REASSIGNMENT) -> <v0>
+    mark(!VAL_REASSIGNMENT)
+    call(!VAL_REASSIGNMENT, <ERROR FUNCTION>|<v0>) -> <v1>
+  4 ret(*|<v1>) L6
+L6:
+    <END>
+error:
+    <ERROR>                                                   INIT: in: {} out: {}
+sink:
+    <SINK>                                                    INIT: in: {a=I, x=I?} out: {a=I, x=I?}    USE: in: {} out: {}
+=====================
+== repeatingFlow ==
+fun repeatingFlow(n: Int) {
+    val x: Int
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+
+    for (i in 1..n) {
+        runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 }
+    }
+
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                                             INIT: in: {} out: {}
+    v(n: Int)                                                                                                                           INIT: in: {} out: {n=D}
+    magic[FAKE_INITIALIZER](n: Int) -> <v0>                                                                                             INIT: in: {n=D} out: {n=D}
+    w(n|<v0>)                                                                                                                           INIT: in: {n=D} out: {n=ID}                           USE: in: {n=READ} out: {n=READ}
+  2 mark({ val x: Int <!UNINITIALIZED_VARIABLE!>x<!>.inc() for (i in 1..n) { runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } } x.inc() })    INIT: in: {n=ID} out: {n=ID}
+    v(val x: Int <!)                                                                                                                    INIT: in: {n=ID} out: {n=ID, x=D}
+  3 r(1) -> <v1>                                                                                                                        INIT: in: {n=ID, x=D} out: {n=ID, x=D}                USE: in: {n=READ, x=READ} out: {n=READ, x=READ}
+    r(n) -> <v2>                                                                                                                                                                              USE: in: {x=READ} out: {n=READ, x=READ}
+    mark(1..n)
+    call(1..n, rangeTo|<v1>, <v2>) -> <v3>
+    mark(1..n)
+    call(1..n, iterator|<v3>) -> <v4>
+    v(i)                                                                                                                                INIT: in: {n=ID, x=D} out: {i=D, n=ID, x=D}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    mark(1..n)                                                                                                                          INIT: in: {i=I?, n=I, x=I?} out: {i=I?, n=I, x=I?}
+    call(1..n, hasNext) -> <v5>
+    jmp?(L3)
+    mark(1..n)
+    call(1..n, next) -> <v6>
+    magic[LOOP_RANGE_ITERATION](1..n|<v6>) -> <v7>
+    w(i|<v7>)                                                                                                                           INIT: in: {i=I?, n=I, x=I?} out: {i=I, n=I, x=I?}
+    mark(for (i in 1..n) { runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } })                                                                INIT: in: {i=I, n=I, x=I?} out: {i=I, n=I, x=I?}
+L4 [body entry point]:
+  4 mark({ runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 } })
+    mark({ <!VAL_REASSIGNMENT!>x<!> = 42 })
+    mark(runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 })
+    call(runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 }, runTwice|!<v8>) -> <v9>
+L7 [before inlined lambda]:
+    inlined({ <!VAL_REASSIGNMENT!>x<!> = 42 })
+    jmp?(L7)
+L8 [after inlined lambda]:
+    r({ <!VAL_REASSIGNMENT!>x<!> = 42 }) -> <v10>
+  3 jmp(L2)
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                                                                                                         INIT: in: {i=I?, n=I, x=I?} out: {i=I?, n=I, x=I?}
+  2 mark(x.inc())                                                                                                                       INIT: in: {n=I, x=I?} out: {n=I, x=I?}                USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v11>                                                                                                                                                                             USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), <ERROR FUNCTION>|<v11>) -> <v12>
+L1:
+  1 <END>                                                                                                                               INIT: in: {n=I} out: {n=I}
+error:
+    <ERROR>                                                                                                                             INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                                                              INIT: in: {n=I?} out: {n=I?}                          USE: in: {} out: {}
+=====================
+== anonymous_4 ==
+{ <!VAL_REASSIGNMENT!>x<!> = 42 }
+---------------------
+L9:
+  5 <START>                                                   INIT: in: {i=I, n=I, x=I?} out: {i=I, n=I, x=I?}
+  6 mark(<!VAL_REASSIGNMENT!>x<!> = 42)
+    magic[UNRESOLVED_CALL](VAL_REASSIGNMENT) -> <v0>
+    mark(!VAL_REASSIGNMENT)
+    call(!VAL_REASSIGNMENT, <ERROR FUNCTION>|<v0>) -> <v1>
+  5 ret(*|<v1>) L10
+L10:
+    <END>
+error:
+    <ERROR>                                                   INIT: in: {} out: {}
+sink:
+    <SINK>                                                    INIT: in: {i=I, n=I, x=I?} out: {i=I, n=I, x=I?}    USE: in: {x=READ} out: {x=READ}
+=====================

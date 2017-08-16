@@ -31,7 +31,7 @@ L3 [afterCatches]:
 L1:
   1 <END>                                                                        NEXT:[<SINK>]                                                                       PREV:[ret(*|<v0>) L1, merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v3>) -> <v4>]
 error:
-    <ERROR>                                                                      PREV:[]
+-   <ERROR>                                                                      PREV:[]
 sink:
-    <SINK>                                                                       PREV:[<ERROR>, <END>]
+    <SINK>                                                                       PREV:[<END>]
 =====================

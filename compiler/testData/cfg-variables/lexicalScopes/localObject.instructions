@@ -29,11 +29,11 @@ L3 [after local declaration]:
     mark("after")
     r("after") -> <v2>
 L1:
-  1 <END>
+  1 <END>                                                                                                                USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                                                               USE: in: {} out: {}
+    <SINK>                                                                                INIT: in: {} out: {}           USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {
@@ -47,9 +47,9 @@ L4:
     r(2) -> <v0>           INIT: in: {b=D} out: {b=D}
     w(b|<v0>)              INIT: in: {b=D} out: {b=ID}
 L5:
-  3 <END>                  INIT: in: {} out: {}
+  3 <END>                  INIT: in: {} out: {}           USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                USE: in: {} out: {}
+    <SINK>                 INIT: in: {} out: {}           USE: in: {} out: {}
 =====================

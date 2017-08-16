@@ -9,9 +9,9 @@ L0:
 L1:
     <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+-   <ERROR>                                    PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<END>]
 =====================
 == A ==
 class A(val w: Char, u: Int = 2) : B(w.toInt() + u) {
@@ -84,9 +84,9 @@ L2 [after default value for parameter u]:
 L1:
   1 <END>                                           NEXT:[<SINK>]
 error:
-    <ERROR>                                         PREV:[]
+-   <ERROR>                                         PREV:[]
 sink:
-    <SINK>                                          PREV:[<ERROR>, <END>]
+    <SINK>                                          PREV:[<END>]
 =====================
 == A ==
 constructor(): this('a') {
@@ -105,9 +105,9 @@ L0:
 L1:
   1 <END>                                   NEXT:[<SINK>]
 error:
-    <ERROR>                                 PREV:[]
+-   <ERROR>                                 PREV:[]
 sink:
-    <SINK>                                  PREV:[<ERROR>, <END>]
+    <SINK>                                  PREV:[<END>]
 =====================
 == A ==
 constructor(a: Int, b: Int = 3): this(b.toChar()) {
@@ -140,7 +140,7 @@ L2 [after default value for parameter b]:
 L1:
   1 <END>                                          NEXT:[<SINK>]
 error:
-    <ERROR>                                        PREV:[]
+-   <ERROR>                                        PREV:[]
 sink:
-    <SINK>                                         PREV:[<ERROR>, <END>]
+    <SINK>                                         PREV:[<END>]
 =====================

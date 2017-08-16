@@ -1,0 +1,112 @@
+== myRun ==
+fun <T> myRun(@CalledInPlace block: () -> T): T = block()
+---------------------
+L0:
+  1 <START>                                                           INIT: in: {} out: {}
+    v(@CalledInPlace block: () -> T)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace block: () -> T) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                     INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                  INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                                           INIT: in: {} out: {}
+sink:
+    <SINK>                                                            INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== functionWithSideEffects ==
+fun functionWithSideEffects(x: Int): Int = x + 1 // ...and some other useful side-effects
+---------------------
+L0:
+  1 <START>                                    INIT: in: {} out: {}
+    v(x: Int)                                  INIT: in: {} out: {x=D}
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>    INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                                  INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v1>                               INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {x=READ}
+    r(1) -> <v2>
+    mark(x + 1)
+    call(x + 1, plus|<v1>, <v2>) -> <v3>
+    ret(*|<v3>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                    INIT: in: {} out: {}
+sink:
+    <SINK>                                     INIT: in: {x=I?} out: {x=I?}    USE: in: {} out: {}
+=====================
+== log ==
+fun log(s: String) = Unit // some logging or println or whatever returning Unit
+---------------------
+L0:
+  1 <START>                                       INIT: in: {} out: {}
+    v(s: String)                                  INIT: in: {} out: {s=D}
+    magic[FAKE_INITIALIZER](s: String) -> <v0>    INIT: in: {s=D} out: {s=D}
+    w(s|<v0>)                                     INIT: in: {s=D} out: {s=ID}     USE: in: {Unit=READ} out: {Unit=READ}
+    r(Unit) -> <v1>                               INIT: in: {s=ID} out: {s=ID}    USE: in: {} out: {Unit=READ}
+    ret(*|<v1>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                       INIT: in: {} out: {}
+sink:
+    <SINK>                                        INIT: in: {s=I?} out: {s=I?}    USE: in: {} out: {}
+=====================
+== implicitCastWithIf ==
+fun implicitCastWithIf(s: String) {
+    myRun { if (s == "") functionWithSideEffects(42) else log(s) }
+}
+---------------------
+L0:
+  1 <START>                                                                                     INIT: in: {} out: {}
+    v(s: String)                                                                                INIT: in: {} out: {s=D}
+    magic[FAKE_INITIALIZER](s: String) -> <v0>                                                  INIT: in: {s=D} out: {s=D}
+    w(s|<v0>)                                                                                   INIT: in: {s=D} out: {s=ID}
+  2 mark({ myRun { if (s == "") functionWithSideEffects(42) else log(s) } })                    INIT: in: {s=ID} out: {s=ID}
+    mark({ if (s == "") functionWithSideEffects(42) else log(s) })
+    jmp?(L2)
+    d({ if (s == "") functionWithSideEffects(42) else log(s) })                                 INIT: in: {s=I} out: {s=I}      USE: in: {s=READ} out: {s=READ}
+L2 [after local declaration]:
+    r({ if (s == "") functionWithSideEffects(42) else log(s) }) -> <v1>                         INIT: in: {s=ID} out: {s=ID}
+    mark(myRun { if (s == "") functionWithSideEffects(42) else log(s) })
+    call(myRun { if (s == "") functionWithSideEffects(42) else log(s) }, myRun|<v1>) -> <v2>
+L1:
+  1 <END>
+error:
+    <ERROR>                                                                                     INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                      INIT: in: {s=I?} out: {s=I?}    USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{ if (s == "") functionWithSideEffects(42) else log(s) }
+---------------------
+L3:
+  3 <START>                                                                           INIT: in: {s=ID} out: {s=ID}
+  4 mark(if (s == "") functionWithSideEffects(42) else log(s))
+    mark(if (s == "") functionWithSideEffects(42) else log(s))
+    r(s) -> <v0>
+    mark("")
+    r("") -> <v1>
+    mark(s == "")
+    call(s == "", equals|<v0>, <v1>) -> <v2>
+    jf(L5|<v2>)                                                                                                       USE: in: {s=READ} out: {s=READ}
+    r(42) -> <v3>
+    mark(functionWithSideEffects(42))
+    call(functionWithSideEffects(42), functionWithSideEffects|<v3>) -> <v4>
+    jmp(L6)                                                                                                           USE: in: {} out: {}
+L5 [else branch]:
+    r(s) -> <v5>                                                                                                      USE: in: {} out: {s=READ}
+    mark(log(s))
+    call(log(s), log|<v5>) -> <v6>
+L6 ['if' expression result]:
+    merge(if (s == "") functionWithSideEffects(42) else log(s)|<v4>, <v6>) -> <v7>
+  3 ret(*|<v7>) L4
+L4:
+    <END>
+error:
+    <ERROR>                                                                           INIT: in: {} out: {}
+sink:
+    <SINK>                                                                            INIT: in: {s=I} out: {s=I}      USE: in: {} out: {}
+=====================

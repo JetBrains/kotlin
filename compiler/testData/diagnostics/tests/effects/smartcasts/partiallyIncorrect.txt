@@ -1,0 +1,4 @@
+package
+
+public fun incorrectPartDoesntMatter(/*0*/ x: kotlin.Any?): kotlin.Unit
+@kotlin.internal.Returns(value = ConstantValue.TRUE) public fun isString(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?): kotlin.Boolean

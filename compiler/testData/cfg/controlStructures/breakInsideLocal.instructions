@@ -39,11 +39,11 @@ L3 [loop exit point]:
 L5 [body exit point]:
 -   read (Unit)                                                                                                                          PREV:[]
 L1:
-  1 <END>                                                                                                                                NEXT:[<SINK>]                                                                                                                               PREV:[]
+- 1 <END>                                                                                                                                NEXT:[<SINK>]                                                                                                                               PREV:[]
 error:
-    <ERROR>                                                                                                                              PREV:[]
+-   <ERROR>                                                                                                                              PREV:[]
 sink:
-    <SINK>                                                                                                                               PREV:[<ERROR>, <END>, d(fun foo() { break })]
+    <SINK>                                                                                                                               PREV:[d(fun foo() { break })]
 =====================
 == foo ==
 fun foo() {
@@ -56,7 +56,7 @@ L9:
 L10:
   4 <END>              NEXT:[<SINK>]
 error:
-    <ERROR>            PREV:[]
+-   <ERROR>            PREV:[]
 sink:
-    <SINK>             PREV:[<ERROR>, <END>]
+    <SINK>             PREV:[<END>]
 =====================

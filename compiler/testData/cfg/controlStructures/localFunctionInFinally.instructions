@@ -45,9 +45,9 @@ L10 [copy of L5, after local declaration]:
 L1:
   1 <END>                                                                   NEXT:[<SINK>]                                                                 PREV:[ret(*|<v3>) L1, ret(*|<v3>) L1]
 error:
-    <ERROR>                                                                 PREV:[]
+-   <ERROR>                                                                 PREV:[]
 sink:
-    <SINK>                                                                  PREV:[<ERROR>, <END>, d(fun bar() {}), d(fun bar() {})]
+    <SINK>                                                                  PREV:[<END>, d(fun bar() {}), d(fun bar() {})]
 =====================
 == bar ==
 fun bar() {}
@@ -59,9 +59,9 @@ L6:
 L7:
   4 <END>          NEXT:[<SINK>]
 error:
-    <ERROR>        PREV:[]
+-   <ERROR>        PREV:[]
 sink:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<END>]
 =====================
 == bar ==
 fun bar() {}
@@ -73,7 +73,7 @@ L2 [copy of L6, null]:
 L3 [copy of L7, null]:
   4 <END>          NEXT:[<SINK>]
 L0 [copy of error, null]:
-    <ERROR>        PREV:[]
+-   <ERROR>        PREV:[]
 L1 [copy of sink, null]:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<END>]
 =====================

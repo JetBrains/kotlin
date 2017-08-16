@@ -105,8 +105,19 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         LexicalWritableScope thenScope = newWritableScopeImpl(context, LexicalScopeKind.THEN, components.overloadChecker);
         LexicalWritableScope elseScope = newWritableScopeImpl(context, LexicalScopeKind.ELSE, components.overloadChecker);
-        DataFlowInfo thenInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, true, context).and(conditionDataFlowInfo);
-        DataFlowInfo elseInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
+        DataFlowInfo basicThenInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, true, context).and(conditionDataFlowInfo);
+        DataFlowInfo thenInfoFromES = components.effectSystem.getConditionalInfoForThenBranch(
+                condition, context.trace,
+                DescriptorUtilsKt.getModule(context.scope.getOwnerDescriptor())
+        );
+        DataFlowInfo thenInfo = basicThenInfo.and(thenInfoFromES);
+
+        DataFlowInfo basicElseInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
+        DataFlowInfo elseInfoFromES = components.effectSystem.getConditionalInfoForElseBranch(
+                condition, context.trace,
+                DescriptorUtilsKt.getModule(context.scope.getOwnerDescriptor())
+        );
+        DataFlowInfo elseInfo = basicElseInfo.and(elseInfoFromES);
 
         if (elseBranch == null) {
             if (thenBranch != null) {

@@ -8,9 +8,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == B ==
 object B {
@@ -23,9 +23,9 @@ L0:
 L1:
     <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                PREV:[]
+-   <ERROR>                                PREV:[]
 sink:
-    <SINK>                                 PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<END>]
 =====================
 == X ==
 object X
@@ -35,9 +35,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == C ==
 object C {
@@ -49,9 +49,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == invoke ==
 operator fun X.invoke() = println("Hello!")
@@ -66,9 +66,9 @@ L0:
 L1:
     <END>                                                            NEXT:[<SINK>]
 error:
-    <ERROR>                                                          PREV:[]
+-   <ERROR>                                                          PREV:[]
 sink:
-    <SINK>                                                           PREV:[<ERROR>, <END>]
+    <SINK>                                                           PREV:[<END>]
 =====================
 == with ==
 inline fun <T, R> with(receiver: T, block: T.() -> R): R = receiver.block()
@@ -90,9 +90,9 @@ L0:
 L1:
     <END>                                                NEXT:[<SINK>]
 error:
-    <ERROR>                                              PREV:[]
+-   <ERROR>                                              PREV:[]
 sink:
-    <SINK>                                               PREV:[<ERROR>, <END>]
+    <SINK>                                               PREV:[<END>]
 =====================
 == use ==
 fun use() = with(C) {
@@ -115,9 +115,9 @@ L2 [after local declaration]:
 L1:
     <END>                                                             NEXT:[<SINK>]
 error:
-    <ERROR>                                                           PREV:[]
+-   <ERROR>                                                           PREV:[]
 sink:
-    <SINK>                                                            PREV:[<ERROR>, <END>, d({ with(B) { A.foo() } })]
+    <SINK>                                                            PREV:[<END>, d({ with(B) { A.foo() } })]
 =====================
 == anonymous_0 ==
 {
@@ -141,9 +141,9 @@ L5 [after local declaration]:
 L4:
     <END>                                                 NEXT:[<SINK>]
 error:
-    <ERROR>                                               PREV:[]
+-   <ERROR>                                               PREV:[]
 sink:
-    <SINK>                                                PREV:[<ERROR>, <END>, d({ A.foo() })]
+    <SINK>                                                PREV:[<END>, d({ A.foo() })]
 =====================
 == anonymous_1 ==
 {
@@ -165,7 +165,7 @@ L6:
 L7:
     <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+-   <ERROR>                                    PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<END>]
 =====================

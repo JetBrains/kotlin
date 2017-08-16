@@ -1,0 +1,154 @@
+== runTwice ==
+fun <T> runTwice(@CalledInPlace(InvocationCount.AT_LEAST_ONCE) block: () -> T): T {
+    block()
+    return block();
+}
+---------------------
+L0:
+  1 <START>                                                                                          INIT: in: {} out: {}
+    v(@CalledInPlace(InvocationCount.AT_LEAST_ONCE) block: () -> T)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.AT_LEAST_ONCE) block: () -> T) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                                                    INIT: in: {block=D} out: {block=ID}
+  2 mark({ block() return block(); })                                                                INIT: in: {block=ID} out: {block=ID}
+    r(block) -> <v1>
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>                                                                                                       USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v3>                                                                                                                         USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v3>) -> <v4>
+    ret(*|<v4>) L1
+L1:
+  1 <END>
+error:
+    <ERROR>                                                                                          INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                           INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== testInitialization ==
+fun testInitialization() {
+    var x: Int
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+    runTwice { x = 42 }
+    x.inc()
+    x = 43
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                 INIT: in: {} out: {}          USE: in: {} out: {}
+  2 mark({ var x: Int <!UNINITIALIZED_VARIABLE!>x<!>.inc() runTwice { x = 42 } x.inc() x = 43 x.inc() })
+    v(var x: Int <!)                                                                                        INIT: in: {} out: {x=D}
+    mark({ x = 42 })                                                                                        INIT: in: {x=D} out: {x=D}
+    mark(runTwice { x = 42 })
+    call(runTwice { x = 42 }, runTwice|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ x = 42 })                                                                                     INIT: in: {x=I} out: {x=I}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    jmp?(L2)
+L3 [after inlined lambda]:
+    r({ x = 42 }) -> <v2>
+    mark(x.inc())                                                                                                                         USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v3>                                                                                                                          USE: in: {x=WRITTEN_AFTER_READ} out: {x=READ}
+    mark(inc())
+    call(inc(), <ERROR FUNCTION>|<v3>) -> <v4>
+    r(43) -> <v5>                                                                                                                         USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v5>)                                                                                                                             USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+    mark(x.inc())                                                                                                                         USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v6>                                                                                                                          USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), <ERROR FUNCTION>|<v6>) -> <v7>
+L1:
+  1 <END>                                                                                                   INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{ x = 42 }
+---------------------
+L4:
+  3 <START>          INIT: in: {x=I?} out: {x=I?}
+  4 mark(x = 42)
+    r(42) -> <v0>                                    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {x=I?} out: {x=I}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L5:
+  3 <END>            INIT: in: {x=I} out: {x=I}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {x=I} out: {x=I}      USE: in: {x=READ} out: {x=READ}
+=====================
+== repeatingFlow ==
+fun repeatingFlow(n: Int) {
+    var x: Int
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+    for (i in 1..n) {
+        runTwice { x = 42 }
+    }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                      INIT: in: {} out: {}
+    v(n: Int)                                                                                                    INIT: in: {} out: {n=D}
+    magic[FAKE_INITIALIZER](n: Int) -> <v0>                                                                      INIT: in: {n=D} out: {n=D}
+    w(n|<v0>)                                                                                                    INIT: in: {n=D} out: {n=ID}                           USE: in: {n=READ} out: {n=READ}
+  2 mark({ var x: Int <!UNINITIALIZED_VARIABLE!>x<!>.inc() for (i in 1..n) { runTwice { x = 42 } } x.inc() })    INIT: in: {n=ID} out: {n=ID}
+    v(var x: Int <!)                                                                                             INIT: in: {n=ID} out: {n=ID, x=D}
+  3 r(1) -> <v1>                                                                                                 INIT: in: {n=ID, x=D} out: {n=ID, x=D}                USE: in: {n=READ, x=READ} out: {n=READ, x=READ}
+    r(n) -> <v2>                                                                                                                                                       USE: in: {x=READ} out: {n=READ, x=READ}
+    mark(1..n)
+    call(1..n, rangeTo|<v1>, <v2>) -> <v3>
+    mark(1..n)
+    call(1..n, iterator|<v3>) -> <v4>
+    v(i)                                                                                                         INIT: in: {n=ID, x=D} out: {i=D, n=ID, x=D}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    mark(1..n)                                                                                                   INIT: in: {i=I?, n=I, x=I?} out: {i=I?, n=I, x=I?}
+    call(1..n, hasNext) -> <v5>
+    jmp?(L3)                                                                                                                                                           USE: in: {x=READ} out: {x=READ}
+    mark(1..n)
+    call(1..n, next) -> <v6>
+    magic[LOOP_RANGE_ITERATION](1..n|<v6>) -> <v7>
+    w(i|<v7>)                                                                                                    INIT: in: {i=I?, n=I, x=I?} out: {i=I, n=I, x=I?}
+    mark(for (i in 1..n) { runTwice { x = 42 } })                                                                INIT: in: {i=I, n=I, x=I?} out: {i=I, n=I, x=I?}
+L4 [body entry point]:
+  4 mark({ runTwice { x = 42 } })
+    mark({ x = 42 })
+    mark(runTwice { x = 42 })
+    call(runTwice { x = 42 }, runTwice|!<v8>) -> <v9>
+L7 [before inlined lambda]:
+    inlined({ x = 42 })                                                                                          INIT: in: {i=I, n=I, x=I} out: {i=I, n=I, x=I}        USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    jmp?(L7)
+L8 [after inlined lambda]:
+    r({ x = 42 }) -> <v10>
+  3 jmp(L2)
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                                                                                  INIT: in: {i=I?, n=I, x=I?} out: {i=I?, n=I, x=I?}
+  2 mark(x.inc())                                                                                                INIT: in: {n=I, x=I?} out: {n=I, x=I?}                USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v11>                                                                                                                                                      USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), <ERROR FUNCTION>|<v11>) -> <v12>
+L1:
+  1 <END>                                                                                                        INIT: in: {n=I} out: {n=I}
+error:
+    <ERROR>                                                                                                      INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                                       INIT: in: {n=I?} out: {n=I?}                          USE: in: {} out: {}
+=====================
+== anonymous_1 ==
+{ x = 42 }
+---------------------
+L9:
+  5 <START>          INIT: in: {i=I, n=I, x=I?} out: {i=I, n=I, x=I?}
+  6 mark(x = 42)
+    r(42) -> <v0>                                                        USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {i=I, n=I, x=I?} out: {i=I, n=I, x=I}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L10:
+  5 <END>            INIT: in: {i=I, n=I, x=I} out: {i=I, n=I, x=I}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {i=I, n=I, x=I} out: {i=I, n=I, x=I}      USE: in: {x=READ} out: {x=READ}
+=====================

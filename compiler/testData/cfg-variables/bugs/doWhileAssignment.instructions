@@ -28,11 +28,11 @@ L6 [condition entry point]:
 L3 [loop exit point]:
     read (Unit)
 L1:
-  1 <END>
+  1 <END>                                                                                    USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                                   USE: in: {} out: {}
+    <SINK>                                                   INIT: in: {} out: {}            USE: in: {} out: {}
 =====================
 == test2 ==
 fun test2() {
@@ -75,9 +75,9 @@ L3 [loop exit point]:
 L5 [body exit point]:
     read (Unit)
 L1:
-  1 <END>
+  1 <END>                                                                                                 USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                                                USE: in: {} out: {}
+    <SINK>                                                                INIT: in: {} out: {}            USE: in: {} out: {}
 =====================

@@ -7241,6 +7241,339 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/effects")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Effects extends AbstractDiagnosticsTest {
+            public void testAllFilesPresentInEffects() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/effects/controlflow")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Controlflow extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInControlflow() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/controlflow"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class FlowInlining extends AbstractDiagnosticsTest {
+                    public void testAllFilesPresentInFlowInlining() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("expressionBody.kt")
+                    public void testExpressionBody() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining/expressionBody.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("implicitCastToAnyInReturnType.kt")
+                    public void testImplicitCastToAnyInReturnType() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining/implicitCastToAnyInReturnType.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("labeledReturns.kt")
+                    public void testLabeledReturns() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining/labeledReturns.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("nonLocalReturn.kt")
+                    public void testNonLocalReturn() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining/nonLocalReturn.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("severalJumpOutsFromInlinedLambda.kt")
+                    public void testSeveralJumpOutsFromInlinedLambda() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining/severalJumpOutsFromInlinedLambda.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("tryCatch.kt")
+                    public void testTryCatch() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining/tryCatch.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("typeMismatch.kt")
+                    public void testTypeMismatch() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining/typeMismatch.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("unreachableCode.kt")
+                    public void testUnreachableCode() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining/unreachableCode.kt");
+                        doTest(fileName);
+                    }
+                }
+
+                @TestMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Initialization extends AbstractDiagnosticsTest {
+                    public void testAllFilesPresentInInitialization() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/controlflow/initialization"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/atLeastOnce")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class AtLeastOnce extends AbstractDiagnosticsTest {
+                        public void testAllFilesPresentInAtLeastOnce() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/controlflow/initialization/atLeastOnce"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                        }
+
+                        @TestMetadata("valDefiniteReassignment.kt")
+                        public void testValDefiniteReassignment() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/atLeastOnce/valDefiniteReassignment.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("varDefiniteInitialization.kt")
+                        public void testVarDefiniteInitialization() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/atLeastOnce/varDefiniteInitialization.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("varIndefiniteIntialization.kt")
+                        public void testVarIndefiniteIntialization() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/atLeastOnce/varIndefiniteIntialization.kt");
+                            doTest(fileName);
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/exactlyOnce")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class ExactlyOnce extends AbstractDiagnosticsTest {
+                        public void testAllFilesPresentInExactlyOnce() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/controlflow/initialization/exactlyOnce"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                        }
+
+                        @TestMetadata("valDefiniteInitialization.kt")
+                        public void testValDefiniteInitialization() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/exactlyOnce/valDefiniteInitialization.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("valDefiniteReassignment.kt")
+                        public void testValDefiniteReassignment() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/exactlyOnce/valDefiniteReassignment.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("valIndefiniteInitialization.kt")
+                        public void testValIndefiniteInitialization() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/exactlyOnce/valIndefiniteInitialization.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("varDefiniteInitalization.kt")
+                        public void testVarDefiniteInitalization() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/exactlyOnce/varDefiniteInitalization.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("varIndefiniteInitialization.kt")
+                        public void testVarIndefiniteInitialization() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/exactlyOnce/varIndefiniteInitialization.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("withReceiver.kt")
+                        public void testWithReceiver() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/exactlyOnce/withReceiver.kt");
+                            doTest(fileName);
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/unknown")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Unknown extends AbstractDiagnosticsTest {
+                        public void testAllFilesPresentInUnknown() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/controlflow/initialization/unknown"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                        }
+
+                        @TestMetadata("unknownInvocations.kt")
+                        public void testUnknownInvocations() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/unknown/unknownInvocations.kt");
+                            doTest(fileName);
+                        }
+                    }
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/effects/smartcasts")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Smartcasts extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInSmartcasts() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/smartcasts"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("compositions.kt")
+                public void testCompositions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/compositions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("deeplyNested.kt")
+                public void testDeeplyNested() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/deeplyNested.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("intersectingInfo.kt")
+                public void testIntersectingInfo() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/intersectingInfo.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("intersectionTypes.kt")
+                public void testIntersectionTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/intersectionTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("joiners.kt")
+                public void testJoiners() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/joiners.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nullabilitySmartcastWhenNullability.kt")
+                public void testNullabilitySmartcastWhenNullability() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/nullabilitySmartcastWhenNullability.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("partiallyIncorrect.kt")
+                public void testPartiallyIncorrect() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/partiallyIncorrect.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("throwsEffect.kt")
+                public void testThrowsEffect() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/throwsEffect.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeSmartcastWhenNullability.kt")
+                public void testTypeSmartcastWhenNullability() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/typeSmartcastWhenNullability.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unreachableBranches.kt")
+                public void testUnreachableBranches() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/unreachableBranches.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/mirror")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Mirror extends AbstractDiagnosticsTest {
+                    public void testAllFilesPresentInMirror() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/smartcasts/mirror"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/mirror/inference")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Inference extends AbstractDiagnosticsTest {
+                        public void testAllFilesPresentInInference() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/smartcasts/mirror/inference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                        }
+
+                        @TestMetadata("kt1355.kt")
+                        public void testKt1355() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/mirror/inference/kt1355.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("kt2746.kt")
+                        public void testKt2746() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/mirror/inference/kt2746.kt");
+                            doTest(fileName);
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class OperatorsTests extends AbstractDiagnosticsTest {
+                    public void testAllFilesPresentInOperatorsTests() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("andOperator.kt")
+                    public void testAndOperator() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/andOperator.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("andOperatorWithConstant.kt")
+                    public void testAndOperatorWithConstant() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/andOperatorWithConstant.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("andOperatorWithUnknown.kt")
+                    public void testAndOperatorWithUnknown() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/andOperatorWithUnknown.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("equalsOperator.kt")
+                    public void testEqualsOperator() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/equalsOperator.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("isInstaceOperator.kt")
+                    public void testIsInstaceOperator() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/isInstaceOperator.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("orOperator.kt")
+                    public void testOrOperator() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/orOperator.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("orOperatorWithConstant.kt")
+                    public void testOrOperatorWithConstant() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/orOperatorWithConstant.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("orOperatorWithUnknown.kt")
+                    public void testOrOperatorWithUnknown() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/smartcasts/operatorsTests/orOperatorWithUnknown.kt");
+                        doTest(fileName);
+                    }
+                }
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/enum")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

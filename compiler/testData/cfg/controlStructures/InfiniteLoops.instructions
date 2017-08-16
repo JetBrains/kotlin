@@ -8,9 +8,9 @@ L0:
 L1:
   1 <END>          NEXT:[<SINK>]
 error:
-    <ERROR>        PREV:[]
+-   <ERROR>        PREV:[]
 sink:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<END>]
 =====================
 == a ==
 fun a() {
@@ -37,11 +37,11 @@ L3 [loop exit point]:
 -   mark(unreachable())                            PREV:[]
 -   call(unreachable(), unreachable) -> <v2>       PREV:[]
 L1:
-  1 <END>                                          NEXT:[<SINK>]                                         PREV:[]
+- 1 <END>                                          NEXT:[<SINK>]                                         PREV:[]
 error:
-    <ERROR>                                        PREV:[]
+-   <ERROR>                                        PREV:[]
 sink:
-    <SINK>                                         PREV:[<ERROR>, <END>]
+-   <SINK>                                         PREV:[]
 =====================
 == b ==
 fun b() {
@@ -68,9 +68,9 @@ L5 [body exit point]:
 -   mark(unreachable())                         PREV:[]
 -   call(unreachable(), unreachable) -> <v2>    PREV:[]
 L1:
-  1 <END>                                       NEXT:[<SINK>]                                      PREV:[]
+- 1 <END>                                       NEXT:[<SINK>]                                      PREV:[]
 error:
-    <ERROR>                                     PREV:[]
+-   <ERROR>                                     PREV:[]
 sink:
-    <SINK>                                      PREV:[<ERROR>, <END>]
+-   <SINK>                                      PREV:[]
 =====================

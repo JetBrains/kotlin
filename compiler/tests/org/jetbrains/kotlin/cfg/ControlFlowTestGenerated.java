@@ -555,6 +555,21 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         }
     }
 
+    @TestMetadata("compiler/testData/cfg/effects")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Effects extends AbstractControlFlowTest {
+        public void testAllFilesPresentInEffects() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/effects"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("labeledReturns.kt")
+        public void testLabeledReturns() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/effects/labeledReturns.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/cfg/expressions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -8,9 +8,9 @@ L0:
 L1:
   1 <END>          NEXT:[<SINK>]
 error:
-    <ERROR>        PREV:[]
+-   <ERROR>        PREV:[]
 sink:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<END>]
 =====================
 == doSmth1 ==
 fun doSmth1() {}
@@ -22,9 +22,9 @@ L0:
 L1:
   1 <END>          NEXT:[<SINK>]
 error:
-    <ERROR>        PREV:[]
+-   <ERROR>        PREV:[]
 sink:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<END>]
 =====================
 == doSmth2 ==
 fun doSmth2() {}
@@ -36,9 +36,9 @@ L0:
 L1:
   1 <END>          NEXT:[<SINK>]
 error:
-    <ERROR>        PREV:[]
+-   <ERROR>        PREV:[]
 sink:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<END>]
 =====================
 == cond ==
 fun cond() {}
@@ -50,9 +50,9 @@ L0:
 L1:
   1 <END>          NEXT:[<SINK>]
 error:
-    <ERROR>        PREV:[]
+-   <ERROR>        PREV:[]
 sink:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<END>]
 =====================
 == testCopy1 ==
 fun testCopy1() : Int {
@@ -117,9 +117,9 @@ L9 [copy of L3, onExceptionToFinallyBlock]:
 L1:
   1 <END>                                                                                                                                                     NEXT:[<SINK>]                                                                                                                              PREV:[ret(*|<v5>) L1, ret(*|<v5>) L1]
 error:
-    <ERROR>                                                                                                                                                   PREV:[]
+-   <ERROR>                                                                                                                                                   PREV:[]
 sink:
-    <SINK>                                                                                                                                                    PREV:[<ERROR>, <END>]
+    <SINK>                                                                                                                                                    PREV:[<END>]
 =====================
 == testCopy2 ==
 fun testCopy2() {
@@ -215,9 +215,9 @@ L5 [body exit point]:
 L1:
   1 <END>                                                                                                                                                                              NEXT:[<SINK>]                                                                                                                                                                             PREV:[ret L1, ret L1, read (Unit)]
 error:
-    <ERROR>                                                                                                                                                                            PREV:[]
+-   <ERROR>                                                                                                                                                                            PREV:[]
 sink:
-    <SINK>                                                                                                                                                                             PREV:[<ERROR>, <END>]
+    <SINK>                                                                                                                                                                             PREV:[<END>]
 =====================
 == testCopy3 ==
 fun testCopy3() {

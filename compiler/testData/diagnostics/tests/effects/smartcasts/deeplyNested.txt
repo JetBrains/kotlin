@@ -1,0 +1,15 @@
+package
+
+public fun br(/*0*/ y: kotlin.Any?): kotlin.Unit
+public fun branchedAndNested(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?): kotlin.Unit
+public fun branchedAndNestedWithNativeOperators(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?): kotlin.Unit
+@kotlin.internal.Returns(value = ConstantValue.TRUE) public fun equalsFalse(/*0*/ @kotlin.internal.Equals(value = ConstantValue.FALSE) x: kotlin.Boolean): kotlin.Boolean
+@kotlin.internal.Returns(value = ConstantValue.TRUE) public fun equalsTrue(/*0*/ @kotlin.internal.Equals(value = ConstantValue.TRUE) x: kotlin.Boolean): kotlin.Boolean
+@kotlin.internal.Returns(value = ConstantValue.TRUE) public fun isInt(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.Int::class) x: kotlin.Any?): kotlin.Boolean
+@kotlin.internal.Returns(value = ConstantValue.TRUE) public fun isString(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?): kotlin.Boolean
+@kotlin.internal.Returns public fun myAssert(/*0*/ @kotlin.internal.Equals(value = ConstantValue.TRUE) condition: kotlin.Boolean): kotlin.Unit
+public fun nested1(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun nested2(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun nested3(/*0*/ x: kotlin.Any?): kotlin.Unit
+@kotlin.internal.Returns(value = ConstantValue.TRUE) public fun notEqualsNull(/*0*/ @kotlin.internal.Equals(value = ConstantValue.NOT_NULL) x: kotlin.Any?): kotlin.Boolean
+@kotlin.internal.Returns(value = ConstantValue.NOT_NULL) public fun nullWhenNotString(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?): kotlin.String?

@@ -9,9 +9,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == component1 ==
 fun component1() = 1
@@ -23,9 +23,9 @@ L0:
 L1:
     <END>             NEXT:[<SINK>]
 error:
-    <ERROR>           PREV:[]
+-   <ERROR>           PREV:[]
 sink:
-    <SINK>            PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<END>]
 =====================
 == component2 ==
 fun component2() = 2
@@ -37,9 +37,9 @@ L0:
 L1:
     <END>             NEXT:[<SINK>]
 error:
-    <ERROR>           PREV:[]
+-   <ERROR>           PREV:[]
 sink:
-    <SINK>            PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<END>]
 =====================
 == test ==
 fun test(c: C) {
@@ -66,7 +66,7 @@ L0:
 L1:
   1 <END>                                    NEXT:[<SINK>]
 error:
-    <ERROR>                                  PREV:[]
+-   <ERROR>                                  PREV:[]
 sink:
-    <SINK>                                   PREV:[<ERROR>, <END>]
+    <SINK>                                   PREV:[<END>]
 =====================

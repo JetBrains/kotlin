@@ -4,13 +4,17 @@
     <node text="Category in Locale (java.util)"/>
     <node text="UnicodeScript in Character (java.lang)"/>
     <node text="Type in Cache in InetAddress (java.net)"/>
-    <node text="BaselineResizeBehavior in Component (java.awt)"/>
     <node text="PathStatus in File (java.io)"/>
+    <node text="BaselineResizeBehavior in Component (java.awt)"/>
     <node text="PrintMode in JTable (javax.swing)"/>
     <node text="ElementType (java.lang.annotation)"/>
     <node text="State in Thread (java.lang)"/>
     <node text="RetentionPolicy (java.lang.annotation)"/>
     <node text="Type in Window (java.awt)"/>
+    <node text="DeprecationLevel (kotlin)"/>
+    <node text="LazyThreadSafetyMode (kotlin)"/>
+    <node text="One ()"/>
+    <node text="G ()"/>
     <node text="Kind in KParameter (kotlin.reflect)"/>
     <node text="FileWalkDirection (kotlin.io)"/>
     <node text="OnErrorAction (kotlin.io)"/>
@@ -19,12 +23,11 @@
     <node text="CharDirectionality (kotlin.text)"/>
     <node text="KVariance (kotlin.reflect)"/>
     <node text="KVisibility (kotlin.reflect)"/>
+    <node text="JoiningStrategy (kotlin.internal)"/>
+    <node text="InvocationCount (kotlin.internal)"/>
+    <node text="ConstantValue (kotlin.internal)"/>
     <node text="AnnotationTarget (kotlin.annotation)"/>
     <node text="AnnotationRetention (kotlin.annotation)"/>
     <node text="State (kotlin.collections)"/>
-    <node text="DeprecationLevel (kotlin)"/>
-    <node text="LazyThreadSafetyMode (kotlin)"/>
-    <node text="One ()"/>
-    <node text="G ()"/>
   </node>
 </node>

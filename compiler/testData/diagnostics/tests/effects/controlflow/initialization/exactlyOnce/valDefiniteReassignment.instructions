@@ -1,0 +1,117 @@
+== myRun ==
+fun <T> myRun(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T) = block()
+---------------------
+L0:
+  1 <START>                                                                                         INIT: in: {} out: {}
+    v(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                                                   INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                                                INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                                                                         INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                          INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== reassignmentInUsualFlow ==
+fun reassignmentInUsualFlow() {
+    val x: Int
+    myRun { x = 42 }
+    <!VAL_REASSIGNMENT!>x<!> = 43
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                        INIT: in: {} out: {}          USE: in: {} out: {}
+  2 mark({ val x: Int myRun { x = 42 } <!VAL_REASSIGNMENT!>x<!> = 43 x.inc() })
+    v(val x: Int)                                                                  INIT: in: {} out: {x=D}
+    mark({ x = 42 })                                                               INIT: in: {x=D} out: {x=D}
+    mark(myRun { x = 42 })
+    call(myRun { x = 42 }, myRun|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ x = 42 })                                                            INIT: in: {x=I} out: {x=I}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L3 [after inlined lambda]:
+    r({ x = 42 }) -> <v2>
+    magic[UNRESOLVED_CALL](VAL_REASSIGNMENT) -> <v3>
+    mark(!VAL_REASSIGNMENT)
+    call(!VAL_REASSIGNMENT, <ERROR FUNCTION>|<v3>) -> <v4>
+    mark(x.inc())                                                                                                USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v5>                                                                                                 USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v5>) -> <v6>
+L1:
+  1 <END>                                                                          INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                       USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{ x = 42 }
+---------------------
+L4:
+  3 <START>          INIT: in: {x=D} out: {x=D}
+  4 mark(x = 42)
+    r(42) -> <v0>                                    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)        INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L5:
+  3 <END>            INIT: in: {x=ID} out: {x=ID}
+error:
+    <ERROR>          INIT: in: {} out: {}
+sink:
+    <SINK>           INIT: in: {x=I} out: {x=I}      USE: in: {x=READ} out: {x=READ}
+=====================
+== reassignment ==
+fun reassignment() {
+    val x = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>42<!>
+    myRun {
+        <!VAL_REASSIGNMENT!>x<!> = 43
+    }
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                           INIT: in: {} out: {}            USE: in: {} out: {}
+  2 mark({ val x = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>42<!> myRun { <!VAL_REASSIGNMENT!>x<!> = 43 } x.inc() })
+    v(val x =)                                                                                                        INIT: in: {} out: {x=D}
+    mark({ <!VAL_REASSIGNMENT!>x<!> = 43 })                                                                           INIT: in: {x=D} out: {x=D}
+    mark(myRun { <!VAL_REASSIGNMENT!>x<!> = 43 })
+    call(myRun { <!VAL_REASSIGNMENT!>x<!> = 43 }, myRun|!<v0>) -> <v1>
+L2 [before inlined lambda]:
+    inlined({ <!VAL_REASSIGNMENT!>x<!> = 43 })                                                                        INIT: in: {x=I?} out: {x=I?}
+L3 [after inlined lambda]:
+    r({ <!VAL_REASSIGNMENT!>x<!> = 43 }) -> <v2>
+    mark(x.inc())                                                                                                                                     USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v3>                                                                                                                                      USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), <ERROR FUNCTION>|<v3>) -> <v4>
+L1:
+  1 <END>                                                                                                             INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                            USE: in: {} out: {}
+=====================
+== anonymous_1 ==
+{
+        <!VAL_REASSIGNMENT!>x<!> = 43
+    }
+---------------------
+L4:
+  3 <START>                                                   INIT: in: {x=D} out: {x=D}
+  4 mark(<!VAL_REASSIGNMENT!>x<!> = 43)
+    magic[UNRESOLVED_CALL](VAL_REASSIGNMENT) -> <v0>
+    mark(!VAL_REASSIGNMENT)
+    call(!VAL_REASSIGNMENT, <ERROR FUNCTION>|<v0>) -> <v1>
+  3 ret(*|<v1>) L5
+L5:
+    <END>
+error:
+    <ERROR>                                                   INIT: in: {} out: {}
+sink:
+    <SINK>                                                    INIT: in: {x=I?} out: {x=I?}    USE: in: {x=READ} out: {x=READ}
+=====================

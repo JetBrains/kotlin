@@ -1,0 +1,85 @@
+== myRun ==
+fun <T> myRun(@CalledInPlace block: () -> T): T = block()
+---------------------
+L0:
+  1 <START>                                                           INIT: in: {} out: {}
+    v(@CalledInPlace block: () -> T)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace block: () -> T) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                     INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                  INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                                           INIT: in: {} out: {}
+sink:
+    <SINK>                                                            INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== foo ==
+fun foo(x: Int): Int = x + 1
+---------------------
+L0:
+  1 <START>                                    INIT: in: {} out: {}
+    v(x: Int)                                  INIT: in: {} out: {x=D}
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>    INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                                  INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v1>                               INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {x=READ}
+    r(1) -> <v2>
+    mark(x + 1)
+    call(x + 1, plus|<v1>, <v2>) -> <v3>
+    ret(*|<v3>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                    INIT: in: {} out: {}
+sink:
+    <SINK>                                     INIT: in: {x=I?} out: {x=I?}    USE: in: {} out: {}
+=====================
+== typeMismatchInLambda ==
+fun typeMismatchInLambda(y: String): Int {
+    val x = myRun { foo(<!TYPE_MISMATCH!>y<!>) }
+    return x
+}
+---------------------
+L0:
+  1 <START>                                                            INIT: in: {} out: {}
+    v(y: String)                                                       INIT: in: {} out: {y=D}
+    magic[FAKE_INITIALIZER](y: String) -> <v0>                         INIT: in: {y=D} out: {y=D}
+    w(y|<v0>)                                                          INIT: in: {y=D} out: {y=ID}                 USE: in: {} out: {}
+  2 mark({ val x = myRun { foo(<!TYPE_MISMATCH!>y<!>) } return x })    INIT: in: {y=ID} out: {y=ID}
+    v(val x = myRun { foo(<!TYPE_MISMATCH!>y<!>) })                    INIT: in: {y=ID} out: {x=D, y=ID}
+    mark({ foo(<!TYPE_MISMATCH!>y<!>) })                               INIT: in: {x=D, y=ID} out: {x=D, y=ID}
+    jmp?(L2)                                                                                                       USE: in: {x=READ} out: {x=READ}
+    d({ foo(<!TYPE_MISMATCH!>y<!>) })                                  INIT: in: {x=I?, y=I} out: {x=I?, y=I}      USE: in: {} out: {}
+L2 [after local declaration]:
+    r({ foo(<!TYPE_MISMATCH!>y<!>) }) -> <v1>                          INIT: in: {x=D, y=ID} out: {x=D, y=ID}
+    mark(myRun { foo(<!TYPE_MISMATCH!>y<!>) })
+    call(myRun { foo(<!TYPE_MISMATCH!>y<!>) }, myRun|<v1>) -> <v2>
+    w(x|<v2>)                                                          INIT: in: {x=D, y=ID} out: {x=ID, y=ID}     USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v3>                                                       INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}    USE: in: {} out: {x=READ}
+    ret(*|<v3>) L1
+L1:
+  1 <END>                                                              INIT: in: {y=ID} out: {y=ID}
+error:
+    <ERROR>                                                            INIT: in: {} out: {}
+sink:
+    <SINK>                                                             INIT: in: {y=I?} out: {y=I?}                USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{ foo(<!TYPE_MISMATCH!>y<!>) }
+---------------------
+L3:
+  3 <START>                             INIT: in: {x=D, y=ID} out: {x=D, y=ID}
+  4 mark(foo(<!TYPE_MISMATCH!>y<!>))
+    mark(foo(<)
+    call(foo(<, foo) -> <v0>
+  3 ret(*|<v0>) L4
+L4:
+    <END>
+error:
+    <ERROR>                             INIT: in: {} out: {}
+sink:
+    <SINK>                              INIT: in: {x=I?, y=I} out: {x=I?, y=I}    USE: in: {} out: {}
+=====================

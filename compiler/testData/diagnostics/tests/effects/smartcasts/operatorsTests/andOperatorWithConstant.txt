@@ -1,0 +1,8 @@
+package
+
+public fun annotatedFalseAndFalse(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun annotatedFalseAndTrue(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun annotatedTrueAndFalse(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun annotatedTrueAndTrue(/*0*/ x: kotlin.Any?): kotlin.Unit
+@kotlin.internal.Returns(value = ConstantValue.FALSE) public fun falseWhenString(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?): kotlin.Boolean
+@kotlin.internal.Returns(value = ConstantValue.TRUE) public fun trueWhenString(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?): kotlin.Boolean

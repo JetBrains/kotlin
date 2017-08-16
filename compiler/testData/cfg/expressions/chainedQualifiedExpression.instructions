@@ -6,9 +6,9 @@ L0:
 L1:
     <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    PREV:[]
+-   <ERROR>    PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<END>]
 =====================
 == JetKeywordCompletionContributor ==
 public open class JetKeywordCompletionContributor() {
@@ -220,9 +220,9 @@ L0:
 L1:
   1 <END>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         NEXT:[<SINK>]
 error:
-    <ERROR>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       PREV:[]
+-   <ERROR>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       PREV:[]
 sink:
-    <SINK>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        PREV:[<ERROR>, <END>]
+    <SINK>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        PREV:[<END>]
 =====================
 == ABSTRACT_KEYWORD ==
 val ABSTRACT_KEYWORD = JetToken()
@@ -236,9 +236,9 @@ L0:
 L1:
     <END>                                   NEXT:[<SINK>]
 error:
-    <ERROR>                                 PREV:[]
+-   <ERROR>                                 PREV:[]
 sink:
-    <SINK>                                  PREV:[<ERROR>, <END>]
+    <SINK>                                  PREV:[<END>]
 =====================
 == FINAL_KEYWORD ==
 val FINAL_KEYWORD OPEN_KEYWORD = JetToken()
@@ -249,9 +249,9 @@ L0:
 L1:
     <END>                                             NEXT:[<SINK>]
 error:
-    <ERROR>                                           PREV:[]
+-   <ERROR>                                           PREV:[]
 sink:
-    <SINK>                                            PREV:[<ERROR>, <END>]
+    <SINK>                                            PREV:[<END>]
 =====================
 == OPEN_KEYWORD ==
 val OPEN_KEYWORD = JetToken()
@@ -265,9 +265,9 @@ L0:
 L1:
     <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                             PREV:[]
+-   <ERROR>                             PREV:[]
 sink:
-    <SINK>                              PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<END>]
 =====================
 == INTERNAL_KEYWORD ==
 val INTERNAL_KEYWORD = JetToken()
@@ -281,9 +281,9 @@ L0:
 L1:
     <END>                                   NEXT:[<SINK>]
 error:
-    <ERROR>                                 PREV:[]
+-   <ERROR>                                 PREV:[]
 sink:
-    <SINK>                                  PREV:[<ERROR>, <END>]
+    <SINK>                                  PREV:[<END>]
 =====================
 == PRIVATE_KEYWORD ==
 val PRIVATE_KEYWORD = JetToken()
@@ -297,9 +297,9 @@ L0:
 L1:
     <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                PREV:[]
+-   <ERROR>                                PREV:[]
 sink:
-    <SINK>                                 PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<END>]
 =====================
 == PROTECTED_KEYWORD ==
 val PROTECTED_KEYWORD = JetToken()
@@ -313,9 +313,9 @@ L0:
 L1:
     <END>                                    NEXT:[<SINK>]
 error:
-    <ERROR>                                  PREV:[]
+-   <ERROR>                                  PREV:[]
 sink:
-    <SINK>                                   PREV:[<ERROR>, <END>]
+    <SINK>                                   PREV:[<END>]
 =====================
 == PUBLIC_KEYWORD ==
 val PUBLIC_KEYWORD = JetToken()
@@ -329,9 +329,9 @@ L0:
 L1:
     <END>                                 NEXT:[<SINK>]
 error:
-    <ERROR>                               PREV:[]
+-   <ERROR>                               PREV:[]
 sink:
-    <SINK>                                PREV:[<ERROR>, <END>]
+    <SINK>                                PREV:[<END>]
 =====================
 == CLASS_KEYWORD ==
 val CLASS_KEYWORD = JetToken()
@@ -345,9 +345,9 @@ L0:
 L1:
     <END>                                NEXT:[<SINK>]
 error:
-    <ERROR>                              PREV:[]
+-   <ERROR>                              PREV:[]
 sink:
-    <SINK>                               PREV:[<ERROR>, <END>]
+    <SINK>                               PREV:[<END>]
 =====================
 == ENUM_KEYWORD ==
 val ENUM_KEYWORD = JetToken()
@@ -361,9 +361,9 @@ L0:
 L1:
     <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                             PREV:[]
+-   <ERROR>                             PREV:[]
 sink:
-    <SINK>                              PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<END>]
 =====================
 == FUN_KEYWORD ==
 val FUN_KEYWORD = JetToken()
@@ -377,9 +377,9 @@ L0:
 L1:
     <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                             PREV:[]
+-   <ERROR>                             PREV:[]
 sink:
-    <SINK>                              PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<END>]
 =====================
 == GET_KEYWORD ==
 val GET_KEYWORD = JetToken()
@@ -393,9 +393,9 @@ L0:
 L1:
     <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                             PREV:[]
+-   <ERROR>                             PREV:[]
 sink:
-    <SINK>                              PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<END>]
 =====================
 == SET_KEYWORD ==
 val SET_KEYWORD = JetToken()
@@ -409,9 +409,9 @@ L0:
 L1:
     <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                             PREV:[]
+-   <ERROR>                             PREV:[]
 sink:
-    <SINK>                              PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<END>]
 =====================
 == INTERFACE_KEYWORD ==
 val INTERFACE_KEYWORD = JetToken()
@@ -425,9 +425,9 @@ L0:
 L1:
     <END>                                    NEXT:[<SINK>]
 error:
-    <ERROR>                                  PREV:[]
+-   <ERROR>                                  PREV:[]
 sink:
-    <SINK>                                   PREV:[<ERROR>, <END>]
+    <SINK>                                   PREV:[<END>]
 =====================
 == VAL_KEYWORD ==
 val VAL_KEYWORD = JetToken()
@@ -441,9 +441,9 @@ L0:
 L1:
     <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                             PREV:[]
+-   <ERROR>                             PREV:[]
 sink:
-    <SINK>                              PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<END>]
 =====================
 == VAR_KEYWORD ==
 val VAR_KEYWORD = JetToken()
@@ -457,9 +457,9 @@ L0:
 L1:
     <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                             PREV:[]
+-   <ERROR>                             PREV:[]
 sink:
-    <SINK>                              PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<END>]
 =====================
 == TYPE_KEYWORD ==
 val TYPE_KEYWORD = JetToken()
@@ -473,9 +473,9 @@ L0:
 L1:
     <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                             PREV:[]
+-   <ERROR>                             PREV:[]
 sink:
-    <SINK>                              PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<END>]
 =====================
 == IMPORT_KEYWORD ==
 val IMPORT_KEYWORD = JetToken()
@@ -489,9 +489,9 @@ L0:
 L1:
     <END>                                 NEXT:[<SINK>]
 error:
-    <ERROR>                               PREV:[]
+-   <ERROR>                               PREV:[]
 sink:
-    <SINK>                                PREV:[<ERROR>, <END>]
+    <SINK>                                PREV:[<END>]
 =====================
 == PACKAGE_KEYWORD ==
 val PACKAGE_KEYWORD = JetToken()
@@ -505,9 +505,9 @@ L0:
 L1:
     <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                PREV:[]
+-   <ERROR>                                PREV:[]
 sink:
-    <SINK>                                 PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<END>]
 =====================
 == OVERRIDE_KEYWORD ==
 val OVERRIDE_KEYWORD = JetToken()
@@ -521,9 +521,9 @@ L0:
 L1:
     <END>                                   NEXT:[<SINK>]
 error:
-    <ERROR>                                 PREV:[]
+-   <ERROR>                                 PREV:[]
 sink:
-    <SINK>                                  PREV:[<ERROR>, <END>]
+    <SINK>                                  PREV:[<END>]
 =====================
 == IN_KEYWORD ==
 val IN_KEYWORD = JetToken()
@@ -537,9 +537,9 @@ L0:
 L1:
     <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                             PREV:[]
+-   <ERROR>                             PREV:[]
 sink:
-    <SINK>                              PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<END>]
 =====================
 == OUT_KEYWORD ==
 val OUT_KEYWORD = JetToken()
@@ -553,9 +553,9 @@ L0:
 L1:
     <END>                               NEXT:[<SINK>]
 error:
-    <ERROR>                             PREV:[]
+-   <ERROR>                             PREV:[]
 sink:
-    <SINK>                              PREV:[<ERROR>, <END>]
+    <SINK>                              PREV:[<END>]
 =====================
 == OBJECT_KEYWORD ==
 val OBJECT_KEYWORD = JetToken()
@@ -569,7 +569,7 @@ L0:
 L1:
     <END>                                 NEXT:[<SINK>]
 error:
-    <ERROR>                               PREV:[]
+-   <ERROR>                               PREV:[]
 sink:
-    <SINK>                                PREV:[<ERROR>, <END>]
+    <SINK>                                PREV:[<END>]
 =====================

@@ -25,9 +25,9 @@ L0:
 L1:
     <END>                NEXT:[<SINK>]
 error:
-    <ERROR>              PREV:[]
+-   <ERROR>              PREV:[]
 sink:
-    <SINK>               PREV:[<ERROR>, <END>]
+    <SINK>               PREV:[<END>]
 =====================
 == doSmth ==
 fun doSmth(i: Int) {}
@@ -42,9 +42,9 @@ L0:
 L1:
   1 <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+-   <ERROR>                                    PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<END>]
 =====================
 == test1 ==
 fun test1() {
@@ -71,9 +71,9 @@ L0:
 L1:
   1 <END>                                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                                    PREV:[]
+-   <ERROR>                                                    PREV:[]
 sink:
-    <SINK>                                                     PREV:[<ERROR>, <END>]
+    <SINK>                                                     PREV:[<END>]
 =====================
 == O ==
 object O {
@@ -93,9 +93,9 @@ L0:
 L1:
   1 <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                PREV:[]
+-   <ERROR>                                PREV:[]
 sink:
-    <SINK>                                 PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<END>]
 =====================
 == test2 ==
 fun test2() {
@@ -121,9 +121,9 @@ L0:
 L1:
   1 <END>                                               NEXT:[<SINK>]
 error:
-    <ERROR>                                             PREV:[]
+-   <ERROR>                                             PREV:[]
 sink:
-    <SINK>                                              PREV:[<ERROR>, <END>]
+    <SINK>                                              PREV:[<END>]
 =====================
 == test3 ==
 fun test3() {
@@ -149,9 +149,9 @@ L2 [after local declaration]:
 L1:
   1 <END>                                                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                                                PREV:[]
+-   <ERROR>                                                                PREV:[]
 sink:
-    <SINK>                                                                 PREV:[<ERROR>, <END>, d(fun inner_bar() { y = 10 })]
+    <SINK>                                                                 PREV:[<END>, d(fun inner_bar() { y = 10 })]
 =====================
 == inner_bar ==
 fun inner_bar() {
@@ -167,9 +167,9 @@ L3:
 L4:
   3 <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                PREV:[]
+-   <ERROR>                                PREV:[]
 sink:
-    <SINK>                                 PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<END>]
 =====================
 == test4 ==
 fun test4() {
@@ -204,9 +204,9 @@ L2 [after local declaration]:
 L1:
   1 <END>                                                                                       NEXT:[<SINK>]
 error:
-    <ERROR>                                                                                     PREV:[]
+-   <ERROR>                                                                                     PREV:[]
 sink:
-    <SINK>                                                                                      PREV:[<ERROR>, <END>, d(fun ggg() { y = 10 })]
+    <SINK>                                                                                      PREV:[<END>, d(fun ggg() { y = 10 })]
 =====================
 == ggg ==
 fun ggg() {
@@ -222,9 +222,9 @@ L3:
 L4:
   3 <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                PREV:[]
+-   <ERROR>                                PREV:[]
 sink:
-    <SINK>                                 PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<END>]
 =====================
 == test5 ==
 fun test5() {
@@ -265,9 +265,9 @@ L5 [after local declaration]:
 L1:
   1 <END>                                                                                            NEXT:[<SINK>]
 error:
-    <ERROR>                                                                                          PREV:[]
+-   <ERROR>                                                                                          PREV:[]
 sink:
-    <SINK>                                                                                           PREV:[<ERROR>, <END>, d(fun foo() { x = 3 }), d(fun bar() { x = 4 })]
+    <SINK>                                                                                           PREV:[<END>, d(fun foo() { x = 3 }), d(fun bar() { x = 4 })]
 =====================
 == foo ==
 fun foo() {
@@ -283,9 +283,9 @@ L3:
 L4:
   3 <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                PREV:[]
+-   <ERROR>                                PREV:[]
 sink:
-    <SINK>                                 PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<END>]
 =====================
 == bar ==
 fun bar() {
@@ -301,7 +301,7 @@ L6:
 L7:
   3 <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                PREV:[]
+-   <ERROR>                                PREV:[]
 sink:
-    <SINK>                                 PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<END>]
 =====================

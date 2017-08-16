@@ -13,9 +13,9 @@ L0:
 L1:
     <END>                                             NEXT:[<SINK>]
 error:
-    <ERROR>                                           PREV:[]
+-   <ERROR>                                           PREV:[]
 sink:
-    <SINK>                                            PREV:[<ERROR>, <END>]
+    <SINK>                                            PREV:[<END>]
 =====================
 == test1 ==
 fun test1(nonLocal: String): String {
@@ -47,9 +47,9 @@ L2 [after local declaration]:
 L1:
   1 <END>                                                                                                                        NEXT:[<SINK>]                                                                                                                       PREV:[ret(*|<v0>) L1, ret(*|<v4>) L1]
 error:
-    <ERROR>                                                                                                                      PREV:[]
+-   <ERROR>                                                                                                                      PREV:[]
 sink:
-    <SINK>                                                                                                                       PREV:[<ERROR>, <END>, d({ return nonLocal //unreachable })]
+    <SINK>                                                                                                                       PREV:[<END>, d({ return nonLocal //unreachable })]
 =====================
 == anonymous_0 ==
 {
@@ -62,11 +62,11 @@ L3:
     r(nonLocal) -> <v0>
     ret(*|<v0>) L1                         NEXT:[<END>]
 L4:
-  3 <END>                                  NEXT:[<SINK>]                                 PREV:[]
+- 3 <END>                                  NEXT:[<SINK>]                                 PREV:[]
 error:
-    <ERROR>                                PREV:[]
+-   <ERROR>                                PREV:[]
 sink:
-    <SINK>                                 PREV:[<ERROR>, <END>]
+-   <SINK>                                 PREV:[]
 =====================
 == doSomething ==
 fun doSomething() {}
@@ -78,9 +78,9 @@ L0:
 L1:
   1 <END>          NEXT:[<SINK>]
 error:
-    <ERROR>        PREV:[]
+-   <ERROR>        PREV:[]
 sink:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<END>]
 =====================
 == test2 ==
 fun test2() {
@@ -101,23 +101,23 @@ L2 [after local declaration]:
     jf(L5)                                                                                          NEXT:[mark(f(null?.let { return })), r(null) -> <v0>]
     r(null) -> <v0>
     mark({ return })
-    jmp?(L6)                                                                                        NEXT:[r({ return }) -> <v1>, d({ return })]
-    d({ return })                                                                                   NEXT:[<SINK>]
-L6 [after local declaration]:
-    r({ return }) -> <v1>                                                                           PREV:[jmp?(L6)]
+    r({ return }) -> <v1>
     mark(let { return })
     call(let { return }, let|<v0>, <v1>)
+L6 [before inlined declaration]:
+    inlined({ return })                                                                             NEXT:[<SINK>]
 L5 [result of call]:
-    mark(f(null?.let { return }))                                                                   PREV:[jf(L5), call(let { return }, let|<v0>, <v1>)]
+L7 [after inlined declaration]:
+    mark(f(null?.let { return }))                                                                   PREV:[jf(L5)]
     call(f(null?.let { return }), f|!<v2>) -> <v3>
     mark(doSomething())
     call(doSomething(), doSomething) -> <v4>
 L1:
   1 <END>                                                                                           NEXT:[<SINK>]                                                                                          PREV:[ret L1, call(doSomething(), doSomething) -> <v4>]
 error:
-    <ERROR>                                                                                         PREV:[]
+-   <ERROR>                                                                                         PREV:[]
 sink:
-    <SINK>                                                                                          PREV:[<ERROR>, <END>, d(fun f(x: Any?) = x), d({ return })]
+    <SINK>                                                                                          PREV:[<END>, d(fun f(x: Any?) = x), inlined({ return })]
 =====================
 == f ==
 fun f(x: Any?) = x
@@ -132,24 +132,24 @@ L3:
 L4:
     <END>                                       NEXT:[<SINK>]
 error:
-    <ERROR>                                     PREV:[]
+-   <ERROR>                                     PREV:[]
 sink:
-    <SINK>                                      PREV:[<ERROR>, <END>]
+    <SINK>                                      PREV:[<END>]
 =====================
 == anonymous_1 ==
 { return }
 ---------------------
-L7:
+L8:
   3 <START>
   4 mark(return)
     ret L1             NEXT:[<END>]
-- 3 ret(*|!<v0>) L8    PREV:[]
-L8:
-    <END>              NEXT:[<SINK>]          PREV:[]
+- 3 ret(*|!<v0>) L9    PREV:[]
+L9:
+-   <END>              NEXT:[<SINK>]          PREV:[]
 error:
-    <ERROR>            PREV:[]
+-   <ERROR>            PREV:[]
 sink:
-    <SINK>             PREV:[<ERROR>, <END>]
+-   <SINK>             PREV:[]
 =====================
 == test3 ==
 fun test3(x: Any?): Boolean =
@@ -166,41 +166,41 @@ L0:
     jf(L2)                                                        NEXT:[mark(x?.let { return true } ?: false), r(x) -> <v1>]
     r(x) -> <v1>
     mark({ return true })
-    jmp?(L3)                                                      NEXT:[r({ return true }) -> <v2>, d({ return true })]
-    d({ return true })                                            NEXT:[<SINK>]
-L3 [after local declaration]:
-    r({ return true }) -> <v2>                                    PREV:[jmp?(L3)]
+    r({ return true }) -> <v2>
     mark(let { return true })
     call(let { return true }, let|<v1>, <v2>)
+L3 [before inlined declaration]:
+    inlined({ return true })                                      NEXT:[<SINK>]
 L2 [result of call]:
-    mark(x?.let { return true } ?: false)                         PREV:[jf(L2), call(let { return true }, let|<v1>, <v2>)]
-    jt(L6|!<v3>)                                                  NEXT:[r(false) -> <v4>, merge(x?.let { return true } ?: false|!<v3>, <v4>) -> <v5>]
+L4 [after inlined declaration]:
+    mark(x?.let { return true } ?: false)                         PREV:[jf(L2)]
+    jt(L7|!<v3>)                                                  NEXT:[r(false) -> <v4>, merge(x?.let { return true } ?: false|!<v3>, <v4>) -> <v5>]
     r(false) -> <v4>
-L6 [after elvis operator]:
-    merge(x?.let { return true } ?: false|!<v3>, <v4>) -> <v5>    PREV:[jt(L6|!<v3>), r(false) -> <v4>]
+L7 [after elvis operator]:
+    merge(x?.let { return true } ?: false|!<v3>, <v4>) -> <v5>    PREV:[jt(L7|!<v3>), r(false) -> <v4>]
     ret(*|<v5>) L1
 L1:
     <END>                                                         NEXT:[<SINK>]                                                                          PREV:[ret(*|<v0>) L1, ret(*|<v5>) L1]
 error:
-    <ERROR>                                                       PREV:[]
+-   <ERROR>                                                       PREV:[]
 sink:
-    <SINK>                                                        PREV:[<ERROR>, <END>, d({ return true })]
+    <SINK>                                                        PREV:[<END>, inlined({ return true })]
 =====================
 == anonymous_2 ==
 {
         return true
     }
 ---------------------
-L4:
+L5:
   2 <START>
   3 mark(return true)
     r(true) -> <v0>
     ret(*|<v0>) L1       NEXT:[<END>]
-- 2 ret(*|!<v1>) L5      PREV:[]
-L5:
-    <END>                NEXT:[<SINK>]               PREV:[]
+- 2 ret(*|!<v1>) L6      PREV:[]
+L6:
+-   <END>                NEXT:[<SINK>]               PREV:[]
 error:
-    <ERROR>              PREV:[]
+-   <ERROR>              PREV:[]
 sink:
-    <SINK>               PREV:[<ERROR>, <END>]
+-   <SINK>               PREV:[]
 =====================

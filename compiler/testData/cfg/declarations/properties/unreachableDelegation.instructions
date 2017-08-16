@@ -11,9 +11,9 @@ L0:
     call(NullPointerException(), <init>) -> <v1>
     throw (throw NullPointerException()|<v1>)                                              NEXT:[<ERROR>]
 L1:
-    <END>                                                                                  NEXT:[<SINK>]                                                                                 PREV:[]
+-   <END>                                                                                  NEXT:[<SINK>]                                                                                 PREV:[]
 error:
     <ERROR>                                                                                PREV:[throw (throw NullPointerException()|<v1>)]
 sink:
-    <SINK>                                                                                 PREV:[<ERROR>, <END>]
+    <SINK>
 =====================

@@ -8,9 +8,9 @@ L0:
 L1:
     <END>              NEXT:[<SINK>]
 error:
-    <ERROR>            PREV:[]
+-   <ERROR>            PREV:[]
 sink:
-    <SINK>             PREV:[<ERROR>, <END>]
+    <SINK>             PREV:[<END>]
 =====================
 == let ==
 inline fun <T, R> T.let(f: (T) -> R): R = f(this)
@@ -28,9 +28,9 @@ L0:
 L1:
     <END>                                           NEXT:[<SINK>]
 error:
-    <ERROR>                                         PREV:[]
+-   <ERROR>                                         PREV:[]
 sink:
-    <SINK>                                          PREV:[<ERROR>, <END>]
+    <SINK>                                          PREV:[<END>]
 =====================
 == foo ==
 fun foo(): String {
@@ -66,9 +66,9 @@ L6 [after elvis operator]:
 L1:
   1 <END>                                                                           NEXT:[<SINK>]
 error:
-    <ERROR>                                                                         PREV:[]
+-   <ERROR>                                                                         PREV:[]
 sink:
-    <SINK>                                                                          PREV:[<ERROR>, <END>, d({ throw Exception() })]
+    <SINK>                                                                          PREV:[<END>, d({ throw Exception() })]
 =====================
 == anonymous_0 ==
 { throw Exception() }
@@ -82,11 +82,11 @@ L4:
     throw (throw Exception()|<v0>)       NEXT:[<ERROR>]
 - 3 ret(*|!<v1>) L5                      PREV:[]
 L5:
-    <END>                                NEXT:[<SINK>]                               PREV:[]
+-   <END>                                NEXT:[<SINK>]                               PREV:[]
 error:
     <ERROR>                              PREV:[throw (throw Exception()|<v0>)]
 sink:
-    <SINK>                               PREV:[<ERROR>, <END>]
+    <SINK>
 =====================
 == bar ==
 fun bar(): String {
@@ -151,9 +151,9 @@ L5:
     throw (throw Exception()|<v0>)       NEXT:[<ERROR>]
 - 3 ret(*|!<v1>) L6                      PREV:[]
 L6:
-    <END>                                NEXT:[<SINK>]                               PREV:[]
+-   <END>                                NEXT:[<SINK>]                               PREV:[]
 error:
     <ERROR>                              PREV:[throw (throw Exception()|<v0>)]
 sink:
-    <SINK>                               PREV:[<ERROR>, <END>]
+    <SINK>
 =====================

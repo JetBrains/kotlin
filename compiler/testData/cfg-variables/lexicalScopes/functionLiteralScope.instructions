@@ -19,18 +19,18 @@ L0:
     v(val f = { x: Int -> val a = x + b })                                      INIT: in: {b=ID} out: {b=ID, f=D}
     mark({ x: Int -> val a = x + b })                                           INIT: in: {b=ID, f=D} out: {b=ID, f=D}
     jmp?(L2)
-    d({ x: Int -> val a = x + b })                                              INIT: in: {b=I, f=I?} out: {b=I, f=I?}      USE: in: {b=READ} out: {b=READ}
+    d({ x: Int -> val a = x + b })                                                                                          USE: in: {b=READ} out: {b=READ}
 L2 [after local declaration]:
-    r({ x: Int -> val a = x + b }) -> <v2>                                      INIT: in: {b=ID, f=D} out: {b=ID, f=D}
+    r({ x: Int -> val a = x + b }) -> <v2>
     w(f|<v2>)                                                                   INIT: in: {b=ID, f=D} out: {b=ID, f=ID}
     mark("after")                                                               INIT: in: {b=ID, f=ID} out: {b=ID, f=ID}
     r("after") -> <v3>
 L1:
-  1 <END>                                                                       INIT: in: {} out: {}
+  1 <END>                                                                       INIT: in: {} out: {}                        USE: in: {} out: {}
 error:
-    <ERROR>
+-   <ERROR>
 sink:
-    <SINK>                                                                                                                  USE: in: {} out: {}
+    <SINK>                                                                      INIT: in: {} out: {}                        USE: in: {} out: {}
 =====================
 == anonymous_0 ==
 { x: Int ->
@@ -50,9 +50,9 @@ L3:
     call(x + b, plus|<v1>, <v2>) -> <v3>
     w(a|<v3>)                                  INIT: in: {a=D, b=ID, f=D, x=ID} out: {a=ID, b=ID, f=D, x=ID}
 L4:
-  3 <END>                                      INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}
+  3 <END>                                      INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}               USE: in: {} out: {}
 error:
-    <ERROR>                                    INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                     INIT: in: {b=I, f=I?, x=I?} out: {b=I, f=I?, x=I?}               USE: in: {} out: {}
+    <SINK>                                     INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}               USE: in: {} out: {}
 =====================

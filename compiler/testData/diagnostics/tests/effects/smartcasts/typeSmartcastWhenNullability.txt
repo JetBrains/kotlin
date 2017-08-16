@@ -1,0 +1,8 @@
+package
+
+@kotlin.internal.Returns(value = ConstantValue.NOT_NULL) public fun nullWhenNotString(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?): kotlin.Int?
+@kotlin.internal.Returns(value = ConstantValue.NULL) public fun nullWhenString(/*0*/ @kotlin.internal.IsInstance(klass = kotlin.String::class) x: kotlin.Any?): kotlin.Int?
+public fun testNullNotWhenString(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testNullWhenNotString(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testNullWhenString(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testNullWhenStringInversed(/*0*/ x: kotlin.Any?): kotlin.Unit

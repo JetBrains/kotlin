@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.effectsystem.effects.InvocationKind
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
@@ -27,9 +28,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 interface ControlFlowBuilder {
     // Subroutines
-    fun enterSubroutine(subroutine: KtElement)
-
-    fun exitSubroutine(subroutine: KtElement): Pseudocode
+    fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind? = null)
+    fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind? = null): Pseudocode
 
     val currentSubroutine: KtElement
     val returnSubroutine: KtElement
@@ -48,6 +48,8 @@ interface ControlFlowBuilder {
 
     fun declareVariable(property: KtVariableDeclaration)
     fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode)
+
+    fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationKind: InvocationKind)
 
     fun declareEntryOrObject(entryOrObject: KtClassOrObject)
 

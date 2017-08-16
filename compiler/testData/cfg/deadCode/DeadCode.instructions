@@ -14,9 +14,9 @@ L0:
 -   mark(test())                          PREV:[]
 -   call(test(), test) -> <v1>            PREV:[]
 L1:
-  1 <END>                                 NEXT:[<SINK>]                                PREV:[]
+- 1 <END>                                 NEXT:[<SINK>]                                PREV:[]
 error:
     <ERROR>                               PREV:[throw (throw Exception()|<v0>)]
 sink:
-    <SINK>                                PREV:[<ERROR>, <END>]
+    <SINK>
 =====================

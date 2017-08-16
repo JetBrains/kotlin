@@ -32,9 +32,9 @@ L7 [after local declaration]:
 L1:
   1 <END>                                                                                              NEXT:[<SINK>]
 error:
-    <ERROR>                                                                                            PREV:[]
+-   <ERROR>                                                                                            PREV:[]
 sink:
-    <SINK>                                                                                             PREV:[<ERROR>, <END>, d(fun foo(n: Int) = n + 1), d(fun bar(n: Int) = n - 1)]
+    <SINK>                                                                                             PREV:[<END>, d(fun foo(n: Int) = n + 1), d(fun bar(n: Int) = n - 1)]
 =====================
 == foo ==
 fun foo(n: Int) = n + 1
@@ -52,9 +52,9 @@ L4:
 L5:
     <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+-   <ERROR>                                    PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<END>]
 =====================
 == bar ==
 fun bar(n: Int) = n - 1
@@ -72,7 +72,7 @@ L8:
 L9:
     <END>                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+-   <ERROR>                                    PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                     PREV:[<END>]
 =====================

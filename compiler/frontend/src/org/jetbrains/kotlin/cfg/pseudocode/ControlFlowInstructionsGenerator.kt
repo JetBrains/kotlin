@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.effectsystem.effects.InvocationKind
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
@@ -65,7 +66,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         return worker
     }
 
-    override fun enterSubroutine(subroutine: KtElement) {
+    override fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind?) {
         val builder = builder
         if (builder != null && subroutine is KtFunctionLiteral) {
             pushBuilder(subroutine, builder.returnSubroutine)
@@ -77,13 +78,18 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         delegateBuilder.enterSubroutine(subroutine)
     }
 
-    override fun exitSubroutine(subroutine: KtElement): Pseudocode {
-        super.exitSubroutine(subroutine)
+    override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode {
+        super.exitSubroutine(subroutine, invocationKind)
         delegateBuilder.exitBlockScope(subroutine)
         val worker = popBuilder()
         if (!builders.empty()) {
             val builder = builders.peek()
-            builder.declareFunction(subroutine, worker.pseudocode)
+
+            if (invocationKind == null) {
+                builder.declareFunction(subroutine, worker.pseudocode)
+            } else {
+                builder.declareInlinedFunction(subroutine, worker.pseudocode, invocationKind)
+            }
         }
         return worker.pseudocode
     }
@@ -142,7 +148,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override val currentLoop: KtLoopExpression?
             get() = if (loopInfo.empty()) null else loopInfo.peek().element
 
-        override fun enterSubroutine(subroutine: KtElement) {
+        override fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind?) {
             val blockInfo = SubroutineInfo(
                     subroutine,
                     /* entry point */ createUnboundLabel(),
@@ -201,7 +207,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             }
         }
 
-        override fun exitSubroutine(subroutine: KtElement): Pseudocode {
+        override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode {
             getSubroutineExitPoint(subroutine)?.let { bindLabel(it) }
             pseudocode.addExitInstruction(SubroutineExitInstruction(subroutine, currentScope, false))
             bindLabel(error)
@@ -256,6 +262,10 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
 
         override fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode) {
             add(LocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope))
+        }
+
+        override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationKind: InvocationKind) {
+            add(InlinedLocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope, invocationKind))
         }
 
         override fun declareEntryOrObject(entryOrObject: KtClassOrObject) {

@@ -22,9 +22,9 @@ L2 [after local class]:
 L3 [after local declaration]:
   1 <END>                                                                                NEXT:[<SINK>]                                                                               PREV:[jmp?(L2), jmp?(L3)]
 error:
-    <ERROR>                                                                              PREV:[]
+-   <ERROR>                                                                              PREV:[]
 sink:
-    <SINK>                                                                               PREV:[<ERROR>, <END>, d(fun f() { val x = "" fun loc() { val x3 = "" } })]
+    <SINK>                                                                               PREV:[<END>, d(fun f() { val x = "" fun loc() { val x3 = "" } })]
 =====================
 == f ==
 fun f() {
@@ -48,9 +48,9 @@ L5:
 L6 [after local declaration]:
   3 <END>                                             NEXT:[<SINK>]                                            PREV:[jmp?(L6)]
 error:
-    <ERROR>                                           PREV:[]
+-   <ERROR>                                           PREV:[]
 sink:
-    <SINK>                                            PREV:[<ERROR>, <END>, d(fun loc() { val x3 = "" })]
+    <SINK>                                            PREV:[<END>, d(fun loc() { val x3 = "" })]
 =====================
 == loc ==
 fun loc() {
@@ -67,7 +67,7 @@ L7:
 L8:
   5 <END>                    NEXT:[<SINK>]
 error:
-    <ERROR>                  PREV:[]
+-   <ERROR>                  PREV:[]
 sink:
-    <SINK>                   PREV:[<ERROR>, <END>]
+    <SINK>                   PREV:[<END>]
 =====================

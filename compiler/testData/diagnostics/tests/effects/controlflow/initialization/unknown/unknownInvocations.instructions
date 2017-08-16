@@ -1,0 +1,64 @@
+== inPlace ==
+fun <T> inPlace(@CalledInPlace block: () -> T): T = block()
+---------------------
+L0:
+  1 <START>                                                           INIT: in: {} out: {}
+    v(@CalledInPlace block: () -> T)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace block: () -> T) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                     INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                  INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                                           INIT: in: {} out: {}
+sink:
+    <SINK>                                                            INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== reassignmentAndNoInitializaiton ==
+fun reassignmentAndNoInitializaiton() {
+    val x: Int
+    inPlace { <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 }
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                           INIT: in: {} out: {}
+  2 mark({ val x: Int inPlace { <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 } <!UNINITIALIZED_VARIABLE!>x<!>.inc() })
+    v(val x: Int)                                                                                                     INIT: in: {} out: {x=D}
+    mark({ <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 })                                                                INIT: in: {x=D} out: {x=D}
+    jmp?(L2)
+    d({ <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 })                                                                   INIT: in: {x=I?} out: {x=I?}
+L2 [after local declaration]:
+    r({ <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 }) -> <v0>                                                           INIT: in: {x=D} out: {x=D}
+    mark(inPlace { <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 })
+    call(inPlace { <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 }, inPlace|<v0>) -> <v1>
+    magic[UNRESOLVED_CALL](UNINITIALIZED_VARIABLE) -> <v2>
+    mark(!UNINITIALIZED_VARIABLE)
+    call(!UNINITIALIZED_VARIABLE, <ERROR FUNCTION>|<v2>) -> <v3>
+L1:
+  1 <END>                                                                                                             INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                            USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{ <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 }
+---------------------
+L3:
+  3 <START>                                                              INIT: in: {x=D} out: {x=D}
+  4 mark(<!CAPTURED_VAL_INITIALIZATION!>x<!> = 42)
+    magic[UNRESOLVED_CALL](CAPTURED_VAL_INITIALIZATION) -> <v0>
+    mark(!CAPTURED_VAL_INITIALIZATION)
+    call(!CAPTURED_VAL_INITIALIZATION, <ERROR FUNCTION>|<v0>) -> <v1>
+  3 ret(*|<v1>) L4
+L4:
+    <END>
+error:
+    <ERROR>                                                              INIT: in: {} out: {}
+sink:
+    <SINK>                                                               INIT: in: {x=I?} out: {x=I?}    USE: in: {} out: {}
+=====================

@@ -61,11 +61,11 @@ L3 [loop exit point]:
 L5 [body exit point]:
     read (Unit)                                                                                                   INIT: in: {i=I?D, numbers=ID} out: {i=I?D, numbers=ID}
 L1:
-  1 <END>                                                                                                         INIT: in: {numbers=ID} out: {numbers=ID}
+  1 <END>                                                                                                         INIT: in: {numbers=ID} out: {numbers=ID}                            USE: in: {} out: {}
 error:
-    <ERROR>                                                                                                       INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                                                                                        INIT: in: {numbers=I?} out: {numbers=I?}                            USE: in: {} out: {}
+    <SINK>                                                                                                        INIT: in: {numbers=ID} out: {numbers=ID}                            USE: in: {} out: {}
 =====================
 == use ==
 fun use(vararg a: Any?) = a
@@ -78,9 +78,9 @@ L0:
     r(a) -> <v1>                                       INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
     ret(*|<v1>) L1
 L1:
-    <END>
+    <END>                                                                              USE: in: {} out: {}
 error:
-    <ERROR>                                            INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                             INIT: in: {a=I?} out: {a=I?}    USE: in: {} out: {}
+    <SINK>                                             INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
 =====================

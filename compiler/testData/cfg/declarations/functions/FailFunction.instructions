@@ -12,9 +12,9 @@ L0:
     call(RuntimeException(), <init>) -> <v0>
     throw (throw java.lang.RuntimeException()|<v0>)    NEXT:[<ERROR>]
 L1:
-  1 <END>                                              NEXT:[<SINK>]                                             PREV:[]
+- 1 <END>                                              NEXT:[<SINK>]                                             PREV:[]
 error:
     <ERROR>                                            PREV:[throw (throw java.lang.RuntimeException()|<v0>)]
 sink:
-    <SINK>                                             PREV:[<ERROR>, <END>]
+    <SINK>
 =====================

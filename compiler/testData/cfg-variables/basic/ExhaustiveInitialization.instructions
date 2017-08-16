@@ -18,11 +18,11 @@ L0:
     magic[FAKE_INITIALIZER](EAST) -> <v3>      INIT: in: {EAST=D, NORTH=ID, SOUTH=ID, WEST=ID} out: {EAST=D, NORTH=ID, SOUTH=ID, WEST=ID}
     w(EAST|<v3>)                               INIT: in: {EAST=D, NORTH=ID, SOUTH=ID, WEST=ID} out: {EAST=ID, NORTH=ID, SOUTH=ID, WEST=ID}
 L1:
-    <END>                                      INIT: in: {EAST=ID, NORTH=ID, SOUTH=ID, WEST=ID} out: {EAST=ID, NORTH=ID, SOUTH=ID, WEST=ID}
+    <END>                                      INIT: in: {EAST=ID, NORTH=ID, SOUTH=ID, WEST=ID} out: {EAST=ID, NORTH=ID, SOUTH=ID, WEST=ID}    USE: in: {} out: {}
 error:
-    <ERROR>                                    INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                     INIT: in: {EAST=I?, NORTH=I?, SOUTH=I?, WEST=I?} out: {EAST=I?, NORTH=I?, SOUTH=I?, WEST=I?}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {EAST=ID, NORTH=ID, SOUTH=ID, WEST=ID} out: {EAST=ID, NORTH=ID, SOUTH=ID, WEST=ID}    USE: in: {} out: {}
 =====================
 == foo ==
 fun foo(dir: Direction): Int {
@@ -95,9 +95,9 @@ L2 [after 'when' expression]:
     r(res) -> <v20>                                                                                                                                                                                                                USE: in: {} out: {res=READ}
     ret(*|<v20>) L1
 L1:
-  1 <END>                                                                                                                                                                      INIT: in: {dir=ID} out: {dir=ID}
+  1 <END>                                                                                                                                                                      INIT: in: {dir=ID} out: {dir=ID}                    USE: in: {} out: {}
 error:
-    <ERROR>                                                                                                                                                                    INIT: in: {} out: {}
+-   <ERROR>
 sink:
-    <SINK>                                                                                                                                                                     INIT: in: {dir=I?} out: {dir=I?}                    USE: in: {} out: {}
+    <SINK>                                                                                                                                                                     INIT: in: {dir=ID} out: {dir=ID}                    USE: in: {} out: {}
 =====================
