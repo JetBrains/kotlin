@@ -44,8 +44,7 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
         for (member in klass.declarations + klass.primaryConstructorParameters) {
             val descriptor = when (member) {
                                  is KtParameter -> context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, member)
-                                 is KtDeclaration -> context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member)
-                                 else -> null
+                                 else -> context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member)
                              } as? MemberDescriptor ?: continue
             when (member) {
                 is KtClassOrObject -> {

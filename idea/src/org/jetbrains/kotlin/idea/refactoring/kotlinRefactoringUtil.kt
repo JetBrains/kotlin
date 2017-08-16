@@ -968,7 +968,7 @@ fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
 
 internal fun KtDeclaration.withHeaderImplementations(): List<KtDeclaration> {
     val header = liftToHeader() ?: return listOf(this)
-    val implementations = header.headerImplementations() ?: emptySet()
+    val implementations = header.headerImplementations()
     return listOf(header) + implementations
 }
 

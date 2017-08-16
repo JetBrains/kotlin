@@ -38,8 +38,7 @@ fun KtElement.suppressDiagnosticsInDebugMode(): Boolean {
 var KtFile.suppressDiagnosticsInDebugMode: Boolean
     get() = when (this) {
         is KtCodeFragment -> true
-        is KtFile -> getUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE) ?: false
-        else -> false
+        else -> getUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE) ?: false
     }
     set(skip) {
         putUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE, skip)
