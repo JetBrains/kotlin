@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import static DependencyTaskKind.*
+
+import groovy.transform.stc.ClosureParams
 import org.jetbrains.kotlin.konan.target.*
 import static org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.properties.KonanProperties
@@ -185,86 +186,61 @@ class HelperNativeDep extends TgzNativeDep {
     }
 }
 
-enum DependencyTaskKind {
-    LIBFFI("Libffi"), SYSROOT("Sysroot")
+enum DependencyKind {
+    LLVM(            "llvm",            { it.llvmHome },       { "llvmDir" }        ),
+    GCC_TOOLCHAIN(   "gccToolchain",    { it.gccToolchain },   { "gccToolchainDir" }),
+    SYSROOT(         "sysroot",         { it.targetSysRoot }                        ),
+    LIBFFI(          "libffi",          { it.libffiDir }                            ),
+    TARGET_TOOLCHAIN("targetToolchain", { it.targetToolchain }                      )
 
-    DependencyTaskKind(String name) {
+
+    DependencyKind(String name,
+            @ClosureParams(KonanProperties.class) Closure<String> dirGetter,
+            @ClosureParams(KonanTarget.class) Closure<String> propertyNameGetter =
+                           {target -> "${target.userName}${name.capitalize()}Dir"}) {
         this.name = name
+        this.dirGetter = dirGetter
+        this.propertyNameGetter = propertyNameGetter
     }
 
-    String name = ""
+    private String name
+    private Closure<String> dirGetter           // KonanProperties -> String
+    private Closure<String> propertyNameGetter  // KonanTarget -> String
+
+    String getDirectory(KonanProperties properties) {
+        return dirGetter(properties)
+    }
+
+    String getPropertyName(KonanTarget target) {
+        return propertyNameGetter(target)
+    }
+
     String toString() { return name }
 }
 
-void dependencyTask(KonanTarget target, DependencyTaskKind kind) {
-    String dependencyBaseName
-    def properties = rootProject.ext.konanProperties
-    def dirs = new KonanProperties(target, properties, null)
-    switch (kind) {
-        case LIBFFI:
-            dependencyBaseName = dirs.libffiDir
-            break
-        case SYSROOT:
-            dependencyBaseName = dirs.targetSysRoot
-            break
-    }
-    if (dependencyBaseName == null) {
-        throw project.unsupportedPlatformException()
+TargetManager.enabled.each { target ->
+    def konanProperties = new KonanProperties(target,
+            rootProject.ext.konanProperties,
+            rootProject.ext.dependenciesDir.canonicalPath
+    )
+
+    konanProperties.dependencies.each { dependency ->
+        task "${target.userName}-${dependency}"(type: HelperNativeDep) {
+            baseName = dependency
+        }
     }
 
-    task "${target.userName}${kind}"(type: HelperNativeDep) {
-        baseName = dependencyBaseName
+    DependencyKind.values().each { kind ->
+        def dir = kind.getDirectory(konanProperties)
+        if (dir != null) {
+            def path = rootProject.ext.dependenciesDir.toPath()
+                    .resolve(dir).toFile()
+                    .canonicalPath
+            rootProject.ext.set(kind.getPropertyName(target), path)
+        }
     }
-}
-
-if (isLinux()) {
-    // The gcc toolchain contains the sysroot for linux platform.
-    task gccToolchain(type: HelperNativeDep) {
-        baseName = "target-gcc-toolchain-3-$hostSystem"
-    }
-
-    dependencyTask(LINUX, LIBFFI)
-    dependencyTask(RASPBERRYPI, SYSROOT)
-    dependencyTask(RASPBERRYPI, LIBFFI)
-} else if (isWindows()) {
-    task mingwWithLlvm(type: HelperNativeDep) {
-        baseName = "msys2-mingw-w64-x86_64-gcc-6.3.0-clang-llvm-3.9.1-$hostSystem"
-    }
-
-    dependencyTask(MINGW, LIBFFI)
-} else if (isMac()) {
-    dependencyTask(MACBOOK, SYSROOT)
-    dependencyTask(MACBOOK, LIBFFI)
-    dependencyTask(IPHONE, SYSROOT)
-    dependencyTask(IPHONE, LIBFFI)
-    dependencyTask(WASM32, SYSROOT)
-    // No FFI for webassembly.
-
-    // TODO: re-enable when we known how to bring the simulator sysroot to dependencies.
-    // dependencyTask("iphoneSim", SYSROOT)
-} else {
-    throw new Error("Unsupported host")
-}
-
-if (isLinux() || isMac()) {
-    task llvm(type: HelperNativeDep) {
-        baseName = "clang-llvm-$llvmVersion-$hostSystem"
-    }
-
-    dependencyTask(ANDROID_ARM32, SYSROOT)
-    dependencyTask(ANDROID_ARM32, LIBFFI)
-    dependencyTask(ANDROID_ARM64, SYSROOT)
-    dependencyTask(ANDROID_ARM64, LIBFFI)
 }
 
 task update(type: Copy) {
     dependsOn tasks.withType(NativeDep)
-}
-
-tasks.withType(TgzNativeDep) {
-    rootProject.ext.set("${name}Dir", outputDir.path)
-}
-
-if (isWindows()) {
-    rootProject.ext.set("llvmDir", mingwWithLlvmDir)
 }

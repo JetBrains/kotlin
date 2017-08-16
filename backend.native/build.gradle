@@ -237,5 +237,3 @@ protobuf {
         artifact = "com.google.protobuf:protoc:${protobufVersion}"
     }
 }
-
-

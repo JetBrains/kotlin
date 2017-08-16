@@ -22,11 +22,11 @@ defaultTasks 'clean', 'dist'
 convention.plugins.platformInfo = new PlatformInfo()
 
 ext {
-        konanPropertiesFile = project(':backend.native').file('konan.properties')
-        konanProperties = PropertiesKt.loadProperties(konanPropertiesFile.absolutePath)
+    konanPropertiesFile = project(':backend.native').file('konan.properties')
+    konanProperties = PropertiesKt.loadProperties(konanPropertiesFile.absolutePath)
 
-        dependenciesDir = rootProject.file("dist/dependencies")
-        clangManager = new ClangManager(konanProperties, dependenciesDir.absolutePath)
+    dependenciesDir = rootProject.file("dist/dependencies")
+    clangManager = new ClangManager(konanProperties, dependenciesDir.absolutePath)
 }
 
 allprojects {
@@ -74,7 +74,7 @@ void setupClang(Project project) {
 
                 toolChains {
                     gcc(Gcc) {
-                        path "$mingwWithLlvmDir/bin"
+                        path "$llvmDir/bin"
                     }
                 }
             } else {

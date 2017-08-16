@@ -55,7 +55,7 @@ class Distribution(val targetManager: TargetManager,
     } else {
         KonanProperties(host, properties, dependenciesDir)
     }
-    val dependencies = targetProperties.hostTargetList("dependencies")
+    val dependencies = targetProperties.dependencies
 
     val llvmHome = hostProperties.absoluteLlvmHome
     val hostSysRoot = hostProperties.absoluteTargetSysRoot
