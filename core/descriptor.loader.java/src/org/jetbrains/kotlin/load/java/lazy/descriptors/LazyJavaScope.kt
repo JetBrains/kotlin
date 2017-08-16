@@ -218,6 +218,11 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     override fun getVariableNames() = propertyNamesLazy
     override fun getClassifierNames() = classNamesLazy
 
+    override fun definitelyDoesNotContainName(name: Name, location: LookupLocation): Boolean {
+        recordLookup(name, location)
+        return name !in functionNamesLazy && name !in propertyNamesLazy && name !in classNamesLazy
+    }
+
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
         if (name !in getFunctionNames()) return emptyList()
         return functions(name)

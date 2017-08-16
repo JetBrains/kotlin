@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.util.*
 import kotlin.coroutines.experimental.buildSequence
 
@@ -99,7 +100,7 @@ class TowerResolver {
                 }
 
                 getImplicitReceiver(scope)?.let {
-                    yield(MemberScopeTowerLevel(this@createNonLocalLevels, it))
+                    yieldIfNotNull(MemberScopeTowerLevel(this@createNonLocalLevels, it).takeIf { it.mayFitForName(name) })
                 }
             }
             else if (scope.mayFitForName(name, location)) {
@@ -156,7 +157,9 @@ class TowerResolver {
                     }
 
                     // members of implicit receiver or member extension for explicit receiver
-                    TowerData.TowerLevel(MemberScopeTowerLevel(this, implicitReceiver)).process()?.let { return it }
+                    MemberScopeTowerLevel(this, implicitReceiver).takeIf { it.mayFitForName(name) }?.let {
+                        TowerData.TowerLevel(it).process()?.let { return it }
+                    }
 
                     // synthetic properties
                     TowerData.BothTowerLevelAndImplicitReceiver(syntheticLevel, implicitReceiver).process()?.let { return it }
@@ -192,6 +195,9 @@ class TowerResolver {
 
         return resultCollector.getFinalCandidates()
     }
+
+    private fun MemberScopeTowerLevel.mayFitForName(name: Name) =
+            !definitelyDoesNotContainName(name) || !definitelyDoesNotContainName(OperatorNameConventions.INVOKE)
 
     private fun ResolutionScope.mayFitForName(name: Name, location: LookupLocation) =
             !definitelyDoesNotContainName(name, location) || !definitelyDoesNotContainName(OperatorNameConventions.INVOKE, location)

@@ -87,6 +87,10 @@ internal class MemberScopeTowerLevel(
 
     private val syntheticScopes = scopeTower.syntheticScopes
 
+    fun definitelyDoesNotContainName(name: Name) =
+            (dispatchReceiver.possibleTypes + dispatchReceiver.receiverValue.type)
+                    .all { !it.isDynamic() && it.memberScope.definitelyDoesNotContainName(name, location) }
+
     private fun collectMembers(
             getMembers: ResolutionScope.(KotlinType?) -> Collection<CallableDescriptor>
     ): Collection<CandidateWithBoundDispatchReceiver> {
