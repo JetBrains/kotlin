@@ -1,0 +1,3 @@
+package
+
+public inline fun test(/*0*/ s: () -> kotlin.Unit, /*1*/ p: (() -> kotlin.Unit)?): kotlin.Unit

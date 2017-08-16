@@ -32,10 +32,16 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 public class InlineUtil {
-    public static boolean isInlineLambdaParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {
+
+    public static boolean isInlineParameterExceptNullability(@NotNull ParameterDescriptor valueParameterOrReceiver) {
         return !(valueParameterOrReceiver instanceof ValueParameterDescriptor
                  && ((ValueParameterDescriptor) valueParameterOrReceiver).isNoinline()) &&
                FunctionTypesKt.isFunctionType(valueParameterOrReceiver.getOriginal().getType());
+    }
+
+    public static boolean isInlineParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {
+        return isInlineParameterExceptNullability(valueParameterOrReceiver) &&
+               !valueParameterOrReceiver.getOriginal().getType().isMarkedNullable();
     }
 
     public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {
@@ -152,7 +158,7 @@ public class InlineUtil {
         if (!(mapping instanceof ArgumentMatch)) return null;
 
         ValueParameterDescriptor parameter = ((ArgumentMatch) mapping).getValueParameter();
-        return isInlineLambdaParameter(parameter) ? parameter : null;
+        return isInlineParameter(parameter) ? parameter : null;
     }
 
     public static boolean canBeInlineArgument(@Nullable PsiElement functionalExpression) {
