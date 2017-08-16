@@ -463,6 +463,32 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/statement.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("endWithElseIf.kt")
+        public void testEndWithElseIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/endWithElseIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("endWithElseIfNoBraces.kt")
+        public void testEndWithElseIfNoBraces() throws Exception {
+            String fileName =
+                    KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/endWithElseIfNoBraces.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("statementElseIf.kt")
+        public void testStatementElseIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/statementElseIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionElseIfBlock.kt")
+        public void testExpressionElseIfBlock() throws Exception {
+            String fileName =
+                    KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/expressionElseIfBlock.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/copyWithoutNamedArguments")
