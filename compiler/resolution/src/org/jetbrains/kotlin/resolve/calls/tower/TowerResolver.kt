@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
+import kotlin.coroutines.experimental.buildSequence
 
 interface Candidate {
     // this operation should be very fast
@@ -90,21 +91,21 @@ class TowerResolver {
     ): Collection<C>
             = scopeTower.run(processor, AllCandidatesCollector(), false, name)
 
-    private fun ImplicitScopeTower.createNonLocalLevels(): List<ScopeTowerLevel> {
-        val result = ArrayList<ScopeTowerLevel>()
-
+    private fun ImplicitScopeTower.createNonLocalLevels(name: Name): Sequence<ScopeTowerLevel> = buildSequence {
         lexicalScope.parentsWithSelf.forEach { scope ->
             if (scope is LexicalScope) {
-                if (!scope.kind.withLocalDescriptors) result.add(ScopeBasedTowerLevel(this, scope))
+                if (!scope.kind.withLocalDescriptors && scope.mayFitForName(name, location)) {
+                    yield(ScopeBasedTowerLevel(this@createNonLocalLevels, scope))
+                }
 
-                getImplicitReceiver(scope)?.let { result.add(MemberScopeTowerLevel(this, it)) }
+                getImplicitReceiver(scope)?.let {
+                    yield(MemberScopeTowerLevel(this@createNonLocalLevels, it))
+                }
             }
-            else {
-                result.add(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
+            else if (scope.mayFitForName(name, location)) {
+                yield(ImportingScopeBasedTowerLevel(this@createNonLocalLevels, scope as ImportingScope))
             }
         }
-
-        return result
     }
 
     private fun <C : Candidate> ImplicitScopeTower.run(
@@ -170,11 +171,16 @@ class TowerResolver {
 
                     // extension for implicit receiver
                     if (nonLocalLevels == null) {
-                        nonLocalLevels = createNonLocalLevels()
+                        nonLocalLevels = arrayListOf()
+                        for (nonLocalLevel in createNonLocalLevels(name)) {
+                            TowerData.BothTowerLevelAndImplicitReceiver(nonLocalLevel, implicitReceiver).process()?.let { return it }
+                            nonLocalLevels.add(nonLocalLevel)
+                        }
                     }
-
-                    for (nonLocalLevel in nonLocalLevels) {
-                        TowerData.BothTowerLevelAndImplicitReceiver(nonLocalLevel, implicitReceiver).process()?.let { return it }
+                    else {
+                        for (nonLocalLevel in nonLocalLevels) {
+                            TowerData.BothTowerLevelAndImplicitReceiver(nonLocalLevel, implicitReceiver).process()?.let { return it }
+                        }
                     }
                 }
             }
