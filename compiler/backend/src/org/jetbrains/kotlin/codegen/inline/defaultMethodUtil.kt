@@ -51,7 +51,7 @@ fun extractDefaultLambdaOffsetAndDescriptor(jvmSignature: JvmMethodSignature, fu
     val valueParameterOffset = valueParameters.takeWhile { it.kind != JvmMethodParameterKind.VALUE }.size
 
     return functionDescriptor.valueParameters.filter {
-        InlineUtil.isInlineLambdaParameter(it) && it.declaresDefaultValue()
+        InlineUtil.isInlineParameter(it) && it.declaresDefaultValue()
     }.associateBy {
         parameterOffsets[valueParameterOffset + it.index]
     }
