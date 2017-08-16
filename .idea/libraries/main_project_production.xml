@@ -73,6 +73,7 @@
       <root url="file://$PROJECT_DIR$/../out/production/sam-with-receiver-ide" />
       <root url="file://$PROJECT_DIR$/../out/production/annotation-based-compiler-plugins-ide-support" />
       <root url="file://$PROJECT_DIR$/../out/production/frontend.script" />
+      <root url="file://$PROJECT_DIR$/../out/production/idea-gradle" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -107,6 +108,7 @@
       <root url="file://$PROJECT_DIR$/../idea/idea-test-framework/src" />
       <root url="file://$PROJECT_DIR$/../idea/formatter/src" />
       <root url="file://$PROJECT_DIR$/../compiler/frontend.script/src" />
+      <root url="file://$PROJECT_DIR$/../idea/idea-gradle/src" />
     </SOURCES>
   </library>
 </component>
