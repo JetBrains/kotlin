@@ -143,7 +143,7 @@ class TowerResolver {
         for (scope in lexicalScope.parentsWithSelf) {
             if (scope is LexicalScope) {
                 // statics
-                if (!scope.kind.withLocalDescriptors) {
+                if (!scope.kind.withLocalDescriptors && scope.mayFitForName(name, location)) {
                     TowerData.TowerLevel(ScopeBasedTowerLevel(this, scope)).process()?.let { return it }
                 }
 
