@@ -7798,6 +7798,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt19690.kt")
+            public void testKt19690() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/kt19690.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localVal.kt")
             public void testLocalVal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/localVal.kt");
