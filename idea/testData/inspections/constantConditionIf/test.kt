@@ -3,7 +3,7 @@ fun baz(s: String) {}
 
 const val TRUE = true
 
-fun bar() {
+fun bar(s: String?) {
     foo(if (TRUE) 1 else 2)
 
     foo(if (false && TRUE) {
@@ -25,4 +25,14 @@ fun bar() {
         baz("a")
         1
     } else 2)
+
+    if (s ==null) {
+        1
+    } else if (true) {
+        2
+    }
+
+    if (s ==null) {
+        1
+    } else if (true) 2
 }
