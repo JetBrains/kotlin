@@ -84,7 +84,7 @@ private fun detectLibraryKindFromJarContents(jarRoot: VirtualFile): PersistentLi
                 when (file.extension) {
                     "class" -> false
 
-                    "js", "kjsm" -> {
+                    "kjsm" -> {
                         result = JSLibraryKind
                         false
                     }

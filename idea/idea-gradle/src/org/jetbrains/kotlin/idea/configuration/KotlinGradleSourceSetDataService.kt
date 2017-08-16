@@ -109,7 +109,7 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
         if (toImport.isEmpty()) return
         val projectDataNode = toImport.first().parent!! as DataNode<ProjectData>
         val moduleDataNodes = projectDataNode.children.filter { it.data is ModuleData } as List<DataNode<ModuleData>>
-        if (moduleDataNodes.any { detectPlatformByPlugin(it) != null}) {
+        if (moduleDataNodes.any { detectPlatformByPlugin(it)?.takeIf { it !is TargetPlatformKind.Jvm } != null }) {
             for (libraryDataNode in toImport) {
                 val ideLibrary = modelsProvider.findIdeLibrary(libraryDataNode.data) ?: continue
 
