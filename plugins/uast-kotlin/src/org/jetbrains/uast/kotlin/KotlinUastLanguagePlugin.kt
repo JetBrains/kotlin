@@ -74,8 +74,8 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
             val parentUnwrapped = KotlinConverter.unwrapElements(parent) ?: return null
             if (parent is KtValueArgument && parentUnwrapped is KtAnnotationEntry) {
                 val argumentName = parent.getArgumentName()?.asName?.asString() ?: ""
-                return (convertElementWithParent(parentUnwrapped, null) as UAnnotation)
-                        .attributeValues.find { it.name == argumentName }
+                return (convertElementWithParent(parentUnwrapped, null) as? UAnnotation)
+                        ?.attributeValues?.find { it.name == argumentName }
             }
             else
                 return convertElementWithParent(parentUnwrapped, null)
