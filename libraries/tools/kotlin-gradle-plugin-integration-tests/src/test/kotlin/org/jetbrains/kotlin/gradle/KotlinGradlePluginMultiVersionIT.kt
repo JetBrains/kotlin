@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
+import org.junit.Assume
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
@@ -123,6 +124,37 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
             assertSuccessful()
             assertReportExists()
             assertContains(":compileKotlin", ":compileTestKotlin")
+        }
+    }
+
+    @Test
+    fun testJavaLibraryCompatibility() {
+        Assume.assumeTrue("The java-library plugin is supported only in Gradle 3.4+ (current: $gradleVersion)",
+                gradleVersion.split(".").map(String::toInt).let { (major, minor) ->
+                    major > 3 || major == 3 && minor >= 4
+                })
+
+        val project = Project("javaLibraryProject", gradleVersion)
+        val compileKotlinTasks = listOf(":libA:compileKotlin", ":libB:compileKotlin", ":app:compileKotlin")
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains("Could not register Kotlin output")
+            assertTasksExecuted(compileKotlinTasks)
+        }
+
+        // Modify a library source and its usage and re-build the project:
+        for (path in listOf("libA/src/main/kotlin/HelloA.kt", "libB/src/main/kotlin/HelloB.kt", "app/src/main/kotlin/App.kt")) {
+            File(project.projectDir, path).modify { original ->
+                original.replace("helloA", "helloA1")
+                        .replace("helloB", "helloB1")
+                        .apply { assert(!equals(original)) }
+            }
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains("Could not register Kotlin output")
+            assertTasksExecuted(compileKotlinTasks)
         }
     }
 }
