@@ -53,7 +53,7 @@ fun StorageComponentContainer.configureModule(
     platform.platformConfigurator.configureModuleComponents(this)
 
     for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
-        extension.addDeclarations(this, platform)
+        extension.registerModuleComponents(this, platform,  moduleContext.module)
     }
 
     configurePlatformIndependentComponents()

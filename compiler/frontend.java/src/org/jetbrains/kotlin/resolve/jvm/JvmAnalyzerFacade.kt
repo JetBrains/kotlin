@@ -100,8 +100,6 @@ object JvmAnalyzerFacade : AnalyzerFacade() {
                 useBuiltInsProvider = false // TODO: load built-ins from module dependencies in IDE
         )
 
-        StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(container, moduleInfo) }
-
         val resolveSession = container.get<ResolveSession>()
         val javaDescriptorResolver = container.get<JavaDescriptorResolver>()
 

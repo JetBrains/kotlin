@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.ANNOTATION
@@ -89,9 +90,11 @@ class NoArgComponentRegistrar : ComponentRegistrar {
 }
 
 class CliNoArgComponentContainerContributor(val annotations: List<String>) : StorageComponentContainerContributor {
-    override fun addDeclarations(container: StorageComponentContainer, platform: TargetPlatform) {
-        if (platform is JvmPlatform) {
-            container.useInstance(CliNoArgDeclarationChecker(annotations))
-        }
+    override fun registerModuleComponents(
+            container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
+    ) {
+        if (platform != JvmPlatform) return
+
+        container.useInstance(CliNoArgDeclarationChecker(annotations))
     }
 }
