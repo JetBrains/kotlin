@@ -595,8 +595,31 @@ public class FunctionCodegen {
             @NotNull KotlinTypeMapper typeMapper,
             int shiftForDestructuringVariables
     ) {
-        generateLocalVariablesForParameters(mv, jvmMethodSignature, thisType, methodBegin, methodEnd,
-                                            functionDescriptor.getValueParameters(),
+        if (functionDescriptor.isSuspend()) {
+            FunctionDescriptor unwrapped = CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(
+                    functionDescriptor
+            );
+
+            if (unwrapped != functionDescriptor) {
+                generateLocalVariableTable(
+                        mv,
+                        new JvmMethodSignature(
+                               jvmMethodSignature.getAsmMethod(),
+                               jvmMethodSignature.getValueParameters().subList(
+                                       0,
+                                       jvmMethodSignature.getValueParameters().size() - 1
+                               )
+                        ),
+                        unwrapped,
+                        thisType, methodBegin, methodEnd, ownerKind, typeMapper, shiftForDestructuringVariables
+                );
+                return;
+            }
+        }
+
+        generateLocalVariablesForParameters(mv,
+                                            jvmMethodSignature,
+                                            thisType, methodBegin, methodEnd, functionDescriptor.getValueParameters(),
                                             AsmUtil.isStaticMethod(ownerKind, functionDescriptor), typeMapper, shiftForDestructuringVariables
         );
     }
