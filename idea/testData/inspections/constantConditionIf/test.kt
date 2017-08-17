@@ -26,13 +26,13 @@ fun bar(s: String?) {
         1
     } else 2)
 
-    if(s ==null) {
+    if (s == null) {
         1
     } else if (true) {
         2
     }
 
-    if(s ==null) {
+    if (s == null) {
         1
     } else if (true) 2
 }
