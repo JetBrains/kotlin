@@ -117,7 +117,10 @@ include ":build-common",
         ":kotlin-sam-with-receiver",
         ":kotlin-gradle-subplugin-example",
         ":examples:annotation-processor-example",
-        ":kotlin-annotation-processing"
+        ":kotlin-script-util",
+        ":kotlin-annotation-processing",
+        ":examples:kotlin-jsr223-local-example",
+        ":examples:kotlin-jsr223-daemon-local-eval-example"
 
 rootProject.name = "kotlin"
 
@@ -169,7 +172,10 @@ project(':kotlin-noarg').projectDir = "$rootDir/libraries/tools/kotlin-noarg" as
 project(':kotlin-sam-with-receiver').projectDir = "$rootDir/libraries/tools/kotlin-sam-with-receiver" as File
 project(':kotlin-gradle-subplugin-example').projectDir = "$rootDir/libraries/examples/kotlin-gradle-subplugin-example" as File
 project(':examples:annotation-processor-example').projectDir = "$rootDir/libraries/examples/annotation-processor-example" as File
+project(':kotlin-script-util').projectDir = "$rootDir/libraries/tools/kotlin-script-util" as File
 project(':kotlin-annotation-processing').projectDir = "$rootDir/libraries/tools/kotlin-annotation-processing" as File
+project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-local-example" as File
+project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
 
 def setBuildFile(ProjectDescriptor project) {
     if (project.projectDir.listFiles().any { file -> file.name == "build.gradle.kts"}) {
