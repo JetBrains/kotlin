@@ -63,7 +63,7 @@ class CoroutineTransformerMethodVisitor(
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
 
-    private val continuationIndex = if (isForNamedFunction) getLastParameterIndex(desc, access) else 0
+    private var continuationIndex = if (isForNamedFunction) -1 else 0
     private var dataIndex = if (isForNamedFunction) -1 else 1
     private var exceptionIndex = if (isForNamedFunction) -1 else 2
 
@@ -83,6 +83,7 @@ class CoroutineTransformerMethodVisitor(
 
             dataIndex = methodNode.maxLocals++
             exceptionIndex = methodNode.maxLocals++
+            continuationIndex = methodNode.maxLocals++
 
             prepareMethodNodePreludeForNamedFunction(methodNode)
         }
@@ -194,6 +195,13 @@ class CoroutineTransformerMethodVisitor(
 
     private fun prepareMethodNodePreludeForNamedFunction(methodNode: MethodNode) {
         val objectTypeForState = Type.getObjectType(classBuilderForCoroutineState.thisName)
+        val continuationArgumentIndex = getLastParameterIndex(methodNode.desc, methodNode.access)
+        methodNode.instructions.asSequence().filterIsInstance<VarInsnNode>().forEach {
+            if (it.`var` != continuationArgumentIndex) return@forEach
+            assert(it.opcode == Opcodes.ALOAD) { "Only ALOADs are allowed for continuation arguments" }
+            it.`var` = continuationIndex
+        }
+
         methodNode.instructions.insert(withInstructionAdapter {
             val createStateInstance = Label()
             val afterCoroutineStateCreated = Label()
@@ -212,11 +220,12 @@ class CoroutineTransformerMethodVisitor(
             // - Otherwise it's still can be a recursive call. To check it's not the case we set the last bit in the label in
             // `doResume` just before calling the suspend function (see kotlin.coroutines.experimental.jvm.internal.CoroutineImplForNamedFunction).
             // So, if it's set we're in continuation.
-            visitVarInsn(Opcodes.ALOAD, continuationIndex)
+
+            visitVarInsn(Opcodes.ALOAD, continuationArgumentIndex)
             instanceOf(objectTypeForState)
             ifeq(createStateInstance)
 
-            visitVarInsn(Opcodes.ALOAD, continuationIndex)
+            visitVarInsn(Opcodes.ALOAD, continuationArgumentIndex)
             checkcast(objectTypeForState)
             visitVarInsn(Opcodes.ASTORE, continuationIndex)
 
