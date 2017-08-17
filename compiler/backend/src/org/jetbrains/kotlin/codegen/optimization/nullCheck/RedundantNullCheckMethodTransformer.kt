@@ -44,13 +44,14 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
         private var changes = false
 
         fun run(): Boolean {
-            val checkedReferenceTypes = analyzeTypesAndRemoveDeadCode()
-            eliminateRedundantChecks(checkedReferenceTypes)
+            val stackOnThrowExceptions = hashMapOf<AbstractInsnNode, Int>()
+            val checkedReferenceTypes = analyzeTypesAndRemoveDeadCode(stackOnThrowExceptions)
+            eliminateRedundantChecks(checkedReferenceTypes, stackOnThrowExceptions)
 
             return changes
         }
 
-        private fun analyzeTypesAndRemoveDeadCode(): Map<AbstractInsnNode, Type> {
+        private fun analyzeTypesAndRemoveDeadCode(stackOnThrowExceptionsHolder: MutableMap<AbstractInsnNode, Int>): Map<AbstractInsnNode, Type> {
             val insns = methodNode.instructions.toArray()
             val frames = analyze(internalClassName, methodNode, OptimizationBasicInterpreter())
 
@@ -64,6 +65,9 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                 else if (insn.isCheckParameterIsNotNull() || insn.isCheckExpressionValueIsNotNull()) {
                     checkedReferenceTypes[insn] = frame?.peek(1)?.type ?: continue
                 }
+                else if (insn.isThrowNpeIntrinsic()) {
+                    stackOnThrowExceptionsHolder[insn] = frame?.maxStackSize ?: continue
+                }
             }
 
             val dceResult = DeadCodeEliminationMethodTransformer().removeDeadCodeByFrames(methodNode, frames)
@@ -74,8 +78,11 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
             return checkedReferenceTypes
         }
 
-        private fun eliminateRedundantChecks(checkedReferenceTypes: Map<AbstractInsnNode, Type>) {
-            val nullabilityAssumptions = injectNullabilityAssumptions(checkedReferenceTypes)
+        private fun eliminateRedundantChecks(
+                checkedReferenceTypes: Map<AbstractInsnNode, Type>,
+                stackOnThrowExceptions: MutableMap<AbstractInsnNode, Int>
+        ) {
+            val nullabilityAssumptions = injectNullabilityAssumptions(checkedReferenceTypes, stackOnThrowExceptions)
 
             val nullabilityMap = analyzeNullabilities()
 
@@ -84,8 +91,10 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
             transformTrivialChecks(nullabilityMap)
         }
 
-        private fun injectNullabilityAssumptions(checkedReferenceTypes: Map<AbstractInsnNode, Type>) =
-                NullabilityAssumptionsBuilder(checkedReferenceTypes).injectNullabilityAssumptions()
+        private fun injectNullabilityAssumptions(
+                checkedReferenceTypes: Map<AbstractInsnNode, Type>,
+                stackOnThrowExceptions: MutableMap<AbstractInsnNode, Int>
+        ) = NullabilityAssumptionsBuilder(checkedReferenceTypes, stackOnThrowExceptions).injectNullabilityAssumptions()
 
         private fun analyzeNullabilities(): Map<AbstractInsnNode, StrictBasicValue> {
             val frames = analyze(internalClassName, methodNode, NullabilityInterpreter())
@@ -168,7 +177,10 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
             }
         }
 
-        private inner class NullabilityAssumptionsBuilder(val checkedReferenceTypes: Map<AbstractInsnNode, Type>) {
+        private inner class NullabilityAssumptionsBuilder(
+                val checkedReferenceTypes: Map<AbstractInsnNode, Type>,
+                val stackOnThrowExceptions: MutableMap<AbstractInsnNode, Int>
+        ) {
 
             private val checksDependingOnVariable = HashMap<Int, MutableList<AbstractInsnNode>>()
 
@@ -362,6 +374,8 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                         athrow()
                     })
                 }
+
+                methodNode.maxStack = Math.max(methodNode.maxStack, (stackOnThrowExceptions[insn] ?: -1) + 1)
             }
 
         }
