@@ -20282,6 +20282,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("itInsideComplexLambda.kt")
+        public void testItInsideComplexLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/itInsideComplexLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt10143.kt")
         public void testKt10143() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt10143.kt");
@@ -20796,6 +20802,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 return;
             }
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+
+        @TestMetadata("useBoundWhenThereIsNoFixedVariables.kt")
+        public void testUseBoundWhenThereIsNoFixedVariables() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/useBoundWhenThereIsNoFixedVariables.kt");
+            doTest(fileName);
         }
     }
 

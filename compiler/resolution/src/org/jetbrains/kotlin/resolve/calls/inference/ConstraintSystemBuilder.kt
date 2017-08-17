@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.resolve.calls.inference
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.model.PostponedKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -31,8 +32,10 @@ interface ConstraintSystemOperation {
     fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition)
 
     fun isProperType(type: UnwrappedType): Boolean
+    fun isTypeVariable(type: UnwrappedType): Boolean
 
     fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor>
+    fun getProperSubTypeBounds(type: UnwrappedType): List<UnwrappedType>
 }
 
 interface ConstraintSystemBuilder : ConstraintSystemOperation {
