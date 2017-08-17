@@ -27,12 +27,14 @@ public class Boolean private constructor() : Comparable<Boolean> {
     public operator fun not(): Boolean
 
     /**
-     * Performs a logical `and` operation between this Boolean and the [other] one.
+     * Performs a logical `and` operation between this Boolean and the [other] one. Unlike the `&&` operator,
+     * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     public infix fun and(other: Boolean): Boolean
 
     /**
-     * Performs a logical `or` operation between this Boolean and the [other] one.
+     * Performs a logical `or` operation between this Boolean and the [other] one. Unlike the `||` operator,
+     * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     public infix fun or(other: Boolean): Boolean
 
