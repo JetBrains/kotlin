@@ -7,7 +7,7 @@ internal class A {
     @Throws(Exception::class)
     fun constructors() {
         String()
-        // TODO: new String("original");
+        "original"
         String(charArrayOf('a', 'b', 'c'))
         String(charArrayOf('b', 'd'), 1, 1)
         String(intArrayOf(32, 65, 127), 0, 3)

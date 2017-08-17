@@ -501,6 +501,14 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 }
             }
 
+            if (type?.canonicalText == CommonClassNames.JAVA_LANG_STRING) {
+                val argument = expression.argumentList?.expressions?.singleOrNull()
+                if (argument != null && argument.type?.canonicalText == CommonClassNames.JAVA_LANG_STRING) {
+                    result = codeConverter.convertExpression(argument)
+                    return
+                }
+            }
+
             val qualifier = expression.qualifier
             val classRef = expression.classOrAnonymousClassReference
             val classRefConverted = if (classRef != null) converter.convertCodeReferenceElement(classRef, hasExternalQualifier = qualifier != null) else null

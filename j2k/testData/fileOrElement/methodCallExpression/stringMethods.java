@@ -4,7 +4,7 @@ import java.util.*;
 class A {
     void constructors() throws Exception {
         new String();
-        // TODO: new String("original");
+        new String("original");
         new String(new char[] {'a', 'b', 'c'});
         new String(new char[] {'b', 'd'}, 1, 1);
         new String(new int[] { 32, 65, 127 }, 0, 3);
