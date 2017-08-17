@@ -5,6 +5,7 @@ perform following operations:
 - breakpoints
 - stepping
 - inspection of type information
+- (var) variable inspection
 
 ### Producing binaries with debug info with Kotlin/Native compiler
 
@@ -132,10 +133,58 @@ struct ktype:Point {
 #### gdb
 Unfortunately ``ptype`` is affected with ``:`` and unusable.
 
+### (var) Variable inspection
+Getting representation of the object variable (var) could be done using builtin runtime function `Konan_DebugPrint`:
+
+````
+0:b-debugger-fixes:minamoto@unit-703(0)# cat ../debugger-plugin/1.kt | nl -p
+     1  fun foo(a:String, b:Int) = a + b
+     2  fun one() = 1
+     3  fun main(arg:Array<String>) {
+     4    var a_variable = foo("(a_variable) one is ", 1)
+     5    var b_variable = foo("(b_variable) two is ", 2)
+     6    var c_variable = foo("(c_variable) two is ", 3)
+     7    var d_variable = foo("(d_variable) two is ", 4)
+     8    println(a_variable)
+     9    println(b_variable)
+    10    println(c_variable)
+    11    println(d_variable)
+    12  }
+0:b-debugger-fixes:minamoto@unit-703(0)# lldb ./program.kexe -o 'b -f 1.kt -l 9' -o r
+(lldb) target create "./program.kexe"
+Current executable set to './program.kexe' (x86_64).
+(lldb) b -f 1.kt -l 9
+Breakpoint 1: where = program.kexe`kfun:main(kotlin.Array<kotlin.String>) + 463 at 1.kt:9, address = 0x0000000100000dbf
+(lldb) r
+(a_variable) one is 1
+Process 80496 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+    frame #0: 0x0000000100000dbf program.kexe`kfun:main(kotlin.Array<kotlin.String>) at 1.kt:9
+   6      var c_variable = foo("(c_variable) two is ", 3)
+   7      var d_variable = foo("(d_variable) two is ", 4)
+   8      println(a_variable)
+-> 9      println(b_variable)
+   10     println(c_variable)
+   11     println(d_variable)
+   12   }
+
+Process 80496 launched: './program.kexe' (x86_64)
+(lldb) expression -- Konan_DebugPrint(a_variable)
+(a_variable) one is 1(KInt) $0 = 0
+(lldb)
+````
+_Note:_ similar could be done in gdb by module of gdb command syntax.
+
+_Note:_ There is possibility to avoid using lldb casts and use provided lldb helper scripts:
+````
+(lldb) command script import dist/tools/konan_lldb.py
+(lldb) show_variable a_variable
+(a_variable) one is 1(KInt) $0 = 0
+````
 
 ### Known issues
 - stepping in imported inline functions 
-- inspection is not implemented
+- inspection is not implemented for (val) variables.
 
 _Note:_ Support DWARF 2 specification means that debugger tool recognize Kotlin as C89, because till DWARF 5 specification, there is no
 identifier for Kotlin language type in specification.
