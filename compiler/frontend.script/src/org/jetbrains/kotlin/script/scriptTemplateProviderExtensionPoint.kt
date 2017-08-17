@@ -61,7 +61,7 @@ interface ScriptTemplatesProvider {
 }
 
 fun makeScriptDefsFromTemplatesProviderExtensions(project: Project,
-                                                  errorsHandler: ((ScriptTemplatesProvider, Throwable) -> Unit) = { _, ex -> throw ex }
+                                                  errorsHandler: ((ScriptTemplatesProvider, Throwable) -> Unit)
 ): List<KotlinScriptDefinition> =
         makeScriptDefsFromTemplatesProviders(Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.asIterable(),
                                              errorsHandler)
