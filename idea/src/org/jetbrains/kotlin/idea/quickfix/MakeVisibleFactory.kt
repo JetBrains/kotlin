@@ -17,21 +17,25 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-object MakeVisibleFactory  : KotlinIntentionActionsFactory() {
+object MakeVisibleFactory : KotlinIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val element = diagnostic.psiElement as? KtElement ?: return emptyList()
         val context = element.analyze(BodyResolveMode.PARTIAL)
@@ -44,7 +48,11 @@ object MakeVisibleFactory  : KotlinIntentionActionsFactory() {
 
         val module = DescriptorUtils.getContainingModule(descriptor)
         val targetVisibilities = when (descriptor.visibility) {
-            PRIVATE, INVISIBLE_FAKE -> if (module != usageModule) listOf(PUBLIC) else listOf(PUBLIC, INTERNAL)
+            PRIVATE, INVISIBLE_FAKE -> mutableListOf(PUBLIC).apply {
+                if (module == usageModule) add(INTERNAL)
+                val superClasses = (element.containingClass()?.descriptor as? ClassDescriptor)?.getAllSuperclassesWithoutAny()
+                if (superClasses?.contains(declaration.containingClass()?.descriptor) == true) add(PROTECTED)
+            }
             else -> listOf(PUBLIC)
         }
 

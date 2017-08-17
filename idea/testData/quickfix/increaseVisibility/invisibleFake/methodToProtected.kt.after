@@ -1,0 +1,12 @@
+// "Make 'doSth' protected" "true"
+
+open class A {
+    protected fun doSth() {
+    }
+}
+
+class B : A() {
+    fun bar() {
+        doSth()
+    }
+}
