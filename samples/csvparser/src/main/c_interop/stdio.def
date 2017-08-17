@@ -1,26 +1,2 @@
 headers = stdio.h stdlib.h string.h
-excludeDependentModules.osx = true
-
-/**
- * TODO: should be fixed in more natural way.
- * zopen is Darwin specific function declared in stdio.h, but it seems definition for this function
- * disappeared in annals of history.
- * This declaration defined under __DARWIN_C_LEVEL >= __DARWIN_C_FULL
- * To change __DARWIN_C_LEVEL it's enough to define _ANSI_SOURCE
- *   > echo "#include <stdio.h>" | clang -D_ANSI_SOURCE -dM -xc -E -  | grep DARWIN
- *   #define __DARWIN_C_ANSI 010000L
- *   #define __DARWIN_C_FULL 900000L
- *   #define __DARWIN_C_LEVEL __DARWIN_C_ANSI
- * But there is an issue in c interop tool [KT-18946]:
- * with compilerOpts=-D_ANSI_SOURCE
- * :csvparser:genStdioInteropStubsException in thread "main" java.lang.Error: /var/folders/cx/q7hktzd16l59d7g3pqc5ggfr0000gp/T/tmp957622261795996282.c:1:10: fatal error: could not build module 'Darwin'
- *         at org.jetbrains.kotlin.native.interop.indexer.UtilsKt.ensureNoCompileErrors(Utils.kt:131)
- *         at org.jetbrains.kotlin.native.interop.indexer.ModulesMap.<init>(Utils.kt:381)
- *         at org.jetbrains.kotlin.native.interop.indexer.UtilsKt.getFilteredHeaders(Utils.kt:466)
- *         at org.jetbrains.kotlin.native.interop.indexer.IndexerKt.indexDeclarations(Indexer.kt:368)
- *         at org.jetbrains.kotlin.native.interop.indexer.IndexerKt.buildNativeIndexImpl(Indexer.kt:356)
- *         at org.jetbrains.kotlin.native.interop.indexer.NativeIndexKt.buildNativeIndex(NativeIndex.kt:34)
- *         at org.jetbrains.kotlin.native.interop.gen.jvm.MainKt.processLib(main.kt:397)
- *         at org.jetbrains.kotlin.native.interop.gen.jvm.MainKt.main(main.kt:34)
- */
-excludedFunctions.osx = zopen
+compilerOpts = -D_ANSI_SOURCE
