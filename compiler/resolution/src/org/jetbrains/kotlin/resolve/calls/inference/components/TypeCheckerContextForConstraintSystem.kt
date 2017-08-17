@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorTypeEqualsToAnything = true, allowedTypeVariable = false) {
 
@@ -59,20 +60,27 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
     }
 
     /**
+     * Previous idea was to replace flexible types with intersection types:
      * Foo <: T! <=> Foo <: T? <=> Foo & Any <: T
      * Foo <: T? <=> Foo & Any <: T
      * Foo <: T -- leave as is
      */
     fun simplifyLowerConstraint(typeVariable: UnwrappedType, subType: UnwrappedType): Boolean {
-        @Suppress("NAME_SHADOWING")
-        val typeVariable = typeVariable.upperIfFlexible()
+        if (typeVariable.isFlexible()) {
+            val subtypeAsFlexible = typeVariable.getCustomTypeVariable()?.substitutionResult(subType)?.unwrap()
+            if (subtypeAsFlexible != null) {
+                addLowerConstraint(typeVariable.constructor, subtypeAsFlexible)
+                return true
+            }
+        }
 
         if (typeVariable.isMarkedNullable) {
-            addLowerConstraint(typeVariable.constructor, intersectTypes(listOf(subType, subType.builtIns.anyType)))
+            val notNullSubType = subType.makeNotNullable().unwrap()
+            addLowerConstraint(typeVariable.constructor, notNullSubType)
+            return true
         }
-        else {
-            addLowerConstraint(typeVariable.constructor, subType)
-        }
+
+        addLowerConstraint(typeVariable.constructor, subType)
 
         return true
     }
