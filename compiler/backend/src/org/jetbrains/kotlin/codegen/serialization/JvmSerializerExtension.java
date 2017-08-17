@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.serialization.*;
 import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
@@ -85,7 +86,9 @@ public class JvmSerializerExtension extends SerializerExtension {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName));
         }
 
-        writeLocalProperties(proto, typeMapper.mapClass(descriptor), JvmProtoBuf.classLocalVariable);
+        Type containerAsmType =
+                DescriptorUtils.isInterface(descriptor) ? typeMapper.mapDefaultImpls(descriptor) : typeMapper.mapClass(descriptor);
+        writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable);
     }
 
     @Override
