@@ -20246,6 +20246,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("functionLiteralAsLastExpressionInBlock.kt")
+        public void testFunctionLiteralAsLastExpressionInBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/functionLiteralAsLastExpressionInBlock.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("generic.kt")
         public void testGeneric() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/generic.kt");
