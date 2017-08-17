@@ -61,7 +61,8 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
     }
 
     private fun isRedundantBackticks(element: PsiElement): Boolean {
-        return (element.text.contains("^`.+`$".toRegex()) &&
+        return (element.text.startsWith("`") &&
+                element.text.endsWith("`") &&
                 !isKeyword(element.text.removePrefix("`").removeSuffix("`")))
     }
 
