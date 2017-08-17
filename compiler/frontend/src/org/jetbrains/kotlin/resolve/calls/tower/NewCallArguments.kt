@@ -224,7 +224,9 @@ internal fun createSimplePSICallArgument(
             ownerDescriptor, bindingContext,
             typeInfoForArgument.dataFlowInfo, // dataFlowInfoBeforeThisArgument cannot be used here, because of if() { if (x != null) return; x }
             ExpressionReceiver.create(ktExpression, baseType, bindingContext)
-    ).prepareReceiverRegardingCaptureTypes()
+    ).let {
+        if (onlyResolvedCall == null) it.prepareReceiverRegardingCaptureTypes() else it
+    }
 
     return if (onlyResolvedCall == null) {
         ExpressionKotlinCallArgumentImpl(valueArgument, dataFlowInfoBeforeThisArgument, typeInfoForArgument.dataFlowInfo, receiverToCast)
