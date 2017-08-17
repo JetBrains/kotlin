@@ -1,0 +1,23 @@
+package test;
+
+@kotlin.Metadata()
+public final class Test<T extends java.lang.CharSequence, N extends java.lang.Number> {
+    private final test.TypedListUpdateCallback<java.lang.String, java.lang.Long> x = null;
+
+    public Test() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.Metadata()
+public abstract interface TypedListUpdateCallback<T extends java.lang.Object, C extends java.lang.Number> {
+
+    public abstract void onInserted(@org.jetbrains.annotations.NotNull()
+    C position, @org.jetbrains.annotations.NotNull()
+    C count, @org.jetbrains.annotations.NotNull()
+    T item);
+}

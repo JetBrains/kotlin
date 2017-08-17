@@ -198,6 +198,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("kt19750.kt")
+    public void testKt19750() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/kt19750.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("mapEntry.kt")
     public void testMapEntry() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/mapEntry.kt");

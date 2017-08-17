@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.kapt3.mapJList
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
@@ -93,7 +94,8 @@ class AnonymousTypeHandler(private val converter: ClassFileToSourceStubConverter
         val typeMapper = converter.kaptContext.generationState.typeMapper
 
         val treeMaker = converter.treeMaker
-        val selfType = treeMaker.Type(typeMapper.mapType(type))
+        // Primitive types can't be anonymous, so if we get here, we want to map a class type or its generic argument
+        val selfType = treeMaker.Type(typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT))
         if (type.arguments.isEmpty()) return selfType
 
         return treeMaker.TypeApply(selfType, mapJList(type.arguments) { projection ->
