@@ -33,3 +33,33 @@ fun String.collapseSpaces(): String {
     }
     return builder.toString()
 }
+
+// -------------------- copied from EscapeUtils.java --------------------
+
+private val ESCAPE_CHAR = '\\'
+
+private fun calcExpectedJoinedSize(list: Collection<String>) = list.size - 1 + list.sumBy { it.length }
+
+fun Collection<String>.joinWithEscape(delimiterChar: Char): String {
+    if (isEmpty()) return ""
+
+    val expectedSize = calcExpectedJoinedSize(this)
+    val out = StringBuilder(expectedSize)
+    var first = true
+    for (s in this) {
+        if (!first) {
+            out.append(delimiterChar)
+        }
+        first = false
+        for (i in 0 until s.length) {
+            val ch = s[i]
+            if (ch == delimiterChar || ch == ESCAPE_CHAR) {
+                out.append(ESCAPE_CHAR)
+            }
+            out.append(ch)
+        }
+    }
+    return out.toString()
+}
+
+// ----------------------------------------------------------------------

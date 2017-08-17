@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.roots.CompilerModuleExtension
+import com.intellij.openapi.roots.ModuleRootModificationUtil
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -48,5 +50,17 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
 
     fun testSuspendImplInPlatformModules() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], TargetPlatformKind.JavaScript)
+    }
+
+    fun testKotlinTestAnnotations() {
+        doMultiPlatformTest(TargetPlatformKind.JavaScript,
+                            configureModule = { module, _ ->
+                                ModuleRootModificationUtil.updateModel(module) {
+                                    with(it.getModuleExtension(CompilerModuleExtension::class.java)!!) {
+                                        inheritCompilerOutputPath(false)
+                                        setCompilerOutputPathForTests("js_out")
+                                    }
+                                }
+                            })
     }
 }
