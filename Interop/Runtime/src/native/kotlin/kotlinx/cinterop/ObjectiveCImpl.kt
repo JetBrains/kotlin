@@ -30,7 +30,7 @@ abstract class ObjCObjectBase protected constructor() : ObjCObject {
 
 abstract class ObjCObjectBaseMeta protected constructor() : ObjCObjectBase(), ObjCObjectMeta {}
 
-external fun optional(): Nothing
+fun optional(): Nothing = throw RuntimeException("Do not call me!!!")
 
 /**
  * The runtime representation of any [ObjCObject].
