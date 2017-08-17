@@ -20246,6 +20246,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("equivalentFlexibleAndIntersectionTypes.kt")
+        public void testEquivalentFlexibleAndIntersectionTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/equivalentFlexibleAndIntersectionTypes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("floatMerge.kt")
         public void testFloatMerge() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/floatMerge.kt");
