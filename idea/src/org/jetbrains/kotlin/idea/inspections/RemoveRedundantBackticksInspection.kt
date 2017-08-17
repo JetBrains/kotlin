@@ -81,6 +81,6 @@ class RemoveRedundantBackticksQuickFix : LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val element = descriptor.psiElement
         val factory = KtPsiFactory(project)
-        element.replace(factory.createExpression(element.text.removePrefix("`").removeSuffix("`")))
+        element.replace(factory.createIdentifier(element.text.removePrefix("`").removeSuffix("`")))
     }
 }
