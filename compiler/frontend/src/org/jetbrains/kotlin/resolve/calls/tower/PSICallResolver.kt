@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore
@@ -483,8 +484,7 @@ class PSICallResolver(
     ): PSIKotlinCallArgument {
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
         val parseErrorArgument = ParseErrorKotlinCallArgument(valueArgument, startDataFlowInfo, builtIns)
-        val ktExpression = KtPsiUtil.deparenthesize(valueArgument.getArgumentExpression()) ?:
-                           return parseErrorArgument
+        val ktExpression = extractArgumentExpression(outerCallContext, valueArgument) ?: parseErrorArgument
 
         val argumentName = valueArgument.getArgumentName()?.asName
 
@@ -499,6 +499,7 @@ class PSICallResolver(
                                  if (ktExpression.hasBlockBody()) builtIns.unitType else null
                 FunctionExpressionImpl(outerCallContext, valueArgument, startDataFlowInfo, argumentName, ktExpression, receiverType, parametersTypes, returnType)
             }
+
             else -> null
         }
         if (lambdaArgument != null) {
@@ -561,6 +562,19 @@ class PSICallResolver(
         // valueArgument.getArgumentExpression()!! instead of ktExpression is hack -- type info should be stored also for parenthesized expression
         val typeInfo = expressionTypingServices.getTypeInfo(valueArgument.getArgumentExpression()!!, context)
         return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: parseErrorArgument
+    }
+
+    private fun extractArgumentExpression(outerCallContext: BasicCallResolutionContext, valueArgument: ValueArgument): KtExpression? {
+        val argumentExpression = valueArgument.getArgumentExpression() ?: return null
+
+        val ktExpression = ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(argumentExpression, outerCallContext) ?:
+                           ArgumentTypeResolver.getCallableReferenceExpressionIfAny(argumentExpression, outerCallContext) ?:
+                           KtPsiUtil.deparenthesize(argumentExpression)
+
+        return when (ktExpression) {
+            is KtFunctionLiteral -> ktExpression.getParentOfType<KtLambdaExpression>(true)
+            else -> ktExpression
+        }
     }
 
     private fun checkNoSpread(context: BasicCallResolutionContext, valueArgument: ValueArgument) {
