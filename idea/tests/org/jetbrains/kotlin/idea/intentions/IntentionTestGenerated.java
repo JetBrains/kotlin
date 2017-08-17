@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15668,6 +15668,57 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("unknownType.kt")
         public void testUnknownType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/unknownType.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/specifyTypeExplicitlyInDestructuringAssignment")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SpecifyTypeExplicitlyInDestructuringAssignment extends AbstractIntentionTest {
+        public void testAllFilesPresentInSpecifyTypeExplicitlyInDestructuringAssignment() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/specifyTypeExplicitlyInDestructuringAssignment"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("in.kt")
+        public void testIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitlyInDestructuringAssignment/in.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitlyInDestructuringAssignment/lambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaHasSignature.kt")
+        public void testLambdaHasSignature() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitlyInDestructuringAssignment/lambdaHasSignature.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("variableHasAllTypes.kt")
+        public void testVariableHasAllTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitlyInDestructuringAssignment/variableHasAllTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("variableHasNoTypes.kt")
+        public void testVariableHasNoTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitlyInDestructuringAssignment/variableHasNoTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("variableHasTypes.kt")
+        public void testVariableHasTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitlyInDestructuringAssignment/variableHasTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("variableHasUnderscore.kt")
+        public void testVariableHasUnderscore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitlyInDestructuringAssignment/variableHasUnderscore.kt");
             doTest(fileName);
         }
     }
