@@ -1,0 +1,20 @@
+package test;
+
+@kotlin.Metadata()
+public abstract interface ListUpdateCallback {
+
+    public abstract void onInserted(int position, int count);
+}
+
+////////////////////
+
+package test;
+
+@kotlin.Metadata()
+public final class Test<T extends java.lang.CharSequence, N extends java.lang.Number> {
+    private final test.ListUpdateCallback x = null;
+
+    public Test() {
+        super();
+    }
+}
