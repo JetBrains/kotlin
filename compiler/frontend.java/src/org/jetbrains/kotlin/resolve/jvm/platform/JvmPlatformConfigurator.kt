@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm.platform
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
@@ -83,6 +84,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useImpl<JvmReflectionAPICallChecker>()
         container.useImpl<JavaSyntheticScopes>()
+        container.useImpl<SamConversionResolverImpl>()
         container.useImpl<InterfaceDefaultMethodCallChecker>()
         container.useImpl<InlinePlatformCompatibilityChecker>()
         container.useImpl<JvmModuleAccessibilityChecker>()
