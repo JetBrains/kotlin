@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
-import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
-import org.jetbrains.kotlin.load.java.sam.SamWithReceiverResolver
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.platform.JvmBuiltIns
@@ -64,8 +62,6 @@ private fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useImpl<SignaturePropagatorImpl>()
     useImpl<TraceBasedErrorReporter>()
     useImpl<PsiBasedExternalAnnotationResolver>()
-    useInstance(SamWithReceiverResolver())
-    useImpl<SamConversionResolverImpl>()
     useInstance(InternalFlexibleTypeTransformer)
 
     useImpl<CompilerDeserializationConfiguration>()

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.android.synthetic
 
 import com.intellij.mock.MockProject
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import kotlinx.android.extensions.CacheImplementation
 import org.jetbrains.kotlin.android.parcel.ParcelableCodegenExtension
@@ -25,8 +24,8 @@ import org.jetbrains.kotlin.android.parcel.ParcelableDeclarationChecker
 import org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidExtensionsExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidOnDestroyClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.android.synthetic.codegen.ParcelableClinitClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.diagnostic.AndroidExtensionPropertiesCallChecker
-import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
@@ -41,13 +40,12 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.android.synthetic.codegen.ParcelableClinitClassBuilderInterceptorExtension
-import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 
 object AndroidConfigurationKeys {
     val VARIANT = CompilerConfigurationKey.create<List<String>>("Android build variant")
@@ -130,10 +128,12 @@ class AndroidComponentRegistrar : ComponentRegistrar {
 }
 
 class AndroidExtensionPropertiesComponentContainerContributor : StorageComponentContainerContributor {
-    override fun addDeclarations(container: StorageComponentContainer, platform: TargetPlatform) {
-        if (platform is JvmPlatform) {
-            container.useInstance(AndroidExtensionPropertiesCallChecker())
-            container.useInstance(ParcelableDeclarationChecker())
-        }
+    override fun registerModuleComponents(
+            container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
+    ) {
+        if (platform != JvmPlatform) return
+
+        container.useInstance(AndroidExtensionPropertiesCallChecker())
+        container.useInstance(ParcelableDeclarationChecker())
     }
 }

@@ -32,6 +32,9 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.projectStructure.sdk
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.ANNOTATION_OPTION
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.PLUGIN_ID
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
 
 open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
@@ -124,6 +127,25 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         checkHighlightingInAllFiles()
     }
+
+    fun testSamWithReceiverExtension() {
+        val module1 = module("m1").setupKotlinFacet {
+            settings.compilerArguments!!.pluginOptions =
+                    arrayOf("plugin:${PLUGIN_ID}:${ANNOTATION_OPTION.name}=anno.A")
+        }
+
+        val module2 = module("m2").setupKotlinFacet {
+            settings.compilerArguments!!.pluginOptions =
+                    arrayOf("plugin:${PLUGIN_ID}:${ANNOTATION_OPTION.name}=anno.B")
+        }
+
+
+        module1.addDependency(module2)
+        module2.addDependency(module1)
+
+        checkHighlightingInAllFiles()
+    }
+
 
     private fun Module.setupKotlinFacet(configure: KotlinFacetConfiguration.() -> Unit) = apply {
         runWriteAction {

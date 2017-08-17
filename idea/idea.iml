@@ -68,5 +68,6 @@
     <orderEntry type="module" module-name="frontend.script" />
     <orderEntry type="module" module-name="idea-maven" />
     <orderEntry type="module" module-name="backend.jvm" />
+    <orderEntry type="module" module-name="sam-with-receiver-cli" scope="TEST" />
   </component>
 </module>

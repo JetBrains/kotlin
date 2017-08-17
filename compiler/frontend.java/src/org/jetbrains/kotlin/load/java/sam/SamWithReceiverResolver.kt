@@ -18,18 +18,6 @@ package org.jetbrains.kotlin.load.java.sam
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
-class SamWithReceiverResolver {
-    private val extensions = mutableListOf<Extension>()
-
-    fun registerExtension(extension: Extension) {
-        extensions += extension
-    }
-
-    fun shouldConvertFirstSamParameterToReceiver(function: FunctionDescriptor): Boolean {
-        return extensions.any { it.shouldConvertFirstSamParameterToReceiver(function) }
-    }
-
-    interface Extension {
-        fun shouldConvertFirstSamParameterToReceiver(function: FunctionDescriptor): Boolean
-    }
+interface SamWithReceiverResolver {
+    fun shouldConvertFirstSamParameterToReceiver(function: FunctionDescriptor): Boolean
 }

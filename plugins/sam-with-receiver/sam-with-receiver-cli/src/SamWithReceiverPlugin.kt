@@ -17,20 +17,21 @@
 package org.jetbrains.kotlin.samWithReceiver
 
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.container.ComponentProvider
-import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.load.java.sam.SamWithReceiverResolver
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.ANNOTATION
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.PRESET
-import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.SUPPORTED_PRESETS
 
 object SamWithReceiverConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> =
@@ -75,7 +76,9 @@ class SamWithReceiverComponentRegistrar : ComponentRegistrar {
 }
 
 class CliSamWithReceiverComponentContributor(val annotations: List<String>): StorageComponentContainerContributor {
-    override fun onContainerComposed(container: ComponentProvider, moduleInfo: ModuleInfo?) {
-        container.get<SamWithReceiverResolver>().registerExtension(SamWithReceiverResolverExtension(annotations))
+    override fun registerModuleComponents(container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor) {
+        if (platform != JvmPlatform) return
+
+        container.useInstance(SamWithReceiverResolverExtension(annotations))
     }
 }

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.types.SimpleType
 
 interface SamConversionResolver {
-    companion object EMPTY : SamConversionResolver {
+    object Empty : SamConversionResolver {
         override fun resolveFunctionTypeIfSamInterface(classDescriptor: JavaClassDescriptor): SimpleType? = null
     }
 
