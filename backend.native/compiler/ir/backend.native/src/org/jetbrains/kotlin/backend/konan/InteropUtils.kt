@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private val cPointerName = "CPointer"
 private val nativePointedName = "NativePointed"
@@ -104,6 +105,27 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val readBits = packageScope.getContributedFunctions("readBits").single()
     val writeBits = packageScope.getContributedFunctions("writeBits").single()
+
+    val cFunctionPointerInvokes = packageScope.getContributedFunctions(OperatorNameConventions.INVOKE.asString())
+            .filter {
+                val extensionReceiverParameter = it.extensionReceiverParameter
+                it.isOperator &&
+                        extensionReceiverParameter != null &&
+                        TypeUtils.getClassDescriptor(extensionReceiverParameter.type) == cPointer
+            }.toSet()
+
+    val invokeImpls = mapOf(
+            builtIns.unit to "invokeImplUnitRet",
+            builtIns.byte to "invokeImplByteRet",
+            builtIns.short to "invokeImplShortRet",
+            builtIns.int to "invokeImplIntRet",
+            builtIns.long to "invokeImplLongRet",
+            builtIns.float to "invokeImplFloatRet",
+            builtIns.double to "invokeImplDoubleRet",
+            cPointer to "invokeImplPointerRet"
+    ).mapValues { (_, name) ->
+        packageScope.getContributedFunctions(name).single()
+    }.toMap()
 
     val objCObject = packageScope.getContributedClassifier("ObjCObject") as ClassDescriptor
     val objCPointerHolder = packageScope.getContributedClassifier("ObjCPointerHolder") as ClassDescriptor

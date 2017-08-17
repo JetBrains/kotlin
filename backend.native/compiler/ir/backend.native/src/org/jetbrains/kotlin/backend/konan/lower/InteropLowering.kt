@@ -354,6 +354,8 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
             }
         }
 
+        fun reportError(message: String): Nothing = context.reportCompilationError(message, irFile, expression)
+
         return when (descriptor) {
             interop.cPointerRawValue.getter ->
                 // Replace by the intrinsic call to be handled by code generator:
@@ -399,7 +401,7 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                 signatureTypes.forEachIndexed { index, type ->
                     type.ensureSupportedInCallbacks(
                             isReturnType = (index == signatureTypes.lastIndex),
-                            reportError = { context.reportCompilationError(it, irFile, expression) }
+                            reportError = ::reportError
                     )
                 }
 
@@ -495,31 +497,65 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                 }
             }
 
+            in interop.cFunctionPointerInvokes -> {
+                // Replace by `invokeImpl${type}Ret`:
+
+                val returnType =
+                        expression.getTypeArgument(descriptor.typeParameters.single { it.name.asString() == "R" })!!
+
+                returnType.checkCTypeNullability(::reportError)
+
+                val invokeImpl = symbols.interopInvokeImpls[TypeUtils.getClassDescriptor(returnType)] ?:
+                        context.reportCompilationError(
+                                "Invocation of C function pointer with return type '$returnType' is not supported yet",
+                                irFile, expression
+                        )
+
+                builder.irCall(invokeImpl).apply {
+                    putValueArgument(0, expression.extensionReceiver)
+
+                    val varargParameter = invokeImpl.descriptor.valueParameters[1]
+                    val varargArgument = IrVarargImpl(
+                            startOffset, endOffset, varargParameter.type, varargParameter.varargElementType!!
+                    ).apply {
+                        descriptor.valueParameters.forEach {
+                            this.addElement(expression.getValueArgument(it)!!)
+                        }
+                    }
+                    putValueArgument(varargParameter, varargArgument)
+                }
+            }
+
             else -> expression
         }
     }
 
     private fun KotlinType.ensureSupportedInCallbacks(isReturnType: Boolean, reportError: (String) -> Nothing) {
+        this.checkCTypeNullability(reportError)
+
         if (isReturnType && KotlinBuiltIns.isUnit(this)) {
             return
         }
 
-        if (KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(this)) {
-            if (!this.isMarkedNullable) {
-                return
-            }
-            reportError("Type $this must not be nullable when used in callback signature")
+        if (KotlinBuiltIns.isPrimitiveType(this)) {
+            return
         }
 
         if (TypeUtils.getClassDescriptor(this) == interop.cPointer) {
-            if (this.isMarkedNullable) {
-                return
-            }
-
-            reportError("Type $this must be nullable when used in callback signature")
+            return
         }
 
         reportError("Type $this is not supported in callback signature")
+    }
+
+    private fun KotlinType.checkCTypeNullability(reportError: (String) -> Nothing) {
+        if (KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(this) && this.isMarkedNullable) {
+            reportError("Type $this must not be nullable when used in C function signature")
+        }
+
+        if (TypeUtils.getClassDescriptor(this) == interop.cPointer && !this.isMarkedNullable) {
+            reportError("Type $this must be nullable when used in C function signature")
+        }
     }
 
     private fun unwrapStaticFunctionArgument(argument: IrExpression): IrFunctionReference? {

@@ -1994,6 +1994,11 @@ kotlinNativeInterop {
         flavor 'native'
     }
 
+    cfunptr {
+        defFile 'interop/basics/cfunptr.def'
+        flavor 'native'
+    }
+
     if (isMac()) {
         opengl {
             defFile '../../samples/opengl/src/main/c_interop/opengl.def'
@@ -2055,6 +2060,13 @@ task interop_bitfields(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/bf.kt"
     interop = 'bitfields'
+}
+
+task interop_funptr(type: RunInteropKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    goldValue = "42\n17\n"
+    source = "interop/basics/funptr.kt"
+    interop = 'cfunptr'
 }
 
 task interop_echo_server(type: RunInteropKonanTest) {

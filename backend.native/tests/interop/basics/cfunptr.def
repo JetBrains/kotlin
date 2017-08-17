@@ -1,0 +1,44 @@
+headerFilter = NOTHING
+---
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef int (*atoiPtrType)(const char*);
+
+static atoiPtrType getAtoiPtr() {
+    return &atoi;
+}
+
+static void __printInt(int x) {
+    printf("%d\n", x);
+}
+
+static void* __getPrintIntPtr() {
+    return &__printInt;
+}
+
+typedef void* (*getPrintIntPtrPtrType)(void);
+
+static getPrintIntPtrPtrType getGetPrintIntPtrPtr() {
+    return &__getPrintIntPtr;
+}
+
+static double __add(double x, double y) {
+    return x + y;
+}
+
+typedef double (*addPtrType)(double, double);
+
+static addPtrType getAddPtr() {
+    return &__add;
+}
+
+static int __doubleToInt(double x) {
+    return (int) x;
+}
+
+typedef int (*doubleToIntPtrType)(double);
+
+static doubleToIntPtrType getDoubleToIntPtr() {
+    return &__doubleToInt;
+}
