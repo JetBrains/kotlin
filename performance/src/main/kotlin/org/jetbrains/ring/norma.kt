@@ -173,5 +173,6 @@ val NormaResults = mapOf(
     "Switch.testDenseEnumsSwitch"                       to        208L,
     "Switch.testSealedWhenSwitch"                       to        172L,
     "WithIndicies.withIndicies"                         to       2303L,
-    "WithIndicies.withIndiciesManual"                   to       2256L
+    "WithIndicies.withIndiciesManual"                   to       2256L,
+    "OctoTest"                                          to    2515062L
 )

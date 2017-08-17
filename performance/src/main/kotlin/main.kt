@@ -9,5 +9,8 @@ fun main(args: Array<String>) {
         numMeasureIterations = args[1].toInt()
     }
 
+    println("Ring starting")
+    println("  warmup  iterations count: $numWarmIterations")
+    println("  measure iterations count: $numMeasureIterations")
     Launcher(numWarmIterations, numMeasureIterations).runBenchmarks()
 }

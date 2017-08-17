@@ -16,6 +16,7 @@
 
 package org.jetbrains.ring
 
+import octoTest
 import kotlin.system.measureNanoTime
 
 val BENCHMARK_SIZE = 100
@@ -25,16 +26,18 @@ val BENCHMARK_SIZE = 100
 class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
     val results = mutableMapOf<String, Long>()
 
-    fun launch(benchmark: () -> Any?): Long {
-        var i = numWarmIterations
-        var j = numMeasureIterations
+    fun launch(benchmark: () -> Any?, coeff: Double = 1.0): Long {                          // If benchmark runs too long - use coeff to speed it up.
+        var i = (numWarmIterations    * coeff).toInt()
+        var j = (numMeasureIterations * coeff).toInt()
 
         while (i-- > 0) benchmark()
         val time = measureNanoTime {
-            while (j-- > 0) benchmark()
+            while (j-- > 0) {
+                benchmark()
+            }
         }
 
-        return time / numMeasureIterations
+        return (time / numMeasureIterations / coeff).toLong()
     }
 
     //-------------------------------------------------------------------------//
@@ -63,16 +66,29 @@ class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
         runStringBenchmark()
         runSwitchBenchmark()
         runWithIndiciesBenchmark()
+        runOctoTest()
 
-        printResults()
+        printResultsNormalized()
     }
 
     //-------------------------------------------------------------------------//
 
-    fun printResults() {
+    fun printResultsAsTime() {
+        results.forEach {
+            val niceName = "\"${it.key}\"".padEnd(51)
+            val niceTime = "${it.value}".padStart(10)
+            println("    $niceName to ${niceTime}L,")
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun printResultsNormalized() {
         var total = 0.0
         results.forEach {
             val normaTime = NormaResults[it.key]
+            if (normaTime == null) println("ERROR: no norma for benchmark ${it.key}")
+
             val norma     = it.value.toDouble() / normaTime!!.toDouble()
             val niceName  = it.key.padEnd(50, ' ')
             val niceNorma = norma.toString(2).padStart(10, ' ')
@@ -417,7 +433,13 @@ class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
         results["WithIndicies.withIndiciesManual"] = launch(benchmark::withIndiciesManual)
     }
 
-//-----------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------//
+
+    fun runOctoTest() {
+        results["OctoTest"] = launch(::octoTest, 0.1)
+    }
+
+    //-------------------------------------------------------------------------//
 
     fun Double.toString(n: Int): String {
         val str = this.toString()
