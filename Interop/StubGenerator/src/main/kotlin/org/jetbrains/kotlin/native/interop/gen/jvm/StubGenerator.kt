@@ -750,6 +750,7 @@ class StubGenerator(
                 add("WRONG_MODIFIER_CONTAINING_DECLARATION") // For `final val` in interface.
                 add("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
                 add("UNUSED_PARAMETER") // For constructors.
+                add("MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED") // Workaround for multiple-inherited properties.
             }
         }
 
