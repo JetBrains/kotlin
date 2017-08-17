@@ -4,7 +4,7 @@
     <buildFile url="file://$PROJECT_DIR$/compiler/frontend/buildLexer.xml" />
     <buildFile url="file://$PROJECT_DIR$/build.xml">
       <antCommandLine value="-J-ea" />
-      <maximumHeapSize value="1024" />
+      <maximumHeapSize value="1724" />
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/update_dependencies.xml" />
     <buildFile url="file://$PROJECT_DIR$/TeamCityBuild.xml">
