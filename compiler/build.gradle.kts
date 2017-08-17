@@ -7,11 +7,6 @@ val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
 
 dependencies {
-    val compile by configurations
-    val compileOnly by configurations
-    val testCompile by configurations
-    val testCompileOnly by configurations
-    val testRuntime by configurations
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:daemon-common"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
