@@ -20,13 +20,7 @@
 package org.jetbrains.kotlin.config;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Generic implementation of version comparison.
@@ -55,7 +49,7 @@ import java.util.Stack;
  *
  * @see <a href="https://cwiki.apache.org/confluence/display/MAVENOLD/Versioning">"Versioning" on Maven Wiki</a>
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
- * @author <a href="mailto:hboutemy@apache.org">Hervé Boutemy</a>
+ * @author <a href="mailto:hboutemy@apache.org">Herve Boutemy</a>
  */
 @SuppressWarnings("ALL")
 public class MavenComparableVersion
