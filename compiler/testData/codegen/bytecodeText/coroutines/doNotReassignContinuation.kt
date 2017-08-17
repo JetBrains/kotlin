@@ -14,5 +14,4 @@ suspend fun suspendThere(param: Int, param2: String, param3: Long): String {
     return a + b
 }
 
-/* 2 stores happen because the continuation parameter is visible in debug and should be spilled */
-// 2 ASTORE 4
+// 0 ASTORE 4
