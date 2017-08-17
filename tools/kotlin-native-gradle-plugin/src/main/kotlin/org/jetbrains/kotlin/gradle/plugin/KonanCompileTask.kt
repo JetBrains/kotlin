@@ -327,5 +327,5 @@ open class KonanCompileConfig(
         dumpParameters = value
     }
 
-    fun dependsOn(task: Task) = compilationTask.dependsOn(task)
+    fun dependsOn(dependency: Any) = compilationTask.dependsOn(dependency)
 }

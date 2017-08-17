@@ -224,6 +224,6 @@ open class KonanInteropConfig(
         compileStubsTask.dumpParameters = value
     }
 
-    fun dependsOn(task: Task) = generateStubsTask.dependsOn(task)
+    fun dependsOn(dependency: Any) = generateStubsTask.dependsOn(dependency)
 }
 
