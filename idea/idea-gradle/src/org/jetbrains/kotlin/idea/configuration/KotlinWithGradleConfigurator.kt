@@ -20,6 +20,7 @@ import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.ide.actions.OpenFileAction
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
@@ -33,8 +34,12 @@ import com.intellij.openapi.vfs.WritingAccessProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.config.CoroutineSupport
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
+import org.jetbrains.kotlin.idea.quickfix.ChangeCoroutineSupportFix
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
@@ -175,6 +180,24 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             collector.addMessage(virtualFile.path + " was modified")
         }
         return isModified
+    }
+
+    override fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State) {
+        val runtimeUpdateRequired = state != LanguageFeature.State.DISABLED &&
+                                    (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
+
+        if (runtimeUpdateRequired) {
+            Messages.showErrorDialog(module.project,
+                                     "Coroutines support requires version 1.1 or later of the Kotlin runtime library. " +
+                                     "Please update the version in your build script.",
+                                     ChangeCoroutineSupportFix.getFixText(state))
+            return
+        }
+
+        val element = changeCoroutineConfiguration(module, CoroutineSupport.getCompilerArgument(state))
+        if (element != null) {
+            OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
+        }
     }
 
     companion object {

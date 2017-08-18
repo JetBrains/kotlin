@@ -58,6 +58,8 @@ class ModuleSourceRootMap(val modules: Collection<Module>) {
     fun toModuleGroup(module: Module): ModuleSourceRootGroup = groupByBaseModules(listOf(module)).single()
 }
 
+fun Module.toModuleGroup() = ModuleSourceRootMap(project).toModuleGroup(this)
+
 private fun isSourceRootPrefix(externalId: String, previousModuleExternalId: String)
         = externalId.length < previousModuleExternalId.length && previousModuleExternalId.startsWith(externalId)
 

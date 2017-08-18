@@ -17,5 +17,6 @@
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="js.frontend" />
     <orderEntry type="module" module-name="frontend.script" />
+    <orderEntry type="module" module-name="kotlin-gradle-tooling" />
   </component>
 </module>

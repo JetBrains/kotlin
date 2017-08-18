@@ -20,11 +20,13 @@ import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.ide.actions.OpenFileAction
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.WritingAccessProvider
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
@@ -35,12 +37,17 @@ import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
+import org.jetbrains.kotlin.config.CoroutineSupport
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.*
+import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
 import org.jetbrains.kotlin.idea.maven.PomFile
+import org.jetbrains.kotlin.idea.maven.changeCoroutineConfiguration
 import org.jetbrains.kotlin.idea.maven.excludeMavenChildrenModules
 import org.jetbrains.kotlin.idea.maven.kotlinPluginId
+import org.jetbrains.kotlin.idea.quickfix.ChangeCoroutineSupportFix
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 abstract class KotlinMavenConfigurator
@@ -185,6 +192,43 @@ abstract class KotlinMavenConfigurator
         if (hasJavaFiles(module)) {
             pomFile.addJavacExecutions(module, kotlinPlugin)
         }
+    }
+
+    override fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State) {
+        val runtimeUpdateRequired = state != LanguageFeature.State.DISABLED &&
+                                    (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
+
+        val messageTitle = ChangeCoroutineSupportFix.getFixText(state)
+        if (runtimeUpdateRequired) {
+            Messages.showErrorDialog(module.project,
+                                     "Coroutines support requires version 1.1 or later of the Kotlin runtime library. " +
+                                     "Please update the version in your build script.",
+                                     messageTitle)
+            return
+        }
+
+        val element = changeMavenCoroutineConfiguration(module, CoroutineSupport.getCompilerArgument(state), messageTitle)
+
+        if (element != null) {
+            OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
+        }
+
+    }
+
+    private fun changeMavenCoroutineConfiguration(module: Module, value: String, messageTitle: String): PsiElement? {
+        fun doChangeMavenCoroutineConfiguration(): PsiElement? {
+            val psi = KotlinMavenConfigurator.findModulePomFile(module) as? XmlFile ?: return null
+            val pom = PomFile.forFileOrNull(psi) ?: return null
+            return pom.changeCoroutineConfiguration(value)
+        }
+
+        val element = doChangeMavenCoroutineConfiguration()
+        if (element == null) {
+            Messages.showErrorDialog(module.project,
+                                     "Failed to update.pom.xml. Please update the file manually.",
+                                     messageTitle)
+        }
+        return element
     }
 
     companion object {

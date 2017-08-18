@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 enum class ConfigureKotlinStatus {
@@ -46,6 +47,8 @@ interface KotlinProjectConfigurator {
     val name: String
 
     val targetPlatform: TargetPlatform
+
+    fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State)
 
     companion object {
         val EP_NAME = ExtensionPointName.create<KotlinProjectConfigurator>("org.jetbrains.kotlin.projectConfigurator")

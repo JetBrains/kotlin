@@ -168,7 +168,7 @@ fun getConfigurableModules(project: Project): List<ModuleSourceRootGroup> {
 }
 
 fun getAbleToRunConfigurators(module: Module): Collection<KotlinProjectConfigurator> {
-    val moduleGroup = ModuleSourceRootMap(module.project).toModuleGroup(module)
+    val moduleGroup = module.toModuleGroup()
     return allConfigurators().filter {
         it.getStatus(moduleGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED
     }
@@ -201,6 +201,12 @@ fun getCanBeConfiguredModulesWithKotlinFiles(project: Project, excludeModules: C
     return modulesWithKotlinFiles.filter { moduleSourceRootGroup ->
         configurators.any { it.getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }
     }.map { it.baseModule }
+}
+
+fun findApplicableConfigurator(module: Module): KotlinProjectConfigurator {
+    val moduleGroup = module.toModuleGroup()
+    return allConfigurators().find { it.getStatus(moduleGroup) != ConfigureKotlinStatus.NON_APPLICABLE }
+           ?: KotlinJavaModuleConfigurator.instance
 }
 
 fun hasAnyKotlinRuntimeInScope(module: Module): Boolean {
