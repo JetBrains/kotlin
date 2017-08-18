@@ -90,7 +90,6 @@ object LabelResolver {
 
         if (parent is KtValueArgument) {
             // f ({}) or f(p = {}) or f (fun () {})
-            // NB: parent of KtElement is really nullable!!!
             val argList = parent.parent ?: return null
             val call = argList.parent
             if (call is KtCallExpression) {
