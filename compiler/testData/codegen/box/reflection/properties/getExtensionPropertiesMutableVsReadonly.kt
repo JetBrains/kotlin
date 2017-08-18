@@ -4,6 +4,7 @@
 // WITH_REFLECT
 
 import kotlin.reflect.*
+import kotlin.reflect.full.*
 
 var storage = "before"
 

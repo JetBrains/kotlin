@@ -10,6 +10,7 @@ public class J extends K {
 // FILE: K.kt
 
 import kotlin.reflect.*
+import kotlin.reflect.full.*
 import kotlin.reflect.jvm.*
 
 public open class K {

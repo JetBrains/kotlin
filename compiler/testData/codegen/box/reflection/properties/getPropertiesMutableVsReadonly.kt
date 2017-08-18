@@ -4,6 +4,7 @@
 // WITH_REFLECT
 
 import kotlin.reflect.*
+import kotlin.reflect.full.*
 
 class A(val readonly: String) {
     var mutable: String = "before"

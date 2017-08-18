@@ -3,7 +3,7 @@
 
 // WITH_REFLECT
 
-import kotlin.reflect.*
+import kotlin.reflect.full.*
 
 class A(param: String) {
     val int: Int get() = 42
