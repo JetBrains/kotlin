@@ -16964,6 +16964,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("lambdaAsLastExpressionInLambda.kt")
+        public void testLambdaAsLastExpressionInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/lambdaAsLastExpressionInLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nestedIntersection.kt")
         public void testNestedIntersection() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/nestedIntersection.kt");
