@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
 import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializableJsTranslator
 import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializerJsTranslator
 
 class SerializationJsExtension: JsSyntheticTranslateExtension {
     override fun generateClassSyntheticParts(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: DeclarationBodyVisitor, context: TranslationContext) {
         SerializerJsTranslator.translate(declaration, descriptor, translator, context)
+        SerializableJsTranslator.translate(declaration, descriptor, translator, context)
     }
 }

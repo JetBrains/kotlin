@@ -22,6 +22,11 @@ import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
@@ -71,7 +76,7 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
 }
 
 fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
-    val name = when(kType.getJetTypeFqName(false)) {
+    val name = when (kType.getJetTypeFqName(false)) {
         "kotlin.Unit" -> "UnitSerializer"
         "Z", "kotlin.Boolean" -> "BooleanSerializer"
         "B", "kotlin.Byte" -> "ByteSerializer"
@@ -102,3 +107,19 @@ fun KotlinType.requiresPolymorphism(): Boolean {
 fun findPolymorphicSerializer(module: ModuleDescriptor): ClassDescriptor {
     return requireNotNull(module.findClassAcrossModuleDependencies(polymorphicSerializerId)) { "Can't locate polymorphic serializer definition" }
 }
+
+fun KtPureClassOrObject.bodyPropertiesDescriptorsMap(bindingContext: BindingContext): Map<PropertyDescriptor, KtProperty> = declarations
+        .asSequence()
+        .filterIsInstance<KtProperty>()
+        .associateBy { (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? PropertyDescriptor)!! }
+
+fun KtPureClassOrObject.primaryPropertiesDescriptorsMap(bindingContext: BindingContext): Map<PropertyDescriptor, KtParameter> = primaryConstructorParameters
+        .asSequence()
+        .filter { it.hasValOrVar() }
+        .associateBy { bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it]!! }
+
+fun KtPureClassOrObject.anonymousInitializers() = declarations
+        .asSequence()
+        .filterIsInstance<KtAnonymousInitializer>()
+        .mapNotNull { it.body }
+        .toList()

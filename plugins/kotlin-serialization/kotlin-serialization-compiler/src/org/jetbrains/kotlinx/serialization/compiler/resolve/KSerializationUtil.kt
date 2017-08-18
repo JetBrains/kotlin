@@ -176,9 +176,9 @@ fun ClassDescriptor.getKSerializerConstructorMarker(): ClassDescriptor =
         module.findClassAcrossModuleDependencies(ClassId(packageFqName, kSerializerConstructorMarkerName))!!
 
 fun ClassDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
-        module.findClassAcrossModuleDependencies(ClassId(packageFqName, Name.identifier(classSimpleName)))!!
+        requireNotNull(module.findClassAcrossModuleDependencies(ClassId(packageFqName, Name.identifier(classSimpleName)))) {"Can't locate class $classSimpleName"}
 
 fun ClassDescriptor.getClassFromInternalSerializationPackage(classSimpleName: String) =
-        module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, Name.identifier(classSimpleName)))!!
+        requireNotNull(module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, Name.identifier(classSimpleName)))) {"Can't locate class $classSimpleName"}
 
 fun ClassDescriptor.toSimpleType(nullable: Boolean = true) = KotlinTypeFactory.simpleType(Annotations.EMPTY, this.typeConstructor, emptyList(), nullable)

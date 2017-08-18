@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.anonymousInitializers
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperties
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperty
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
@@ -52,15 +52,9 @@ class SerializableCodegenImpl(
         }
     }
 
-    private val descToProps = classCodegen.myClass.declarations
-            .asSequence()
-            .filterIsInstance<KtProperty>()
-            .associateBy { classCodegen.bindingContext[BindingContext.VARIABLE, it]!! }
+    private val descToProps = classCodegen.myClass.bodyPropertiesDescriptorsMap(classCodegen.bindingContext)
 
-    private val paramsToProps: Map<PropertyDescriptor, KtParameter> = classCodegen.myClass.primaryConstructorParameters
-            .asSequence()
-            .filter { it.hasValOrVar() }
-            .associateBy { classCodegen.bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it]!! }
+    private val paramsToProps: Map<PropertyDescriptor, KtParameter> = classCodegen.myClass.primaryPropertiesDescriptorsMap(classCodegen.bindingContext)
 
     private fun getProp(prop: SerializableProperty) = descToProps[prop.descriptor]
     private fun getParam(prop: SerializableProperty) = paramsToProps[prop.descriptor]
@@ -162,10 +156,7 @@ class SerializableCodegenImpl(
 
         // init blocks
         // todo: proper order with other initializers
-        classCodegen.myClass.declarations
-                .asSequence()
-                .filterIsInstance<KtAnonymousInitializer>()
-                .mapNotNull { it.body }
+        classCodegen.myClass.anonymousInitializers()
                 .forEach { exprCodegen.gen(it, Type.VOID_TYPE) }
         areturn(Type.VOID_TYPE)
     }
