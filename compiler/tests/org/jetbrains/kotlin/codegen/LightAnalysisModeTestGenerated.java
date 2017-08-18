@@ -16970,6 +16970,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("noResolutionRecursion.kt")
+        public void testNoResolutionRecursion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/noResolutionRecursion.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullabilityForCommonCapturedSupertypes.kt")
         public void testNullabilityForCommonCapturedSupertypes() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/nullabilityForCommonCapturedSupertypes.kt");
