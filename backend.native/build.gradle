@@ -52,25 +52,24 @@ allprojects {
 
 sourceSets {
     compiler {
-      proto.srcDir 'compiler/ir/backend.native/src/'
-      java {
-          srcDir 'compiler/ir/backend.native/src/'
-          srcDir 'build/renamed/source/proto/compiler/java'
-      }
-      kotlin {
-          srcDir 'compiler/ir/backend.native/src/'
-          srcDir "${rootProject.projectDir}/shared/src/main/kotlin"
-      }
-      resources.srcDir 'compiler/ir/backend.native/resources/'
+        proto.srcDir 'compiler/ir/backend.native/src/'
+        java {
+            srcDir 'compiler/ir/backend.native/src/'
+            srcDir 'build/renamed/source/proto/compiler/java'
+        }
+        kotlin {
+            srcDir 'compiler/ir/backend.native/src/'
+        }
+        resources.srcDir 'compiler/ir/backend.native/resources/'
     }
     cli_bc {
-      java.srcDir 'cli.bc/src'
-      kotlin.srcDir 'cli.bc/src'
+        java.srcDir 'cli.bc/src'
+        kotlin.srcDir 'cli.bc/src'
     }
     bc_frontend {
-     java.srcDir 'bc.frontend/src'
-     kotlin.srcDir 'bc.frontend/src'
-   }
+        java.srcDir 'bc.frontend/src'
+        kotlin.srcDir 'bc.frontend/src'
+    }
 }
 
 compileCompilerKotlin {
@@ -96,26 +95,26 @@ task renamePackage(type: Copy) {
 }
 
 kotlinNativeInterop {
-   llvm {
-     dependsOn ":llvmDebugInfoC:debugInfoStaticLibrary"
-     defFile 'llvm.def'
-     compilerOpts "-fPIC", "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include"
-     linkerOpts "-L$llvmDir/lib", "-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static"
-   }
+    llvm {
+        dependsOn ":llvmDebugInfoC:debugInfoStaticLibrary"
+        defFile 'llvm.def'
+        compilerOpts "-fPIC", "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include"
+        linkerOpts "-L$llvmDir/lib", "-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static"
+    }
 
-   hash { // TODO: copy-pasted from ':common:compileHash'
-     compilerOpts '-fPIC'
-     linkerOpts '-fPIC'
-     linker 'clang++'
-     linkOutputs ":common:${hostName}Hash"
+    hash { // TODO: copy-pasted from ':common:compileHash'
+        compilerOpts '-fPIC'
+        linkerOpts '-fPIC'
+        linker 'clang++'
+        linkOutputs ":common:${hostName}Hash"
 
-     headers fileTree('../common/src/hash/headers') {
-       include '**/*.h'
-       include '**/*.hpp'
-     }
+        headers fileTree('../common/src/hash/headers') {
+          include '**/*.h'
+          include '**/*.hpp'
+        }
 
-     pkg 'org.jetbrains.kotlin.backend.konan.hash'
-   }
+        pkg 'org.jetbrains.kotlin.backend.konan.hash'
+    }
 }
 
 
@@ -129,19 +128,20 @@ configurations {
 
 dependencies {
 
-   compilerCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
+    compilerCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
 
-   compilerCompile kotlinCompilerModule
-   compilerCompile kotlinNativeInterop['llvm'].configuration
-   compilerCompile kotlinNativeInterop['hash'].configuration
-   compilerCompile project(':shared')
+    compilerCompile kotlinCompilerModule
+    compilerCompile kotlinNativeInterop['llvm'].configuration
+    compilerCompile kotlinNativeInterop['hash'].configuration
+    compilerCompile project(':shared')
 
-   cli_bcCompile "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
-   cli_bcCompile sourceSets.compiler.output
+    cli_bcCompile "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
+    cli_bcCompile project(':shared')
+    cli_bcCompile sourceSets.compiler.output
 
-   bc_frontendCompile kotlinCompilerModule
+    bc_frontendCompile kotlinCompilerModule
 
-   cli_bc sourceSets.cli_bc.output
+    cli_bc sourceSets.cli_bc.output
 }
 
 
