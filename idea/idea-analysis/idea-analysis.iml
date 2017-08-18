@@ -33,7 +33,6 @@
     <orderEntry type="module" module-name="descriptors" />
     <orderEntry type="library" exported="" name="idea-full" level="project" />
     <orderEntry type="library" name="uast-java" level="project" />
-    <orderEntry type="module" module-name="android-extensions-compiler" />
     <orderEntry type="module" module-name="frontend.script" />
   </component>
 </module>

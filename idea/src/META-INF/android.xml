@@ -90,6 +90,8 @@
         <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.android.synthetic.codegen.ParcelableClinitClassBuilderInterceptorExtension"/>
 
         <androidDexer implementation="org.jetbrains.kotlin.android.debugger.AndroidDexerImpl"/>
+
+        <highlighterExtension implementation="org.jetbrains.kotlin.android.AndroidHighlighterExtension"/>
     </extensions>
 
     <project-components>

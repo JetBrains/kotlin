@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 
 abstract class HighlightingVisitor protected constructor(
@@ -43,5 +45,17 @@ abstract class HighlightingVisitor protected constructor(
         if (NameHighlighter.namesHighlightingEnabled) {
             createInfoAnnotation(textRange, message).textAttributes = attributesKey
         }
+    }
+
+    protected fun applyHighlighterExtensions(element: PsiElement, descriptor: DeclarationDescriptor): Boolean {
+        if (!NameHighlighter.namesHighlightingEnabled) return false
+        for (extension in Extensions.getExtensions(HighlighterExtension.EP_NAME)) {
+            val key = extension.highlightReference(element, descriptor)
+            if (key != null) {
+                highlightName(element, key)
+                return true
+            }
+        }
+        return false
     }
 }

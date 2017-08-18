@@ -13,6 +13,9 @@
 
         <extensionPoint name="idePlatformSupport"
                         interface="org.jetbrains.kotlin.caches.resolve.IdePlatformSupport"/>
+
+        <extensionPoint name="highlighterExtension"
+                        interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
