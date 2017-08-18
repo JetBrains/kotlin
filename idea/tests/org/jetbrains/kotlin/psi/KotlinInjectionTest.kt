@@ -410,4 +410,65 @@ class KotlinInjectionTest : AbstractInjectionTest() {
                     ShredInfo(range(7, 15), hostRange=range(12, 22), prefix="s")
             )
     )
+
+    fun testInjectionInJavaAnnotation() {
+        val customInjection = BaseInjection("java")
+        customInjection.injectedLanguageId = HTMLLanguage.INSTANCE.id
+        val elementPattern = customInjection.compiler.createElementPattern(
+                """psiMethod().withName("value").withParameters().definedInClass("InHtml")""",
+                "SuppressWarnings temp rule")
+        customInjection.setInjectionPlaces(InjectionPlace(elementPattern, true))
+
+        try {
+            Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
+
+            doInjectionPresentTest(
+                    """
+                      @InHtml("<htm<caret>l></html>")
+                      fun foo() {
+                      }
+                    """, """
+                    @interface InHtml {
+                        String value();
+                    }
+                    """.trimIndent(),
+                    HTMLLanguage.INSTANCE.id,
+                    unInjectShouldBePresent = false
+            )
+        }
+        finally {
+            Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
+        }
+    }
+
+    fun testInjectionInJavaAnnotationWithNamedParam() {
+        val customInjection = BaseInjection("java")
+        customInjection.injectedLanguageId = HTMLLanguage.INSTANCE.id
+        val elementPattern = customInjection.compiler.createElementPattern(
+                """psiMethod().withName("html").withParameters().definedInClass("InHtml")""",
+                "SuppressWarnings temp rule")
+        customInjection.setInjectionPlaces(InjectionPlace(elementPattern, true))
+
+        try {
+            Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
+
+            doInjectionPresentTest(
+                    """
+                      @InHtml(html = "<htm<caret>l></html>")
+                      fun foo() {
+                      }
+                    """, """
+                    @interface InHtml {
+                        String html();
+                    }
+                    """.trimIndent(),
+                    HTMLLanguage.INSTANCE.id,
+                    unInjectShouldBePresent = false
+            )
+        }
+        finally {
+            Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
+        }
+    }
+
 }

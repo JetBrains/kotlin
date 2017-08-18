@@ -35,6 +35,7 @@ import org.intellij.plugins.intelliLang.inject.TemporaryPlacesRegistry
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.java.JavaLanguageInjectionSupport
 import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -43,7 +44,9 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -152,6 +155,7 @@ class KotlinLanguageInjector(
     private fun findInjectionInfo(place: KtElement, originalHost: Boolean = true): InjectionInfo? {
         return injectWithExplicitCodeInstruction(place)
                ?: injectWithCall(place)
+               ?: injectInAnnotationCall(place)
                ?: injectWithReceiver(place)
                ?: injectWithVariableUsage(place, originalHost)
     }
@@ -258,6 +262,16 @@ class KotlinLanguageInjector(
         }
 
         return null
+    }
+
+    private fun injectInAnnotationCall(host: KtElement): InjectionInfo? {
+        val argument = host.parent as? KtValueArgument ?: return null
+        val annotationEntry = argument.parent.parent as? KtAnnotationEntry ?: return null
+        val callDescriptor = annotationEntry.getResolvedCall(annotationEntry.analyze())?.candidateDescriptor
+        val psiClass = (callDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() as? PsiClass ?: return null
+        val argumentName = argument.getArgumentName()?.asName?.identifier ?: "value"
+        val method = psiClass.findMethodsByName(argumentName, false).singleOrNull() ?: return null
+        return findInjection(method, Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID))
     }
 
     private fun injectionForJavaMethod(argument: KtValueArgument, javaMethod: PsiMethod): InjectionInfo? {
