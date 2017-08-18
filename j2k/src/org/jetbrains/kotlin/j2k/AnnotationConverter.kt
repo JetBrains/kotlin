@@ -66,6 +66,7 @@ class AnnotationConverter(private val converter: Converter) {
         if (owner is PsiDocCommentOwner) {
             val deprecatedAnnotation = convertDeprecatedJavadocTag(owner, target)
             if (deprecatedAnnotation != null) {
+                convertedAnnotations = convertedAnnotations.filter { it.name.name != deprecatedAnnotation.name.name }
                 convertedAnnotations += deprecatedAnnotation
             }
         }

@@ -1790,6 +1790,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("deprecatedDocTagWithAnnotation.java")
+        public void testDeprecatedDocTagWithAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTagWithAnnotation.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("docCommentWithParamTag.java")
         public void testDocCommentWithParamTag() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/docCommentWithParamTag.java");
