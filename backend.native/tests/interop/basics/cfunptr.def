@@ -42,3 +42,13 @@ typedef int (*doubleToIntPtrType)(double);
 static doubleToIntPtrType getDoubleToIntPtr() {
     return &__doubleToInt;
 }
+
+static _Bool __isIntPositive(int x) {
+    return x > 0;
+}
+
+typedef _Bool (*isIntPositivePtrType)(int);
+
+static isIntPositivePtrType getIsIntPositivePtr() {
+    return &__isIntPositive;
+}

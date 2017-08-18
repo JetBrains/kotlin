@@ -71,6 +71,10 @@ private fun invokeImplUnitRet(ptr: COpaquePointer, vararg args: Any?): Unit = me
 }
 
 @ExportForCompiler
+private fun invokeImplBooleanRet(ptr: COpaquePointer, vararg args: Any?): Boolean =
+        invokeImplByteRet(ptr, *args).toBoolean()
+
+@ExportForCompiler
 private fun invokeImplByteRet(ptr: COpaquePointer, vararg args: Any?): Byte = memScoped {
     val resultBuffer = allocFfiReturnValueBuffer<ByteVar>(ByteVar)
     callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_SINT8, args, emptyArray(), memScope)

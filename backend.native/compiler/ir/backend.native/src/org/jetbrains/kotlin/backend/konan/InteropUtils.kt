@@ -116,6 +116,7 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val invokeImpls = mapOf(
             builtIns.unit to "invokeImplUnitRet",
+            builtIns.boolean to "invokeImplBooleanRet",
             builtIns.byte to "invokeImplByteRet",
             builtIns.short to "invokeImplShortRet",
             builtIns.int to "invokeImplIntRet",

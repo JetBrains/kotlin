@@ -38,6 +38,8 @@ private tailrec fun convertArgument(
         FFI_TYPE_KIND_SINT64
     }
 
+    is Boolean -> convertArgument(argument.toByte(), isVariadic, location, additionalPlacement)
+
     is Byte -> if (isVariadic) {
         convertArgument(argument.toInt(), isVariadic, location, additionalPlacement)
     } else {

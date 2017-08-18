@@ -18,4 +18,11 @@ fun main(args: Array<String>) {
                     getAddPtr()!!(5.1, 12.2)
             )
     )
+
+    val isIntPositivePtr = getIsIntPositivePtr()!!
+
+    printIntPtr(isIntPositivePtr(42).ifThenOneElseZero())
+    printIntPtr(isIntPositivePtr(-42).ifThenOneElseZero())
 }
+
+fun Boolean.ifThenOneElseZero() = if (this) 1 else 0
