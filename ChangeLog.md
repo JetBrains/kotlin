@@ -3,6 +3,15 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.1.4-2
+
+- [`KT-19679`](https://youtrack.jetbrains.com/issue/KT-19679) CompilationException: Couldn't inline method call 'methodName' into... 
+- [`KT-19690`](https://youtrack.jetbrains.com/issue/KT-19690) Lazy field in interface default method leads to ClassFormatError 
+- [`KT-19716`](https://youtrack.jetbrains.com/issue/KT-19716) Quickdoc `Ctrl+Q` broken while browsing code completion list `Ctrl-Space`
+- [`KT-19717`](https://youtrack.jetbrains.com/issue/KT-19717) Library kind incorrectly detected for vertx-web in Kotlin project 
+- [`KT-19723`](https://youtrack.jetbrains.com/issue/KT-19723) "Insufficient maximum stack size" during compilation 
+
+
 ## 1.1.4
 
 ### Android
