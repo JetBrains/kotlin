@@ -17029,6 +17029,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/useBoundWhenThereIsNoFixedVariables.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("wrongBoundInConstraintSystem.kt")
+        public void testWrongBoundInConstraintSystem() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/wrongBoundInConstraintSystem.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/reified")
