@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
@@ -264,21 +266,22 @@ class KotlinToResolvedCallTransformer(
     }
 
     private fun bindAndReport(context: BasicCallResolutionContext, trace: BindingTrace, simpleResolvedCall: NewResolvedCallImpl<*>) {
-        reportCallDiagnostic(context, trace, simpleResolvedCall.resolvedCallAtom, simpleResolvedCall.resultingDescriptor)
         val tracing = simpleResolvedCall.resolvedCallAtom.atom.psiKotlinCall.tracingStrategy
 
         tracing.bindReference(trace, simpleResolvedCall)
         tracing.bindResolvedCall(trace, simpleResolvedCall)
+
+        reportCallDiagnostic(context, trace, simpleResolvedCall.resolvedCallAtom, simpleResolvedCall.resultingDescriptor)
     }
 
     private fun bindAndReport(context: BasicCallResolutionContext, trace: BindingTrace, variableAsFunction: NewVariableAsFunctionResolvedCallImpl) {
-        reportCallDiagnostic(context, trace, variableAsFunction.variableCall.resolvedCallAtom, variableAsFunction.variableCall.resultingDescriptor)
-        reportCallDiagnostic(context, trace, variableAsFunction.functionCall.resolvedCallAtom, variableAsFunction.functionCall.resultingDescriptor)
-
         val outerTracingStrategy = variableAsFunction.baseCall.tracingStrategy
         outerTracingStrategy.bindReference(trace, variableAsFunction.variableCall)
         outerTracingStrategy.bindResolvedCall(trace, variableAsFunction)
         variableAsFunction.functionCall.kotlinCall.psiKotlinCall.tracingStrategy.bindReference(trace, variableAsFunction.functionCall)
+
+        reportCallDiagnostic(context, trace, variableAsFunction.variableCall.resolvedCallAtom, variableAsFunction.variableCall.resultingDescriptor)
+        reportCallDiagnostic(context, trace, variableAsFunction.functionCall.resolvedCallAtom, variableAsFunction.functionCall.resultingDescriptor)
     }
 
     private fun reportCallDiagnostic(
@@ -431,6 +434,9 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         TypeApproximator().approximateToSuperType(substituted, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: substituted
     }
 
+    private var extensionReceiver = resolvedCallAtom.extensionReceiverArgument?.receiver?.receiverValue
+    private var smartCastDispatchReceiverType: KotlinType? = null
+
     override val kotlinCall: KotlinCall get() = resolvedCallAtom.atom
 
     override fun getStatus(): ResolutionStatus = getResultApplicability(resolvedCallAtom.diagnostics).toResolutionStatus()
@@ -440,7 +446,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 
     override fun getCandidateDescriptor(): D = resolvedCallAtom.candidateDescriptor as D
     override fun getResultingDescriptor(): D = resultingDescriptor as D
-    override fun getExtensionReceiver(): ReceiverValue? = resolvedCallAtom.extensionReceiverArgument?.receiver?.receiverValue
+    override fun getExtensionReceiver(): ReceiverValue? = extensionReceiver
     override fun getDispatchReceiver(): ReceiverValue? = resolvedCallAtom.dispatchReceiverArgument?.receiver?.receiverValue
     override fun getExplicitReceiverKind(): ExplicitReceiverKind = resolvedCallAtom.explicitReceiverKind
 
@@ -449,7 +455,20 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         return typeParameters.zip(typeArguments).toMap()
     }
 
-    override fun getSmartCastDispatchReceiverType(): KotlinType? = null // todo
+    override fun getSmartCastDispatchReceiverType(): KotlinType? = smartCastDispatchReceiverType
+
+    fun updateExtensionReceiverWithSmartCastIfNeeded(smartCastExtensionReceiverType: KotlinType) {
+        if (extensionReceiver is ImplicitClassReceiver) {
+            extensionReceiver = CastImplicitClassReceiver(
+                    (extensionReceiver as ImplicitClassReceiver).classDescriptor,
+                    smartCastExtensionReceiverType
+            )
+        }
+    }
+
+    fun setSmartCastDispatchReceiverType(smartCastDispatchReceiverType: KotlinType) {
+        this.smartCastDispatchReceiverType = smartCastDispatchReceiverType
+    }
 }
 
 fun ResolutionCandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) {

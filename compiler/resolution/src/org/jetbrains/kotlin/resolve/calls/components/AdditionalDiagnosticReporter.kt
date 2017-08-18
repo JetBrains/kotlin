@@ -35,10 +35,14 @@ class AdditionalDiagnosticReporter {
         reportSmartCasts(candidate, resultingDescriptor, kotlinDiagnosticsHolder)
     }
 
-    private fun createSmartCastDiagnostic(argument: KotlinCallArgument, expectedResultType: UnwrappedType): SmartCastDiagnostic? {
+    private fun createSmartCastDiagnostic(
+            candidate: ResolvedCallAtom,
+            argument: KotlinCallArgument,
+            expectedResultType: UnwrappedType
+    ): SmartCastDiagnostic? {
         if (argument !is ExpressionKotlinCallArgument) return null
         if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(argument.receiver.receiverValue.type, expectedResultType)) {
-            return SmartCastDiagnostic(argument, expectedResultType.unwrap())
+            return SmartCastDiagnostic(argument, expectedResultType.unwrap(), candidate.atom)
         }
         return null
     }
@@ -51,7 +55,7 @@ class AdditionalDiagnosticReporter {
         if (receiver == null || parameter == null) return null
         val expectedType = parameter.type.unwrap().let { if (receiver.isSafeCall) it.makeNullableAsSpecified(true) else it }
 
-        val smartCastDiagnostic = createSmartCastDiagnostic(receiver, expectedType) ?: return null
+        val smartCastDiagnostic = createSmartCastDiagnostic(candidate, receiver, expectedType) ?: return null
 
         // todo may be we have smart cast to Int?
         return smartCastDiagnostic.takeIf {
@@ -75,7 +79,7 @@ class AdditionalDiagnosticReporter {
 
         for (parameter in resultingDescriptor.valueParameters) {
             for (argument in candidate.argumentMappingByOriginal[parameter.original]?.arguments ?: continue) {
-                val smartCastDiagnostic = createSmartCastDiagnostic(argument, argument.getExpectedType(parameter)) ?: continue
+                val smartCastDiagnostic = createSmartCastDiagnostic(candidate, argument, argument.getExpectedType(parameter)) ?: continue
 
                 val thereIsUnstableSmartCastError = candidate.diagnostics.filterIsInstance<UnstableSmartCast>().any {
                     it.argument == argument

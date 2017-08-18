@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.NON_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -126,28 +127,40 @@ class DiagnosticReporterByTrackingStrategy(
 
     private fun reportSmartCast(smartCastDiagnostic: SmartCastDiagnostic) {
         val expressionArgument = smartCastDiagnostic.argument
-        if (expressionArgument is ExpressionKotlinCallArgumentImpl) {
-            val context = context.replaceDataFlowInfo(expressionArgument.dataFlowInfoBeforeThisArgument)
-            val argumentExpression = KtPsiUtil.getLastElementDeparenthesized(expressionArgument.valueArgument.getArgumentExpression (), context.statementFilter)
-            val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
-            SmartCastManager.checkAndRecordPossibleCast(
-                    dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
-                    recordExpressionType = true)
-            trace.markAsReported()
+        val smartCastResult = when (expressionArgument) {
+            is ExpressionKotlinCallArgumentImpl -> {
+                trace.markAsReported()
+                val context = context.replaceDataFlowInfo(expressionArgument.dataFlowInfoBeforeThisArgument)
+                val argumentExpression = KtPsiUtil.getLastElementDeparenthesized(expressionArgument.valueArgument.getArgumentExpression (), context.statementFilter)
+                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
+                SmartCastManager.checkAndRecordPossibleCast(
+                        dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
+                        recordExpressionType = true)
+            }
+            is ReceiverExpressionKotlinCallArgument -> {
+                trace.markAsReported()
+                val receiverValue = expressionArgument.receiver.receiverValue
+                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, context)
+                SmartCastManager.checkAndRecordPossibleCast(
+                        dataFlowValue, smartCastDiagnostic.smartCastType, (receiverValue as? ExpressionReceiver)?.expression, context, call,
+                        recordExpressionType = true)
+            }
+            else -> null
         }
-        else if(expressionArgument is ReceiverExpressionKotlinCallArgument) {
-            val receiverValue = expressionArgument.receiver.receiverValue
-            val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, context)
-            SmartCastManager.checkAndRecordPossibleCast(
-                    dataFlowValue, smartCastDiagnostic.smartCastType, (receiverValue as? ExpressionReceiver)?.expression, context, call,
-                    recordExpressionType = true)
-            trace.markAsReported()
+        val resolvedCall = smartCastDiagnostic.kotlinCall?.psiKotlinCall?.psiCall?.getResolvedCall(trace.bindingContext) as? NewResolvedCallImpl<*>
+        if (resolvedCall != null && smartCastResult != null) {
+            if (resolvedCall.extensionReceiver == expressionArgument.receiver.receiverValue) {
+                resolvedCall.updateExtensionReceiverWithSmartCastIfNeeded(smartCastResult.resultType)
+            }
+            if (resolvedCall.dispatchReceiver == expressionArgument.receiver.receiverValue) {
+                resolvedCall.setSmartCastDispatchReceiverType(smartCastResult.resultType)
+            }
         }
     }
 
     private fun reportUnstableSmartCast(unstableSmartCast: UnstableSmartCast) {
         // todo hack -- remove it after removing SmartCastManager
-        reportSmartCast(SmartCastDiagnostic(unstableSmartCast.argument, unstableSmartCast.targetType))
+        reportSmartCast(SmartCastDiagnostic(unstableSmartCast.argument, unstableSmartCast.targetType, null))
     }
 
     override fun constraintError(diagnostic: KotlinCallDiagnostic) {
