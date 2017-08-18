@@ -213,6 +213,66 @@ tasks {
     "clean" {
         doLast {
             delete("$buildDir/repo")
+            delete(distDir)
+        }
+    }
+
+    "compiler-tests" {
+        dependsOn("dist")
+        dependsOn(":compiler:test",
+                  ":compiler:container:test",
+                  ":compiler:tests-java8:test")
+    }
+
+    "js-tests" {
+        dependsOn("dist")
+        dependsOn(":js:js.tests:test")
+    }
+
+    "jps-tests" {
+        dependsOn("dist")
+        dependsOn(":jps-plugin:test")
+    }
+
+    "idea-plugin-tests" {
+        dependsOn("dist")
+        dependsOn(":idea:test",
+                  ":j2k:test",
+                  ":eval4j:test")
+    }
+
+    "android-tests" {
+        dependsOn("dist")
+        dependsOn(":plugins:android-extensions-idea:test",
+                  ":idea:idea-android:test",
+                  ":plugins:kapt3:test",
+                  ":compiler:android-tests:test")
+    }
+
+    "plugins-tests" {
+        dependsOn("dist")
+        dependsOn(":plugins:plugins-tests:test",
+                  ":plugins:kapt3:test",
+                  ":kotlin-source-sections-compiler-plugin:test",
+                  ":plugins:uast-kotlin:test")
+    }
+
+    "scripting-tests" {
+        dependsOn("dist")
+        dependsOn(":kotlin-script-util:test",
+                  ":examples:kotlin-jsr223-local-example:test",
+                  ":examples:kotlin-jsr223-daemon-local-eval-example:test")
+    }
+
+    "other-tests" {
+        dependsOn("dist")
+        dependsOn(":kotlin-build-common:test",
+                  ":generators:test")
+    }
+
+    "test" {
+        doLast {
+            throw GradleException("Don't use directly, use aggregate tasks *-tests instead")
         }
     }
 }
