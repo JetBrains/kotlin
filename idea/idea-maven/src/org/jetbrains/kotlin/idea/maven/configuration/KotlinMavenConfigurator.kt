@@ -37,16 +37,14 @@ import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
-import org.jetbrains.kotlin.idea.maven.PomFile
-import org.jetbrains.kotlin.idea.maven.changeCoroutineConfiguration
-import org.jetbrains.kotlin.idea.maven.excludeMavenChildrenModules
-import org.jetbrains.kotlin.idea.maven.kotlinPluginId
+import org.jetbrains.kotlin.idea.maven.*
 import org.jetbrains.kotlin.idea.quickfix.ChangeCoroutineSupportFix
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
@@ -191,6 +189,44 @@ abstract class KotlinMavenConfigurator
 
         if (hasJavaFiles(module)) {
             pomFile.addJavacExecutions(module, kotlinPlugin)
+        }
+    }
+
+    override fun updateLanguageVersion(
+            module: Module,
+            languageVersion: String?,
+            apiVersion: String?,
+            requiredStdlibVersion: ApiVersion,
+            forTests: Boolean
+    ) {
+        fun doUpdateMavenLanguageVersion(): PsiElement? {
+            val psi = KotlinMavenConfigurator.findModulePomFile(module) as? XmlFile ?: return null
+            val pom = PomFile.forFileOrNull(psi) ?: return null
+            return pom.changeLanguageVersion(
+                    languageVersion,
+                    apiVersion)
+        }
+
+        val runtimeUpdateRequired = getRuntimeLibraryVersion(module)?.let { ApiVersion.parse(it) }?.let { runtimeVersion ->
+            runtimeVersion < requiredStdlibVersion
+        } ?: false
+
+        if (runtimeUpdateRequired) {
+            Messages.showErrorDialog(module.project,
+                                     "This language feature requires version $requiredStdlibVersion or later of the Kotlin runtime library. " +
+                                     "Please update the version in your build script.",
+                                     "Update Language Version")
+            return
+        }
+
+        val element = doUpdateMavenLanguageVersion()
+        if (element == null) {
+            Messages.showErrorDialog(module.project,
+                                     "Failed to update.pom.xml. Please update the file manually.",
+                                     "Update Language Version")
+        }
+        else {
+            OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
         }
     }
 

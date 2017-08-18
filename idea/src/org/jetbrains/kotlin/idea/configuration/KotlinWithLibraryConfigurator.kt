@@ -28,6 +28,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.annotations.Contract
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -334,7 +335,6 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         val runtimeUpdateRequired = state != LanguageFeature.State.DISABLED &&
                                     (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
 
-
         if (runtimeUpdateRequired && !askUpdateRuntime(module, LanguageFeature.Coroutines.sinceApiVersion)) {
             return
         }
@@ -344,6 +344,28 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
             facetSettings.coroutineSupport = state
             facetSettings.apiLevel = LanguageVersion.KOTLIN_1_1
             facetSettings.languageLevel = LanguageVersion.KOTLIN_1_1
+        }
+    }
+
+    override fun updateLanguageVersion(module: Module, languageVersion: String?, apiVersion: String?, requiredStdlibVersion: ApiVersion, forTests: Boolean) {
+        val runtimeUpdateRequired = getRuntimeLibraryVersion(module)?.let { ApiVersion.parse(it) }?.let { runtimeVersion ->
+            runtimeVersion < requiredStdlibVersion
+        } ?: false
+
+        if (runtimeUpdateRequired && !askUpdateRuntime(module, requiredStdlibVersion)) {
+            return
+        }
+
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module)
+        ModuleRootModificationUtil.updateModel(module) {
+            with(facetSettings) {
+                if (languageVersion != null) {
+                    languageLevel = LanguageVersion.fromVersionString(languageVersion)
+                }
+                if (apiVersion != null) {
+                    apiLevel = LanguageVersion.fromVersionString(apiVersion)
+                }
+            }
         }
     }
 
