@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls
 
 val USE_NEW_INFERENCE
-    get() = false
+    get() = true
 
 val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
     get() = false
