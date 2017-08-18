@@ -16640,6 +16640,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("itInsideComplexLambda.kt")
+        public void testItInsideComplexLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/itInsideComplexLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt10143.kt")
         public void testKt10143() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt10143.kt");
@@ -17033,6 +17039,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("typeCastException.kt")
         public void testTypeCastException() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/typeCastException.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("useBoundWhenThereIsNoFixedVariables.kt")
+        public void testUseBoundWhenThereIsNoFixedVariables() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/useBoundWhenThereIsNoFixedVariables.kt");
             doTest(fileName);
         }
     }

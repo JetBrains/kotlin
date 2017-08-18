@@ -37,8 +37,10 @@ interface ConstraintSystemOperation {
     fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition)
 
     fun isProperType(type: UnwrappedType): Boolean
+    fun isTypeVariable(type: UnwrappedType): Boolean
 
     fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor>
+    fun getProperSubTypeBounds(type: UnwrappedType): List<UnwrappedType>
 }
 
 interface ConstraintSystemBuilder : ConstraintSystemOperation {
