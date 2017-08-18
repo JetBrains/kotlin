@@ -26,20 +26,20 @@ import org.jetbrains.kotlin.types.checker.intersectTypes
 interface NewTypeSubstitutor {
     fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType?
 
-    fun safeSubstitute(type: UnwrappedType): UnwrappedType = substitute(type) ?: type
+    fun safeSubstitute(type: UnwrappedType): UnwrappedType = substitute(type, runCapturedChecks = true, keepAnnotation = false) ?: type
 
-    // null means that this type isn't changed
-    fun substitute(type: UnwrappedType): UnwrappedType? = substitute(type, runCapturedChecks = true)
+    fun substituteKeepAnnotations(type: UnwrappedType): UnwrappedType =
+            substitute(type, runCapturedChecks = true, keepAnnotation = true) ?: type
 
-    private fun substitute(type: UnwrappedType, runCapturedChecks: Boolean): UnwrappedType? =
+    private fun substitute(type: UnwrappedType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? =
             when (type) {
-                is SimpleType -> substitute(type, runCapturedChecks)
+                is SimpleType -> substitute(type, keepAnnotation, runCapturedChecks)
                 is FlexibleType -> if (type is DynamicType || type is RawType) {
                     null
                 }
                 else {
-                    val lowerBound = substitute(type.lowerBound, runCapturedChecks)
-                    val upperBound = substitute(type.upperBound, runCapturedChecks)
+                    val lowerBound = substitute(type.lowerBound, keepAnnotation, runCapturedChecks)
+                    val upperBound = substitute(type.upperBound, keepAnnotation, runCapturedChecks)
                     if (lowerBound == null && upperBound == null) {
                         null
                     }
@@ -50,12 +50,12 @@ interface NewTypeSubstitutor {
                 }
             }
 
-    private fun substitute(type: SimpleType, runCapturedChecks: Boolean): UnwrappedType? {
+    private fun substitute(type: SimpleType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? {
         if (type.isError) return null
 
         if (type is AbbreviatedType) {
-            val substitutedExpandedType = substitute(type.expandedType, runCapturedChecks)
-            val substitutedAbbreviation = substitute(type.abbreviation, runCapturedChecks)
+            val substitutedExpandedType = substitute(type.expandedType, keepAnnotation, runCapturedChecks)
+            val substitutedAbbreviation = substitute(type.abbreviation, keepAnnotation, runCapturedChecks)
             if (substitutedExpandedType is SimpleType? && substitutedAbbreviation is SimpleType?) {
                 return AbbreviatedType(substitutedExpandedType ?: type.expandedType,
                                        substitutedAbbreviation ?: type.abbreviation)
@@ -66,7 +66,7 @@ interface NewTypeSubstitutor {
         }
 
         if (type.arguments.isNotEmpty()) {
-            return substituteParametrizedType(type, runCapturedChecks)
+            return substituteParametrizedType(type, keepAnnotation, runCapturedChecks)
         }
 
         val typeConstructor = type.constructor
@@ -78,13 +78,13 @@ interface NewTypeSubstitutor {
                 "Type is inconsistent -- somewhere we create type with typeConstructor = $typeConstructor " +
                 "and class: ${type::class.java.canonicalName}. type.toString() = $type"
             }
-            val lower = (type as NewCapturedType).lowerType?.let { substitute(it, runCapturedChecks = false) }
+            val lower = (type as NewCapturedType).lowerType?.let { substitute(it, keepAnnotation, runCapturedChecks = false) }
             if (lower != null) throw IllegalStateException("Illegal type substitutor: $this, " +
                                                            "because for captured type '$type' lower type approximation should be null, but it is: '$lower'," +
                                                            "original lower type: '${type.lowerType}")
 
             type.constructor.supertypes.forEach { supertype ->
-                substitute(supertype, runCapturedChecks = false)?.let {
+                substitute(supertype, keepAnnotation, runCapturedChecks = false)?.let {
                     throw IllegalStateException("Illegal type substitutor: $this, " +
                                                 "because for captured type '$type' supertype approximation should be null, but it is: '$supertype'," +
                                                 "original supertype: '$supertype'")
@@ -97,19 +97,29 @@ interface NewTypeSubstitutor {
         if (typeConstructor is IntersectionTypeConstructor) {
             var thereIsChanges = false
             val newTypes = typeConstructor.supertypes.map {
-                substitute(it.unwrap(), runCapturedChecks)?.apply { thereIsChanges = true } ?: it.unwrap()
+                substitute(it.unwrap(), keepAnnotation, runCapturedChecks)?.apply { thereIsChanges = true } ?: it.unwrap()
             }
             if (!thereIsChanges) return null
             return intersectTypes(newTypes).let { if (type.isMarkedNullable) it.makeNullableAsSpecified(true) else it }
         }
 
         // simple classifier type
-        val replacement = substituteNotNullTypeWithConstructor(typeConstructor) ?: return null
+        var replacement = substituteNotNullTypeWithConstructor(typeConstructor) ?: return null
+        if (keepAnnotation) {
+            replacement = replacement.replaceAnnotations(type.annotations)
+        }
+        if (type.isMarkedNullable) {
+            replacement = replacement.makeNullableAsSpecified(true)
+        }
 
-        return if (type.isMarkedNullable) replacement.makeNullableAsSpecified(true) else replacement
+        return replacement
     }
 
-    private fun substituteParametrizedType(type: SimpleType, runCapturedChecks: Boolean): UnwrappedType? {
+    private fun substituteParametrizedType(
+            type: SimpleType,
+            keepAnnotation: Boolean,
+            runCapturedChecks: Boolean
+    ): UnwrappedType? {
         val parameters = type.constructor.parameters
         val arguments = type.arguments
         if (parameters.size != arguments.size) {
@@ -122,7 +132,7 @@ interface NewTypeSubstitutor {
             val argument = arguments[index]
 
             if (argument.isStarProjection) continue
-            val substitutedArgumentType = substitute(argument.type.unwrap(), runCapturedChecks) ?: continue
+            val substitutedArgumentType = substitute(argument.type.unwrap(), keepAnnotation, runCapturedChecks) ?: continue
 
             newArguments[index] = TypeProjectionImpl(argument.projectionKind, substitutedArgumentType)
         }

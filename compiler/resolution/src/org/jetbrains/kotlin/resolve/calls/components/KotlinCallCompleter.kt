@@ -111,7 +111,7 @@ class KotlinCallCompleter(
     // true if we should complete this call
     private fun KotlinResolutionCandidate.prepareForCompletion(expectedType: UnwrappedType?): ConstraintSystemCompletionMode {
         val unsubstitutedReturnType = resolvedCall.candidateDescriptor.returnType?.unwrap() ?: return ConstraintSystemCompletionMode.PARTIAL
-        val returnType = resolvedCall.substitutor.safeSubstitute(unsubstitutedReturnType)
+        val returnType = resolvedCall.substitutor.substituteKeepAnnotations(unsubstitutedReturnType)
         if (expectedType != null && !TypeUtils.noExpectedType(expectedType)) {
             csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
         }
