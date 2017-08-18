@@ -18,17 +18,22 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
             object : KtVisitorVoid() {
                 override fun visitNamedFunction(function: KtNamedFunction) {
                     super.visitNamedFunction(function)
-                    if (!function.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
-                    if (MODIFIER_EXCLUDE_OVERRIDE.any { function.hasModifier(it) }) return
+                    val funKeyword = function.funKeyword ?: return
+                    val modifierList = function.modifierList ?: return
+                    if (!modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+                    if (MODIFIER_EXCLUDE_OVERRIDE.any { modifierList.hasModifier(it) }) return
                     if (function.annotationEntries.isNotEmpty()) return
 
                     val bodyExpression = function.bodyExpression ?: return
@@ -55,10 +60,15 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
                     if (!isSameFunctionName(superCallElement, function)) return
                     if (!isSameArguments(superCallElement, function)) return
 
-                    holder.registerProblem(function,
-                                           "Redundant override",
-                                           ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                           RedundantOverrideFix())
+                    val descriptor = holder.manager.createProblemDescriptor(
+                            function,
+                            TextRange(modifierList.startOffsetInParent, funKeyword.endOffset - function.startOffset),
+                            "Redundant override",
+                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                            isOnTheFly,
+                            RedundantOverrideFix()
+                    )
+                    holder.registerProblem(descriptor)
                 }
             }
 
@@ -77,7 +87,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
     }
 
     private class RedundantOverrideFix : LocalQuickFix {
-        override fun getName() = "Remove redundant overrides"
+        override fun getName() = "Remove redundant override"
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
