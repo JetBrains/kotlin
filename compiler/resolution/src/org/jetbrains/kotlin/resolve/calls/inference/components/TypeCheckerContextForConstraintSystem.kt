@@ -65,21 +65,6 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
      * Foo <: T? <=> Foo & Any <: T
      * Foo <: T -- leave as is
      */
-
-//    fun simplifyLowerConstraint(typeVariable: UnwrappedType, subType: UnwrappedType): Boolean {
-//        @Suppress("NAME_SHADOWING")
-//        val typeVariable = typeVariable.upperIfFlexible()
-//
-//        if (typeVariable.isMarkedNullable) {
-//            addLowerConstraint(typeVariable.constructor, intersectTypes(listOf(subType, subType.builtIns.anyType)))
-//        }
-//        else {
-//            addLowerConstraint(typeVariable.constructor, subType)
-//        }
-//
-//        return true
-//    }
-
     fun simplifyLowerConstraint(typeVariable: UnwrappedType, subType: UnwrappedType): Boolean {
         if (typeVariable.isFlexible()) {
             val subtypeAsFlexible = typeVariable.getCustomTypeVariable()?.substitutionResult(subType)?.unwrap()
@@ -90,7 +75,8 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
         }
 
         if (typeVariable.isMarkedNullable) {
-            val notNullSubType = if (subType is NewCapturedType) intersectTypes(listOf(subType, subType.builtIns.anyType)) else subType.makeNotNullable().unwrap()
+//            val notNullSubType = if (subType is NewCapturedType) intersectTypes(listOf(subType, subType.builtIns.anyType)) else subType.makeNotNullable().unwrap()
+            val notNullSubType = subType.makeNotNullable().unwrap()
             addLowerConstraint(typeVariable.constructor, notNullSubType)
             return true
         }

@@ -381,7 +381,7 @@ object NullabilityChecker {
         if (superType.isMarkedNullable) return true
 
         // i.e. subType is not-nullable
-        if (hasNotNullSupertype(subType, SupertypesPolicy.LowerIfFlexible)) return true
+        if (hasNotNullSupertype(subType, SupertypesPolicy.LowerIfFlexible) || subType is NewCapturedType) return true
 
         // i.e subType hasn't not-null supertype, but superType has
         if (hasNotNullSupertype(superType, SupertypesPolicy.UpperIfFlexible)) return false

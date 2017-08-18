@@ -5,7 +5,7 @@ object FirstTest {
         bar(a)
     }
 
-    fun <T> bar(a: Inv<T?>) {}
+    fun <V> bar(a: Inv<V?>) {}
 
     class Inv<T>
 }
