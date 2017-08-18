@@ -84,6 +84,12 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         doTest(fileName);
     }
 
+    @TestMetadata("javaNestedClass")
+    public void testJavaNestedClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/javaNestedClass/");
+        doTest(fileName);
+    }
+
     @TestMetadata("noResolver")
     public void testNoResolver() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/noResolver/");
