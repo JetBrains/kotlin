@@ -257,4 +257,8 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     fun testDependencyOnStdlibJdk78() {
         module("usage", listOf(File("dist/kotlinc/lib/kotlin-stdlib-jdk7.jar"), File("dist/kotlinc/lib/kotlin-stdlib-jdk8.jar")))
     }
+
+    fun testDependencyOnReflect() {
+        module("usage")
+    }
 }
