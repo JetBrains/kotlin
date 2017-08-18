@@ -33,7 +33,6 @@
     <orderEntry type="module" module-name="idea-jps-common" exported="" />
     <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="module" module-name="eval4j" />
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
@@ -62,7 +61,6 @@
     <orderEntry type="module" module-name="sam-with-receiver-ide" scope="TEST" />
     <orderEntry type="module" module-name="kapt3" scope="TEST" />
     <orderEntry type="module" module-name="descriptors" />
-    <orderEntry type="module" module-name="kotlin-gradle-tooling" />
     <orderEntry type="module" module-name="build-common" />
     <orderEntry type="library" name="kotlinx-coroutines-core" level="project" />
     <orderEntry type="module" module-name="frontend.script" />
