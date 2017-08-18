@@ -107,6 +107,9 @@ class KotlinResolutionCandidate(
                 partIndex++
                 workStep -= workCount
             }
+            else {
+                break
+            }
         }
         if (partIndex < resolutionSequence.size) {
             if (processPart(resolutionSequence[partIndex], stopOnFirstError, workStep)) return
