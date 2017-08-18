@@ -128,7 +128,8 @@ class NotCallableExpectedType(
 // SmartCasts
 class SmartCastDiagnostic(
         val argument: ExpressionKotlinCallArgument,
-        val smartCastType: UnwrappedType
+        val smartCastType: UnwrappedType,
+        val kotlinCall: KotlinCall?
 ): KotlinCallDiagnostic(RESOLVED) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
