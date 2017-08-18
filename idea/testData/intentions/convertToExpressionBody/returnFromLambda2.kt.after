@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+
+public fun List<String>.fn() : List<String> = map {
+    if (it.isEmpty()) return emptyList()
+    it
+}

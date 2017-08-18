@@ -1,4 +1,5 @@
 // "Create property 'foo'" "false"
+// ACTION: Convert to expression body
 // ACTION: Create parameter 'foo'
 // ACTION: Create local variable 'foo'
 // ACTION: Rename reference
