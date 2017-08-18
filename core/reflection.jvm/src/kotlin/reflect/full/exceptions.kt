@@ -28,7 +28,7 @@ import kotlin.reflect.jvm.isAccessible
  * @see [kotlin.reflect.jvm.isAccessible]
  */
 @SinceKotlin("1.1")
-class IllegalCallableAccessException(cause: IllegalAccessException) : kotlin.reflect.IllegalCallableAccessException(cause)
+class IllegalCallableAccessException(cause: IllegalAccessException) : Exception(cause)
 
 /**
  * An exception that is thrown when `getDelegate` is invoked on a [KProperty] object that was not made accessible
@@ -50,5 +50,4 @@ class IllegalPropertyDelegateAccessException(cause: IllegalAccessException) : Ex
  * and that class or the package no longer has that property.
  */
 @SinceKotlin("1.1")
-class NoSuchPropertyException(cause: Exception? = null) : kotlin.reflect.NoSuchPropertyException(cause)
-
+class NoSuchPropertyException(cause: Exception? = null) : Exception(cause)
