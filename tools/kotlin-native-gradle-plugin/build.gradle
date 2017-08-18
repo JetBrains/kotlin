@@ -47,11 +47,8 @@ repositories {
     mavenCentral()
 }
 
-evaluationDependsOn(':tools:helpers')
-
 dependencies {
     compile project(':shared')
-    compile project(':tools:helpers')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile gradleApi()
 
@@ -69,8 +66,6 @@ test {
 }
 
 jar {
-    dependsOn(':tools:helpers:jar')
-    from (rootProject.findProject(':tools:helpers').sourceSets.main.output)
     from (rootProject.findProject(':shared').sourceSets.main.output)
 }
 

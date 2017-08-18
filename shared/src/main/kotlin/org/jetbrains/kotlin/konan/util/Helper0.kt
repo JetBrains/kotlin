@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.konan
+package org.jetbrains.kotlin.konan.util
 
 import java.io.File
 import java.util.*
@@ -24,15 +24,10 @@ class Helper0(val dependenciesDir: String,
               val dependencies: List<String>): Runnable {
 
     override fun run() {
-        DependencyDownloader(
-                File(dependenciesDir),
-                properties.getProperty("dependenciesUrl", "https://download.jetbrains.com/kotlin/native"),
+        DependencyProcessor(File(dependenciesDir),
+                properties,
                 dependencies,
-                airplaneMode = properties.getProperty("airplaneMode")?.toBoolean() ?: false,
-                maxAttempts = properties.getProperty("downloadingAttempts")?.toInt()
-                        ?: DependencyDownloader.DEFAULT_MAX_ATTEMPTS,
-                attemptPauseMs = properties.getProperty("downloadingAttemptPauseMs")?.toLong()
-                        ?: DependencyDownloader.DEFAULT_ATTEMPT_PAUSE_MS
+                properties.getProperty("dependenciesUrl", "https://download.jetbrains.com/kotlin/native")
         ).run()
     }
 }

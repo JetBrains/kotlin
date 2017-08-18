@@ -143,7 +143,6 @@ task list_dist(dependsOn: "listDist")
 
 task distCompiler(type: Copy) {
     dependsOn ':backend.native:jars'
-    dependsOn ':tools:helpers:jar'
     dependsOn ':utilities:jar'
     dependsOn ':klib:jar'
     dependsOn ':shared:jar'
@@ -211,11 +210,6 @@ task distCompiler(type: Copy) {
     }
     from(konanPropertiesFile) {
         into('konan')
-    }
-
-    // TODO: check if we use native libraries copied to dist (see above) or not.
-    from(project(':tools:helpers').file('build/libs')) {
-        into('konan/lib')
     }
 }
 

@@ -16,7 +16,12 @@
 
 
 import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.ClosureSignatureHint
+import groovy.transform.stc.FirstParam
+import groovy.transform.stc.FromString
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
+
 import static org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.properties.KonanProperties
 import org.jetbrains.kotlin.konan.properties.*
@@ -166,23 +171,11 @@ class TgzNativeDep extends NativeDep {
 
 class HelperNativeDep extends TgzNativeDep {
 
-    int maxAttempts = Integer.parseInt(
-            project.rootProject.ext.konanProperties['downloadingAttempts'].toString())
-    long attemptPauseMs = Long.parseLong(
-            project.rootProject.ext.konanProperties['downloadingAttemptPauseMs'].toString())
-
-    public HelperNativeDep() {
-        dependsOn(':tools:helpers:jar')
-    }
+    Properties konanProperties = new Properties()
 
     @TaskAction
     public void downloadAndExtract() {
-        project.javaexec {
-            main = "org.jetbrains.kotlin.konan.MainKt"
-            classpath += project.findProject(':tools:helpers').getConfigurations().getByName("runtime")
-            classpath += project.findProject(':tools:helpers').getConfigurations().getByName("runtime").artifacts.files
-            args baseOutDir.canonicalPath, baseUrl, maxAttempts, attemptPauseMs, baseName
-        }
+        new DependencyProcessor(baseOutDir, konanProperties, [baseName], baseUrl).run()
     }
 }
 
@@ -195,8 +188,8 @@ enum DependencyKind {
 
 
     DependencyKind(String name,
-            @ClosureParams(KonanProperties.class) Closure<String> dirGetter,
-            @ClosureParams(KonanTarget.class) Closure<String> propertyNameGetter =
+            @ClosureParams(value = FromString.class, options = "KonanProperties") Closure<String> dirGetter,
+            @ClosureParams(value = FromString.class, options = "KonanTarget") Closure<String> propertyNameGetter =
                            {target -> "${target.userName}${name.capitalize()}Dir"}) {
         this.name = name
         this.dirGetter = dirGetter
@@ -225,8 +218,11 @@ TargetManager.enabled.each { target ->
     )
 
     konanProperties.dependencies.each { dependency ->
-        task "${target.userName}-${dependency}"(type: HelperNativeDep) {
-            baseName = dependency
+        if (tasks.findByName(dependency) == null) {
+            task "${dependency}"(type: HelperNativeDep) {
+                baseName = dependency
+                it.konanProperties = rootProject.ext.konanProperties
+            }
         }
     }
 

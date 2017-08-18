@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleScriptException
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.konan.DependencyDownloader
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import java.io.File
 
 open class KonanCompilerDownloadTask : DefaultTask() {
@@ -53,7 +53,7 @@ open class KonanCompilerDownloadTask : DefaultTask() {
         try {
             val konanCompiler = project.konanCompilerName()
             logger.info("Downloading Kotlin/Native compiler from $DOWNLOAD_URL/$konanCompiler into $KONAN_PARENT_DIR")
-            DependencyDownloader(File(KONAN_PARENT_DIR), DOWNLOAD_URL, listOf(konanCompiler)).run()
+            DependencyProcessor(File(KONAN_PARENT_DIR), DOWNLOAD_URL, listOf(konanCompiler)).run()
         } catch (e: RuntimeException) {
             throw GradleScriptException("Cannot download Kotlin/Native compiler", e)
         }

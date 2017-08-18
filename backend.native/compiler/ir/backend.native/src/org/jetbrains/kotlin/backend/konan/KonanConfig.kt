@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.target.TargetManager.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
@@ -47,9 +48,16 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             error("Target $target is not available on the ${TargetManager.host} host")
         }
     }
+
+    private fun Distribution.prepareDependencies() {
+        DependencyProcessor(java.io.File(dependenciesDir), targetProperties).run()
+    }
+
     internal val distribution = Distribution(targetManager, 
-        configuration.get(KonanConfigKeys.PROPERTY_FILE), 
-        configuration.get(KonanConfigKeys.RUNTIME_FILE))
+        configuration.get(KonanConfigKeys.PROPERTY_FILE),
+        configuration.get(KonanConfigKeys.RUNTIME_FILE)).apply {
+        prepareDependencies()
+    }
 
     private val produce = configuration.get(KonanConfigKeys.PRODUCE)!!
     private val suffix = produce.suffix(targetManager.target)

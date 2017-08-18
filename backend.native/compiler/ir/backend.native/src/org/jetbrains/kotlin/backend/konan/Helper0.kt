@@ -18,11 +18,11 @@
 // Example startup helper for Kotlin N compiler. Compile to JAR and add it to
 // Kotlin N classpath - it will get loaded and executed automatically.
 //
-package org.jetbrains.kotlin.konan
+package org.jetbrains.kotlin.konan.util
 
 import java.util.*
 
-// Name it CompilerHelper0 so that it get loaded.
+// Name it Helper0 so that it get loaded.
 class Helper0Disabled(val dependenciesDir: String,
                       val properties: Properties,
                       val dependencies: List<String>) : Runnable {

@@ -100,8 +100,6 @@ abstract class KonanTest extends JavaExec {
         try {
             main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.configurations.cli_bc
-            // TODO: Remove helpers classpath when downloading is moved into 'shared' project.
-            classpath += project.project(":tools:helpers").sourceSets.main.runtimeClasspath
             enableAssertions = true
             args = ["-output", output,
                     *filesToCompile,
