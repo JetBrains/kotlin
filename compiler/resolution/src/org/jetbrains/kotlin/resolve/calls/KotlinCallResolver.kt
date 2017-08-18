@@ -55,12 +55,11 @@ class KotlinCallResolver(
             KotlinCallKind.UNSUPPORTED -> throw UnsupportedOperationException()
         }
 
-        val candidates = if (collectAllCandidates) {
-            towerResolver.collectAllCandidates(scopeTower, processor)
+        if (collectAllCandidates) {
+            return towerResolver.collectAllCandidates(scopeTower, processor).transformToResolvedCalls(resolutionCallbacks)
         }
-        else {
-            towerResolver.runResolve(scopeTower, processor, useOrder = kotlinCall.callKind != KotlinCallKind.UNSUPPORTED)
-        }
+
+        val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = kotlinCall.callKind != KotlinCallKind.UNSUPPORTED)
 
         return choseMostSpecific(resolutionCallbacks, expectedType, candidates, collectAllCandidates)
     }
@@ -89,16 +88,17 @@ class KotlinCallResolver(
             )
         }
 
-        val candidates = if (collectAllCandidates) {
-            towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
-                                                TowerResolver.AllCandidatesCollector { it.status },
-                                                useOrder = false)
+        if (collectAllCandidates) {
+            return towerResolver
+                    .runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
+                                           TowerResolver.AllCandidatesCollector { it.status },
+                                           useOrder = false)
+                    .transformToResolvedCalls(resolutionCallbacks)
         }
-        else {
-            towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
+
+        val candidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
                                                 TowerResolver.SuccessfulResultCollector { it.status },
                                                 useOrder = true)
-        }
 
         return choseMostSpecific(resolutionCallbacks, expectedType, candidates, collectAllCandidates)
     }
@@ -129,9 +129,13 @@ class KotlinCallResolver(
             return listOf(singleResult)
         }
 
-        return maximallySpecificCandidates.map {
-            kotlinCallCompleter.transformWhenAmbiguity(it, resolutionCallbacks)
-        }
+        return maximallySpecificCandidates.transformToResolvedCalls(resolutionCallbacks)
+    }
+
+    private fun Collection<KotlinResolutionCandidate>.transformToResolvedCalls(
+            resolutionCallbacks: KotlinResolutionCallbacks
+    ): List<ResolvedKotlinCall> {
+        return this.map { kotlinCallCompleter.transformWhenAmbiguity(it, resolutionCallbacks) }
     }
 }
 
