@@ -17,7 +17,7 @@ class A {
 }
 
 fun box(): String {
-    val props = A::class.java.kotlin.memberExtensionProperties
+    val props = A::class.memberExtensionProperties
     val readonly = props.single { it.name == "readonly" }
     assert(readonly !is KMutableProperty2<A, *, *>) { "Fail 1: $readonly" }
     val mutable = props.single { it.name == "mutable" }
