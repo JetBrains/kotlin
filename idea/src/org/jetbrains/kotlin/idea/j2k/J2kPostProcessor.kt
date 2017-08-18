@@ -57,7 +57,7 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
     }
 
     override fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?) =
-            runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
+            runBlocking(EDT.ModalityStateElement(ModalityState.any())) {
                 do {
                     var modificationStamp: Long? = file.modificationStamp
                     val elementToActions = runReadAction {
