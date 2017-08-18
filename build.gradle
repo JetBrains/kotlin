@@ -185,6 +185,10 @@ task distCompiler(type: Copy) {
         into('konan/nativelib')
     }
 
+    from(project(':llvmDebugInfoC').file('src/scripts/konan_lldb.py')) {
+        into('tools')
+    }
+
     from(project(':utilities').file('build/libs')) {
         into('konan/lib')
     }
