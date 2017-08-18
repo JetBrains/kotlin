@@ -885,6 +885,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention</className>
       <category>Kotlin</category>
     </intentionAction>

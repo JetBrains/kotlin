@@ -1,5 +1,6 @@
 // "Import" "false"
 // ERROR: Unresolved reference: Some
+// ACTION: Convert to expression body
 // ACTION: Create function 'Some'
 // ACTION: Rename reference
 
