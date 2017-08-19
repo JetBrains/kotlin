@@ -87,30 +87,26 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
         }
     }
 
+
     /**
-     * Previous idea was to replace flexible types with intersection types:
      * Foo <: T! <=> Foo <: T? <=> Foo & Any <: T
      * Foo <: T? <=> Foo & Any <: T
      * Foo <: T -- leave as is
      */
-    private fun simplifyLowerConstraint(typeVariable: UnwrappedType, subType: UnwrappedType): Boolean {
-        if (typeVariable.isFlexible()) {
-            val subtypeAsFlexible = typeVariable.getCustomTypeVariable()?.substitutionResult(subType)?.unwrap()
-            if (subtypeAsFlexible != null) {
-                addLowerConstraint(typeVariable.constructor, subtypeAsFlexible)
-                return true
-            }
-        }
+    fun simplifyLowerConstraint(typeVariable: UnwrappedType, subType: UnwrappedType): Boolean {
+        @Suppress("NAME_SHADOWING")
+        val typeVariable = typeVariable.upperIfFlexible()
 
         if (typeVariable.isMarkedNullable) {
             addLowerConstraint(typeVariable.constructor, intersectTypes(listOf(subType, subType.builtIns.anyType)))
-            return true
         }
-
-        addLowerConstraint(typeVariable.constructor, subType)
+        else {
+            addLowerConstraint(typeVariable.constructor, subType)
+        }
 
         return true
     }
+
 
     /**
      * T! <: Foo <=> T <: Foo
