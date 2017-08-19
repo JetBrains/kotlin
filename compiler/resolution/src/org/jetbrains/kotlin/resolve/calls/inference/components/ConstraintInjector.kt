@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 import java.util.*
 
 class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val typeApproximator: TypeApproximator) {
-    private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 3
+    private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 1
 
     interface Context {
         val allTypeVariables: Map<TypeConstructor, NewTypeVariable>
