@@ -31,6 +31,12 @@ buildscript {
 plugins {
 //    java // so we can benefit from the `java()` accessor below
 //    kotlin("jvm")
+    `build-scan`
+}
+
+buildScan {
+    setLicenseAgreementUrl("https://gradle.com/terms-of-service")
+    setLicenseAgree("yes")
 }
 
 val buildNumber = "1.1-SNAPSHOT"

@@ -9,7 +9,8 @@
             "scriptRuntime"
         ],
         "extensions": {
-            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension"
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "buildScan": "com.gradle.scan.plugin.internal.api.f"
         }
     },
     ":android-extensions-compiler": {
@@ -20,6 +21,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -330,7 +332,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -417,6 +418,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -488,6 +490,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -524,6 +527,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -584,6 +588,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -623,6 +628,7 @@
         },
         "configurations": [
             "archives",
+            "buildVersion",
             "compilerJar",
             "default",
             "runtimeJar"
@@ -640,7 +646,7 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -826,6 +832,24 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
+    ":kotlin-jps-plugin": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "archives",
+            "buildVersion",
+            "default",
+            "fatJarContents",
+            "runtimeJar"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
     ":kotlin-noarg": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
@@ -873,6 +897,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -910,6 +935,7 @@
             "apiElements",
             "archives",
             "build-version",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -990,6 +1016,7 @@
             "apiElements",
             "archives",
             "build-version",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1103,6 +1130,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1179,6 +1207,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1216,6 +1245,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3640,7 +3670,7 @@
             
         },
         "configurations": [
-            "default"
+            "buildVersion"
         ],
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension"
@@ -3678,37 +3708,6 @@
         }
     },
     ":prepare:ide-lazy-resolver": {
-        "conventions": {
-            "base": "org.gradle.api.plugins.BasePluginConvention",
-            "java": "org.gradle.api.plugins.JavaPluginConvention"
-        },
-        "configurations": [
-            "apiElements",
-            "archives",
-            "compile",
-            "compileClasspath",
-            "compileOnly",
-            "default",
-            "implementation",
-            "runtime",
-            "runtimeClasspath",
-            "runtimeElements",
-            "runtimeOnly",
-            "testCompile",
-            "testCompileClasspath",
-            "testCompileOnly",
-            "testImplementation",
-            "testRuntime",
-            "testRuntimeClasspath",
-            "testRuntimeOnly"
-        ],
-        "extensions": {
-            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
-            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
-        }
-    },
-    ":prepare:jps-plugin": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
             "java": "org.gradle.api.plugins.JavaPluginConvention"
