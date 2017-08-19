@@ -616,6 +616,8 @@ fun main(args: Array<String>) {
         testClass<AbstractSurroundWithTest> {
             model("codeInsight/surroundWith/if", testMethod = "doTestWithIfSurrounder")
             model("codeInsight/surroundWith/ifElse", testMethod = "doTestWithIfElseSurrounder")
+            model("codeInsight/surroundWith/ifElseExpression", testMethod = "doTestWithIfElseExpressionSurrounder")
+            model("codeInsight/surroundWith/ifElseExpressionBraces", testMethod = "doTestWithIfElseExpressionBracesSurrounder")
             model("codeInsight/surroundWith/not", testMethod = "doTestWithNotSurrounder")
             model("codeInsight/surroundWith/parentheses", testMethod = "doTestWithParenthesesSurrounder")
             model("codeInsight/surroundWith/stringTemplate", testMethod = "doTestWithStringTemplateSurrounder")

@@ -68,6 +68,12 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             doTestWithIfSurrounder(fileName);
         }
 
+        @TestMetadata("usedAsExpression.kt")
+        public void testUsedAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/if/usedAsExpression.kt");
+            doTestWithIfSurrounder(fileName);
+        }
+
         @TestMetadata("variable.kt")
         public void testVariable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/if/variable.kt");
@@ -311,10 +317,46 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             doTestWithIfElseSurrounder(fileName);
         }
 
+        @TestMetadata("usedAsExpression.kt")
+        public void testUsedAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElse/usedAsExpression.kt");
+            doTestWithIfElseSurrounder(fileName);
+        }
+
         @TestMetadata("variable.kt")
         public void testVariable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElse/variable.kt");
             doTestWithIfElseSurrounder(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/codeInsight/surroundWith/ifElseExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IfElseExpression extends AbstractSurroundWithTest {
+        public void testAllFilesPresentInIfElseExpression() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/ifElseExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("singleExpression.kt")
+        public void testSingleExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElseExpression/singleExpression.kt");
+            doTestWithIfElseExpressionSurrounder(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/codeInsight/surroundWith/ifElseExpressionBraces")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IfElseExpressionBraces extends AbstractSurroundWithTest {
+        public void testAllFilesPresentInIfElseExpressionBraces() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/ifElseExpressionBraces"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("singleExpression.kt")
+        public void testSingleExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElseExpressionBraces/singleExpression.kt");
+            doTestWithIfElseExpressionBracesSurrounder(fileName);
         }
     }
 

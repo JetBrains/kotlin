@@ -35,7 +35,9 @@ public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
             new KotlinWithIfExpressionSurrounder(/* withElse = */false),
             new KotlinWithIfExpressionSurrounder(/* withElse = */true),
             new KotlinTryCatchExpressionSurrounder(),
-            new KotlinTryCatchFinallyExpressionSurrounder()
+            new KotlinTryCatchFinallyExpressionSurrounder(),
+            new KotlinIfElseExpressionSurrounder(false),
+            new KotlinIfElseExpressionSurrounder(true)
     };
 
     @Override

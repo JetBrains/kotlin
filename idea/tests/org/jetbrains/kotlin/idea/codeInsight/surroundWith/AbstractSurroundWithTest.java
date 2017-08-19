@@ -43,6 +43,14 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
         doTest(path, new KotlinIfElseSurrounder());
     }
 
+    public void doTestWithIfElseExpressionSurrounder(String path) throws Exception {
+        doTest(path, new KotlinIfElseExpressionSurrounder(false));
+    }
+
+    public void doTestWithIfElseExpressionBracesSurrounder(String path) throws Exception {
+        doTest(path, new KotlinIfElseExpressionSurrounder(true));
+    }
+
     public void doTestWithNotSurrounder(String path) throws Exception {
         doTest(path, new KotlinNotSurrounder());
     }

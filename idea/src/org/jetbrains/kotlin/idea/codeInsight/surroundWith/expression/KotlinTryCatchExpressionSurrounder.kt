@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression
 
-import com.intellij.codeInsight.CodeInsightBundle
-
 class KotlinTryCatchExpressionSurrounder : KotlinTryExpressionSurrounderBase() {
 
-    override fun getTemplateDescription(): String = CodeInsightBundle.message("surround.with.try.catch.template")
+    override fun getTemplateDescription() = "try { expr } catch {}"
 
     override fun getPattern() = "try { \n$0 } catch (e: Exception) {\n}"
 }

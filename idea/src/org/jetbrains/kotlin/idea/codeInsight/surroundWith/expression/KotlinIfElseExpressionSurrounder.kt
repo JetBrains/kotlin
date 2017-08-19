@@ -18,14 +18,21 @@ package org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement.KotlinTrySurrounderBase
+import org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement.KotlinIfSurrounderBase
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtTryExpression
+import org.jetbrains.kotlin.psi.KtIfExpression
 
-abstract class KotlinTryExpressionSurrounderBase : KotlinControlFlowExpressionSurrounderBase() {
+class KotlinIfElseExpressionSurrounder(private val withBraces: Boolean) : KotlinControlFlowExpressionSurrounderBase() {
+    override fun getPattern(): String {
+        return if (withBraces) "if (a) { \n$0 } else {\n}" else "if (a) $0 else"
+    }
+
+    override fun getTemplateDescription(): String {
+        return if (withBraces) "if () { expr } else {}" else "if () expr else"
+    }
 
     override fun getRange(editor: Editor, replaced: KtExpression): TextRange? {
-        return KotlinTrySurrounderBase.getCatchTypeParameterTextRange(replaced as KtTryExpression)
+        return KotlinIfSurrounderBase.getRange(editor, replaced as KtIfExpression?)
     }
-}
 
+}
