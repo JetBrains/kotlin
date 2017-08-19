@@ -20282,6 +20282,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("getOperatorNotFixedK.kt")
+        public void testGetOperatorNotFixedK() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/getOperatorNotFixedK.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("hashCodeNPE.kt")
         public void testHashCodeNPE() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/hashCodeNPE.kt");

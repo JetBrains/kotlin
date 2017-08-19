@@ -16628,6 +16628,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("getOperatorNotFixedK.kt")
+        public void testGetOperatorNotFixedK() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/getOperatorNotFixedK.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("hashCodeNPE.kt")
         public void testHashCodeNPE() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/hashCodeNPE.kt");

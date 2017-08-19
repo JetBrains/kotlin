@@ -20,4 +20,4 @@ val USE_NEW_INFERENCE
     get() = true
 
 val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
-    get() = false
+    get() = true
