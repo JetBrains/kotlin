@@ -106,7 +106,7 @@ class KotlinResolutionCallbacksImpl(
         val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { (returnedExpression, typeInfo, context) ->
 
             if (returnedExpression != null) {
-                psiCallResolver.resolveValueArgument(context, callForScopeTower, context.dataFlowInfo,
+                psiCallResolver.resolveValueArgument(context.replaceBindingTrace(trace), callForScopeTower, context.dataFlowInfo,
                                                      CallMaker.makeExternalValueArgument(returnedExpression)).also {
                     it.setResultDataFlowInfoIfRelevant(context.dataFlowInfo)
                 }
