@@ -58,7 +58,8 @@ internal class KTypeImpl(
                 }
 
                 if (!TypeUtils.isNullableType(type)) {
-                    return KClassImpl(jClass.primitiveByWrapper ?: jClass)
+                    val jClass1: Class<*> = jClass.primitiveByWrapper ?: jClass
+                    return KClassImpl(jClass1)
                 }
 
                 return KClassImpl(jClass)

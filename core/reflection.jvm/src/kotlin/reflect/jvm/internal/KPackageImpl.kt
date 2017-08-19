@@ -62,7 +62,7 @@ internal class KPackageImpl(
             }
         }
 
-        val metadata: PackageData? by ReflectProperties.lazy {
+        val metadata: PackageData? by ReflectProperties.lazy<PackageData?> {
             kotlinClass?.classHeader?.let { header ->
                 val data = header.data
                 val strings = header.strings

@@ -38,7 +38,7 @@ public fun <T> Sequence<T>.asStream(): Stream<T> = StreamSupport.stream({ Splite
  * Returns a [List] containing all elements produced by this stream.
  */
 @SinceKotlin("1.1")
-public fun <T> Stream<T>.toList(): List<T> = collect(Collectors.toList<T>())
+public fun <T> Stream<T>.toList(): List<T> = collect<MutableList<T>, Any?>(Collectors.toList<T>() as Collector<T, Any?, MutableList<T>>)
 
 /**
  * Returns a [List] containing all elements produced by this stream.

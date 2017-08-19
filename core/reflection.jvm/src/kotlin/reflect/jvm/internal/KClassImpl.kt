@@ -64,7 +64,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
             }
         }
 
-        val qualifiedName: String? by ReflectProperties.lazySoft {
+        val qualifiedName: String? by ReflectProperties.lazySoft<String?> {
             if (jClass.isAnonymousClass) return@lazySoft null
 
             val classId = classId
