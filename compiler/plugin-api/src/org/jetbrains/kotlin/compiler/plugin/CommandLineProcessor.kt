@@ -26,7 +26,7 @@ interface CommandLineProcessor {
     @Throws(CliOptionProcessingException::class) fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration)
 
     fun <T> CompilerConfiguration.appendList(option: CompilerConfigurationKey<List<T>>, value: T) {
-        val paths = getList(option).toMutableList()
+        val paths = getList<T>(option).toMutableList()
         paths.add(value)
         put(option, paths)
     }

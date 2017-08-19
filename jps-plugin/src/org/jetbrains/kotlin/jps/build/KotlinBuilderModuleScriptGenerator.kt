@@ -66,7 +66,7 @@ object KotlinBuilderModuleScriptGenerator {
             return@run alwaysNull()
         }
 
-        return@run { module ->
+        return@run { module: JpsModule ->
             getTestModulePropertiesMethod(JpsJavaExtensionService.getInstance(), module)?.let {
                 getProductionModuleMethod(it) as JpsModule?
             }

@@ -103,7 +103,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         return lightClassData
     }
 
-    private val _containingFile: PsiFile by lazyPub {
+    private val _containingFile: PsiFile by lazyPub<PsiFile> {
         classOrObject.containingFile.virtualFile ?: error("No virtual file for " + classOrObject.text)
 
         object : FakeFileForLightClass(

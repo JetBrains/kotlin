@@ -346,7 +346,8 @@ private fun ExtractionData.analyzeControlFlow(
     if (outputValues.isNotEmpty()) {
         if (jumpExits.isNotEmpty()) return outputAndExitsError
 
-        val boxerFactory: (List<OutputValue>) -> OutputValueBoxer = when {
+        val boxerFactory: (List<OutputValue>) -> OutputValueBoxer
+        when {
             outputValues.size > 3 -> {
                 if (!options.enableListBoxing) {
                     val outValuesStr =
@@ -354,10 +355,10 @@ private fun ExtractionData.analyzeControlFlow(
                              + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sorted()
                     return controlFlow to ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr)
                 }
-                { outputValues -> OutputValueBoxer.AsList(outputValues) } // KT-8596
+                boxerFactory = { outputValues -> OutputValueBoxer.AsList(outputValues) } // KT-8596
             }
 
-            else -> controlFlow.boxerFactory
+            else -> boxerFactory = controlFlow.boxerFactory
         }
 
         return controlFlow.copy(outputValues = outputValues, boxerFactory = boxerFactory) to null

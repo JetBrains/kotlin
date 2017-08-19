@@ -100,7 +100,7 @@ open class DelegatingBindingTrace(
         val value = map.get(slice, key)
         if (slice is SetSlice<*>) {
             assert(value != null)
-            if (value != SetSlice.DEFAULT) return value
+            if (value as V != SetSlice.DEFAULT) return value
         }
         else if (value != null) {
             return value

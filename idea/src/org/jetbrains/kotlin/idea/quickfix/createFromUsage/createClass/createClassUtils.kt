@@ -95,15 +95,15 @@ internal fun KotlinType.toClassTypeInfo(): TypeInfo {
 }
 
 internal fun getClassKindFilter(expectedType: KotlinType, containingDeclaration: PsiElement): (ClassKind) -> Boolean {
-    val descriptor = expectedType.constructor.declarationDescriptor ?: return { _ -> false }
+    val descriptor = expectedType.constructor.declarationDescriptor ?: return { _: ClassKind -> false }
 
     val canHaveSubtypes = !(expectedType.constructor.isFinal || expectedType.containsStarProjections())
     val isEnum = DescriptorUtils.isEnumClass(descriptor)
 
     if (!(canHaveSubtypes || isEnum)
-        || descriptor is TypeParameterDescriptor) return { _ -> false }
+        || descriptor is TypeParameterDescriptor) return { _: ClassKind -> false }
 
-    return { classKind ->
+    return { classKind: ClassKind ->
         when (classKind) {
             ClassKind.ENUM_ENTRY -> isEnum && containingDeclaration == DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
             ClassKind.INTERFACE -> containingDeclaration !is PsiClass

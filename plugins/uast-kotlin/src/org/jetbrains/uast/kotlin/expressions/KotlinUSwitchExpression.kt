@@ -27,7 +27,7 @@ class KotlinUSwitchExpression(
 ) : KotlinAbstractUExpression(), USwitchExpression, KotlinUElementWithType {
     override val expression by lz { KotlinConverter.convertOrNull(psi.subjectExpression, this) }
 
-    override val body: UExpressionList by lz {
+    override val body: UExpressionList by lz<UExpressionList> {
         object : KotlinUExpressionList(psi, KotlinSpecialExpressionKinds.WHEN, this@KotlinUSwitchExpression) {
             override fun asRenderString() = expressions.joinToString("\n") { it.asRenderString().withMargin }
         }.apply {
@@ -76,7 +76,7 @@ class KotlinUSwitchEntry(
         }}
     }
 
-    override val body: UExpressionList by lz {
+    override val body: UExpressionList by lz<UExpressionList> {
         object : KotlinUExpressionList(psi, KotlinSpecialExpressionKinds.WHEN_ENTRY, this@KotlinUSwitchEntry) {
             override fun asRenderString() = buildString {
                 appendln("{")

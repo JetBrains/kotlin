@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
 //TODO: should use change signature to deal with cases of multiple overridden descriptors
@@ -60,7 +61,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         }
 
         val expectedType: KotlinType
-        val expressionType: KotlinType?
+        val expressionType: KotlinType
         when (diagnostic.factory) {
             Errors.TYPE_MISMATCH -> {
                 val diagnosticWithParameters = Errors.TYPE_MISMATCH.cast(diagnostic)
@@ -80,8 +81,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             Errors.CONSTANT_EXPECTED_TYPE_MISMATCH -> {
                 val diagnosticWithParameters = Errors.CONSTANT_EXPECTED_TYPE_MISMATCH.cast(diagnostic)
                 expectedType = diagnosticWithParameters.b
-                expressionType = context.getType(diagnosticElement)
-                if (expressionType == null) {
+                expressionType = context.getType(diagnosticElement).sure {
                     LOG.error("No type inferred: " + diagnosticElement.text)
                     return emptyList()
                 }

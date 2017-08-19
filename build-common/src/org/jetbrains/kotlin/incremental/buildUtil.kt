@@ -170,7 +170,7 @@ fun<Target> OutputItemsCollectorImpl.generatedFiles(
             else mapOf<File, Target>()
 
     return outputs.map { outputItem ->
-        val target =
+        val target: Target =
                 outputItem.sourceFiles.firstOrNull()?.let { sourceToTarget[it] } ?:
                 targets.singleOrNull { getOutputDir(it)?.let { outputItem.outputFile.startsWith(it) } ?: false } ?:
                 representativeTarget

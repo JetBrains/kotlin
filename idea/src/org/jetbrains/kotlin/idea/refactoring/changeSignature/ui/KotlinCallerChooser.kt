@@ -73,7 +73,7 @@ class KotlinMethodNode(
         called: HashSet<PsiElement>,
         project: Project,
         cancelCallback: Runnable
-): MethodNodeBase<PsiElement>(method?.namedUnwrappedElement ?: method, called, project, cancelCallback) {
+): MethodNodeBase<PsiElement>(method?.namedUnwrappedElement ?: method!!, called, project, cancelCallback) {
     override fun createNode(caller: PsiElement, called: HashSet<PsiElement>) =
             KotlinMethodNode(caller, called, myProject, myCancelCallback)
 

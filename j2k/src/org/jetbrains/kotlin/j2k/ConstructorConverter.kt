@@ -123,7 +123,8 @@ class ConstructorConverter(
 
         val parameterUsageReplacementMap = HashMap<String, String>()
 
-        val bodyGenerator: (CodeConverter) -> Block = if (body != null) {
+        val bodyGenerator: (CodeConverter) -> Block
+        if (body != null) {
             val statementsToRemove = HashSet<PsiStatement>()
             for (parameter in params) {
                 val (field, initializationStatement) = findBackingFieldForConstructorParameter(parameter, primaryConstructor) ?: continue
@@ -154,7 +155,7 @@ class ConstructorConverter(
                 }
             }
 
-            { codeConverter ->
+            bodyGenerator = { codeConverter ->
                 val bodyConverter = codeConverter.withSpecialExpressionConverter(
                         object : ReplacingExpressionConverter(parameterUsageReplacementMap) {
                             override fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression? {
@@ -168,7 +169,7 @@ class ConstructorConverter(
             }
         }
         else {
-            { Block.Empty }
+            bodyGenerator = { Block.Empty }
         }
 
         // we need to replace renamed parameter usages in base class constructor arguments and in default values

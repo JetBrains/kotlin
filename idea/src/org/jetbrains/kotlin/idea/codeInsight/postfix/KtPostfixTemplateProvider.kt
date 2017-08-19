@@ -113,7 +113,7 @@ internal fun createExpressionSelector(
 ): PostfixTemplateExpressionSelector {
     val predicate: ((KtExpression, BindingContext) -> Boolean)? =
             if (typePredicate != null) { expression, bindingContext ->
-                    expression.getType(bindingContext)?.let(typePredicate) ?: false
+                    expression.getType(bindingContext)?.let(typePredicate!!) ?: false
             }
             else null
     return createExpressionSelectorWithComplexFilter(checkCanBeUsedAsValue, statementsOnly, predicate)

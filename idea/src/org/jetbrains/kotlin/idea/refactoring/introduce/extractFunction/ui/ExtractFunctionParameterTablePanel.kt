@@ -45,7 +45,7 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
         override fun toParameter() = originalParameter.copy(name, type)
     }
 
-    override fun createTableModel(): AbstractParameterTablePanel<Parameter, ParameterInfo>.TableModelBase = MyTableModel()
+    override fun createTableModel(): AbstractParameterTablePanel.TableModelBase<Parameter, ParameterInfo> = MyTableModel()
 
     override fun createAdditionalColumns() {
         with(table.columnModel.getColumn(PARAMETER_TYPE_COLUMN)) {
@@ -96,7 +96,7 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
         super.init()
     }
 
-    private inner class MyTableModel : AbstractParameterTablePanel<Parameter, ParameterInfo>.TableModelBase() {
+    private inner class MyTableModel : AbstractParameterTablePanel.TableModelBase<Parameter, ParameterInfo>(this) {
         override fun getColumnCount() = 3
 
         override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {

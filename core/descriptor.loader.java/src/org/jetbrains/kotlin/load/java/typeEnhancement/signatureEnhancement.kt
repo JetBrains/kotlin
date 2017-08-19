@@ -113,7 +113,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
         val receiverTypeEnhancement =
                 if (extensionReceiverParameter != null)
-                    parts(
+                    parts<D>(
                             typeContainer =
                                 annotationOwnerForMember.safeAs<FunctionDescriptor>()
                                     ?.getUserData(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER),
@@ -139,7 +139,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
         val valueParameterEnhancements = annotationOwnerForMember.valueParameters.map {
             p ->
-            parts(
+            parts<D>(
                     typeContainer = p, isCovariant = false,
                     defaultTopLevelQualifiers =
                             outerScopeQualifiers
@@ -149,7 +149,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
         }
 
         val returnTypeEnhancement =
-                parts(
+                parts<D>(
                         typeContainer = annotationOwnerForMember, isCovariant = true,
                         defaultTopLevelQualifiers =
                             outerScopeQualifiers?.get(

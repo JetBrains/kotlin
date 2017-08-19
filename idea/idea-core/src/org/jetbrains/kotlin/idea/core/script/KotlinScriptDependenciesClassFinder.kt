@@ -33,7 +33,7 @@ class KotlinScriptDependenciesClassFinder(project: Project,
                                           private val scriptDependenciesManager: ScriptDependenciesManager
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
 
-    private val myCaches by lazy {
+    private val myCaches by lazy<ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>> {
         object : ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>() {
             override fun create(file: VirtualFile): PackageDirectoryCache? {
                 val scriptClasspath = scriptDependenciesManager.getScriptClasspath(file)

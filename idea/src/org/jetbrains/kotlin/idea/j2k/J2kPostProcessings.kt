@@ -128,7 +128,7 @@ object J2KPostProcessingRegistrar {
             }
             else {
                 {
-                    if (!property.isVar) {
+                    if (!property!!.isVar) {
                         property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
                     }
                 }

@@ -366,11 +366,11 @@ fun KtExpression.isStableInLoop(loop: KtLoopExpression, checkNoOtherUsagesInLoop
 }
 
 fun KtExpression.containsEmbeddedBreakOrContinue(): Boolean {
-    return anyDescendantOfType(::isEmbeddedBreakOrContinue)
+    return anyDescendantOfType<KtExpressionWithLabel> { isEmbeddedBreakOrContinue(it) }
 }
 
 fun KtExpression.countEmbeddedBreaksAndContinues(): Int {
-    return collectDescendantsOfType(::isEmbeddedBreakOrContinue).size
+    return collectDescendantsOfType<KtExpressionWithLabel> { isEmbeddedBreakOrContinue(it) }.size
 }
 
 private fun isEmbeddedBreakOrContinue(expression: KtExpressionWithLabel): Boolean {

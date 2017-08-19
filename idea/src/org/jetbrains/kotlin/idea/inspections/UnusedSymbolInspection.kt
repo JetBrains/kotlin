@@ -43,6 +43,7 @@ import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -278,12 +279,12 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             val lightMethods = declaration.toLightMethods()
             if (lightMethods.isNotEmpty()) {
                 return lightMethods.any { method ->
-                    !MethodReferencesSearch.search(method).forEach(::checkReference)
+                    !MethodReferencesSearch.search(method).forEach(Processor { checkReference(it) })
                 }
             }
         }
 
-        return !ReferencesSearch.search(declaration, useScope).forEach(::checkReference)
+        return !ReferencesSearch.search(declaration, useScope).forEach(Processor { checkReference(it) })
     }
 
     private fun hasOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {

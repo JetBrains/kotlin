@@ -346,9 +346,9 @@ fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: In
     ShortenReferences.DEFAULT.process(context.file as KtFile, startOffset, endOffset)
 }
 
-infix fun <T> ElementPattern<T>.and(rhs: ElementPattern<T>) = StandardPatterns.and(this, rhs)
-fun <T> ElementPattern<T>.andNot(rhs: ElementPattern<T>) = StandardPatterns.and(this, StandardPatterns.not(rhs))
-infix fun <T> ElementPattern<T>.or(rhs: ElementPattern<T>) = StandardPatterns.or(this, rhs)
+infix fun <T> ElementPattern<T>.and(rhs: ElementPattern<T>): ElementPattern<T> = StandardPatterns.and(this, rhs)
+fun <T> ElementPattern<T>.andNot(rhs: ElementPattern<T>): ElementPattern<T> = StandardPatterns.and(this, StandardPatterns.not(rhs))
+infix fun <T> ElementPattern<T>.or(rhs: ElementPattern<T>): ElementPattern<T> = StandardPatterns.or(this, rhs)
 
 fun singleCharPattern(char: Char) = StandardPatterns.character().equalTo(char)
 

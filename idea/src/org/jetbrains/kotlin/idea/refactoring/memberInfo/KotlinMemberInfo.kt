@@ -70,7 +70,7 @@ class KotlinMemberInfo @JvmOverloads constructor(
                 displayName = "companion $displayName"
             }
 
-            val overriddenDescriptors = (memberDescriptor as? CallableMemberDescriptor)?.overriddenDescriptors ?: emptySet()
+            val overriddenDescriptors = (memberDescriptor as? CallableMemberDescriptor)?.overriddenDescriptors ?: emptySet<CallableMemberDescriptor>()
             if (overriddenDescriptors.isNotEmpty()) {
                 overrides = overriddenDescriptors.any { it.modality != Modality.ABSTRACT }
             }

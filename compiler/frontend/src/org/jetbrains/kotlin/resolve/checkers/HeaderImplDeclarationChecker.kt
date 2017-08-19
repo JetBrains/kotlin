@@ -505,7 +505,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
     }
 
     private fun ClassDescriptor.getMembers(name: Name? = null): Collection<CallableMemberDescriptor> {
-        val nameFilter = if (name != null) { it -> it == name } else MemberScope.ALL_NAME_FILTER
+        val nameFilter = if (name != null) { it: Name -> it == name } else MemberScope.ALL_NAME_FILTER
         return defaultType.memberScope.getDescriptorsFiltered(nameFilter = nameFilter).filterIsInstance<CallableMemberDescriptor>() +
                constructors.filter { nameFilter(it.name) }
     }

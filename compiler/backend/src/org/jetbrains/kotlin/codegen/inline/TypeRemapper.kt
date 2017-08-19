@@ -85,7 +85,7 @@ class TypeRemapper private constructor(
 
         private fun createNewAndMerge(remapper: TypeRemapper, additionalTypeMappings: Map<String, String?>): MutableMap<String, String> {
             return HashMap(remapper.typeMapping).apply {
-                this += additionalTypeMappings
+                this.putAll(additionalTypeMappings as Map<String, String>)
             }
         }
     }

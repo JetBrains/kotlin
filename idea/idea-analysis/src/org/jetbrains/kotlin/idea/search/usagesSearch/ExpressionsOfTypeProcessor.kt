@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.util.*
 
 //TODO: check if smart search is too expensive
@@ -312,7 +313,7 @@ class ExpressionsOfTypeProcessor(
         }
 
         val file = psiClass.containingFile
-        (file ?: psiClass).useScope
+        (file ?: psiClass).cast<PsiElement>().useScope
     }
 
     private fun addStaticMemberToProcess(psiMember: PsiMember, scope: SearchScope, processor: ReferenceProcessor) {

@@ -154,7 +154,9 @@ abstract class ImplementAbstractMemberIntentionBase :
                         LOG.error(e)
                     }
                 }
+                Unit
             }
+            Unit
         }
     }
 

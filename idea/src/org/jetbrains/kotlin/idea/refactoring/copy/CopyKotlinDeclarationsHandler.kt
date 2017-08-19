@@ -254,7 +254,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                     }
                     else {
                         targetFile = getOrCreateTargetFile(originalFile, targetDirectory, targetFileName, commandName) ?: return@executeCommand
-                        runWriteAction {
+                        runWriteAction<Unit> {
                             val newElements = elementsToCopy.map { targetFile.add(it.copy()) as KtNamedDeclaration }
                             elementsToCopy.zip(newElements).toMap(oldToNewElementsMapping)
 
@@ -270,10 +270,11 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                     (oldToNewElementsMapping.values.singleOrNull() as? KtNamedDeclaration)?.let { newDeclaration ->
                         if (newName == newDeclaration.name) return@let
                         val selfReferences = ReferencesSearch.search(newDeclaration, LocalSearchScope(newDeclaration)).findAll()
-                        runWriteAction {
+                        runWriteAction<Unit> {
                             selfReferences.forEach { it.handleElementRename(newName!!) }
                             newDeclaration.setName(newName!!)
                         }
+                        Unit
                     }
 
                     if (openInEditor) {

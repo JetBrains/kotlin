@@ -49,10 +49,10 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
     lateinit var table: JBTable
         private set
 
-    protected lateinit var tableModel: TableModelBase
+    protected lateinit var tableModel: TableModelBase<Param, UIParam>
         private set
 
-    protected open fun createTableModel() = TableModelBase()
+    protected open fun createTableModel() = TableModelBase(this)
 
     protected open fun createAdditionalColumns() {
 
@@ -152,7 +152,12 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
 
     protected open fun isCheckMarkColumnEditable() = true
 
-    protected open inner class TableModelBase : AbstractTableModel(), EditableModel {
+    protected open class TableModelBase<Param, UIParam : AbstractParameterTablePanel.AbstractParameterInfo<Param>>(
+            val outer: AbstractParameterTablePanel<Param, UIParam>
+    ) : AbstractTableModel(), EditableModel {
+
+        val parameterInfos get() = outer.parameterInfos
+
         override fun addRow() = throw IllegalAccessError("Not implemented")
 
         override fun removeRow(index: Int) = throw IllegalAccessError("Not implemented")
@@ -166,7 +171,7 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
             parameterInfos[newIndex] = old
 
             fireTableRowsUpdated(Math.min(oldIndex, newIndex), Math.max(oldIndex, newIndex))
-            updateSignature()
+            outer.updateSignature()
         }
 
         override fun canExchangeRows(oldIndex: Int, newIndex: Int): Boolean {
@@ -195,15 +200,15 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
                 CHECKMARK_COLUMN -> {
                     info.isEnabled = aValue as Boolean
                     fireTableRowsUpdated(rowIndex, rowIndex)
-                    table.selectionModel.setSelectionInterval(rowIndex, rowIndex)
-                    updateSignature()
+                    outer.table.selectionModel.setSelectionInterval(rowIndex, rowIndex)
+                    outer.updateSignature()
                 }
                 PARAMETER_NAME_COLUMN -> {
                     val name = aValue as String
                     if (KotlinNameSuggester.isIdentifier(name)) {
                         info.name = name
                     }
-                    updateSignature()
+                    outer.updateSignature()
                 }
             }
         }
@@ -211,8 +216,8 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
         override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
             val info = parameterInfos[rowIndex]
             return when (columnIndex) {
-                CHECKMARK_COLUMN -> isEnabled && isCheckMarkColumnEditable()
-                PARAMETER_NAME_COLUMN -> isEnabled && info.isEnabled
+                CHECKMARK_COLUMN -> outer.isEnabled && outer.isCheckMarkColumnEditable()
+                PARAMETER_NAME_COLUMN -> outer.isEnabled && info.isEnabled
                 else -> false
             }
         }

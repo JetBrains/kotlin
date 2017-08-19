@@ -41,7 +41,10 @@ class JavaPackageImpl(
         get() = FqName(psi.qualifiedName)
 
     override val annotations: Collection<JavaAnnotation>
-        get() = org.jetbrains.kotlin.load.java.structure.impl.annotations(psi.annotationList?.annotations.orEmpty())
+        get() {
+            val annotations1 = psi.annotationList?.annotations.orEmpty()
+            return org.jetbrains.kotlin.load.java.structure.impl.annotations(annotations1)
+        }
 
     override val annotationsByFqName: Map<FqName?, JavaAnnotation> by buildLazyValueForMap()
 }

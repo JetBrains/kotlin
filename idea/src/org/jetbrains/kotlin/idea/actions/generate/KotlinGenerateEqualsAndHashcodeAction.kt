@@ -119,6 +119,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                     LOG.error(e)
                 }
             }
+            Unit
         }
 
         val properties = getPropertiesToUseInGeneratedMember(klass)

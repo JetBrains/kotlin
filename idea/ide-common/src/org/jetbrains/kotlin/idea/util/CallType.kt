@@ -246,10 +246,12 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
                                 .map { ReceiverType(it, 0) }
                     }
                 }
+                Unit
             }
             else {
                 return emptyList()
             }
+
         }
 
         is CallTypeAndReceiver.DEFAULT -> receiverExpression = null

@@ -33,7 +33,7 @@ open class ProjectExtensionDescriptor<T>(name: String, private val extensionClas
     }
 
     fun registerExtension(project: Project, extension: T) {
-        Extensions.getArea(project).getExtensionPoint(extensionPointName).registerExtension(extension)
+        Extensions.getArea(project).getExtensionPoint(extensionPointName).registerExtension(extension!!)
     }
 
     fun getInstances(project: Project): List<T> {

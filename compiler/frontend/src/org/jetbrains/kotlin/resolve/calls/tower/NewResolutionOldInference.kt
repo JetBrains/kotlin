@@ -241,15 +241,15 @@ class NewResolutionOldInference(
             if (resolvedCall is VariableAsFunctionResolvedCallImpl) {
                 // todo hacks
                 tracing.bindReference(resolvedCall.variableCall.trace, resolvedCall.variableCall)
-                tracing.bindResolvedCall(resolvedCall.variableCall.trace, resolvedCall)
+                tracing.bindResolvedCall(resolvedCall.variableCall.trace, resolvedCall as ResolvedCall<*>)
 
                 resolvedCall.variableCall.trace.addOwnDataTo(resolvedCall.functionCall.trace)
 
                 resolvedCall.functionCall.tracingStrategy.bindReference(resolvedCall.functionCall.trace, resolvedCall.functionCall)
                 //                resolvedCall.hackInvokeTracing.bindResolvedCall(resolvedCall.functionCall.trace, resolvedCall)
             } else {
-                tracing.bindReference(resolvedCall.trace, resolvedCall)
-                tracing.bindResolvedCall(resolvedCall.trace, resolvedCall)
+                tracing.bindReference(resolvedCall.trace, resolvedCall as ResolvedCall<*>)
+                tracing.bindResolvedCall(resolvedCall.trace, resolvedCall as ResolvedCall<*>)
             }
 
             if (resolvedCall.status.possibleTransformToSuccess()) {
@@ -435,7 +435,7 @@ class NewResolutionOldInference(
                                                              variableType,
                                                              basicCallContext.trace.bindingContext)
             // used for smartCasts, see: DataFlowValueFactory.getIdForSimpleNameExpression
-            functionContext.tracing.bindReference(variable.resolvedCall.trace, variable.resolvedCall)
+            functionContext.tracing.bindReference(variable.resolvedCall.trace, variable.resolvedCall as ResolvedCall<*>)
             // todo hacks
             val functionCall = CallTransformer.CallForImplicitInvoke(
                     basicCallContext.call.explicitReceiver?.takeIf { useExplicitReceiver },

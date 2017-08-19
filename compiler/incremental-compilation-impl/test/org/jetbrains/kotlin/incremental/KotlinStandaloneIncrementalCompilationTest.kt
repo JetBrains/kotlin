@@ -197,7 +197,7 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
             return jpsResourcesPath.walk()
                     .onEnter { it !in ignoredDirs }
                     .filter(File::isValidTestDir)
-                    .map { arrayOf(it, it.relativeToGrandfather()) }
+                    .map<File, Array<*>> { arrayOf(it, it.relativeToGrandfather()) }
                     .toList()
         }
     }

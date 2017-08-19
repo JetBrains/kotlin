@@ -36,7 +36,7 @@ fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? {
         return this
     }
 
-    val result = LinkedHashSet(this)
+    val result = LinkedHashSet<T>(this)
     result.addAll(collection)
     return result
 }

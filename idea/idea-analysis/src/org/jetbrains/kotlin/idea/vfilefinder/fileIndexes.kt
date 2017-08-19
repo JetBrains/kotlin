@@ -72,7 +72,7 @@ abstract class KotlinFileIndexBase<T>(classOfIndex: Class<T>) : ScalarIndexExten
                 }
                 catch (e: Throwable) {
                     LOG.warn("Error while indexing file " + it.fileName, e)
-                    emptyMap()
+                    emptyMap<FqName, Void>()
                 }
             }
 }

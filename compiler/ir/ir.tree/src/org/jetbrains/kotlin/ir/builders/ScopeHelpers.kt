@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 
-inline fun <reified T> Scope.assertCastOwner() =
+inline fun <reified T> Scope.assertCastOwner(): T =
         scopeOwner as? T ?:
         throw AssertionError("Unexpected scopeOwner: $scopeOwner")
 

@@ -754,10 +754,12 @@ class CompileServiceImpl(
                     log.fine("Execute delayed shutdown")
                     shutdownNow()
                 }
+                Unit
             }
             else {
                 log.info("Cancel delayed shutdown due to new client")
             }
+            Unit
         }
     }
 

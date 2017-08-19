@@ -176,7 +176,7 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
         override fun equals(other: Any?)
                 = descriptorsEqualWithSubstitution(this.descriptor, (other as? ItemData)?.descriptor) && itemOptions ==
                 (other as? ItemData)?.itemOptions
-        override fun hashCode() = if (this.descriptor != null) this.descriptor.original.hashCode() else 0
+        override fun hashCode() = if (this.descriptor != null) this.descriptor!!.original.hashCode() else 0
     }
 
     fun ItemData.createLookupElements() = lookupElementFactory(this.descriptor).map { it.withOptions(this.itemOptions) }
