@@ -182,7 +182,7 @@ class PSICallResolver(
         }
 
         result.diagnostics.firstIsInstanceOrNull<ManyCandidatesCallDiagnostic>()?.let {
-            val resolvedCalls = it.candidates.map { kotlinToResolvedCallTransformer.onlyTransform<D>(it.resolvedCall) }
+            val resolvedCalls = it.candidates.map { kotlinToResolvedCallTransformer.onlyTransform<D>(it.resolvedCall, trace) }
             if (it.candidates.areAllFailed()) {
                 tracingStrategy.noneApplicable(trace, resolvedCalls)
                 tracingStrategy.recordAmbiguity(trace, resolvedCalls)
@@ -203,7 +203,7 @@ class PSICallResolver(
         val isInapplicableReceiver = getResultApplicability(singleCandidate.diagnostics) == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
 
         val resolvedCall = if (isInapplicableReceiver) {
-            kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate).also {
+            kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate, trace).also {
                 tracingStrategy.unresolvedReferenceWrongReceiver(trace, listOf(it))
             }
         }

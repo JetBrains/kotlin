@@ -74,7 +74,7 @@ class ResolvedAtomCompleter(
     fun completeResolvedCall(resolvedCallAtom: ResolvedCallAtom): ResolvedCall<*>? {
         if (resolvedCallAtom.atom.psiKotlinCall is PSIKotlinCallForVariable) return null
 
-        val resolvedCall = kotlinToResolvedCallTransformer.transformToResolvedCall<CallableDescriptor>(resolvedCallAtom, true, resultSubstitutor)
+        val resolvedCall = kotlinToResolvedCallTransformer.transformToResolvedCall<CallableDescriptor>(resolvedCallAtom, trace, resultSubstitutor)
         kotlinToResolvedCallTransformer.bindAndReport(topLevelCallContext, trace, resolvedCall)
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, callCheckerContext)
 
