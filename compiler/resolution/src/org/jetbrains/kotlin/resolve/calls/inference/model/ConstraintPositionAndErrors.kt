@@ -67,7 +67,7 @@ abstract class ConstraintSystemCallDiagnostic(applicability: ResolutionCandidate
     override fun report(reporter: DiagnosticReporter) = reporter.constraintError(this)
 }
 
-class NewConstraintError(
+data class NewConstraintError(
         val lowerType: UnwrappedType,
         val upperType: UnwrappedType,
         val position: IncorporationConstraintPosition

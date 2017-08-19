@@ -20768,6 +20768,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("labeledNullReturn.kt")
+        public void testLabeledNullReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/labeledNullReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaAsLastExpressionInLambda.kt")
         public void testLambdaAsLastExpressionInLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/lambdaAsLastExpressionInLambda.kt");
