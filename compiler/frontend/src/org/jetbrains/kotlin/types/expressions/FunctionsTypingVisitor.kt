@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
@@ -158,8 +159,9 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
         val expectedType = context.expectedType
 
+        val lambdaInfo = context.trace[BindingContext.NEW_INFERENCE_LAMBDA_INFO, expression.functionLiteral]
         if (USE_NEW_INFERENCE && context.contextDependency == ContextDependency.DEPENDENT &&
-            context.trace[BindingContext.NEW_INFERENCE_LAMBDA_INFO, expression.functionLiteral] == null
+            (lambdaInfo == null || lambdaInfo == KotlinResolutionCallbacksImpl.LambdaInfo.STUB_EMPTY)
                 ) return noTypeInfo(context)
 
         val functionTypeExpected = expectedType.isBuiltinFunctionalType()

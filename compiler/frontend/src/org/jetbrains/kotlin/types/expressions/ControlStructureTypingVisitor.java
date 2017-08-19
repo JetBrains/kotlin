@@ -712,7 +712,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             @NotNull KtElement function
     ) {
         if (function instanceof KtFunction) {
-            return context.trace.get(BindingContext.NEW_INFERENCE_LAMBDA_INFO, (KtFunction) function);
+            KotlinResolutionCallbacksImpl.LambdaInfo info =
+                    context.trace.get(BindingContext.NEW_INFERENCE_LAMBDA_INFO, (KtFunction) function);
+            if (info == KotlinResolutionCallbacksImpl.LambdaInfo.Companion.getSTUB_EMPTY()) return null;
+            return info;
         }
         return null;
     }
