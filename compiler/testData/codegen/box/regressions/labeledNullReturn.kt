@@ -6,4 +6,4 @@ val ok = listOf("OK", null).mapNotNull { f ->
     id(f ?: return@mapNotNull null)
 }
 
-fun box() = ok
+fun box() = ok.first()
