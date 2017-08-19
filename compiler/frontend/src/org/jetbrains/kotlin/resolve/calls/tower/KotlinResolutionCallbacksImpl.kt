@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -30,9 +29,10 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
-import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -51,13 +51,14 @@ class KotlinResolutionCallbacksImpl(
         val typeApproximator: TypeApproximator,
         val argumentTypeResolver: ArgumentTypeResolver,
         val languageVersionSettings: LanguageVersionSettings,
-        val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer
+        val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
+        val psiCallResolver: PSICallResolver
 ): KotlinResolutionCallbacks {
     val trace: BindingTrace = topLevelCallContext.trace
 
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
         var dataFlowInfoAfter: DataFlowInfo? = null
-        val returnStatements = ArrayList<Pair<KtReturnExpression, KotlinTypeInfo?>>()
+        val returnStatements = ArrayList<Triple<KtExpression?, KotlinTypeInfo?, ResolutionContext<*>>>()
 
         companion object {
             val STUB_EMPTY = LambdaInfo(TypeUtils.NO_EXPECTED_TYPE, ContextDependency.INDEPENDENT)
@@ -70,18 +71,18 @@ class KotlinResolutionCallbacksImpl(
             receiverType: UnwrappedType?,
             parameters: List<UnwrappedType>,
             expectedReturnType: UnwrappedType?
-    ): List<SimpleKotlinCallArgument> {
+    ): List<KotlinCallArgument> {
         val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
         val outerCallContext = psiCallArgument.outerCallContext
+        val callForScopeTower = psiCallArgument.callForScopeTower
 
-        fun createCallArgument(ktExpression: KtExpression, typeInfo: KotlinTypeInfo) =
-                createSimplePSICallArgument(trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
-                                            CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo)
 
         val lambdaInfo = LambdaInfo(expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE,
                                     if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT)
 
-        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, lambdaInfo)
+        if (expectedReturnType == null) {
+            trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, lambdaInfo)
+        }
 
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
         val expectedType = createFunctionType(builtIns, Annotations.EMPTY, receiverType, parameters, null,
@@ -96,20 +97,23 @@ class KotlinResolutionCallbacksImpl(
                 .replaceDataFlowInfo(psiCallArgument.lambdaInitialDataFlowInfo)
 
         val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
+
+        if (expectedReturnType != null) return emptyList()
+
         trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
 
         var hasReturnWithoutExpression = false
-        val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { (expression, typeInfo) ->
-            val returnedExpression = expression.returnedExpression
+        val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { (returnedExpression, typeInfo, context) ->
+
             if (returnedExpression != null) {
-                createCallArgument(
-                        returnedExpression,
-                        typeInfo ?: throw AssertionError("typeInfo should be non-null for return with expression")
-                )
+                psiCallResolver.resolveValueArgument(context, callForScopeTower, context.dataFlowInfo,
+                                                     CallMaker.makeExternalValueArgument(returnedExpression)).also {
+                    it.setResultDataFlowInfoIfRelevant(context.dataFlowInfo)
+                }
             }
             else {
                 hasReturnWithoutExpression = true
-                EmptyLabeledReturn(expression, builtIns)
+                EmptyLabeledReturn(builtIns)
             }
         }
 
@@ -120,7 +124,9 @@ class KotlinResolutionCallbacksImpl(
                 // todo lastExpression can be if without else
                 val lastExpressionType = trace.getType(lastExpression)
                 val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, lambdaInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
-                createCallArgument(lastExpression, lastExpressionTypeInfo)
+
+                createSimplePSICallArgument(trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
+                                            CallMaker.makeExternalValueArgument(lastExpression), DataFlowInfo.EMPTY, lastExpressionTypeInfo)
             }
             returnArguments.addIfNotNull(lastExpressionArgument)
         }

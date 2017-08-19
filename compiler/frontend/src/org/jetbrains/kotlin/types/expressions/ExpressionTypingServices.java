@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
+import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
@@ -44,9 +47,12 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.getCallableReferenceExpressionIfAny;
+import static org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.getFunctionLiteralArgumentIfAny;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.UNIT_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
+import static org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt.noTypeInfo;
 
 public class ExpressionTypingServices {
 
@@ -256,7 +262,7 @@ public class ExpressionTypingServices {
                 expressionTypingComponents, annotationChecker, scope);
         ExpressionTypingContext newContext = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE);
 
-        KotlinTypeInfo result = TypeInfoFactoryKt.noTypeInfo(context);
+        KotlinTypeInfo result = noTypeInfo(context);
         // Jump point data flow info
         DataFlowInfo beforeJumpInfo = newContext.dataFlowInfo;
         boolean jumpOutPossible = false;
@@ -305,6 +311,17 @@ public class ExpressionTypingServices {
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingInternals blockLevelVisitor
     ) {
+
+        KotlinResolutionCallbacksImpl.LambdaInfo lambdaInfo = getNewInferenceLambdaInfo(context, statementExpression);
+        if (lambdaInfo != null &&
+            (getFunctionLiteralArgumentIfAny(statementExpression, context) != null ||
+             getCallableReferenceExpressionIfAny(statementExpression, context) != null)
+                ) {
+
+            lambdaInfo.getReturnStatements().add(new Triple<>(statementExpression, null, context));
+            return noTypeInfo(context);
+        }
+
         if (context.expectedType != NO_EXPECTED_TYPE) {
             KotlinType expectedType;
             if (context.expectedType == UNIT_EXPECTED_TYPE ||//the first check is necessary to avoid invocation 'isUnit(UNIT_EXPECTED_TYPE)'
@@ -348,4 +365,16 @@ public class ExpressionTypingServices {
         return result;
     }
 
+
+    @Nullable
+    private static KotlinResolutionCallbacksImpl.LambdaInfo getNewInferenceLambdaInfo(
+            @NotNull ExpressionTypingContext context,
+            @NotNull KtExpression statementExpression
+    ) {
+        KtFunction function = PsiTreeUtil.getParentOfType(statementExpression, KtFunction.class, true);
+        if (function != null) {
+            return context.trace.get(BindingContext.NEW_INFERENCE_LAMBDA_INFO, (KtFunction) function);
+        }
+        return null;
+    }
 }

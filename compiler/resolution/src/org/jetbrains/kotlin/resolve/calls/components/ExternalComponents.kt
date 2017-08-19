@@ -42,7 +42,7 @@ interface KotlinResolutionCallbacks {
             receiverType: UnwrappedType?,
             parameters: List<UnwrappedType>,
             expectedReturnType: UnwrappedType? // null means, that return type is not proper i.e. it depends on some type variables
-    ): List<SimpleKotlinCallArgument>
+    ): List<KotlinCallArgument>
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
 }

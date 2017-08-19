@@ -98,12 +98,11 @@ class NewConstraintSystemImpl(
         }
     }
 
-    override fun getProperSubTypeBounds(type: UnwrappedType): List<UnwrappedType> {
+    override fun getProperTypeBounds(type: UnwrappedType): List<UnwrappedType> {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         val variableWithConstraints = notFixedTypeVariables[type.constructor] ?: return emptyList()
 
         return variableWithConstraints.constraints.mapNotNull { constraint ->
-            if (constraint.kind == ConstraintKind.UPPER) return@mapNotNull null
             constraint.type.takeUnless { !canBeProper(it) }
         }
     }

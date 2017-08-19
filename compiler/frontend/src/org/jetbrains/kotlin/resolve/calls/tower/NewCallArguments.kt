@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -82,7 +82,8 @@ class ParseErrorKotlinCallArgument(
 }
 
 abstract class PSIFunctionKotlinCallArgument(
-        val outerCallContext: BasicCallResolutionContext,
+        val outerCallContext: ResolutionContext<*>,
+        val callForScopeTower: Call,
         override val valueArgument: ValueArgument,
         override val dataFlowInfoBeforeThisArgument: DataFlowInfo,
         override val argumentName: Name?
@@ -96,19 +97,21 @@ abstract class PSIFunctionKotlinCallArgument(
 }
 
 class LambdaKotlinCallArgumentImpl(
-        outerCallContext: BasicCallResolutionContext,
+        outerCallContext: ResolutionContext<*>,
+        callForScopeTower: Call,
         valueArgument: ValueArgument,
         dataFlowInfoBeforeThisArgument: DataFlowInfo,
         argumentName: Name?,
         val ktLambdaExpression: KtLambdaExpression,
         override val parametersTypes: Array<UnwrappedType?>?
-) : PSIFunctionKotlinCallArgument(outerCallContext, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
+) : PSIFunctionKotlinCallArgument(outerCallContext, callForScopeTower, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
     override val ktFunction get() = ktLambdaExpression.functionLiteral
     override val expression get() = ktLambdaExpression
 }
 
 class FunctionExpressionImpl(
-        outerCallContext: BasicCallResolutionContext,
+        outerCallContext: ResolutionContext<*>,
+        callForScopeTower: Call,
         valueArgument: ValueArgument,
         dataFlowInfoBeforeThisArgument: DataFlowInfo,
         argumentName: Name?,
@@ -116,7 +119,7 @@ class FunctionExpressionImpl(
         override val receiverType: UnwrappedType?,
         override val parametersTypes: Array<UnwrappedType?>,
         override val returnType: UnwrappedType?
-) : FunctionExpression, PSIFunctionKotlinCallArgument(outerCallContext, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
+) : FunctionExpression, PSIFunctionKotlinCallArgument(outerCallContext, callForScopeTower, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
     override val expression get() = ktFunction
 }
 
@@ -137,7 +140,7 @@ class CollectionLiteralKotlinCallArgumentImpl(
         override val dataFlowInfoBeforeThisArgument: DataFlowInfo,
         override val dataFlowInfoAfterThisArgument: DataFlowInfo,
         val collectionLiteralExpression: KtCollectionLiteralExpression,
-        val outerCallContext: BasicCallResolutionContext
+        val outerCallContext: ResolutionContext<*>
 ) : CollectionLiteralKotlinCallArgument, PSIKotlinCallArgument() {
     override val isSpread: Boolean get() = valueArgument.getSpreadElement() != null
 }
@@ -176,7 +179,6 @@ class FakeValueArgumentForLeftCallableReference(val ktExpression: KtCallableRefe
 }
 
 class EmptyLabeledReturn(
-        val returnExpression: KtReturnExpression,
         builtIns: KotlinBuiltIns
 ) : ExpressionKotlinCallArgument {
     override val isSpread: Boolean get() = false
@@ -194,7 +196,7 @@ internal fun KotlinCallArgument.setResultDataFlowInfoIfRelevant(resultDataFlowIn
 
 // context here is context for value argument analysis
 internal fun createSimplePSICallArgument(
-        contextForArgument: BasicCallResolutionContext,
+        contextForArgument: ResolutionContext<*>,
         valueArgument: ValueArgument,
         typeInfoForArgument: KotlinTypeInfo
 ) = createSimplePSICallArgument(contextForArgument.trace.bindingContext, contextForArgument.statementFilter,

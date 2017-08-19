@@ -3250,7 +3250,7 @@ public inline fun CharArray.filterNot(predicate: (Char) -> Boolean): List<Char> 
  * Returns a list containing all elements that are not `null`.
  */
 public fun <T : Any> Array<out T?>.filterNotNull(): List<T> {
-    return filterNotNullTo(ArrayList<T>())
+    return (this as Array<T>).filterNotNullTo<ArrayList<T>, T>(ArrayList<T>())
 }
 
 /**

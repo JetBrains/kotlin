@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types.expressions;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -668,9 +669,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         if (returnedExpression != null) {
             if (newInferenceLambdaInfo != null) {
-                KotlinTypeInfo result = facade.getTypeInfo(returnedExpression, context.replaceExpectedType(newInferenceLambdaInfo.getExpectedType())
-                        .replaceContextDependency(newInferenceLambdaInfo.getContextDependency()));
-                newInferenceLambdaInfo.getReturnStatements().add(new kotlin.Pair<>(expression, result));
+                newInferenceLambdaInfo.getReturnStatements().add(new Triple<>(returnedExpression, null, context));
             }
             else {
                 facade.getTypeInfo(returnedExpression, context.replaceExpectedType(expectedType).replaceContextDependency(INDEPENDENT));
@@ -682,7 +681,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
             }
             if (newInferenceLambdaInfo != null) {
-                newInferenceLambdaInfo.getReturnStatements().add(new kotlin.Pair<>(expression, null));
+                newInferenceLambdaInfo.getReturnStatements().add(new Triple<>(returnedExpression, null, context));
             }
         }
         return components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, expression);

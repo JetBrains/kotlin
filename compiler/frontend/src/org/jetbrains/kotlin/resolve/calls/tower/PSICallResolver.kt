@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.calls.results.ManyCandidates
@@ -87,7 +88,7 @@ class PSICallResolver(
         val refinedName = refineNameForRemOperator(isBinaryRemOperator, name)
 
         val kotlinCall = toKotlinCall(context, resolutionKind.kotlinCallKind, context.call, refinedName, tracingStrategy)
-        val scopeTower = ASTScopeTower(context)
+        val scopeTower = ASTScopeTower(context, context.call)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
         val factoryProviderForInvoke = FactoryProviderForInvoke(context, scopeTower, kotlinCall)
@@ -116,7 +117,7 @@ class PSICallResolver(
         val dispatchReceiver = resolutionCandidates.firstNotNullResult { it.dispatchReceiver }
 
         val kotlinCall = toKotlinCall(context, KotlinCallKind.FUNCTION, context.call, GIVEN_CANDIDATES_NAME, tracingStrategy, dispatchReceiver)
-        val scopeTower = ASTScopeTower(context)
+        val scopeTower = ASTScopeTower(context, context.call)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
         val givenCandidates = resolutionCandidates.map {
@@ -152,7 +153,7 @@ class PSICallResolver(
 
     private fun createResolutionCallbacks(context: BasicCallResolutionContext) =
             KotlinResolutionCallbacksImpl(context, expressionTypingServices, typeApproximator,
-                                          argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer)
+                                          argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer, this)
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
         val expectedType = context.expectedType.unwrap()
@@ -261,12 +262,13 @@ class PSICallResolver(
 
 
     private inner class ASTScopeTower(
-            val context: BasicCallResolutionContext
+            val context: ResolutionContext<*>,
+            call: Call
     ): ImplicitScopeTower {
         // todo may be for invoke for case variable + invoke we should create separate dynamicScope(by newCall for invoke)
-        override val dynamicScope: MemberScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
+        override val dynamicScope: MemberScope = dynamicCallableDescriptors.createDynamicDescriptorScope(call, context.scope.ownerDescriptor)
         // same for location
-        override val location: LookupLocation = context.call.createLookupLocation()
+        override val location: LookupLocation = call.createLookupLocation()
 
         override val syntheticScopes: SyntheticScopes get() = this@PSICallResolver.syntheticScopes
         override val isDebuggerContext: Boolean get() = context.isDebuggerContext
@@ -407,7 +409,7 @@ class PSICallResolver(
                 else
                     context.dataFlowInfoForArguments.resultInfo
 
-        val astExternalArgument = externalArgument?.let { resolveValueArgument(context, dataFlowInfoAfterArgumentsInParenthesis, it) }
+        val astExternalArgument = externalArgument?.let { resolveValueArgument(context, oldCall, dataFlowInfoAfterArgumentsInParenthesis, it) }
         val resultDataFlowInfo = astExternalArgument?.dataFlowInfoAfterThisArgument ?: dataFlowInfoAfterArgumentsInParenthesis
 
         resolvedArgumentsInParenthesis.forEach { it.setResultDataFlowInfoIfRelevant(resultDataFlowInfo) }
@@ -447,7 +449,7 @@ class PSICallResolver(
                 else -> error("Incorrect receiver: $oldReceiver")
             }
 
-    private fun resolveType(context: BasicCallResolutionContext, typeReference: KtTypeReference?): UnwrappedType? {
+    private fun resolveType(context: ResolutionContext<*>, typeReference: KtTypeReference?): UnwrappedType? {
         if (typeReference == null) return null
 
         val type = typeResolver.resolveType(context.scope, typeReference, context.trace, checkBounds = true)
@@ -471,14 +473,15 @@ class PSICallResolver(
     ): List<KotlinCallArgument> {
         val dataFlowInfoForArguments = context.dataFlowInfoForArguments
         return arguments.map { argument ->
-            resolveValueArgument(context, dataFlowInfoForArguments.getInfo(argument), argument).also { resolvedArgument ->
+            resolveValueArgument(context, context.call, dataFlowInfoForArguments.getInfo(argument), argument).also { resolvedArgument ->
                 dataFlowInfoForArguments.updateInfo(argument, resolvedArgument.dataFlowInfoAfterThisArgument)
             }
         }
     }
 
-    private fun resolveValueArgument(
-            outerCallContext: BasicCallResolutionContext,
+    fun resolveValueArgument(
+            outerCallContext: ResolutionContext<*>,
+            callForScopeTower: Call,
             startDataFlowInfo: DataFlowInfo,
             valueArgument: ValueArgument
     ): PSIKotlinCallArgument {
@@ -490,14 +493,14 @@ class PSICallResolver(
 
         val lambdaArgument: PSIKotlinCallArgument? = when (ktExpression) {
             is KtLambdaExpression ->
-                LambdaKotlinCallArgumentImpl(outerCallContext, valueArgument, startDataFlowInfo, argumentName, ktExpression,
+                LambdaKotlinCallArgumentImpl(outerCallContext, callForScopeTower, valueArgument, startDataFlowInfo, argumentName, ktExpression,
                                              resolveParametersTypes(outerCallContext, ktExpression.functionLiteral))
             is KtNamedFunction -> {
                 val receiverType = resolveType(outerCallContext, ktExpression.receiverTypeReference)
                 val parametersTypes = resolveParametersTypes(outerCallContext, ktExpression) ?: emptyArray()
                 val returnType = resolveType(outerCallContext, ktExpression.typeReference) ?:
                                  if (ktExpression.hasBlockBody()) builtIns.unitType else null
-                FunctionExpressionImpl(outerCallContext, valueArgument, startDataFlowInfo, argumentName, ktExpression, receiverType, parametersTypes, returnType)
+                FunctionExpressionImpl(outerCallContext, callForScopeTower, valueArgument, startDataFlowInfo, argumentName, ktExpression, receiverType, parametersTypes, returnType)
             }
 
             else -> null
@@ -555,7 +558,7 @@ class PSICallResolver(
                 }
             }
 
-            return CallableReferenceKotlinCallArgumentImpl(ASTScopeTower(context), valueArgument, startDataFlowInfo, newDataFlowInfo,
+            return CallableReferenceKotlinCallArgumentImpl(ASTScopeTower(context, callForScopeTower), valueArgument, startDataFlowInfo, newDataFlowInfo,
                                                            ktExpression, argumentName, lhsNewResult, name)
         }
 
@@ -564,7 +567,7 @@ class PSICallResolver(
         return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: parseErrorArgument
     }
 
-    private fun extractArgumentExpression(outerCallContext: BasicCallResolutionContext, valueArgument: ValueArgument): KtExpression? {
+    private fun extractArgumentExpression(outerCallContext: ResolutionContext<*>, valueArgument: ValueArgument): KtExpression? {
         val argumentExpression = valueArgument.getArgumentExpression() ?: return null
 
         val ktExpression = ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(argumentExpression, outerCallContext) ?:
@@ -577,13 +580,13 @@ class PSICallResolver(
         }
     }
 
-    private fun checkNoSpread(context: BasicCallResolutionContext, valueArgument: ValueArgument) {
+    private fun checkNoSpread(context: ResolutionContext<*>, valueArgument: ValueArgument) {
         valueArgument.getSpreadElement()?.let {
             context.trace.report(Errors.SPREAD_OF_LAMBDA_OR_CALLABLE_REFERENCE.on(it))
         }
     }
 
-    private fun resolveParametersTypes(context: BasicCallResolutionContext, ktFunction: KtFunction): Array<UnwrappedType?>? {
+    private fun resolveParametersTypes(context: ResolutionContext<*>, ktFunction: KtFunction): Array<UnwrappedType?>? {
         val parameterList = ktFunction.valueParameterList ?: return null
 
         return Array(parameterList.parameters.size) {

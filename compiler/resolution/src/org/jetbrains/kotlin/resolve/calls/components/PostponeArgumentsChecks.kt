@@ -47,7 +47,7 @@ private fun preprocessLambdaArgument(
         argument: LambdaKotlinCallArgument,
         expectedType: UnwrappedType?
 ): ResolvedAtom {
-    val newExpectedType = expectedType?.let { csBuilder.getProperSubTypeBounds(expectedType).singleOrNull() } ?: expectedType
+    val newExpectedType = expectedType?.let { csBuilder.getProperTypeBounds(expectedType).singleOrNull { it.isBuiltinFunctionalType } } ?: expectedType
 
     val resolvedArgument = extractLambdaInfoFromFunctionalType(newExpectedType, argument) ?: extraLambdaInfo(newExpectedType, argument, csBuilder)
 

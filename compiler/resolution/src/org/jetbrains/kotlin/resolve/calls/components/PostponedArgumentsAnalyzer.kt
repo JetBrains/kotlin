@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstrai
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class PostponedArgumentsAnalyzer(
         private val callableReferenceResolver: CallableReferenceResolver
@@ -54,7 +55,7 @@ class PostponedArgumentsAnalyzer(
 
         val receiver = lambda.receiver?.let(::substitute)
         val parameters = lambda.parameters.map(::substitute)
-        val expectedType = lambda.returnType.takeIf { c.canBeProper(it) }?.let(::substitute)
+        val expectedType = lambdaExpectedType(c, lambda)
 
         val resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(lambda.atom, lambda.isSuspend, receiver, parameters, expectedType)
 
@@ -63,7 +64,7 @@ class PostponedArgumentsAnalyzer(
         val diagnosticHolder = KotlinDiagnosticsHolder.SimpleHolder()
 
         val subResolvedKtPrimitives = resultArguments.map {
-            checkSimpleArgument(c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, isReceiver = false)
+            resolveKtPrimitive(c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, isReceiver = false)
         }
 
         if (resultArguments.isEmpty()) {
@@ -72,5 +73,14 @@ class PostponedArgumentsAnalyzer(
         }
 
         lambda.setAnalyzedResults(resultArguments, subResolvedKtPrimitives, diagnosticHolder.getDiagnostics())
+    }
+
+    private fun lambdaExpectedType(c: Context, lambda: ResolvedLambdaAtom): UnwrappedType? {
+        val substitutedExpectedType = c.buildCurrentSubstitutor().safeSubstitute(lambda.returnType)
+        val csBuilder = c.getBuilder()
+        if (csBuilder.isProperType(substitutedExpectedType)) return substitutedExpectedType
+
+        if (csBuilder.getProperTypeBounds(substitutedExpectedType).any { it.isUnit() }) return csBuilder.builtIns.unitType
+        return null
     }
 }

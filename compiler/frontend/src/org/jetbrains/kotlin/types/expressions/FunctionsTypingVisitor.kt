@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -156,6 +157,11 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         if (!expression.functionLiteral.hasBody()) return null
 
         val expectedType = context.expectedType
+
+        if (USE_NEW_INFERENCE && context.contextDependency == ContextDependency.DEPENDENT &&
+            context.trace[BindingContext.NEW_INFERENCE_LAMBDA_INFO, expression.functionLiteral] == null
+                ) return noTypeInfo(context)
+
         val functionTypeExpected = expectedType.isBuiltinFunctionalType()
         val suspendFunctionTypeExpected = expectedType.isSuspendFunctionType()
 
@@ -243,7 +249,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
         // i.e. this lambda isn't call arguments
         if (newInferenceLambdaInfo == null && USE_NEW_INFERENCE) {
-            newContext = newContext.replaceContextDependency(ContextDependency.INDEPENDENT)
+//            newContext = newContext.replaceContextDependency(ContextDependency.INDEPENDENT)
         }
 
         // Type-check the body

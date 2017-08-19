@@ -112,7 +112,7 @@ public fun <T> arrayListOf(vararg elements: T): ArrayList<T>
 public fun <T : Any> listOfNotNull(element: T?): List<T> = if (element != null) listOf(element) else emptyList()
 
 /** Returns a new read-only list only of those given elements, that are not null.  The returned list is serializable (JVM). */
-public fun <T : Any> listOfNotNull(vararg elements: T?): List<T> = elements.filterNotNull()
+public fun <T : Any> listOfNotNull(vararg elements: T?): List<T> = (elements as Array<T?>).filterNotNull<T>()
 
 /**
  * Creates a new read-only list with the specified [size], where each element is calculated by calling the specified
