@@ -42,7 +42,6 @@ dependencies {
 //    testRuntime(ideaPluginDeps("*.jar", plugin = "java-i18n"))
 //    testRuntime(ideaPluginDeps("*.jar", plugin = "coverage"))
 //    testRuntime(ideaPluginDeps("*.jar", plugin = "java-decompiler"))
-//    testRuntime(preloadedDeps("uast-common", "uast-java"))
     buildVersion()
 }
 

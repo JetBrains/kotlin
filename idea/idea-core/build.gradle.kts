@@ -16,7 +16,7 @@ dependencies {
     compile(ideaSdkCoreDeps("intellij-core", "util"))
     compile(ideaSdkDeps("openapi", "idea"))
     compile(ideaPluginDeps("gradle-tooling-api", "gradle", plugin = "gradle"))
-    compile(preloadedDeps("uast-common", "kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
+    compile(preloadedDeps("kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
     buildVersion()
 }
 
@@ -25,3 +25,5 @@ configureKotlinProjectResources("idea-analysis/src", sourcesBaseDir = File(rootD
     include("**/*.properties")
 }
 configureKotlinProjectNoTests()
+
+

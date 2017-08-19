@@ -73,8 +73,6 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
 
-    testRuntime(preloadedDeps("uast-common", "uast-java"))
-
     // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
     testCompile(project(":android-extensions-compiler"))
     testCompile(project(":plugins:android-extensions-idea")) { isTransitive = false }
@@ -98,6 +96,7 @@ dependencies {
 
 configureKotlinProjectSources("src",
                               "idea-maven/src",
+                              "idea-gradle/src",
                               "idea-completion/src",
                               "idea-live-templates/src",
                               "idea-repl/src")

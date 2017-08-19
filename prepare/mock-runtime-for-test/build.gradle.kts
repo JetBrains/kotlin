@@ -2,6 +2,7 @@
 import org.gradle.jvm.tasks.Jar
 import org.gradle.api.internal.HasConvention
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 apply { plugin("kotlin") }
 
@@ -34,6 +35,17 @@ configure<JavaPluginConvention> {
 
 configureKotlinProjectNoTests()
 
+tasks.withType<JavaCompile> {
+    sourceCompatibility = "1.6"
+    targetCompatibility = "1.6"
+//    options.fork = true
+    options.forkOptions.javaHome = file(rootProject.extra["JDK_16"] as String)
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.6"
+    kotlinOptions.jdkHome = rootProject.extra["JDK_16"] as String
+}
 
 task<Copy>("dist") {
     into(rootProject.extra["distDir"].toString())

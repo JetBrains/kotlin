@@ -57,6 +57,7 @@ ext.configureJvm6Project = { Project project ->
 
         tasks.withType(project.compileKotlin.class) {
             kotlinOptions.jdkHome = JDK_16
+            kotlinOptions.jvmTarget = "1.6"
             doFirst {
                 System.setProperty("kotlin.colors.enabled", "false")
             }

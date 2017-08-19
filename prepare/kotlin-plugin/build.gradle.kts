@@ -57,7 +57,7 @@ dependencies {
     sideJars(project(":kotlin-script-runtime"))
     sideJars(commonDep("io.javaslang", "javaslang"))
     sideJars(commonDep("javax.inject"))
-    sideJars(preloadedDeps("markdown", "kotlinx-coroutines-core", "kotlinx-coroutines-jdk8", "uast-java"))
+    sideJars(preloadedDeps("markdown", "kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
 }
 
 val targetJar = File(buildDir, "libs", "kotlin-plugin.jar")

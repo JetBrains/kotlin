@@ -53,6 +53,9 @@ val packagesToRelocate =
                 "javax.inject",
                 "org.fusesource")
 
+val ideaCoreSdkJars: Array<String> by rootProject.extra
+val coreSdkJarsSimple = ideaCoreSdkJars.filterNot { it == "jdom" || it == "log4j" }.toTypedArray()
+
 fun firstFromJavaHomeThatExists(vararg paths: String): File =
         paths.mapNotNull { File(javaHome, it).takeIf { it.exists() } }.firstOrNull()
                 ?: throw GradleException("Cannot find under '$javaHome' neither of: ${paths.joinToString()}")
@@ -73,9 +76,8 @@ dependencies {
 //    buildVersion()
 
     fatJarContents(project(":core:builtins", configuration = "builtins"))
-    fatJarContents(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
-    fatJarContents(ideaSdkDeps("jna-platform", "oromatcher"))
-    fatJarContents(ideaSdkDeps("jps-model.jar", subdir = "jps"))
+    fatJarContents(ideaSdkCoreDeps(*coreSdkJarsSimple))
+    fatJarContents(ideaSdkDeps("jna-platform"))
     fatJarContents(commonDep("javax.inject"))
     fatJarContents(commonDep("org.jline", "jline"))
     fatJarContents(protobufFull())
@@ -106,6 +108,9 @@ val packCompiler by task<ShadowJar> {
 
     setupPublicJar("before-proguard", "")
     from(fatJarContents)
+    ideaSdkDeps("jps-model.jar", subdir = "jps").forEach { from(it) { exclude("META-INF/services/**") } }
+    ideaSdkDeps("oromatcher").forEach { from(it) { exclude("META-INF/jb/** META-INF/LICENSE") } }
+    ideaSdkCoreDeps("jdom", "log4j").forEach { from(it) { exclude("META-INF/jb/** META-INF/LICENSE") } }
 
     manifest.attributes.put("Class-Path", compilerManifestClassPath)
     manifest.attributes.put("Main-Class", "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")

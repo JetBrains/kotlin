@@ -99,7 +99,7 @@ extra["versions.javaslang"] = "2.0.6"
 extra["versions.ant"] = "1.8.2"
 
 extra["ideaCoreSdkJars"] = arrayOf("annotations", "asm-all", "guava", "intellij-core", "jdom", "jna", "log4j", "picocontainer",
-                                   "snappy-in-java", "trove4j", "xpp3-1.1.4-min", "xstream")
+                                   "snappy-in-java", "streamex", "trove4j", "xpp3-1.1.4-min", "xstream")
 
 extra["compilerModules"] = arrayOf(":compiler:util",
                                    ":compiler:container",
@@ -179,6 +179,7 @@ allprojects {
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", project.name)
+        kotlinOptions.jvmTarget = "1.8"
     }
 
     tasks.withType<Kotlin2JsCompile> {

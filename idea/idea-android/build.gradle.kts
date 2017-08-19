@@ -17,8 +17,7 @@ dependencies {
     compile(project(":idea:ide-common"))
     compile(ideaSdkDeps("openapi", "idea"))
     compile(ideaPluginDeps("gradle-tooling-api", plugin = "gradle"))
-    compile(ideaPluginDeps("android", "common", "sdklib", "sdk-common", "layoutlib-api", plugin = "android"))
-    compile(preloadedDeps("uast-common", "uast-java"))
+    compile(ideaPluginDeps("android", "android-common", "sdklib", "sdk-common", "layoutlib-api", plugin = "android"))
     compile(preloadedDeps("dx", subdir = "android-5.0/lib"))
 
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
@@ -26,11 +25,9 @@ dependencies {
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(projectTests(":idea"))
-    testCompile(ideaPluginDeps("android-common", "sdklib", plugin = "android"))
     testCompile(ideaPluginDeps("properties", plugin = "properties"))
     testCompile(ideaSdkDeps("gson"))
 
-    testRuntime(preloadedDeps("uast-common", "uast-java"))
     testRuntime(project(":plugins:android-extensions-idea"))
     testRuntime(project(":plugins:sam-with-receiver-ide"))
     testRuntime(project(":plugins:noarg-ide"))
