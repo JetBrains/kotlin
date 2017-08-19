@@ -98,8 +98,6 @@ class KotlinResolutionCallbacksImpl(
 
         val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
 
-        if (expectedReturnType != null) return emptyList()
-
         trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
 
         var hasReturnWithoutExpression = false
