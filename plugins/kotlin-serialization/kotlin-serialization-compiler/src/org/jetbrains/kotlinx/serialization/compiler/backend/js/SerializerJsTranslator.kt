@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.annotationVarsAndDesc
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
@@ -62,14 +63,24 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         translator.addInitializerStatement(assgmnt.makeStmt())
 
         // adding elements via serialDesc.addElement(...)
-        val addFunc = serialDescImplClass.unsubstitutedMemberScope
-                .getDescriptorsFiltered { it == Name.identifier("addElement") }.single()
+        val addFunc = serialDescImplClass.getFuncDesc("addElement").single()
+        val pushFunc = serialDescImplClass.getFuncDesc("pushAnnotation").single()
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(serialDescPropertyDescriptor), JsThisRef())
+
         for (prop in orderedProperties) {
             if (prop.transient) continue
             val call = JsInvocation(JsNameRef(context.getNameForDescriptor(addFunc), serialClassDescRef), JsStringLiteral(prop.name))
             translator.addInitializerStatement(call.makeStmt())
-            //todo: annotations
+            // serialDesc.pushAnnotation(...)
+            for (annotationClass in prop.annotations) {
+                val (args, _) = prop.annotationVarsAndDesc(annotationClass)
+                val argExprs = args.map { arg ->
+                    Translation.translateAsExpression(arg.getArgumentExpression()!!, context)
+                }
+                val classRef = context.getQualifiedReference(annotationClass)
+                val invok = JsInvocation(JsNameRef(context.getNameForDescriptor(pushFunc), serialClassDescRef), JsNew(classRef, argExprs))
+                translator.addInitializerStatement(invok.makeStmt())
+            }
         }
     }
 

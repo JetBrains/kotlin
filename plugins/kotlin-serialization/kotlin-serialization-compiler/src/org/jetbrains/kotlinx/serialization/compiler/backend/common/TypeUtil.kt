@@ -22,12 +22,11 @@ import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtAnonymousInitializer
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
@@ -123,3 +122,10 @@ fun KtPureClassOrObject.anonymousInitializers() = declarations
         .filterIsInstance<KtAnonymousInitializer>()
         .mapNotNull { it.body }
         .toList()
+
+fun SerializableProperty.annotationVarsAndDesc(annotationClass: ClassDescriptor): Pair<List<ValueArgument>, List<ValueParameterDescriptor>> {
+    val args: List<ValueArgument> = (this.descriptor.annotations.findAnnotation(annotationClass.fqNameSafe) as? LazyAnnotationDescriptor)?.annotationEntry?.valueArguments.orEmpty()
+    val consParams = annotationClass.unsubstitutedPrimaryConstructor?.valueParameters.orEmpty()
+    if (args.size != consParams.size) throw IllegalArgumentException("Can't use arguments with defaults for serializable annotations yet")
+    return args to consParams
+}

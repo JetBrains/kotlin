@@ -23,12 +23,10 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
-import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.annotationVarsAndDesc
+import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorBySerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 import org.jetbrains.org.objectweb.asm.Label
@@ -79,9 +77,7 @@ class SerializerCodegenImpl(
                     anew(Type.getObjectType(implType))
                     dup()
                     val sb = StringBuilder("(")
-                    val args: List<ValueArgument> = (property.descriptor.annotations.findAnnotation(annotationClass.fqNameSafe) as? LazyAnnotationDescriptor)?.annotationEntry?.valueArguments.orEmpty()
-                    val consParams = annotationClass.unsubstitutedPrimaryConstructor?.valueParameters.orEmpty()
-                    if (args.size != consParams.size) throw IllegalArgumentException("Can't use arguments with defaults for serializable annotations yet")
+                    val (args, consParams) = property.annotationVarsAndDesc(annotationClass)
                     for (i in consParams.indices) {
                         val decl = args[i]
                         val desc = consParams[i]
