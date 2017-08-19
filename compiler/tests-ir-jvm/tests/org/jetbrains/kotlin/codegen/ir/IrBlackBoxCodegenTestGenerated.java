@@ -17060,6 +17060,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("unitFromLambdaCompletion.kt")
+        public void testUnitFromLambdaCompletion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/unitFromLambdaCompletion.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("useBoundWhenThereIsNoFixedVariables.kt")
         public void testUseBoundWhenThereIsNoFixedVariables() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/useBoundWhenThereIsNoFixedVariables.kt");

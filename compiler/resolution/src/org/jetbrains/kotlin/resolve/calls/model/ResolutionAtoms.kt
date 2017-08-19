@@ -104,6 +104,8 @@ class ResolvedLambdaAtom(
 
     override val inputTypes: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
     override val outputType: UnwrappedType get() = returnType
+
+    override fun toString(): String = atom.toString()
 }
 
 class ResolvedCallableReferenceAtom(
