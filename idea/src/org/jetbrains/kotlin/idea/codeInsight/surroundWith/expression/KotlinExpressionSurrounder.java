@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,10 +45,15 @@ public abstract class KotlinExpressionSurrounder implements Surrounder {
             return false;
         }
         KotlinType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
-        if (type == null || isUnit(type)) {
+        if (type == null || (isUnit(type) && !isApplicableToUnit())) {
             return false;
         }
+
         return isApplicable(expression);
+    }
+
+    protected boolean isApplicableToUnit() {
+        return false;
     }
 
     protected abstract boolean isApplicable(@NotNull KtExpression expression);

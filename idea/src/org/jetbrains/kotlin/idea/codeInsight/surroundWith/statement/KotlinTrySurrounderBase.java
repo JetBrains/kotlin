@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,11 @@ import org.jetbrains.kotlin.idea.codeInsight.surroundWith.MoveDeclarationsOutHel
 import org.jetbrains.kotlin.psi.*;
 
 public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder {
+
+    @Override
+    protected boolean isApplicableWhenUsedAsExpression() {
+        return false;
+    }
 
     @Nullable
     @Override
@@ -61,7 +66,7 @@ public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder
     @NotNull
     protected abstract TextRange getTextRangeForCaret(@NotNull KtTryExpression expression);
 
-    protected static TextRange getCatchTypeParameterTextRange(@NotNull KtTryExpression expression) {
+    public static TextRange getCatchTypeParameterTextRange(@NotNull KtTryExpression expression) {
         KtParameter parameter = expression.getCatchClauses().get(0).getCatchParameter();
         assert parameter != null : "Catch parameter should exists for " + expression.getText();
         KtElement typeReference = parameter.getTypeReference();

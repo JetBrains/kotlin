@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,9 +63,18 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
         doTest(path, new KotlinTryCatchSurrounder());
     }
 
+    public void doTestWithTryCatchExpressionSurrounder(String path) throws Exception {
+        doTest(path, new KotlinTryCatchExpressionSurrounder());
+    }
+
     public void doTestWithTryCatchFinallySurrounder(String path) throws Exception {
         doTest(path, new KotlinTryCatchFinallySurrounder());
     }
+
+    public void doTestWithTryCatchFinallyExpressionSurrounder(String path) throws Exception {
+        doTest(path, new KotlinTryCatchFinallyExpressionSurrounder());
+    }
+
 
     public void doTestWithTryFinallySurrounder(String path) throws Exception {
         doTest(path, new KotlinTryFinallySurrounder());
