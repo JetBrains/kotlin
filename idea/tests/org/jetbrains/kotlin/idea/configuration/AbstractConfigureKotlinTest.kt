@@ -124,13 +124,13 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     companion object {
         private val BASE_PATH = "idea/testData/configuration/"
         private val TEMP_DIR_MACRO_KEY = "TEMP_TEST_DIR"
-        protected val JAVA_CONFIGURATOR: KotlinJavaModuleConfigurator by lazy {
+        protected val JAVA_CONFIGURATOR: KotlinJavaModuleConfigurator by lazy<KotlinJavaModuleConfigurator> {
             object : KotlinJavaModuleConfigurator() {
                 override fun getDefaultPathToJarFile(project: Project) = getPathRelativeToTemp("default_jvm_lib")
             }
         }
 
-        protected val JS_CONFIGURATOR: KotlinJsModuleConfigurator by lazy {
+        protected val JS_CONFIGURATOR: KotlinJsModuleConfigurator by lazy<KotlinJsModuleConfigurator> {
             object : KotlinJsModuleConfigurator() {
                 override fun getDefaultPathToJarFile(project: Project) = getPathRelativeToTemp("default_js_lib")
             }

@@ -147,7 +147,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
     }
 
     private fun doInvoke(selectedParent: PsiElement, editor: Editor, file: KtFile) {
-        runWriteAction {
+        runWriteAction<Unit> {
             with(classInfo) {
                 val targetParent =
                         when (selectedParent) {
@@ -167,6 +167,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
                 builder.placement = CallablePlacement.NoReceiver(targetParent)
                 file.project.executeCommand(text) { builder.build() }
             }
+            Unit
         }
     }
 
