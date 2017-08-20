@@ -104,7 +104,7 @@ class IncrementalJvmCompilerRunner(
     override fun createCacheManager(args: K2JVMCompilerArguments): IncrementalJvmCachesManager =
             IncrementalJvmCachesManager(cacheDirectory, File(args.destination), reporter)
 
-    override fun destionationDir(args: K2JVMCompilerArguments): File =
+    override fun destinationDir(args: K2JVMCompilerArguments): File =
             args.destinationAsFile
 
     private var javaFilesProcessor = ChangedJavaFilesProcessor(reporter)

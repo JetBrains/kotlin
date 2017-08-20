@@ -52,7 +52,7 @@ abstract class IncrementalCompilerRunner<
 
     protected abstract fun isICEnabled(): Boolean
     protected abstract fun createCacheManager(args: Args): CacheManager
-    protected abstract fun destionationDir(args: Args): File
+    protected abstract fun destinationDir(args: Args): File
 
     fun compile(
             allKotlinSources: List<File>,
@@ -66,7 +66,7 @@ abstract class IncrementalCompilerRunner<
         fun rebuild(): ExitCode {
             caches.clean()
             dirtySourcesSinceLastTimeFile.delete()
-            destionationDir(args).deleteRecursively()
+            destinationDir(args).deleteRecursively()
 
             caches = createCacheManager(args)
             // todo more optimal fix
