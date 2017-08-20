@@ -31,7 +31,7 @@ class SuspiciousEqualsCombination : AbstractKotlinInspection(), CleanupLocalInsp
                     val operands = expression.parseBinary()
                     val eqeq = operands.eqEqOperands.map { it.text }
                     val eqeqeq = operands.eqEqEqOperands.map { it.text }
-                    if (eqeq.fold(false) { acc, it -> acc || eqeqeq.contains(it) }) {
+                    if (eqeq.intersect(eqeqeq).isNotEmpty()) {
                         holder.registerProblem(expression, "Suspicious combination of == and ===",
                                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
                     }
