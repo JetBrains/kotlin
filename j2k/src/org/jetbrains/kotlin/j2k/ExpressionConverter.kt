@@ -704,7 +704,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             codeConverter.convertExpression(it, expression.type).assignPrototype(it, CommentsAndSpacesInheritance.LINE_BREAKS)
         }
         val operators = expression.operands.mapNotNull {
-            expression.getTokenBeforeOperand(it)?.run { Operator(tokenType).assignPrototype(this, CommentsAndSpacesInheritance.LINE_BREAKS) }
+            expression.getTokenBeforeOperand(it)?.let { Operator(it.tokenType).assignPrototype(it, CommentsAndSpacesInheritance.LINE_BREAKS) }
         }
         result = polyadicExpressionToBinaryExpressions(args, operators)
         if (!expression.isInSingleLine()) {

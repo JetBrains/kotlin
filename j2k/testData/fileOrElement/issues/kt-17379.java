@@ -13,5 +13,7 @@ class Test {
             + d; // x4
     int z = a // binary expression case
             + b; // x4
+    int j = b +
+               c;
   }
 }

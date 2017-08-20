@@ -15,5 +15,6 @@ internal class Test {
                 + d) // x4
         val z = (a // binary expression case
                 + b) // x4
+        val j = b + c
     }
 }
