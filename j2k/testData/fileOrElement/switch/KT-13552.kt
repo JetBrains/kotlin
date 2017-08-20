@@ -73,10 +73,10 @@ object SwitchDemo {
         val status = ""
         when (status) {
             "init", "dial", "transmit" -> return 0x111111
-            "ok" -> return -16751104
-            "cancel" -> return -10066330
-            "fail", "busy", "error" -> return -10092544
-            else -> return -10092544
+            "ok" -> return -0xff9a00
+            "cancel" -> return -0x99999a
+            "fail", "busy", "error" -> return -0x9a0000
+            else -> return -0x9a0000
         }
     }
 }

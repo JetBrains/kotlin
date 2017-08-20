@@ -272,7 +272,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         var text = expression.text!!
         val type = expression.type
 
-        if(expression.isNullLiteral()) {
+        if (expression.isNullLiteral()) {
             result = LiteralExpression.NullLiteral
             return
         }
@@ -304,12 +304,12 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 val v = BigInteger(text.substring(2).replace("L", ""), 16)
                 if (text.contains("L")) {
                     if (v.bitLength() > 63) {
-                        text = v.toLong().toString()
+                        text = "-0x${v.toLong().toString(16).substring(1)}"
                     }
                 }
                 else {
                     if (v.bitLength() > 31) {
-                        text = v.toInt().toString()
+                        text = "-0x${v.toInt().toString(16).substring(1)}"
                     }
                 }
             }
@@ -328,7 +328,8 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     val leadingBackslashes = it.groupValues[1]
                     if (leadingBackslashes.length % 2 == 0) {
                         String.format("%s\\u%04x", leadingBackslashes, Integer.parseInt(it.groupValues[2], 8))
-                    } else {
+                    }
+                    else {
                         it.value
                     }
                 }
