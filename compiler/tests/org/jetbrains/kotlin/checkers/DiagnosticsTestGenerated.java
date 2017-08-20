@@ -6099,6 +6099,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("typeOfLazyDelegatedPropertyWithObject.kt")
+                public void testTypeOfLazyDelegatedPropertyWithObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/typeOfLazyDelegatedPropertyWithObject.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("useCompleterWithoutExpectedType.kt")
                 public void testUseCompleterWithoutExpectedType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/useCompleterWithoutExpectedType.kt");
