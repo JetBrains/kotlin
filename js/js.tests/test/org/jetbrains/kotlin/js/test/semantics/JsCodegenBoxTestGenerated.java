@@ -20786,6 +20786,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("objectInsideDelegation.kt")
+        public void testObjectInsideDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/objectInsideDelegation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("referenceToSelfInLocal.kt")
         public void testReferenceToSelfInLocal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/referenceToSelfInLocal.kt");

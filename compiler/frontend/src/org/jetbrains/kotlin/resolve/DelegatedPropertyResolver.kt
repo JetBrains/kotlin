@@ -20,6 +20,7 @@ import com.google.common.collect.Lists
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -399,7 +401,9 @@ class DelegatedPropertyResolver(
             traceToResolveDelegatedProperty.record(CONSTRAINT_SYSTEM_COMPLETER, it, completer)
         }
 
-        val expectedTypeByNewInference = completer.resolveViaNewInference(delegateExpression, variableDescriptor, scopeForDelegate, trace, dataFlowInfo)
+        val expectedTypeByNewInference = completer
+                .resolveViaNewInference(delegateExpression, variableDescriptor, scopeForDelegate, trace, dataFlowInfo)
+                ?.let { AnonymousTypeSubstitutor.safeSubstitute(it.unwrap()) }
         val delegateType = expressionTypingServices.safeGetType(scopeForDelegate, delegateExpression, expectedTypeByNewInference ?: NO_EXPECTED_TYPE, dataFlowInfo, traceToResolveDelegatedProperty)
 
         traceToResolveDelegatedProperty.commit({ slice, _ -> slice !== CONSTRAINT_SYSTEM_COMPLETER }, true)
@@ -565,5 +569,18 @@ class DelegatedPropertyResolver(
             val call = delegateExpression.getCall(traceToResolveConventionMethods.bindingContext)
             return call.getResolvedCall(traceToResolveConventionMethods.bindingContext)?.resultingDescriptor?.returnType
         }
+    }
+}
+
+private object AnonymousTypeSubstitutor : NewTypeSubstitutor {
+    override val isEmpty get() = true
+
+    override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
+        val declarationDescriptor = constructor.declarationDescriptor
+        if (declarationDescriptor is ClassifierDescriptor && DescriptorUtils.isAnonymousObject(declarationDescriptor)) {
+            return constructor.supertypes.firstOrNull()?.unwrap()
+        }
+
+        return null
     }
 }
