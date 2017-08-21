@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.gradle.plugin.CopyClassesToJavaOutputStatus
 import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
@@ -556,6 +557,68 @@ class KotlinGradleIT: BaseGradleIT() {
             // Check that the sync output task is not used with Gradle 4.0+ and there's no old Kotlin output layout
             assertNotContains(":copyMainKotlinClasses")
             assertNoSuchFile("build/kotlin-classes")
+        }
+    }
+
+    @Test
+    fun testDisableSeparateClassesDirs() {
+        val separateDirPath = "build/classes/kotlin/main/demo/KotlinGreetingJoiner.class"
+        val singleDirPath = "build/classes/java/main/demo/KotlinGreetingJoiner.class"
+
+        fun CompiledProject.check(copyClassesToJavaOutput: Boolean?,
+                                  expectBuildCacheWarning: Boolean,
+                                  expectGradleLowVersionWarning: Boolean) {
+            assertSuccessful()
+            when (copyClassesToJavaOutput) {
+                true -> {
+                    assertNoSuchFile(separateDirPath)
+                    assertFileExists(singleDirPath)
+                }
+                false -> {
+                    assertFileExists(separateDirPath)
+                    assertNoSuchFile(singleDirPath)
+                }
+            }
+
+            if (expectBuildCacheWarning)
+                assertContains(CopyClassesToJavaOutputStatus.buildCacheWarningMessage)
+            else
+                assertNotContains(CopyClassesToJavaOutputStatus.buildCacheWarningMessage)
+
+            if (expectGradleLowVersionWarning)
+                assertContains(CopyClassesToJavaOutputStatus.gradleVersionTooLowWarningMessage)
+            else
+                assertNotContains(CopyClassesToJavaOutputStatus.gradleVersionTooLowWarningMessage)
+        }
+
+        Project("simpleProject", "4.0").apply {
+            build("build") {
+                check(copyClassesToJavaOutput = false,
+                        expectBuildCacheWarning = false,
+                        expectGradleLowVersionWarning = false)
+            }
+            File(projectDir, "build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
+            build("clean", "build") {
+                check(copyClassesToJavaOutput = true,
+                        expectBuildCacheWarning = false,
+                        expectGradleLowVersionWarning = false)
+            }
+            build("clean", "build", "--build-cache") {
+                check(copyClassesToJavaOutput = true,
+                        expectBuildCacheWarning = true,
+                        expectGradleLowVersionWarning = false)
+            }
+            projectDir.deleteRecursively()
+        }
+
+        Project("simpleProject", "3.4").apply {
+            setupWorkingDir()
+            File(projectDir, "build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
+            build("build") {
+                check(copyClassesToJavaOutput = null,
+                        expectBuildCacheWarning = false,
+                        expectGradleLowVersionWarning = true)
+            }
         }
     }
 }
