@@ -23,6 +23,8 @@
 
 // Must fit in two bits.
 typedef enum {
+  // Those bit masks are applied to refCount_ field.
+
   // Container is normal thread local container.
   CONTAINER_TAG_NORMAL = 0,
   // Container shall be atomically refcounted, currently disabled.
@@ -39,7 +41,19 @@ typedef enum {
   // Actual value to increment/decrement container by. Tag is in lower bits.
   CONTAINER_TAG_INCREMENT = 1 << CONTAINER_TAG_SHIFT,
   // Mask for container type, disregard seen bit.
-  CONTAINER_TAG_MASK = ((CONTAINER_TAG_INCREMENT >> 1) - 1)
+  CONTAINER_TAG_MASK = ((CONTAINER_TAG_INCREMENT >> 1) - 1),
+
+  // Those bit masks are applied to objectCount_ field.
+  // Shift to get actual object count.
+  CONTAINER_TAG_GC_SHIFT = 3,
+  CONTAINER_TAG_GC_INCREMENT = 1 << CONTAINER_TAG_GC_SHIFT,
+  // Color of a container.
+  CONTAINER_TAG_GC_COLOR_MASK = ((CONTAINER_TAG_GC_INCREMENT >> 1) - 1),
+  // Colors.
+  CONTAINER_TAG_GC_BLACK  = 0,
+  CONTAINER_TAG_GC_GRAY   = 1,
+  CONTAINER_TAG_GC_WHITE  = 2,
+  CONTAINER_TAG_GC_PURPLE = 3
 } ContainerTag;
 
 typedef uint32_t container_offset_t;
@@ -47,11 +61,38 @@ typedef uint32_t container_size_t;
 
 // Header of all container objects. Contains reference counter.
 struct ContainerHeader {
-  // Reference counter of container. Uses two lower bits of counter for
-  // container type (for polymorphism in ::Release()).
-  volatile uint32_t refCount_;
+  // Reference counter of container. Uses CONTAINER_TAG_SHIFT,lower bits of counter
+  // for container type (for polymorphism in ::Release()).
+  uint32_t refCount_;
   // Number of objects in the container.
   uint32_t objectCount_;
+
+
+  inline unsigned refCount() const {
+    return refCount_ >> CONTAINER_TAG_SHIFT;
+  }
+  inline void incRefCount() {
+    refCount_ += CONTAINER_TAG_INCREMENT;
+  }
+  inline int decRefCount() {
+    refCount_ -= CONTAINER_TAG_INCREMENT;
+    return refCount_ >> CONTAINER_TAG_SHIFT;
+  }
+  inline unsigned objectCount() const {
+    return objectCount_ >> CONTAINER_TAG_GC_SHIFT;
+  }
+  inline void incObjectCount() {
+    objectCount_ += CONTAINER_TAG_GC_INCREMENT;
+  }
+  inline void setObjectCount(int count) {
+    objectCount_ = count << CONTAINER_TAG_GC_SHIFT;
+  }
+  inline unsigned color() const {
+    return objectCount_ & CONTAINER_TAG_GC_COLOR_MASK;
+  }
+  void setColor(unsigned color) {
+    objectCount_ = (objectCount_ & ~CONTAINER_TAG_GC_COLOR_MASK) | color;
+  }
 };
 
 struct ArrayHeader;
