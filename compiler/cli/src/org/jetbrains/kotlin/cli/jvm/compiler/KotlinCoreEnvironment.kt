@@ -42,10 +42,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.PersistentFSConstants
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.PsiElementFinder
@@ -74,13 +71,14 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.script.CliScriptReportSink
 import org.jetbrains.kotlin.cli.common.script.CliScriptDependenciesProvider
+import org.jetbrains.kotlin.cli.common.script.CliScriptReportSink
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
 import org.jetbrains.kotlin.cli.jvm.javac.JavacWrapperRegistrar
+import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
@@ -197,10 +195,17 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
+        val jdkHome = configuration.get(JVMConfigurationKeys.JDK_HOME)
+        val jrtFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL)
+        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.path?.let { path ->
+            jrtFileSystem?.findFileByPath(path + URLUtil.JAR_SEPARATOR)
+        })
         classpathRootsResolver = ClasspathRootsResolver(
-                PsiManager.getInstance(project), messageCollector,
+                PsiManager.getInstance(project),
+                messageCollector,
                 configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
-                this::contentRootToVirtualFile
+                this::contentRootToVirtualFile,
+                javaModuleFinder
         )
 
         val (initialRoots, javaModules) =
@@ -232,8 +237,7 @@ class KotlinCoreEnvironment private constructor(
 
         project.registerService(
                 JavaModuleResolver::class.java,
-                CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules,
-                                      classpathRootsResolver.javaModuleFinder.systemModules.toList())
+                CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList())
         )
 
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
@@ -441,10 +445,7 @@ class KotlinCoreEnvironment private constructor(
             Extensions.cleanRootArea(parentDisposable)
             registerAppExtensionPoints()
             val applicationEnvironment = object : JavaCoreApplicationEnvironment(parentDisposable) {
-                override fun createJrtFileSystem(): VirtualFileSystem? {
-                    val jdkHome = configuration[JVMConfigurationKeys.JDK_HOME] ?: return null
-                    return CoreJrtFileSystem.create(jdkHome)
-                }
+                override fun createJrtFileSystem(): VirtualFileSystem? = CoreJrtFileSystem()
             }
 
             for (configPath in configFilePaths) {
