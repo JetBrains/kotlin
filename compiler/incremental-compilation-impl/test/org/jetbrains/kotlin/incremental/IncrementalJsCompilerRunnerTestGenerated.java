@@ -40,12 +40,6 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
             doTest(fileName);
         }
 
-        @TestMetadata("accessingFunctionsViaRenamedFileClass")
-        public void testAccessingFunctionsViaRenamedFileClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/accessingFunctionsViaRenamedFileClass/");
-            doTest(fileName);
-        }
-
         @TestMetadata("accessingPropertiesViaField")
         public void testAccessingPropertiesViaField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/accessingPropertiesViaField/");
@@ -209,12 +203,6 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
         @TestMetadata("defaultValueChanged")
         public void testDefaultValueChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueChanged/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("defaultValueInConstructorAdded")
-        public void testDefaultValueInConstructorAdded() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueInConstructorAdded/");
             doTest(fileName);
         }
 
