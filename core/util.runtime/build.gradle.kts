@@ -5,11 +5,12 @@ apply {
 }
 
 dependencies {
-    val compile by configurations
     compile(project(":core:builtins"))
     compile(project(":kotlin-stdlib"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { projectDefault() }
+    "test" {}
+}
 

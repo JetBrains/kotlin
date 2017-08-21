@@ -1,14 +1,7 @@
 
-apply {
-    plugin("kotlin")
-}
+apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
-    val compileOnly by configurations
-    val testCompile by configurations
-    val testCompileOnly by configurations
-    val testRuntime by configurations
     compile(project(":core"))
     compile(project(":idea"))
     compile(project(":j2k"))
@@ -59,13 +52,11 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectTestsDefault()
+sourceSets {
+    "main" { projectDefault() }
+    "test" { projectDefault() }
+}
 
-
-tasks.withType<Test> {
+projectTest {
     workingDir = rootDir
-    systemProperty("idea.is.unit.test", "true")
-    systemProperty("NO_FS_ROOTS_ACCESS_CHECK", "true")
-    ignoreFailures = true
 }

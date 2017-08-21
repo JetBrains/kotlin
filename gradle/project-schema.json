@@ -258,7 +258,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -295,7 +294,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1941,7 +1939,8 @@
             "testImplementation",
             "testRuntime",
             "testRuntimeClasspath",
-            "testRuntimeOnly"
+            "testRuntimeOnly",
+            "tests-jar"
         ],
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
@@ -2679,7 +2678,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -2715,7 +2713,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3569,7 +3566,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
             "compile",
             "compileClasspath",
             "compileOnly",

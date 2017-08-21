@@ -21,8 +21,10 @@ tasks.withType<Jar> {
     }
 }
 
-configureKotlinProjectSources() // no sources
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" {}
+    "test" {}
+}
 
 val jar: Jar by tasks
 

@@ -2,7 +2,6 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":compiler:util"))
     compile(project(":compiler:backend-common"))
     compile(project(":compiler:frontend"))
@@ -12,7 +11,11 @@ dependencies {
     compile(project(":compiler:serialization"))
 }
 
-configureKotlinProjectSources("backend/src", "ir/backend.jvm/src", sourcesBaseDir = File(rootDir, "compiler"))
-configureKotlinProjectResourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDir("../ir/backend.jvm/src")
+    }
+    "test" {}
+}
 

@@ -14,8 +14,10 @@ dependencies {
     compile(project(":idea"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { projectDefault() }
+    "test" {}
+}
 
 
 val jar: Jar by tasks

@@ -10,8 +10,10 @@ dependencies {
     buildVersion()
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { projectDefault() }
+    "test" {}
+}
 
 tasks.withType<Jar> {
     setupRuntimeJar("Kotlin Script Runtime")

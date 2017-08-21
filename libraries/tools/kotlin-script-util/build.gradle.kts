@@ -18,13 +18,7 @@ dependencies {
     testRuntime("org.apache.maven:maven-core:3.0.3")
 }
 
-tasks.withType<Test> {
-    jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1200m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
-    maxHeapSize = "1200m"
-    systemProperty("idea.is.unit.test", "true")
-    environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
-    ignoreFailures = true
-}
+projectTest()
 
 runtimeJar()
 sourcesJar()

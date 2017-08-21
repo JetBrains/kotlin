@@ -2,7 +2,6 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":core"))
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
@@ -14,7 +13,9 @@ dependencies {
     testCompile(projectTests(":kotlin-build-common"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectTestsDefault()
+sourceSets {
+    "main" { projectDefault() }
+    "test" { projectDefault() }
+}
 
 testsJar()

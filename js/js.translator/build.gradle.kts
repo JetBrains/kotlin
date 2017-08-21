@@ -2,7 +2,6 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":core"))
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
@@ -13,6 +12,10 @@ dependencies {
     compile(ideaSdkCoreDeps("intellij-core"))
 }
 
-configureKotlinProjectSources("js.translator/src", "js.inliner/src", sourcesBaseDir = File(rootDir, "js"))
-configureKotlinProjectNoTests()
-
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDir("../js.inliner/src")
+    }
+    "test" {}
+}

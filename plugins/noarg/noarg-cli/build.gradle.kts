@@ -4,8 +4,6 @@ description = "Kotlin NoArg Compiler Plugin"
 apply { plugin("kotlin") }
 
 dependencies {
-    val compileOnly by configurations
-    val runtime by configurations
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:backend"))
@@ -15,8 +13,10 @@ dependencies {
     runtime(project(":kotlin-stdlib"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { projectDefault() }
+    "test" {}
+}
 
 val jar = runtimeJar {
     from(fileTree("$projectDir/src")) { include("META-INF/**") }

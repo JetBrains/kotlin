@@ -5,7 +5,6 @@ apply {
 }
 
 dependencies {
-    val compile by configurations
     compile(project(":compiler:frontend"))
     compile(project(":idea"))
     compile(project(":idea:idea-core"))
@@ -16,9 +15,13 @@ dependencies {
     compile(ideaSdkDeps("guava"))
 }
 
-configureKotlinProjectSources("android-annotations/src",
-                              "lint-api/src",
-                              "lint-checks/src",
-                              "lint-idea/src")
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" {
+        java.srcDirs("android-annotations/src",
+                     "lint-api/src",
+                     "lint-checks/src",
+                     "lint-idea/src")
+    }
+    "test" {}
+}
 

@@ -4,7 +4,6 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":core"))
     compile(project(":core::util.runtime"))
     compile(project(":compiler:util"))
@@ -30,6 +29,7 @@ dependencies {
     compile(preloadedDeps("dx", subdir = "android-5.0/lib"))
 }
 
-configureKotlinProjectSources("tests-common", sourcesBaseDir = File(rootDir, "compiler"))
-configureKotlinProjectNoTests()
-
+sourceSets {
+    "main" { java.srcDir("../compiler/tests-common") }
+    "test" {}
+}

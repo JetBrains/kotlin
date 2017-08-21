@@ -39,28 +39,25 @@ dependencies {
     buildVersion()
 }
 
-configureKotlinProjectSources(
-        "compiler/daemon/src",
-        "compiler/conditional-preprocessor/src",
-        sourcesBaseDir = rootDir)
-configureKotlinProjectResources("idea/src", sourcesBaseDir = rootDir) {
-    include("META-INF/extensions/common.xml",
-            "META-INF/extensions/kotlin2jvm.xml",
-            "META-INF/extensions/kotlin2js.xml")
+sourceSets {
+    "main" {
+        java.srcDirs("daemon/src",
+                     "conditional-preprocessor/src")
+        resources.srcDir("../idea/src").apply {
+            include("META-INF/extensions/common.xml",
+                    "META-INF/extensions/kotlin2jvm.xml",
+                    "META-INF/extensions/kotlin2js.xml")
+        }
+    }
+    "test" { projectDefault() }
 }
-configureKotlinProjectTests("tests")
 
 testsJar {}
 
-tasks.withType<Test> {
+projectTest {
     dependsOnTaskIfExistsRec("dist", project = rootProject)
     dependsOn(":prepare:mock-runtime-for-test:dist")
     workingDir = rootDir
-    systemProperty("idea.is.unit.test", "true")
-    environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
     systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
-    jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1200m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
-    maxHeapSize = "1200m"
-    ignoreFailures = true
 }
 

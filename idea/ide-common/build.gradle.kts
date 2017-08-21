@@ -2,7 +2,6 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
@@ -11,6 +10,8 @@ dependencies {
     compile(ideaSdkCoreDeps("annotations", "guava", "intellij-core"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { projectDefault() }
+    "test" {}
+}
 

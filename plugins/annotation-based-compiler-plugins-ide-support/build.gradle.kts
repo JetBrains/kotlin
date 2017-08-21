@@ -2,11 +2,6 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
-    val compileOnly by configurations
-    val testCompile by configurations
-    val testCompileOnly by configurations
-    val testRuntime by configurations
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:cli-common"))
@@ -17,6 +12,8 @@ dependencies {
     compileOnly(ideaSdkDeps("openapi", "idea"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { projectDefault() }
+    "test" {}
+}
 

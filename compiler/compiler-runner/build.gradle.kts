@@ -2,7 +2,6 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":kotlin-build-common"))
     compile(project(":compiler:cli-common"))
     compile(project(":kotlin-preloader"))
@@ -12,6 +11,8 @@ dependencies {
     compile(project(":compiler:util"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { projectDefault() }
+    "test" {}
+}
 

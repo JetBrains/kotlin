@@ -43,17 +43,15 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectTestsDefault()
+sourceSets {
+    "main" { projectDefault() }
+    "test" { projectDefault() }
+}
 
 testsJar {}
 
-
-tasks.withType<Test> {
+projectTest {
     workingDir = rootDir
-    systemProperty("idea.is.unit.test", "true")
-    environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
-    ignoreFailures = true
 }
 
 val jar: Jar by tasks

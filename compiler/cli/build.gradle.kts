@@ -2,7 +2,6 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":compiler:util"))
     compile(project(":compiler:cli-common"))
     compile(project(":compiler:frontend"))
@@ -22,11 +21,12 @@ dependencies {
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 }
 
-configureKotlinProjectSources("compiler/cli/src",
-                              "plugins/annotation-collector/src",
-                              "compiler/builtins-serializer/src",
-                              "compiler/javac-wrapper/src",
-                              sourcesBaseDir = rootDir)
-configureKotlinProjectResourcesDefault()
-configureKotlinProjectNoTests()
-
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDirs("../../plugins/annotation-collector/src",
+                     "../builtins-serializer/src",
+                     "../javac-wrapper/src")
+    }
+    "test" {}
+}

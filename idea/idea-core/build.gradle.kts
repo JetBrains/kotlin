@@ -1,7 +1,6 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":kotlin-stdlib"))
     compile(project(":core"))
     compile(project(":compiler:frontend"))
@@ -17,13 +16,13 @@ dependencies {
     compile(ideaSdkDeps("openapi", "idea"))
     compile(ideaPluginDeps("gradle-tooling-api", "gradle", plugin = "gradle"))
     compile(preloadedDeps("kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
-    buildVersion()
 }
 
-configureKotlinProjectSources("idea-core/src", "idea-analysis/src", sourcesBaseDir = File(rootDir, "idea"))
-configureKotlinProjectResources("idea-analysis/src", sourcesBaseDir = File(rootDir, "idea")) {
-    include("**/*.properties")
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDir("../idea-analysis/src")
+        resources.srcDir("../idea-analysis/src").apply { include("**/*.properties") }
+    }
+    "test" {}
 }
-configureKotlinProjectNoTests()
-
-

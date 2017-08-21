@@ -15,6 +15,8 @@ tasks.withType<Jar> {
     from(fileTree("$rootDir/idea/formatter")) { include("src/**") } // Eclipse formatter sources navigation depends on this
 }
 
-configureKotlinProjectSources() // no sources
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" {}
+    "test" {}
+}
 

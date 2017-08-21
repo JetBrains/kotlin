@@ -12,14 +12,16 @@ dependencies {
     compile(commonDep("javax.inject"))
 }
 
-configureKotlinProjectSources(
-        "descriptor.loader.java/src",
-        "descriptors/src",
-        "descriptors.runtime/src",
-        "deserialization/src")
-configureKotlinProjectResources(
-        "descriptor.loader.java/src", "deserialization/src") { include("META-INF/**") }
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" {
+        java.srcDirs("descriptor.loader.java/src",
+                     "descriptors/src",
+                     "descriptors.runtime/src",
+                     "deserialization/src")
+        resources.srcDirs("descriptor.loader.java/src", "deserialization/src").apply { include("META-INF/**") }
+    }
+    "test" {}
+}
 
 tasks.withType<JavaCompile> {
     dependsOn(protobufLiteTask)

@@ -20,9 +20,14 @@ dependencies {
     compile(files(builtinsSerialized))
 }
 
-configureKotlinProjectSources("core/builtins/src", "core/runtime.jvm/src", sourcesBaseDir = rootDir)
-configureKotlinProjectResources(listOf(builtinsSerialized))
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDir("../runtime.jvm/src")
+        resources.srcDir(builtinsSerialized).apply { include("**") }
+    }
+    "test" {}
+}
 
 val serialize = task("serialize") {
     val outDir = builtinsSerialized

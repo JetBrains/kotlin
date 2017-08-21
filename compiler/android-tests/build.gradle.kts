@@ -1,15 +1,7 @@
 
-apply {
-    plugin("kotlin")
-}
+apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
-    val compileOnly by configurations
-    val testCompile by configurations
-    val testCompileOnly by configurations
-    val testRuntime by configurations
-
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))
     compile(project(":compiler.tests-common"))
@@ -28,13 +20,11 @@ dependencies {
     testCompile(ideaSdkDeps("jps-builders"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectTestsDefault()
+sourceSets {
+    "main" { java.srcDirs() }
+    "test" { projectDefault() }
+}
 
-
-tasks.withType<Test> {
+projectTest {
     workingDir = rootDir
-    systemProperty("idea.is.unit.test", "true")
-    systemProperty("NO_FS_ROOTS_ACCESS_CHECK", "true")
-    ignoreFailures = true
 }

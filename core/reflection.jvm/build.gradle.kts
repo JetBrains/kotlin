@@ -1,7 +1,6 @@
 
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.File
 
 buildscript {
     repositories {
@@ -20,21 +19,16 @@ apply {
     plugin("com.github.johnrengelman.shadow")
 }
 
-configure<JavaPluginConvention> {
-    sourceSets.getByName("main")?.apply {
-        val srcs = listOf(File(rootDir, "core/reflection.jvm/src"))
-        java.setSrcDirs(srcs)
-    }
-    sourceSets.getByName("test").apply {
-        java.setSrcDirs(emptyList<File>())
-    }
-}
-
 dependencies {
     val compile by configurations
     compile(project(":core:builtins"))
     compile(project(":core"))
     compile(protobufLite())
+}
+
+sourceSets {
+    "main" { projectDefault() }
+    "test" {}
 }
 
 tasks.withType<JavaCompile> {
@@ -44,5 +38,3 @@ tasks.withType<JavaCompile> {
 tasks.withType<KotlinCompile> {
     dependsOn(protobufLiteTask)
 }
-
-

@@ -2,10 +2,6 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    val testCompile by configurations
-    val testCompileOnly by configurations
-    val testRuntime by configurations
-
     testCompile(project(":compiler.tests-common"))
     testCompile(project(":compiler:frontend"))
     testCompile(project(":compiler:cli"))
@@ -19,8 +15,10 @@ dependencies {
     testRuntime(ideaSdkDeps("*.jar"))
 }
 
-configureKotlinProjectSources()
-configureKotlinProjectTestsDefault()
+sourceSets {
+    "main" {}
+    "test" { projectDefault() }
+}
 
 val test: Test by tasks
 test.apply {
