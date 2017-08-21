@@ -55,8 +55,10 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     abstract protected fun doTargetSpecificProcessing()
     protected val logger = Logging.getLogger(this.javaClass)!!
 
-    protected val isSeparateClassesDirSupported: Boolean =
-            sourceSet.output.javaClass.methods.any { it.name == "getClassesDirs" }
+    protected val isSeparateClassesDirSupported: Boolean by lazy {
+        !CopyClassesToJavaOutputStatus.isEnabled(project) &&
+                sourceSet.output.javaClass.methods.any { it.name == "getClassesDirs" }
+    }
 
     protected val sourceSetName: String = sourceSet.name
     protected val sourceRootDir: String = "src/$sourceSetName/kotlin"
