@@ -78,7 +78,7 @@ fun makeCompileServices(
 
 fun updateIncrementalCache(
         generatedFiles: Iterable<GeneratedFile>,
-        cache: IncrementalCacheImpl,
+        cache: IncrementalJvmCache,
         changesCollector: ChangesCollector
 ) {
     for (generatedFile in generatedFiles) {

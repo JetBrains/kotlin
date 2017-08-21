@@ -40,7 +40,7 @@ import java.util.*
 
 val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 
-open class IncrementalCacheImpl(
+open class IncrementalJvmCache(
         private val targetDataRoot: File,
         targetOutputDir: File?
 ) : IncrementalCacheCommon(File(targetDataRoot, KOTLIN_CACHE_DIRECTORY_NAME)), IncrementalCache {
