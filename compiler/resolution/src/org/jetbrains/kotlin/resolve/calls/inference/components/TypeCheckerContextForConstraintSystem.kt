@@ -75,6 +75,11 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
         }
 
         if (typeVariable.isMarkedNullable) {
+            if (subType is SimpleType && isMyTypeVariable(subType.asSimpleType())) {
+//                addLowerConstraint(typeVariable.constructor, intersectTypes(listOf(subType, subType.builtIns.anyType)))
+                return true
+            }
+
 //            val notNullSubType = if (subType is NewCapturedType) intersectTypes(listOf(subType, subType.builtIns.anyType)) else subType.makeNotNullable().unwrap()
             val notNullSubType = subType.makeNotNullable().unwrap()
             addLowerConstraint(typeVariable.constructor, notNullSubType)

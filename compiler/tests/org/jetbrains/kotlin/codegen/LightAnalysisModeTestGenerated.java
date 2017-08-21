@@ -16628,6 +16628,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("intersectionInsideConstraintSystem.kt")
+        public void testIntersectionInsideConstraintSystem() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/intersectionInsideConstraintSystem.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("intersectionOfEqualTypes.kt")
         public void testIntersectionOfEqualTypes() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/intersectionOfEqualTypes.kt");
