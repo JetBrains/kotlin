@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.name.ClassId
@@ -34,12 +35,14 @@ open class IncrementalJsCache(cachesDir: File) : IncrementalCacheCommon(cachesDi
     companion object {
         private val TRANSLATION_RESULT_MAP = "translation-result"
         private val SOURCES_TO_CLASSES_FQNS = "sources-to-classes"
+        private val INLINE_FUNCTIONS = "inline-functions"
         private val HEADER_FILE_NAME = "header.meta"
     }
 
     private val dirtySources = arrayListOf<File>()
     private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile))
     private val sourcesToClasses = registerMap(SourceToClassesMap(SOURCES_TO_CLASSES_FQNS.storageFile))
+    private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
 
     private val headerFile: File
         get() = File(cachesDir, HEADER_FILE_NAME)
@@ -55,10 +58,13 @@ open class IncrementalJsCache(cachesDir: File) : IncrementalCacheCommon(cachesDi
         dirtySources.addAll(removedAndCompiledSources)
     }
 
-    fun compareAndUpdate(translatedFiles: Map<File, TranslationResultValue>, changesCollector: ChangesCollector) {
+    fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
+        val translatedFiles = incrementalResults.packageParts
+
         dirtySources.forEach {
             if (it !in translatedFiles) {
                 translationResults.remove(it, changesCollector)
+                inlineFunctions.remove(it)
             }
 
             removeAllFromClassStorage(sourcesToClasses[it])
@@ -83,6 +89,10 @@ open class IncrementalJsCache(cachesDir: File) : IncrementalCacheCommon(cachesDi
             }
 
             translationResults.put(srcFile, binaryMetadata, binaryAst)
+        }
+
+        for ((srcFile, inlineDeclarations) in incrementalResults.inlineFunctions) {
+            inlineFunctions.process(srcFile, inlineDeclarations, changesCollector)
         }
     }
 
@@ -186,4 +196,31 @@ fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>
         classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
     }
     return classes
+}
+
+private class InlineFunctionsMap(storageFile: File) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
+    fun process(srcFile: File, newMap: Map<String, Long>, changesCollector: ChangesCollector) {
+        val key = srcFile.canonicalPath
+        val oldMap = storage[key] ?: emptyMap()
+
+        if (newMap.isNotEmpty()) {
+            storage[key] = newMap
+        }
+        else {
+            storage.remove(key)
+        }
+
+        for (fn in oldMap.keys + newMap.keys) {
+            val fqNameSegments = fn.removePrefix("<get>").removePrefix("<set>").split(".")
+            val fqName = FqName.fromSegments(fqNameSegments)
+            changesCollector.collectMemberIfValueWasChanged(fqName.parent(), fqName.shortName().asString(), oldMap[fn], newMap[fn])
+        }
+    }
+
+    fun remove(sourceFile: File) {
+        storage.remove(sourceFile.canonicalPath)
+    }
+
+    override fun dumpValue(value: Map<String, Long>): String =
+            value.dumpMap { java.lang.Long.toHexString(it) }
 }
