@@ -30,3 +30,8 @@ private fun throwCCE() {
 private fun throwISE(message: String) {
     throw IllegalStateException(message)
 }
+
+@JsName("throwUPAE")
+private fun throwUPAE(propertyName: String) {
+    throw UninitializedPropertyAccessException("lateinit property ${propertyName} has not been initialized")
+}
