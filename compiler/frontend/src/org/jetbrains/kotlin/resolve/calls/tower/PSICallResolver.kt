@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.*
-import org.jetbrains.kotlin.resolve.calls.results.ManyCandidates
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
@@ -93,7 +93,8 @@ class PSICallResolver(
         val factoryProviderForInvoke = FactoryProviderForInvoke(context, scopeTower, kotlinCall)
 
         val expectedType = calculateExpectedType(context)
-        var result = kotlinCallResolver.resolveCall(scopeTower, resolutionCallbacks, kotlinCall, expectedType, factoryProviderForInvoke)
+        var result = kotlinCallResolver.resolveCall(
+                scopeTower, resolutionCallbacks, kotlinCall, expectedType, factoryProviderForInvoke, context.collectAllCandidates)
 
         val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
         if (isBinaryRemOperator && shouldUseOperatorRem && (result.isEmpty() || result.areAllInapplicable())) {
@@ -125,7 +126,8 @@ class PSICallResolver(
                            it.knownTypeParametersResultingSubstitutor)
         }
 
-        val result = kotlinCallResolver.resolveGivenCandidates(scopeTower, resolutionCallbacks, kotlinCall, calculateExpectedType(context), givenCandidates)
+        val result = kotlinCallResolver.resolveGivenCandidates(
+                scopeTower, resolutionCallbacks, kotlinCall, calculateExpectedType(context), givenCandidates, context.collectAllCandidates)
         return convertToOverloadResolutionResults(context, result, tracingStrategy)
 
     }
@@ -142,7 +144,8 @@ class PSICallResolver(
         val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[remOperatorName]!!
         val callWithDeprecatedName = toKotlinCall(context, resolutionKind.kotlinCallKind, context.call, deprecatedName, tracingStrategy)
         val refinedProviderForInvokeFactory = FactoryProviderForInvoke(context, scopeTower, callWithDeprecatedName)
-        return kotlinCallResolver.resolveCall(scopeTower, resolutionCallbacks, callWithDeprecatedName, expectedType, refinedProviderForInvokeFactory)
+        return kotlinCallResolver.resolveCall(scopeTower, resolutionCallbacks, callWithDeprecatedName, expectedType,
+                                              refinedProviderForInvokeFactory, context.collectAllCandidates)
     }
 
     private fun refineNameForRemOperator(isBinaryRemOperator: Boolean, name: Name): Name {
@@ -173,6 +176,15 @@ class PSICallResolver(
             result: CallResolutionResult,
             tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
+        if (result.type == CallResolutionResult.Type.ALL_CANDIDATES) {
+            val resolvedCalls = result.allCandidates?.map {
+                val resultingSubstitutor = it.getSystem().asReadOnlyStorage().buildResultingSubstitutor()
+                kotlinToResolvedCallTransformer.transformToResolvedCall<D>(it.resolvedCall, false, resultingSubstitutor)
+            }
+
+            return AllCandidates(resolvedCalls ?: emptyList())
+        }
+
         val trace = context.trace
 
         result.diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>()?.let {
@@ -559,8 +571,10 @@ class PSICallResolver(
                                                            ktExpression, argumentName, lhsNewResult, name)
         }
 
-        // valueArgument.getArgumentExpression()!! instead of ktExpression is hack -- type info should be stored also for parenthesized expression
-        val typeInfo = expressionTypingServices.getTypeInfo(valueArgument.getArgumentExpression()!!, context)
+        val argumentExpression = valueArgument.getArgumentExpression() ?: return parseErrorArgument
+
+        // argumentExpression instead of ktExpression is hack -- type info should be stored also for parenthesized expression
+        val typeInfo = expressionTypingServices.getTypeInfo(argumentExpression, context)
         return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: parseErrorArgument
     }
 

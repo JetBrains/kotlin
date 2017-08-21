@@ -98,6 +98,7 @@ class KotlinToResolvedCallTransformer(
 
                 return ktPrimitiveCompleter.completeResolvedCall(candidate) as ResolvedCall<D>
             }
+            CallResolutionResult.Type.ALL_CANDIDATES -> error("Cannot transform result for ALL_CANDIDATES mode")
         }
     }
 

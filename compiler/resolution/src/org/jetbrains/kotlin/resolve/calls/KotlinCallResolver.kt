@@ -38,7 +38,8 @@ class KotlinCallResolver(
             resolutionCallbacks: KotlinResolutionCallbacks,
             kotlinCall: KotlinCall,
             expectedType: UnwrappedType?,
-            factoryProviderForInvoke: CandidateFactoryProviderForInvoke<KotlinResolutionCandidate>
+            factoryProviderForInvoke: CandidateFactoryProviderForInvoke<KotlinResolutionCandidate>,
+            collectAllCandidates: Boolean
     ): CallResolutionResult {
         kotlinCall.checkCallInvariants()
 
@@ -53,6 +54,11 @@ class KotlinCallResolver(
             KotlinCallKind.UNSUPPORTED -> throw UnsupportedOperationException()
         }
 
+        if (collectAllCandidates) {
+            val allCandidates = towerResolver.collectAllCandidates(scopeTower, processor)
+            return kotlinCallCompleter.createAllCandidatesResult(allCandidates, expectedType, resolutionCallbacks)
+        }
+
         val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = kotlinCall.callKind != KotlinCallKind.UNSUPPORTED)
 
         return choseMostSpecific(candidateFactory, resolutionCallbacks, expectedType, candidates)
@@ -63,12 +69,21 @@ class KotlinCallResolver(
             resolutionCallbacks: KotlinResolutionCallbacks,
             kotlinCall: KotlinCall,
             expectedType: UnwrappedType?,
-            givenCandidates: Collection<GivenCandidate>
+            givenCandidates: Collection<GivenCandidate>,
+            collectAllCandidates: Boolean
     ): CallResolutionResult {
         kotlinCall.checkCallInvariants()
         val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall)
 
         val resolutionCandidates = givenCandidates.map { candidateFactory.createCandidate(it).forceResolution() }
+
+        if (collectAllCandidates) {
+            val allCandidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
+                                                                    TowerResolver.AllCandidatesCollector(),
+                                                                    useOrder = false)
+            return kotlinCallCompleter.createAllCandidatesResult(allCandidates, expectedType, resolutionCallbacks)
+
+        }
         val candidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolutionCandidates),
                                                              TowerResolver.SuccessfulResultCollector(),
                                                              useOrder = true)

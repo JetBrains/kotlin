@@ -68,7 +68,25 @@ class KotlinCallCompleter(
         else {
             CallResolutionResult(CallResolutionResult.Type.PARTIAL, candidate.resolvedCall, diagnosticHolder.getDiagnostics(), constraintSystem.asReadOnlyStorage())
         }
+    }
 
+    fun createAllCandidatesResult(
+            candidates: Collection<KotlinResolutionCandidate>,
+            expectedType: UnwrappedType?,
+            resolutionCallbacks: KotlinResolutionCallbacks
+    ): CallResolutionResult {
+        val diagnosticsHolder = KotlinDiagnosticsHolder.SimpleHolder()
+        for (candidate in candidates) {
+            candidate.prepareForCompletion(expectedType)
+            runCompletion(
+                    candidate.resolvedCall,
+                    ConstraintSystemCompletionMode.FULL,
+                    diagnosticsHolder,
+                    candidate.getSystem(),
+                    resolutionCallbacks,
+                    skipPostponedArguments = true)
+        }
+        return CallResolutionResult(CallResolutionResult.Type.ALL_CANDIDATES, null, emptyList(), ConstraintStorage.Empty, candidates)
     }
 
     private  fun runCompletion(
@@ -76,11 +94,14 @@ class KotlinCallCompleter(
             completionMode: ConstraintSystemCompletionMode,
             diagnosticsHolder: KotlinDiagnosticsHolder,
             constraintSystem: NewConstraintSystem,
-            resolutionCallbacks: KotlinResolutionCallbacks
+            resolutionCallbacks: KotlinResolutionCallbacks,
+            skipPostponedArguments: Boolean = false
     ) {
         val returnType = resolvedCallAtom.freshReturnType ?: constraintSystem.builtIns.unitType
         kotlinConstraintSystemCompleter.runCompletion(constraintSystem.asConstraintSystemCompleterContext(), completionMode, resolvedCallAtom, returnType) {
-            postponedArgumentsAnalyzer.analyze(constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it)
+            if (!skipPostponedArguments) {
+                postponedArgumentsAnalyzer.analyze(constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it)
+            }
         }
 
         constraintSystem.diagnostics.forEach(diagnosticsHolder::addDiagnostic)

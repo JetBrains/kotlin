@@ -150,14 +150,16 @@ class CallResolutionResult(
         val type: Type,
         val resultCallAtom: ResolvedCallAtom?,
         diagnostics: List<KotlinCallDiagnostic>,
-        val constraintSystem: ConstraintStorage
+        val constraintSystem: ConstraintStorage,
+        val allCandidates: Collection<KotlinResolutionCandidate>? = null
 ) : ResolvedAtom() {
     override val atom: ResolutionAtom? get() = null
 
     enum class Type {
         COMPLETED, // resultSubstitutor possible create use constraintSystem
         PARTIAL,
-        ERROR // if resultCallAtom == null it means that there is errors NoneCandidates or ManyCandidates
+        ERROR, // if resultCallAtom == null it means that there is errors NoneCandidates or ManyCandidates
+        ALL_CANDIDATES // allCandidates != null
     }
 
     init {
