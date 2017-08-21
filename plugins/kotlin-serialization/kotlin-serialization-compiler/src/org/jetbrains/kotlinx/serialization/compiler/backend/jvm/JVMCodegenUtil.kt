@@ -23,16 +23,17 @@ import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerialTypeInfo
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findPolymorphicSerializer
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.requiresPolymorphism
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperty
+import org.jetbrains.kotlinx.serialization.compiler.resolve.internalPackageFqName
+import org.jetbrains.kotlinx.serialization.compiler.resolve.toClassDescriptor
+import org.jetbrains.kotlinx.serialization.compiler.resolve.typeSerializer
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -154,9 +155,10 @@ internal fun stackValueSerializerInstance(codegen: ClassBodyCodegen, module: Mod
                 signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
             }
             referenceArraySerializerId -> {
-                // a special way to instantiate reference array serializer -- need an element java.lang.Class reference
+                // a special way to instantiate reference array serializer -- need an element KClass reference
                 aconst(codegen.typeMapper.mapType(kType.arguments[0].type, null, TypeMappingMode.GENERIC_ARGUMENT))
-                signature.append("Ljava/lang/Class;")
+                AsmUtil.wrapJavaClassIntoKClass(this)
+                signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
             }
         }
         // all serializers get arguments with serializers of their generic types

@@ -159,15 +159,15 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
             return getQualifiedClassReferenceName(serializerClass)
         }
         else {
-            val args = when {
-                serializerClass.classId == enumSerializerId -> listOf(createGetKClassExpression(kType.toClassDescriptor!!))
-                serializerClass.classId == referenceArraySerializerId -> TODO("arrays are not supported yet")
-                else -> kType.arguments.map {
-                    val argSer = findTypeSerializer(module, it.type) ?: return null
-                    val expr = serializerInstance(argSer, module, it.type) ?: return null
-                    if (it.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
-                }
+            var args = if (serializerClass.classId == enumSerializerId)
+                listOf(createGetKClassExpression(kType.toClassDescriptor!!))
+            else kType.arguments.map {
+                val argSer = findTypeSerializer(module, it.type) ?: return null
+                val expr = serializerInstance(argSer, module, it.type) ?: return null
+                if (it.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
             }
+            if (serializerClass.classId == referenceArraySerializerId)
+               args = listOf(createGetKClassExpression(kType.arguments[0].type.toClassDescriptor!!)) + args
             return JsNew(getQualifiedClassReferenceName(serializerClass), args)
         }
     }
