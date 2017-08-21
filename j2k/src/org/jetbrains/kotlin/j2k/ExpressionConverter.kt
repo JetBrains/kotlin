@@ -304,7 +304,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 val v = BigInteger(text.substring(2).replace("L", ""), 16)
                 if (text.contains("L")) {
                     if (v.bitLength() > 63) {
-                        text = "-0x${v.toLong().toString(16).substring(1)}"
+                        text = "-0x${v.toLong().toString(16).substring(1)}L"
                     }
                 }
                 else {
