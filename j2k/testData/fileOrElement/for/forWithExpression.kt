@@ -1,1 +1,1 @@
-for (i in 0..-1) t++
+for (i in 0 until 0) t++

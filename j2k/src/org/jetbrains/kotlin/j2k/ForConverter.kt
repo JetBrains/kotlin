@@ -209,7 +209,7 @@ class ForConverter(
         return if (reversed)
             DownToExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else +1))
         else
-            RangeExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else -1))
+            UntilExpression(startConverted, convertBound(bound, if (inclusiveComparison) +1 else 0))
     }
 
     private fun indicesIterationRange(start: PsiExpression, bound: PsiExpression, reversed: Boolean, inclusiveComparison: Boolean): Expression? {

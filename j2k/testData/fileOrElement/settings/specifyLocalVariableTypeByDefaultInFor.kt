@@ -1,7 +1,7 @@
 // !specifyLocalVariableTypeByDefault: true
 fun foo(list: List<String>) {
     val array: IntArray = IntArray(10)
-    for (i: Int in 0..9) {
+    for (i: Int in 0 until 10) {
         array[i] = i
     }
 

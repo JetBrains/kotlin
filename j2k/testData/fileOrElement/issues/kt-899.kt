@@ -1,18 +1,18 @@
 internal class Test {
     fun printNumbers() {
-        for (i1 in 0..0)
+        for (i1 in 0 until 1)
             println(i1)
 
         val b: Byte = 1
-        for (i2 in 0..b - 1)
+        for (i2 in 0 until b)
             println(i2)
 
         val s: Short = 1
-        for (i3 in 0..s - 1)
+        for (i3 in 0 until s)
             println(i3)
 
         val l = 1L
-        for (i4 in 0..l - 1)
+        for (i4 in 0 until l)
             println(i4)
 
         val d = 1.0
