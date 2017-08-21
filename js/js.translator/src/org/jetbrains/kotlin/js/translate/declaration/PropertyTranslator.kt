@@ -94,6 +94,11 @@ class DefaultPropertyTranslator(
         assert(!descriptor.isExtension) { "Unexpected extension property $descriptor}" }
         assert(descriptor is PropertyDescriptor) { "Property descriptor expected: $descriptor" }
         val result = backingFieldReference(context(), descriptor as PropertyDescriptor)
+        if (getterDescriptor is PropertyAccessorDescriptor && getterDescriptor.correspondingProperty.isLateInit) {
+            function.body.statements += JsIf(JsBinaryOperation(JsBinaryOperator.EQ, result, JsNullLiteral()),
+                                             JsReturn(JsInvocation(Namer.throwUninitializedPropertyAccessExceptionFunRef(),
+                                                                   JsStringLiteral(getterDescriptor.correspondingProperty.name.asString()))))
+        }
         function.body.statements += JsReturn(result).apply { source = descriptor.source.getPsi() }
     }
 

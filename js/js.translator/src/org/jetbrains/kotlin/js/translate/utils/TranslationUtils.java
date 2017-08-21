@@ -333,7 +333,7 @@ public final class TranslationUtils {
     }
 
     private static boolean shouldAccessViaFunctions(@NotNull PropertyDescriptor property) {
-        if (AnnotationsUtils.hasJsNameInAccessors(property)) return true;
+        if (AnnotationsUtils.hasJsNameInAccessors(property) || property.isLateInit()) return true;
         for (PropertyDescriptor overriddenProperty : property.getOverriddenDescriptors()) {
             if (shouldAccessViaFunctions(overriddenProperty)) return true;
         }

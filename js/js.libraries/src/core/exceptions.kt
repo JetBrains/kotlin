@@ -43,3 +43,5 @@ public open class AssertionError(message: String? = null) : Error(message)
 public open class NoSuchElementException(message: String? = null) : Exception(message)
 
 public open class NoWhenBranchMatchedException(message: String? = null) : RuntimeException(message)
+
+public open class UninitializedPropertyAccessException(message: String? = null) : RuntimeException(message)
