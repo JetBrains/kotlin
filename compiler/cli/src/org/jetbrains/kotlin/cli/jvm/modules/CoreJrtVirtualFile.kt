@@ -27,7 +27,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 
-class CoreLocalPathVirtualFile(private val fileSystem: VirtualFileSystem, private val path: Path) : VirtualFile() {
+internal class CoreJrtVirtualFile(private val fileSystem: VirtualFileSystem, private val path: Path) : VirtualFile() {
     // TODO: catch IOException?
     private val attributes: BasicFileAttributes get() = Files.readAttributes(path, BasicFileAttributes::class.java)
 
@@ -47,7 +47,7 @@ class CoreLocalPathVirtualFile(private val fileSystem: VirtualFileSystem, privat
 
     override fun getParent(): VirtualFile? {
         val parentPath = path.parent
-        return if (parentPath != null) CoreLocalPathVirtualFile(fileSystem, parentPath) else null
+        return if (parentPath != null) CoreJrtVirtualFile(fileSystem, parentPath) else null
     }
 
     override fun getChildren(): Array<out VirtualFile> {
@@ -59,7 +59,7 @@ class CoreLocalPathVirtualFile(private val fileSystem: VirtualFileSystem, privat
         }
         return when {
             paths.isEmpty() -> VirtualFile.EMPTY_ARRAY
-            else -> paths.map { path -> CoreLocalPathVirtualFile(fileSystem, path) }.toTypedArray()
+            else -> paths.map { path -> CoreJrtVirtualFile(fileSystem, path) }.toTypedArray()
         }
     }
 
@@ -82,7 +82,7 @@ class CoreLocalPathVirtualFile(private val fileSystem: VirtualFileSystem, privat
     override fun getModificationStamp(): Long = 0
 
     override fun equals(other: Any?): Boolean =
-            other is CoreLocalPathVirtualFile && path == other.path && fileSystem == other.fileSystem
+            other is CoreJrtVirtualFile && path == other.path && fileSystem == other.fileSystem
 
     override fun hashCode(): Int =
             path.hashCode()
