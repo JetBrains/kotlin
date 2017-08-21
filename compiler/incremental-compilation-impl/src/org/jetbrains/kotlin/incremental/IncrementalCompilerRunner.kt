@@ -111,7 +111,7 @@ abstract class IncrementalCompilerRunner<
         val dirtyFiles = HashSet<File>(with(changedFiles) { modified.size + removed.size })
         with(changedFiles) {
             modified.asSequence() + removed.asSequence()
-        }.forEach { if (it.isKotlinFile()) dirtyFiles.add(it) }
+        }.filterTo(dirtyFiles, File::isKotlinFile)
 
         if (dirtySourcesSinceLastTimeFile.exists()) {
             val files = dirtySourcesSinceLastTimeFile.readLines().map(::File).filter(File::exists)
