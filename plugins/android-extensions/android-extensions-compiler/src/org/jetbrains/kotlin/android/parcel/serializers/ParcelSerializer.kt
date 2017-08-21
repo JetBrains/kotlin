@@ -201,7 +201,7 @@ interface ParcelSerializer {
                     if (strict && !type.annotations.hasAnnotation(RAWVALUE_ANNOTATION_FQNAME))
                         throw IllegalArgumentException("Illegal type")
                     else
-                        GenericParcelSerializer
+                        GenericParcelSerializer(asmType)
                 }
             }
         }

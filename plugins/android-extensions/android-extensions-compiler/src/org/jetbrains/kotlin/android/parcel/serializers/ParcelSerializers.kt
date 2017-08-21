@@ -25,9 +25,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 internal val PARCEL_TYPE = Type.getObjectType("android/os/Parcel")
 
-internal object GenericParcelSerializer : ParcelSerializer {
-    override val asmType: Type = Type.getObjectType("java/lang/Object")
-
+internal class GenericParcelSerializer(override val asmType: Type) : ParcelSerializer {
     override fun writeValue(v: InstructionAdapter) {
         v.invokevirtual(PARCEL_TYPE.internalName, "writeValue", "(Ljava/lang/Object;)V", false)
     }
@@ -36,6 +34,7 @@ internal object GenericParcelSerializer : ParcelSerializer {
         v.aconst(asmType) // -> parcel, type
         v.invokevirtual("java/lang/Class", "getClassLoader", "()Ljava/lang/ClassLoader;", false) // -> parcel, classloader
         v.invokevirtual(PARCEL_TYPE.internalName, "readValue", "(Ljava/lang/ClassLoader;)Ljava/lang/Object;", false)
+        v.castIfNeeded(asmType)
     }
 }
 

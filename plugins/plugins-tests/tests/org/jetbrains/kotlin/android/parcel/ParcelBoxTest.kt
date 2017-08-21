@@ -47,4 +47,6 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testObjects() = doTest("objects")
     fun testNestedParcelable() = doTest("nestedParcelable")
     fun testKt19749() = doTest("kt19749")
+    fun testKt19747() = doTest("kt19747")
+    fun testKt19747_2() = doTest("kt19747_2")
 }
