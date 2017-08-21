@@ -211,12 +211,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("accessingFunctionsViaRenamedFileClass")
-        public void testAccessingFunctionsViaRenamedFileClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/accessingFunctionsViaRenamedFileClass/");
-            doTest(fileName);
-        }
-
         @TestMetadata("accessingPropertiesViaField")
         public void testAccessingPropertiesViaField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/accessingPropertiesViaField/");
@@ -380,12 +374,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("defaultValueChanged")
         public void testDefaultValueChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueChanged/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("defaultValueInConstructorAdded")
-        public void testDefaultValueInConstructorAdded() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueInConstructorAdded/");
             doTest(fileName);
         }
 
@@ -1158,6 +1146,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Other extends AbstractIncrementalJpsTest {
+            @TestMetadata("accessingFunctionsViaRenamedFileClass")
+            public void testAccessingFunctionsViaRenamedFileClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/accessingFunctionsViaRenamedFileClass/");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInOther() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
@@ -1171,6 +1165,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             @TestMetadata("conflictingPlatformDeclarations")
             public void testConflictingPlatformDeclarations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/conflictingPlatformDeclarations/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("defaultValueInConstructorAdded")
+            public void testDefaultValueInConstructorAdded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/defaultValueInConstructorAdded/");
                 doTest(fileName);
             }
 
