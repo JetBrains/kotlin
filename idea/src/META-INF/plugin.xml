@@ -146,6 +146,10 @@
                 text="Local scenario"/>
       </group>
 
+      <action id="HighlightingBenchmarkAction"
+              class="org.jetbrains.kotlin.idea.actions.internal.benchmark.HighlightingBenchmarkAction"
+              text="Benchmark highlighting"/>
+
       <action id="CompletionBindingContextCachingToggleAction"
               class="org.jetbrains.kotlin.idea.actions.internal.CompletionBindingContextCachingToggleAction"
               text="Enable completion binding context caching"/>
