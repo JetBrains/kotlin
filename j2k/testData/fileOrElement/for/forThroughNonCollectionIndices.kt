@@ -6,7 +6,7 @@ internal class X {
 
 internal class C {
     fun foo(x: X) {
-        for (i in 0..x.size() - 1) {
+        for (i in 0 until x.size()) {
             print(i)
         }
     }
