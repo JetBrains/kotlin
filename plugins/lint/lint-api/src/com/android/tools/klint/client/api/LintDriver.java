@@ -81,7 +81,7 @@ import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiNameValuePair;
 
-import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.*;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
@@ -2609,9 +2609,8 @@ public class LintDriver {
         boolean checkComments = mClient.checkForSuppressComments() &&
                 context != null && context.containsCommentSuppress();
         while (scope != null) {
-            if (scope instanceof PsiModifierListOwner) {
-                PsiModifierListOwner owner = (PsiModifierListOwner) scope;
-                if (isSuppressed(issue, owner.getModifierList())) {
+            if (scope instanceof UAnnotated) {
+                if (isSuppressed(issue, (UAnnotated) scope)) {
                     return true;
                 }
             }
@@ -2621,7 +2620,7 @@ public class LintDriver {
             }
 
             scope = scope.getUastParent();
-            if (scope instanceof PsiFile) {
+            if (scope instanceof UFile) {
                 return false;
             }
         }
@@ -2817,6 +2816,38 @@ public class LintDriver {
             }
 
             node = node.getParentNode();
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns true if the given AST modifier has a suppress annotation for the
+     * given issue (which can be null to check for the "all" annotation)
+     *
+     * @param issue the issue to be checked
+     * @param element the element to check
+     * @return true if the issue or all issues should be suppressed for this
+     *         element
+     */
+    public static boolean isSuppressed(@NonNull Issue issue,
+            @Nullable UAnnotated element) {
+        if (element == null) {
+            return false;
+        }
+
+        for (UAnnotation annotation : element.getAnnotations()) {
+            String fqcn = annotation.getQualifiedName();
+            if (fqcn != null && (fqcn.equals(FQCN_SUPPRESS_LINT)
+                                 || fqcn.equals(SUPPRESS_WARNINGS_FQCN)
+                                 || fqcn.equals(SUPPRESS_LINT))) { // when missing imports
+                for (UNamedExpression attribute : annotation.getAttributeValues()) {
+                    Object value = attribute.getExpression().evaluate();
+                    if (value instanceof String && isSuppressed(issue, (String) value)) {
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;

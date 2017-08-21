@@ -73,7 +73,7 @@ class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) 
 
         // This one should not be reported:
         @SuppressLint("UseSparseArrays")
-        val myOtherMap = <warning descr="Use `new SparseArray<Object>(...)` instead for better performance">HashMap<Int, Any>()</warning>
+        val myOtherMap = HashMap<Int, Any>()
     }
 
     protected fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int,
