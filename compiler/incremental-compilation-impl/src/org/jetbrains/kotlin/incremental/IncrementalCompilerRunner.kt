@@ -105,8 +105,7 @@ abstract class IncrementalCompilerRunner<
                 is ChangedFiles.Unknown -> CompilationMode.Rebuild { "inputs' changes are unknown (first or clean build)" }
             }
 
-    protected open fun calculateSourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles.Known, args: Args): CompilationMode =
-            CompilationMode.Incremental(getDirtyFiles(changedFiles))
+    protected abstract fun calculateSourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles.Known, args: Args): CompilationMode
 
     protected fun getDirtyFiles(changedFiles: ChangedFiles.Known): HashSet<File> {
         val dirtyFiles = HashSet<File>(with(changedFiles) { modified.size + removed.size })
