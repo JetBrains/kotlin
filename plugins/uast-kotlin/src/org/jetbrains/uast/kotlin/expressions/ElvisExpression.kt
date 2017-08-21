@@ -2,8 +2,11 @@ package org.jetbrains.uast.kotlin.expressions
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.CommonSupertypes
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.*
 import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
@@ -69,7 +72,7 @@ fun createElvisExpression(elvisExpression: KtBinaryExpression, containingElement
     val left = elvisExpression.left ?: return UastEmptyExpression
     val right = elvisExpression.right ?: return UastEmptyExpression
 
-    return object : UExpressionList, KotlinEvaluatableUElement, KotlinUElementWithType {
+    return object : UExpressionList, KotlinEvaluatableUElement {
         override val psi: PsiElement? = elvisExpression
         override val kind = KotlinSpecialExpressionKinds.ELVIS
         override val uastParent: UElement? = containingElement
@@ -77,9 +80,19 @@ fun createElvisExpression(elvisExpression: KtBinaryExpression, containingElement
         override val expressions: List<UExpression> by lz {
             createElvisExpressions(left, right, this, elvisExpression.parent)
         }
-        override fun asRenderString(): String = kind.name + " " +
-                expressions.joinToString(separator = "\n", prefix = "{\n", postfix = "\n}") {
-                    it.asRenderString().withMargin
-                }
+        override fun asRenderString(): String {
+            return kind.name + " " +
+                   expressions.joinToString(separator = "\n", prefix = "{\n", postfix = "\n}") {
+                       it.asRenderString().withMargin
+                   }
+        }
+        override fun getExpressionType(): PsiType? {
+            val leftType = left.analyze()[BindingContext.EXPRESSION_TYPE_INFO, left]?.type ?: return null
+            val rightType = right.analyze()[BindingContext.EXPRESSION_TYPE_INFO, right]?.type ?: return null
+
+            return CommonSupertypes
+                    .commonSupertype(listOf(leftType, rightType))
+                    .toPsiType(this, elvisExpression, boxed = false)
+        }
     }
 }

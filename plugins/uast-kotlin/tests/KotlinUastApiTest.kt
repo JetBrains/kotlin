@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.uast.*
 import org.jetbrains.uast.test.env.findElementByText
-import org.jetbrains.uast.visitor.UastVisitor
 import org.junit.Assert
 import org.junit.Test
 
@@ -96,6 +95,13 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             setter2.uastParameters.first().annotations.single { it.qualifiedName == "MyAnnotation" }
 
             test2.fields.find { it.name == "bar" }!!.annotations.single { it.qualifiedName == "MyAnnotation" }
+        }
+    }
+
+    @Test fun testElvisType() {
+        doTest("ElvisType") { _, file ->
+            val elvisExpression = file.findElementByText<UExpression>("text ?: return")
+            assertEquals("String", elvisExpression.getExpressionType()!!.presentableText)
         }
     }
 }
