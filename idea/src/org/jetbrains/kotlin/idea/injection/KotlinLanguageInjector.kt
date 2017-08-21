@@ -74,7 +74,7 @@ class KotlinLanguageInjector(
 
         val support = kotlinSupport ?: return
 
-        if (!ProjectRootsUtil.isInProjectOrLibSource(ktHost)) return
+        if (!ProjectRootsUtil.isInProjectOrLibSource(ktHost.containingFile.originalFile)) return
 
         val needImmediateAnswer = with(ApplicationManager.getApplication()) { isDispatchThread && !isUnitTestMode }
         val kotlinCachedInjection = ktHost.cachedInjectionWithModification
