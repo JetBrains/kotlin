@@ -420,7 +420,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun doCompileModuleChunk(
             allCompiledFiles: MutableSet<File>, chunk: ModuleChunk, commonArguments: CommonCompilerArguments, context: CompileContext,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>, environment: JpsCompilerEnvironment,
-            filesToCompile: MultiMap<ModuleBuildTarget, File>, incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
+            filesToCompile: MultiMap<ModuleBuildTarget, File>, incrementalCaches: Map<ModuleBuildTarget, IncrementalJvmCache>,
             project: JpsProject
     ): OutputItemsCollector? {
 
@@ -539,7 +539,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
             outputItems: Map<ModuleBuildTarget, Iterable<GeneratedFile>>,
-            incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCacheImpl>
+            incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalJvmCache>
     ) {
         val previousMappings = context.projectDescriptor.dataManager.mappings
         val callback = JavaBuilderUtil.getDependenciesRegistrar(context)
@@ -779,7 +779,7 @@ private fun ChangesCollector.processChangesUsingLookups(
         compiledFiles: Set<File>,
         dataManager: BuildDataManager,
         fsOperations: FSOperationsHelper,
-        caches: Iterable<IncrementalCacheImpl>
+        caches: Iterable<IncrementalJvmCache>
 ) {
     val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
     val allCaches = caches.flatMap { it.thisWithDependentCaches }
@@ -803,7 +803,7 @@ private fun getLookupTracker(project: JpsProject): LookupTracker {
     return testLookupTracker
 }
 
-private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext): Map<ModuleBuildTarget, JpsIncrementalCacheImpl> {
+private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext): Map<ModuleBuildTarget, JpsIncrementalJvmCache> {
     val dependentTargets = getDependentTargets(chunk, context)
 
     val dataManager = context.projectDescriptor.dataManager

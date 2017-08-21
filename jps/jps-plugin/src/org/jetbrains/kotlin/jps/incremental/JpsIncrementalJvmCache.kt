@@ -21,14 +21,14 @@ import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.StorageOwner
-import org.jetbrains.kotlin.incremental.IncrementalCacheImpl
+import org.jetbrains.kotlin.incremental.IncrementalJvmCache
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import java.io.File
 
-class JpsIncrementalCacheImpl(
+class JpsIncrementalJvmCache(
         target: ModuleBuildTarget,
         paths: BuildDataPaths
-) : IncrementalCacheImpl(paths.getTargetDataRoot(target), target.outputDir), StorageOwner {
+) : IncrementalJvmCache(paths.getTargetDataRoot(target), target.outputDir), StorageOwner {
     override fun debugLog(message: String) {
         KotlinBuilder.LOG.debug(message)
     }
@@ -37,16 +37,16 @@ class JpsIncrementalCacheImpl(
 private class KotlinIncrementalStorageProvider(
         private val target: ModuleBuildTarget,
         private val paths: BuildDataPaths
-) : StorageProvider<JpsIncrementalCacheImpl>() {
+) : StorageProvider<JpsIncrementalJvmCache>() {
 
     override fun equals(other: Any?) = other is KotlinIncrementalStorageProvider && target == other.target
 
     override fun hashCode() = target.hashCode()
 
-    override fun createStorage(targetDataDir: File): JpsIncrementalCacheImpl =
-            JpsIncrementalCacheImpl(target, paths)
+    override fun createStorage(targetDataDir: File): JpsIncrementalJvmCache =
+            JpsIncrementalJvmCache(target, paths)
 }
 
-fun BuildDataManager.getKotlinCache(target: ModuleBuildTarget): JpsIncrementalCacheImpl =
+fun BuildDataManager.getKotlinCache(target: ModuleBuildTarget): JpsIncrementalJvmCache =
         getStorage(target, KotlinIncrementalStorageProvider(target, dataPaths))
 
