@@ -194,8 +194,8 @@ interface ParcelSerializer {
                 }
 
                 type.isSerializable() -> NullCompliantObjectParcelSerializer(asmType,
-                        Method("writeSerializable"),
-                        Method("readSerializable"))
+                        Method("writeSerializable", "(Ljava/io/Serializable;)V"),
+                        Method("readSerializable", "()Ljava/io/Serializable;"))
 
                 else -> {
                     if (strict && !type.annotations.hasAnnotation(RAWVALUE_ANNOTATION_FQNAME))

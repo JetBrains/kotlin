@@ -21,9 +21,11 @@ public static class User$Creator : java/lang/Object, android/os/Parcelable$Creat
           NEW
           DUP
           ALOAD (1)
-          INVOKEVIRTUAL (android/os/Parcel, readSerializable, ()LSerializableSimple;)
+          INVOKEVIRTUAL (android/os/Parcel, readSerializable, ()Ljava/io/Serializable;)
+          CHECKCAST
           ALOAD (1)
-          INVOKEVIRTUAL (android/os/Parcel, readSerializable, ()LSerializableSimple;)
+          INVOKEVIRTUAL (android/os/Parcel, readSerializable, ()Ljava/io/Serializable;)
+          CHECKCAST
           INVOKESPECIAL (User, <init>, (LSerializableSimple;LSerializableSimple;)V)
           ARETURN
         LABEL (L1)
@@ -63,11 +65,11 @@ public final class User : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           ALOAD (0)
           GETFIELD (notNull, LSerializableSimple;)
-          INVOKEVIRTUAL (android/os/Parcel, writeSerializable, (LSerializableSimple;)V)
+          INVOKEVIRTUAL (android/os/Parcel, writeSerializable, (Ljava/io/Serializable;)V)
           ALOAD (1)
           ALOAD (0)
           GETFIELD (nullable, LSerializableSimple;)
-          INVOKEVIRTUAL (android/os/Parcel, writeSerializable, (LSerializableSimple;)V)
+          INVOKEVIRTUAL (android/os/Parcel, writeSerializable, (Ljava/io/Serializable;)V)
           RETURN
         LABEL (L1)
     }
