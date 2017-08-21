@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi
 
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import org.intellij.lang.regexp.RegExpLanguage
@@ -435,6 +436,9 @@ class KotlinInjectionTest : AbstractInjectionTest() {
                     HTMLLanguage.INSTANCE.id,
                     unInjectShouldBePresent = false
             )
+
+            assertSameElements(myFixture.complete(CompletionType.BASIC).flatMap { it.allLookupStrings },
+                               "html")
         }
         finally {
             Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
