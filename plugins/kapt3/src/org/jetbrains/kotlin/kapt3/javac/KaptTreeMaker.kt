@@ -27,6 +27,7 @@ import com.sun.tools.javac.util.Name
 import com.sun.tools.javac.util.Names
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.kapt3.KaptContext
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -45,6 +46,12 @@ class KaptTreeMaker(context: Context, private val kaptContext: KaptContext<*>) :
     fun FqName(internalOrFqName: String): JCTree.JCExpression {
         val path = getQualifiedName(internalOrFqName).convertSpecialFqName().split('.')
         assert(path.isNotEmpty())
+        return FqName(path)
+    }
+
+    fun FqName(fqName: FqName) = FqName(fqName.pathSegments().map { it.asString() })
+
+    private fun FqName(path: List<String>): JCTree.JCExpression {
         if (path.size == 1) return SimpleName(path.single())
 
         var expr = Select(SimpleName(path[0]), name(path[1]))
