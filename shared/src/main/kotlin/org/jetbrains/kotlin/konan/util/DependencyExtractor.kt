@@ -14,7 +14,6 @@ class DependencyExtractor {
     }
 
     private fun extractTarGz(tarGz: File, targetDirectory: File) {
-        println("Extract dependency: ${tarGz.canonicalPath} in ${targetDirectory.canonicalPath}")
         val tarProcess = ProcessBuilder().apply {
             command("tar", "-xzf", tarGz.canonicalPath)
             directory(targetDirectory)

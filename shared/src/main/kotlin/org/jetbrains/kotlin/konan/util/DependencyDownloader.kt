@@ -1,16 +1,16 @@
 package org.jetbrains.kotlin.konan.util
 
-import java.io.EOFException
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
+import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLConnection
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 class DependencyDownloader(
         var maxAttempts: Int = DEFAULT_MAX_ATTEMPTS,
-        var attemptIntervalMs: Long = DEFAULT_ATTEMPT_INTERVAL_MS) {
+        var attemptIntervalMs: Long = DEFAULT_ATTEMPT_INTERVAL_MS
+) {
 
     enum class ReplacingMode {
         /** Redownload the file and replace the existing one. */
@@ -21,31 +21,72 @@ class DependencyDownloader(
         RETURN_EXISTING
     }
 
-    /** Performs an attempt to download a specified file into the specified location */
-    fun tryDownload(url: URL, dstFile: File) {
-        val connection = url.openConnection()
-        val totalBytes = connection.contentLengthLong
-        var currentBytes = 0L
-
-        try {
-            url.openStream().use { from ->
-                FileOutputStream(dstFile, false).use { to ->
-                    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-                    var read = from.read(buffer)
-                    while (read != -1) {
-                        to.write(buffer, 0, read)
-                        currentBytes += read
-                        updateProgressMsg(url.toString(), currentBytes, totalBytes)
-                        read = from.read(buffer)
-                    }
-                    if (currentBytes != totalBytes) {
-                        throw EOFException("The stream closed before end of downloading.")
-                    }
+    private fun doDownload(originalUrl: URL,
+                           connection: URLConnection,
+                           tmpFile: File,
+                           currentBytes: Long,
+                           totalBytes: Long,
+                           append: Boolean) {
+        @Suppress("NAME_SHADOWING")
+        var currentBytes = currentBytes
+        connection.getInputStream().use { from ->
+            FileOutputStream(tmpFile, append).use { to ->
+                val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                var read = from.read(buffer)
+                while (read != -1) {
+                    to.write(buffer, 0, read)
+                    currentBytes += read
+                    updateProgressMsg(originalUrl.toString(), currentBytes, totalBytes)
+                    read = from.read(buffer)
+                }
+                if (currentBytes != totalBytes) {
+                    throw EOFException("The stream closed before end of downloading.")
                 }
             }
-        } catch (e: Throwable) {
-            dstFile.delete()
+        }
+    }
+
+    private fun tryHttpDownload(originalUrl: URL, connection: HttpURLConnection, tmpFile: File) {
+        @Suppress("NAME_SHADOWING")
+        var connection = connection
+        connection.connect()
+        val totalBytes = connection.contentLengthLong
+        var currentBytes = 0L
+        if (tmpFile.exists()) {
+            currentBytes = tmpFile.length()
+            if (currentBytes < totalBytes) {
+                connection.disconnect()
+                connection = originalUrl.openConnection() as HttpURLConnection
+                connection.setRequestProperty("range", "bytes=$currentBytes-")
+                connection.connect()
+            } else {
+                tmpFile.delete()
+            }
+        }
+
+        doDownload(originalUrl, connection, tmpFile, currentBytes, totalBytes, true)
+    }
+
+    private fun tryOtherDownload(originalUrl: URL, connection: URLConnection, tmpFile: File) {
+        connection.connect()
+        val currentBytes = 0L
+        val totalBytes = connection.contentLengthLong
+
+        try {
+            doDownload(originalUrl, connection, tmpFile, currentBytes, totalBytes, false)
+        } catch(e: Throwable) {
+            tmpFile.delete()
             throw e
+        }
+    }
+
+    /** Performs an attempt to download a specified file into the specified location */
+    private fun tryDownload(url: URL, tmpFile: File) {
+        var connection = url.openConnection()
+        if (connection is HttpURLConnection) {
+            tryHttpDownload(url, connection, tmpFile)
+        } else {
+            tryOtherDownload(url, connection, tmpFile)
         }
     }
 
@@ -59,11 +100,16 @@ class DependencyDownloader(
             when (replace) {
                 ReplacingMode.RETURN_EXISTING -> return destination
                 ReplacingMode.THROW -> throw FileAlreadyExistsException(destination)
-                // TODO: What if dst is a directory?
             }
         }
-        // TODO: resuming must be here
         val tmpFile = File("${destination.canonicalPath}.$TMP_SUFFIX")
+
+        check(!tmpFile.isDirectory) {
+            "A temporary file is a directory: ${tmpFile.canonicalPath}. Remove it and try again."
+        }
+        check(!destination.isDirectory) {
+            "The destination file is a directory: ${tmpFile.canonicalPath}. Remove it and try again."
+        }
 
         var attempt = 1
         var waitTime = 0L
@@ -78,7 +124,7 @@ class DependencyDownloader(
                 attempt++
                 waitTime += attemptIntervalMs
                 println("Cannot download a dependency: $e\n" +
-                        "Wait ${waitTime.toDouble() / 1000} sec and try again (attempt: $attempt/$maxAttempts).")
+                        "Waiting ${waitTime.toDouble() / 1000} sec and trying again (attempt: $attempt/$maxAttempts).")
                 // TODO: Wait better
                 Thread.sleep(waitTime)
             }
@@ -103,8 +149,10 @@ class DependencyDownloader(
         }
 
     private fun updateProgressMsg(url: String, currentBytes: Long, totalBytes: Long) {
-        print("\rDownload dependency: $url (${currentBytes.humanReadable}/${totalBytes.humanReadable}). ")
+        print("\rDownloading dependency: $url (${currentBytes.humanReadable}/${totalBytes.humanReadable}). ")
     }
+
+
 
     companion object {
         const val DEFAULT_MAX_ATTEMPTS = 10

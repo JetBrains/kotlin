@@ -149,10 +149,10 @@ class DependencyProcessor(dependenciesRoot: File,
                     Cannot find a dependency locally: $dependency.
                     Set `airplaneMode = false` in konan.properties to download it.
                 """.trimIndent())
-            } else {
-                downloader.download(url, archive)
             }
+            downloader.download(url, archive)
         }
+        println("Extracting dependency: $archive into $dependenciesDirectory")
         extractor.extract(archive, dependenciesDirectory)
         extractedDependencies.addWithSave(depName)
     }
