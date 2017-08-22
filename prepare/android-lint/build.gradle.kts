@@ -1,16 +1,19 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin Android Lint"
 
-apply { plugin("java") }
+apply { plugin("java-base") }
 
 val projectsToShadow = listOf(
         ":plugins:lint",
         ":plugins:uast-kotlin",
         ":plugins:uast-kotlin-idea")
 
-tasks.withType<Jar> {
-    setupRuntimeJar("Kotlin Android Lint")
-    archiveName = "android-lint.jar"
+sourceSets {
+    "main" {}
+    "test" {}
+}
+
+runtimeJar {
     projectsToShadow.forEach {
         dependsOn("$it:classes")
         project(it).let { p ->
@@ -21,13 +24,4 @@ tasks.withType<Jar> {
     }
 }
 
-sourceSets {
-    "main" {}
-    "test" {}
-}
-
-val jar: Jar by tasks
-
-ideaPlugin {
-    from(jar)
-}
+ideaPlugin()

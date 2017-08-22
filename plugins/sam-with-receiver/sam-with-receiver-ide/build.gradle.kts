@@ -1,9 +1,9 @@
-import org.gradle.jvm.tasks.Jar
+
+description = "Kotlin SamWithReceiver IDEA Plugin"
 
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":kotlin-sam-with-receiver-compiler-plugin"))
     compile(project(":plugins:annotation-based-compiler-plugins-ide-support"))
     compile(project(":compiler:util"))
@@ -19,10 +19,7 @@ sourceSets {
     "test" {}
 }
 
+runtimeJar()
 
-val jar: Jar by tasks
-
-ideaPlugin {
-    from(jar)
-}
+ideaPlugin()
 

@@ -37,8 +37,6 @@ dependencies {
     testRuntime(ideaSdkCoreDeps("*.jar"))
     testRuntime(ideaSdkDeps("*.jar"))
 //    testRuntime(project(":kotlin-compiler", configuration = "default"))
-
-    buildVersion()
 }
 
 sourceSets {

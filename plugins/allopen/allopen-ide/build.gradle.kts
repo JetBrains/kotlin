@@ -1,9 +1,9 @@
-import org.gradle.jvm.tasks.Jar
+
+description = "Kotlin AllOpen IDEA Plugin"
 
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":kotlin-allopen-compiler-plugin"))
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
@@ -22,10 +22,7 @@ sourceSets {
     "test" {}
 }
 
+runtimeJar()
 
-val jar: Jar by tasks
-
-ideaPlugin {
-    from(jar)
-}
+ideaPlugin()
 

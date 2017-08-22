@@ -17,7 +17,6 @@ val builtinsSerialized = File(rootProject.extra["distDir"].toString(), "builtins
 val builtins by configurations.creating
 
 dependencies {
-    val compile by configurations
     compile(protobufLite())
     compile(files(builtinsSerialized))
 }

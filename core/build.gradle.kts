@@ -7,7 +7,6 @@ apply { plugin("kotlin") }
 jvmTarget = "1.6"
 
 dependencies {
-    val compile by configurations
     compile(project(":core:builtins"))
     compile(project("util.runtime"))
     compile(protobufLite())

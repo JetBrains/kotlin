@@ -1,10 +1,9 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin NoArg IDEA Plugin"
 
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":kotlin-noarg-compiler-plugin"))
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
@@ -25,9 +24,6 @@ sourceSets {
     "test" {}
 }
 
-val jar: Jar by tasks
+runtimeJar()
 
-ideaPlugin {
-    from(jar)
-}
-
+ideaPlugin()

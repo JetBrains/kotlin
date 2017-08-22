@@ -4,8 +4,6 @@ description = "Kotlin AllOpen Compiler Plugin"
 apply { plugin("kotlin") }
 
 dependencies {
-    val compileOnly by configurations
-    val runtime by configurations
     compileOnly(ideaSdkCoreDeps("intellij-core"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:frontend"))

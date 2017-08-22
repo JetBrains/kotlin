@@ -1,3 +1,4 @@
+
 apply { plugin("kotlin") }
 
 dependencies {
@@ -8,7 +9,6 @@ dependencies {
 //    compile(files(PathUtil.getJdkClassesRootsFromCurrentJre())) // TODO: make this one work instead of the nex one, since it contains more universal logic
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
-    buildVersion()
 }
 
 sourceSets {

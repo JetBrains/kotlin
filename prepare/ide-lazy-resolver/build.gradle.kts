@@ -1,10 +1,9 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin IDE Lazy Resolver"
 
 apply { plugin("java") }
 
-tasks.withType<Jar> {
-    setupRuntimeJar("Kotlin IDE Lazy Resolver")
+runtimeJar {
     archiveName = "kotlin-ide-common.jar"
     dependsOn(":idea:ide-common:classes")
     project(":idea:ide-common").let { p ->

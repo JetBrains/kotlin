@@ -30,7 +30,6 @@ val projectsToInclude = listOf(
         ":kotlin-daemon-client")
 
 dependencies {
-    val testCompile by configurations
     projectsToInclude.forEach {
         jarContents(project(it)) { isTransitive = false }
         testCompile(project(it))

@@ -33,11 +33,11 @@ val fatJar by configurations.creating
 val compilerJar by configurations.creating
 val archives by configurations
 
-val compilerBaseName: String by rootProject.extra
+val compilerBaseName = name
 
 val outputJar = File(buildDir, "libs", "$compilerBaseName.jar")
 
-val javaHome = System.getProperty("java.home")
+val jreHome = System.getProperty("java.home")
 
 val compilerModules: Array<String> by rootProject.extra
 
@@ -57,8 +57,8 @@ val ideaCoreSdkJars: Array<String> by rootProject.extra
 val coreSdkJarsSimple = ideaCoreSdkJars.filterNot { it == "jdom" || it == "log4j" }.toTypedArray()
 
 fun firstFromJavaHomeThatExists(vararg paths: String): File =
-        paths.mapNotNull { File(javaHome, it).takeIf { it.exists() } }.firstOrNull()
-                ?: throw GradleException("Cannot find under '$javaHome' neither of: ${paths.joinToString()}")
+        paths.mapNotNull { File(jreHome, it).takeIf { it.exists() } }.firstOrNull()
+                ?: throw GradleException("Cannot find under '$jreHome' neither of: ${paths.joinToString()}")
 
 compilerModules.forEach { evaluationDependsOn(it) }
 
@@ -73,7 +73,6 @@ dependencies {
     compiledModulesSources.forEach {
         fatSourcesJarContents(it)
     }
-//    buildVersion()
 
     fatJarContents(project(":core:builtins", configuration = "builtins"))
     fatJarContents(ideaSdkCoreDeps(*coreSdkJarsSimple))
@@ -93,10 +92,6 @@ dependencies {
     proguardLibraryJars(project(":kotlin-script-runtime", configuration = "mainJar"))
     proguardLibraryJars(project(":kotlin-reflect", configuration = "mainJar"))
     proguardLibraryJars(preloadedDeps("kotlinx-coroutines-core"))
-
-//    proguardLibraryJars(project(":prepare:runtime", configuration = "default").apply { isTransitive = false })
-//    proguardLibraryJars(project(":prepare:reflect", configuration = "default").apply { isTransitive = false })
-//    proguardLibraryJars(project(":core:script.runtime").apply { isTransitive = false })
 }
 
 val packCompiler by task<ShadowJar> {

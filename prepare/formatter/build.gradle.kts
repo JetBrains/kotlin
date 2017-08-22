@@ -1,10 +1,9 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin Formatter"
 
 apply { plugin("java") }
 
-tasks.withType<Jar> {
-    setupRuntimeJar("Kotlin Formatter")
+runtimeJar {
     archiveName = "kotlin-formatter.jar"
     dependsOn(":idea:formatter:classes")
     project(":idea:formatter").let { p ->

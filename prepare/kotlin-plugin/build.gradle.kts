@@ -1,6 +1,8 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
+description = "Kotlin IDEA plugin"
+
 buildscript {
     repositories {
         jcenter()
@@ -60,11 +62,7 @@ dependencies {
     sideJars(preloadedDeps("markdown", "kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
 }
 
-val targetJar = File(buildDir, "libs", "kotlin-plugin.jar")
-
-val shadowTask = task<ShadowJar>("shadowJar") {
-    setupRuntimeJar("Kotlin IDEA plugin")
-    archiveName = targetJar.canonicalPath
+val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
     projectsToShadow.forEach {
         dependsOn("$it:classes")
         project(it).let { p ->
@@ -78,9 +76,7 @@ val shadowTask = task<ShadowJar>("shadowJar") {
 }
 
 ideaPlugin {
-    dependsOn(shadowTask)
-    from(targetJar)
-    dependsOn(":kotlin-script-runtime:jar")
+    from(jar)
     from(sideJars)
 }
 

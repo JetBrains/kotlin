@@ -1,10 +1,9 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin Gradle Tooling support"
 
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(project(":kotlin-stdlib"))
     compile(project(":compiler:cli-common"))
     compile(ideaSdkDeps("gradle-tooling-api",
@@ -13,7 +12,6 @@ dependencies {
                         "gradle-core",
                         "gradle-base-services-groovy",
                         subdir = "plugins/gradle/lib"))
-    buildVersion()
 }
 
 sourceSets {
@@ -21,8 +19,6 @@ sourceSets {
     "test" {}
 }
 
-val jar: Jar by tasks
+runtimeJar()
 
-ideaPlugin {
-    from(jar)
-}
+ideaPlugin()

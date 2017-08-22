@@ -50,6 +50,23 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
+    ":android-lint": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "archives",
+            "buildVersion",
+            "default",
+            "runtimeJar"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
     ":compiler": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
@@ -58,7 +75,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -176,7 +192,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -932,7 +947,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
             "buildVersion",
             "compile",
             "compileClasspath",
@@ -1013,7 +1027,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
             "buildVersion",
             "compile",
             "compileClasspath",
@@ -2339,42 +2352,6 @@
             "shadow": "com.github.jengelman.gradle.plugins.shadow.ShadowExtension"
         }
     },
-    ":core:script.runtime": {
-        "conventions": {
-            "base": "org.gradle.api.plugins.BasePluginConvention",
-            "java": "org.gradle.api.plugins.JavaPluginConvention"
-        },
-        "configurations": [
-            "apiElements",
-            "archives",
-            "build-version",
-            "compile",
-            "compileClasspath",
-            "compileOnly",
-            "default",
-            "implementation",
-            "kapt",
-            "kaptTest",
-            "runtime",
-            "runtimeClasspath",
-            "runtimeElements",
-            "runtimeOnly",
-            "testCompile",
-            "testCompileClasspath",
-            "testCompileOnly",
-            "testImplementation",
-            "testRuntime",
-            "testRuntimeClasspath",
-            "testRuntimeOnly"
-        ],
-        "extensions": {
-            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
-            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension",
-            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
-            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
-        }
-    },
     ":core:util.runtime": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
@@ -2783,7 +2760,7 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -2794,6 +2771,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "testCompile",
             "testCompileClasspath",
@@ -3248,6 +3226,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3258,6 +3237,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "testCompile",
             "testCompileClasspath",
@@ -3283,6 +3263,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3293,6 +3274,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "testCompile",
             "testCompileClasspath",
@@ -3460,6 +3442,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3470,6 +3453,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "testCompile",
             "testCompileClasspath",
@@ -3531,6 +3515,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3541,6 +3526,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "testCompile",
             "testCompileClasspath",
@@ -3602,7 +3588,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "build-version",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3630,37 +3615,6 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
-    ":prepare:android-lint": {
-        "conventions": {
-            "base": "org.gradle.api.plugins.BasePluginConvention",
-            "java": "org.gradle.api.plugins.JavaPluginConvention"
-        },
-        "configurations": [
-            "apiElements",
-            "archives",
-            "compile",
-            "compileClasspath",
-            "compileOnly",
-            "default",
-            "implementation",
-            "runtime",
-            "runtimeClasspath",
-            "runtimeElements",
-            "runtimeOnly",
-            "testCompile",
-            "testCompileClasspath",
-            "testCompileOnly",
-            "testImplementation",
-            "testRuntime",
-            "testRuntimeClasspath",
-            "testRuntimeOnly"
-        ],
-        "extensions": {
-            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
-            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
-        }
-    },
     ":prepare:build.version": {
         "conventions": {
             
@@ -3680,6 +3634,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3688,6 +3643,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "testCompile",
             "testCompileClasspath",
@@ -3711,6 +3667,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3719,6 +3676,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "testCompile",
             "testCompileClasspath",
@@ -3739,7 +3697,10 @@
             
         },
         "configurations": [
+            "archives",
+            "buildVersion",
             "packedJars",
+            "runtimeJar",
             "sideJars"
         ],
         "extensions": {
@@ -3754,6 +3715,7 @@
         "configurations": [
             "apiElements",
             "archives",
+            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3764,6 +3726,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "testCompile",
             "testCompileClasspath",

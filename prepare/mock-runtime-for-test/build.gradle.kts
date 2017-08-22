@@ -1,21 +1,13 @@
 
-import org.gradle.jvm.tasks.Jar
-import org.gradle.api.internal.HasConvention
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+description = "Kotlin Mock Runtime for Tests"
 
 apply { plugin("kotlin") }
 
-dependencies {
-    val compile by configurations
-    compile(project(":kotlin-stdlib"))
-}
+jvmTarget = "1.6"
+javaHome = rootProject.extra["JDK_16"] as String
 
-val jar: Jar by tasks
-jar.apply {
-    setupRuntimeJar("Kotlin Mock Runtime for Tests")
-    from(fileTree("${rootProject.extra["distDir"]}/builtins")) { include("kotlin/**") }
-    archiveName = "kotlin-mock-runtime-for-test.jar"
+dependencies {
+    compile(project(":kotlin-stdlib"))
 }
 
 sourceSets {
@@ -38,17 +30,16 @@ sourceSets {
 tasks.withType<JavaCompile> {
     sourceCompatibility = "1.6"
     targetCompatibility = "1.6"
-//    options.fork = true
-    options.forkOptions.javaHome = file(rootProject.extra["JDK_16"] as String)
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.6"
-    kotlinOptions.jdkHome = rootProject.extra["JDK_16"] as String
+val jar = runtimeJar {
+    from(fileTree("${rootProject.extra["distDir"]}/builtins")) { include("kotlin/**") }
+    archiveName = "kotlin-mock-runtime-for-test.jar"
 }
 
 task<Copy>("dist") {
-    into(rootProject.extra["distDir"].toString())
     from(jar)
+    into(rootProject.extra["distDir"].toString())
+    rename("-${Regex.escape(rootProject.extra["build.number"].toString())}", "")
 }
 

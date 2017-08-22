@@ -1,15 +1,9 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin Android Extensions IDEA"
 
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
-    val compileOnly by configurations
-    val testCompile by configurations
-    val testCompileOnly by configurations
-    val testRuntime by configurations
-
     compile(project(":compiler:util"))
     compile(project(":compiler:light-classes"))
     compile(project(":idea:idea-core"))
@@ -54,8 +48,6 @@ projectTest {
     workingDir = rootDir
 }
 
-val jar: Jar by tasks
+runtimeJar()
 
-ideaPlugin {
-    from(jar)
-}
+ideaPlugin()

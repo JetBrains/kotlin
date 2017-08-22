@@ -50,7 +50,6 @@ include ":kotlin-build-common",
         ":core",
         ":core:builtins",
         ":core:reflection.jvm",
-        ":core:script.runtime",
         ":core:util.runtime",
         ":custom-dependencies:protobuf-lite",
         ":idea:idea-jps-common",
@@ -97,7 +96,7 @@ include ":kotlin-build-common",
         ":prepare:formatter",
         ":prepare:ide-lazy-resolver",
         ":prepare:kotlin-plugin",
-        ":prepare:android-lint",
+        ":android-lint",
         ":prepare:mock-runtime-for-test",
         ":kotlin-compiler",
         ":kotlin-compiler-embeddable",
@@ -157,6 +156,7 @@ project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-and
 project(':android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
 project(':plugins:android-extensions-idea').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
 project(':plugins:android-extensions-jps').projectDir = "$rootDir/plugins/android-extensions/android-extensions-jps" as File
+project(':android-lint').projectDir = "$rootDir/prepare/android-lint" as File
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen/allopen-cli" as File
 project(':plugins:allopen-ide').projectDir = "$rootDir/plugins/allopen/allopen-ide" as File
 project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg/noarg-cli" as File

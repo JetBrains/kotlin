@@ -2,7 +2,6 @@ import org.gradle.api.Project
 import java.util.*
 import java.io.File
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.java
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
@@ -31,8 +30,6 @@ buildscript {
 }
 
 plugins {
-//    java // so we can benefit from the `java()` accessor below
-//    kotlin("jvm")
     `build-scan`
 }
 
@@ -84,11 +81,6 @@ Properties().apply {
 extra["JDK_16"] = jdkPath("1.6")
 extra["JDK_17"] = jdkPath("1.7")
 extra["JDK_18"] = jdkPath("1.8")
-
-extra["compilerBaseName"] = "kotlin-compiler"
-extra["embeddableCompilerBaseName"] = "kotlin-compiler-embeddable"
-
-extra["buildLocalRepoPath"] = File(commonBuildDir, "repo")
 
 extra["versions.protobuf-java"] = "2.6.1"
 extra["versions.javax.inject"] = "1"
@@ -158,10 +150,6 @@ tasks.matching { task ->
 //    dependsOn(tasks.getByName(importedAntTasksPrefix + "update"))
 //}
 
-//val prepareBootstrapTask = task("prepareBootstrap") {
-//    dependsOn(bootstrapCfg, scriptCompileCfg, scriptRuntimeCfg)
-//}
-
 fun Project.allprojectsRecursive(body: Project.() -> Unit) {
     this.body()
     this.subprojects { allprojectsRecursive(body) }
@@ -187,12 +175,11 @@ allprojects {
     configureJvmProject(javaHome!!, jvmTarget!!)
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", project.name)
-//        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package")
     }
 
     tasks.withType<Kotlin2JsCompile> {
-        kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", project.name)
+        kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package")
     }
 
     tasks.withType<Javadoc> {

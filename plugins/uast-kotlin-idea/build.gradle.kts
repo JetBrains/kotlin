@@ -8,7 +8,6 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":idea:ide-common"))
     compile(project(":plugins:uast-kotlin"))
-    buildVersion()
 }
 
 sourceSets {

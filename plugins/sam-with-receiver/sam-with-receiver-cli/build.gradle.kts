@@ -4,8 +4,6 @@ description = "Kotlin SamWithReceiver Compiler Plugin"
 apply { plugin("kotlin") }
 
 dependencies {
-    val compileOnly by configurations
-    val runtime by configurations
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
