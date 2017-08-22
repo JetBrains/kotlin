@@ -138,6 +138,12 @@ public class KotlinLintTestGenerated extends AbstractKotlinLintTest {
         doTest(fileName);
     }
 
+    @TestMetadata("supportAnnotation.kt")
+    public void testSupportAnnotation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lint/supportAnnotation.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("systemServices.kt")
     public void testSystemServices() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lint/systemServices.kt");
