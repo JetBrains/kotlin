@@ -25,7 +25,7 @@ import java.io.File
 open class KonanCompilerDownloadTask : DefaultTask() {
 
     internal companion object {
-        internal const val DOWNLOAD_URL = "http://download.jetbrains.com/kotlin/native"
+        internal const val DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native"
 
         internal val KONAN_PARENT_DIR = "${System.getProperty("user.home")}/.konan"
     }
