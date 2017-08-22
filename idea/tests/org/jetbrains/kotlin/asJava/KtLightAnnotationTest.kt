@@ -287,6 +287,61 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
 
     }
 
+    fun testWrongNamesPassed() {
+        myFixture.configureByText("AnnotatedClass.kt", """
+            annotation class Anno1(val i:Int , val j: Int)
+
+            @Anno1(k = 3, l = 5)
+            class AnnotatedClass
+        """.trimIndent())
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotation = annotations.first()
+        TestCase.assertNull(annotation.findAttributeValue("k"))
+        TestCase.assertNull(annotation.findAttributeValue("l"))
+        TestCase.assertNull(annotation.findAttributeValue("i"))
+        TestCase.assertNull(annotation.findAttributeValue("j"))
+    }
+
+    fun testWrongValuesPassed() {
+        myFixture.configureByText("AnnotatedClass.kt", """
+            annotation class Anno1(val i: Int , val j: Int)
+
+            @Anno1(i = true, j = false)
+            class AnnotatedClass
+        """.trimIndent())
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotation = annotations.first()
+        assertTextAndRange("true", annotation.findAttributeValue("i")!!)
+        assertTextAndRange("false", annotation.findAttributeValue("j")!!)
+    }
+
+    fun testDuplicateParameters() {
+        myFixture.configureByText("AnnotatedClass.kt", """
+            annotation class Anno1(val i:Int , val i: Boolean)
+
+            @Anno1(i = true, i = 3)
+            class AnnotatedClass
+        """.trimIndent())
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotation = annotations.first()
+        assertTextAndRange("", annotation.findAttributeValue("i")!!)
+    }
+
+    fun testMissingDefault() {
+        myFixture.configureByText("AnnotatedClass.kt", """
+            annotation class Anno1(val i: Int = 0)
+
+            @Anno1()
+            class AnnotatedClass
+        """.trimIndent())
+
+        val (annotation) = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        assertTextAndRange("0", annotation.findAttributeValue("i")!!)
+    }
+
     private fun assertTextAndRange(expected: String, psiElement: PsiElement) {
         TestCase.assertEquals(expected, psiElement.text)
         TestCase.assertEquals(expected, psiElement.textRange.substring(psiElement.containingFile.text))
