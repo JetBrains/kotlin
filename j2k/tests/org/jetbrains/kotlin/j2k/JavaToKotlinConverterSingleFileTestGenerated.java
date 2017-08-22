@@ -1018,6 +1018,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass3.java");
             doTest(fileName);
         }
+
+        @TestMetadata("utilityClass4.java")
+        public void testUtilityClass4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass4.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("utilityClass5.java")
+        public void testUtilityClass5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass5.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/classExpression")
