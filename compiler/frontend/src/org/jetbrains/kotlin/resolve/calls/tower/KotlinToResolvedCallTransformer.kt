@@ -73,7 +73,7 @@ class KotlinToResolvedCallTransformer(
 
     fun <D : CallableDescriptor> onlyTransform(
             resolvedCallAtom: ResolvedCallAtom
-    ): ResolvedCall<D> = transformToResolvedCall(resolvedCallAtom, completed = false)
+    ): ResolvedCall<D> = transformToResolvedCall(resolvedCallAtom, null)
 
     fun <D : CallableDescriptor> transformAndReport(
             baseResolvedCall: CallResolutionResult,
@@ -103,7 +103,7 @@ class KotlinToResolvedCallTransformer(
     }
 
     fun <D : CallableDescriptor> createStubResolvedCallAndWriteItToTrace(candidate: ResolvedCallAtom, trace: BindingTrace): ResolvedCall<D> {
-        val result = onlyTransform<D>(candidate)
+        val result = transformToResolvedCall<D>(candidate, trace)
         val psiKotlinCall = candidate.atom.psiKotlinCall
         val tracing = psiKotlinCall.safeAs<PSIKotlinCallForInvoke>()?.baseCall?.tracingStrategy ?: psiKotlinCall.tracingStrategy
 
@@ -114,20 +114,36 @@ class KotlinToResolvedCallTransformer(
 
     fun <D : CallableDescriptor> transformToResolvedCall(
             completedCallAtom: ResolvedCallAtom,
-            completed: Boolean,
-            resultSubstitutor: NewTypeSubstitutor = FreshVariableNewTypeSubstitutor.Empty
+            trace: BindingTrace?,
+            resultSubstitutor: NewTypeSubstitutor? = null // if substitutor is not null, it means that this call is completed
     ): ResolvedCall<D> {
         val psiKotlinCall = completedCallAtom.atom.psiKotlinCall
         return if (psiKotlinCall is PSIKotlinCallForInvoke) {
             @Suppress("UNCHECKED_CAST")
             NewVariableAsFunctionResolvedCallImpl(
-                    NewResolvedCallImpl(psiKotlinCall.variableCall.resolvedCall, completed, resultSubstitutor),
-                    NewResolvedCallImpl(completedCallAtom, completed, resultSubstitutor)
+                    createOrGet(psiKotlinCall.variableCall.resolvedCall, trace, resultSubstitutor),
+                    createOrGet(completedCallAtom, trace, resultSubstitutor)
             ) as ResolvedCall<D>
         }
         else {
-            NewResolvedCallImpl(completedCallAtom, completed, resultSubstitutor)
+            createOrGet(completedCallAtom, trace, resultSubstitutor)
         }
+    }
+
+    private fun <D : CallableDescriptor> createOrGet(
+            completedSimpleAtom: ResolvedCallAtom,
+            trace: BindingTrace?,
+            resultSubstitutor: NewTypeSubstitutor?
+    ): NewResolvedCallImpl<D> {
+        if (trace != null) {
+            val storedResolvedCall = completedSimpleAtom.atom.psiKotlinCall.psiCall.getResolvedCall(trace.bindingContext)?.
+                    safeAs<NewResolvedCallImpl<D>>()
+            if (storedResolvedCall != null) {
+                storedResolvedCall.setResultingSubstitutor(resultSubstitutor)
+                return storedResolvedCall
+            }
+        }
+        return NewResolvedCallImpl(completedSimpleAtom, resultSubstitutor)
     }
 
     fun runCallCheckers(resolvedCall: ResolvedCall<*>, callCheckerContext: CallCheckerContext) {
@@ -329,12 +345,17 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>(): ResolvedCall<D> 
     abstract val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     abstract val kotlinCall: KotlinCall
 
-    private var argumentToParameterMap: Map<ValueArgument, ArgumentMatchImpl>? = null
-    private val _valueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument> by lazy { createValueArguments() }
+    protected var argumentToParameterMap: Map<ValueArgument, ArgumentMatchImpl>? = null
+    protected var _valueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>? = null
 
     override fun getCall(): Call = kotlinCall.psiKotlinCall.psiCall
 
-    override fun getValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> = _valueArguments
+    override fun getValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> {
+        if (_valueArguments == null) {
+            _valueArguments = createValueArguments()
+        }
+        return _valueArguments!!
+    }
 
     override fun getValueArgumentsByIndex(): List<ResolvedValueArgument>? {
         val arguments = ArrayList<ResolvedValueArgument?>(candidateDescriptor.valueParameters.size)
@@ -412,28 +433,13 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>(): ResolvedCall<D> 
 
 class NewResolvedCallImpl<D : CallableDescriptor>(
         val resolvedCallAtom: ResolvedCallAtom,
-        val completed: Boolean,
-        substitutor: NewTypeSubstitutor
+        substitutor: NewTypeSubstitutor?
 ): NewAbstractResolvedCall<D>() {
-    private val resultingDescriptor = run {
-        val candidateDescriptor = resolvedCallAtom.candidateDescriptor
-        val containsCapturedTypes = resolvedCallAtom.candidateDescriptor.returnType?.contains { it is NewCapturedType } ?: false
+    var isCompleted = false
+        private set
+    private lateinit var resultingDescriptor: D
 
-        when {
-            candidateDescriptor is FunctionDescriptor ||
-            (candidateDescriptor is PropertyDescriptor && (candidateDescriptor.typeParameters.isNotEmpty() || containsCapturedTypes)) ->
-                // this code is very suspicious. Now it is very useful for BE, because they cannot do nothing with captured types,
-                // but it seems like temporary solution.
-                candidateDescriptor.substitute(resolvedCallAtom.substitutor).substituteAndApproximateCapturedTypes(substitutor)
-            else ->
-                candidateDescriptor
-        }
-    }
-
-    val typeArguments = resolvedCallAtom.substitutor.freshVariables.map {
-        val substituted = substitutor.safeSubstitute(it.defaultType)
-        TypeApproximator().approximateToSuperType(substituted, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: substituted
-    }
+    private lateinit var typeArguments: List<UnwrappedType>
 
     private var extensionReceiver = resolvedCallAtom.extensionReceiverArgument?.receiver?.receiverValue
     private var smartCastDispatchReceiverType: KotlinType? = null
@@ -446,7 +452,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         get() = resolvedCallAtom.argumentMappingByOriginal
 
     override fun getCandidateDescriptor(): D = resolvedCallAtom.candidateDescriptor as D
-    override fun getResultingDescriptor(): D = resultingDescriptor as D
+    override fun getResultingDescriptor(): D = resultingDescriptor
     override fun getExtensionReceiver(): ReceiverValue? = extensionReceiver
     override fun getDispatchReceiver(): ReceiverValue? = resolvedCallAtom.dispatchReceiverArgument?.receiver?.receiverValue
     override fun getExplicitReceiverKind(): ExplicitReceiverKind = resolvedCallAtom.explicitReceiverKind
@@ -470,6 +476,41 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     fun setSmartCastDispatchReceiverType(smartCastDispatchReceiverType: KotlinType) {
         this.smartCastDispatchReceiverType = smartCastDispatchReceiverType
     }
+
+    fun setResultingSubstitutor(substitutor: NewTypeSubstitutor?) {
+        //clear cached values
+        argumentToParameterMap = null
+        _valueArguments = null
+        if (substitutor != null) {
+            // todo: add asset that we do not complete call many times
+            isCompleted = true
+        }
+
+        resultingDescriptor = run {
+            val candidateDescriptor = resolvedCallAtom.candidateDescriptor
+            val containsCapturedTypes = resolvedCallAtom.candidateDescriptor.returnType?.contains { it is NewCapturedType } ?: false
+
+            when {
+                candidateDescriptor is FunctionDescriptor ||
+                (candidateDescriptor is PropertyDescriptor && (candidateDescriptor.typeParameters.isNotEmpty() || containsCapturedTypes)) ->
+                    // this code is very suspicious. Now it is very useful for BE, because they cannot do nothing with captured types,
+                    // but it seems like temporary solution.
+                    candidateDescriptor.substitute(resolvedCallAtom.substitutor).substituteAndApproximateCapturedTypes(
+                            substitutor ?: FreshVariableNewTypeSubstitutor.Empty)
+                else ->
+                    candidateDescriptor
+            }
+        } as D
+
+        typeArguments = resolvedCallAtom.substitutor.freshVariables.map {
+            val substituted = (substitutor ?: FreshVariableNewTypeSubstitutor.Empty).safeSubstitute(it.defaultType)
+            TypeApproximator().approximateToSuperType(substituted, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: substituted
+        }
+    }
+
+    init {
+        setResultingSubstitutor(substitutor)
+    }
 }
 
 fun ResolutionCandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) {
@@ -487,10 +528,10 @@ class NewVariableAsFunctionResolvedCallImpl(
 
 fun ResolvedCall<*>.isNewNotCompleted(): Boolean {
     if (this is NewVariableAsFunctionResolvedCallImpl) {
-        return !functionCall.completed
+        return !functionCall.isCompleted
     }
     if (this is NewResolvedCallImpl<*>) {
-        return !completed
+        return !isCompleted
     }
     return false
 }

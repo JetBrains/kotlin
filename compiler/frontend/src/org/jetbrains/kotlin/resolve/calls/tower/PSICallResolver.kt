@@ -179,7 +179,7 @@ class PSICallResolver(
         if (result.type == CallResolutionResult.Type.ALL_CANDIDATES) {
             val resolvedCalls = result.allCandidates?.map {
                 val resultingSubstitutor = it.getSystem().asReadOnlyStorage().buildResultingSubstitutor()
-                kotlinToResolvedCallTransformer.transformToResolvedCall<D>(it.resolvedCall, false, resultingSubstitutor)
+                kotlinToResolvedCallTransformer.transformToResolvedCall<D>(it.resolvedCall, null, resultingSubstitutor)
             }
 
             return AllCandidates(resolvedCalls ?: emptyList())
