@@ -6,6 +6,10 @@ import java.net.URL
 import java.net.URLConnection
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.thread
+import kotlin.concurrent.withLock
 
 class DependencyDownloader(
         var maxAttempts: Int = DEFAULT_MAX_ATTEMPTS,
@@ -21,28 +25,76 @@ class DependencyDownloader(
         RETURN_EXISTING
     }
 
+    class DownloadingProgress(@Volatile var currentBytes: Long, val totalBytes: Long) {
+        @Volatile var done: Boolean = false
+            private set
+        @Volatile var exception: Throwable? = null
+            private set
+
+        private val lock = ReentrantLock()
+        private val condition = lock.newCondition()
+
+        val doneCorrectly: Boolean
+            get() = done && exception != null
+
+        fun update(readBytes: Int) { currentBytes += readBytes }
+
+        fun done() = lock.withLock {
+            done = true
+            condition.signalAll()
+        }
+
+        fun done(e: Throwable) = lock.withLock {
+            done = true
+            exception = e
+            condition.signalAll()
+        }
+
+        fun trackProgress(interval: Long,
+                          intervalTimeUnit: TimeUnit = TimeUnit.MILLISECONDS,
+                          action: (progress: DownloadingProgress) -> Unit) =
+            lock.withLock {
+                action(this)
+                while (!done) {
+                    condition.await(interval, intervalTimeUnit)
+                    action(this)
+                }
+            }
+    }
+
     private fun doDownload(originalUrl: URL,
                            connection: URLConnection,
                            tmpFile: File,
                            currentBytes: Long,
                            totalBytes: Long,
                            append: Boolean) {
-        @Suppress("NAME_SHADOWING")
-        var currentBytes = currentBytes
-        connection.getInputStream().use { from ->
-            FileOutputStream(tmpFile, append).use { to ->
-                val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-                var read = from.read(buffer)
-                while (read != -1) {
-                    to.write(buffer, 0, read)
-                    currentBytes += read
-                    updateProgressMsg(originalUrl.toString(), currentBytes, totalBytes)
-                    read = from.read(buffer)
-                }
-                if (currentBytes != totalBytes) {
-                    throw EOFException("The stream closed before end of downloading.")
+        val progress = DownloadingProgress(currentBytes, totalBytes)
+
+        // TODO: Implement multi-thread downloading + use some sort of thread pool.
+        thread {
+            Thread.setDefaultUncaughtExceptionHandler { _, throwable -> progress.done(throwable) }
+            connection.getInputStream().use { from ->
+                FileOutputStream(tmpFile, append).use { to ->
+                    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                    var read = from.read(buffer)
+                    while (read != -1) {
+                        to.write(buffer, 0, read)
+                        progress.update(read)
+                        read = from.read(buffer)
+                    }
+                    if (currentBytes != totalBytes) {
+                        throw EOFException("The stream closed before end of downloading.")
+                    }
+                    progress.done()
                 }
             }
+        }
+
+        progress.trackProgress(1000) {
+            updateProgressMsg(originalUrl.toString(), it.currentBytes, it.totalBytes)
+        }
+        if (!progress.doneCorrectly) {
+            throw progress.exception!!
         }
     }
 
@@ -82,7 +134,7 @@ class DependencyDownloader(
 
     /** Performs an attempt to download a specified file into the specified location */
     private fun tryDownload(url: URL, tmpFile: File) {
-        var connection = url.openConnection()
+        val connection = url.openConnection()
         if (connection is HttpURLConnection) {
             tryHttpDownload(url, connection, tmpFile)
         } else {
@@ -151,8 +203,6 @@ class DependencyDownloader(
     private fun updateProgressMsg(url: String, currentBytes: Long, totalBytes: Long) {
         print("\rDownloading dependency: $url (${currentBytes.humanReadable}/${totalBytes.humanReadable}). ")
     }
-
-
 
     companion object {
         const val DEFAULT_MAX_ATTEMPTS = 10

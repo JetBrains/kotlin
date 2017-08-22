@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.TargetManager
 import org.jetbrains.kotlin.utils.KotlinPaths
-import java.io.File
 import kotlin.reflect.KFunction
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
