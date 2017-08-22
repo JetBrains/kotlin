@@ -16580,6 +16580,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/regressions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("approximateIntersectionType.kt")
+        public void testApproximateIntersectionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/approximateIntersectionType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("arrayLengthNPE.kt")
         public void testArrayLengthNPE() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/arrayLengthNPE.kt");
@@ -16649,6 +16655,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("internalTopLevelOtherPackage.kt")
         public void testInternalTopLevelOtherPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/internalTopLevelOtherPackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intersectionAsLastLambda.kt")
+        public void testIntersectionAsLastLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/intersectionAsLastLambda.kt");
             doTest(fileName);
         }
 

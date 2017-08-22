@@ -20222,6 +20222,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/regressions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("approximateIntersectionType.kt")
+        public void testApproximateIntersectionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/approximateIntersectionType.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+
         @TestMetadata("arrayLengthNPE.kt")
         public void testArrayLengthNPE() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/arrayLengthNPE.kt");
@@ -20304,6 +20316,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testInternalTopLevelOtherPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/internalTopLevelOtherPackage.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("intersectionAsLastLambda.kt")
+        public void testIntersectionAsLastLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/intersectionAsLastLambda.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
         @TestMetadata("intersectionOfEqualTypes.kt")

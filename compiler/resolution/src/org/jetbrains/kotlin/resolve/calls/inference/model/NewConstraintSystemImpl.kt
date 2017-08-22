@@ -25,10 +25,14 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.types.IntersectionTypeConstructor
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class NewConstraintSystemImpl(
         private val constraintInjector: ConstraintInjector,
@@ -201,7 +205,8 @@ class NewConstraintSystemImpl(
     override fun fixVariable(variable: NewTypeVariable, resultType: UnwrappedType) {
         checkState(State.BUILDING, State.COMPLETION)
 
-        constraintInjector.addInitialEqualityConstraint(this, variable.defaultType, resultType, FixVariableConstraintPosition(variable))
+        val actualResultType = eliminateSpecialIntersectionType(resultType) ?: resultType
+        constraintInjector.addInitialEqualityConstraint(this, variable.defaultType, actualResultType, FixVariableConstraintPosition(variable))
         notFixedTypeVariables.remove(variable.freshTypeConstructor)
 
         for (variableWithConstraint in notFixedTypeVariables.values) {
@@ -210,7 +215,16 @@ class NewConstraintSystemImpl(
             }
         }
 
-        storage.fixedTypeVariables[variable.freshTypeConstructor] = resultType
+        storage.fixedTypeVariables[variable.freshTypeConstructor] = actualResultType
+    }
+
+    private fun eliminateSpecialIntersectionType(type: UnwrappedType): UnwrappedType? {
+        val constructor = type.constructor.safeAs<IntersectionTypeConstructor>() ?: return null
+
+        if (constructor.supertypes.size != 2) return null
+        val actualType = constructor.supertypes.singleOrNull { it != type.builtIns.anyType }
+
+        return actualType?.unwrap()
     }
 
     // KotlinConstraintSystemCompleter.Context, PostponedArgumentsAnalyzer.Context
