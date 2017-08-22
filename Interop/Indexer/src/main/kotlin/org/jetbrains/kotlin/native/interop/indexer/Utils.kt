@@ -139,10 +139,10 @@ internal fun visitChildren(parent: CValue<CXCursor>, visitor: CursorVisitor) {
     val visitorPtr = StableObjPtr.create(visitor)
     try {
         val clientData = visitorPtr.value
-        clang_visitChildren(parent, staticCFunction { cursor, parent, clientData ->
-            @Suppress("NAME_SHADOWING", "UNCHECKED_CAST")
-            val visitor = StableObjPtr.fromValue(clientData!!).get() as CursorVisitor
-            visitor(cursor, parent)
+        clang_visitChildren(parent, staticCFunction { cursorIt, parentIt, clientDataIt ->
+            @Suppress("UNCHECKED_CAST")
+            val visitorIt = StableObjPtr.fromValue(clientDataIt!!).get() as CursorVisitor
+            visitorIt(cursorIt, parentIt)
         }, clientData)
     } finally {
         visitorPtr.dispose()
@@ -345,16 +345,20 @@ internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslation
             val indexerCallbacks = alloc<IndexerCallbacks>().apply {
                 abortQuery = null
                 diagnostic = null
-                enteredMainFile = staticCFunction { clientData, mainFile, reserved ->
+                enteredMainFile = staticCFunction { clientData, mainFile, _ ->
                     @Suppress("NAME_SHADOWING")
                     val indexer = StableObjPtr.fromValue(clientData!!).get() as Indexer
                     indexer.enteredMainFile(mainFile!!)
+                    // We must ensure only interop types exist in function signature.
+                    @Suppress("USELESS_CAST")
                     null as CXIdxClientFile?
                 }
                 ppIncludedFile = staticCFunction { clientData, info ->
                     @Suppress("NAME_SHADOWING")
                     val indexer = StableObjPtr.fromValue(clientData!!).get() as Indexer
                     indexer.ppIncludedFile(info!!.pointed)
+                    // We must ensure only interop types exist in function signature.
+                    @Suppress("USELESS_CAST")
                     null as CXIdxClientFile?
                 }
                 importedASTFile = null

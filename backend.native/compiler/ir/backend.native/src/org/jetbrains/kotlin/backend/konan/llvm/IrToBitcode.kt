@@ -127,7 +127,7 @@ internal fun produceOutput(context: Context) {
                 llvmModule,
                 nopack,
                 manifest,
-                context.moduleEscapeAnalysisResult?.build()?.toByteArray())
+                context.moduleEscapeAnalysisResult.build().toByteArray())
 
             context.library = library
             context.bitcodeFileName = library.mainBitcodeFileName

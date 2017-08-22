@@ -39,6 +39,7 @@ import kotlin.reflect.KFunction
 private fun maybeExecuteHelper(targetName: String) {
     try {
         val kClass = Class.forName("org.jetbrains.kotlin.konan.Helper0").kotlin
+        @Suppress("UNCHECKED_CAST")
         val ctor = kClass.constructors.single() as KFunction<Runnable>
         val distribution = Distribution(TargetManager(targetName))
         val result = ctor.call(

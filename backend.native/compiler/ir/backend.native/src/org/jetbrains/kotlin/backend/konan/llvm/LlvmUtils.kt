@@ -150,7 +150,7 @@ internal fun structType(types: List<LLVMTypeRef>): LLVMTypeRef =
 
 internal fun ContextUtils.numParameters(functionType: LLVMTypeRef) : Int {
     // Note that type is usually function pointer, so we have to dereference it.
-    return LLVMCountParamTypes(LLVMGetElementType(functionType))!!
+    return LLVMCountParamTypes(LLVMGetElementType(functionType))
 }
 
 internal fun ContextUtils.isObjectReturn(functionType: LLVMTypeRef) : Boolean {

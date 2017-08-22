@@ -258,7 +258,7 @@ private fun createStaticCFunctionImpl(
     val impl: FfiClosureImpl = when (arity) {
         0 -> {
             val f = function as () -> Any?
-            ffiClosureImpl(returnType) { args ->
+            ffiClosureImpl(returnType) { _ ->
                 f()
             }
         }

@@ -123,7 +123,7 @@ class MappingBridgeGeneratorImpl(
 
         val bridgeArguments = mutableListOf<BridgeTypedNativeValue>()
 
-        nativeValues.forEachIndexed { index, (type, value) ->
+        nativeValues.forEachIndexed { _, (type, value) ->
             val bridgeArgument = if (type.unwrapTypedefs() is RecordType) {
                 BridgeTypedNativeValue(BridgedType.NATIVE_PTR, "&$value")
             } else {

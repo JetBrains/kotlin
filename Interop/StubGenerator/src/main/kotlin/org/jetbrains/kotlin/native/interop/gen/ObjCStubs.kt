@@ -25,7 +25,7 @@ private fun ObjCMethod.getKotlinParameterNames(): List<String> {
     val result = mutableListOf<String>()
 
     // The names of all parameters except first must depend only on the selector:
-    this.parameters.forEachIndexed { index, parameter ->
+    this.parameters.forEachIndexed { index, _ ->
         if (index > 0) {
             var name = selectorParts[index]
             if (name.isEmpty()) {
