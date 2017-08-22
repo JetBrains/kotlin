@@ -473,15 +473,15 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("inlinFunctionUsageAdded")
-        public void testInlinFunctionUsageAdded() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlinFunctionUsageAdded/");
-            doTest(fileName);
-        }
-
         @TestMetadata("inlineFunctionBecomesNonInline")
         public void testInlineFunctionBecomesNonInline() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineFunctionBecomesNonInline/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineFunctionUsageAdded")
+        public void testInlineFunctionUsageAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineFunctionUsageAdded/");
             doTest(fileName);
         }
 
