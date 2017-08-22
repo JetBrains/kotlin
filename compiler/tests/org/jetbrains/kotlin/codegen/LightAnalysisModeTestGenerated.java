@@ -956,6 +956,30 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("kt19767.kt")
+        public void testKt19767() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/boxingOptimization/kt19767.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt19767_2.kt")
+        public void testKt19767_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/boxingOptimization/kt19767_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt19767_3.kt")
+        public void testKt19767_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/boxingOptimization/kt19767_3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt19767_chain.kt")
+        public void testKt19767_chain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/boxingOptimization/kt19767_chain.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt5493.kt")
         public void testKt5493() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/boxingOptimization/kt5493.kt");

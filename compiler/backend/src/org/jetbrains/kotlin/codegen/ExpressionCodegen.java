@@ -2926,11 +2926,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return genCmpWithZero(left, opToken, pregeneratedLeft);
         }
 
-        if (pregeneratedLeft == null && left instanceof KtSafeQualifiedExpression && isPrimitive(rightType)) {
+        if (pregeneratedLeft == null && left instanceof KtSafeQualifiedExpression &&
+            isSelectorPureNonNullType((KtSafeQualifiedExpression) left) && isPrimitive(rightType)) {
             return genCmpSafeCallToPrimitive((KtSafeQualifiedExpression) left, right, rightType, opToken);
         }
 
-        if (isPrimitive(leftType) && right instanceof KtSafeQualifiedExpression) {
+        if (isPrimitive(leftType) && right instanceof KtSafeQualifiedExpression &&
+            isSelectorPureNonNullType(((KtSafeQualifiedExpression) right))) {
             return genCmpPrimitiveToSafeCall(left, leftType, (KtSafeQualifiedExpression) right, opToken, pregeneratedLeft);
         }
 
@@ -2977,6 +2979,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         return genEqualsForExpressionsPreferIEEE754Arithmetic(left, right, opToken, leftType, rightType, pregeneratedLeft);
+    }
+
+    private boolean isSelectorPureNonNullType(@NotNull KtSafeQualifiedExpression safeExpression) {
+        KtExpression expression = safeExpression.getSelectorExpression();
+        if (expression == null) return false;
+        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
+        if (resolvedCall == null) return false;
+        KotlinType returnType = resolvedCall.getResultingDescriptor().getReturnType();
+        return returnType != null && !TypeUtils.isNullableType(returnType);
     }
 
     private StackValue genCmpPrimitiveToSafeCall(
