@@ -4856,6 +4856,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("topLevelNestedInline.kt")
+        public void testTopLevelNestedInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/topLevelNestedInline.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typealiases.kt")
         public void testTypealiases() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/typealiases.kt");

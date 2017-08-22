@@ -279,6 +279,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
             reportInlineCycle(call, definition.getFunction());
         }
         else if (!processedFunctions.contains(definition.getFunction())) {
+            for (int i = 0; i < call.getArguments().size(); ++i) {
+                JsExpression argument = call.getArguments().get(i);
+                call.getArguments().set(i, accept(argument));
+            }
             inlineFunctionDepth++;
             visit(definition);
             inlineFunctionDepth--;
