@@ -82,6 +82,18 @@ sealed class PostponedResolvedAtom : ResolvedAtom() {
     abstract val outputType: UnwrappedType?
 }
 
+class LambdaWithTypeVariableAsExpectedTypeAtom(
+        override val atom: LambdaKotlinCallArgument,
+        val expectedType: UnwrappedType
+) : PostponedResolvedAtom() {
+    override val inputTypes: Collection<UnwrappedType> get() = listOf(expectedType)
+    override val outputType: UnwrappedType? get() = null
+
+    fun setAnalyzed(resolvedLambdaAtom: ResolvedLambdaAtom) {
+        setAnalyzedResults(listOf(resolvedLambdaAtom), listOf())
+    }
+}
+
 class ResolvedLambdaAtom(
         override val atom: LambdaKotlinCallArgument,
         val isSuspend: Boolean,

@@ -61,8 +61,9 @@ class KotlinConstraintSystemCompleter(
             val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
                     c, allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
 
-            if (shouldWeForceCallableReferenceResolution(completionMode, variableForFixation)) {
-                if (forceCallableReferenceResolution(topLevelPrimitive, analyze)) continue
+            if (shouldForceCallableReferenceOrLambdaResolution(completionMode, variableForFixation)) {
+                if (forcePostponedAtomResolution<ResolvedCallableReferenceAtom>(topLevelPrimitive, analyze)) continue
+                if (forcePostponedAtomResolution<LambdaWithTypeVariableAsExpectedTypeAtom>(topLevelPrimitive, analyze)) continue
             }
 
             if (variableForFixation != null) {
@@ -86,7 +87,7 @@ class KotlinConstraintSystemCompleter(
         }
     }
 
-    private fun shouldWeForceCallableReferenceResolution(
+    private fun shouldForceCallableReferenceOrLambdaResolution(
             completionMode: ConstraintSystemCompletionMode,
             variableForFixation: VariableFixationFinder.VariableForFixation?
     ): Boolean {
@@ -108,11 +109,12 @@ class KotlinConstraintSystemCompleter(
     }
 
     // true if we find some callable reference and run resolution for it. Note that such resolution can be unsuccessful
-    private fun forceCallableReferenceResolution(topLevelPrimitive: ResolvedAtom, analyze: (PostponedResolvedAtom) -> Unit): Boolean {
-        val callableReferenceArgument = getOrderedNotAnalyzedPostponedArguments(topLevelPrimitive).
-                firstIsInstanceOrNull<ResolvedCallableReferenceAtom>() ?: return false
-
-        analyze(callableReferenceArgument)
+    private inline fun <reified T : PostponedResolvedAtom> forcePostponedAtomResolution(
+            topLevelPrimitive: ResolvedAtom,
+            analyze: (PostponedResolvedAtom) -> Unit
+    ): Boolean {
+        val postponedArgument = getOrderedNotAnalyzedPostponedArguments(topLevelPrimitive).firstIsInstanceOrNull<T>() ?: return false
+        analyze(postponedArgument)
         return true
     }
 
