@@ -4,6 +4,7 @@ apply plugin: 'kotlin'
 
 configureJvm6Project(project)
 configurePublishing(project)
+ext.javaHome = JDK_17
 
 dependencies {
     compile project(':kotlin-stdlib')

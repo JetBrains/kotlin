@@ -3,6 +3,8 @@ import org.gradle.jvm.tasks.Jar
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     val compile by configurations
     compile(project(":core:builtins"))

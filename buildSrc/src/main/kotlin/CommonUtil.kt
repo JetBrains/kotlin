@@ -65,7 +65,13 @@ fun Project.getResourceFiles(): SourceDirectorySet? = withJavaPlugin {
     the<JavaPluginConvention>().sourceSets.getByName("main").resources
 }
 
-
-
 fun File(root: File, vararg children: String): File = children.fold(root, { f, c -> File(f, c) })
 fun File(root: String, vararg children: String): File = children.fold(File(root), { f, c -> File(f, c) })
+
+var Project.jvmTarget: String?
+    get() = extra.takeIf { it.has("jvmTarget") }?.get("jvmTarget") as? String
+    set(v) { extra["jvmTarget"] = v }
+
+var Project.javaHome: String?
+    get() = extra.takeIf { it.has("javaHome") }?.get("javaHome") as? String
+    set(v) { extra["javaHome"] = v }

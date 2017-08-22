@@ -43,6 +43,9 @@ ext.configureJvmProject = { Project project ->
 
 ext.configureJvm6Project = { Project project ->
     project.configure(project) {
+        project.ext.jvmTarget = "1.6"
+        project.ext.javaHome = JDK_16
+
         task sourcesJar(type: Jar, dependsOn: classes) {
             classifier = 'sources'
             from sourceSets.main.kotlin

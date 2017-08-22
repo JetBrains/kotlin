@@ -3,6 +3,8 @@ description = "Kotlin Daemon Client"
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 val nativePlatformUberjar = preloadedDeps("native-platform-uberjar")
 
 dependencies {

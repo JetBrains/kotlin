@@ -3,6 +3,8 @@ description = "Kotlin Preloader"
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     val compile by configurations
     compile(ideaSdkDeps("asm-all"))

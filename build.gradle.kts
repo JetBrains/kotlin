@@ -1,4 +1,6 @@
+import org.gradle.api.Project
 import java.util.*
+import java.io.File
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.java
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -165,7 +167,13 @@ fun Project.allprojectsRecursive(body: Project.() -> Unit) {
     this.subprojects { allprojectsRecursive(body) }
 }
 
+val defaultJvmTarget = "1.8"
+val defaultJavaHome = jdkPath(defaultJvmTarget!!)
+
 allprojects {
+
+    jvmTarget = defaultJvmTarget
+    javaHome = defaultJavaHome
 
     buildDir = File(commonBuildDir, project.name)
 
@@ -176,10 +184,11 @@ allprojects {
         mavenCentral()
         jcenter()
     }
+    configureJvmProject(javaHome!!, jvmTarget!!)
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", project.name)
-        kotlinOptions.jvmTarget = "1.8"
+//        kotlinOptions.jvmTarget = "1.8"
     }
 
     tasks.withType<Kotlin2JsCompile> {
@@ -196,6 +205,13 @@ allprojects {
 
     tasks.withType<Jar> {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    afterEvaluate {
+        logger.info("configuring project $name to compile to the target jvm version $jvmTarget using jdk: $javaHome")
+        if (javaHome != defaultJavaHome || jvmTarget != defaultJvmTarget) {
+            configureJvmProject(javaHome!!, jvmTarget!!)
+        }
     }
 }
 
@@ -287,4 +303,23 @@ tasks {
 fun jdkPath(version: String): String {
     val varName = "JDK_${version.replace(".", "")}"
     return System.getenv(varName) ?: throw GradleException ("Please set environment variable $varName to point to JDK $version installation")
+}
+
+fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
+
+    tasks.withType<JavaCompile> {
+        options.forkOptions.javaHome = file(javaHome)
+    }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions.jdkHome = javaHome
+        kotlinOptions.jvmTarget = javaVersion
+        doFirst {
+            System.setProperty("kotlin.colors.enabled", "false")
+        }
+    }
+
+    tasks.withType<Test> {
+        executable = File(javaHome, "bin/java").canonicalPath
+    }
 }

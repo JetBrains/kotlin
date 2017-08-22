@@ -7,6 +7,8 @@ import java.io.File
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 val builtinsSrc = File(rootDir, "core", "builtins", "src")
 val builtinsNative = File(rootDir, "core", "builtins", "native")
 // TODO: rewrite dependent projects on using build results instead of the fixed location

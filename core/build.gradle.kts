@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     val compile by configurations
     compile(project(":core:builtins"))
