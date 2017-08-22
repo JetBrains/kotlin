@@ -1383,6 +1383,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     //-------------------------------------------------------------------------//
+    private fun evaluateStringConst(value: IrConst<String>) =
+        if (this.produceImmutableBinaryBlob) {
+            context.llvm.staticData.createImmutableBinaryBlob(value)
+        } else {
+            context.llvm.staticData.kotlinStringLiteral(
+                    context.builtIns.stringType, value).llvm
+        }
 
     private fun evaluateConst(value: IrConst<*>): LLVMValueRef {
         context.log{"evaluateConst                  : ${ir2string(value)}"}
@@ -1397,8 +1404,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             IrConstKind.Short  -> return LLVMConstInt(LLVMInt16Type(), (value.value as Short).toLong(), 1)!!
             IrConstKind.Int    -> return LLVMConstInt(LLVMInt32Type(), (value.value as Int).toLong(),   1)!!
             IrConstKind.Long   -> return LLVMConstInt(LLVMInt64Type(), value.value as Long,             1)!!
-            IrConstKind.String -> return context.llvm.staticData.kotlinStringLiteral(
-                    context.builtIns.stringType, value as IrConst<String>).llvm
+            IrConstKind.String -> return evaluateStringConst(value as IrConst<String>)
             IrConstKind.Float  -> return LLVMConstRealOfString(LLVMFloatType(), (value.value as Float).toString())!!
             IrConstKind.Double -> return LLVMConstRealOfString(LLVMDoubleType(), (value.value as Double).toString())!!
         }
@@ -1757,15 +1763,29 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun CallableDescriptor.returnsUnit() = returnType == context.builtIns.unitType && !isSuspend
 
+
+    private var produceImmutableBinaryBlob: Boolean = false
+
     /**
      * Evaluates all arguments of [expression] that are explicitly represented in the IR.
      * Returns results in the same order as LLVM function expects, assuming that all explicit arguments
      * exactly correspond to a tail of LLVM parameters.
      */
     private fun evaluateExplicitArgs(expression: IrMemberAccessExpression): List<LLVMValueRef> {
+        // TODO: remove this hack by properly implementing blobs in the frontend.
+        if (expression.descriptor.original == context.builtIns.immutableBinaryBlobOf) {
+            // As calls to immutableBinaryBlobOf() cannot be composed, it's OK to
+            // have simple flag for that purpose.
+            assert(!produceImmutableBinaryBlob)
+            produceImmutableBinaryBlob = true
+        }
+
         val evaluatedArgs = expression.getArguments().map { (param, argExpr) ->
             param to evaluateExpression(argExpr)
         }.toMap()
+
+        if (produceImmutableBinaryBlob)
+            produceImmutableBinaryBlob = false
 
         val allValueParameters = expression.descriptor.allParameters
 
@@ -1968,6 +1988,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     LLVMBuildSExt(functionGenerationContext.builder, intPtrValue, resultType, "")!!
                 }
             }
+
+            context.builtIns.immutableBinaryBlobOf -> {
+                // LLVM value is already computed when evaluating argument, just use it.
+                args.single()
+            }
+
             interop.objCObjectInitFromPtr -> {
                 genObjCObjectInitFromPtr(args)
             }

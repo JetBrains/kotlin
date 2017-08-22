@@ -83,6 +83,13 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
         }
     }.toMap()
 
+    val immutableBinaryBlob = symbolTable.referenceClass(
+            builtInsPackage("konan").getContributedClassifier(
+                    Name.identifier("ImmutableBinaryBlob"), NoLookupLocation.FROM_BACKEND
+            ) as ClassDescriptor
+    )
+
+    val immutableBinaryBlobOf = symbolTable.referenceSimpleFunction(context.builtIns.immutableBinaryBlobOf)
 
     val scheduleImpl = symbolTable.referenceSimpleFunction(context.interopBuiltIns.scheduleImplFunction)
 

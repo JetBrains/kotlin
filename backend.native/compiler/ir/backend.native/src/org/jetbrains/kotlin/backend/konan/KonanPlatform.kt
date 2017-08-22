@@ -58,6 +58,10 @@ class KonanBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageMana
     val nativePtrPlusLong by lazy { nativePtr.unsubstitutedMemberScope.getContributedFunctions("plus").single() }
     val nativePtrToLong   by lazy { nativePtr.unsubstitutedMemberScope.getContributedFunctions("toLong").single() }
     val getNativeNullPtr  by lazy { packageScope.getContributedFunctions("getNativeNullPtr").single() }
+    val immutableBinaryBlobOf by lazy {
+        builtInsModule.getPackage(FqName("konan")).memberScope.
+                getContributedFunctions("immutableBinaryBlobOf").single()
+    }
 
     private fun MemberScope.getContributedClassifier(name: String) =
             this.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)

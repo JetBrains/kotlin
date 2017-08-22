@@ -160,3 +160,13 @@ internal class StaticData(override val context: Context): ContextUtils {
     fun kotlinStringLiteral(type: KotlinType, value: IrConst<String>) =
         stringLiterals.getOrPut(value.value) { createKotlinStringLiteral(type, value) }
 }
+
+/**
+ * Creates static instance of `konan.ImmutableByteArray` with given values of elements.
+ *
+ * @param args data for constant creation.
+ */
+internal fun StaticData.createImmutableBinaryBlob(value: IrConst<String>): LLVMValueRef {
+    val args = value.value.map { Int8(it.toByte()).llvm }
+    return createKotlinArray(context.ir.symbols.immutableBinaryBlob.descriptor.defaultType, args)
+}

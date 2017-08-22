@@ -68,7 +68,6 @@ internal fun StaticData.createKotlinArray(arrayType: KotlinType, elements: List<
         createKotlinArray(arrayType, elements.map { constValue(it) }).llvm
 
 internal fun StaticData.createKotlinArray(arrayType: KotlinType, elements: List<ConstValue>): ConstPointer {
-
     val typeInfo = arrayType.typeInfoPtr!!
 
     val bodyElementType: LLVMTypeRef = elements.firstOrNull()?.llvmType ?: int8Type
@@ -142,6 +141,7 @@ internal fun StaticData.createArrayList(elementType: TypeProjection, array: Cons
 
     return createKotlinObject(type, body)
 }
+
 
 internal fun StaticData.createUnitInstance(descriptor: ClassDescriptor,
                                            bodyType: LLVMTypeRef,

@@ -78,16 +78,17 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private val arrayClasses = mapOf(
-            "kotlin.Array"        to -LLVMABISizeOfType(llvmTargetData, kObjHeaderPtr).toInt(),
-            "kotlin.ByteArray"    to -1,
-            "kotlin.CharArray"    to -2,
-            "kotlin.ShortArray"   to -2,
-            "kotlin.IntArray"     to -4,
-            "kotlin.LongArray"    to -8,
-            "kotlin.FloatArray"   to -4,
-            "kotlin.DoubleArray"  to -8,
-            "kotlin.BooleanArray" to -1,
-            "kotlin.String"       to -2
+            "kotlin.Array"              to -LLVMABISizeOfType(llvmTargetData, kObjHeaderPtr).toInt(),
+            "kotlin.ByteArray"          to -1,
+            "kotlin.CharArray"          to -2,
+            "kotlin.ShortArray"         to -2,
+            "kotlin.IntArray"           to -4,
+            "kotlin.LongArray"          to -8,
+            "kotlin.FloatArray"         to -4,
+            "kotlin.DoubleArray"        to -8,
+            "kotlin.BooleanArray"       to -1,
+            "kotlin.String"             to -2,
+            "konan.ImmutableBinaryBlob" to -1
     )
 
     private fun getInstanceSize(classType: LLVMTypeRef?, className: FqName) : Int {
