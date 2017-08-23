@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /*
  * Notice the difference between two function descriptors in this class.
@@ -106,11 +103,22 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
 
             private final Map<ValueParameterDescriptor, ResolvedValueArgument> argumentMap = new LinkedHashMap<>();
             {
-                int index = 0;
-                List<ValueParameterDescriptor> parameters = referencedFunction.getValueParameters();
-                for (ValueArgument argument : fakeArguments) {
-                    argumentMap.put(parameters.get(index), new ExpressionValueArgument(argument));
-                    index++;
+                Iterator<? extends ValueArgument> argument = fakeArguments.iterator();
+                for (ValueParameterDescriptor parameter : referencedFunction.getValueParameters()) {
+                    // TODO (!): do not break non-expanded varargs
+                    if (parameter.getVarargElementType() != null) {
+                        VarargValueArgument vararg = new VarargValueArgument();
+                        while (argument.hasNext()) {
+                            vararg.addArgument(argument.next());
+                        }
+                        argumentMap.put(parameter, vararg);
+                    }
+                    else if (argument.hasNext()) {
+                        argumentMap.put(parameter, new ExpressionValueArgument(argument.next()));
+                    }
+                    else {
+                        argumentMap.put(parameter, DefaultValueArgument.DEFAULT);
+                    }
                 }
             }
 
