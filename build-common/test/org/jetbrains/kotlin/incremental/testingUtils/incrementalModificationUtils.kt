@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,9 +80,9 @@ fun getModificationsToPerform(
         }
 
         val rules = mapOf<String, (String, File) -> Modification>(
-                newSuffix to { path: String, file: File -> ModifyContent(path, file) },
-                touchSuffix to { path: String, file: File -> TouchFile(path, touchPolicy) },
-                deleteSuffix to { path: String, file: File -> DeleteFile(path) }
+                newSuffix to { path, file -> ModifyContent(path, file) },
+                touchSuffix to { path, _ -> TouchFile(path, touchPolicy) },
+                deleteSuffix to { path, _ -> DeleteFile(path) }
         )
 
         val modifications = ArrayList<Modification>()

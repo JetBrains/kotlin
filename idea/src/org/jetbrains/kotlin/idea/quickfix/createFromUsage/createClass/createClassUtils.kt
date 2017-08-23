@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,15 +95,15 @@ internal fun KotlinType.toClassTypeInfo(): TypeInfo {
 }
 
 internal fun getClassKindFilter(expectedType: KotlinType, containingDeclaration: PsiElement): (ClassKind) -> Boolean {
-    val descriptor = expectedType.constructor.declarationDescriptor ?: return { _: ClassKind -> false }
+    val descriptor = expectedType.constructor.declarationDescriptor ?: return { _ -> false }
 
     val canHaveSubtypes = !(expectedType.constructor.isFinal || expectedType.containsStarProjections())
     val isEnum = DescriptorUtils.isEnumClass(descriptor)
 
     if (!(canHaveSubtypes || isEnum)
-        || descriptor is TypeParameterDescriptor) return { _: ClassKind -> false }
+        || descriptor is TypeParameterDescriptor) return { _ -> false }
 
-    return { classKind: ClassKind ->
+    return { classKind ->
         when (classKind) {
             ClassKind.ENUM_ENTRY -> isEnum && containingDeclaration == DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
             ClassKind.INTERFACE -> containingDeclaration !is PsiClass

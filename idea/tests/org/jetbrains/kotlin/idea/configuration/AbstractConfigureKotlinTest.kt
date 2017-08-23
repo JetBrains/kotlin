@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,13 +124,13 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     companion object {
         private val BASE_PATH = "idea/testData/configuration/"
         private val TEMP_DIR_MACRO_KEY = "TEMP_TEST_DIR"
-        protected val JAVA_CONFIGURATOR: KotlinJavaModuleConfigurator by lazy<KotlinJavaModuleConfigurator> {
+        protected val JAVA_CONFIGURATOR: KotlinJavaModuleConfigurator by lazy {
             object : KotlinJavaModuleConfigurator() {
                 override fun getDefaultPathToJarFile(project: Project) = getPathRelativeToTemp("default_jvm_lib")
             }
         }
 
-        protected val JS_CONFIGURATOR: KotlinJsModuleConfigurator by lazy<KotlinJsModuleConfigurator> {
+        protected val JS_CONFIGURATOR: KotlinJsModuleConfigurator by lazy {
             object : KotlinJsModuleConfigurator() {
                 override fun getDefaultPathToJarFile(project: Project) = getPathRelativeToTemp("default_js_lib")
             }

@@ -265,7 +265,7 @@ class JavacWrapper(
                 }
             }
 
-    private inline fun <reified T> Iterable<T>.toJavacList(): JavacList<T> = JavacList.from(this)
+    private inline fun <reified T> Iterable<T>.toJavacList() = JavacList.from(this)
 
     private fun findClassInSymbols(fqName: String): SymbolBasedClass? {
         if (symbolBasedClassesCache.containsKey(fqName)) return symbolBasedClassesCache[fqName]

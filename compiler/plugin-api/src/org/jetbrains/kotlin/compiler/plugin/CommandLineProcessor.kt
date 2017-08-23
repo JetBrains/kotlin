@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ interface CommandLineProcessor {
     @Throws(CliOptionProcessingException::class) fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration)
 
     fun <T> CompilerConfiguration.appendList(option: CompilerConfigurationKey<List<T>>, value: T) {
-        val paths = getList<T>(option).toMutableList()
+        val paths = getList(option).toMutableList()
         paths.add(value)
         put(option, paths)
     }

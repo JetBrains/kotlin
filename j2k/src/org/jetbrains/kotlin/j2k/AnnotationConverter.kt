@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -188,7 +188,7 @@ class AnnotationConverter(private val converter: Converter) {
 
     private fun convertAttributeValue(value: PsiAnnotationMemberValue?, expectedType: PsiType?, isVararg: Boolean, isUnnamed: Boolean): List<(CodeConverter) -> Expression> {
         return when (value) {
-            is PsiExpression -> listOf<(CodeConverter) -> Expression>({ codeConverter -> convertExpressionValue(codeConverter, value, expectedType, isVararg) })
+            is PsiExpression -> listOf({ codeConverter -> convertExpressionValue(codeConverter, value, expectedType, isVararg) })
 
             is PsiArrayInitializerMemberValue -> {
                 val componentType = (expectedType as? PsiArrayType)?.componentType
@@ -197,7 +197,7 @@ class AnnotationConverter(private val converter: Converter) {
                     componentGenerators
                 }
                 else {
-                    listOf<(CodeConverter) -> Expression>({ codeConverter ->
+                    listOf({ codeConverter ->
                                convertArrayInitializerValue(codeConverter, value.text, componentGenerators, expectedType, isVararg)
                                        .assignPrototype(value)
                            })
@@ -205,12 +205,12 @@ class AnnotationConverter(private val converter: Converter) {
             }
 
             is PsiAnnotation -> {
-                listOf<(CodeConverter) -> Expression>({ _ ->
+                listOf({ _ ->
                            val (name, arguments) = convertAnnotationValue(value)!!
                            AnnotationConstructorCall(name, arguments).assignPrototype(value)
                        })
             }
-            else -> listOf<(CodeConverter) -> Expression>({ _ -> DummyStringExpression(value?.text ?: "").assignPrototype(value) })
+            else -> listOf({ _ -> DummyStringExpression(value?.text ?: "").assignPrototype(value) })
         }
     }
 

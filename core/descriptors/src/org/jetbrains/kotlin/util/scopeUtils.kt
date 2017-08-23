@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? {
         return this
     }
 
-    val result = LinkedHashSet<T>(this)
+    val result = LinkedHashSet(this)
     result.addAll(collection)
     return result
 }

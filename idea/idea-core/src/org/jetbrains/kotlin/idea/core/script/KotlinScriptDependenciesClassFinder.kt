@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ class KotlinScriptDependenciesClassFinder(project: Project,
                                           private val scriptDependenciesManager: ScriptDependenciesManager
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
 
-    private val myCaches by lazy<ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>> {
+    private val myCaches by lazy {
         object : ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>() {
             override fun create(file: VirtualFile): PackageDirectoryCache? {
                 val scriptClasspath = scriptDependenciesManager.getScriptClasspath(file)

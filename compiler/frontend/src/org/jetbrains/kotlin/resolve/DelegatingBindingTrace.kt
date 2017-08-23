@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ open class DelegatingBindingTrace(
         val value = map.get(slice, key)
         if (slice is SetSlice<*>) {
             assert(value != null)
-            if (value as V != SetSlice.DEFAULT) return value
+            if (value != SetSlice.DEFAULT) return value
         }
         else if (value != null) {
             return value

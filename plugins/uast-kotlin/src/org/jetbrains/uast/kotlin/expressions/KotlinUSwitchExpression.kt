@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class KotlinUSwitchExpression(
 ) : KotlinAbstractUExpression(), USwitchExpression, KotlinUElementWithType {
     override val expression by lz { KotlinConverter.convertOrNull(psi.subjectExpression, this) }
 
-    override val body: UExpressionList by lz<UExpressionList> {
+    override val body: UExpressionList by lz {
         object : KotlinUExpressionList(psi, KotlinSpecialExpressionKinds.WHEN, this@KotlinUSwitchExpression) {
             override fun asRenderString() = expressions.joinToString("\n") { it.asRenderString().withMargin }
         }.apply {
