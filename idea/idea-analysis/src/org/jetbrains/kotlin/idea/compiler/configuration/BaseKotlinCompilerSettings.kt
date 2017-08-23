@@ -64,7 +64,7 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor()
     override fun getState() = XmlSerializer.serialize(_settings, SKIP_DEFAULT_VALUES)
 
     override fun loadState(state: Element) {
-        _settings = XmlSerializer.deserialize(state, _settings.javaClass)
+        _settings = XmlSerializer.deserialize(state, _settings.javaClass)!!
     }
 
     public override fun clone(): Any = super.clone()
