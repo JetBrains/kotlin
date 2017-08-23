@@ -1639,6 +1639,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("coercionToUnit.kt")
+            public void testCoercionToUnit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/coercionToUnit.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("companionObjectReceiver.kt")
             public void testCompanionObjectReceiver() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/companionObjectReceiver.kt");
@@ -1837,6 +1843,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("classMemberFromTopLevelUnitOneStringArg.kt")
             public void testClassMemberFromTopLevelUnitOneStringArg() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/classMemberFromTopLevelUnitOneStringArg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("coercionToUnit.kt")
+            public void testCoercionToUnit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/coercionToUnit.kt");
                 doTest(fileName);
             }
 
@@ -2414,6 +2426,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public static class VarargAndDefaults extends AbstractIrBlackBoxCodegenTest {
             public void testAllFilesPresentInVarargAndDefaults() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/callableReference/varargAndDefaults"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("bothWithCoercionToUnit.kt")
+            public void testBothWithCoercionToUnit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/varargAndDefaults/bothWithCoercionToUnit.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("boundReferences.kt")
