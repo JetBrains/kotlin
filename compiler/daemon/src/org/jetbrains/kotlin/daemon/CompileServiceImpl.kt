@@ -448,7 +448,10 @@ class CompileServiceImpl(
 
         val workingDir = incrementalCompilationOptions.workingDir
         val versions = commonCacheVersions(workingDir) +
-                       customCacheVersion(incrementalCompilationOptions.customCacheVersion, incrementalCompilationOptions.customCacheVersionFileName, workingDir, forceEnable = true)
+                       customCacheVersion(incrementalCompilationOptions.customCacheVersion,
+                                          incrementalCompilationOptions.customCacheVersionFileName,
+                                          workingDir,
+                                          enabled = true)
 
         return IncrementalJsCompilerRunner(workingDir, versions, reporter)
                 .compile(allKotlinFiles, args, compilerMessageCollector, { changedFiles })
@@ -499,7 +502,10 @@ class CompileServiceImpl(
 
         val workingDir = incrementalCompilationOptions.workingDir
         val versions = commonCacheVersions(workingDir) +
-                       customCacheVersion(incrementalCompilationOptions.customCacheVersion, incrementalCompilationOptions.customCacheVersionFileName, workingDir, forceEnable = true)
+                       customCacheVersion(incrementalCompilationOptions.customCacheVersion,
+                                          incrementalCompilationOptions.customCacheVersionFileName,
+                                          workingDir,
+                                          enabled = true)
 
         return IncrementalJvmCompilerRunner(workingDir, javaSourceRoots, versions, reporter, annotationFileUpdater,
                                             artifactChanges, changesRegistry)

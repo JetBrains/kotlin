@@ -67,10 +67,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val taskBuildDirectory: File
         get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
 
-    private val cacheVersions: List<CacheVersion> =
-        listOf(normalCacheVersion(taskBuildDirectory),
-               dataContainerCacheVersion(taskBuildDirectory),
-               gradleCacheVersion(taskBuildDirectory))
+    private val cacheVersions: List<CacheVersion>
+        get() =
+            listOf(normalCacheVersion(taskBuildDirectory, enabled = incremental),
+                   dataContainerCacheVersion(taskBuildDirectory, enabled = incremental),
+                   gradleCacheVersion(taskBuildDirectory, enabled = incremental))
 
     // indicates that task should compile kotlin incrementally if possible
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)

@@ -16,22 +16,21 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import java.io.File
 
 internal const val STANDALONE_CACHE_VERSION = 2
 internal const val STANDALONE_VERSION_FILE_NAME = "standalone-ic-format-version.txt"
 
 fun standaloneCacheVersion(dataRoot: File): CacheVersion =
-        customCacheVersion(STANDALONE_CACHE_VERSION, STANDALONE_VERSION_FILE_NAME, dataRoot)
+        customCacheVersion(STANDALONE_CACHE_VERSION, STANDALONE_VERSION_FILE_NAME, dataRoot, enabled = true)
 
-fun customCacheVersion(version: Int, fileName: String, dataRoot: File, forceEnable: Boolean = false): CacheVersion =
+fun customCacheVersion(version: Int, fileName: String, dataRoot: File, enabled: Boolean): CacheVersion =
         CacheVersion(ownVersion = version,
                 versionFile = File(dataRoot, fileName),
                 whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                 whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                 whenTurnedOff = CacheVersion.Action.REBUILD_ALL_KOTLIN,
-                isEnabled = { IncrementalCompilation.isEnabled() || forceEnable })
+                isEnabled = { enabled })
 
 fun commonCacheVersions(cachesDir: File): List<CacheVersion> =
         listOf(normalCacheVersion(cachesDir),
