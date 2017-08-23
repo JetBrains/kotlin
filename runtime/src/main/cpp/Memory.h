@@ -397,6 +397,8 @@ void UpdateRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NOTHROW;
 // Optimization: release all references in range.
 void ReleaseRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
+// Called on frame enter, if it has object slots.
+void EnterFrame(ObjHeader** start, int count) RUNTIME_NOTHROW;
 // Called on frame leave, if it has object slots.
 void LeaveFrame(ObjHeader** start, int count) RUNTIME_NOTHROW;
 // Tries to use returnSlot's arena for allocation.

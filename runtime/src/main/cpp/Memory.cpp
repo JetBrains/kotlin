@@ -46,8 +46,6 @@ constexpr container_size_t kContainerAlignment = 1024;
 // Single object alignment.
 constexpr container_size_t kObjectAlignment = 8;
 
-}  // namespace
-
 #if USE_GC
 // Collection threshold default (collect after having so many elements in the
 // release candidates set). Better be a prime number.
@@ -56,11 +54,17 @@ constexpr size_t kGcThreshold = 9341;
 typedef KStdDeque<ContainerHeader*> ContainerHeaderDeque;
 #endif
 
+}  // namespace
+
 #if TRACE_MEMORY || USE_GC
 typedef KStdUnorderedSet<ContainerHeader*> ContainerHeaderSet;
 typedef KStdVector<ContainerHeader*> ContainerHeaderList;
 typedef KStdVector<KRef*> KRefPtrList;
 #endif
+
+struct FrameOverlay {
+  ArenaContainer* arena;
+};
 
 struct MemoryState {
   // Current number of allocated containers.
@@ -99,6 +103,8 @@ namespace {
 // TODO: can we pass this variable as an explicit argument?
 THREAD_LOCAL_VARIABLE MemoryState* memoryState = nullptr;
 
+constexpr int kFrameOverlaySlots = sizeof(FrameOverlay) / sizeof(ObjHeader**);
+
 inline bool isFreeable(const ContainerHeader* header) {
   return (header->refCount_ & CONTAINER_TAG_MASK) < CONTAINER_TAG_PERMANENT;
 }
@@ -129,6 +135,15 @@ inline bool isArenaSlot(ObjHeader** slot) {
 inline ObjHeader** asArenaSlot(ObjHeader** slot) {
   return reinterpret_cast<ObjHeader**>(
       reinterpret_cast<uintptr_t>(slot) & ~ARENA_BIT);
+}
+
+inline FrameOverlay* asFrameOverlay(ObjHeader** slot) {
+  return reinterpret_cast<FrameOverlay*>(slot);
+}
+
+inline bool isRefCounted(KConstRef object) {
+  return (object->container()->refCount_ & CONTAINER_TAG_MASK) ==
+      CONTAINER_TAG_NORMAL;
 }
 
 #if USE_GC
@@ -777,27 +792,12 @@ ObjHeader** GetParamSlotIfArena(ObjHeader* param, ObjHeader** localSlot) {
 
 void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
   if (isArenaSlot(returnSlot)) {
-    if (object == nullptr
-        || (object->container()->refCount_ & CONTAINER_TAG_MASK) > CONTAINER_TAG_NORMAL) {
-        // Not a subject of reference counting.
-        return;
-    }
+    // Not a subject of reference counting.
+    if (object == nullptr || !isRefCounted(object)) return;
     auto arena = initedArena(asArenaSlot(returnSlot));
     returnSlot = arena->getSlot();
   }
-  ObjHeader* old = *returnSlot;
-#if TRACE_MEMORY
-  fprintf(stderr, "UpdateReturnRef *%p: %p -> %p\n", returnSlot, old, object);
-#endif
-  if (old != object) {
-    if (object != nullptr) {
-      AddRef(object);
-    }
-    *const_cast<const ObjHeader**>(returnSlot) = object;
-    if (old > reinterpret_cast<ObjHeader*>(1)) {
-      ReleaseRef(old);
-    }
-  }
+  UpdateRef(returnSlot, object);
 }
 
 void UpdateRef(ObjHeader** location, const ObjHeader* object) {
@@ -817,11 +817,17 @@ void UpdateRef(ObjHeader** location, const ObjHeader* object) {
   }
 }
 
+void EnterFrame(ObjHeader** start, int count) {
+#if TRACE_MEMORY
+  fprintf(stderr, "EnterFrame %p .. %p\n", start, start + count);
+#endif
+}
+
 void LeaveFrame(ObjHeader** start, int count) {
 #if TRACE_MEMORY
-    fprintf(stderr, "LeaveFrame %p .. %p\n", start, start + count);
+  fprintf(stderr, "LeaveFrame %p .. %p\n", start, start + count);
 #endif
-  ReleaseRefs(start + 1, count - 1);
+  ReleaseRefs(start + kFrameOverlaySlots, count - kFrameOverlaySlots);
   if (*start != nullptr) {
     auto arena = initedArena(start);
 #if TRACE_MEMORY
@@ -854,10 +860,11 @@ void GarbageCollect() {
   RuntimeAssert(state->toFree != nullptr, "GC must not be stopped");
   RuntimeAssert(!state->gcInProgress, "Recursive GC is disallowed");
 
+  state->gcInProgress = true;
+
   // Flush cache.
   flushFreeableCache(state);
 
-  state->gcInProgress = true;
   // Traverse inner pointers in the closure of release candidates, and
   // temporary decrement refs on them. Set CONTAINER_TAG_SEEN while traversing.
 #if TRACE_GC_PHASES

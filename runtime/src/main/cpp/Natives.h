@@ -134,6 +134,9 @@ OBJ_GETTER0(Kotlin_getCurrentStackTrace);
 
 OBJ_GETTER0(Kotlin_konan_internal_undefined);
 
+void Kotlin_konan_internal_GC_suspend(KRef);
+void Kotlin_konan_internal_GC_resume(KRef);
+
 #ifdef __cplusplus
 }
 #endif
