@@ -1705,7 +1705,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Companion.getInstances(state.getProject());
             if (!codegenExtensions.isEmpty() && resolvedCall != null) {
-                ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
+                ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(this, typeMapper, v);
                 KotlinType returnType = propertyDescriptor.getReturnType();
                 for (ExpressionCodegenExtension extension : codegenExtensions) {
                     if (returnType != null) {
@@ -2141,7 +2141,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Companion.getInstances(state.getProject());
         if (!codegenExtensions.isEmpty()) {
-            ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
+            ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(this, typeMapper, v);
             for (ExpressionCodegenExtension extension : codegenExtensions) {
                 StackValue stackValue = extension.applyFunction(receiver, resolvedCall, context);
                 if (stackValue != null) return stackValue;

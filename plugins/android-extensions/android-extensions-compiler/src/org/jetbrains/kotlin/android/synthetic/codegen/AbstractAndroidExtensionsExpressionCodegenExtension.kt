@@ -103,11 +103,12 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         }
 
         if (containerOptions.containerType == AndroidContainerType.UNKNOWN) return null
+        val actualReceiver = StackValue.receiver(resolvedCall, receiver, c.codegen, null)
 
         return StackValue.functionCall(Type.VOID_TYPE) {
             val bytecodeClassName = c.typeMapper.mapType(container).internalName
 
-            receiver.put(c.typeMapper.mapType(container), it)
+            actualReceiver.put(c.typeMapper.mapType(container), it)
             it.invokevirtual(bytecodeClassName, CLEAR_CACHE_METHOD_NAME, "()V", false)
         }
     }
