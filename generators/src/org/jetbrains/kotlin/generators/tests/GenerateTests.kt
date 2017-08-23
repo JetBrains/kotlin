@@ -1503,7 +1503,7 @@ fun main(args: Array<String>) {
             model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS)
         }
 
-        testClass<AbstractJsTypedArraysBoxTest> {
+        testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
             model("codegen/box/arrays", targetBackend = TargetBackend.JS)
         }
     }

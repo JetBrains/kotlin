@@ -51,10 +51,10 @@ abstract class AbstractJsCodegenBoxTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "out/codegen/box/"
 )
 
-abstract class AbstractJsTypedArraysBoxTest : BasicBoxTest(
+abstract class AbstractJsLegacyPrimitiveArraysBoxTest : BasicBoxTest(
         "compiler/testData/codegen/box/arrays/",
-        BasicBoxTest.TEST_DATA_DIR_PATH + "out/codegen/box/arrays-typedarrays/",
-        typedArraysEnabled = true
+        BasicBoxTest.TEST_DATA_DIR_PATH + "out/codegen/box/arrays-legacy-primitivearrays/",
+        typedArraysEnabled = false
 )
 
 abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(

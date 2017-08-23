@@ -72,7 +72,7 @@ import java.util.regex.Pattern
 abstract class BasicBoxTest(
         protected val pathToTestDir: String,
         private val pathToOutputDir: String,
-        private val typedArraysEnabled: Boolean = false,
+        private val typedArraysEnabled: Boolean = true,
         private val generateSourceMap: Boolean = false,
         private val generateNodeJsRunner: Boolean = true
 ) : KotlinTestWithEnvironment() {
