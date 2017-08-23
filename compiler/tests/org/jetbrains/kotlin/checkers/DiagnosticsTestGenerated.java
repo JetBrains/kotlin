@@ -16708,6 +16708,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("correctResultSubstitutorForErrorCandidate.kt")
+            public void testCorrectResultSubstitutorForErrorCandidate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/correctResultSubstitutorForErrorCandidate.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("delegationWithReceiver.kt")
             public void testDelegationWithReceiver() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/delegationWithReceiver.kt");

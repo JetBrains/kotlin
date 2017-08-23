@@ -54,7 +54,8 @@ class KotlinCallCompleter(
             candidateForCompletion.prepareForCompletion(expectedType)
             runCompletion(candidateForCompletion.resolvedCall, ConstraintSystemCompletionMode.FULL, diagnosticHolder, candidateForCompletion.getSystem(), resolutionCallbacks)
 
-            return CallResolutionResult(CallResolutionResult.Type.ERROR, candidate?.resolvedCall, diagnosticHolder.getDiagnostics(), ConstraintStorage.Empty)
+            val systemStorage = candidate?.getSystem()?.asReadOnlyStorage() ?: ConstraintStorage.Empty
+            return CallResolutionResult(CallResolutionResult.Type.ERROR, candidate?.resolvedCall, diagnosticHolder.getDiagnostics(), systemStorage)
         }
 
         val completionType = candidate.prepareForCompletion(expectedType)
