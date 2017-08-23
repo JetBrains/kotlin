@@ -70,48 +70,32 @@ class DependencyDownloader(
         }
     }
 
-    private fun tryHttpDownload(originalUrl: URL, connection: HttpURLConnection, tmpFile: File) {
-        @Suppress("NAME_SHADOWING")
-        var connection = connection
-        connection.connect()
-        val totalBytes = connection.contentLengthLong
-        var currentBytes = 0L
-        if (tmpFile.exists()) {
-            currentBytes = tmpFile.length()
-            if (currentBytes < totalBytes) {
-                connection.disconnect()
-                connection = originalUrl.openConnection() as HttpURLConnection
-                connection.setRequestProperty("range", "bytes=$currentBytes-")
-                connection.connect()
-            } else {
-                currentBytes = 0
-                tmpFile.delete()
-            }
-        }
-
-        doDownload(originalUrl, connection, tmpFile, currentBytes, totalBytes, true)
-    }
-
-    private fun tryOtherDownload(originalUrl: URL, connection: URLConnection, tmpFile: File) {
-        connection.connect()
-        val currentBytes = 0L
-        val totalBytes = connection.contentLengthLong
-
-        try {
-            doDownload(originalUrl, connection, tmpFile, currentBytes, totalBytes, false)
-        } catch(e: Throwable) {
-            tmpFile.delete()
-            throw e
+    private fun resumeDownload(originalUrl: URL, originalConnection: HttpURLConnection, tmpFile: File) {
+        originalConnection.connect()
+        val totalBytes = originalConnection.contentLengthLong
+        val currentBytes = tmpFile.length()
+        if (currentBytes >= totalBytes || originalConnection.getHeaderField("Accept-Ranges") != "bytes") {
+            // The temporary file is bigger then expected or the server doesn't support resuming downloading.
+            // Download the file from scratch.
+            doDownload(originalUrl, originalConnection, tmpFile, 0, totalBytes, false)
+        } else {
+            originalConnection.disconnect()
+            val rangeConnection = originalUrl.openConnection() as HttpURLConnection
+            rangeConnection.setRequestProperty("range", "bytes=$currentBytes-")
+            rangeConnection.connect()
+            doDownload(originalUrl, rangeConnection, tmpFile, currentBytes, totalBytes, true)
         }
     }
 
     /** Performs an attempt to download a specified file into the specified location */
     private fun tryDownload(url: URL, tmpFile: File) {
         val connection = url.openConnection()
-        if (connection is HttpURLConnection) {
-            tryHttpDownload(url, connection, tmpFile)
+        if (connection is HttpURLConnection && tmpFile.exists()) {
+            resumeDownload(url, connection, tmpFile)
         } else {
-            tryOtherDownload(url, connection, tmpFile)
+            connection.connect()
+            val totalBytes = connection.contentLengthLong
+            doDownload(url, connection, tmpFile, 0, totalBytes, false)
         }
     }
 
