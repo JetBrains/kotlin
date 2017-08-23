@@ -4115,6 +4115,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("sameNameOfDeclarationsInSameModule.kt")
+        public void testSameNameOfDeclarationsInSameModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/sameNameOfDeclarationsInSameModule.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("severalClosures.kt")
         public void testSeveralClosures() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/severalClosures.kt");

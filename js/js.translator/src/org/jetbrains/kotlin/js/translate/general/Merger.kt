@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
 import org.jetbrains.kotlin.js.backend.ast.metadata.exportedTag
+import org.jetbrains.kotlin.js.backend.ast.metadata.localAlias
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.createPrototypeStatements
@@ -141,7 +142,9 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
             override fun visitElement(node: JsNode) {
                 super.visitElement(node)
                 if (node is HasName) {
-                    node.name = node.name?.let { name -> rename(name) }
+                    val oldName = node.name
+                    node.name = oldName?.let { rename(it) }
+                    node.name?.localAlias = oldName?.localAlias?.let { rename(it) }
                 }
                 if (node is JsFunction) {
                     val coroutineMetadata = node.coroutineMetadata
