@@ -188,7 +188,14 @@ fun Converter.convertParameterList(
                 val parameter = params[i]
                 val defaultValue = overloadReducer?.parameterDefault(method, i)
                 val defaultValueConverted = if (defaultValue != null)
-                    deferredElement { codeConverter -> codeConverter.correctCodeConverter().convertExpression(defaultValue, parameter.type) }
+                    deferredElement { codeConverter ->
+                        val expr = codeConverter.correctCodeConverter().convertExpression(defaultValue, parameter.type)
+                        val refExpr = (defaultValue as? PsiReferenceExpression)
+                        if (refExpr != null && !refExpr.isQualified && refExpr.referenceName == parameter.name)
+                            QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), expr, null)
+                        else
+                            expr
+                    }
                 else
                     null
                 convertParameter(parameter, defaultValueConverted)

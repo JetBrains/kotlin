@@ -4007,6 +4007,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("ConflictParameterName.java")
+        public void testConflictParameterName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/ConflictParameterName.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("Override.java")
         public void testOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Override.java");
