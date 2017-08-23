@@ -44,9 +44,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_INFERENCE_ERRORS;
 import static org.jetbrains.kotlin.resolve.BindingContext.PROCESSED;
 
@@ -183,15 +180,6 @@ public class ExpressionTypingUtils {
     public static boolean isExclExclExpression(@Nullable KtExpression expression) {
         return expression instanceof KtUnaryExpression
                && ((KtUnaryExpression) expression).getOperationReference().getReferencedNameElementType() == KtTokens.EXCLEXCL;
-    }
-
-    @NotNull
-    public static List<KotlinType> getValueParametersTypes(@NotNull List<ValueParameterDescriptor> valueParameters) {
-        List<KotlinType> parameterTypes = new ArrayList<>(valueParameters.size());
-        for (ValueParameterDescriptor parameter : valueParameters) {
-            parameterTypes.add(parameter.getType());
-        }
-        return parameterTypes;
     }
 
     /**

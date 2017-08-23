@@ -82,7 +82,7 @@ object CallableReferenceTranslator {
             receiver: JsExpression?
     ): JsExpression {
         val realResolvedCall = expression.callableReference.getFunctionResolvedCallWithAssert(context.bindingContext())
-        val fakeExpression = CodegenUtil.constructFakeFunctionCall(expression.project, descriptor)
+        val fakeExpression = CodegenUtil.constructFakeFunctionCall(expression.project, descriptor.valueParameters.size)
 
         val fakeCall = CallMaker.makeCall(fakeExpression, null, null, fakeExpression, fakeExpression.valueArguments)
         val fakeResolvedCall = object : DelegatingResolvedCall<FunctionDescriptor>(realResolvedCall) {

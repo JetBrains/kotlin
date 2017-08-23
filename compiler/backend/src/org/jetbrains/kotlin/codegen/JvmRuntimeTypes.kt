@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
 class JvmRuntimeTypes(module: ModuleDescriptor) {
     private val kotlinJvmInternalPackage = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
@@ -77,7 +77,7 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
                 descriptor.builtIns,
                 Annotations.EMPTY,
                 actualFunctionDescriptor.extensionReceiverParameter?.type,
-                ExpressionTypingUtils.getValueParametersTypes(actualFunctionDescriptor.valueParameters),
+                actualFunctionDescriptor.valueParameters.map { it.type },
                 null,
                 actualFunctionDescriptor.returnType!!
         )
@@ -94,14 +94,20 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
         return listOf(lambda.defaultType, functionType)
     }
 
-    fun getSupertypesForFunctionReference(descriptor: FunctionDescriptor, isBound: Boolean): Collection<KotlinType> {
+    fun getSupertypesForFunctionReference(
+            referencedFunction: FunctionDescriptor,
+            anonymousFunctionDescriptor: AnonymousFunctionDescriptor,
+            isBound: Boolean
+    ): Collection<KotlinType> {
+        val receivers = computeExpectedNumberOfReceivers(referencedFunction, isBound)
+
         val functionType = createFunctionType(
-                descriptor.builtIns,
+                referencedFunction.builtIns,
                 Annotations.EMPTY,
-                if (isBound) null else descriptor.extensionReceiverParameter?.type ?: descriptor.dispatchReceiverParameter?.type,
-                ExpressionTypingUtils.getValueParametersTypes(descriptor.valueParameters),
+                if (isBound) null else referencedFunction.extensionReceiverParameter?.type ?: referencedFunction.dispatchReceiverParameter?.type,
+                anonymousFunctionDescriptor.valueParameters.drop(receivers).map { it.type },
                 null,
-                descriptor.returnType!!
+                referencedFunction.returnType!!
         )
 
         return listOf(functionReference.defaultType, functionType)

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
@@ -341,7 +342,9 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             callableDescriptor = bindingContext.get(FUNCTION, expression);
             if (callableDescriptor == null) return;
 
-            supertypes = runtimeTypes.getSupertypesForFunctionReference((FunctionDescriptor) target, receiverType != null);
+            supertypes = runtimeTypes.getSupertypesForFunctionReference(
+                    (FunctionDescriptor) target, (AnonymousFunctionDescriptor) callableDescriptor, receiverType != null
+            );
         }
         else if (target instanceof PropertyDescriptor) {
             callableDescriptor = bindingContext.get(VARIABLE, expression);
