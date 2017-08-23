@@ -69,7 +69,7 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
         return null
     }
 
-    private fun doCollectMarkers(psiElement: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>?) {
+    private fun doCollectMarkers(psiElement: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
         if (psiElement is KtProperty || psiElement is KtParameter) {
             for (it in (psiElement as KtDeclaration).toLightElements()) {
                 val nameIdentifier = (it as? PsiNameIdentifierOwner)?.nameIdentifier ?: continue
