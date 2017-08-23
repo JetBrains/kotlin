@@ -30,7 +30,7 @@ internal class KotlinCommonCompilerArgumentsSerializer : JpsProjectExtensionSeri
                                                                                        KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION) {
 
     override fun loadExtension(project: JpsProject, componentTag: Element) {
-        val settings = XmlSerializer.deserialize(componentTag, CommonCompilerArguments.DummyImpl::class.java)
+        val settings = XmlSerializer.deserialize(componentTag, CommonCompilerArguments.DummyImpl::class.java)!!
         if (VersionComparatorUtil.compare(settings.languageVersion, settings.apiVersion) < 0) {
             settings.apiVersion = settings.languageVersion
         }
