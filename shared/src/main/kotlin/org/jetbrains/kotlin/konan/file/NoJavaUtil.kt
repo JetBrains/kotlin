@@ -186,9 +186,12 @@ fun Path.recursiveCopyTo(destPath: Path) {
         val newPath = destFs.getPath(destPath.toString(), relative.toString())
 
         // File systems don't allow replacing an existing root.
-        if (newPath == newPath.getRoot()) return@next 
-        Files.copy(oldPath, newPath,
-            StandardCopyOption.REPLACE_EXISTING)
+        if (newPath == newPath.getRoot()) return@next
+        if (Files.isDirectory(newPath)) {
+            Files.createDirectories(newPath)
+        } else {
+            Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING)
+        }
     }
 }
 

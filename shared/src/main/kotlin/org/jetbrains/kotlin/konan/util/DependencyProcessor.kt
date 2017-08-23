@@ -73,6 +73,7 @@ class DependencyProcessor(dependenciesRoot: File,
 
     val lockFile = File(cacheDirectory, ".lock").apply { if (!exists()) createNewFile() }
 
+    var showInfo = true
     private var isInfoShown = false
 
     // TOOO: Rename pause -> interval
@@ -135,7 +136,7 @@ class DependencyProcessor(dependenciesRoot: File,
             return
         }
 
-        if (!isInfoShown) {
+        if (showInfo && !isInfoShown) {
             println("Downloading native dependencies (LLVM, sysroot etc). This is a one-time action performed only on the first run of the compiler.")
             isInfoShown = true
         }

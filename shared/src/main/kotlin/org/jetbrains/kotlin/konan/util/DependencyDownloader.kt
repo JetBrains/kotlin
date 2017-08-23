@@ -6,15 +6,13 @@ import java.net.URL
 import java.net.URLConnection
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.thread
-import kotlin.concurrent.withLock
+import java.util.concurrent.*
 
 class DependencyDownloader(
         var maxAttempts: Int = DEFAULT_MAX_ATTEMPTS,
         var attemptIntervalMs: Long = DEFAULT_ATTEMPT_INTERVAL_MS
 ) {
+    val executor = ExecutorCompletionService<Unit>(Executors.newSingleThreadExecutor())
 
     enum class ReplacingMode {
         /** Redownload the file and replace the existing one. */
@@ -25,41 +23,8 @@ class DependencyDownloader(
         RETURN_EXISTING
     }
 
-    class DownloadingProgress(@Volatile var currentBytes: Long, val totalBytes: Long) {
-        @Volatile var done: Boolean = false
-            private set
-        @Volatile var exception: Throwable? = null
-            private set
-
-        private val lock = ReentrantLock()
-        private val condition = lock.newCondition()
-
-        val doneCorrectly: Boolean
-            get() = done && exception != null
-
+    class DownloadingProgress(@Volatile var currentBytes: Long) {
         fun update(readBytes: Int) { currentBytes += readBytes }
-
-        fun done() = lock.withLock {
-            done = true
-            condition.signalAll()
-        }
-
-        fun done(e: Throwable) = lock.withLock {
-            done = true
-            exception = e
-            condition.signalAll()
-        }
-
-        fun trackProgress(interval: Long,
-                          intervalTimeUnit: TimeUnit = TimeUnit.MILLISECONDS,
-                          action: (progress: DownloadingProgress) -> Unit) =
-            lock.withLock {
-                action(this)
-                while (!done) {
-                    condition.await(interval, intervalTimeUnit)
-                    action(this)
-                }
-            }
     }
 
     private fun doDownload(originalUrl: URL,
@@ -68,33 +33,40 @@ class DependencyDownloader(
                            currentBytes: Long,
                            totalBytes: Long,
                            append: Boolean) {
-        val progress = DownloadingProgress(currentBytes, totalBytes)
+        val progress = DownloadingProgress(currentBytes)
 
-        // TODO: Implement multi-thread downloading + use some sort of thread pool.
-        thread {
-            Thread.setDefaultUncaughtExceptionHandler { _, throwable -> progress.done(throwable) }
+        // TODO: Implement multi-thread downloading.
+        executor.submit {
             connection.getInputStream().use { from ->
                 FileOutputStream(tmpFile, append).use { to ->
                     val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
                     var read = from.read(buffer)
                     while (read != -1) {
+                        if (Thread.interrupted()) {
+                            throw InterruptedException()
+                        }
                         to.write(buffer, 0, read)
                         progress.update(read)
                         read = from.read(buffer)
                     }
-                    if (currentBytes != totalBytes) {
+                    if (progress.currentBytes != totalBytes) {
                         throw EOFException("The stream closed before end of downloading.")
                     }
-                    progress.done()
                 }
             }
         }
 
-        progress.trackProgress(1000) {
-            updateProgressMsg(originalUrl.toString(), it.currentBytes, it.totalBytes)
-        }
-        if (!progress.doneCorrectly) {
-            throw progress.exception!!
+        var result: Future<Unit>?
+        do {
+            updateProgressMsg(originalUrl.toString(), progress.currentBytes, totalBytes)
+            result = executor.poll(1, TimeUnit.SECONDS)
+        } while(result == null)
+        updateProgressMsg(originalUrl.toString(), progress.currentBytes, totalBytes)
+
+        try {
+            result.get()
+        } catch (e: ExecutionException) {
+            throw e.cause ?: e
         }
     }
 
@@ -112,6 +84,7 @@ class DependencyDownloader(
                 connection.setRequestProperty("range", "bytes=$currentBytes-")
                 connection.connect()
             } else {
+                currentBytes = 0
                 tmpFile.delete()
             }
         }
@@ -148,10 +121,10 @@ class DependencyDownloader(
                  replace: ReplacingMode = ReplacingMode.RETURN_EXISTING): File {
 
         if (destination.exists()) {
-            @Suppress("NON_EXHAUSTIVE_WHEN")
             when (replace) {
                 ReplacingMode.RETURN_EXISTING -> return destination
                 ReplacingMode.THROW -> throw FileAlreadyExistsException(destination)
+                ReplacingMode.REPLACE -> Unit // Just continue with downloading.
             }
         }
         val tmpFile = File("${destination.canonicalPath}.$TMP_SUFFIX")
@@ -160,7 +133,7 @@ class DependencyDownloader(
             "A temporary file is a directory: ${tmpFile.canonicalPath}. Remove it and try again."
         }
         check(!destination.isDirectory) {
-            "The destination file is a directory: ${tmpFile.canonicalPath}. Remove it and try again."
+            "The destination file is a directory: ${destination.canonicalPath}. Remove it and try again."
         }
 
         var attempt = 1

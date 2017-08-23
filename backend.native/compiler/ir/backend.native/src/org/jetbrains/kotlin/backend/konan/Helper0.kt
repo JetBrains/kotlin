@@ -15,8 +15,8 @@
  */
 
 //
-// Example startup helper for Kotlin N compiler. Compile to JAR and add it to
-// Kotlin N classpath - it will get loaded and executed automatically.
+// Example startup helper for Kotlin/Native compiler. Compile to JAR and add it to
+// Kotlin/Native classpath - it will get loaded and executed automatically.
 //
 package org.jetbrains.kotlin.konan.util
 
