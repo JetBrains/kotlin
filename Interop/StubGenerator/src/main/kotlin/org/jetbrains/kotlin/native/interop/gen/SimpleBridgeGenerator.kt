@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.native.interop.gen
 /**
  * The type which has exact counterparts on both Kotlin and native side and can be directly passed through bridges.
  */
-enum class BridgedType(val kotlinType: String) {
-    BYTE("Byte"),
-    SHORT("Short"),
-    INT("Int"),
-    LONG("Long"),
-    FLOAT("Float"),
-    DOUBLE("Double"),
+enum class BridgedType(val kotlinType: String, val convertor: String? = null) {
+    BYTE("kotlin.Byte", "toByte"),
+    SHORT("kotlin.Short", "toShort"),
+    INT("kotlin.Int",  "toInt"),
+    LONG("kotlin.Long", "toLong"),
+    FLOAT("kotlin.Float", "toFloat"),
+    DOUBLE("kotlin.Double", "toDouble"),
     NATIVE_PTR("NativePtr"),
     OBJC_POINTER("NativePtr"),
-    VOID("Unit")
+    VOID("kotlin.Unit")
 }
 
 data class BridgeTypedKotlinValue(val type: BridgedType, val value: KotlinExpression)

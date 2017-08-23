@@ -26,22 +26,22 @@ interface DeclarationMapper {
 
 val PrimitiveType.kotlinType: String
     get() = when (this) {
-        is CharType -> "Byte"
+        is CharType -> "kotlin.Byte"
 
-        is BoolType -> "Boolean"
+        is BoolType -> "kotlin.Boolean"
 
     // TODO: C primitive types should probably be generated as type aliases for Kotlin types.
         is IntegerType -> when (this.size) {
-            1 -> "Byte"
-            2 -> "Short"
-            4 -> "Int"
-            8 -> "Long"
+            1 -> "kotlin.Byte"
+            2 -> "kotlin.Short"
+            4 -> "kotlin.Int"
+            8 -> "kotlin.Long"
             else -> TODO(this.toString())
         }
 
         is FloatingType -> when (this.size) {
-            4 -> "Float"
-            8 -> "Double"
+            4 -> "kotlin.Float"
+            8 -> "kotlin.Double"
             else -> TODO(this.toString())
         }
 

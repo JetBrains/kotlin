@@ -1,0 +1,3 @@
+package = platform.omxal
+headers = OMXAL/OpenMAXAL.h OMXAL/OpenMAXAL_Android.h OMXAL/OpenMAXAL_Platform.h
+linkerOpts = -lOpenMAXAL

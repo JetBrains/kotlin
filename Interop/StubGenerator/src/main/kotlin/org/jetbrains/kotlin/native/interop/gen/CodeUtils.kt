@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 val kotlinKeywords = setOf(
-        "as", "break", "class", "continue", "do", "else", "false", "for", "fun", "if", "in",
+        "as", "break", "class", "continue", "do", "dynamic", "else", "false", "for", "fun", "if", "in",
         "interface", "is", "null", "object", "package", "return", "super", "this", "throw",
         "true", "try", "typealias", "val", "var", "when", "while"
 )

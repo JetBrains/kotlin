@@ -1,0 +1,3 @@
+package = platform.gles2
+headers = GLES2/gl2.h GLES2/gl2ext.h GLES2/gl2platform.h
+linkerOpts = -lGLESv2

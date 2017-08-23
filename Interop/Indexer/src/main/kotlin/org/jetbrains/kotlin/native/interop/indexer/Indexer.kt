@@ -64,6 +64,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
     private sealed class DeclarationID {
         data class USR(val usr: String) : DeclarationID()
+        object VaList : DeclarationID()
         object VaListTag : DeclarationID()
         object BuiltinVaList : DeclarationID()
     }
@@ -105,6 +106,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             val spelling = getCursorSpelling(cursor)
             return when (kind to spelling) {
                 CXCursorKind.CXCursor_StructDecl to "__va_list_tag" -> DeclarationID.VaListTag
+                CXCursorKind.CXCursor_StructDecl to "__va_list" -> DeclarationID.VaList
                 CXCursorKind.CXCursor_TypedefDecl to "__builtin_va_list" -> DeclarationID.BuiltinVaList
                 else -> error(spelling)
             }
@@ -388,7 +390,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                     if (canonicalType.kind != CXType_Unexposed) {
                         convertType(canonicalType)
                     } else {
-                        throw NotImplementedError()
+                        UnsupportedType
                     }
                 }
             }

@@ -1,0 +1,3 @@
+package = platform.egl
+headers = EGL/egl.h EGL/eglext.h EGL/eglplatform.h
+linkerOpts = -lEGL

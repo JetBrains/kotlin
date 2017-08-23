@@ -199,7 +199,7 @@ private fun maybeExecuteHelper(dependenciesRoot: String, properties: Properties,
     }
 }
 
-private fun Properties.getClangFlags(target: String, targetSysRoot: String) : List<String> {
+private fun Properties.getClangFlags(target: String, targetSysRoot: String): List<String> {
     val flags = getTargetSpecific("clangFlags", target)
     if (flags == null) return emptyList()
     return flags.replace("<sysrootDir>", targetSysRoot).split(' ')
@@ -263,8 +263,8 @@ private fun loadProperties(file: File?, substitutions: Map<String, String>): Pro
 }
 
 private fun Properties.storeProperties(file: File) {
-    file.outputStream().use { 
-        this.store(it, null) 
+    file.outputStream().use {
+        this.store(it, null)
     }
 }
 
@@ -303,7 +303,7 @@ private fun parseDefFile(file: File?, substitutions: Map<String, String>): Tripl
     return Triple(properties, manifestAddendProperties, headerLines)
 }
 
-private fun Properties.duplicate() = Properties().apply{ putAll(this@duplicate) }
+private fun Properties.duplicate() = Properties().apply { putAll(this@duplicate) }
 
 private fun usage() {
     println("""
@@ -355,8 +355,8 @@ private fun processLib(konanHome: String,
         return
     }
 
-    val (config, manifestAddendProperties, defHeaderLines) 
-        = parseDefFile(defFile, substitutions)
+    val (config, manifestAddendProperties, defHeaderLines)
+            = parseDefFile(defFile, substitutions)
 
     val konanFileName = args["-properties"]?.single() ?:
             "${konanHome}/konan/konan.properties"
@@ -369,7 +369,7 @@ private fun processLib(konanHome: String,
     val llvmHome = konanProperties.getHostSpecific("llvmHome")!!
     val llvmInstallPath = "$dependencies/$llvmHome"
     val additionalHeaders = args["-h"].orEmpty()
-    val additionalCompilerOpts = args["-copt"].orEmpty()+ args["-compilerOpts"].orEmpty()
+    val additionalCompilerOpts = args["-copt"].orEmpty() + args["-compilerOpts"].orEmpty()
     val additionalLinkerOpts = args["-lopt"].orEmpty() + args["-linkerOpts"].orEmpty()
     val generateShims = args["-shims"].isTrue()
     val verbose = args["-verbose"].isTrue()
@@ -403,7 +403,7 @@ private fun processLib(konanHome: String,
     val linker = args["-linker"]?.atMostOne() ?: config.getProperty("linker") ?: "clang"
     val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
 
-    val fqParts = args["-pkg"]?.atMostOne()?.let {
+    val fqParts = (args["-pkg"]?.atMostOne() ?: config.getProperty("package"))?.let {
         it.split('.')
     } ?: defFile!!.name.split('.').reversed().drop(1)
 
@@ -459,7 +459,7 @@ private fun processLib(konanHome: String,
     }
 
     manifestAddend?.parentFile?.mkdirs()
-    manifestAddend ?.let { manifestAddendProperties.storeProperties(it) }
+    manifestAddend?.let { manifestAddendProperties.storeProperties(it) }
 
     val workDir = defFile?.absoluteFile?.parentFile ?: File(userDir)
 

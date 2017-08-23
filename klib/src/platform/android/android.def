@@ -1,0 +1,61 @@
+package = platform.android
+headers = android/api-level.h android/asset_manager.h android/asset_manager_jni.h android/bitmap.h \
+     android/configuration.h android/dlext.h android/input.h android/keycodes.h android/log.h \
+     android/looper.h android/native_activity.h android/native_window.h android/native_window_jni.h \
+     android/obb.h android/rect.h android/sensor.h android/storage_manager.h android/tts.h \
+     android/window.h
+
+linkerOpts = -landroid -llog -ljnigraphics
+
+---
+
+struct NativeActivityState {
+  struct ANativeActivity* activity;
+  void* savedState;
+  size_t savedStateSize;
+  struct ALooper* looper;
+};
+
+void getNativeActivityState(struct NativeActivityState* state);
+
+void notifySysEventProcessed();
+
+#define LOOPER_ID_SYS 1
+
+typedef enum NativeActivityEventKind {
+  UNKNOWN,
+  DESTROY,
+  START,
+  RESUME,
+  SAVE_INSTANCE_STATE,
+  PAUSE,
+  STOP,
+  CONFIGURATION_CHANGED,
+  LOW_MEMORY,
+  WINDOW_GAINED_FOCUS,
+  WINDOW_LOST_FOCUS,
+  NATIVE_WINDOW_CREATED,
+  NATIVE_WINDOW_DESTROYED,
+  INPUT_QUEUE_CREATED,
+  INPUT_QUEUE_DESTROYED
+} NativeActivityEventKind;
+
+struct NativeActivityEvent {
+  NativeActivityEventKind eventKind;
+};
+
+struct NativeActivitySaveStateEvent {
+  NativeActivityEventKind eventKind;
+  void* savedState;
+  size_t savedStateSize;
+};
+
+struct NativeActivityWindowEvent {
+  NativeActivityEventKind eventKind;
+  struct ANativeWindow* window;
+};
+
+struct NativeActivityQueueEvent {
+  NativeActivityEventKind eventKind;
+  struct AInputQueue* queue;
+};

@@ -316,7 +316,7 @@ class StubGenerator(
                     val signed = field.type.getUnderlyingIntegerType().isSigned
 
                     val readBitsExpr =
-                            "readBits(this.rawPtr, ${field.offset}, ${field.size}, $signed).to${rawType.kotlinType}()"
+                            "readBits(this.rawPtr, ${field.offset}, ${field.size}, $signed).${rawType.convertor!!}()"
 
                     out("    get() = ${typeInfo.argFromBridged(readBitsExpr)}")
 
@@ -626,10 +626,10 @@ class StubGenerator(
         }
 
         val narrowedValue: Number = when (unwrappedType.kotlinType) {
-            "Byte" -> value.toByte()
-            "Short" -> value.toShort()
-            "Int" -> value.toInt()
-            "Long" -> value
+            "kotlin.Byte" -> value.toByte()
+            "kotlin.Short" -> value.toShort()
+            "kotlin.Int" -> value.toInt()
+            "kotlin.Long" -> value
             else -> return null
         }
 
