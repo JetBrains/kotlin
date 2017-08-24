@@ -36,6 +36,12 @@ public class AndroidGotoTestGenerated extends AbstractAndroidGotoTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/goto"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
+    @TestMetadata("customNamespaceName")
+    public void testCustomNamespaceName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/goto/customNamespaceName/");
+        doTest(fileName);
+    }
+
     @TestMetadata("fqNameInAttr")
     public void testFqNameInAttr() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/goto/fqNameInAttr/");

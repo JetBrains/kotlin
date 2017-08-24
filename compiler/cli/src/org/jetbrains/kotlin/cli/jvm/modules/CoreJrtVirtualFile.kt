@@ -20,6 +20,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.util.io.URLUtil
+import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem.CoreJrtHandler
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -27,17 +29,17 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 
-class CoreLocalPathVirtualFile(private val fileSystem: VirtualFileSystem, private val path: Path) : VirtualFile() {
+internal class CoreJrtVirtualFile(private val handler: CoreJrtHandler, private val path: Path) : VirtualFile() {
     // TODO: catch IOException?
     private val attributes: BasicFileAttributes get() = Files.readAttributes(path, BasicFileAttributes::class.java)
 
-    override fun getFileSystem(): VirtualFileSystem = fileSystem
+    override fun getFileSystem(): VirtualFileSystem = handler.virtualFileSystem
 
     override fun getName(): String =
             path.fileName.toString()
 
     override fun getPath(): String =
-            FileUtil.toSystemIndependentName(path.toString())
+            FileUtil.toSystemIndependentName(handler.jdkHomePath + URLUtil.JAR_SEPARATOR + path)
 
     override fun isWritable(): Boolean = false
 
@@ -47,7 +49,7 @@ class CoreLocalPathVirtualFile(private val fileSystem: VirtualFileSystem, privat
 
     override fun getParent(): VirtualFile? {
         val parentPath = path.parent
-        return if (parentPath != null) CoreLocalPathVirtualFile(fileSystem, parentPath) else null
+        return if (parentPath != null) CoreJrtVirtualFile(handler, parentPath) else null
     }
 
     override fun getChildren(): Array<out VirtualFile> {
@@ -59,7 +61,7 @@ class CoreLocalPathVirtualFile(private val fileSystem: VirtualFileSystem, privat
         }
         return when {
             paths.isEmpty() -> VirtualFile.EMPTY_ARRAY
-            else -> paths.map { path -> CoreLocalPathVirtualFile(fileSystem, path) }.toTypedArray()
+            else -> paths.map { path -> CoreJrtVirtualFile(handler, path) }.toTypedArray()
         }
     }
 
@@ -82,7 +84,7 @@ class CoreLocalPathVirtualFile(private val fileSystem: VirtualFileSystem, privat
     override fun getModificationStamp(): Long = 0
 
     override fun equals(other: Any?): Boolean =
-            other is CoreLocalPathVirtualFile && path == other.path && fileSystem == other.fileSystem
+            other is CoreJrtVirtualFile && path == other.path && fileSystem == other.fileSystem
 
     override fun hashCode(): Int =
             path.hashCode()

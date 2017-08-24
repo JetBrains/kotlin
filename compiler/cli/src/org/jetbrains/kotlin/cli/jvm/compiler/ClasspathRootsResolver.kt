@@ -50,9 +50,9 @@ internal class ClasspathRootsResolver(
         private val psiManager: PsiManager,
         private val messageCollector: MessageCollector?,
         private val additionalModules: List<String>,
-        private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?
+        private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?,
+        private val javaModuleFinder: CliJavaModuleFinder
 ) {
-    val javaModuleFinder = CliJavaModuleFinder(VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL))
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
     data class RootsAndModules(val roots: List<JavaRoot>, val modules: List<JavaModule>)

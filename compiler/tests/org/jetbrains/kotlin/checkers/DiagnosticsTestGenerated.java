@@ -16702,6 +16702,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("delegationWithReceiver.kt")
+            public void testDelegationWithReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/delegationWithReceiver.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("DoubleDefine.kt")
             public void testDoubleDefine() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/DoubleDefine.kt");
@@ -17467,6 +17473,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("OverrideResolution.kt")
             public void testOverrideResolution() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/OverrideResolution.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyWithExtensionTypeInvoke.kt")
+            public void testPropertyWithExtensionTypeInvoke() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/propertyWithExtensionTypeInvoke.kt");
                 doTest(fileName);
             }
 

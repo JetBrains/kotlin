@@ -530,6 +530,10 @@ public class KtPsiUtil {
             return false;
         }
 
+        if (innerExpression instanceof KtBinaryExpression && isKeepBinaryExpressionParenthesized((KtBinaryExpression) innerExpression)) {
+            return true;
+        }
+
         int innerPriority = getPriority(innerExpression);
         int parentPriority = getPriority((KtExpression) parentElement);
 
@@ -549,6 +553,21 @@ public class KtPsiUtil {
         }
 
         return innerPriority < parentPriority;
+    }
+
+    private static boolean isKeepBinaryExpressionParenthesized(KtBinaryExpression expression) {
+        PsiElement expr = expression.getFirstChild();
+        while (expr != null) {
+            if (expr instanceof PsiWhiteSpace && expr.textContains('\n')) {
+                return true;
+            }
+            if (expr instanceof KtOperationReferenceExpression) {
+                break;
+            }
+            expr = expr.getNextSibling();
+        }
+        return (expression.getRight() instanceof KtBinaryExpression && isKeepBinaryExpressionParenthesized((KtBinaryExpression) expression.getRight())) ||
+               (expression.getLeft() instanceof KtBinaryExpression && isKeepBinaryExpressionParenthesized((KtBinaryExpression) expression.getLeft()));
     }
 
     public static boolean isAssignment(@NotNull PsiElement element) {

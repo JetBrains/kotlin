@@ -30,11 +30,16 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.search.DelegatingGlobalSearchScope
+import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBTextField
+import com.intellij.uiDesigner.core.GridConstraints
 import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withTimeout
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleOrigin
 import org.jetbrains.kotlin.idea.caches.resolve.getNullableModuleInfo
@@ -42,11 +47,12 @@ import org.jetbrains.kotlin.idea.completion.CompletionBenchmarkSink
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.refactoring.getLineCount
-import org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex
+import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 import javax.swing.JFileChooser
+import javax.swing.JPanel
 
 abstract class AbstractCompletionBenchmarkAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent?) {
@@ -74,31 +80,36 @@ abstract class AbstractCompletionBenchmarkAction : AnAction() {
 
         internal fun <T> List<T>.randomElement(random: Random): T? = if (this.isNotEmpty()) this[random.nextInt(this.size)] else null
         internal fun <T> Array<T>.randomElement(random: Random): T? = if (this.isNotEmpty()) this[random.nextInt(this.size)] else null
+        internal fun <T : Any> List<T>.shuffledSequence(random: Random): Sequence<T> = generateSequence { this.randomElement(random) }.distinct()
 
-    }
-
-    fun collectSuitableKotlinFiles(project: Project, filter: (KtFile) -> Boolean): MutableList<KtFile> {
-        val scope = object : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
-            override fun isSearchOutsideRootModel(): Boolean = false
-        }
-        val exactPackageIndex = KotlinExactPackagesIndex.getInstance()
-
-        fun KtFile.isUsableForBenchmark(): Boolean {
-            val moduleInfo = this.getNullableModuleInfo() ?: return false
-            if (this.isCompiled || !this.isWritable || this.isScript) return false
-            return moduleInfo.moduleOrigin == ModuleOrigin.MODULE
-        }
-
-        val ktFiles = mutableListOf<KtFile>()
-        exactPackageIndex.processAllKeys(project) {
-            exactPackageIndex.get(it, project, scope).forEach {
-                if (it.isUsableForBenchmark() && filter(it)) {
-                    ktFiles += it
-                }
+        internal fun collectSuitableKotlinFiles(project: Project, filePredicate: (KtFile) -> Boolean): MutableList<KtFile> {
+            val scope = object : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
+                override fun isSearchOutsideRootModel(): Boolean = false
             }
-            true
+
+            fun KtFile.isUsableForBenchmark(): Boolean {
+                val moduleInfo = this.getNullableModuleInfo() ?: return false
+                if (this.isCompiled || !this.isWritable || this.isScript) return false
+                return moduleInfo.moduleOrigin == ModuleOrigin.MODULE
+            }
+
+            val kotlinVFiles = FileTypeIndex.getFiles(KotlinFileType.INSTANCE, scope)
+
+            return kotlinVFiles
+                    .asSequence()
+                    .mapNotNull { vfile -> (vfile.toPsiFile(project) as? KtFile) }
+                    .filterTo(mutableListOf()) { it.isUsableForBenchmark() && filePredicate(it) }
         }
-        return ktFiles
+
+        internal fun JPanel.addBoxWithLabel(tooltip: String, label: String = tooltip + ":", default: String, i: Int): JBTextField {
+            this.add(JBLabel(label), GridConstraints().apply { row = i; column = 0 })
+            val textField = JBTextField().apply {
+                text = default
+                toolTipText = tooltip
+            }
+            this.add(textField, GridConstraints().apply { row = i; column = 1; fill = GridConstraints.FILL_HORIZONTAL })
+            return textField
+        }
     }
 
     override fun update(e: AnActionEvent) {

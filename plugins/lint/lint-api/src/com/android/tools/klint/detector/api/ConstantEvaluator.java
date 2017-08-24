@@ -862,7 +862,7 @@ public class ConstantEvaluator {
                 }
             }
             return operandValue;
-        } else if (node instanceof UReferenceExpression) {
+        } else if (mContext != null && node instanceof UReferenceExpression) {
             PsiElement resolved = ((UReferenceExpression) node).resolve();
             if (resolved instanceof PsiVariable) {
                 PsiVariable variable = (PsiVariable) resolved;

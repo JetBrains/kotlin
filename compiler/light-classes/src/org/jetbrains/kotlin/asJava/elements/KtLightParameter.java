@@ -148,7 +148,8 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
 
     @Override
     public String getText() {
-        return "";
+        KtParameter origin = getKotlinOrigin();
+        return origin != null ? origin.getText() : "";
     }
 
     @Override

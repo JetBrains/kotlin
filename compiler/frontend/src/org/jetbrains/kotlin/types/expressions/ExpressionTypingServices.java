@@ -318,7 +318,6 @@ public class ExpressionTypingServices {
             ContextDependency dependency = context.contextDependency;
             if (KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE()) {
                 dependency = ContextDependency.INDEPENDENT;
-
             }
 
             return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType).replaceContextDependency(dependency), true);

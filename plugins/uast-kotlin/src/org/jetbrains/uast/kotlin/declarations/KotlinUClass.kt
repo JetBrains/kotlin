@@ -96,7 +96,7 @@ class KotlinUClass private constructor(
                     }
                 }
             } else {
-                getLanguagePlugin().convert<UMethod>(psiMethod, this)
+                getLanguagePlugin().convert(psiMethod, this)
             }
         }
 

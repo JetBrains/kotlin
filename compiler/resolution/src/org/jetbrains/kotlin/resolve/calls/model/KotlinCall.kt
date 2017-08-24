@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,16 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
-interface KotlinCall {
+interface KotlinCall : ResolutionAtom {
     val callKind: KotlinCallKind
 
     val explicitReceiver: ReceiverKotlinCallArgument?
 
     // a.(foo)() -- (foo) is dispatchReceiverForInvoke
-    val dispatchReceiverForInvokeExtension: SimpleKotlinCallArgument? get() = null
+    val dispatchReceiverForInvokeExtension: ReceiverKotlinCallArgument? get() = null
 
     val name: Name
 
@@ -43,6 +44,18 @@ private fun SimpleKotlinCallArgument.checkReceiverInvariants() {
     assert(argumentName == null) {
         "Argument name should be null for receiver: $this, but it is $argumentName"
     }
+    checkArgumentInvariants()
+}
+
+private fun KotlinCallArgument.checkArgumentInvariants() {
+    if (this is SubKotlinCallArgument) {
+        assert(callResult.type == CallResolutionResult.Type.PARTIAL) {
+            "SubCall should has type PARTIAL: $callResult"
+        }
+        assert(callResult.resultCallAtom != null) {
+            "SubCall should has resultCallAtom: $callResult"
+        }
+    }
 }
 
 fun KotlinCall.checkCallInvariants() {
@@ -50,8 +63,10 @@ fun KotlinCall.checkCallInvariants() {
         "Lambda argument or callable reference is not allowed as explicit receiver: $explicitReceiver"
     }
 
-    (explicitReceiver as? SimpleKotlinCallArgument)?.checkReceiverInvariants()
-    dispatchReceiverForInvokeExtension?.checkReceiverInvariants()
+    explicitReceiver.safeAs<SimpleKotlinCallArgument>()?.checkReceiverInvariants()
+    dispatchReceiverForInvokeExtension.safeAs<SimpleKotlinCallArgument>()?.checkReceiverInvariants()
+    argumentsInParenthesis.forEach(KotlinCallArgument::checkArgumentInvariants)
+    externalArgument?.checkArgumentInvariants()
 
     if (callKind != KotlinCallKind.FUNCTION) {
         assert(externalArgument == null) {

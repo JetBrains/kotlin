@@ -61,7 +61,7 @@ class ToastTest(context: Context) : Activity() {
 
     private fun checkSuppress2(context: Context) {
         @android.annotation.SuppressLint("ShowToast")
-        val toast = Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText</warning>(this, "MyToast", Toast.LENGTH_LONG)
+        val toast = Toast.makeText(this, "MyToast", Toast.LENGTH_LONG)
     }
 
     class R {

@@ -6,9 +6,7 @@ import com.android.build.gradle.api.AndroidSourceSet
 import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
 import org.apache.tools.ant.util.ReflectUtil.newInstance
-import org.gradle.api.InvalidUserDataException
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
@@ -31,6 +29,7 @@ import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.getKaptClasssesDir
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
+import org.jetbrains.kotlin.gradle.utils.checkedReflection
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
 import java.io.File
 import java.net.URL
@@ -164,14 +163,25 @@ internal class Kotlin2JvmSourceSetProcessor(
 
                 configureJavaTask(kotlinTask, javaTask, logger)
 
+                var syncOutputTask: SyncOutputTask? = null
+
                 if (!isSeparateClassesDirSupported) {
-                    createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
+                    syncOutputTask = createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
                 }
 
                 val artifactFile = project.tryGetSingleArtifact()
                 configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
                         kotlinGradleBuildServices.artifactDifferenceRegistryProvider,
                         artifactFile)
+
+                if (project.pluginManager.hasPlugin("java-library") && sourceSetName == SourceSet.MAIN_SOURCE_SET_NAME) {
+                    val (classesProviderTask, classesDirectory) = when {
+                        isSeparateClassesDirSupported -> (kotlinAfterJavaTask ?: kotlinTask).let { it to it.destinationDir }
+                        else -> syncOutputTask!!.let { it to it.javaOutputDir }
+                    }
+
+                    registerKotlinOutputForJavaLibrary(classesDirectory, classesProviderTask)
+                }
             }
         }
     }
@@ -190,6 +200,36 @@ internal class Kotlin2JvmSourceSetProcessor(
         log.kotlinDebug { "All artifacts for project $path: [${artifacts.joinToString()}]" }
 
         return if (artifacts.size == 1) artifacts.first() else null
+    }
+
+    private fun registerKotlinOutputForJavaLibrary(outputDir: File, taskDependency: Task): Boolean {
+        val configuration = project.configurations.getByName("apiElements")
+
+        checkedReflection({
+            val getOutgoing = configuration.javaClass.getMethod("getOutgoing")
+            val outgoing = getOutgoing(configuration)
+
+            val getVariants = outgoing.javaClass.getMethod("getVariants")
+            val variants = getVariants(outgoing) as NamedDomainObjectCollection<*>
+
+            val variant = variants.getByName("classes")
+
+            val artifactMethod = variant.javaClass.getMethod("artifact", Any::class.java)
+
+            val artifactMap = mapOf(
+                    "file" to outputDir,
+                    "type" to "java-classes-directory",
+                    "builtBy" to taskDependency
+            )
+
+            artifactMethod(variant, artifactMap)
+
+            return true
+
+        }, { reflectException ->
+            logger.kotlinWarn("Could not register Kotlin output of source set $sourceSetName for java-library: $reflectException")
+            return false
+        })
     }
 }
 
@@ -615,7 +655,7 @@ internal fun createSyncOutputTask(
         javaTask: AbstractCompile,
         kotlinAfterJavaTask: KotlinCompile?,
         variantName: String
-) {
+): SyncOutputTask {
     // if kotlinAfterJavaTask is not null then kotlinTask compiles stubs, so don't sync them
     val kotlinCompile = kotlinAfterJavaTask ?: kotlinTask
     val kotlinDir = kotlinCompile.destinationDir
@@ -635,6 +675,8 @@ internal fun createSyncOutputTask(
     previousTask.finalizedByIfNotFailed(syncTask)
 
     project.logger.kotlinDebug { "Created task ${syncTask.path} to copy kotlin classes from $kotlinDir to $javaDir" }
+
+    return syncTask
 }
 
 private val KOTLIN_ANNOTATION_PROCESSING_FILE_REGEX = "kotlin-annotation-processing-[\\-0-9A-Za-z.]+\\.jar".toRegex()

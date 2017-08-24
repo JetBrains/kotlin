@@ -1790,6 +1790,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("deprecatedDocTagWithAnnotation.java")
+        public void testDeprecatedDocTagWithAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTagWithAnnotation.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("deprecatedDocTagWithMultiLineMessage.java")
         public void testDeprecatedDocTagWithMultiLineMessage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTagWithMultiLineMessage.java");
@@ -2936,6 +2942,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("kt-14248.java")
         public void testKt_14248() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-14248.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt-17379.java")
+        public void testKt_17379() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-17379.java");
             doTest(fileName);
         }
 

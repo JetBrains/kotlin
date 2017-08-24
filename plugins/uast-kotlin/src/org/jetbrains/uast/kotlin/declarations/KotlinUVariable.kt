@@ -24,16 +24,16 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
-import org.jetbrains.uast.java.AbstractJavaUVariable
 import org.jetbrains.uast.java.JavaAbstractUExpression
 import org.jetbrains.uast.java.JavaUAnnotation
 import org.jetbrains.uast.java.annotations
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
+import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 import org.jetbrains.uast.visitor.UastVisitor
 
-abstract class AbstractKotlinUVariable : AbstractJavaUVariable() {
+abstract class AbstractKotlinUVariable : PsiVariable, UVariable, KotlinUElementWithComments {
     override val uastInitializer: UExpression?
         get() {
             val psi = psi
@@ -68,6 +68,17 @@ abstract class AbstractKotlinUVariable : AbstractJavaUVariable() {
         val kotlinOrigin = (psi as? KtLightElement<*, *>)?.kotlinOrigin
         return UastLightIdentifier(psi, kotlinOrigin as KtNamedDeclaration?)
     }
+
+    override val annotations: List<UAnnotation> by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
+
+    override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
+
+    override val uastAnchor: UElement?
+        get() = UIdentifier(psi.nameIdentifier, this)
+
+    override fun equals(other: Any?) = other is AbstractKotlinUVariable && psi == other.psi
+
+    override fun hashCode() = psi.hashCode()
 }
 
 class KotlinUVariable(
@@ -77,6 +88,7 @@ class KotlinUVariable(
     override val psi = unwrap<UVariable, PsiVariable>(psi)
 
     override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
+
     override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
 
     override fun getContainingFile(): PsiFile? = (psi as? KtLightElement<*, *>)?.kotlinOrigin?.containingFile ?: psi.containingFile
@@ -91,18 +103,6 @@ class KotlinUVariable(
 
     override fun getNameIdentifier(): PsiIdentifier {
         return super.getNameIdentifier()
-    }
-
-    companion object {
-        fun create(psi: PsiVariable, containingElement: UElement?): UVariable {
-            return when (psi) {
-                is PsiEnumConstant -> KotlinUEnumConstant(psi, containingElement)
-                is PsiLocalVariable -> KotlinULocalVariable(psi, containingElement)
-                is PsiParameter -> KotlinUParameter(psi, containingElement)
-                is PsiField -> KotlinUField(psi, containingElement)
-                else -> KotlinUVariable(psi, containingElement)
-            }
-        }
     }
 }
 
@@ -186,6 +186,15 @@ open class KotlinULocalVariable(
         delegateExpression?.accept(visitor)
         visitor.afterVisitLocalVariable(this)
     }
+}
+
+open class KotlinUAnnotatedLocalVariable(
+        psi: PsiLocalVariable,
+        uastParent: UElement?,
+        computeAnnotations: (parent: UElement) -> List<UAnnotation>
+) : KotlinULocalVariable(psi, uastParent) {
+
+    override val annotations: List<UAnnotation> by lz { computeAnnotations(this) }
 }
 
 open class KotlinUEnumConstant(
