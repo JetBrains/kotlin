@@ -176,6 +176,12 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
             doTest(fileName);
         }
 
+        @TestMetadata("constantValueChanged")
+        public void testConstantValueChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/constantValueChanged/");
+            doTest(fileName);
+        }
+
         @TestMetadata("constantsUnchanged")
         public void testConstantsUnchanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/constantsUnchanged/");
