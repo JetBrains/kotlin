@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue;
@@ -166,6 +167,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             messageCollector.report(ERROR, "Specify at least one source file or directory", null);
             return COMPILATION_ERROR;
         }
+
+        ExitCode plugLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration);
+        if (plugLoadResult != ExitCode.OK) return plugLoadResult;
 
         configuration.put(JSConfigurationKeys.LIBRARIES, configureLibraries(arguments, paths, messageCollector));
 

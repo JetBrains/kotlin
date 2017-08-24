@@ -610,6 +610,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             @NotNull TranslationContext context
     ) {
         TranslationContext classContext = context.innerWithUsageTracker(descriptor);
-        ClassTranslator.translate(declaration, classContext, null);
+        ClassTranslator.translate(declaration, classContext);
     }
 }

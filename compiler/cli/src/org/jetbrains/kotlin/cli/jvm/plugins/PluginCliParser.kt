@@ -17,7 +17,11 @@
 package org.jetbrains.kotlin.cli.jvm.plugins
 
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.cli.jvm.BundledCompilerPlugins
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -26,6 +30,30 @@ import java.net.URL
 import java.util.*
 
 object PluginCliParser {
+
+    @JvmStatic
+    fun loadPluginsSafe(arguments: CommonCompilerArguments, configuration: CompilerConfiguration): ExitCode {
+        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
+        try {
+            PluginCliParser.loadPlugins(arguments, configuration)
+        }
+        catch (e: PluginCliOptionProcessingException) {
+            val message = e.message + "\n\n" + cliPluginUsageString(e.pluginId, e.options)
+            messageCollector.report(CompilerMessageSeverity.ERROR, message)
+            return ExitCode.INTERNAL_ERROR
+        }
+        catch (e: CliOptionProcessingException) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, e.message!!)
+            return ExitCode.INTERNAL_ERROR
+        }
+        catch (t: Throwable) {
+            MessageCollectorUtil.reportException(messageCollector, t)
+            return ExitCode.INTERNAL_ERROR
+        }
+        return ExitCode.OK
+    }
+
     @JvmStatic
     fun loadPlugins(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
         val classLoader = PluginURLClassLoader(
