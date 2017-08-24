@@ -107,7 +107,7 @@ class MetadataPackageFragment(
                 containerSource = null, components = components, classNames = { emptyList() }
         ) {
             override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
-            override fun definitelyDoesNotContainName(name: Name, location: LookupLocation) = false
+            override fun definitelyDoesNotContainName(name: Name) = false
             override fun getClassifierNames(): Set<Name>? = null
         })
 

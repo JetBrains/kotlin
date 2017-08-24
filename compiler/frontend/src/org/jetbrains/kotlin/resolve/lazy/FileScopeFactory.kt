@@ -241,11 +241,7 @@ class FileScopeFactory(
 
             override fun computeImportedNames() = packageView.memberScope.computeAllNames()
 
-            override fun definitelyDoesNotContainName(name: Name, location: LookupLocation): Boolean {
-                if (names?.let { name in it } != false) return false
-                packageView.memberScope.recordLookup(name, location)
-                return true
-            }
+            override fun definitelyDoesNotContainName(name: Name) = names?.let { name !in it } == true
 
             override fun toString() = "Scope for current package (${filteringKind.name})"
 

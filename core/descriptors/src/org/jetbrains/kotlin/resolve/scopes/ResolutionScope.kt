@@ -40,7 +40,7 @@ interface ResolutionScope {
             nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER
     ): Collection<DeclarationDescriptor>
 
-    fun definitelyDoesNotContainName(name: Name, location: LookupLocation): Boolean = false
+    fun definitelyDoesNotContainName(name: Name): Boolean = false
 
     fun recordLookup(name: Name, location: LookupLocation) {
         getContributedFunctions(name, location)

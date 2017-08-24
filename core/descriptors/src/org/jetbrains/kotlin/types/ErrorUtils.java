@@ -231,7 +231,7 @@ public class ErrorUtils {
         }
 
         @Override
-        public boolean definitelyDoesNotContainName(@NotNull Name name, @NotNull LookupLocation location) {
+        public boolean definitelyDoesNotContainName(@NotNull Name name) {
             return false;
         }
 
@@ -306,7 +306,7 @@ public class ErrorUtils {
         }
 
         @Override
-        public boolean definitelyDoesNotContainName(@NotNull Name name, @NotNull LookupLocation location) {
+        public boolean definitelyDoesNotContainName(@NotNull Name name) {
             return false;
         }
 

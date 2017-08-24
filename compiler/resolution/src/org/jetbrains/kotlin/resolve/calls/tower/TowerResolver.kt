@@ -199,8 +199,8 @@ class TowerResolver {
     private fun MemberScopeTowerLevel.mayFitForName(name: Name) =
             !definitelyDoesNotContainName(name) || !definitelyDoesNotContainName(OperatorNameConventions.INVOKE)
 
-    private fun ResolutionScope.mayFitForName(name: Name, location: LookupLocation) =
-            !definitelyDoesNotContainName(name, location) || !definitelyDoesNotContainName(OperatorNameConventions.INVOKE, location)
+    private fun ResolutionScope.mayFitForName(name: Name) =
+            !definitelyDoesNotContainName(name) || !definitelyDoesNotContainName(OperatorNameConventions.INVOKE)
 
     fun <C : Candidate> runWithEmptyTowerData(
             processor: ScopeTowerProcessor<C>,

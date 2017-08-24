@@ -89,7 +89,7 @@ internal class MemberScopeTowerLevel(
 
     fun definitelyDoesNotContainName(name: Name) =
             (dispatchReceiver.possibleTypes + dispatchReceiver.receiverValue.type)
-                    .all { !it.isDynamic() && it.memberScope.definitelyDoesNotContainName(name, location) }
+                    .all { !it.isDynamic() && it.memberScope.definitelyDoesNotContainName(name) }
 
     private fun collectMembers(
             getMembers: ResolutionScope.(KotlinType?) -> Collection<CallableDescriptor>

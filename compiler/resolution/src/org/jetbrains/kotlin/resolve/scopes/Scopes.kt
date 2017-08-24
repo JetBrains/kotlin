@@ -55,7 +55,7 @@ interface LexicalScope : HierarchicalScope {
         override val kind: LexicalScopeKind
             get() = LexicalScopeKind.EMPTY
 
-        override fun definitelyDoesNotContainName(name: Name, location: LookupLocation) = true
+        override fun definitelyDoesNotContainName(name: Name) = true
 
         override fun printStructure(p: Printer) {
             p.println("Base lexical scope with owner = $ownerDescriptor and parent = $parent")
@@ -130,7 +130,7 @@ interface ImportingScope : HierarchicalScope {
 
         override fun computeImportedNames() = emptySet<Name>()
 
-        override fun definitelyDoesNotContainName(name: Name, location: LookupLocation) = true
+        override fun definitelyDoesNotContainName(name: Name) = true
     }
 }
 
