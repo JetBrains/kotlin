@@ -1651,6 +1651,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("emptyLHS.kt")
+            public void testEmptyLHS() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/emptyLHS.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("enumEntryMember.kt")
             public void testEnumEntryMember() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/enumEntryMember.kt");

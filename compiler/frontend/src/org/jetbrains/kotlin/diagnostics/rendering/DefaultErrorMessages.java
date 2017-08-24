@@ -833,9 +833,6 @@ public class DefaultErrorMessages {
         MAP.put(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
                 "''{0}'' is a member and an extension at the same time. References to such elements are not allowed", NAME);
         MAP.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Left-hand side of a callable reference cannot be a type parameter");
-        MAP.put(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS,
-                "Left-hand side of a callable reference with a receiver parameter cannot be empty. " +
-                "Please specify the type of the receiver before '::' explicitly");
         MAP.put(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, "Annotation class cannot be instantiated");
 
         MAP.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal");

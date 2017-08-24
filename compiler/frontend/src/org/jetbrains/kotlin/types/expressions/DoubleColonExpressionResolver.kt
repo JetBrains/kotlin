@@ -550,10 +550,6 @@ class DoubleColonExpressionResolver(
             descriptor: CallableDescriptor, trace: BindingTrace, expression: KtCallableReferenceExpression
     ) {
         val simpleName = expression.callableReference
-        if (expression.isEmptyLHS &&
-            (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null)) {
-            trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(simpleName))
-        }
         if (descriptor is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)) {
             trace.report(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR.on(simpleName))
         }

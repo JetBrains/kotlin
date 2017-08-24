@@ -6,7 +6,7 @@ class A {
     inner class Inner
     
     fun main() {
-        ::<!CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS!>Inner<!>
+        ::Inner
         val y = A::Inner
 
         checkSubtype<KFunction1<A, Inner>>(y)
