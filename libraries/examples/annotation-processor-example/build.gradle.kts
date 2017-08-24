@@ -3,7 +3,7 @@ description = "Simple Annotation Processor for testing kapt"
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib"))
 }
 
 sourceSets {

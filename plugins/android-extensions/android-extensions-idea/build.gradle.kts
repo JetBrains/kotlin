@@ -17,7 +17,8 @@ dependencies {
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":idea:idea-android"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testCompile(commonDep("junit:junit"))
     testRuntime(project(":plugins:android-extensions-jps"))
     testRuntime(project(":plugins:sam-with-receiver-ide"))
     testRuntime(project(":plugins:noarg-ide"))

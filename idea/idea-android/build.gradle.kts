@@ -2,7 +2,7 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(project(":kotlin-reflect"))
+    compile(projectDist(":kotlin-reflect"))
     compile(project(":compiler:util"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:frontend"))
@@ -15,13 +15,14 @@ dependencies {
     compile(ideaPluginDeps("android", "android-common", "sdklib", "sdk-common", "layoutlib-api", plugin = "android"))
     compile(preloadedDeps("dx", subdir = "android-5.0/lib"))
 
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":compiler.tests-common"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(projectTests(":idea"))
     testCompile(ideaPluginDeps("properties", plugin = "properties"))
     testCompile(ideaSdkDeps("gson"))
+    testCompile(commonDep("junit:junit"))
 
     testRuntime(project(":plugins:android-extensions-idea"))
     testRuntime(project(":plugins:sam-with-receiver-ide"))

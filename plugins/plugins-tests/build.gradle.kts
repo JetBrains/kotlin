@@ -18,8 +18,9 @@ dependencies {
     testCompile(project(":idea:idea-android")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":plugins:uast-kotlin"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":jps-plugin"))
+    testCompile(commonDep("junit:junit"))
     testCompileOnly(ideaSdkDeps("jps-builders"))
     testCompile(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
     testCompile(ideaPluginDeps("*.jar", plugin = "android", subdir = "lib/jps"))
@@ -37,12 +38,8 @@ sourceSets {
 
 testsJar {}
 
-val test: Test by tasks
-test.apply {
+projectTest {
     dependsOnTaskIfExistsRec("dist", project = rootProject)
     workingDir = rootDir
-    systemProperty("idea.is.unit.test", "true")
-    environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
-    ignoreFailures = true
 }
 

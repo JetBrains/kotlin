@@ -23,7 +23,7 @@ dependencies {
     compile(project(":js:js.translator"))
     compile(project(":android-extensions-compiler"))
     compile(project(":kotlin-test:kotlin-test-jvm"))
-    compile(commonDep("junit"))
+    compile(commonDep("junit:junit"))
     compile(ideaSdkCoreDeps("intellij-core"))
     compile(ideaSdkDeps("openapi", "idea", "idea_rt"))
     compile(preloadedDeps("dx", subdir = "android-5.0/lib"))

@@ -56,7 +56,7 @@ val sideJars by configurations.creating
 dependencies {
     packedJars(commonDep("com.github.spullara.cli-parser", "cli-parser"))
     packedJars(preloadedDeps("protobuf-${rootProject.extra["versions.protobuf-java"]}"))
-    sideJars(project(":kotlin-script-runtime"))
+    sideJars(projectDist(":kotlin-script-runtime"))
     sideJars(commonDep("io.javaslang", "javaslang"))
     sideJars(commonDep("javax.inject"))
     sideJars(preloadedDeps("markdown", "kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))

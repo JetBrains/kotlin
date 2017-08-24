@@ -13,7 +13,10 @@ inline fun <reified T : Task> Project.task(noinline configuration: T.() -> Unit)
 
 
 fun AbstractTask.dependsOnTaskIfExists(task: String) {
-    project.tasks.firstOrNull { it.name == task }?.let { dependsOn(it) }
+    val thisTask = this
+    project.afterEvaluate {
+        project.tasks.firstOrNull { it.name == task }?.let { thisTask.dependsOn(it) }
+    }
 }
 
 fun AbstractTask.dependsOnTaskIfExistsRec(task: String, project: Project? = null) {

@@ -14,7 +14,7 @@ dependencies {
     compile(project(":js:js.ast"))
     compile(project(":js:js.frontend"))
     compile(project(":idea:idea-test-framework"))
-    compile(project(":kotlin-test:kotlin-test-jvm"))
+    compile(projectDist(":kotlin-test:kotlin-test-jvm"))
     compile(projectTests(":kotlin-build-common"))
     compile(projectTests(":compiler"))
     compile(projectTests(":compiler:tests-java8"))

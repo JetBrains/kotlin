@@ -6,7 +6,7 @@ jvmTarget = "1.6"
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
-    compile(project(":kotlin-reflect"))
+    compile(projectDist(":kotlin-reflect"))
     compile(preloadedDeps("kotlinx-coroutines-core"))
 }
 

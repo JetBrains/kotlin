@@ -4,12 +4,13 @@ description = "Sample Kotlin JSR 223 scripting jar with local (in-process) compi
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
-    compile(project(":kotlin-script-runtime"))
+    compile(projectDist(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-script-runtime"))
     compile(projectRuntimeJar(":kotlin-compiler"))
     compile(project(":kotlin-script-util"))
-    testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testRuntime(project(":kotlin-reflect"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
+    testCompile(commonDep("junit:junit"))
+    testRuntime(projectDist(":kotlin-reflect"))
 }
 
 projectTest()

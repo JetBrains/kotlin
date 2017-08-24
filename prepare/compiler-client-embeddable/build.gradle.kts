@@ -35,11 +35,11 @@ dependencies {
         testCompile(project(it))
     }
     testCompile(commonDep("junit:junit"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testRuntimeCompilerJar(project(":kotlin-compiler", configuration = "runtimeJar"))
-    testStdlibJar(project(":kotlin-stdlib", configuration = "mainJar"))
-    testScriptRuntimeJar(project(":kotlin-script-runtime", configuration = "mainJar"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
+    testRuntimeCompilerJar(projectDist(":kotlin-compiler"))
+    testStdlibJar(projectDist(":kotlin-stdlib"))
+    testScriptRuntimeJar(projectDist(":kotlin-script-runtime"))
 }
 
 sourceSets {

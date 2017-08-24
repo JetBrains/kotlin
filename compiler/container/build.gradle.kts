@@ -7,8 +7,9 @@ dependencies {
     compile(project(":core:util.runtime"))
     compile(commonDep("javax.inject"))
     compile(ideaSdkCoreDeps("intellij-core"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testRuntime(ideaSdkCoreDeps("trove4j", "intellij-core"))
 }
 

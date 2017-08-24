@@ -13,8 +13,8 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler.tests-common"))
     testCompile(protobufFull())
-    testRuntime(project(":kotlin-stdlib"))
-    testRuntime(project(":kotlin-reflect"))
+    testRuntime(projectDist(":kotlin-stdlib"))
+    testRuntime(projectDist(":kotlin-reflect"))
 }
 
 sourceSets {

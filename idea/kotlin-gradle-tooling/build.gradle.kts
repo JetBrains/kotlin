@@ -4,7 +4,7 @@ description = "Kotlin Gradle Tooling support"
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib"))
     compile(project(":compiler:cli-common"))
     compile(ideaSdkDeps("gradle-tooling-api",
                         "gradle-tooling-extension-api",

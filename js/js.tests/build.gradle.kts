@@ -10,9 +10,10 @@ dependencies {
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.dce"))
     testCompile(ideaSdkDeps("openapi", "idea"))
-    testRuntime(project(":kotlin-stdlib"))
+    testRuntime(projectDist(":kotlin-stdlib"))
     testRuntime(project(":compiler:backend-common"))
     testRuntime(ideaSdkDeps("*.jar"))
+    testRuntime(commonDep("org.fusesource.jansi", "jansi"))
 }
 
 sourceSets {
@@ -20,14 +21,22 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val test: Test by tasks
-test.apply {
-    dependsOnTaskIfExistsRec("dist", project = rootProject)
-    dependsOn(":prepare:mock-runtime-for-test:dist")
+val testDistProjects = listOf(
+        "", // for root project
+        ":prepare:mock-runtime-for-test",
+        ":kotlin-compiler",
+        ":kotlin-runtime",
+        ":kotlin-script-runtime",
+        ":kotlin-stdlib",
+        ":kotlin-stdlib-js",
+        ":kotlin-test:kotlin-test-jvm",
+        ":kotlin-test:kotlin-test-junit",
+        ":kotlin-daemon-client",
+        ":kotlin-ant")
+
+projectTest {
+    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
-    systemProperty("idea.is.unit.test", "true")
-    environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
-    ignoreFailures = true
 }
 
 testsJar {}

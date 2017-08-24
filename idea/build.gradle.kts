@@ -2,11 +2,11 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib"))
     compile(project(":core"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:cli-common"))
-    compile(project(":kotlin-daemon-client"))
+    compile(projectDist(":kotlin-daemon-client"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:frontend.script"))
@@ -45,10 +45,11 @@ dependencies {
 
     compile(preloadedDeps("markdown", "kotlinx-coroutines-core"))
 
-    testCompile(project(":kotlin-test:kotlin-test-junit"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler.tests-common"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
+    testCompile(commonDep("junit:junit"))
 
     testCompileOnly(ideaPluginDeps("gradle-base-services", "gradle-tooling-extension-impl", "gradle-wrapper", plugin = "gradle"))
     testCompileOnly(ideaPluginDeps("Groovy", plugin = "Groovy"))

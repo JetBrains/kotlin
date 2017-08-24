@@ -1,6 +1,8 @@
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     compile(project(":core"))
     compile(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))

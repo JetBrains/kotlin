@@ -6,7 +6,7 @@ apply { plugin("kotlin") }
 dependencies {
     compile(commonDep("org.apache.ant", "ant"))
     compile(project(":kotlin-preloader"))
-    compile(project(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib"))
 }
 
 sourceSets {

@@ -4,8 +4,8 @@ apply { plugin("kotlin") }
 
 dependencies {
     testCompile(commonDep("junit:junit"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":kotlin-test:kotlin-test-junit"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(project(":compiler.tests-common"))
     testCompile(project(":core"))
     testCompile(project(":compiler:util"))
@@ -16,12 +16,12 @@ dependencies {
     testCompile(project(":compiler:serialization"))
     testCompile(ideaSdkDeps("openapi", "idea", "util", "asm-all"))
     // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
-    testCompile(project(":kotlin-stdlib"))
-    testCompile(project(":kotlin-script-runtime"))
-    testCompile(project(":kotlin-runtime"))
-    testCompile(project(":kotlin-reflect"))
+    testCompile(projectDist(":kotlin-stdlib"))
+    testCompile(projectDist(":kotlin-script-runtime"))
+    testCompile(projectDist(":kotlin-runtime"))
+    testCompile(projectDist(":kotlin-reflect"))
     testCompile(projectTests(":compiler"))
-    testRuntime(project(":kotlin-preloader"))
+    testRuntime(projectDist(":kotlin-preloader"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
     testRuntime(ideaSdkDeps("*.jar"))
 }

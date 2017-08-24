@@ -30,7 +30,7 @@ val packagesToRelocate =
                "org.fusesource")
 
 dependencies {
-    compilerJar(project(":kotlin-compiler", configuration = "runtimeJar"))
+    compilerJar(projectDist(":kotlin-compiler"))
 }
 
 runtimeJar(task<ShadowJar>("embeddable")) {

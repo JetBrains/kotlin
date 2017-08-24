@@ -8,7 +8,7 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:container"))
     compile(project(":compiler:resolution"))
-    compile(project(":kotlin-script-runtime"))
+    compile(projectDist(":kotlin-script-runtime"))
     compile(commonDep("io.javaslang","javaslang"))
 }
 

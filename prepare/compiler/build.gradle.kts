@@ -88,9 +88,9 @@ dependencies {
     proguardLibraryJars(files(firstFromJavaHomeThatExists("lib/rt.jar", "../Classes/classes.jar"),
             firstFromJavaHomeThatExists("lib/jsse.jar", "../Classes/jsse.jar"),
             firstFromJavaHomeThatExists("../lib/tools.jar", "../Classes/tools.jar")))
-    proguardLibraryJars(project(":kotlin-stdlib", configuration = "mainJar"))
-    proguardLibraryJars(project(":kotlin-script-runtime", configuration = "mainJar"))
-    proguardLibraryJars(project(":kotlin-reflect", configuration = "mainJar"))
+    proguardLibraryJars(projectDist(":kotlin-stdlib"))
+    proguardLibraryJars(projectDist(":kotlin-script-runtime"))
+    proguardLibraryJars(projectDist(":kotlin-reflect"))
     proguardLibraryJars(preloadedDeps("kotlinx-coroutines-core"))
 }
 
@@ -98,7 +98,6 @@ val packCompiler by task<ShadowJar> {
     configurations = listOf(fatJar)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDir = File(buildDir, "libs")
-//    baseName = compilerBaseName
     dependsOn(protobufFullTask)
 
     setupPublicJar("before-proguard", "")
@@ -130,14 +129,9 @@ val proguard by task<ProGuardTask> {
     printconfiguration("$buildDir/compiler.pro.dump")
 }
 
-dist {
-    if (shrink) {
-        from(proguard)
-    } else {
-        from(packCompiler)
-    }
-    rename(".*", compilerBaseName + ".jar")
-}
+dist(targetName = compilerBaseName + ".jar",
+     fromTask = if (shrink) proguard
+                else packCompiler)
 
 runtimeJarArtifactBy(proguard, proguard.outputs.files.singleFile) {
     name = compilerBaseName

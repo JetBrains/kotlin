@@ -2,7 +2,7 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib"))
     compile(project(":core:util.runtime"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:frontend.java"))

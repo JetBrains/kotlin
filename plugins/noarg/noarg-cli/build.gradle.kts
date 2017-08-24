@@ -9,8 +9,8 @@ dependencies {
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
-    runtime(project(":kotlin-compiler", configuration = "runtimeJar"))
-    runtime(project(":kotlin-stdlib"))
+    runtime(projectDist(":kotlin-compiler"))
+    runtime(projectDist(":kotlin-stdlib"))
 }
 
 sourceSets {
@@ -22,10 +22,7 @@ val jar = runtimeJar {
     from(fileTree("$projectDir/src")) { include("META-INF/**") }
 }
 
-dist {
-    from(jar)
-    rename("^kotlin-", "")
-}
+dist(targetName = the<BasePluginConvention>().archivesBaseName.removePrefix("kotlin-") + ".jar")
 
 ideaPlugin {
     from(jar)

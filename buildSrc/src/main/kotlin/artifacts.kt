@@ -8,10 +8,11 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
-
+import java.io.File
 
 fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testCompile"])
@@ -93,7 +94,7 @@ fun Project.publish(body: Upload.() -> Unit = {}): Upload {
     }
 }
 
-fun Project.ideaPlugin(subdir: String = "lib", body: Copy.() -> Unit) {
+fun Project.ideaPlugin(subdir: String = "lib", body: AbstractCopyTask.() -> Unit) {
     task<Copy>("idea-plugin") {
         body()
         into(File(rootProject.extra["ideaPluginDir"].toString(), subdir).path)
@@ -105,17 +106,25 @@ fun Project.ideaPlugin(subdir: String = "lib") = ideaPlugin(subdir) {
     fromRuntimeJarIfExists(this)
 }
 
+fun Project.dist(targetDir: File? = null,
+                 targetName: String? = null,
+                 fromTask: Task? = null,
+                 body: AbstractCopyTask.() -> Unit = {}): AbstractCopyTask {
+    val distJarCfg = configurations.getOrCreate("distJar")
+    val distLibDir: File by rootProject.extra
+    val distJarName = targetName ?: (the<BasePluginConvention>().archivesBaseName + ".jar")
 
-fun Project.dist(body: Copy.() -> Unit) {
-    task<Copy>("dist") {
+    return task<Copy>("dist") {
         body()
-        rename("-${java.util.regex.Pattern.quote(rootProject.extra["build.number"].toString())}", "")
-        into(rootProject.extra["distLibDir"].toString())
+        when {
+            fromTask != null -> from(fromTask)
+            else -> project.fromRuntimeJarIfExists(this)
+        }
+        rename(".*", distJarName)
+//        rename("-${java.util.regex.Pattern.quote(rootProject.extra["build.number"].toString())}", "")
+        into(targetDir ?: distLibDir)
+        project.addArtifact(distJarCfg, this, File(targetDir ?: distLibDir, distJarName))
     }
-}
-
-fun Project.dist() = dist {
-    fromRuntimeJarIfExists(this)
 }
 
 private fun<T: AbstractCopyTask> Project.fromRuntimeJarIfExists(task: T) {
