@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.LibraryData
@@ -29,6 +30,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
+import com.intellij.openapi.roots.impl.libraries.LibraryImpl
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
@@ -37,6 +39,8 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.*
+import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
@@ -109,32 +113,36 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
         if (toImport.isEmpty()) return
         val projectDataNode = toImport.first().parent!! as DataNode<ProjectData>
         val moduleDataNodes = projectDataNode.children.filter { it.data is ModuleData } as List<DataNode<ModuleData>>
-        if (moduleDataNodes.any { detectPlatformByPlugin(it)?.takeIf { it !is TargetPlatformKind.Jvm } != null }) {
-            for (libraryDataNode in toImport) {
-                val ideLibrary = modelsProvider.findIdeLibrary(libraryDataNode.data) ?: continue
+        val anyNonJvmModules = moduleDataNodes.any { detectPlatformByPlugin(it)?.takeIf { it !is TargetPlatformKind.Jvm } != null }
+        for (libraryDataNode in toImport) {
+            val ideLibrary = modelsProvider.findIdeLibrary(libraryDataNode.data) ?: continue
 
-                val modifiableModel = modelsProvider.getModifiableLibraryModel(ideLibrary) as LibraryEx.ModifiableModelEx
+            val modifiableModel = modelsProvider.getModifiableLibraryModel(ideLibrary) as LibraryEx.ModifiableModelEx
+            if (anyNonJvmModules) {
                 detectLibraryKind(modifiableModel.getFiles(OrderRootType.CLASSES))?.let { modifiableModel.kind = it }
             }
+            else if (ideLibrary is LibraryImpl && (ideLibrary.kind is JSLibraryKind || ideLibrary.kind is CommonLibraryKind)) {
+                resetLibraryKind(modifiableModel)
+            }
         }
+    }
 
+    private fun resetLibraryKind(modifiableModel: LibraryEx.ModifiableModelEx) {
+        try {
+            val cls = LibraryImpl::class.java
+            val declaredField = cls.getDeclaredField("myKind")
+            declaredField.isAccessible = true
+            declaredField.set(modifiableModel, null)
+        }
+        catch (e: Exception) {
+            LOG.info("Failed to reset library kind", e)
+        }
+    }
+
+    companion object {
+        val LOG = Logger.getInstance(KotlinGradleLibraryDataService::class.java)
     }
 }
-
-private fun findOwnerModule(libraryData: LibraryData,
-                            projectDataNode: DataNode<ProjectData>): DataNode<ModuleData>? {
-    return projectDataNode.children.firstOrNull { dataNode ->
-        if (dataNode.data !is ModuleData) return@firstOrNull false
-        if (dataNode.hasDependency(libraryData)) return@firstOrNull true
-        val sourceSetDataNodes = dataNode.children.filter { it.data is GradleSourceSetData }
-        sourceSetDataNodes.any { it.hasDependency(libraryData) }
-    } as DataNode<ModuleData>?
-}
-
-private fun DataNode<*>.hasDependency(libraryData: LibraryData): Boolean =
-        children.any {
-            (it.data as? LibraryDependencyData)?.target == libraryData
-        }
 
 fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): TargetPlatformKind<*>? {
     return when (moduleNode.platformPluginId) {
