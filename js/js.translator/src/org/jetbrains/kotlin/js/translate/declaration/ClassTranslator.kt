@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.declaration
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.*
 import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
 import org.jetbrains.kotlin.js.translate.expression.translateFunction
+import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
@@ -38,12 +40,16 @@ import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toInvocationWith
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
+import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.CommonSupertypes.topologicallySortSuperclassesAndRecordAllInstances
 import org.jetbrains.kotlin.types.SimpleType
@@ -54,7 +60,7 @@ import org.jetbrains.kotlin.utils.DFS
  * Generates a definition of a single class.
  */
 class ClassTranslator private constructor(
-        private val classDeclaration: KtClassOrObject,
+        private val classDeclaration: KtPureClassOrObject,
         context: TranslationContext,
         private val enumInitializerName: JsName?,
         private val ordinal: Int?
@@ -83,11 +89,30 @@ class ClassTranslator private constructor(
         translatePropertiesAsConstructorParameters(nonConstructorContext)
         val bodyVisitor = DeclarationBodyVisitor(descriptor, nonConstructorContext, enumInitFunction)
         bodyVisitor.traverseContainer(classDeclaration, nonConstructorContext)
+
+        val companionDescriptor = descriptor.companionObjectDescriptor
+
+        // add non-declared (therefore, not traversed) synthetic companion object
+        if (companionDescriptor is SyntheticClassOrObjectDescriptor) {
+            bodyVisitor.generateClassOrObject(companionDescriptor.syntheticDeclaration, nonConstructorContext, true)
+        }
+
+        // synthetic nested classes
+        descriptor
+                .unsubstitutedMemberScope
+                .getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)
+                .asSequence()
+                .filterIsInstance<SyntheticClassOrObjectDescriptor>()
+                .filter { it != companionDescriptor }
+                .forEach { bodyVisitor.generateClassOrObject(it.syntheticDeclaration, nonConstructorContext, false) }
+
+        // other synthetic initializers, properties and functions
+        generateClassSyntheticParts(nonConstructorContext, bodyVisitor)
+
         mayBeAddThrowableProperties(context)
         constructorFunction.body.statements += bodyVisitor.initializerStatements
         delegationTranslator.generateDelegated()
 
-        val companionDescriptor = descriptor.companionObjectDescriptor
         if (enumInitFunction != null && companionDescriptor != null) {
             val initInvocation = JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(companionDescriptor), null))
             enumInitFunction.body.statements += JsAstUtils.asSyntheticStatement(initInvocation.source(companionDescriptor.source.getPsi()))
@@ -100,7 +125,7 @@ class ClassTranslator private constructor(
         addSuperclassReferences()
         classDeclaration.secondaryConstructors.forEach { generateSecondaryConstructor(context, it) }
 
-        if (descriptor.isData) {
+        if (descriptor.isData && classDeclaration is KtClassOrObject) {
             JsDataClassGenerator(classDeclaration, context).generate()
         }
 
@@ -120,6 +145,11 @@ class ClassTranslator private constructor(
         // We don't use generated name. However, by generating the name, we generate corresponding entry in inter-fragment import table.
         // This is required to properly merge fragments when one contains super-class and another contains derived class.
         descriptor.getSuperClassNotAny()?.let { ReferenceTranslator.translateAsTypeReference(it, context) }
+    }
+
+    private fun generateClassSyntheticParts(context: TranslationContext, declarationVisitor: DeclarationBodyVisitor) {
+        val ext = JsSyntheticTranslateExtension.getInstances(context.config.project)
+        ext.forEach { it.generateClassSyntheticParts(classDeclaration, descriptor, declarationVisitor, context) }
     }
 
     private fun TranslationContext.withUsageTrackerIfNecessary(innerDescriptor: MemberDescriptor): TranslationContext {
@@ -475,7 +505,8 @@ class ClassTranslator private constructor(
     }
 
     private fun generateEnumStandardMethods(entries: List<ClassDescriptor>) {
-        EnumTranslator(context(), descriptor, entries, classDeclaration).generateStandardMethods()
+        if (classDeclaration is PsiElement) // synthetic enums aren't supported yet
+            EnumTranslator(context(), descriptor, entries, classDeclaration).generateStandardMethods()
     }
 
     private fun mayBeAddThrowableProperties(context: TranslationContext) {
@@ -498,6 +529,10 @@ class ClassTranslator private constructor(
     private fun <T : JsNode> T.withDefaultLocation(): T = apply { source = classDeclaration }
 
     companion object {
+        @JvmStatic fun translate(classDeclaration: KtPureClassOrObject, context: TranslationContext) {
+            ClassTranslator(classDeclaration, context, null, null).translate()
+        }
+
         @JvmStatic fun translate(classDeclaration: KtClassOrObject, context: TranslationContext, enumInitializerName: JsName?) {
             return ClassTranslator(classDeclaration, context, enumInitializerName, null).translate()
         }

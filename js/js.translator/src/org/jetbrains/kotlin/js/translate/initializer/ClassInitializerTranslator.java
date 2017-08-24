@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtEnumEntry;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
@@ -62,7 +59,7 @@ import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstru
 
 public final class ClassInitializerTranslator extends AbstractTranslator {
     @NotNull
-    private final KtClassOrObject classDeclaration;
+    private final KtPureClassOrObject classDeclaration;
     @NotNull
     private final JsFunction initFunction;
     @NotNull
@@ -75,7 +72,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     private int ordinal;
 
     public ClassInitializerTranslator(
-            @NotNull KtClassOrObject classDeclaration,
+            @NotNull KtPureClassOrObject classDeclaration,
             @NotNull TranslationContext context,
             @NotNull JsFunction initFunction
     ) {
@@ -110,8 +107,8 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             initFunction.getParameters().addAll(translatePrimaryConstructorParameters());
 
             // Initialize enum 'name' and 'ordinal' before translating property initializers.
-            if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-                addEnumClassParameters(initFunction, classDeclaration);
+            if (classDescriptor.getKind() == ClassKind.ENUM_CLASS && classDeclaration instanceof PsiElement) {
+                addEnumClassParameters(initFunction, (PsiElement) classDeclaration);
             }
         }
 
@@ -176,7 +173,8 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     }
 
     private void mayBeAddCallToSuperMethod(JsFunction initializer) {
-        if (classDeclaration.hasModifier(KtTokens.ENUM_KEYWORD)) {
+        if (classDeclaration instanceof KtClassOrObject &&
+            ((KtClassOrObject) classDeclaration).hasModifier(KtTokens.ENUM_KEYWORD)) {
             addCallToSuperMethod(Collections.emptyList(), initializer, classDeclaration);
         }
         else if (hasAncestorClass(bindingContext(), classDeclaration)) {
@@ -330,7 +328,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         return additionalArguments;
     }
 
-    private void addCallToSuperMethod(@NotNull List<JsExpression> arguments, @NotNull JsFunction initializer, @NotNull PsiElement psi) {
+    private void addCallToSuperMethod(@NotNull List<JsExpression> arguments, @NotNull JsFunction initializer, @NotNull KtPureElement psi) {
         if (initializer.getName() == null) {
             JsName ref = context().scope().declareName(Namer.CALLEE_NAME);
             initializer.setName(ref);

@@ -98,7 +98,7 @@ public final class PsiUtils {
     }
 
     @NotNull
-    public static List<KtParameter> getPrimaryConstructorParameters(@NotNull KtClassOrObject classDeclaration) {
+    public static List<KtParameter> getPrimaryConstructorParameters(@NotNull KtPureClassOrObject classDeclaration) {
         if (classDeclaration instanceof KtClass) {
             return classDeclaration.getPrimaryConstructorParameters();
         }

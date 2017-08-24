@@ -45,7 +45,7 @@ class FileDeclarationVisitor(private val context: TranslationContext) : Abstract
         super.visitProperty(expression, context)
     }
 
-    override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression?, psi: KtElement) {
+    override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression?, psi: KtElement?) {
         if (expression == null) return
         addFunctionButNotExport(descriptor, expression)
         context.export(descriptor)
