@@ -10,7 +10,7 @@
 
     git checkout -b v0.X-fixes
     git tag -a v0.X -m "version 0.X"
-    git push --set-upstream origin origin v0.X-fixes --tags
+    git push --set-upstream origin v0.X-fixes --tags
 
 ### Build for all supported platforms ###
 
@@ -38,7 +38,7 @@ in few minutes after upload.
 
  Upload Gradle plugin to BinTray
 
-    BINTRAY_USER=... BINTRAY_KEY=... ./gradlew :tools:gradle-plugin:bintrayUpload
+    BINTRAY_USER=... BINTRAY_KEY=... ./gradlew :tools:kotlin-native-gradle-plugin:bintrayUpload
 
 ### Blog post ###
  
