@@ -21877,6 +21877,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noCallableReferencesWithEmptyLHS.kt")
+            public void testNoCallableReferencesWithEmptyLHS() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noCallableReferencesWithEmptyLHS.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noDataClassInheritance.kt")
             public void testNoDataClassInheritance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noDataClassInheritance.kt");
