@@ -102,6 +102,9 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         }
     }
 
+    protected open val buildLogFinder: BuildLogFinder
+        get() = BuildLogFinder(isGradleEnabled = true)
+
     protected abstract fun make(cacheDir: File, sourceRoots: Iterable<File>, args: Args): TestCompilationResult
 
     private fun stepLogAsString(step: Int, ktSources: Iterable<String>, errors: Collection<String>, includeErrors: Boolean = true): String {
@@ -134,7 +137,5 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
     companion object {
         @JvmStatic
         protected val bootstrapKotlincLib: File = File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib")
-
-        private val buildLogFinder = BuildLogFinder(isGradleEnabled = true)
     }
 }

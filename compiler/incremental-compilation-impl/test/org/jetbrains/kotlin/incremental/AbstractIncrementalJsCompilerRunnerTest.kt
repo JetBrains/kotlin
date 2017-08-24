@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
 import org.jetbrains.kotlin.incremental.utils.TestICReporter
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
@@ -29,6 +30,9 @@ abstract class AbstractIncrementalJsCompilerRunnerTest : AbstractIncrementalComp
         makeJsIncrementally(cacheDir, sourceRoots, args, reporter = reporter, messageCollector = messageCollector)
         return TestCompilationResult(reporter, messageCollector)
     }
+
+    override val buildLogFinder: BuildLogFinder
+        get() = super.buildLogFinder.copy(isJsEnabled = true)
 
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
             K2JSCompilerArguments().apply {
