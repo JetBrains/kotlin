@@ -106,7 +106,7 @@ fun PsiClass.resolveToDescriptor(
 
 private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFacade?): JavaDescriptorResolver? {
     if (resolutionFacade != null) {
-        return resolutionFacade.getFrontendService(this, JavaDescriptorResolver::class.java)
+        return resolutionFacade.tryGetFrontendService(this, JavaDescriptorResolver::class.java)
     }
     else {
         //TODO_R: should this work in scripts?
