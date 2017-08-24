@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.TestLoggerFactory
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.concurrency.FixedFuture
 import junit.framework.TestCase
 import org.apache.log4j.ConsoleAppender
 import org.apache.log4j.Level
@@ -45,7 +46,6 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageProvider
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.*
 import java.util.*
+import java.util.concurrent.Future
 import kotlin.reflect.jvm.javaField
 
 abstract class AbstractIncrementalJpsTest(
@@ -130,11 +131,14 @@ abstract class AbstractIncrementalJpsTest(
         super.tearDown()
     }
 
+    // JPS forces rebuild of all files when JVM constant has been changed and Callbacks.ConstantAffectionResolver
+    // is not provided, so ConstantAffectionResolver is mocked with empty implementation
     protected open val mockConstantSearch: Callbacks.ConstantAffectionResolver?
-        get() = null
+        get() = MockConstantSearch(workDir)
 
     private fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules()): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.absolutePath)
+
         val logger = MyLogger(workDirPath)
         projectDescriptor = createProjectDescriptor(BuildLoggingManager(logger))
 
@@ -474,6 +478,23 @@ abstract class AbstractIncrementalJpsTest(
             logBuf.append(KotlinTestUtils.replaceHashWithStar(message!!.replace("^$rootPath/".toRegex(), "  "))).append('\n')
         }
     }
+}
+
+private class MockConstantSearch(private val workDir: File) : Callbacks.ConstantAffectionResolver {
+    override fun request(
+        ownerClassName: String,
+        fieldName: String,
+        accessFlags: Int,
+        fieldRemoved: Boolean,
+        accessChanged: Boolean
+    ): Future<Callbacks.ConstantAffection> {
+        val affectedFiles = workDir.walk().filter { it.isFile && it.isNameUsage() }
+        return FixedFuture(Callbacks.ConstantAffection(affectedFiles.toList()))
+    }
+
+    private fun File.isNameUsage(): Boolean =
+            name.equals("usage.kt", ignoreCase = true)
+            || name.equals("usage.java", ignoreCase = true)
 }
 
 internal val ProjectDescriptor.allModuleTargets: Collection<ModuleBuildTarget>
