@@ -504,7 +504,11 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             if (type?.canonicalText == CommonClassNames.JAVA_LANG_STRING) {
                 val argument = expression.argumentList?.expressions?.singleOrNull()
                 if (argument != null && argument.type?.canonicalText == CommonClassNames.JAVA_LANG_STRING) {
-                    result = codeConverter.convertExpression(argument)
+                    result = if ((argument.reference?.resolve() as? PsiVariable)?.hasModifierProperty(PsiModifier.FINAL) == true) {
+                        codeConverter.convertExpression(argument)
+                    } else {
+                        LiteralExpression("${CommonClassNames.JAVA_LANG_STRING}(${argument.text}) as String").assignPrototype(expression)
+                    }
                     return
                 }
             }
