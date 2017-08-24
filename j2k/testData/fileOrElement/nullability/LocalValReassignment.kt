@@ -18,7 +18,7 @@ internal class A {
         if (nullableString() != null) {
             aString = nullableString()
             if (aString != null) {
-                for (i in 0 until 10) {
+                for (i in 0..9) {
                     takesNotNullString(aString!!) // Bang-bang here
                     aString = nullableString()
                 }

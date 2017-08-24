@@ -1,6 +1,6 @@
 internal class Test {
     fun printNumbers() {
-        for (i1 in 0 until 1)
+        for (i1 in 0..0)
             println(i1)
 
         val b: Byte = 1

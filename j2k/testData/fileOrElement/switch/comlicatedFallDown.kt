@@ -78,7 +78,7 @@ object SwitchDemo {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        for (i in 1 until 13)
+        for (i in 1..12)
             test(i)
     }
 }
