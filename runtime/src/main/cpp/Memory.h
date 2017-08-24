@@ -34,14 +34,12 @@ typedef enum {
   CONTAINER_TAG_PERMANENT = 2,
   // Stack objects, no need to free, children cleanup still shall be there.
   CONTAINER_TAG_STACK = 3,
-  // Container was seen during GC.
-  CONTAINER_TAG_SEEN = 4,
   // Shift to get actual counter.
-  CONTAINER_TAG_SHIFT = 3,
+  CONTAINER_TAG_SHIFT = 2,
   // Actual value to increment/decrement container by. Tag is in lower bits.
   CONTAINER_TAG_INCREMENT = 1 << CONTAINER_TAG_SHIFT,
-  // Mask for container type, disregard seen bit.
-  CONTAINER_TAG_MASK = ((CONTAINER_TAG_INCREMENT >> 1) - 1),
+  // Mask for container type.
+  CONTAINER_TAG_MASK = CONTAINER_TAG_INCREMENT - 1,
 
   // Those bit masks are applied to objectCount_ field.
   // Shift to get actual object count.
@@ -53,7 +51,8 @@ typedef enum {
   CONTAINER_TAG_GC_BLACK  = 0,
   CONTAINER_TAG_GC_GRAY   = 1,
   CONTAINER_TAG_GC_WHITE  = 2,
-  CONTAINER_TAG_GC_PURPLE = 3
+  CONTAINER_TAG_GC_PURPLE = 3,
+  CONTAINER_TAG_GC_BUFFERED = 4
 } ContainerTag;
 
 typedef uint32_t container_offset_t;
@@ -66,7 +65,6 @@ struct ContainerHeader {
   uint32_t refCount_;
   // Number of objects in the container.
   uint32_t objectCount_;
-
 
   inline unsigned refCount() const {
     return refCount_ >> CONTAINER_TAG_SHIFT;
@@ -90,8 +88,17 @@ struct ContainerHeader {
   inline unsigned color() const {
     return objectCount_ & CONTAINER_TAG_GC_COLOR_MASK;
   }
-  void setColor(unsigned color) {
+  inline void setColor(unsigned color) {
     objectCount_ = (objectCount_ & ~CONTAINER_TAG_GC_COLOR_MASK) | color;
+  }
+  inline bool buffered() const {
+    return (objectCount_ & CONTAINER_TAG_GC_BUFFERED) != 0;
+  }
+  inline void setBuffered() {
+    objectCount_ |= CONTAINER_TAG_GC_BUFFERED;
+  }
+  inline void resetBuffered() {
+    objectCount_ &= ~CONTAINER_TAG_GC_BUFFERED;
   }
 };
 
@@ -170,48 +177,6 @@ inline uint32_t ArrayDataSizeBytes(const ArrayHeader* obj) {
   return -obj->type_info()->instanceSize_ * obj->count_;
 }
 
-// TODO: those two operations can be implemented by translator when storing
-// reference to an object.
-inline void AddRef(ContainerHeader* header) {
-  // Looking at container type we may want to skip AddRef() totally
-  // (non-escaping stack objects, constant objects).
-  switch (header->refCount_ & CONTAINER_TAG_MASK) {
-    case CONTAINER_TAG_STACK:
-    case CONTAINER_TAG_PERMANENT:
-      break;
-    case CONTAINER_TAG_NORMAL:
-      header->refCount_ += CONTAINER_TAG_INCREMENT;
-      break;
-    default:
-      RuntimeAssert(false, "unknown container type");
-      break;
-  }
-}
-
-void FreeContainer(ContainerHeader* header);
-
-// Release() returns 'true' iff container cannot be part of cycle (either NOCOUNT
-// object or container was fully released and will be collected).
-inline bool Release(ContainerHeader* header) {
-  switch (header->refCount_ & CONTAINER_TAG_MASK) {
-      case CONTAINER_TAG_PERMANENT:
-      case CONTAINER_TAG_STACK:
-        // permanent/stack containers aren't loop candidates.
-        return true;
-    case CONTAINER_TAG_NORMAL:
-      if ((header->refCount_ -= CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_NORMAL) {
-        FreeContainer(header);
-        return true;
-      }
-      break;
-    default:
-      RuntimeAssert(false, "unknown container type");
-      break;
-  }
-  // Object with non-zero counter after release are loop candidates.
-  return false;
-}
-
 // Class representing arbitrary placement container.
 class Container {
  protected:
@@ -223,20 +188,6 @@ class Container {
         reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(header_);
     obj->set_type_info(type_info);
     RuntimeAssert(obj->container() == header_, "Placement must match");
-  }
-
- public:
-  // Increment reference counter associated with container.
-  void AddRef() {
-    if (header_) ::AddRef(header_);
-  }
-
-  // Decrement reference counter associated with container.
-  // For objects whith tricky lifetime (such as ones shared between threads objects)
-  // individual container per object (ObjectContainer) shall be created.
-  // As an alternative, such objects could be evacuated from short-lived containers.
-  void Release() {
-    if (header_) ::Release(header_);
   }
 };
 
