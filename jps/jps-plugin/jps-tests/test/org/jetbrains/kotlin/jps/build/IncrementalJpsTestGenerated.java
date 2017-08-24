@@ -815,6 +815,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeUnusedFile")
+        public void testRemoveUnusedFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeUnusedFile/");
+            doTest(fileName);
+        }
+
         @TestMetadata("renameClass")
         public void testRenameClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/renameClass/");
