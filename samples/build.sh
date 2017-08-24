@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 EXCLUDE=()
 BUILD_SCRIPT="build.sh"
 

@@ -34,12 +34,12 @@ the following platforms:
 To run _Kotlin/Native_ JDK8 for the host platform has to be installed.
 Note that Java 9 not yet supported.
 
-The language and library version supported by this EAP release mostly match Kotlin 1.1.
+The language and library version supported by this EAP release mostly match Kotlin 1.1.4.
 However, there are certain limitations, see section [Known Limitations](#limitations).
 
  Currently _Kotlin/Native_ uses reference counting based memory management scheme with a cycle
-collection algorithm. Multiple threads could be used, but no objects shared 
-between threads are allowed.
+collection algorithm. Multiple threads could be used, but objects must be explicitly transferred
+between threads, and same object couldn't be accessed by two threads concurrently.
 
 _Kotlin/Native_ provides efficient interoperability with libraries written in C, and supports
 automatic generation of Kotlin bindings from a C header file.
@@ -100,4 +100,5 @@ Notice that property delegation (including lazy properties) *does* work.
     b kfun:main(kotlin.Array<kotlin.String>)
 
 to set breakpoint in main function of your application. Single stepping and step into shall work, 
-variable inspection does not work yet. See [`DEBUGGING.md`](https://github.com/JetBrains/kotlin-native/blob/master/DEBUGGING.md)
+variable inspection partially works (not on val's, var's only).
+See [`DEBUGGING.md`](https://github.com/JetBrains/kotlin-native/blob/master/DEBUGGING.md)
