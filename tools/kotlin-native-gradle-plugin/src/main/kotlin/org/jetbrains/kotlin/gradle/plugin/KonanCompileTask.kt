@@ -25,47 +25,8 @@ import org.gradle.api.tasks.*
 import java.io.File
 
 /**
- *  We can the following:
- *
- *  konanArtifacts {
- *
- *      artifactName1 {
- *
- *          inputFiles "files" "to" "be" "compiled"
- *
- *          outputDir "path/to/output/dir"
- *
- *          library "path/to/library"
- *          library File("Library")
- *
- *          nativeLibrary "path/to/library"
- *          nativeLibrary File("Library")
- *
- *          noStdLib
- *          produce "library"|"program"|"bitcode"
- *          enableOptimization
- *
- *          linkerOpts "linker" "args"
- *          target "target"
- *
- *          languageVersion "version"
- *          apiVersion "version"
- *
- *     }
- *
- *     artifactName2 {
- *
- *          extends artifactName1
- *
- *          inputDir "someDir"
- *          outputDir "someDir"
- *     }
- *
- *  }
+ * A task compiling the target executable/library using Kotlin/Native compiler
  */
-
-
-// TODO: Make the task class nested for config with properties accessible for outer users.
 open class KonanCompileTask: KonanTargetableTask() {
 
     companion object {
@@ -114,6 +75,8 @@ open class KonanCompileTask: KonanTargetableTask() {
         internal set
 
     @Internal val interops = mutableSetOf<KonanInteropConfig>()
+
+    @Input val extraOpts = mutableListOf<String>()
 
     internal var _linkerOpts = mutableListOf<String>()
     val linkerOpts: List<String>
@@ -167,6 +130,8 @@ open class KonanCompileTask: KonanTargetableTask() {
         addKey("-nomain", noMain)
         addKey("-opt", enableOptimization)
         addKey("-ea", enableAssertions)
+
+        addAll(extraOpts)
 
         inputFiles.flatMap { it.files }.filter { it.name.endsWith(".kt") }.mapTo(this) { it.canonicalPath }
     }
@@ -326,4 +291,9 @@ open class KonanCompileConfig(
     }
 
     fun dependsOn(dependency: Any) = compilationTask.dependsOn(dependency)
+
+    fun extraOpts(vararg values: Any) = extraOpts(values.asList())
+    fun extraOpts(values: List<Any>) {
+        values.mapTo(compilationTask.extraOpts) { it.toString() }
+    }
 }

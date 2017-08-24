@@ -113,6 +113,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
         "enableAssertions"   | "()"
         "enableDebug"        | "true"
         "outputName"         | "'foo'"
+        "extraOpts"          | "'--time'"
     }
 
     def 'inputFiles change for a compilation task should cause only recompilation'() {
@@ -220,6 +221,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
         "compilerOpts"       | "'-g'"
         "linkerOpts"         | "'--help'"
         "includeDirs"        | "'src'"
+        "extraOpts"          | "'-shims', 'false'"
     }
 
     def 'defFile change for an interop task should cause recompilation and interop reprocessing'() {

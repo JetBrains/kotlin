@@ -25,25 +25,8 @@ import org.gradle.api.tasks.*
 import java.io.File
 
 /**
- *  What we can:
- *
- *  konanInterop {
- *      pkgName {
- *          defFile <def-file>
- *          pkg <package with stubs>
- *          target <target: linux/macbook/iphone/iphone_sim>
- *          compilerOpts <Options for native stubs compilation>
- *          linkerOpts <Options for native stubs >
- *          headers <headers to process>
- *          includeDirs <directories where headers are located>
- *          linkFiles <files which will be linked with native stubs>
- *          dumpParameters <Option to print parameters of task before execution>
- *      }
- *
- *      // TODO: add configuration for konan compiler
- *  }
+ * A task executing cinterop tool with the given args and compiling the stubs produced by this tool.
  */
-
 open class KonanInteropTask: KonanTargetableTask() {
 
     internal companion object {
@@ -86,6 +69,7 @@ open class KonanInteropTask: KonanTargetableTask() {
     @Input var dumpParameters: Boolean = false
     @Input val compilerOpts   = mutableListOf<String>()
     @Input val linkerOpts     = mutableListOf<String>()
+    @Input val extraOpts      = mutableListOf<String>()
 
     // TODO: Check if we can use only one FileCollection instead of set.
     @InputFiles val headers   = mutableSetOf<FileCollection>()
@@ -122,7 +106,7 @@ open class KonanInteropTask: KonanTargetableTask() {
         manifest ?.let {addArg("-manifest", it)}
 
         addArgIfNotNull("-target", target)
-        addArgIfNotNull("-def", defFile?.canonicalPath)
+        addArgIfNotNull("-def", defFile.canonicalPath)
         addArg("-pkg", pkg ?: libName)
 
         addFileArgs("-h", headers)
@@ -138,6 +122,8 @@ open class KonanInteropTask: KonanTargetableTask() {
         linkerOpts.forEach {
             addArg("-lopt", it)
         }
+
+        addAll(extraOpts)
     }
 
 }
@@ -222,5 +208,10 @@ open class KonanInteropConfig(
     }
 
     fun dependsOn(dependency: Any) = generateStubsTask.dependsOn(dependency)
+
+    fun extraOpts(vararg values: Any) = extraOpts(values.asList())
+    fun extraOpts(values: List<Any>) {
+        values.mapTo(generateStubsTask.extraOpts) { it.toString() }
+    }
 }
 

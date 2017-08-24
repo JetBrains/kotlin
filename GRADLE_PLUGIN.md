@@ -93,7 +93,38 @@ You also can use an interop from another project:
        }
     }            
 
-### Tasks
+## Additional options
+
+You can also pass additional command line keys to the compiler or cinterop tool using the `extraOpts` expression
+available an artifact or interop block. For example this sample enables a verbose output for a link and bitcode
+generation stages and prints execution time for all compiler phases:
+
+	konanArtifacts
+		foo {
+			extraOpts '--verbose', 'linker', '--verbose', 'bitcode', '--time'
+		}
+	}
+
+Any command line key supported by the according tool (compiler or cinterop) can be used. Some of them are listed in the
+tables below.
+
+##### Compiler additional options
+|Key                |Description                              |
+|-------------------|-----------------------------------------|
+|`--disable <Phase>`|Disable backend phase                    |
+|`--enable <Phase> `|Enable backend phase                     |
+|`--list_phases    `|List all backend phases                  |
+|`--time           `|Report execution time for compiler phases|
+|`--verbose <Phase>`|Trace phase execution                    |
+|`-verbose         `|Enable verbose logging output            |
+
+##### Cinterop additional options
+|Key                 |Description                                         |
+|--------------------|----------------------------------------------------|
+|`-verbose <boolean>`|Increase verbosity                                  |
+|`-shims <boolean>`  |Add generation of shims tracing native library calls|
+
+## Tasks
 
 The Kotlin/Native plugin creates the following tasks:
 
@@ -173,7 +204,7 @@ The plugin also edits the default `build` and `clean` tasks so that the first on
 supported (it's dependent on the `compileKonan` task) and the second one removes the files created by the Kotlin/Native
 build.
 
-#### Task graph
+### Task graph
 
 A task dependency structure is simple. Consider a following project:
 
@@ -244,6 +275,9 @@ For this project the task graph will be the following:
              
              // Add the `anotherTask` to the compilation task dependencies.
              dependsOn anotherTask
+             
+             // Pass additional command line options to the compiler.
+             extraOpts '--time', '--verbose', 'linker'
         }
      }
 
@@ -266,5 +300,8 @@ For this project the task graph will be the following:
              
              // Add the `anotherTask` to the stub generation task dependencies.
              dependsOn anotherTask
+             
+             // Pass additional command line options to the cinterop tool.
+             extraOpts '-shims', 'true'
          }
      }
