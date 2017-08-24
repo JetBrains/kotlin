@@ -109,6 +109,10 @@ any distributions of the compiler, libraries or plugin:
  - Path: idea/testData/android/lint/IntRange.java
       - License: Apache 2 (license/third_party/aosp_license.txt)
       - Origin: Copyright (C) 2011-15 The Android Open Source Project
+      
+ - Path: idea/testData/android/lint/RequiresPermission.java
+      - License: Apache 2 (license/third_party/aosp_license.txt)
+      - Origin: Copyright (C) 2011-15 The Android Open Source Project
    
  - Path: libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/allOpenSpring/src/org/springframework/stereotype/Component.java
       - License: Apache 2 (license/third_party/testdata/spring_license.txt)
