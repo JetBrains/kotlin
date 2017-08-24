@@ -230,7 +230,7 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
                 codegen.typeMapper.typeMappingConfiguration.innerClassNameFactory(containerAsmType.internalName, "Creator"))
 
         val creatorClass = ClassDescriptorImpl(
-                parcelableClass.containingDeclaration, Name.identifier("Creator"), Modality.FINAL, ClassKind.CLASS, emptyList(),
+                parcelableClass, Name.identifier("Creator"), Modality.FINAL, ClassKind.CLASS, emptyList(),
                 parcelableClass.source, false)
 
         creatorClass.initialize(
