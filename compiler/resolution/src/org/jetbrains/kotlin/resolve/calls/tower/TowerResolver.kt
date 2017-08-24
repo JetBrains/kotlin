@@ -114,6 +114,7 @@ class TowerResolver {
             private val useOrder: Boolean,
             private val name: Name
     ) {
+        private val isNameForHidesMember = name in HIDES_MEMBERS_NAME_LIST
         private val skippedDataForLookup = mutableListOf<TowerData>()
 
         private val localLevels: Collection<ScopeTowerLevel> by lazy(LazyThreadSafetyMode.NONE) {
@@ -181,7 +182,7 @@ class TowerResolver {
         }
 
         fun run(): Collection<C> {
-            if (name in HIDES_MEMBERS_NAME_LIST) {
+            if (isNameForHidesMember) {
                 // hides members extensions for explicit receiver
                 TowerData.TowerLevel(hidesMembersLevel).process()?.let { return it }
             }
@@ -220,7 +221,7 @@ class TowerResolver {
         }
 
         private fun processImplicitReceiver(implicitReceiver: ReceiverValueWithSmartCastInfo): Collection<C>? {
-            if (name in HIDES_MEMBERS_NAME_LIST) {
+            if (isNameForHidesMember) {
                 // hides members extensions
                 TowerData.BothTowerLevelAndImplicitReceiver(hidesMembersLevel, implicitReceiver).process()?.let { return it }
             }
