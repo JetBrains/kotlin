@@ -87,10 +87,6 @@ internal class MemberScopeTowerLevel(
 
     private val syntheticScopes = scopeTower.syntheticScopes
 
-    fun definitelyDoesNotContainName(name: Name) =
-            (dispatchReceiver.possibleTypes + dispatchReceiver.receiverValue.type)
-                    .all { !it.isDynamic() && it.memberScope.definitelyDoesNotContainName(name) }
-
     private fun collectMembers(
             getMembers: ResolutionScope.(KotlinType?) -> Collection<CallableDescriptor>
     ): Collection<CandidateWithBoundDispatchReceiver> {
@@ -173,6 +169,13 @@ internal class MemberScopeTowerLevel(
             syntheticScopes.collectSyntheticMemberFunctions(listOfNotNull(it), name, location)
         }
     }
+
+    override fun recordLookup(name: Name) {
+        dispatchReceiver.receiverValue.type.memberScope.recordLookup(name, location)
+        dispatchReceiver.possibleTypes.forEach {
+            it.memberScope.recordLookup(name, location)
+        }
+    }
 }
 
 internal class QualifierScopeTowerLevel(scopeTower: ImplicitScopeTower, val qualifier: QualifierReceiver) : AbstractScopeTowerLevel(scopeTower) {
@@ -193,6 +196,8 @@ internal class QualifierScopeTowerLevel(scopeTower: ImplicitScopeTower, val qual
                                                     qualifier.staticScope).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }
+
+    override fun recordLookup(name: Name) {}
 }
 
 // KT-3335 Creating imported super class' inner class fails in codegen
@@ -220,6 +225,10 @@ internal open class ScopeBasedTowerLevel protected constructor(
                                                                      resolutionScope).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }
+
+    override fun recordLookup(name: Name) {
+        resolutionScope.recordLookup(name, location)
+    }
 }
 internal class ImportingScopeBasedTowerLevel(
         scopeTower: ImplicitScopeTower,
@@ -251,6 +260,10 @@ internal class SyntheticScopeBasedTowerLevel(
             extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<CandidateWithBoundDispatchReceiver> =
             emptyList()
+
+    override fun recordLookup(name: Name) {
+
+    }
 }
 
 internal class HidesMembersTowerLevel(scopeTower: ImplicitScopeTower): AbstractScopeTowerLevel(scopeTower) {
@@ -276,6 +289,8 @@ internal class HidesMembersTowerLevel(scopeTower: ImplicitScopeTower): AbstractS
             createCandidateDescriptor(it, dispatchReceiver = null)
         }
     }
+
+    override fun recordLookup(name: Name) {}
 }
 
 private fun KotlinType.getClassifierFromMeAndSuperclasses(name: Name, location: LookupLocation): ClassifierDescriptor? {

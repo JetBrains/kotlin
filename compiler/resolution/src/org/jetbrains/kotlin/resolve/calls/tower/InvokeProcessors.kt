@@ -27,11 +27,13 @@ import java.util.*
 
 abstract class AbstractInvokeTowerProcessor<C : Candidate>(
         protected val factoryProviderForInvoke: CandidateFactoryProviderForInvoke<C>,
-        private val variableProcessor: ScopeTowerProcessor<C>
+        protected val variableProcessor: ScopeTowerProcessor<C>
 ) : ScopeTowerProcessor<C> {
     // todo optimize it
     private val previousData = ArrayList<TowerData>()
     private val invokeProcessors: MutableList<Collection<VariableInvokeProcessor>> = ArrayList()
+
+    protected fun hasInvokeProcessors() = invokeProcessors.isNotEmpty()
 
     private inner class VariableInvokeProcessor(
             var variableCandidate: C,
@@ -42,6 +44,10 @@ abstract class AbstractInvokeTowerProcessor<C : Candidate>(
                 = invokeProcessor.process(data).map { candidateGroup ->
                     candidateGroup.map { factoryProviderForInvoke.transformCandidate(variableCandidate, it) }
                 }
+
+        override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {
+            invokeProcessor.recordLookups(skippedData, name)
+        }
     }
 
     private fun createVariableInvokeProcessor(variableCandidate: C): VariableInvokeProcessor? =
@@ -110,6 +116,17 @@ class InvokeTowerProcessor<C : Candidate>(
 
     override fun mayDataBeApplicable(data: TowerData) =
             data == TowerData.Empty || data is TowerData.TowerLevel
+
+    override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {
+        variableProcessor.recordLookups(skippedData, name)
+        if (!hasInvokeProcessors()) return
+
+        skippedData.forEach {
+            if (it is TowerData.TowerLevel) {
+                it.level.recordLookup(OperatorNameConventions.INVOKE)
+            }
+        }
+    }
 }
 
 class InvokeExtensionTowerProcessor<C : Candidate>(
@@ -131,6 +148,10 @@ class InvokeExtensionTowerProcessor<C : Candidate>(
     }
 
     override fun mayDataBeApplicable(data: TowerData): Boolean = data == TowerData.Empty || data is TowerData.OnlyImplicitReceiver
+
+    override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {
+        variableProcessor.recordLookups(skippedData, name)
+    }
 }
 
 private class InvokeExtensionScopeTowerProcessor<C : Candidate>(
@@ -150,6 +171,9 @@ private class InvokeExtensionScopeTowerProcessor<C : Candidate>(
 
         return emptyList()
     }
+
+    // No lookups happen in `simpleProcess`
+    override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {}
 }
 
 // todo debug info

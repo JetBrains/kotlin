@@ -28,6 +28,8 @@ class KnownResultProcessor<out C>(
 ): ScopeTowerProcessor<C> {
     override fun process(data: TowerData)
             = if (data == TowerData.Empty) listOfNotNull(result.takeIf { it.isNotEmpty() }) else emptyList()
+
+    override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {}
 }
 
 // use this if processors priority is important
@@ -35,6 +37,11 @@ class PrioritizedCompositeScopeTowerProcessor<out C>(
         vararg val processors: ScopeTowerProcessor<C>
 ) : ScopeTowerProcessor<C> {
     override fun process(data: TowerData): List<Collection<C>> = processors.flatMap { it.process(data) }
+
+    override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {
+        processors.forEach { it.recordLookups(skippedData, name) }
+    }
+
 }
 
 // use this if all processors has same priority
@@ -42,6 +49,10 @@ class SamePriorityCompositeScopeTowerProcessor<out C>(
         private vararg val processors: SimpleScopeTowerProcessor<C>
 ): SimpleScopeTowerProcessor<C> {
     override fun simpleProcess(data: TowerData): Collection<C> = processors.flatMap { it.simpleProcess(data) }
+    override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {
+        processors.forEach { it.recordLookups(skippedData, name) }
+    }
+
 }
 
 internal abstract class AbstractSimpleScopeTowerProcessor<C: Candidate>(
@@ -84,6 +95,14 @@ internal class ExplicitReceiverScopeTowerProcessor<C: Candidate>(
         }
         return extensions
     }
+
+    override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {
+        for (data in skippedData) {
+            if (data is TowerData.TowerLevel) {
+                data.level.recordLookup(name)
+            }
+        }
+    }
 }
 
 private class QualifierScopeTowerProcessor<C: Candidate>(
@@ -103,6 +122,9 @@ private class QualifierScopeTowerProcessor<C: Candidate>(
         }
         return staticMembers
     }
+
+    // QualifierScopeTowerProcessor works only with TowerData.Empty that should not be ignored
+    override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {}
 }
 
 private class NoExplicitReceiverScopeTowerProcessor<C: Candidate>(
@@ -132,6 +154,14 @@ private class NoExplicitReceiverScopeTowerProcessor<C: Candidate>(
                 else -> emptyList()
             }
 
+    override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {
+        for (data in skippedData) {
+            when (data) {
+                is TowerData.TowerLevel -> data.level.recordLookup(name)
+                is TowerData.BothTowerLevelAndImplicitReceiver -> data.level.recordLookup(name)
+            }
+        }
+    }
 }
 
 private fun <C : Candidate> createSimpleProcessorWithoutClassValueReceiver(

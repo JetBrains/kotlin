@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -26,10 +25,10 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.util.*
-import kotlin.coroutines.experimental.buildSequence
 
 interface Candidate {
     // this operation should be very fast
@@ -69,6 +68,8 @@ interface ScopeTowerProcessor<out C> {
     // Candidates with matched receivers (dispatch receiver was already matched in ScopeTowerLevel)
     // Candidates in one groups have same priority, first group has highest priority.
     fun process(data: TowerData): List<Collection<C>>
+
+    fun recordLookups(skippedData: Collection<TowerData>, name: Name)
 }
 
 interface SimpleScopeTowerProcessor<out C> : ScopeTowerProcessor<C> {
@@ -92,21 +93,49 @@ class TowerResolver {
     ): Collection<C>
             = scopeTower.run(processor, AllCandidatesCollector(), false, name)
 
-    private fun ImplicitScopeTower.createNonLocalLevels(name: Name): Sequence<ScopeTowerLevel> = buildSequence {
+    private data class ScopeLevelsAndSkippedForLookups(
+            val levelsToProcess: Collection<ScopeTowerLevel>,
+            val levelsToSkip: Collection<ScopeTowerLevel>
+    )
+
+    private fun ImplicitScopeTower.createNonLocalLevels(name: Name): ScopeLevelsAndSkippedForLookups {
+        val mainResult = mutableListOf<ScopeTowerLevel>()
+        val skippedLevels = mutableListOf<ScopeTowerLevel>()
+
+        fun addLevel(scopeTowerLevel: ScopeTowerLevel, mayFitForName: Boolean) {
+            if (mayFitForName) {
+                mainResult.add(scopeTowerLevel)
+            }
+            else {
+                skippedLevels.add(scopeTowerLevel)
+            }
+        }
+
         lexicalScope.parentsWithSelf.forEach { scope ->
             if (scope is LexicalScope) {
-                if (!scope.kind.withLocalDescriptors && scope.mayFitForName(name, location)) {
-                    yield(ScopeBasedTowerLevel(this@createNonLocalLevels, scope))
+                if (!scope.kind.withLocalDescriptors) {
+                    addLevel(
+                            ScopeBasedTowerLevel(this@createNonLocalLevels, scope),
+                            scope.mayFitForName(name)
+                    )
                 }
 
                 getImplicitReceiver(scope)?.let {
-                    yieldIfNotNull(MemberScopeTowerLevel(this@createNonLocalLevels, it).takeIf { it.mayFitForName(name) })
+                    addLevel(
+                            MemberScopeTowerLevel(this@createNonLocalLevels, it),
+                            it.mayFitForName(name)
+                    )
                 }
             }
-            else if (scope.mayFitForName(name, location)) {
-                yield(ImportingScopeBasedTowerLevel(this@createNonLocalLevels, scope as ImportingScope))
+            else {
+                addLevel(
+                        ImportingScopeBasedTowerLevel(this@createNonLocalLevels, scope as ImportingScope),
+                        scope.mayFitForName(name)
+                )
             }
         }
+
+        return ScopeLevelsAndSkippedForLookups(mainResult, skippedLevels)
     }
 
     private fun <C : Candidate> ImplicitScopeTower.run(
@@ -115,7 +144,23 @@ class TowerResolver {
             useOrder: Boolean,
             name: Name
     ): Collection<C> {
-        fun TowerData.process() = processTowerData(processor, resultCollector, useOrder, this)
+        val skippedDataForLookup = mutableListOf<TowerData>()
+
+        fun recordLookups() {
+            processor.recordLookups(skippedDataForLookup, name)
+        }
+
+        fun TowerData.process() = processTowerData(processor, resultCollector, useOrder, this)?.also {
+            recordLookups()
+        }
+
+        fun TowerData.process(mayFitForName: Boolean): Collection<C>? {
+            if (!mayFitForName) {
+                skippedDataForLookup.add(this)
+                return null
+            }
+            return process()
+        }
 
         // Lazy calculation
         var nonLocalLevels: Collection<ScopeTowerLevel>? = null
@@ -134,7 +179,7 @@ class TowerResolver {
 
         val localLevels =
                 lexicalScope.parentsWithSelf.
-                        filterIsInstance<LexicalScope>().filter { it.kind.withLocalDescriptors && it.mayFitForName(name, location) }.
+                        filterIsInstance<LexicalScope>().filter { it.kind.withLocalDescriptors && it.mayFitForName(name) }.
                         map { ScopeBasedTowerLevel(this@run, it) }.toList()
 
         // local non-extensions or extension for explicit receiver
@@ -145,8 +190,9 @@ class TowerResolver {
         for (scope in lexicalScope.parentsWithSelf) {
             if (scope is LexicalScope) {
                 // statics
-                if (!scope.kind.withLocalDescriptors && scope.mayFitForName(name, location)) {
-                    TowerData.TowerLevel(ScopeBasedTowerLevel(this, scope)).process()?.let { return it }
+                if (!scope.kind.withLocalDescriptors) {
+                    TowerData.TowerLevel(ScopeBasedTowerLevel(this, scope))
+                            .process(scope.mayFitForName(name))?.let { return it }
                 }
 
                 val implicitReceiver = getImplicitReceiver(scope)
@@ -157,9 +203,8 @@ class TowerResolver {
                     }
 
                     // members of implicit receiver or member extension for explicit receiver
-                    MemberScopeTowerLevel(this, implicitReceiver).takeIf { it.mayFitForName(name) }?.let {
-                        TowerData.TowerLevel(it).process()?.let { return it }
-                    }
+                    TowerData.TowerLevel(MemberScopeTowerLevel(this, implicitReceiver))
+                            .process(implicitReceiver.mayFitForName(name))?.let { return it }
 
                     // synthetic properties
                     TowerData.BothTowerLevelAndImplicitReceiver(syntheticLevel, implicitReceiver).process()?.let { return it }
@@ -172,32 +217,39 @@ class TowerResolver {
                         TowerData.BothTowerLevelAndImplicitReceiver(localLevel, implicitReceiver).process()?.let { return it }
                     }
 
-                    // extension for implicit receiver
-                    if (nonLocalLevels == null) {
-                        nonLocalLevels = arrayListOf()
-                        for (nonLocalLevel in createNonLocalLevels(name)) {
-                            TowerData.BothTowerLevelAndImplicitReceiver(nonLocalLevel, implicitReceiver).process()?.let { return it }
-                            nonLocalLevels.add(nonLocalLevel)
-                        }
+                   if (nonLocalLevels == null) {
+                        val (toProcess, toSkip) = createNonLocalLevels(name)
+                        nonLocalLevels = toProcess
+                        toSkip.mapTo(skippedDataForLookup) { TowerData.BothTowerLevelAndImplicitReceiver(it, implicitReceiver) }
                     }
-                    else {
-                        for (nonLocalLevel in nonLocalLevels) {
-                            TowerData.BothTowerLevelAndImplicitReceiver(nonLocalLevel, implicitReceiver).process()?.let { return it }
-                        }
+
+                    // extension for implicit receiver
+                    for (nonLocalLevel in nonLocalLevels) {
+                        TowerData.BothTowerLevelAndImplicitReceiver(nonLocalLevel, implicitReceiver).process()?.let { return it }
                     }
                 }
             }
-            else if (scope.mayFitForName(name, location)) {
-                // functions with no receiver or extension for explicit receiver
-                TowerData.TowerLevel(ImportingScopeBasedTowerLevel(this, scope as ImportingScope)).process()?.let { return it }
+            else {
+                TowerData.TowerLevel(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
+                        .process(scope.mayFitForName(name))?.let { return it }
             }
         }
+
+        recordLookups()
 
         return resultCollector.getFinalCandidates()
     }
 
-    private fun MemberScopeTowerLevel.mayFitForName(name: Name) =
-            !definitelyDoesNotContainName(name) || !definitelyDoesNotContainName(OperatorNameConventions.INVOKE)
+    private fun ReceiverValueWithSmartCastInfo.mayFitForName(name: Name): Boolean {
+        if (receiverValue.type.mayFitForName(name)) return true
+        if (possibleTypes.isEmpty()) return false
+        return possibleTypes.any { it.mayFitForName(name) }
+    }
+
+    private fun KotlinType.mayFitForName(name: Name) =
+            isDynamic() ||
+            !memberScope.definitelyDoesNotContainName(name) ||
+            !memberScope.definitelyDoesNotContainName(OperatorNameConventions.INVOKE)
 
     private fun ResolutionScope.mayFitForName(name: Name) =
             !definitelyDoesNotContainName(name) || !definitelyDoesNotContainName(OperatorNameConventions.INVOKE)
