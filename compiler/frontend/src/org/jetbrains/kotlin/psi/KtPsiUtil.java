@@ -530,7 +530,10 @@ public class KtPsiUtil {
             return false;
         }
 
-        if (innerExpression instanceof KtBinaryExpression && isKeepBinaryExpressionParenthesized((KtBinaryExpression) innerExpression)) {
+        // '(x operator y)' case
+        if (innerExpression instanceof KtBinaryExpression &&
+            innerOperation != KtTokens.ELVIS &&
+            isKeepBinaryExpressionParenthesized((KtBinaryExpression) innerExpression)) {
             return true;
         }
 
