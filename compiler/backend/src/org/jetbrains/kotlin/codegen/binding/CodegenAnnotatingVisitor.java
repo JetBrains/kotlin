@@ -57,6 +57,8 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -332,11 +334,17 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (referencedFunction == null) return;
         CallableDescriptor target = referencedFunction.getResultingDescriptor();
 
+        ReceiverValue extensionReceiver = referencedFunction.getExtensionReceiver();
+        ReceiverValue dispatchReceiver = referencedFunction.getDispatchReceiver();
+        assert dispatchReceiver == null || extensionReceiver == null : "Cannot generate reference with both receivers: " + target;
+        // TransientReceiver corresponds to an unbound reference, other receiver values -- to bound references
+        KotlinType receiverType =
+                extensionReceiver != null && !(extensionReceiver instanceof TransientReceiver) ? extensionReceiver.getType() :
+                dispatchReceiver != null && !(dispatchReceiver instanceof TransientReceiver) ? dispatchReceiver.getType() :
+                null;
+
         CallableDescriptor callableDescriptor;
         Collection<KotlinType> supertypes;
-
-        KtExpression receiverExpression = expression.getReceiverExpression();
-        KotlinType receiverType = receiverExpression != null ? bindingContext.getType(receiverExpression) : null;
 
         if (target instanceof FunctionDescriptor) {
             callableDescriptor = bindingContext.get(FUNCTION, expression);

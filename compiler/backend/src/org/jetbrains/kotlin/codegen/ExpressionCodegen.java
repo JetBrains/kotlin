@@ -2692,27 +2692,38 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public StackValue visitCallableReferenceExpression(@NotNull KtCallableReferenceExpression expression, StackValue data) {
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression.getCallableReference(), bindingContext);
 
-        KotlinType receiverExpressionType = expressionJetType(expression.getReceiverExpression());
-        Type receiverAsmType = receiverExpressionType != null ? asmType(receiverExpressionType) : null;
-        StackValue receiverValue =
-                receiverExpressionType != null ? StackValue.coercion(gen(expression.getReceiverExpression()), receiverAsmType) : null;
+        StackValue receiver = generateCallableReferenceReceiver(resolvedCall);
 
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         if (functionDescriptor != null) {
-            FunctionReferenceGenerationStrategy strategy =
-                    new FunctionReferenceGenerationStrategy(state, functionDescriptor, resolvedCall, receiverAsmType, null, false);
+            FunctionReferenceGenerationStrategy strategy = new FunctionReferenceGenerationStrategy(
+                    state, functionDescriptor, resolvedCall, receiver != null ? receiver.type : null, null, false
+            );
 
             return genClosure(
                     expression, functionDescriptor, strategy, null,
-                    (FunctionDescriptor) resolvedCall.getResultingDescriptor(), receiverValue
+                    (FunctionDescriptor) resolvedCall.getResultingDescriptor(), receiver
             );
         }
 
-        VariableDescriptor variableDescriptor = getVariableDescriptorNotNull(expression);
         return generatePropertyReference(
-                expression, variableDescriptor, (VariableDescriptor) resolvedCall.getResultingDescriptor(),
-                receiverAsmType, receiverValue
+                expression, getVariableDescriptorNotNull(expression),
+                (VariableDescriptor) resolvedCall.getResultingDescriptor(), receiver
         );
+    }
+
+    @Nullable
+    private StackValue generateCallableReferenceReceiver(@NotNull ResolvedCall<?> resolvedCall) {
+        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+        if (descriptor.getExtensionReceiverParameter() == null && descriptor.getDispatchReceiverParameter() == null) return null;
+
+        ReceiverValue dispatchReceiver = resolvedCall.getDispatchReceiver();
+        ReceiverValue extensionReceiver = resolvedCall.getExtensionReceiver();
+        assert dispatchReceiver == null || extensionReceiver == null : "Cannot generate reference with both receivers: " + descriptor;
+        ReceiverValue receiver = dispatchReceiver != null ? dispatchReceiver : extensionReceiver;
+        if (receiver == null || receiver instanceof TransientReceiver) return null;
+
+        return StackValue.coercion(generateReceiverValue(receiver, false), asmType(receiver.getType()));
     }
 
     @NotNull
@@ -2720,7 +2731,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull KtElement element,
             @NotNull VariableDescriptor variableDescriptor,
             @NotNull VariableDescriptor target,
-            @Nullable Type receiverAsmType,
             @Nullable StackValue receiverValue
     ) {
         ClassDescriptor classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor);
@@ -2731,17 +2741,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 element.getContainingFile()
         );
 
+        Type receiverAsmType = receiverValue != null ? receiverValue.type : null;
         PropertyReferenceCodegen codegen = new PropertyReferenceCodegen(
                 state, parentCodegen, context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION),
                 element, classBuilder, variableDescriptor, target, receiverAsmType
         );
         codegen.generate();
 
-        return codegen.putInstanceOnStack(receiverValue == null ? null : () -> {
-            assert receiverAsmType != null : "Receiver type should not be null when receiver value is not null: " + receiverValue;
-            receiverValue.put(receiverAsmType, v);
-            return Unit.INSTANCE;
-        });
+        return codegen.putInstanceOnStack(receiverValue);
     }
 
     @NotNull
@@ -3670,7 +3677,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         // container class (where the PropertyReferenceNImpl instance is created), copy and adapt it at the call site
         //noinspection ConstantConditions
         StackValue value = context.getFunctionDescriptor().isInline()
-                           ? generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null, null)
+                           ? generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null)
                            : PropertyCodegen.getDelegatedPropertyMetadata(variableDescriptor, bindingContext);
         value.put(K_PROPERTY_TYPE, v);
         metadataVar.storeSelector(K_PROPERTY_TYPE, v);
