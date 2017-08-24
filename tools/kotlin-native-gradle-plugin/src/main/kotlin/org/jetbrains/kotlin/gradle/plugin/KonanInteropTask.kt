@@ -66,7 +66,9 @@ open class KonanInteropTask: KonanTargetableTask() {
     @Optional @Input var manifest: String? = null
         internal set
 
-    @Input var dumpParameters: Boolean = false
+    @Input var dumpParameters = false
+        internal set
+
     @Input val compilerOpts   = mutableListOf<String>()
     @Input val linkerOpts     = mutableListOf<String>()
     @Input val extraOpts      = mutableListOf<String>()
@@ -206,6 +208,8 @@ open class KonanInteropConfig(
         dumpParameters = value
         compileStubsTask.dumpParameters = value
     }
+
+    fun measureTime(value: Boolean) = compileStubsConfig.measureTime(value)
 
     fun dependsOn(dependency: Any) = generateStubsTask.dependsOn(dependency)
 

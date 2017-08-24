@@ -95,6 +95,8 @@ open class KonanCompileTask: KonanTargetableTask() {
         internal set
     @Input var enableAssertions   = false
         internal set
+    @Console var measureTime      = false
+        internal set
 
     @Optional @Input var languageVersion : String? = null
         internal set
@@ -130,6 +132,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         addKey("-nomain", noMain)
         addKey("-opt", enableOptimization)
         addKey("-ea", enableAssertions)
+        addKey("--time", measureTime)
 
         addAll(extraOpts)
 
@@ -284,6 +287,10 @@ open class KonanCompileConfig(
 
     fun enableAssertions() = with(compilationTask) {
         enableAssertions = true
+    }
+
+    fun measureTime(value: Boolean) = with(compilationTask) {
+        measureTime = value
     }
 
     fun dumpParameters(value: Boolean) = with(compilationTask) {
