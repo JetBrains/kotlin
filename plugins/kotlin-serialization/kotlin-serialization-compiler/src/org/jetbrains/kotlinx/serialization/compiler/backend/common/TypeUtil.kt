@@ -72,6 +72,7 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
     return if (kType.requiresPolymorphism()) findPolymorphicSerializer(module)
     else kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
          ?: findStandardKotlinTypeSerializer(module, kType) // otherwise see if there is a standard serializer
+         ?: findEnumTypeSerializer(module, kType)
 }
 
 fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
@@ -95,6 +96,11 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         else -> return null
     }
     return module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, Name.identifier(name)))
+}
+
+fun findEnumTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
+    val classDescriptor = kType.toClassDescriptor ?: return null
+    return if (classDescriptor.kind == ClassKind.ENUM_CLASS) module.findClassAcrossModuleDependencies(enumSerializerId) else null
 }
 
 fun KotlinType.requiresPolymorphism(): Boolean {

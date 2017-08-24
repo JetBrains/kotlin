@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerialTypeInfo
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.findEnumTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findPolymorphicSerializer
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.requiresPolymorphism
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperty
@@ -235,11 +236,6 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType, asmType: Typ
     else kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
          ?: findStandardAsmTypeSerializer(module, asmType) // otherwise see if there is a standard serializer
          ?: findEnumTypeSerializer(module, kType)
-}
-
-fun findEnumTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
-    val classDescriptor = kType.toClassDescriptor ?: return null
-    return if (classDescriptor.kind == ClassKind.ENUM_CLASS) module.findClassAcrossModuleDependencies(enumSerializerId) else null
 }
 
 fun findStandardAsmTypeSerializer(module: ModuleDescriptor, asmType: Type): ClassDescriptor? {
