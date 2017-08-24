@@ -198,6 +198,13 @@ class LazyImportResolver(
     }
 
     fun definitelyDoesNotContainName(name: Name) = allNames?.let { name !in it } == true
+
+    fun recordLookup(name: Name, location: LookupLocation) {
+        if (allNames == null) return
+        indexedImports.importsForName(name).forEach {
+            getImportScope(it).recordLookup(name, location)
+        }
+    }
 }
 
 class LazyImportScope(
@@ -278,5 +285,10 @@ class LazyImportScope(
     }
 
     override fun definitelyDoesNotContainName(name: Name) = importResolver.definitelyDoesNotContainName(name)
+
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        importResolver.recordLookup(name, location)
+    }
+
     override fun computeImportedNames() = importResolver.allNames
 }

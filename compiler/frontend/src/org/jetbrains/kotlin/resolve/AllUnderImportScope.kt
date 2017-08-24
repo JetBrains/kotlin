@@ -86,6 +86,10 @@ class AllUnderImportScope(
         return scopes.flatMap { it.getContributedFunctions(name, location) }
     }
 
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        scopes.forEach { it.recordLookup(name, location) }
+    }
+
     override fun printStructure(p: Printer) {
         p.println(this::class.java.simpleName)
     }
