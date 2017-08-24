@@ -4484,6 +4484,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("temporaryVarNonTrivial.kt")
+        public void testTemporaryVarNonTrivial() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineEvaluationOrder/temporaryVarNonTrivial.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ternaryConditional.kt")
         public void testTernaryConditional() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineEvaluationOrder/ternaryConditional.kt");
