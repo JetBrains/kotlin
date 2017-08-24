@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.types.checker.intersectTypes
 
 interface NewTypeSubstitutor {
     fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType?
-    val isEmpty: Boolean
 
     fun safeSubstitute(type: UnwrappedType): UnwrappedType = substitute(type) ?: type
 
@@ -136,13 +135,10 @@ interface NewTypeSubstitutor {
 }
 
 class NewTypeSubstitutorByConstructorMap(val map: Map<TypeConstructor, UnwrappedType>) : NewTypeSubstitutor {
-    override val isEmpty get() = map.isEmpty()
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? = map[constructor]
 }
 
 class FreshVariableNewTypeSubstitutor(val freshVariables: List<TypeVariableFromCallableDescriptor>) : NewTypeSubstitutor {
-    override val isEmpty get() = freshVariables.isEmpty()
-
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
         val indexProposal = (constructor.declarationDescriptor as? TypeParameterDescriptor)?.index ?: return null
         val typeVariable = freshVariables.getOrNull(indexProposal) ?: return null

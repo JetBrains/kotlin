@@ -575,8 +575,6 @@ class DelegatedPropertyResolver(
 }
 
 private object AnonymousTypeSubstitutor : NewTypeSubstitutor {
-    override val isEmpty get() = true
-
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
         val declarationDescriptor = constructor.declarationDescriptor
         if (declarationDescriptor is ClassifierDescriptor && DescriptorUtils.isAnonymousObject(declarationDescriptor)) {
