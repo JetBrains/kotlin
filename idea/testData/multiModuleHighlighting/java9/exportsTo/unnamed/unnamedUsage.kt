@@ -1,6 +1,6 @@
-import dependency.<error>Foo</error>
+import dependency.Foo
 
 fun unnamedUsage(): String {
-    val foo: <error>Foo</error> = <error>Foo</error>()
-    return foo.<error>toString</error>()
+    val foo: Foo = Foo()
+    return foo.toString()
 }
