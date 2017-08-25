@@ -7,7 +7,9 @@ Digit
   : ["0".."9"];
 
 IntegerLiteral
-  : Digit (Digit | "_")*
+  : Digit
+  : Digit (Digit | "_")* Digit
+  ;
 
 FloatLiteral
   : <Java double literal>;
@@ -17,7 +19,9 @@ HexDigit
   : Digit | ["A".."F", "a".."f"];
 
 HexadecimalLiteral
-  : "0x" HexDigit (HexDigit | "_")*;
+  : "0x" HexDigit
+  : "0x" HexDigit (HexDigit | "_")* HexDigit
+  ;
 
 CharacterLiteral
   : <character as in Java>;
