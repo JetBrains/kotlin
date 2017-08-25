@@ -22,20 +22,20 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import java.io.Reader
 import java.io.StringReader
 
-fun parse(code: String, reporter: ErrorReporter, scope: JsScope, fileName: String): List<JsStatement> {
+fun parse(code: String, reporter: ErrorReporter, scope: JsScope, fileName: String): List<JsStatement>? {
     val insideFunction = scope is JsFunctionScope
     val node = parse(code, CodePosition(0, 0), 0, reporter, insideFunction, Parser::parse)
-    return node.toJsAst(scope, fileName) {
+    return node?.toJsAst(scope, fileName) {
         mapStatements(it)
     }
 }
 
-fun parseFunction(code: String, fileName: String, position: CodePosition, offset: Int, reporter: ErrorReporter, scope: JsScope): JsFunction {
+fun parseFunction(code: String, fileName: String, position: CodePosition, offset: Int, reporter: ErrorReporter, scope: JsScope): JsFunction? {
     val rootNode = parse(code, position, offset, reporter, insideFunction = false) {
         addListener(FunctionParsingObserver())
         primaryExpr(it)
     }
-    return rootNode.toJsAst(scope, fileName, JsAstMapper::mapFunction)
+    return rootNode?.toJsAst(scope, fileName, JsAstMapper::mapFunction)
 }
 
 private class FunctionParsingObserver : ParserListener {
@@ -60,13 +60,13 @@ private fun parse(
         reporter: ErrorReporter,
         insideFunction: Boolean,
         parseAction: Parser.(TokenStream)->Any
-): Node {
+): Node? {
     Context.enter().errorReporter = reporter
 
     try {
         val ts = TokenStream(StringReader(code, offset), "<parser>", startPosition)
         val parser = Parser(IRFactory(ts), insideFunction)
-        return parser.parseAction(ts) as Node
+        return parser.parseAction(ts) as? Node
     } finally {
         Context.exit()
     }

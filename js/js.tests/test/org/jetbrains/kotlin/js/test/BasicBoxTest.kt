@@ -440,7 +440,7 @@ abstract class BasicBoxTest(
         val codeWithLines = generatedProgram.toStringWithLineNumbers()
 
         val parsedProgram = JsProgram()
-        parsedProgram.globalBlock.statements += parse(code, ThrowExceptionOnErrorReporter, parsedProgram.scope, outputFile.path)
+        parsedProgram.globalBlock.statements += parse(code, ThrowExceptionOnErrorReporter, parsedProgram.scope, outputFile.path).orEmpty()
         removeLocationFromBlocks(parsedProgram)
         val sourceMapParseResult = SourceMapParser.parse(StringReader(generatedSourceMap))
         val sourceMap = when (sourceMapParseResult) {
@@ -524,12 +524,12 @@ abstract class BasicBoxTest(
         val kotlinJsLibOutput = File(workDir, "kotlin.min.js").path
         val kotlinTestJsLibOutput = File(workDir, "kotlin-test.min.js").path
 
-        val kotlinJsInputFile = InputFile(kotlinJsLib, kotlinJsLibOutput, "kotlin")
-        val kotlinTestJsInputFile = InputFile(kotlinTestJsLib, kotlinTestJsLibOutput, "kotlin-test")
+        val kotlinJsInputFile = InputFile(kotlinJsLib, null, kotlinJsLibOutput, "kotlin")
+        val kotlinTestJsInputFile = InputFile(kotlinTestJsLib, null, kotlinTestJsLibOutput, "kotlin-test")
 
         val filesToMinify = generatedJsFiles.associate { (fileName, module) ->
             val inputFileName = File(fileName).nameWithoutExtension
-            fileName to InputFile(fileName, File(workDir, inputFileName + ".min.js").absolutePath, module.name)
+            fileName to InputFile(fileName, null, File(workDir, inputFileName + ".min.js").absolutePath, module.name)
         }
 
         val testFunctionFqn = testModuleName + (if (testPackage.isNullOrEmpty()) "" else ".$testPackage") + ".$testFunction"
@@ -538,7 +538,7 @@ abstract class BasicBoxTest(
                 "kotlin.kotlin.io.output.buffer", "kotlin-test.kotlin.test.overrideAsserter_wbnzx$"
         )
         val allFilesToMinify = filesToMinify.values + kotlinJsInputFile + kotlinTestJsInputFile
-        val dceResult = DeadCodeElimination.run(allFilesToMinify, additionalReachableNodes) { }
+        val dceResult = DeadCodeElimination.run(allFilesToMinify, additionalReachableNodes) { _, _ -> }
 
         val reachableNodes = dceResult.reachableNodes
         minificationThresholdChecker(reachableNodes.size)
