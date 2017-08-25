@@ -173,7 +173,7 @@ targetList.each { target ->
     task("${target}Stdlib", type: JavaExec) {
         main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
         classpath = project.configurations.cli_bc
-        jvmArgs.addAll(konanJvmArgs)
+        jvmArgs = konanJvmArgs
         args = [*konanArgs,
                 '-output', project(':runtime').file("build/${target}Stdlib"),
                 '-produce', 'library',
@@ -191,7 +191,7 @@ targetList.each { target ->
     task("${target}Start", type: JavaExec) {
         main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
         classpath = project.configurations.cli_bc
-        jvmArgs(*jvmArgs)
+        jvmArgs = konanJvmArgs
         args = [*konanArgs, '-produce', 'bitcode',
                 '-output', project(':runtime').file("build/${target}Start"),
                 '-library', project(':runtime').file("build/${target}Stdlib"),
