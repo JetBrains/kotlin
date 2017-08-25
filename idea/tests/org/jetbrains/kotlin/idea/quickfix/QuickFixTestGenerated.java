@@ -11887,6 +11887,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addRemainingBranchesEnumImport1.kt")
+        public void testAddRemainingBranchesEnumImport1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesEnumImport1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addRemainingBranchesEnumImport2.kt")
+        public void testAddRemainingBranchesEnumImport2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesEnumImport2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addRemainingBranchesEnumImport3.kt")
+        public void testAddRemainingBranchesEnumImport3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesEnumImport3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addRemainingBranchesEnumImport4.kt")
+        public void testAddRemainingBranchesEnumImport4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesEnumImport4.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("addRemainingBranchesEnumStatement.kt")
         public void testAddRemainingBranchesEnumStatement() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesEnumStatement.kt");
