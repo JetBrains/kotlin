@@ -1,5 +1,8 @@
 import foo.Foo
+import foo.impl.Impl
 
 fun usage() {
-    Foo()
+    Foo()  // should be OK
+
+    Impl()  // should be error
 }
