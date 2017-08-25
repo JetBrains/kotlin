@@ -26,30 +26,21 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
-class IdeJavaModuleResolver(project: Project) : JavaModuleResolver {
-    private val psiManager = PsiManager.getInstance(project)
-
-    private fun findJavaModule(file: VirtualFile): PsiJavaModule? {
-        return psiManager.findFile(file)?.let(JavaModuleGraphUtil::findDescriptorByElement)
-    }
+class IdeJavaModuleResolver(private val project: Project) : JavaModuleResolver {
+    private fun findJavaModule(file: VirtualFile): PsiJavaModule? =
+            ModuleHighlightUtil2.getModuleDescriptor(file, project)
 
     override fun checkAccessibility(
             fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
     ): JavaModuleResolver.AccessError? {
         val ourModule = fileFromOurModule?.let(this::findJavaModule)
-        val theirModule = this.findJavaModule(referencedFile)
+        val theirModule = findJavaModule(referencedFile)
 
-        // If we're both in the unnamed module, it's OK, no error should be reported
-        if (ourModule == null && theirModule == null) return null
+        if (ourModule?.name == theirModule?.name) return null
 
         if (theirModule == null) {
-            // We should probably prohibit this usage according to JPMS (named module cannot use types from unnamed module),
-            // but we cannot be sure that a module without module-info.java is going to be actually used as an unnamed module.
-            // It could also be an automatic module, in which case it would be read by every module.
-            return null
+            return JavaModuleResolver.AccessError.ModuleDoesNotReadUnnamedModule
         }
-
-        if (ourModule?.name == theirModule.name) return null
 
         if (ourModule != null && !JavaModuleGraphUtil.reads(ourModule, theirModule)) {
             return JavaModuleResolver.AccessError.ModuleDoesNotReadModule(theirModule.name)
