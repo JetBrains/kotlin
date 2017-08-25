@@ -44,4 +44,8 @@ abstract class CommonToolArguments : Freezable(), Serializable {
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-nowarn", description = "Generate no warnings")
     var suppressWarnings: Boolean by FreezableVar(false)
+
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @Argument(value = "-Werror", description = "Report an error if there are any warnings")
+    var warningsAsErrors: Boolean by FreezableVar(false)
 }

@@ -17,4 +17,10 @@ interface KotlinCommonOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToo
      * Default value: null
      */
      var languageVersion: kotlin.String?
+
+    /**
+     * Report an error if there are any warnings
+     * Default value: false
+     */
+     var warningsAsErrors: kotlin.Boolean
 }
