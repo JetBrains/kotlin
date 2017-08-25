@@ -2,9 +2,12 @@
 // ERROR: Unresolved reference: TODO
 // ERROR: Unresolved reference: TODO
 package test
+
+import test.Color.*
+
 enum class Color { R, G, B }
 fun test(c: Color) = when(c) {
-    Color.B -> 0xff
-    Color.R -> TODO()
-    Color.G -> TODO()
+    B -> 0xff
+    R -> TODO()
+    G -> TODO()
 }
