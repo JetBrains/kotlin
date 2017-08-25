@@ -43,14 +43,14 @@ fun main(args: Array<String>) {
     fun File.relativizeIfNecessary(): String = baseDir.relativize(canonicalFile.toPath()).toString()
 
     val wrapperFile = File(args[2])
-    val wrapper = parse(wrapperFile.readText(), ThrowExceptionOnErrorReporter, program.scope, wrapperFile.relativizeIfNecessary())
+    val wrapper = parse(wrapperFile.readText(), ThrowExceptionOnErrorReporter, program.scope, wrapperFile.relativizeIfNecessary())!!
     val insertionPlace = wrapper.createInsertionPlace()
 
     val allFiles = mutableListOf<File>()
     args.drop(3).map { File(it) }.forEach { collectFiles(it, allFiles) }
 
     for (file in allFiles) {
-        val statements = parse(file.readText(), ThrowExceptionOnErrorReporter, program.scope, file.relativizeIfNecessary())
+        val statements = parse(file.readText(), ThrowExceptionOnErrorReporter, program.scope, file.relativizeIfNecessary())!!
         val block = JsBlock(statements)
         block.fixForwardNameReferences()
 

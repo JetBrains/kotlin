@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.js.dce.DeadCodeElimination
-import org.jetbrains.kotlin.js.dce.InputFile
-import org.jetbrains.kotlin.js.dce.extractRoots
-import org.jetbrains.kotlin.js.dce.printTree
+import org.jetbrains.kotlin.js.dce.*
 import java.io.File
 
 class K2JSDce : CLITool<K2JSDceArguments>() {
@@ -38,7 +35,9 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
             val inputName = parts[0]
             val moduleName = parts.getOrNull(1) ?: ""
             val resolvedModuleName = if (!moduleName.isEmpty()) moduleName else File(inputName).nameWithoutExtension
-            InputFile(inputName, File(baseDir, resolvedModuleName + ".js").absolutePath, resolvedModuleName)
+            val pathToSourceMapCandidate = "$inputName.map"
+            val pathToSourceMap = if (File(pathToSourceMapCandidate).exists()) pathToSourceMapCandidate else null
+            InputFile(inputName, pathToSourceMap, File(baseDir, resolvedModuleName + ".js").absolutePath, resolvedModuleName)
         }
 
         if (files.isEmpty() && !arguments.version) {
@@ -51,9 +50,16 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
 
         val includedDeclarations = arguments.declarationsToKeep.orEmpty().toSet()
 
-        val dceResult = DeadCodeElimination.run(files, includedDeclarations) {
-            messageCollector.report(CompilerMessageSeverity.LOGGING, it)
+        val logConsumer = { level: DCELogLevel, message: String ->
+            val severity = when (level) {
+                DCELogLevel.ERROR -> CompilerMessageSeverity.ERROR
+                DCELogLevel.WARN -> CompilerMessageSeverity.WARNING
+                DCELogLevel.INFO -> CompilerMessageSeverity.LOGGING
+            }
+            messageCollector.report(severity, message)
         }
+        val dceResult = DeadCodeElimination.run(files, includedDeclarations, logConsumer)
+        if (dceResult.status == DeadCodeEliminationStatus.FAILED) return ExitCode.COMPILATION_ERROR
         val nodes = dceResult.reachableNodes
 
         val reachabilitySeverity = if (arguments.printReachabilityInfo) CompilerMessageSeverity.INFO else CompilerMessageSeverity.LOGGING

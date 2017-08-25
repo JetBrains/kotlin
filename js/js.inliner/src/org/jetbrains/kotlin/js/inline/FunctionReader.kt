@@ -209,7 +209,8 @@ class FunctionReader(
         }
 
         val position = info.offsetToSourceMapping[offset]
-        val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram()))
+        val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram())) ?:
+                           return null
         functionExpr.fixForwardNameReferences()
         val (function, wrapper) = if (isWrapped) {
             InlineMetadata.decomposeWrapper(functionExpr) ?: return null

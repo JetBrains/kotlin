@@ -18,10 +18,12 @@ dependencies {
 }
 
 compileKotlin2Js.kotlinOptions.outputFile = "${buildDir}/examplelib.js"
+compileKotlin2Js.kotlinOptions.sourceMap = true
 
 jar {
     from buildDir
     include "**/*.js"
+    include "**/*.js.map"
 }
 
 jar.dependsOn(compileKotlin2Js)

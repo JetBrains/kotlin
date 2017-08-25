@@ -16,4 +16,7 @@
 
 package org.jetbrains.kotlin.js.dce
 
-class DeadCodeEliminationResult(val reachableNodes: Set<Context.Node>, val status: DeadCodeEliminationStatus)
+enum class DeadCodeEliminationStatus {
+    OK,
+    FAILED
+}
