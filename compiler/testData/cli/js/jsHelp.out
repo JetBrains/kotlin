@@ -26,4 +26,5 @@ where possible options include:
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
+  -Werror                    Report an error if there are any warnings
 OK

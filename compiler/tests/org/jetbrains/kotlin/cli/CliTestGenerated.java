@@ -428,6 +428,30 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("werror.args")
+        public void testWerror() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/werror.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("werrorWithExplicitError.args")
+        public void testWerrorWithExplicitError() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/werrorWithExplicitError.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("werrorWithNoWarn.args")
+        public void testWerrorWithNoWarn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/werrorWithNoWarn.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("werrorWithStrongWarning.args")
+        public void testWerrorWithStrongWarning() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/werrorWithStrongWarning.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("wrongAbiVersion.args")
         public void testWrongAbiVersion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongAbiVersion.args");

@@ -81,7 +81,7 @@ abstract class CLITool<A : CommonToolArguments> {
     fun exec(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
         printVersionIfNeeded(messageCollector, arguments)
 
-        val fixedMessageCollector = if (arguments.suppressWarnings) {
+        val fixedMessageCollector = if (arguments.suppressWarnings && !arguments.warningsAsErrors) {
             FilteringMessageCollector(messageCollector, Predicate.isEqual(CompilerMessageSeverity.WARNING))
         }
         else {

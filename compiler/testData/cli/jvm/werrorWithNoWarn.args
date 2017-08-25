@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/werrorWithNoWarn.kt
+-d
+$TEMP_DIR$
+-Werror
+-nowarn
