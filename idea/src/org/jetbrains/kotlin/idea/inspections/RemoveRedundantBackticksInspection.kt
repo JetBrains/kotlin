@@ -19,38 +19,19 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
-            override fun visitProperty(property: KtProperty) {
-                super.visitProperty(property)
-                val nameIdentifier = property.nameIdentifier ?: return
-                if (isRedundantBackticks(nameIdentifier)) {
-                    registerProblem(holder, nameIdentifier)
-                }
-            }
-
-            override fun visitNamedFunction(function: KtNamedFunction) {
-                super.visitNamedFunction(function)
-                function.valueParameters.map {
-                    val nameIdentifier = it.nameIdentifier ?: return@map
-                    if (isRedundantBackticks(nameIdentifier)) {
-                        registerProblem(holder, nameIdentifier)
+            override fun visitKtElement(element: KtElement) {
+                super.visitKtElement(element)
+                element.findChildrenByType(KtTokens.IDENTIFIER).forEach {
+                    if (isRedundantBackticks(it)) {
+                        registerProblem(holder, it)
                     }
-                }
-            }
-
-            override fun visitReferenceExpression(expression: KtReferenceExpression) {
-                super.visitReferenceExpression(expression)
-                val bindingContext = expression.analyze()
-                expression.getResolvedCall(bindingContext) ?: return
-                if (isRedundantBackticks(expression)) {
-                    registerProblem(holder, expression)
                 }
             }
         }
@@ -71,6 +52,22 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
                                "Remove redundant backticks",
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                RemoveRedundantBackticksQuickFix())
+    }
+
+    private fun KtElement.findChildrenByType(elementType: IElementType): List<PsiElement> {
+        val EMPTY = emptyList<PsiElement>()
+        var result = arrayListOf<PsiElement>()
+        var child = node.firstChildNode
+        while (child != null) {
+            if (elementType == child.elementType) {
+                if (result == EMPTY) {
+                    result = arrayListOf<PsiElement>()
+                }
+                result.add(child.psi)
+            }
+            child = child.treeNext
+        }
+        return result
     }
 }
 
