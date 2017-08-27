@@ -1423,6 +1423,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt19666.kt")
+            public void testKt19666() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/kt19666.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lhsEqualsNull.kt")
             public void testLhsEqualsNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/lhsEqualsNull.kt");

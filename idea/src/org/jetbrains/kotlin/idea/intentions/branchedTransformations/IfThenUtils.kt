@@ -165,13 +165,20 @@ data class IfThenToSelectData(
                                               it.leftHandSide,
                                               it.typeReference!!)
         }
+
         return if (baseClauseEvaluatesToReceiver()) {
             if (condition is KtIsExpression) newReceiver!! else baseClause
         }
         else {
             when {
-                condition is KtIsExpression -> (baseClause as KtDotQualifiedExpression).replaceFirstReceiver(
-                        factory, newReceiver!!, safeAccess = true)
+                condition is KtIsExpression -> {
+                    when {
+                        baseClause is KtDotQualifiedExpression -> baseClause.replaceFirstReceiver(
+                                factory, newReceiver!!, safeAccess = true)
+                        hasImplicitReceiver() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!, baseClause).insertSafeCalls(factory)
+                        else -> error("Illegal state")
+                    }
+                }
                 hasImplicitReceiver() -> factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
                 else -> baseClause.insertSafeCalls(factory)
             }
