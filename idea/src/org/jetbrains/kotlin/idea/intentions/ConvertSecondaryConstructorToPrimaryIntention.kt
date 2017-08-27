@@ -181,10 +181,15 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
         with (constructorInClass.replace(constructor)) {
             constructorCommentSaver.restore(this)
         }
-        element.delete()
 
-        if ((initializer.body as? KtBlockExpression)?.statements?.isNotEmpty() ?: false) {
-            klass.addDeclaration(initializer)
+        if ((initializer.body as? KtBlockExpression)?.statements?.isNotEmpty() == true) {
+            val nextSiblings = element.parent.children.takeLastWhile { it !== element }
+            if (nextSiblings.isEmpty() || nextSiblings.any { it is KtProperty })
+                klass.addDeclaration(initializer)
+            else
+                klass.addDeclarationBefore(initializer, nextSiblings.firstOrNull())
         }
+
+        element.delete()
     }
 }
