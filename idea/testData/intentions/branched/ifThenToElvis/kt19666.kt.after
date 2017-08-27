@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+interface Taggable {
+    val tag: String
+}
+
+fun Any.log() {
+    val tag = (this as? Taggable)?.tag ?: this::class.java.simpleName
+}
