@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
 import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -210,7 +211,7 @@ class IncrementalJvmCompilerRunner(
         }
     }
 
-    override fun compareAndUpdateCache(caches: IncrementalJvmCachesManager, generatedFiles: List<GeneratedFile>): CompilationResult =
+    override fun compareAndUpdateCache(services: Services, caches: IncrementalJvmCachesManager, generatedFiles: List<GeneratedFile>): CompilationResult =
         updateIncrementalCache(generatedFiles, caches.platformCache)
 
     override fun additionalDirtyFiles(
@@ -256,11 +257,24 @@ class IncrementalJvmCompilerRunner(
     override fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
             javaFilesProcessor.allChangedSymbols
 
+    override fun makeServices(
+            args: K2JVMCompilerArguments,
+            lookupTracker: LookupTracker,
+            caches: IncrementalJvmCachesManager,
+            compilationMode: CompilationMode
+    ): Services.Builder =
+        super.makeServices(args, lookupTracker, caches, compilationMode).apply {
+            val targetId = TargetId(args.moduleName!!, "java-production")
+            val targetToCache = mapOf(targetId to caches.platformCache)
+            val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)
+            register(IncrementalCompilationComponents::class.java, incrementalComponents)
+        }
+
     override fun runCompiler(
             sourcesToCompile: Set<File>,
             args: K2JVMCompilerArguments,
             caches: IncrementalJvmCachesManager,
-            services: Services.Builder,
+            services: Services,
             messageCollector: MessageCollector
     ): ExitCode {
         val compiler = K2JVMCompiler()
@@ -278,14 +292,9 @@ class IncrementalJvmCompilerRunner(
         args.buildFile = moduleFile.absolutePath
 
         try {
-            val targetId = TargetId(args.buildFile!!, "java-production")
-            val targetToCache = mapOf(targetId to caches.platformCache)
-            val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)
-            services.register(IncrementalCompilationComponents::class.java, incrementalComponents)
-
             reporter.report { "compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}" }
             reporter.report { "compiling with classpath: ${classpath.toList().sorted().joinToString()}" }
-            val exitCode = compiler.exec(messageCollector, services.build(), args)
+            val exitCode = compiler.exec(messageCollector, services, args)
             reporter.reportCompileIteration(sourcesToCompile, exitCode)
             return exitCode
         }
