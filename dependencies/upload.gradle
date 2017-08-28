@@ -1,0 +1,41 @@
+buildscript {
+    def rootProperties = new Properties()
+    rootProperties.load(new FileReader(project.file("../gradle.properties")))
+    rootProperties.each {k,v -> ext.set(k, v)}
+    apply from: "../gradle/kotlinGradlePlugin.gradle"
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
+}
+
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+    user = gradle.startParameter.projectProperties.user
+    key  = gradle.startParameter.projectProperties.key
+    pkg {
+        repo = 'kotlin-native-dependencies'
+        name = 'kotlin-compiler-builds'
+        userOrg = 'jetbrains'
+        publish = true
+        override = project.hasProperty("override")
+    }
+
+    filesSpec {
+        def (groupId, artifactId, version) = gradle.startParameter.projectProperties.module.tokenize(':')
+        def groupPath = groupId.replace('.', '/')
+        def artifactPath = artifactId
+        def versionPath =  "${version.tokenize('-')[0]}-SNAPSHOT"
+        from project.files(gradle.startParameter.projectProperties.jar)
+        from project.files(gradle.startParameter.projectProperties.src)
+        from project.files(gradle.startParameter.projectProperties.doc)
+        from project.files(gradle.startParameter.projectProperties.pom)
+        into "$groupPath/$artifactPath/$versionPath"
+    }
+
+}

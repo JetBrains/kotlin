@@ -31,20 +31,27 @@ buildscript {
     repositories {
         jcenter()
     }
-
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-    }
 }
-
-apply plugin: 'com.jfrog.bintray'
 
 configurations {
     kotlin_compiler_jar
     kotlin_compiler_pom
     kotlin_compiler_src
     kotlin_compiler_doc
+
+    kotlin_gradle_plugin_jar
+    kotlin_gradle_plugin_pom
+    kotlin_gradle_plugin_src
+    kotlin_gradle_plugin_doc
+
+    kotlin_stdlib_jdk8_jar
+    kotlin_stdlib_jdk8_pom
+    kotlin_stdlib_jdk8_src
+    kotlin_stdlib_jdk8_doc
 }
+
+def kotlinGradleModule = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinGradlePluginVersion"
+def kotlinStdLibJdk8Module = "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinStdLibJdk8Version"
 
 // TODO: Check if we really need the our bintray mirror and delete the uploading code below if we don't.
 repositories {
@@ -56,6 +63,16 @@ dependencies {
     kotlin_compiler_pom "$kotlinCompilerModule@pom"
     kotlin_compiler_src "$kotlinCompilerModule:sources@jar"
     kotlin_compiler_doc "$kotlinCompilerModule:javadoc@jar"
+
+    kotlin_gradle_plugin_jar "$kotlinGradleModule@jar"
+    kotlin_gradle_plugin_pom "$kotlinGradleModule@pom"
+    kotlin_gradle_plugin_src "$kotlinGradleModule:sources@jar"
+    kotlin_gradle_plugin_doc "$kotlinGradleModule:javadoc@jar"
+
+    kotlin_stdlib_jdk8_jar "$kotlinStdLibJdk8Module@jar"
+    kotlin_stdlib_jdk8_pom "$kotlinStdLibJdk8Module@pom"
+    kotlin_stdlib_jdk8_src "$kotlinStdLibJdk8Module:sources@jar"
+    kotlin_stdlib_jdk8_doc "$kotlinStdLibJdk8Module:javadoc@jar"
 }
 
 // Hack kotlin-compiler pom-file to resolve the dependency correctly.
@@ -81,33 +98,30 @@ task generatePom(type: DefaultTask) {
     }
 }
 
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key  = project.hasProperty('bintrayKey') ? project.property('bintrayKey') : System.getenv('BINTRAY_KEY')
-    pkg {
-        repo = 'kotlin-native-dependencies'
-        name = 'kotlin-compiler-builds'
-        userOrg = 'jetbrains'
-        publish = true
-        override = project.hasProperty("override")
-    }
-    filesSpec {
-        // kotlinCompilerModule@jar and @pom -> groupId/with/dots/replaced/by/slashes/artifactId/<major-version>-SNAPSHOT
-        // e.g. org.jetbrains.kotlin:kotlin-compiler:1.1-20170426.212805-507 -> org/jetbrains/kotlin/kotlin-compiler/1.1-SNAPSHOT
-        def (groupId, artifactId, version) = kotlinCompilerModule.tokenize(':')
-        def groupPath = groupId.replace('.', '/')
-        def artifactPath = artifactId
-        def versionPath =  "${version.tokenize('-')[0]}-SNAPSHOT"
-        from project.configurations.kotlin_compiler_jar.files
-        from project.configurations.kotlin_compiler_src.files
-        from project.configurations.kotlin_compiler_doc.files
-        from generatePom.outputs.files
-        into "$groupPath/$artifactPath/$versionPath"
+def modules = ['compiler'     : kotlinCompilerModule,
+               'gradle_plugin': kotlinGradleModule,
+               'stdlib_jdk8'  : kotlinStdLibJdk8Module]
+def uploads = ['compiler', 'gradle_plugin', 'stdlib_jdk8']
+uploads.each { target ->
+    task("${target}Upload", type:GradleBuild) {
+        tasks = ['dump', 'bintrayUpload']
+        buildFile project.file("upload.gradle")
+        dir project.projectDir
+        startParameter.projectProperties = [
+                'user'   :  "${project.hasProperty('bintrayUser') ? project['bintrayUser'] : System.getenv('BINTRAY_USER')}",
+                'key'    : "${ project.hasProperty('bintrayKey') ? project.property('bintrayKey') : System.getenv('BINTRAY_KEY')}",
+                'module' : modules["${target}"],
+                'jar'    : project.configurations.getByName("kotlin_${target}_jar").files.collect {it.path},
+                'src'    : project.configurations.getByName("kotlin_${target}_src").files.collect {it.path},
+                'doc'    : project.configurations.getByName("kotlin_${target}_doc").files.collect {it.path},
+                'pom'    : project.configurations.getByName("kotlin_${target}_pom").files.collect {it.path},
+
+        ]
     }
 }
 
 task update_kotlin_compiler(type: DefaultTask) {
-    dependsOn(bintrayUpload)
+    dependsOn compilerUpload, gradle_pluginUpload, stdlib_jdk8Upload
 }
 
 abstract class NativeDep extends DefaultTask {
