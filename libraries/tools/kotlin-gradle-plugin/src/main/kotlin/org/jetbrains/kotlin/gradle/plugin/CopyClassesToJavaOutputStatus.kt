@@ -12,10 +12,13 @@ object CopyClassesToJavaOutputStatus {
     fun isEnabled(project: Project): Boolean {
         val kotlinJvmExt = project.kotlinJvmExt ?: return false
         if (kotlinJvmExt.copyClassesToJavaOutput) {
-            if (isGradleVersionTooLow(project) && warningReportedForProject.add(project)) {
-                project.logger.kotlinWarn(gradleVersionTooLowWarningMessage)
+            if (isGradleVersionTooLow(project)) {
+                if (warningReportedForProject.add(project)) {
+                    project.logger.kotlinWarn(gradleVersionTooLowWarningMessage)
+                }
+            } else {
+                addCacheWarningToJavaTasks(project)
             }
-            addCacheWarningToJavaTasks(project)
             return true
         }
         return false
