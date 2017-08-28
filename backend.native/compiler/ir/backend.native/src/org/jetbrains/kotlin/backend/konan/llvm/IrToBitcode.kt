@@ -360,13 +360,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 }
 
                 appendingTo(bbInit) {
-                    context.llvm.fileInitializers.forEach {
-                        val irField = it as IrField
-                        val descriptor = irField.descriptor
-                        val initialization = evaluateExpression(irField.initializer!!.expression)
-                        val globalPtr = context.llvmDeclarations.forStaticField(descriptor).storage
-                        storeAnyGlobal(initialization, globalPtr)
-                    }
+                    context.llvm.fileInitializers
+                            .map { it as IrField }
+                            .filterNot { it.initializer is IrConst<*> }
+                            .forEach {
+                                val descriptor = it.descriptor
+                                val initialization = evaluateExpression(it.initializer!!.expression)
+                                val globalPtr = context.llvmDeclarations.forStaticField(descriptor).storage
+                                storeAnyGlobal(initialization, globalPtr)
+                            }
                     ret(null)
                 }
             }
@@ -668,8 +670,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 LLVMSetInitializer(globalProperty, evaluateExpression(declaration.initializer!!.expression))
             } else {
                 LLVMSetInitializer(globalProperty, LLVMConstNull(type))
-                context.llvm.fileInitializers.add(declaration)
             }
+            context.llvm.fileInitializers.add(declaration)
 
             LLVMSetLinkage(globalProperty, LLVMLinkage.LLVMInternalLinkage)
             // (Cannot do this before the global is initialized).
