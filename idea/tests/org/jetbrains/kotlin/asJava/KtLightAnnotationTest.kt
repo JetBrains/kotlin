@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiArrayInitializerMemberValue
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiModifierListOwner
+import com.intellij.psi.*
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -53,6 +50,9 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
                 .expectAnnotations(2).single { it.qualifiedName == "Autowired" }
         val annotationAttributeVal = annotations.findAttributeValue("required") as PsiElement
         assertTextAndRange("true", annotationAttributeVal)
+
+        val computed = JavaPsiFacade.getInstance(project).constantEvaluationHelper.computeConstantExpression(annotationAttributeVal)
+        TestCase.assertEquals(true, computed)
     }
 
     fun testAnnotationsInAnnotationsDeclarations() {
