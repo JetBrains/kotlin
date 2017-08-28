@@ -204,8 +204,8 @@ fun getCanBeConfiguredModulesWithKotlinFiles(project: Project, excludeModules: C
 }
 
 fun hasAnyKotlinRuntimeInScope(module: Module): Boolean {
-    val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
     return runReadAction {
+        val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
         getKotlinJvmRuntimeMarkerClass(module.project, scope) != null ||
         hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind) ) ||
         hasKotlinCommonRuntimeInScope(scope)
