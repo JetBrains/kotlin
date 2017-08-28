@@ -3,12 +3,11 @@
   <component name="FacetManager">
     <facet type="kotlin-language" name="Kotlin">
       <configuration version="3" platform="JVM 1.6" useProjectSettings="false">
-        <compilerSettings>
-          <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />
-        </compilerSettings>
+        <compilerSettings />
         <compilerArguments>
           <option name="languageVersion" value="1.1" />
           <option name="apiVersion" value="1.1" />
+          <option name="version" value="true" />
         </compilerArguments>
       </configuration>
     </facet>
