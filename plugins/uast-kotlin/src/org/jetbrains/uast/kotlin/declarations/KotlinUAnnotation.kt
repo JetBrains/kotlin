@@ -42,7 +42,7 @@ class KotlinUAnnotation(
     }
 
     override fun findAttributeValue(name: String?): UExpression? =
-            findDeclaredAttributeValue(name)
+            findDeclaredAttributeValue(name) ?: findAttributeDefaultValue(name ?: "value")
 
     override fun findDeclaredAttributeValue(name: String?): UExpression? {
         return attributeValues.find {
@@ -52,5 +52,15 @@ class KotlinUAnnotation(
         }?.expression
     }
 
+    private fun findAttributeDefaultValue(name: String): UExpression? {
+        val parameter = resolvedAnnotation
+                                ?.annotationClass
+                                ?.unsubstitutedPrimaryConstructor
+                                ?.valueParameters
+                                ?.find { it.name.asString() == name } ?: return null
+
+        val defaultValue = (parameter.source.getPsi() as? KtParameter)?.defaultValue ?: return null
+        return getLanguagePlugin().convertWithParent(defaultValue)
+    }
 }
 

@@ -104,4 +104,12 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             assertEquals("String", elvisExpression.getExpressionType()!!.presentableText)
         }
     }
+
+    @Test fun testFindAttributeDefaultValue() {
+        doTest("AnnotationParameters") { _, file ->
+            val witDefaultValue = file.findElementByText<UAnnotation>("@WithDefaultValue")
+            assertEquals(42, witDefaultValue.findAttributeValue("value")!!.evaluate())
+            assertEquals(42, witDefaultValue.findAttributeValue(null)!!.evaluate())
+        }
+    }
 }
