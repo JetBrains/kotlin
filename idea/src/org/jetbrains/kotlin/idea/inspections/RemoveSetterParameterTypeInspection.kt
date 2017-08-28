@@ -30,12 +30,11 @@ class RemoveSetterParameterTypeInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitDeclaration(dcl: KtDeclaration) {
-                if (dcl is KtParameter && dcl.typeReference != null && dcl.isSetterParameter) {
-                    holder.registerProblem(dcl,
-                                           "Redundant setter parameter type",
-                                           ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                           IntentionWrapper(RemoveExplicitTypeIntention(), dcl.containingKtFile))
-                }
+                val typeReference = (dcl as? KtParameter)?.takeIf { it.isSetterParameter }?.typeReference ?: return
+                holder.registerProblem(typeReference,
+                                       "Redundant setter parameter type",
+                                       ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                       IntentionWrapper(RemoveExplicitTypeIntention(), dcl.containingKtFile))
             }
         }
     }
