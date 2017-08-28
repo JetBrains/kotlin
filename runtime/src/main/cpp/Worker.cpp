@@ -65,6 +65,8 @@ KNativePtr transfer(KRef object, KInt mode) {
     case CHECKED:
     case UNCHECKED:
       if (!ClearSubgraphReferences(object, mode == CHECKED)) {
+        // Release reference to the object, as it is not being managed by ObjHolder.
+        UpdateRef(&object, nullptr);
         ThrowWorkerInvalidState();
         return nullptr;
       }

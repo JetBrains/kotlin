@@ -19,6 +19,10 @@
 
 #include <cstddef> // for offsetof
 
+#ifndef KONAN_NO_THREADS
+#include <pthread.h>
+#endif
+
 #include "Alloc.h"
 #include "Assert.h"
 #include "Exceptions.h"
@@ -48,6 +52,14 @@ constexpr container_size_t kObjectAlignment = 8;
 #define MEMORY_LOG(...)
 #endif
 
+inline int atomicAdd(int* where, int what) {
+#ifndef KONAN_NO_THREADS
+  return __sync_add_and_fetch(where, what);
+#else
+  return *where += what;
+#endif
+}
+
 #if USE_GC
 // Collection threshold default (collect after having so many elements in the
 // release candidates set). Better be a prime number.
@@ -68,9 +80,11 @@ struct FrameOverlay {
   ArenaContainer* arena;
 };
 
+// Current number of allocated containers.
+int allocCount = 0;
+int aliveMemoryStatesCount = 0;
+
 struct MemoryState {
-  // Current number of allocated containers.
-  int allocCount = 0;
 
 #if TRACE_MEMORY
   // List of all global objects addresses.
@@ -210,7 +224,7 @@ inline void processFinalizerQueue(MemoryState* state) {
       runDeallocationHooks(container);
     }
     konanFreeMemory(container);
-    state->allocCount--;
+    atomicAdd(&allocCount, -1);
   }
 }
 #endif
@@ -224,7 +238,7 @@ inline void scheduleDestroyContainer(
     processFinalizerQueue(state);
   }
 #else
-  state->allocCount--;
+  atomicAdd(&allocCount, -1);
   konanFreeMemory(header);
 #endif
 }
@@ -334,9 +348,54 @@ void MarkRoots(MemoryState*);
 void DeleteCorpses(MemoryState*);
 void ScanRoots(MemoryState*);
 void CollectRoots(MemoryState*);
-void MarkGray(ContainerHeader* container);
+
+template<bool useColor>
+void MarkGray(ContainerHeader* container) {
+  if (useColor) {
+    if (container->color() == CONTAINER_TAG_GC_GRAY) return;
+  } else {
+    if (container->marked()) return;
+  }
+  if (useColor) {
+    container->setColor(CONTAINER_TAG_GC_GRAY);
+  } else {
+    container->mark();
+  }
+  traverseContainerReferredObjects(container, [](ObjHeader* ref) {
+    auto childContainer = ref->container();
+    RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
+    if (!isPermanent(childContainer)) {
+      childContainer->decRefCount();
+      MarkGray<useColor>(childContainer);
+    }
+  });
+}
+
 void Scan(ContainerHeader* container);
-void ScanBlack(ContainerHeader* container);
+
+template<bool useColor>
+void ScanBlack(ContainerHeader* container) {
+  if (useColor) {
+    container->setColor(CONTAINER_TAG_GC_BLACK);
+  } else {
+    container->unMark();
+  }
+  traverseContainerReferredObjects(container, [](ObjHeader* ref) {
+    auto childContainer = ref->container();
+    RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
+    if (!isPermanent(childContainer)) {
+      childContainer->incRefCount();
+      if (useColor) {
+        if (childContainer->color() != CONTAINER_TAG_GC_BLACK)
+          ScanBlack<useColor>(childContainer);
+      } else {
+        if (childContainer->marked())
+          ScanBlack<useColor>(childContainer);
+      }
+    }
+  });
+}
+
 void CollectWhite(MemoryState*, ContainerHeader* container);
 
 void CollectCycles(MemoryState* state) {
@@ -354,7 +413,7 @@ void MarkRoots(MemoryState* state) {
     auto color = container->color();
     auto rcIsZero = container->refCount() == 0;
     if (color == CONTAINER_TAG_GC_PURPLE && !rcIsZero) {
-      MarkGray(container);
+      MarkGray<true>(container);
       state->roots->push_back(container);
     } else {
       container->resetBuffered();
@@ -378,23 +437,10 @@ void CollectRoots(MemoryState* state) {
   }
 }
 
-void MarkGray(ContainerHeader* container) {
-  if (container->color() == CONTAINER_TAG_GC_GRAY) return;
-  container->setColor(CONTAINER_TAG_GC_GRAY);
-  traverseContainerReferredObjects(container, [](ObjHeader* ref) {
-    auto childContainer = ref->container();
-    RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
-    if (!isPermanent(childContainer)) {
-      childContainer->decRefCount();
-      MarkGray(childContainer);
-    }
-  });
-}
-
 void Scan(ContainerHeader* container) {
   if (container->color() != CONTAINER_TAG_GC_GRAY) return;
   if (container->refCount() != 0) {
-    ScanBlack(container);
+    ScanBlack<true>(container);
     return;
   }
   container->setColor(CONTAINER_TAG_GC_WHITE);
@@ -403,19 +449,6 @@ void Scan(ContainerHeader* container) {
     RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
     if (!isPermanent(childContainer)) {
       Scan(childContainer);
-    }
-  });
-}
-
-void ScanBlack(ContainerHeader* container) {
-  container->setColor(CONTAINER_TAG_GC_BLACK);
-  traverseContainerReferredObjects(container, [](ObjHeader* ref) {
-    auto childContainer = ref->container();
-    RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
-    if (!isPermanent(childContainer)) {
-      childContainer->incRefCount();
-      if (childContainer->color() != CONTAINER_TAG_GC_BLACK)
-        ScanBlack(childContainer);
     }
   });
 }
@@ -495,7 +528,7 @@ ContainerHeader* AllocContainer(size_t size) {
 #if TRACE_MEMORY
   state->containers->insert(result);
 #endif
-  state->allocCount++;
+  atomicAdd(&allocCount, 1);
   return result;
 }
 
@@ -678,7 +711,6 @@ MemoryState* InitMemory() {
   RuntimeAssert(memoryState == nullptr, "memory state must be clear");
   memoryState = konanConstructInstance<MemoryState>();
   // TODO: initialize heap here.
-  memoryState->allocCount = 0;
 #if TRACE_MEMORY
   memoryState->globalObjects = konanConstructInstance<KRefPtrList>();
   memoryState->containers = konanConstructInstance<ContainerHeaderSet>();
@@ -691,6 +723,7 @@ MemoryState* InitMemory() {
   initThreshold(memoryState, kGcThreshold);
   memoryState->gcSuspendCount = 0;
 #endif
+  atomicAdd(&aliveMemoryStatesCount, 1);
   return memoryState;
 }
 
@@ -716,16 +749,19 @@ void DeinitMemory(MemoryState* memoryState) {
 
 #endif // USE_GC
 
+  bool lastMemoryState = atomicAdd(&aliveMemoryStatesCount, -1) == 0;
+
 #if TRACE_MEMORY
-  if (memoryState->allocCount > 0) {
+  if (allocCount > 0) {
     MEMORY_LOG("*** Memory leaks, leaked %d containers ***\n",
-               memoryState->allocCount);
+               allocCount);
     dumpReachable("", memoryState->containers);
   }
   konanDestructInstance(memoryState->containers);
   memoryState->containers = nullptr;
 #else
-  RuntimeAssert(memoryState->allocCount == 0, "Memory leaks found");
+  if (lastMemoryState)
+    RuntimeAssert(allocCount == 0, "Memory leaks found");
 #endif
 
   konanFreeMemory(memoryState);
@@ -972,33 +1008,43 @@ OBJ_GETTER(AdoptStablePointer, KNativePtr pointer) {
   return ref;
 }
 
+#if USE_GC
+
+bool hasExternalRefs(ContainerHeader* container, ContainerHeaderSet* visited) {
+  visited->insert(container);
+  bool result = container->refCount() != 0;
+  traverseContainerReferredObjects(container, [&result, visited](ObjHeader* ref) {
+    auto child = ref->container();
+    if (!isPermanent(child) && (visited->find(child) == visited->end())) {
+      result |= hasExternalRefs(child, visited);
+    }
+  });
+  return result;
+}
+#endif
+
 bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
 #if USE_GC
   if (root != nullptr) {
     auto state = memoryState;
 
     auto container = root->container();
-    ContainerHeaderList todo;
-    ContainerHeaderSet subgraph;
-    todo.push_back(container);
-    while (todo.size() > 0) {
-      auto header = todo.back();
-      todo.pop_back();
-      if (subgraph.count(header) != 0)
-        continue;
-      subgraph.insert(header);
-      MEMORY_LOG("Calling removeFreeable from ClearSubgraphReferences\n");
-      traverseContainerReferredObjects(header, [&todo](ObjHeader* ref) {
-        auto child = ref->container();
-        RuntimeAssert(!isArena(child), "A reference to local object is encountered");
-        if (!isPermanent(child)) {
-          todo.push_back(child);
-        }
-      });
+
+    ContainerHeaderSet visited;
+    if (!checked) {
+      hasExternalRefs(container, &visited);
+    } else {
+      container->decRefCount();
+      MarkGray<false>(container);
+      auto bad = hasExternalRefs(container, &visited);
+      ScanBlack<false>(container);
+      container->incRefCount();
+      if (bad) return false;
     }
+
     for (auto it = state->toFree->begin(); it != state->toFree->end(); ++it) {
       auto container = *it;
-      if (subgraph.find(container) != subgraph.end()) {
+      if (visited.find(container) != visited.end()) {
         container->resetBuffered();
         container->setColor(CONTAINER_TAG_GC_BLACK);
         *it = reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) | 1);
@@ -1006,7 +1052,6 @@ bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
     }
   }
 #endif  // USE_GC
-  // TODO: perform trial deletion starting from this root, if in checked mode.
   return true;
 }
 

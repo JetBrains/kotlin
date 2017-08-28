@@ -43,16 +43,17 @@ typedef enum {
 
   // Those bit masks are applied to objectCount_ field.
   // Shift to get actual object count.
-  CONTAINER_TAG_GC_SHIFT = 3,
+  CONTAINER_TAG_GC_SHIFT = 4,
   CONTAINER_TAG_GC_INCREMENT = 1 << CONTAINER_TAG_GC_SHIFT,
   // Color of a container.
-  CONTAINER_TAG_GC_COLOR_MASK = ((CONTAINER_TAG_GC_INCREMENT >> 1) - 1),
+  CONTAINER_TAG_GC_COLOR_MASK = ((CONTAINER_TAG_GC_INCREMENT >> 2) - 1),
   // Colors.
   CONTAINER_TAG_GC_BLACK  = 0,
   CONTAINER_TAG_GC_GRAY   = 1,
   CONTAINER_TAG_GC_WHITE  = 2,
   CONTAINER_TAG_GC_PURPLE = 3,
-  CONTAINER_TAG_GC_BUFFERED = 4
+  CONTAINER_TAG_GC_MARKED = 4,
+  CONTAINER_TAG_GC_BUFFERED = 8
 } ContainerTag;
 
 typedef uint32_t container_offset_t;
@@ -99,6 +100,15 @@ struct ContainerHeader {
   }
   inline void resetBuffered() {
     objectCount_ &= ~CONTAINER_TAG_GC_BUFFERED;
+  }
+  inline bool marked() const {
+    return (objectCount_ & CONTAINER_TAG_GC_MARKED) != 0;
+  }
+  inline void mark() {
+    objectCount_ |= CONTAINER_TAG_GC_MARKED;
+  }
+  inline void unMark() {
+    objectCount_ &= ~CONTAINER_TAG_GC_MARKED;
   }
 };
 
