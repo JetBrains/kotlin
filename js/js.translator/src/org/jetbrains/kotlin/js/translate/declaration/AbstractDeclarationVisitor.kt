@@ -116,17 +116,18 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
         return innerContext.wrapWithInlineMetadata(function, descriptor, context.config)
     }
 
-    protected abstract fun addFunction(
+    // public api for extensions
+    public abstract fun addFunction(
             descriptor: FunctionDescriptor,
             expression: JsExpression?,
-            psi: KtElement
+            psi: KtElement?
     )
 
-    protected abstract fun addProperty(
+    public abstract fun addProperty(
             descriptor: PropertyDescriptor,
             getter: JsExpression,
             setter: JsExpression?
     )
 
-    protected abstract fun getBackingFieldReference(descriptor: PropertyDescriptor): JsExpression
+    public abstract fun getBackingFieldReference(descriptor: PropertyDescriptor): JsExpression
 }

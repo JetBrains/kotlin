@@ -55,6 +55,16 @@ class DeclarationBodyVisitor(
         }
     }
 
+    fun generateClassOrObject(classOrObject: KtPureClassOrObject, context: TranslationContext, needCompanionInitializer: Boolean = false) {
+        ClassTranslator.translate(classOrObject, context)
+        val descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), classOrObject)
+        context.export(descriptor)
+        if (needCompanionInitializer) {
+            addInitializerStatement(JsInvocation(context.getNameForObjectInstance(descriptor).makeRef())
+                                            .source(classOrObject).makeStmt())
+        }
+    }
+
     override fun visitEnumEntry(enumEntry: KtEnumEntry, context: TranslationContext) {
         val enumInitializer = this.enumInitializer!!
         val descriptor = getClassDescriptor(context.bindingContext(), enumEntry)
@@ -95,11 +105,12 @@ class DeclarationBodyVisitor(
 
     override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: TranslationContext) { }
 
-    private fun addInitializerStatement(statement: JsStatement) {
+    // public api for extensions
+    fun addInitializerStatement(statement: JsStatement) {
         initializerStatements.add(statement)
     }
 
-    override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression?, psi: KtElement) {
+    override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression?, psi: KtElement?) {
         if (!descriptor.hasOrInheritsParametersWithDefaultValue() || !descriptor.isOverridableOrOverrides) {
             if (expression != null) {
                 context.addDeclarationStatement(context.addFunctionToPrototype(containingClass, descriptor, expression))
@@ -116,7 +127,7 @@ class DeclarationBodyVisitor(
 
             if (descriptor.hasOwnParametersWithDefaultValue()) {
                 val caller = JsFunction(context.getScopeForDescriptor(containingClass), JsBlock(), "")
-                caller.source = psi.finalElement
+                caller.source = psi?.finalElement
                 val callerContext = context
                         .newDeclaration(descriptor)
                         .translateAndAliasParameters(descriptor, caller.parameters)
