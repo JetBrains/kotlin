@@ -63,7 +63,7 @@ abstract class KotlinMavenConfigurator
         }
 
         if (isKotlinModule(module)) {
-            return checkKotlinPlugin(module)
+            return runReadAction { checkKotlinPlugin(module) }
         }
         return ConfigureKotlinStatus.CAN_BE_CONFIGURED
     }
