@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
@@ -30,6 +31,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
+import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
 import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 interface IdeaModuleInfo : ModuleInfo {
@@ -56,7 +59,7 @@ interface IdeaModuleInfo : ModuleInfo {
 }
 
 private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, productionOnly: Boolean): List<IdeaModuleInfo> {
-    fun Module.toInfos() = if (productionOnly) listOf(productionSourceInfo()) else listOf(testSourceInfo(), productionSourceInfo())
+    fun Module.toInfos() = correspondingModuleInfos().filter { !productionOnly || it is ModuleProductionSourceInfo }
 
     if (!orderEntry.isValid) return emptyList()
 
@@ -115,7 +118,7 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
             KotlinModuleModificationTracker(module)
 }
 
-data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourceInfo {
+data class ModuleProductionSourceInfo internal constructor(override val module: Module) : ModuleSourceInfo {
     override val name = Name.special("<production sources for module ${module.name}>")
 
     override fun contentScope(): GlobalSearchScope = ModuleProductionSourceScope(module)
@@ -128,7 +131,7 @@ data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourc
 }
 
 //TODO: (module refactoring) do not create ModuleTestSourceInfo when there are no test roots for module
-data class ModuleTestSourceInfo(override val module: Module) : ModuleSourceInfo {
+data class ModuleTestSourceInfo internal constructor(override val module: Module) : ModuleSourceInfo {
     override val name = Name.special("<test sources for module ${module.name}>")
 
     override val displayedName get() = module.name + " (test)"
@@ -142,7 +145,9 @@ data class ModuleTestSourceInfo(override val module: Module) : ModuleSourceInfo 
     })
 
     override fun modulesWhoseInternalsAreVisible() = module.cached(CachedValueProvider {
-        val list = SmartList<ModuleInfo>(module.productionSourceInfo())
+        val list = SmartList<ModuleInfo>()
+
+        list.addIfNotNull(module.productionSourceInfo())
 
         TestModuleProperties.getInstance(module).productionModule?.let {
             list.add(it.productionSourceInfo())
@@ -154,8 +159,16 @@ data class ModuleTestSourceInfo(override val module: Module) : ModuleSourceInfo 
 
 internal fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
 
-fun Module.productionSourceInfo(): ModuleProductionSourceInfo = ModuleProductionSourceInfo(this)
-fun Module.testSourceInfo(): ModuleTestSourceInfo = ModuleTestSourceInfo(this)
+fun Module.productionSourceInfo(): ModuleProductionSourceInfo? = if (hasProductionRoots()) ModuleProductionSourceInfo(this) else null
+fun Module.testSourceInfo(): ModuleTestSourceInfo? = if (hasTestRoots()) ModuleTestSourceInfo(this) else null
+
+internal fun Module.correspondingModuleInfos(): List<ModuleSourceInfo> = listOf(testSourceInfo(), productionSourceInfo()).filterNotNull()
+
+private fun Module.hasProductionRoots() = hasRootsOfType(JavaSourceRootType.SOURCE)
+private fun Module.hasTestRoots() = hasRootsOfType(JavaSourceRootType.TEST_SOURCE)
+
+private fun Module.hasRootsOfType(sourceRootType: JavaSourceRootType): Boolean =
+        rootManager.contentEntries.any { it.getSourceFolders(sourceRootType).isNotEmpty() }
 
 private abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.project), GlobalSearchScopeWithModuleSources {
     override fun compare(file1: VirtualFile, file2: VirtualFile) = 0
@@ -266,7 +279,7 @@ data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo {
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
 }
 
-internal object NotUnderContentRootModuleInfo : IdeaModuleInfo {
+object NotUnderContentRootModuleInfo : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 

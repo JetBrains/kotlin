@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.components.service
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
@@ -102,7 +103,7 @@ fun createModuleResolverProvider(
 
 fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
     val ideaModules = ModuleManager.getInstance(project).modules.toList()
-    val modulesSourcesInfos = ideaModules.flatMap { listOf(it.productionSourceInfo(), it.testSourceInfo()) }
+    val modulesSourcesInfos = ideaModules.flatMap(Module::correspondingModuleInfos)
 
     //TODO: (module refactoring) include libraries that are not among dependencies of any module
     val ideaLibraries = ideaModules.flatMap {
