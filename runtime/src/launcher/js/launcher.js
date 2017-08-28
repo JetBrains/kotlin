@@ -18,13 +18,43 @@ var module;
 var instance;
 var heap;
 var memory;
-var global_arguments = arguments;
-var exit_status = 0;
-var globalBase = 0; // Is there any way to obtain global_base from JavaScript?
+var global_arguments;
+var globalBase = 0; // TODO: Is there any way to obtain global_base from JavaScript?
+
+function isBrowser() {
+    if (typeof window === 'undefined') {
+        return false;
+    } else {
+        return true;
+    };
+}
+
+if (isBrowser()) {
+    runtime = {
+        print: console.log,
+        stdout: '',
+        write: function (message) {
+           this.stdout += message;
+           var lastNewlineIndex = this.stdout.lastIndexOf('\n');
+           if (lastNewlineIndex == -1) return;
+           this.print(this.stdout.substring(0, lastNewlineIndex));
+           this.stdout = this.stdout.substring(lastNewlineIndex + 1)
+        },
+        flush: function () {
+            this.print(this.stdout);
+        }
+    };
+} else {
+    runtime = {
+        write: write,
+        print: print,
+        flush: function() {},
+    };
+}
 
 function print_usage() {
     // TODO: any reliable way to obtain the current script name?
-    print('Usage: d8 --expose-wasm launcher.js -- <program.wasm> <program arg1> <program arg2> ...')
+    runtime.print('Usage: d8 --expose-wasm launcher.js -- <program.wasm> <program arg1> <program arg2> ...')
     quit(1); // TODO: this is d8 specific
 }
 
@@ -123,32 +153,54 @@ var konan_dependencies = {
             if (fd != 1 && fd != 2) throw ("write(" + fd + ", ...)");
             // TODO: There is no writeErr() in d8. 
             // Approximate it with write() to stdout for now.
-            write(utf8decode(toString(str))); // TODO: write() d8 specific.
+            runtime.write(utf8decode(toString(str)));
         },
         memory: new WebAssembly.Memory({ initial: 256, maximum: 16384 })
     }
 };
 
-if (arguments.length < 1) print_usage();
+function invokeModule(buffer, args) {
+    if (args.length < 1) print_usage();
+    global_arguments = args;
 
-module = new WebAssembly.Module(new Uint8Array(readbuffer(arguments[0])));
-module.env = {};
-module.env.memoryBase = 0;
-module.env.tablebase = 0;
+    module = new WebAssembly.Module(new Uint8Array(buffer));
+    module.env = {};
+    module.env.memoryBase = 0;
+    module.env.tablebase = 0;
 
-instance = new WebAssembly.Instance(module, konan_dependencies);
-memory = konan_dependencies.env.memory
-heap = new Uint8Array(konan_dependencies.env.memory.buffer);
-konanStackTop = stackTop();
+    instance = new WebAssembly.Instance(module, konan_dependencies);
+    memory = konan_dependencies.env.memory
+    heap = new Uint8Array(konan_dependencies.env.memory.buffer);
+    konanStackTop = stackTop();
 
-try {
-    runGlobalInitializers(instance.exports);
-    exit_status = instance.exports.Konan_js_main(arguments.length);
-} catch (e) {
-    print("Exception executing Konan_js_main: " + e);
-    print(e.stack);
-    exit_status = 1;
+    var exit_status = 0;
+    try {
+        runGlobalInitializers(instance.exports);
+        exit_status = instance.exports.Konan_js_main(args.length);
+    } catch (e) {
+        runtime.print("Exception executing Konan_js_main: " + e);
+        runtime.print(e.stack);
+        exit_status = 1;
+    }
+    runtime.flush();
+    return exit_status;
 }
 
-quit(exit_status); // TODO: d8 specific.
+// Invoke from the browser.
+function loadAndInvoke(filename) {
+    function listener () {
+        invokeModule(this.response, [filename]);
+    }
+
+    var request = new XMLHttpRequest();
+    request.addEventListener("load", listener);
+    request.open("GET", filename);
+    request.responseType = "arraybuffer";
+    request.send();
+}
+
+// Invoke from d8.
+if (!isBrowser()) {
+    quit(invokeModule(readbuffer(arguments[0]), arguments));
+}
 
