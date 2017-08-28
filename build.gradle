@@ -27,6 +27,7 @@ ext {
 
     dependenciesDir = rootProject.file("dist/dependencies")
     clangManager = new ClangManager(konanProperties, dependenciesDir.absolutePath)
+    kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}"
 }
 
 allprojects {
@@ -314,7 +315,7 @@ task performance(type: GradleBuild) {
     dependsOn ':tools:kotlin-native-gradle-plugin:jar'
 
     dir = 'performance'
-    tasks = ['build', 'run']
+    tasks = ['build', 'bench']
 
     doFirst {
         startParameter.projectProperties['konanPluginClasspath'] =
