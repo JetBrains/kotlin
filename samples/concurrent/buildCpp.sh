@@ -12,6 +12,9 @@ case "$OSTYPE" in
 esac
 fi
 
+# Ensure that C compiler for the target is available.
+konanc --check_dependencies -target $TARGET || exit 1
+
 CLANG_linux=$DEPS/clang-llvm-3.9.0-linux-x86-64/bin/clang++
 CLANG_macbook=$DEPS/clang-llvm-3.9.0-darwin-macos/bin/clang++
 
