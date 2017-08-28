@@ -107,7 +107,7 @@ class KtLightAnnotationForSourceEntry(
         val annotationConstructor = resolvedCall.resultingDescriptor
         val parameterName =
                 memberValue.getNonStrictParentOfType<PsiNameValuePair>()?.name ?:
-                memberValue.getNonStrictParentOfType<PsiAnnotationMethod>()?.name ?:
+                memberValue.getNonStrictParentOfType<PsiAnnotationMethod>()?.takeIf { it.containingClass?.isAnnotationType == true }?.name ?:
                 "value"
 
         val parameter = annotationConstructor.valueParameters.singleOrNull { it.name.asString() == parameterName } ?: return null

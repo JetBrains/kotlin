@@ -49,10 +49,31 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         val annotations = myFixture.findClass("AnnotatedClass").fields.single()
                 .expectAnnotations(2).single { it.qualifiedName == "Autowired" }
         val annotationAttributeVal = annotations.findAttributeValue("required") as PsiElement
-        assertTextAndRange("true", annotationAttributeVal)
+        assertTextRangeAndValue("true", true, annotationAttributeVal)
+    }
 
-        val computed = JavaPsiFacade.getInstance(project).constantEvaluationHelper.computeConstantExpression(annotationAttributeVal)
-        TestCase.assertEquals(true, computed)
+    fun testStringAnnotationWithUnnamedParameter() {
+        myFixture.addClass("""
+            import java.lang.annotation.ElementType;
+            import java.lang.annotation.Target;
+
+            @Target(ElementType.PARAMETER)
+            public @interface Qualifier {
+                String value();
+            }
+        """.trimIndent())
+
+        myFixture.configureByText("AnnotatedClass.kt", """
+            class AnnotatedClass {
+                    fun bar(@Qualifier("foo") param: String){}
+            }
+        """.trimIndent())
+        myFixture.testHighlighting("Qualifier.java", "AnnotatedClass.kt")
+
+        val annotations = myFixture.findClass("AnnotatedClass").methods.first { it.name == "bar" }.parameterList.parameters.single()
+                .expectAnnotations(2).single { it.qualifiedName == "Qualifier" }
+        val annotationAttributeVal = annotations.findAttributeValue("value") as PsiElement
+        assertTextRangeAndValue("\"foo\"", "foo", annotationAttributeVal)
     }
 
     fun testAnnotationsInAnnotationsDeclarations() {
@@ -345,6 +366,12 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun assertTextAndRange(expected: String, psiElement: PsiElement) {
         TestCase.assertEquals(expected, psiElement.text)
         TestCase.assertEquals(expected, psiElement.textRange.substring(psiElement.containingFile.text))
+    }
+
+    private fun assertTextRangeAndValue(expected: String, value: Any?, psiElement: PsiElement) {
+        assertTextAndRange(expected, psiElement)
+        val result = JavaPsiFacade.getInstance(project).constantEvaluationHelper.computeConstantExpression(psiElement)
+        TestCase.assertEquals(value, result)
     }
 
     private fun PsiModifierListOwner.expectAnnotations(number: Int): Array<PsiAnnotation> =
