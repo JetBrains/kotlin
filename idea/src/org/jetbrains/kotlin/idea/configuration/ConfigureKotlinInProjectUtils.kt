@@ -109,18 +109,16 @@ fun isModuleConfigured(moduleSourceRootGroup: ModuleSourceRootGroup): Boolean {
 }
 
 fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
-    if (project.isDisposed) {
-        return emptyList()
-    }
-
-    if (!runReadAction { FileTypeIndex.containsFileOfType (KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project)) }) {
+    if (!runReadAction {
+        !project.isDisposed && FileTypeIndex.containsFileOfType (KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+    }) {
         return emptyList()
     }
 
     return project.allModules()
             .filter { module ->
                 runReadAction {
-                    FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
+                    !project.isDisposed && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
                 }
             }
 }
