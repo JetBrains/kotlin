@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.js;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;

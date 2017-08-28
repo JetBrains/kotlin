@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.incremental.storage
 import org.jetbrains.annotations.TestOnly
 import java.io.File
 
-open class BasicMapsOwner(private val baseDir: File) {
+open class BasicMapsOwner(val cachesDir: File) {
     private val maps = arrayListOf<BasicMap<*, *>>()
 
     companion object {
@@ -27,7 +27,7 @@ open class BasicMapsOwner(private val baseDir: File) {
     }
 
     protected val String.storageFile: File
-        get() = File(baseDir, this + "." + CACHE_EXTENSION)
+        get() = File(cachesDir, this + "." + CACHE_EXTENSION)
 
     protected fun <K, V, M : BasicMap<K, V>> registerMap(map: M): M {
         maps.add(map)

@@ -65,7 +65,7 @@ fun makeIncrementally(
     }
 }
 
-private object EmptyICReporter : ICReporter {
+object EmptyICReporter : ICReporter {
     override fun report(message: ()->String) {
     }
 }
@@ -92,7 +92,7 @@ class IncrementalJvmCompilerRunner(
         changesRegistry: ChangesRegistry? = null
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
         workingDir,
-        CACHES_DIR_NAME,
+        "caches-jvm",
         cacheVersions,
         reporter,
         artifactChangesProvider,
@@ -308,10 +308,6 @@ class IncrementalJvmCompilerRunner(
             args.destination = destination
             moduleFile.delete()
         }
-    }
-
-    companion object {
-        const val CACHES_DIR_NAME = "caches"
     }
 }
 
