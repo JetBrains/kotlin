@@ -1621,6 +1621,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("identifierContainingSpaces.kt")
+        public void testIdentifierContainingSpaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantBackticks/identifierContainingSpaces.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("keyword.kt")
         public void testKeyword() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantBackticks/keyword.kt");
