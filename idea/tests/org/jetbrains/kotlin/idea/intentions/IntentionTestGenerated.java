@@ -12701,6 +12701,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("notOnSetterParameter.kt")
+        public void testNotOnSetterParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnSetterParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("onOverride.kt")
         public void testOnOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/onOverride.kt");
