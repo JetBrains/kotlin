@@ -29,3 +29,19 @@ inline fun <R> autoreleasepool(block: () -> R): R {
 var <T : ObjCObject?> ObjCObjectVar<T>.value: T
     get() = interpretObjCPointerOrNull<T>(nativeMemUtils.getNativePtr(this)).uncheckedCast<T>()
     set(value) = nativeMemUtils.putNativePtr(this, value.rawPtr)
+
+/**
+ * Makes Kotlin method in Objective-C class accessible through Objective-C dispatch
+ * to be used as action sent by control in UIKit or AppKit.
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.SOURCE)
+annotation class ObjCAction
+
+/**
+ * Makes Kotlin property in Objective-C class settable through Objective-C dispatch
+ * to be used as IB outlet.
+ */
+@Target(AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.SOURCE)
+annotation class ObjCOutlet

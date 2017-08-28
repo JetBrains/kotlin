@@ -20,24 +20,28 @@ import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ObjCMethodInfo
 import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
+import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.isFinalClass
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 
 internal class KotlinObjCClassInfoGenerator(override val context: Context) : ContextUtils {
-    fun generate(descriptor: ClassDescriptor) {
+    fun generate(irClass: IrClass) {
+        val descriptor = irClass.descriptor
         assert(descriptor.isFinalClass)
 
         val objCLLvmDeclarations = context.llvmDeclarations.forClass(descriptor).objCDeclarations!!
 
-        val instanceMethods = descriptor.generateMethodDescs()
+        val instanceMethods = descriptor.generateOverridingMethodDescs() + irClass.generateImpMethodDescs()
 
         val companionObjectDescriptor = descriptor.companionObjectDescriptor
-        val classMethods = companionObjectDescriptor?.generateMethodDescs() ?: emptyList()
+        val classMethods = companionObjectDescriptor?.generateOverridingMethodDescs() ?: emptyList()
 
         val superclassName = descriptor.getSuperClassNotAny()!!.name.asString()
         val protocolNames = descriptor.getSuperInterfaces().map { it.name.asString().removeSuffix("Protocol") }
@@ -79,16 +83,37 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         objCLLvmDeclarations.bodyOffsetGlobal.setInitializer(Int32(0))
     }
 
+    private fun createMethodDesc(selector: String, encoding: String, imp: ConstPointer) = Struct(
+            runtime.objCMethodDescription,
+            staticData.cStringLiteral(selector),
+            staticData.cStringLiteral(encoding),
+            imp
+    )
+
     private fun generateMethodDesc(info: ObjCMethodInfo): ConstValue {
-        return Struct(runtime.objCMethodDescription, 
-                staticData.cStringLiteral(info.selector),
-                staticData.cStringLiteral(info.encoding),
+        return createMethodDesc(
+                info.selector,
+                info.encoding,
                 constPointer(context.llvm.externalFunction(info.imp, functionType(voidType))).bitcast(int8TypePtr)
         )
     }
 
-    private fun ClassDescriptor.generateMethodDescs(): List<ConstValue> =
+    private fun ClassDescriptor.generateOverridingMethodDescs(): List<ConstValue> =
             this.unsubstitutedMemberScope.contributedMethods.filter {
                 it.kind.isReal && it !is ConstructorDescriptor
             }.mapNotNull { it.getObjCMethodInfo() }.map { generateMethodDesc(it) }
+
+    private fun IrClass.generateImpMethodDescs(): List<ConstValue> = this.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .mapNotNull {
+                val annotation =
+                        it.descriptor.annotations.findAnnotation(context.interopBuiltIns.objCMethodImp.fqNameSafe) ?:
+                                return@mapNotNull null
+
+                createMethodDesc(
+                        annotation.getStringValue("selector"),
+                        annotation.getStringValue("encoding"),
+                        it.descriptor.entryPointAddress
+                )
+            }
 }

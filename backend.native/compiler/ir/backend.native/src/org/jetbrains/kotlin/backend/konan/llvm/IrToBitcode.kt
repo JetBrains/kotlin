@@ -176,7 +176,7 @@ internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
         generator.generate(descriptor)
 
         if (descriptor.isKotlinObjCClass()) {
-            kotlinObjCClassInfoGenerator.generate(descriptor)
+            kotlinObjCClassInfoGenerator.generate(declaration)
         }
     }
 

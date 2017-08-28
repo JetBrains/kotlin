@@ -18,36 +18,41 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
-import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
-import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal class InteropLoweringPart1(val context: Context) : IrBuildingTransformer(context), FileLoweringPass {
 
@@ -87,7 +92,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
 
     override fun visitClass(declaration: IrClass): IrStatement {
         if (declaration.descriptor.isKotlinObjCClass()) {
-            checkKotlinObjCClass(declaration)
+            lowerKotlinObjCClass(declaration)
         }
 
         outerClasses.push(declaration)
@@ -96,6 +101,204 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
         } finally {
             outerClasses.pop()
         }
+    }
+
+    private fun lowerKotlinObjCClass(irClass: IrClass) {
+        checkKotlinObjCClass(irClass)
+
+        val interop = context.interopBuiltIns
+
+        irClass.declarations.mapNotNull {
+            when {
+                it is IrSimpleFunction && it.descriptor.annotations.hasAnnotation(interop.objCAction) ->
+                        generateActionImp(it)
+
+                it is IrProperty && it.descriptor.annotations.hasAnnotation(interop.objCOutlet) ->
+                        generateOutletSetterImp(it)
+
+                else -> null
+            }
+        }.let { irClass.declarations.addAll(it) }
+    }
+
+    private fun generateActionImp(function: IrSimpleFunction): IrSimpleFunction {
+        val action = "@${context.interopBuiltIns.objCAction.name}"
+
+        function.extensionReceiverParameter?.let {
+            context.reportCompilationError("$action method must not have extension receiver",
+                    currentFile, it)
+        }
+
+        function.valueParameters.forEach {
+            val kotlinType = it.descriptor.type
+            if (!kotlinType.isObjCObjectType()) {
+                context.reportCompilationError("Unexpected $action method parameter type: $kotlinType\n" +
+                        "Only Objective-C object types are supported here",
+                        currentFile, it)
+            }
+        }
+
+        val returnType = function.descriptor.returnType!!
+
+        if (!returnType.isUnit()) {
+            context.reportCompilationError("Unexpected $action method return type: $returnType\n" +
+                    "Only 'Unit' is supported here",
+                    currentFile, function
+            )
+        }
+
+        return generateFunctionImp(inferObjCSelector(function.descriptor), function)
+    }
+
+    private fun generateOutletSetterImp(property: IrProperty): IrSimpleFunction {
+        val descriptor = property.descriptor
+
+        val outlet = "@${context.interopBuiltIns.objCOutlet.name}"
+
+        if (!descriptor.isVar) {
+            context.reportCompilationError("$outlet property must be var",
+                    currentFile, property)
+        }
+
+        property.getter?.extensionReceiverParameter?.let {
+            context.reportCompilationError("$outlet must not have extension receiver",
+                    currentFile, it)
+        }
+
+        val type = descriptor.type
+        if (!type.isObjCObjectType()) {
+            context.reportCompilationError("Unexpected $outlet type: $type\n" +
+                    "Only Objective-C object types are supported here",
+                    currentFile, property)
+        }
+
+        val name = descriptor.name.asString()
+        val selector = "set${name.capitalize()}:"
+
+        return generateFunctionImp(selector, property.setter!!)
+    }
+
+    private fun getMethodSignatureEncoding(function: IrFunction): String {
+        assert(function.extensionReceiverParameter == null)
+        assert(function.valueParameters.all { it.type.isObjCObjectType() })
+        assert(function.descriptor.returnType!!.isUnit())
+
+        // Note: these values are valid for x86_64 and arm64.
+        return when (function.valueParameters.size) {
+            0 -> "v16@0:8"
+            1 -> "v24@0:8@16"
+            2 -> "v32@0:8@16@24"
+            else -> context.reportCompilationError("Only 0, 1 or 2 parameters are supported here",
+                    currentFile, function
+            )
+        }
+    }
+
+    private fun generateFunctionImp(selector: String, function: IrFunction): IrSimpleFunction {
+        val signatureEncoding = getMethodSignatureEncoding(function)
+
+        val returnType = function.descriptor.returnType!!
+        assert(returnType.isUnit())
+
+        val nativePtrType = context.builtIns.nativePtr.defaultType
+
+        val parameterTypes = mutableListOf(nativePtrType) // id self
+
+        parameterTypes.add(nativePtrType) // SEL _cmd
+
+        function.valueParameters.mapTo(parameterTypes) {
+            when {
+                it.descriptor.type.isObjCObjectType() -> nativePtrType
+                else -> TODO()
+            }
+        }
+
+        // Annotations to be detected in KotlinObjCClassInfoGenerator:
+        val annotations = createObjCMethodImpAnnotations(selector = selector, encoding = signatureEncoding)
+
+        val newDescriptor = SimpleFunctionDescriptorImpl.create(
+                function.descriptor.containingDeclaration,
+                annotations,
+                ("imp:" + selector).synthesizedName,
+                CallableMemberDescriptor.Kind.SYNTHESIZED,
+                SourceElement.NO_SOURCE
+        )
+
+        val valueParameters = parameterTypes.mapIndexed { index, it ->
+            ValueParameterDescriptorImpl(
+                    newDescriptor,
+                    null,
+                    index,
+                    Annotations.EMPTY,
+                    Name.identifier("p$index"),
+                    it,
+                    false,
+                    false,
+                    false,
+                    null,
+                    SourceElement.NO_SOURCE
+            )
+        }
+
+        newDescriptor.initialize(
+                null, null,
+                emptyList(),
+                valueParameters,
+                returnType,
+                Modality.FINAL,
+                Visibilities.PRIVATE
+        )
+
+        val newFunction = IrFunctionImpl(
+                function.startOffset, function.endOffset,
+                IrDeclarationOrigin.DEFINED,
+                newDescriptor
+        ).apply { createParameterDeclarations() }
+
+        val builder = context.createIrBuilder(newFunction.symbol)
+        newFunction.body = builder.irBlockBody(newFunction) {
+            +irCall(function.symbol).apply {
+                dispatchReceiver = interpretObjCPointer(
+                        irGet(newFunction.valueParameters[0].symbol),
+                        function.dispatchReceiverParameter!!.type
+                )
+
+                function.valueParameters.forEachIndexed { index, parameter ->
+                    putValueArgument(index,
+                            interpretObjCPointer(
+                                    irGet(newFunction.valueParameters[index + 2].symbol),
+                                    parameter.type
+                            )
+                    )
+                }
+            }
+        }
+
+        return newFunction
+    }
+
+    private fun IrBuilderWithScope.interpretObjCPointer(expression: IrExpression, type: KotlinType): IrExpression {
+        val callee: IrFunctionSymbol = if (TypeUtils.isNullableType(type)) {
+            symbols.interopInterpretObjCPointerOrNull
+        } else {
+            symbols.interopInterpretObjCPointer
+        }
+
+        return irCall(callee, listOf(type)).apply {
+            putValueArgument(0, expression)
+        }
+    }
+
+    private fun createObjCMethodImpAnnotations(selector: String, encoding: String): Annotations {
+        val annotation = AnnotationDescriptorImpl(
+                context.interopBuiltIns.objCMethodImp.defaultType,
+                mapOf("selector" to selector, "encoding" to encoding)
+                        .mapKeys { Name.identifier(it.key) }
+                        .mapValues { StringValue(it.value, context.builtIns) },
+                SourceElement.NO_SOURCE
+        )
+
+        return AnnotationsImpl(listOf(annotation))
     }
 
     private fun checkKotlinObjCClass(irClass: IrClass) {
@@ -598,3 +801,5 @@ private fun IrBuilder.irFloat(value: Float) =
 
 private fun IrBuilder.irDouble(value: Double) =
         IrConstImpl.double(startOffset, endOffset, context.builtIns.doubleType, value)
+
+private fun Annotations.hasAnnotation(descriptor: ClassDescriptor) = this.hasAnnotation(descriptor.fqNameSafe)

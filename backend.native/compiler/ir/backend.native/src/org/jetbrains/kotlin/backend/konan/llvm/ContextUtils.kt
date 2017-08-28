@@ -176,10 +176,10 @@ internal interface ContextUtils : RuntimeAware {
     /**
      * Address of entry point of [llvmFunction].
      */
-    val FunctionDescriptor.entryPointAddress: ConstValue
+    val FunctionDescriptor.entryPointAddress: ConstPointer
         get() {
             val result = LLVMConstBitCast(this.llvmFunction, int8TypePtr)!!
-            return constValue(result)
+            return constPointer(result)
         }
 
     val ClassDescriptor.typeInfoPtr: ConstPointer

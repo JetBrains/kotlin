@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 
 private val interopPackageName = InteropBuiltIns.FqNames.packageName
 private val objCObjectFqName = interopPackageName.child(Name.identifier("ObjCObject"))
@@ -33,6 +35,12 @@ private val objCBridgeFqName = interopPackageName.child(Name.identifier("ObjCBri
 fun ClassDescriptor.isObjCClass(): Boolean =
         this.getAllSuperClassifiers().any { it.fqNameSafe == objCObjectFqName } &&
                 this.containingDeclaration.fqNameSafe != interopPackageName
+
+fun KotlinType.isObjCObjectType(): Boolean =
+        TypeUtils.getClassDescriptor(this)
+                ?.getAllSuperClassifiers()
+                ?.any { it.fqNameSafe == objCObjectFqName }
+                ?: false
 
 fun ClassDescriptor.isExternalObjCClass(): Boolean = this.isObjCClass() &&
         this.parentsWithSelf.filterIsInstance<ClassDescriptor>().any {
@@ -153,4 +161,17 @@ class ObjCOverridabilityCondition : ExternalOverridabilityCondition {
         return true
     }
 
+}
+
+fun inferObjCSelector(descriptor: FunctionDescriptor): String = if (descriptor.valueParameters.isEmpty()) {
+    descriptor.name.asString()
+} else {
+    buildString {
+        append(descriptor.name)
+        append(':')
+        descriptor.valueParameters.drop(1).forEach {
+            append(it.name)
+            append(':')
+        }
+    }
 }

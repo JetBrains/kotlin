@@ -65,6 +65,12 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
         symbolTable.referenceSimpleFunction(function)
     }
 
+    val interopInterpretObjCPointer =
+            symbolTable.referenceSimpleFunction(context.interopBuiltIns.interpretObjCPointer)
+
+    val interopInterpretObjCPointerOrNull =
+            symbolTable.referenceSimpleFunction(context.interopBuiltIns.interpretObjCPointerOrNull)
+
     val getNativeNullPtr = symbolTable.referenceSimpleFunction(context.builtIns.getNativeNullPtr)
 
     val boxFunctions = ValueType.values().associate {

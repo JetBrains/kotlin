@@ -152,6 +152,15 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
     val getObjCMessenger = packageScope.getContributedFunctions("getMessenger").single()
     val getObjCMessengerLU = packageScope.getContributedFunctions("getMessengerLU").single()
 
+    val interpretObjCPointerOrNull = packageScope.getContributedFunctions("interpretObjCPointerOrNull").single()
+    val interpretObjCPointer = packageScope.getContributedFunctions("interpretObjCPointer").single()
+
+    val objCAction = packageScope.getContributedClassifier("ObjCAction") as ClassDescriptor
+
+    val objCOutlet = packageScope.getContributedClassifier("ObjCOutlet") as ClassDescriptor
+
+    val objCMethodImp = packageScope.getContributedClassifier("ObjCMethodImp") as ClassDescriptor
+
 }
 
 private fun MemberScope.getContributedVariables(name: String) =

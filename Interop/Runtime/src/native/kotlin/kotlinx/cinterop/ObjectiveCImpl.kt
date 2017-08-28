@@ -62,7 +62,11 @@ inline fun <T : ObjCObject?> interpretObjCPointerOrNull(rawPtr: NativePtr): T? =
     null
 }
 
-inline fun <T : ObjCObject?> interpretObjCPointer(rawPtr: NativePtr): T? = interpretObjCPointerOrNull<T>(rawPtr)!!
+inline fun <T : ObjCObject> interpretObjCPointer(rawPtr: NativePtr): T = if (rawPtr != nativeNullPtr) {
+    ObjCPointerHolder(rawPtr).uncheckedCast<T>()
+} else {
+    throw NullPointerException()
+}
 
 inline val ObjCObject.rawPtr: NativePtr get() = (this.uncheckedCast<ObjCPointerHolder>()).rawPtr
 inline val ObjCObject?.rawPtr: NativePtr get() = if (this != null) {
@@ -104,6 +108,10 @@ annotation class ObjCConstructor(val initSelector: String)
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
 annotation class InteropStubs()
+
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.SOURCE)
+private annotation class ObjCMethodImp(val selector: String, val encoding: String)
 
 @konan.internal.ExportForCompiler
 private fun <T : ObjCObject> allocObjCObject(clazz: NativePtr): T {
