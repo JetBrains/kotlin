@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
+import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.TargetManager
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -38,6 +39,10 @@ import kotlin.reflect.KFunction
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     override fun doExecute(@NotNull arguments: K2NativeCompilerArguments, @NotNull configuration: CompilerConfiguration, @NotNull rootDisposable: Disposable, @Nullable paths: KotlinPaths?): ExitCode {
+
+        if (arguments.freeArgs.isEmpty() && !arguments.isUsefulWithoutFreeArgs) {
+            configuration.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
+        }
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
             configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
@@ -50,16 +55,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             return ExitCode.COMPILATION_ERROR
         }
 
-        if (arguments.freeArgs.isEmpty() && !arguments.isUsefulWithoutFreeArgs) {
-            configuration.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
-        }
-
         // TODO: catch Errors and IllegalStateException.
         return ExitCode.OK
     }
 
     val K2NativeCompilerArguments.isUsefulWithoutFreeArgs: Boolean
-        get() = this.listTargets || this.listPhases
+        get() = this.listTargets || this.listPhases || this.checkDependencies
 
     fun Array<String>?.toNonNullList(): List<String> {
         return this?.asList<String>() ?: listOf<String>()
@@ -129,6 +130,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(TIME_PHASES, arguments.timePhases)
 
                 put(ENABLE_ASSERTIONS, arguments.enableAssertions)
+
+                // We need to download dependencies only if we use them ( = there are files to compile).
+                put(CHECK_DEPENDENCIES, if (configuration.kotlinSourceRoots.isNotEmpty()) {
+                        true
+                    } else {
+                        arguments.checkDependencies
+                    })
             }
         }
     }

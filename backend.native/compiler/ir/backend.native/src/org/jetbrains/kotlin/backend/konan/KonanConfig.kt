@@ -49,14 +49,16 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     }
 
-    private fun Distribution.prepareDependencies() {
-        DependencyProcessor(java.io.File(dependenciesDir), targetProperties).run()
+    private fun Distribution.prepareDependencies(checkDependencies: Boolean) {
+        if (checkDependencies) {
+            DependencyProcessor(java.io.File(dependenciesDir), targetProperties).run()
+        }
     }
 
     internal val distribution = Distribution(targetManager, 
         configuration.get(KonanConfigKeys.PROPERTY_FILE),
         configuration.get(KonanConfigKeys.RUNTIME_FILE)).apply {
-        prepareDependencies()
+        prepareDependencies(configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES))
     }
 
     private val produce = configuration.get(KonanConfigKeys.PRODUCE)!!

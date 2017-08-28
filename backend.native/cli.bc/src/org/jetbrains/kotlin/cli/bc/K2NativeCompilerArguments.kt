@@ -82,11 +82,14 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     // Make sure to prepend them with a double dash.
     // Keep the list lexically sorted.
 
-    @Argument(value = "--enable", valueDescription = "<Phase>", description = "Enable backend phase")
-    var enablePhases: Array<String>? = null
+    @Argument(value = "--check_dependencies", description = "Check dependencies and download the missing ones")
+    var checkDependencies: Boolean = false
 
     @Argument(value = "--disable", valueDescription = "<Phase>", description = "Disable backend phase")
     var disablePhases: Array<String>? = null
+
+    @Argument(value = "--enable", valueDescription = "<Phase>", description = "Enable backend phase")
+    var enablePhases: Array<String>? = null
 
     @Argument(value = "--list_phases", description = "List all backend phases")
     var listPhases: Boolean = false
