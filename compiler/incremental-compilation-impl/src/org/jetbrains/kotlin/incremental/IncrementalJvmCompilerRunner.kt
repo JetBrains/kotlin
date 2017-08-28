@@ -196,10 +196,9 @@ class IncrementalJvmCompilerRunner(
     }
 
     private var outdatedClasses: Iterable<JvmClassName> = emptyList()
-    override fun markOutputDirty(caches: IncrementalJvmCachesManager, dirtySources: List<File>) {
+    override fun markDirty(caches: IncrementalJvmCachesManager, dirtySources: List<File>) {
         outdatedClasses = caches.platformCache.classesBySources(dirtySources)
-        caches.platformCache.markOutputClassesDirty(dirtySources)
-        super.markOutputDirty(caches, dirtySources)
+        super.markDirty(caches, dirtySources)
     }
 
     override fun postCompilationHook(exitCode: ExitCode) {

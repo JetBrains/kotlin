@@ -131,7 +131,8 @@ abstract class IncrementalCompilerRunner<
         }
     }
 
-    protected open fun markOutputDirty(caches: CacheManager, dirtySources: List<File>) {
+    protected open fun markDirty(caches: CacheManager, dirtySources: List<File>) {
+        caches.platformCache.markDirty(dirtySources)
     }
 
     protected abstract fun compareAndUpdateCache(caches: CacheManager, generatedFiles: List<GeneratedFile>): CompilationResult
@@ -175,7 +176,7 @@ abstract class IncrementalCompilerRunner<
         val allGeneratedFiles = hashSetOf<GeneratedFile>()
 
         while (dirtySources.any()) {
-            markOutputDirty(caches, dirtySources)
+            caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
 
             val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)

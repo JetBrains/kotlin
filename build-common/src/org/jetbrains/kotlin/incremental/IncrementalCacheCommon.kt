@@ -28,7 +28,7 @@ import java.io.File
 /**
  * Incremental cache common for JVM and JS
  */
-open class IncrementalCacheCommon(workingDir: File) : BasicMapsOwner(workingDir) {
+abstract class IncrementalCacheCommon(workingDir: File) : BasicMapsOwner(workingDir) {
     companion object {
         private val SUBTYPES = "subtypes"
         private val SUPERTYPES = "supertypes"
@@ -54,6 +54,8 @@ open class IncrementalCacheCommon(workingDir: File) : BasicMapsOwner(workingDir)
 
     fun getSourceFileIfClass(fqName: FqName): File? =
             classFqNameToSourceMap[fqName]
+
+    abstract fun markDirty(removedAndCompiledSources: List<File>)
 
     protected fun addToClassStorage(proto: ProtoBuf.Class, nameResolver: NameResolver, srcFile: File) {
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))

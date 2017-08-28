@@ -80,7 +80,7 @@ open class IncrementalCacheImpl(
 
     protected open fun debugLog(message: String) {}
 
-    fun markOutputClassesDirty(removedAndCompiledSources: List<File>) {
+    override fun markDirty(removedAndCompiledSources: List<File>) {
         for (sourceFile in removedAndCompiledSources) {
             val classes = sourceToClassesMap[sourceFile]
             classes.forEach {
