@@ -165,7 +165,7 @@ class KotlinGradleModelBuilder : ModelBuilderService {
 
     private fun Task.getSourceSetName(): String {
         return try {
-            javaClass.methods.firstOrNull { it.name.startsWith("getSourceSetName") && it.parameterCount == 0 }?.invoke(this) as? String
+            javaClass.methods.firstOrNull { it.name.startsWith("getSourceSetName") && it.parameterTypes.isEmpty() }?.invoke(this) as? String
         } catch (e : InvocationTargetException) {
             null // can be thrown if property is not initialized yet
         } ?: "main"
