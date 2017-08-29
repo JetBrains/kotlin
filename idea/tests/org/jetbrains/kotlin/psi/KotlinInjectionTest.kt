@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
@@ -266,7 +267,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             fun other() { foo(v) }
             """,
             languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
-    
+
     fun testInjectionOfCustomParameterWithAnnotation() = doInjectionPresentTest(
             """
             import org.intellij.lang.annotations.Language
@@ -413,140 +414,126 @@ class KotlinInjectionTest : AbstractInjectionTest() {
     )
 
     fun testJavaAnnotationsPattern() {
-        val customInjection = BaseInjection("java")
-        customInjection.injectedLanguageId = RegExpLanguage.INSTANCE.id
-        val elementPattern = customInjection.compiler.createElementPattern(
-                """psiMethod().withName("value").withParameters().definedInClass("Matches")""",
-                "temp rule")
-        customInjection.setInjectionPlaces(InjectionPlace(elementPattern, true))
+        myFixture.addClass("""
+                @interface Matches { String value(); }
+                """)
 
-        try {
-            Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
-
-            doInjectionPresentTest(
-                    javaText = """
-                        @interface Matches { String value(); }
-                    """,
-                    text = """
-                        @Matches("[A-Z]<caret>[a-z]+")
-                        val name = "John"
-                    """,
-                    languageId = RegExpLanguage.INSTANCE.id,
-                    unInjectShouldBePresent = false
-            )
-
-            doInjectionPresentTest(
-                    javaText = """
-                        @interface Matches { String value(); }
-                    """,
-                    text = """
-                        @Matches(value = "[A-Z]<caret>[a-z]+")
-                        val name = "John"
-                    """,
-                    languageId = RegExpLanguage.INSTANCE.id,
-                    unInjectShouldBePresent = false
-            )
-        }
-        finally {
-            Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
-        }
+        doAnnotationInjectionTest(
+                injectedLanguage = RegExpLanguage.INSTANCE.id,
+                pattern = """psiMethod().withName("value").withParameters().definedInClass("Matches")""",
+                kotlinCode = """
+                                        @Matches("[A-Z]<caret>[a-z]+")
+                                        val name = "John"
+                                    """
+        )
     }
 
     fun testKotlinAnnotationsPattern() {
-        val customInjection = BaseInjection("kotlin")
-        customInjection.injectedLanguageId = RegExpLanguage.INSTANCE.id
-        val elementPattern = customInjection.compiler.createElementPattern(
-                """kotlinParameter().ofFunction(0, kotlinFunction().withName("Matches").definedInClass("Matches"))""".trimIndent(),
-                "temp rule")
-        customInjection.setInjectionPlaces(InjectionPlace(elementPattern, true))
-
-        try {
-            Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
-
-            doInjectionPresentTest(
-                    text = """
+        doAnnotationInjectionTest(
+                patternLanguage = "kotlin",
+                injectedLanguage = RegExpLanguage.INSTANCE.id,
+                pattern = """kotlinParameter().ofFunction(0, kotlinFunction().withName("Matches").definedInClass("Matches"))""",
+                kotlinCode = """
                         annotation class Matches(val pattern: String)
 
                         @Matches("[A-Z]<caret>[a-z]+")
                         val name = "John"
-                    """,
-                    languageId = RegExpLanguage.INSTANCE.id,
-                    unInjectShouldBePresent = false
-            )
+                                    """
+        )
+    }
 
-            doInjectionPresentTest(
-                    text = """
+    fun testKotlinAnnotationsPatternNamed() {
+        doAnnotationInjectionTest(
+                patternLanguage = "kotlin",
+                injectedLanguage = RegExpLanguage.INSTANCE.id,
+                pattern = """kotlinParameter().ofFunction(0, kotlinFunction().withName("Matches").definedInClass("Matches"))""",
+                kotlinCode = """
                         annotation class Matches(val pattern: String)
 
                         @Matches(pattern = "[A-Z]<caret>[a-z]+")
                         val name = "John"
-                    """,
-                    languageId = RegExpLanguage.INSTANCE.id,
-                    unInjectShouldBePresent = false
+                                    """
             )
         }
-        finally {
-            Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
-        }
-    }
+
 
     fun testInjectionInJavaAnnotation() {
-        val customInjection = BaseInjection("java")
-        customInjection.injectedLanguageId = HTMLLanguage.INSTANCE.id
-        val elementPattern = customInjection.compiler.createElementPattern(
-                """psiMethod().withName("value").withParameters().definedInClass("InHtml")""",
-                "SuppressWarnings temp rule")
-        customInjection.setInjectionPlaces(InjectionPlace(elementPattern, true))
 
-        try {
-            Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
+        myFixture.addClass("""
+                @interface InHtml {
+                    String value();
+                }
+                """)
 
-            doInjectionPresentTest(
-                    """
-                      @InHtml("<htm<caret>l></html>")
-                      fun foo() {
-                      }
-                    """, """
-                    @interface InHtml {
-                        String value();
-                    }
-                    """.trimIndent(),
-                    HTMLLanguage.INSTANCE.id,
-                    unInjectShouldBePresent = false
-            )
+        doAnnotationInjectionTest(
+                injectedLanguage = HTMLLanguage.INSTANCE.id,
+                pattern = """psiMethod().withName("value").withParameters().definedInClass("InHtml")""",
+                kotlinCode = """
+                                    @InHtml("<htm<caret>l></html>")
+                                    fun foo() {
+                                    }
+                                    """,
+                additionalAsserts = { assertSameElements(myFixture.complete(CompletionType.BASIC).flatMap { it.allLookupStrings }, "html") }
+        )
 
-            assertSameElements(myFixture.complete(CompletionType.BASIC).flatMap { it.allLookupStrings },
-                               "html")
-        }
-        finally {
-            Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
-        }
     }
 
     fun testInjectionInJavaAnnotationWithNamedParam() {
-        val customInjection = BaseInjection("java")
-        customInjection.injectedLanguageId = HTMLLanguage.INSTANCE.id
+        myFixture.addClass("""
+                            package myinjection;
+
+                            @interface InHtml {
+                            String html();
+                            }
+                            """)
+        doAnnotationInjectionTest(
+                injectedLanguage = HTMLLanguage.INSTANCE.id,
+                pattern = """psiMethod().withName("html").withParameters().definedInClass("myinjection.InHtml")""",
+                kotlinCode = """
+                                            import myinjection.InHtml
+
+                                            @InHtml(html = "<htm<caret>l></html>")
+                                            fun foo() {
+                                            }
+                                            """)
+    }
+
+    fun testInjectionInAliasedJavaAnnotation() {
+        myFixture.addClass("""
+                                @interface InHtml {
+                                String html();
+                                }
+                                """)
+        doAnnotationInjectionTest(
+                injectedLanguage = HTMLLanguage.INSTANCE.id,
+                pattern = """psiMethod().withName("html").withParameters().definedInClass("InHtml")""",
+                kotlinCode = """
+                                                import InHtml as InHtmlAliased
+
+                                                @InHtmlAliased(html = "<htm<caret>l></html>")
+                                                fun foo() {
+                                                }
+                                                """
+        )
+    }
+
+    private fun doAnnotationInjectionTest(patternLanguage: String = "java", injectedLanguage: String, pattern: String, @Language("kotlin") kotlinCode: String, additionalAsserts: () -> Unit = {}) {
+        val customInjection = BaseInjection(patternLanguage)
+        customInjection.injectedLanguageId = injectedLanguage
         val elementPattern = customInjection.compiler.createElementPattern(
-                """psiMethod().withName("html").withParameters().definedInClass("InHtml")""",
-                "SuppressWarnings temp rule")
+                pattern,
+                "temp rule")
         customInjection.setInjectionPlaces(InjectionPlace(elementPattern, true))
 
         try {
             Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
 
             doInjectionPresentTest(
-                    """
-                      @InHtml(html = "<htm<caret>l></html>")
-                      fun foo() {
-                      }
-                    """, """
-                    @interface InHtml {
-                        String html();
-                    }
-                    """.trimIndent(),
-                    HTMLLanguage.INSTANCE.id,
+                    kotlinCode, null,
+                    injectedLanguage,
                     unInjectShouldBePresent = false
             )
+            additionalAsserts()
         }
         finally {
             Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
