@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.idea.editor.quickDoc;
 
-import com.intellij.codeInsight.documentation.DocumentationComponent;
 import com.intellij.codeInsight.documentation.DocumentationManager;
-import com.intellij.codeInsight.navigation.CtrlMouseHandler;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -35,7 +33,7 @@ import java.util.List;
 
 public abstract class AbstractQuickDocProviderTest extends KotlinLightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String path) throws Exception {
-        IdeaTestUtilsKt.configureWithExtraFileAbs(myFixture, path, "_Data");
+        IdeaTestUtilsKt.configureWithExtraFile(myFixture, path, "_Data");
 
         PsiElement element = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         assertNotNull("Can't find element at caret in file: " + path, element);
