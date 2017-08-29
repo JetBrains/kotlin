@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -27,7 +28,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBuildScriptManipulator {
     override fun isConfigured(kotlinPluginName: String): Boolean =
-            kotlinScript.containsApplyKotlinPlugin(kotlinPluginName) && kotlinScript.containsCompileStdLib()
+            runReadAction {
+                kotlinScript.containsApplyKotlinPlugin(kotlinPluginName) && kotlinScript.containsCompileStdLib()
+            }
 
     override fun configureProjectBuildScript(version: String): Boolean {
         val originalText = kotlinScript.text
