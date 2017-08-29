@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
+import java.net.URI
 import java.util.*
 
 class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
@@ -647,7 +648,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeModule)
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(representativeModule)
 
-        val sourceRoots = KotlinSourceFileCollector.getRelevantSourceRoots(representativeTarget).map { it.file }
+        val sourceRoots = representativeModule.contentRootsList.urls
+                .map { URI.create(it) }
+                .filter { it.scheme == "file" }
+                .map { File(it) }
 
         val friendPaths = KotlinBuilderModuleScriptGenerator.getProductionModulesWhichInternalsAreVisible(representativeTarget).mapNotNull {
             val file = getOutputMetaFile(it, false)

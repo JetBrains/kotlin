@@ -359,7 +359,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         buildAllModules().assertSuccessful()
 
         val sourceMapContent = File(getOutputDir(PROJECT_NAME), "$PROJECT_NAME.js.map").readText()
-        val expectedPath = "prefix-dir/pkg/test1.kt"
+        val expectedPath = "prefix-dir/src/pkg/test1.kt"
         assertTrue("Source map file should contain relative path ($expectedPath)", sourceMapContent.contains("\"$expectedPath\""))
 
         val librarySourceMapFile = File(getOutputDir(PROJECT_NAME), "lib/kotlin.js.map")
