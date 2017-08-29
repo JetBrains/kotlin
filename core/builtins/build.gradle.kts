@@ -1,13 +1,7 @@
 
-import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializer
 import org.gradle.jvm.tasks.Jar
 import java.io.File
-
-apply { plugin("kotlin") }
-
-jvmTarget = "1.6"
 
 val builtinsSrc = File(rootDir, "core", "builtins", "src")
 val builtinsNative = File(rootDir, "core", "builtins", "native")
@@ -15,20 +9,6 @@ val builtinsNative = File(rootDir, "core", "builtins", "native")
 val builtinsSerialized = File(rootProject.extra["distDir"].toString(), "builtins")
 
 val builtins by configurations.creating
-
-dependencies {
-    compile(protobufLite())
-    compile(files(builtinsSerialized))
-}
-
-sourceSets {
-    "main" {
-        projectDefault()
-        java.srcDir("../runtime.jvm/src")
-        resources.srcDir(builtinsSerialized).apply { include("**") }
-    }
-    "test" {}
-}
 
 val serialize = task("serialize") {
     val outDir = builtinsSerialized
@@ -42,22 +22,6 @@ val serialize = task("serialize") {
                     println("Total bytes written: $totalSize to $totalFiles files")
                 }
     }
-}
-
-tasks.withType<JavaCompile> {
-    dependsOn(protobufLiteTask)
-    dependsOn(serialize)
-}
-
-tasks.withType<KotlinCompile> {
-    dependsOn(protobufLiteTask)
-    dependsOn(serialize)
-}
-
-val jar: Jar by tasks
-jar.apply {
-    dependsOn(serialize)
-    from(builtinsSerialized) { include("kotlin/**") }
 }
 
 val builtinsJar by task<Jar> {

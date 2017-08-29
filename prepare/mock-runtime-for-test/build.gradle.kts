@@ -33,6 +33,7 @@ tasks.withType<JavaCompile> {
 }
 
 val jar = runtimeJar {
+    dependsOn(":core:builtins:serialize")
     from(fileTree("${rootProject.extra["distDir"]}/builtins")) { include("kotlin/**") }
 }
 

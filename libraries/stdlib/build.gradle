@@ -51,6 +51,7 @@ dependencies {
 
 configurations {
     mainJar
+    builtins
 }
 
 task originalStdlibJar(type: Jar) {
@@ -69,10 +70,18 @@ task distJar(type: Jar) {
     baseName = 'dist-kotlin-stdlib'
     version = null
     manifestAttributes(manifest, project, 'Main')
+    dependsOn ":core:builtins:serialize"
     from("${rootDir}/dist/builtins")
     from sourceSets.annotations.output
     from sourceSets.builtins.output
     from sourceSets.main.output
+}
+
+task builtinsJar(type: Jar) {
+    baseName = "builtins"
+    dependsOn ":core:builtins:serialize"
+    from("${rootDir}/dist/builtins")
+    from sourceSets.builtins.output
 }
 
 sourcesJar {
@@ -84,6 +93,7 @@ artifacts {
     archives sourcesJar
     archives javadocJar
     mainJar jar
+    builtins builtinsJar
 }
 
 dist {

@@ -14,7 +14,6 @@ buildscript {
 }
 
 val projectsToShadow = listOf(
-        ":core:builtins",
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":compiler:backend",
         ":compiler:backend-common",
@@ -56,6 +55,7 @@ val sideJars by configurations.creating
 dependencies {
     packedJars(commonDep("com.github.spullara.cli-parser", "cli-parser"))
     packedJars(preloadedDeps("protobuf-${rootProject.extra["versions.protobuf-java"]}"))
+    packedJars(project(":kotlin-stdlib", configuration = "builtins"))
     sideJars(projectDist(":kotlin-script-runtime"))
     sideJars(commonDep("io.javaslang", "javaslang"))
     sideJars(commonDep("javax.inject"))

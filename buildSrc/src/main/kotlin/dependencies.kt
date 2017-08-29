@@ -47,10 +47,6 @@ fun Project.ideaPluginDeps(vararg artifactBaseNames: String, plugin: String, sub
 
 fun Project.kotlinDep(artifactBaseName: String, version: String? = null): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:${version ?: bootstrapKotlinVersion}"
 
-fun DependencyHandler.projectDep(name: String): Dependency = project(name, configuration = "default")
-fun DependencyHandler.projectDepIntransitive(name: String): Dependency =
-        project(name, configuration = "default").apply { isTransitive = false }
-
 fun DependencyHandler.projectDist(name: String): Dependency = project(name, configuration = "distJar").apply { isTransitive = false }
 fun DependencyHandler.projectTests(name: String): Dependency = project(name, configuration = "tests-jar").apply { isTransitive = false }
 fun DependencyHandler.projectRuntimeJar(name: String): Dependency = project(name, configuration = "runtimeJar")

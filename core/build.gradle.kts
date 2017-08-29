@@ -7,7 +7,7 @@ apply { plugin("kotlin") }
 jvmTarget = "1.6"
 
 dependencies {
-    compile(project(":core:builtins"))
+    compile(projectDist(":kotlin-stdlib"))
     compile(project("util.runtime"))
     compile(protobufLite())
     compile(commonDep("javax.inject"))

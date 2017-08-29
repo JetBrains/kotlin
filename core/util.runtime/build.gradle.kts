@@ -7,7 +7,6 @@ apply {
 jvmTarget = "1.6"
 
 dependencies {
-    compile(project(":core:builtins"))
     compile(projectDist(":kotlin-stdlib"))
 }
 
