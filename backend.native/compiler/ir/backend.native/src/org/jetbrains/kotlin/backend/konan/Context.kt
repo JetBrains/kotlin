@@ -216,6 +216,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     var phase: KonanPhase? = null
     var depth: Int = 0
 
+    // Cache used for source offset->(line,column) mapping.
+    val fileEntryCache = mutableMapOf<String, SourceManager.FileEntry>()
+
     protected fun separator(title: String) {
         println("\n\n--- ${title} ----------------------\n")
     }

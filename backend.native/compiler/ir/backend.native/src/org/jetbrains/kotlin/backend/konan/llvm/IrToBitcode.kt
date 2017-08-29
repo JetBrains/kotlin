@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
 import org.jetbrains.kotlin.ir.expressions.*
@@ -1433,8 +1434,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     //-------------------------------------------------------------------------//
+    fun getFileEntry(sourceFileName: String): SourceManager.FileEntry {
+        // We must cache file entries, otherwise we reparse same file many times.
+        return context.fileEntryCache.getOrPut(sourceFileName) {
+            NaiveSourceBasedFileEntryImpl(sourceFileName)
+        }
+    }
 
-    private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlockImpl) : FileScope(IrFileImpl(returnableBlock.sourceFileName)) {
+    private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlockImpl) :
+            FileScope(IrFileImpl(getFileEntry(returnableBlock.sourceFileName))) {
 
         var bbExit : LLVMBasicBlockRef? = null
         var resultPhi : LLVMValueRef? = null

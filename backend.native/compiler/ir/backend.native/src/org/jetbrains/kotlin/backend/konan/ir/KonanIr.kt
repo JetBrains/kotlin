@@ -93,9 +93,9 @@ class NaiveSourceBasedFileEntryImpl(override val name: String) : SourceManager.F
 
 //-----------------------------------------------------------------------------//
 
-class IrFileImpl(fileName: String) : IrFile {
+class IrFileImpl(entry: SourceManager.FileEntry) : IrFile {
 
-    override val fileEntry = NaiveSourceBasedFileEntryImpl(fileName)
+    override val fileEntry = entry
 
     //-------------------------------------------------------------------------//
 

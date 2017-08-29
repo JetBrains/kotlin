@@ -128,7 +128,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         if (structDecl.def == null) {
             val definitionCursor = clang_getCursorDefinition(cursor)
             if (clang_Cursor_isNull(definitionCursor) == 0) {
-                assert (clang_isCursorDefinition(definitionCursor) != 0)
+                assert(clang_isCursorDefinition(definitionCursor) != 0)
                 createStructDef(structDecl, cursor)
             }
         }
@@ -285,7 +285,8 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                         result.methods.add(method)
                     }
                 }
-                else -> {}
+                else -> {
+                }
             }
             CXChildVisitResult.CXChildVisit_Continue
         }
@@ -365,7 +366,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
     }
 
     private fun convertCursorType(cursor: CValue<CXCursor>) =
-        convertType(clang_getCursorType(cursor), clang_getDeclTypeAttributes(cursor))
+            convertType(clang_getCursorType(cursor), clang_getDeclTypeAttributes(cursor))
 
     private inline fun objCType(supplier: () -> ObjCPointer) = when (library.language) {
         Language.C -> UnsupportedType
@@ -483,7 +484,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
     private fun convertFunctionType(type: CValue<CXType>): Type {
         val kind = type.kind
-        assert (kind == CXType_Unexposed || kind == CXType_FunctionProto)
+        assert(kind == CXType_Unexposed || kind == CXType_FunctionProto)
 
         return if (clang_isFunctionTypeVariadic(type) != 0) {
             VoidType // make this function pointer opaque.
@@ -500,27 +501,27 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
     private val TARGET_ATTRIBUTE = "__target__"
 
     internal fun tokenizeExtent(cursor: CValue<CXCursor>): List<String> {
-      val translationUnit = clang_Cursor_getTranslationUnit(cursor)!!
-      val cursorExtent = clang_getCursorExtent(cursor)
-      memScoped {
-        val tokensVar = alloc<CPointerVar<CXToken>>()
-        val numTokensVar = alloc<IntVar>()
-        clang_tokenize(translationUnit, cursorExtent, tokensVar.ptr, numTokensVar.ptr)
-        val numTokens = numTokensVar.value
-        val tokens = tokensVar.value
-        if (tokens == null) return emptyList<String>()
-        try {
-            return (0 until numTokens).map {
-                clang_getTokenSpelling(translationUnit, tokens[it].readValue()).convertAndDispose()
+        val translationUnit = clang_Cursor_getTranslationUnit(cursor)!!
+        val cursorExtent = clang_getCursorExtent(cursor)
+        memScoped {
+            val tokensVar = alloc<CPointerVar<CXToken>>()
+            val numTokensVar = alloc<IntVar>()
+            clang_tokenize(translationUnit, cursorExtent, tokensVar.ptr, numTokensVar.ptr)
+            val numTokens = numTokensVar.value
+            val tokens = tokensVar.value
+            if (tokens == null) return emptyList<String>()
+            try {
+                return (0 until numTokens).map {
+                    clang_getTokenSpelling(translationUnit, tokens[it].readValue()).convertAndDispose()
+                }
+            } finally {
+                clang_disposeTokens(translationUnit, tokens, numTokens)
             }
-        } finally {
-            clang_disposeTokens(translationUnit, tokens, numTokens)
         }
-      }
-      TODO()
+        TODO()
     }
 
-    private fun isSuitable(cursor: CValue<CXCursor>): Boolean {
+    private fun isSuitableFunction(cursor: CValue<CXCursor>): Boolean {
         if (!isAvailable(cursor)) return false
 
         // If function is specific for certain target, ignore that, as we may be
@@ -566,7 +567,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             }
 
             CXIdxEntity_Function -> {
-                if (isSuitable(cursor)) {
+                if (isSuitableFunction(cursor)) {
                     functionById[getDeclarationId(cursor)] = getFunction(cursor)
                 }
             }
