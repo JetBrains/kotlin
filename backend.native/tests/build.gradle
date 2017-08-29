@@ -502,6 +502,12 @@ task worker2(type: RunKonanTest) {
     source = "runtime/workers/worker2.kt"
 }
 
+task worker3(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
+    goldValue = "OK\n"
+    source = "runtime/workers/worker3.kt"
+}
+
 task superFunCall(type: RunKonanTest) {
     goldValue = "<fun:C><fun:C1>\n<fun:C><fun:C3>\n"
     source = "codegen/basics/superFunCall.kt"
