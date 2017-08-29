@@ -6,7 +6,7 @@ configurations {
 
 dependencies {
     compile project(':kotlin-stdlib')
-    compile 'org.ow2.asm:asm-debug-all:5.0.4'
+    compile 'org.ow2.asm:asm-debug-all:6.0_BETA'
     compile 'com.google.code.gson:gson:2.6.2'
     testCompile project(':kotlin-test:kotlin-test-junit')
 

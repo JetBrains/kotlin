@@ -1,4 +1,3 @@
-
 description = 'Kotlin Test'
 
 apply plugin: 'kotlin-platform-jvm'
@@ -9,6 +8,10 @@ configurePublishing(project)
 
 project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
+sourceSets {
+    java9
+}
+
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
     compile project(':kotlin-stdlib')
@@ -18,8 +21,11 @@ dependencies {
 
 archivesBaseName = 'kotlin-test'
 
+createCompileJava9Task(project, "compileJava9", "kotlin.test")
+
 jar {
-    manifestAttributes(manifest, project, 'Test')
+    manifestAttributes(manifest, project, 'Test', true)
+    from compileJava9.outputs
 }
 
 artifacts {
