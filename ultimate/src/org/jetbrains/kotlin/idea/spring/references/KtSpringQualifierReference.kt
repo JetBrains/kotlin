@@ -20,8 +20,8 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.*
 import com.intellij.spring.model.DefaultSpringBeanQualifier
 import com.intellij.spring.model.converters.SpringConverterUtil
-import com.intellij.spring.model.highlighting.SpringAutowireUtil
 import com.intellij.spring.model.jam.qualifiers.SpringJamQualifier
+import com.intellij.spring.model.utils.SpringAutowireUtil
 import com.intellij.spring.model.utils.SpringModelSearchers
 import com.intellij.spring.references.SpringQualifierReference
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
