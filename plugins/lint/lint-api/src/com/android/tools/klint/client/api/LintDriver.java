@@ -92,6 +92,7 @@ import org.jetbrains.org.objectweb.asm.tree.FieldNode;
 import org.jetbrains.org.objectweb.asm.tree.InsnList;
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.uast.util.UastExpressionUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
@@ -2841,10 +2842,22 @@ public class LintDriver {
             if (fqcn != null && (fqcn.equals(FQCN_SUPPRESS_LINT)
                                  || fqcn.equals(SUPPRESS_WARNINGS_FQCN)
                                  || fqcn.equals(SUPPRESS_LINT))) { // when missing imports
-                for (UNamedExpression attribute : annotation.getAttributeValues()) {
-                    Object value = attribute.getExpression().evaluate();
-                    if (value instanceof String && isSuppressed(issue, (String) value)) {
-                        return true;
+                UExpression valueAttributeExpression = annotation.findAttributeValue("value");
+                if (valueAttributeExpression != null) {
+                    if (UastExpressionUtils.isArrayInitializer(valueAttributeExpression)) {
+                        UCallExpression arrayInitializer = (UCallExpression) valueAttributeExpression;
+                        for (UExpression issueIdExpression : arrayInitializer.getValueArguments()) {
+                            Object value = issueIdExpression.evaluate();
+                            if (value instanceof String && isSuppressed(issue, (String) value)) {
+                                return true;
+                            }
+                        }
+                    }
+                    else {
+                        Object value = valueAttributeExpression.evaluate();
+                        if (value instanceof String && isSuppressed(issue, (String) value)) {
+                            return true;
+                        }
                     }
                 }
             }
