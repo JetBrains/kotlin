@@ -47,11 +47,11 @@ class ClangTarget(val target: KonanTarget, konanProperties: KonanProperties) {
                         "-DKONAN_OBJC_INTEROP=1")
 
             KonanTarget.IPHONE ->
-                listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", "$sysRoot", "-miphoneos-version-min=8.0.0",
+                listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", sysRoot, "-miphoneos-version-min=8.0.0",
                         "-DKONAN_OBJC_INTEROP=1")
 
             KonanTarget.IPHONE_SIM ->
-                listOf("-stdlib=libc++", "-isysroot", "$sysRoot", "-miphoneos-version-min=8.0.0",
+                listOf("-stdlib=libc++", "-isysroot", sysRoot, "-miphoneos-version-min=8.0.0",
                         "-DKONAN_OBJC_INTEROP=1")
 
             KonanTarget.ANDROID_ARM32 ->

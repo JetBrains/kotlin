@@ -67,6 +67,24 @@ uint32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
   return ::strlen(result);
 }
 
+#if KONAN_INTERNAL_SNPRINTF
+extern "C" int rpl_vsnprintf(char *, size_t, const char *, va_list);
+#define vsnprintf_impl rpl_vsnprintf
+#else
+#define vsnprintf_impl ::vsnprintf
+#endif
+
+
+void consolePrintf(const char* format, ...) {
+  char buffer[1024];
+  va_list args;
+  va_start(args, format);
+  int rv = vsnprintf_impl(buffer, sizeof(buffer) - 1, format, args);
+  va_end(args);
+  consoleWriteUtf8(buffer, rv);
+}
+
+
 // Process execution.
 void abort() {
   ::abort();
@@ -89,18 +107,10 @@ void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLe
 }
 
 // The sprintf family.
-#if KONAN_INTERNAL_SNPRINTF
-extern "C" int rpl_vsnprintf(char *, size_t, const char *, va_list);
-#endif
-
 int snprintf(char* buffer, size_t size, const char* format, ...) {
   va_list args;
   va_start(args, format);
-#if KONAN_INTERNAL_SNPRINTF
-  int rv = rpl_vsnprintf(buffer, size, format, args);
-#else
-  int rv = ::vsnprintf(buffer, size, format, args);
-#endif
+  int rv = vsnprintf_impl(buffer, size, format, args);
   va_end(args);
   return rv;
 }
@@ -113,22 +123,19 @@ size_t strnlen(const char* buffer, size_t maxSize) {
 #if KONAN_INTERNAL_DLMALLOC
 extern "C" void* dlcalloc(size_t, size_t);
 extern "C" void dlfree(void*);
+#define calloc_impl dlcalloc
+#define free_impl dlfree
+#else
+#define calloc_impl ::calloc
+#define free_impl ::free
 #endif
 
 void* calloc(size_t count, size_t size) {
-#if KONAN_INTERNAL_DLMALLOC
-  return dlcalloc(count, size);
-#else
-  return ::calloc(count, size);
-#endif
+  return calloc_impl(count, size);
 }
 
 void free(void* pointer) {
-#if KONAN_INTERNAL_DLMALLOC
-  dlfree(pointer);
-#else
-  ::free(pointer);
-#endif
+  free_impl(pointer);
 }
 
 #if KONAN_INTERNAL_NOW
@@ -240,11 +247,11 @@ extern "C" {
     int _ZNSt3__212__next_primeEm(unsigned long n) {
         static unsigned long primes[] = {
                 11UL,
-                101UL, 
-                1009UL, 
-                10007UL, 
-                100003UL, 
-                1000003UL, 
+                101UL,
+                1009UL,
+                10007UL,
+                100003UL,
+                1000003UL,
                 10000019UL,
                 100000007UL,
                 1000000007UL
@@ -288,7 +295,7 @@ extern "C" {
         if (src < dst) {
             for (long i = len; i != 0; --i) {
                 *((char*)dst + i - 1) = *((char*)src + i - 1);
-            } 
+            }
         } else {
             memcpy(dst, src, len);
         }

@@ -58,4 +58,13 @@ class Runtime(bitcodeFile: String) {
 
     val kotlinObjCClassInfo by lazy { getStructType("KotlinObjCClassInfo") }
     val objCMethodDescription by lazy { getStructType("ObjCMethodDescription") }
+
+
+    val pointerSize: Int by lazy {
+        LLVMABISizeOfType(targetData, objHeaderPtrType).toInt()
+    }
+
+    val pointerAlignment: Int by lazy {
+        LLVMABIAlignmentOfType(targetData, objHeaderPtrType)
+    }
 }

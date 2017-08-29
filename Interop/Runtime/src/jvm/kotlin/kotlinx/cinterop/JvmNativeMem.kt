@@ -33,6 +33,7 @@ private val dataModel: DataModel = when (System.getProperty("sun.arch.data.model
     else -> throw IllegalStateException()
 }
 
+// Must be only used in interop, contains host pointer size, not target!
 val pointerSize: Int = dataModel.pointerSize.toInt()
 
 object nativeMemUtils {

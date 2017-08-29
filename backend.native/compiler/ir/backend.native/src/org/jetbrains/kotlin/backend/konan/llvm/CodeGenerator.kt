@@ -110,7 +110,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private var returnSlot: LLVMValueRef? = null
     private var slotsPhi: LLVMValueRef? = null
     private val frameOverlaySlotCount =
-            (LLVMStoreSizeOfType(llvmTargetData, runtime.frameOverlayType) / pointerSize).toInt()
+            (LLVMStoreSizeOfType(llvmTargetData, runtime.frameOverlayType) / runtime.pointerSize).toInt()
     private var slotCount = frameOverlaySlotCount
     private var localAllocs = 0
     private var arenaSlot: LLVMValueRef? = null
@@ -496,11 +496,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             if (needSlots) {
                 // Zero-init slots.
                 val slotsMem = bitcast(kInt8Ptr, slots)
-                val pointerSize = LLVMABISizeOfType(llvmTargetData, kObjHeaderPtr).toInt()
-                val alignment = LLVMABIAlignmentOfType(llvmTargetData, kObjHeaderPtr)
                 call(context.llvm.memsetFunction,
                         listOf(slotsMem, Int8(0).llvm,
-                                Int32(slotCount * pointerSize).llvm, Int32(alignment).llvm,
+                                Int32(slotCount * codegen.runtime.pointerSize).llvm,
+                                Int32(codegen.runtime.pointerAlignment).llvm,
                                 Int1(0).llvm))
                 call(context.llvm.enterFrameFunction, listOf(slots, Int32(slotCount).llvm))
             }
@@ -508,7 +507,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             val slotOffset = pointerSize * slotCount
             memScoped {
                 slotToVariableLocation.forEach { slot, variable ->
-                    val expr = longArrayOf(DwarfOp.DW_OP_minus.value, slotOffset + pointerSize * slot.toLong()).toCValues()
+                    val expr = longArrayOf(DwarfOp.DW_OP_minus.value,
+                            slotOffset + runtime.pointerSize * slot.toLong()).toCValues()
                     DIInsertDeclaration(
                             builder       = codegen.context.debugInfo.builder,
                             value         = slotsPhi,
