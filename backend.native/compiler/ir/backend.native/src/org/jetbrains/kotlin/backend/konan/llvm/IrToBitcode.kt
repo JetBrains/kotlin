@@ -1607,9 +1607,29 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return null
     }
 
+    private fun evaluateSpecialIntrinsicCall(expression: IrFunctionAccessExpression): LLVMValueRef? {
+        if (expression.descriptor.isIntrinsic) {
+            when (expression.descriptor.original) {
+                context.interopBuiltIns.objCObjectInitBy -> {
+                    val receiver = evaluateExpression(expression.extensionReceiver!!)
+                    val irConstructorCall = expression.getValueArgument(0) as IrCall
+                    val constructorDescriptor = irConstructorCall.descriptor as ClassConstructorDescriptor
+                    val constructorArgs = evaluateExplicitArgs(irConstructorCall)
+                    val args = listOf(receiver) + constructorArgs
+                    callDirect(constructorDescriptor, args, Lifetime.IRRELEVANT)
+                    return receiver
+                }
+            }
+        }
+
+        return null
+    }
+
     //-------------------------------------------------------------------------//
-    private fun evaluateCall(value: IrMemberAccessExpression): LLVMValueRef {
+    private fun evaluateCall(value: IrFunctionAccessExpression): LLVMValueRef {
         context.log{"evaluateCall                   : ${ir2string(value)}"}
+
+        evaluateSpecialIntrinsicCall(value)?.let { return it }
 
         val args = evaluateExplicitArgs(value)
 
@@ -1925,6 +1945,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 assert(args.isEmpty())
                 functionGenerationContext.allocArray(codegen.typeInfoValue(constructedClass), count = kImmZero,
                         lifetime = resultLifetime(callee))
+            } else if (constructedClass.isKotlinObjCClass()) {
+                callDirect(context.interopBuiltIns.allocObjCObject, listOf(genGetObjCClass(constructedClass)),
+                        resultLifetime(callee))
             } else {
                 functionGenerationContext.allocInstance(typeInfoForAllocation(constructedClass), resultLifetime(callee))
             }

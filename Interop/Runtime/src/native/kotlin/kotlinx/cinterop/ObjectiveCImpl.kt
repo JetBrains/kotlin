@@ -51,8 +51,17 @@ class ObjCPointerHolder(inline val rawPtr: NativePtr) {
 @konan.internal.ExportForCompiler
 private external fun ObjCObject.initFromPtr(ptr: NativePtr)
 
+@konan.internal.Intrinsic
+external fun <T : ObjCObjectBase> T.initBy(constructorCall: T): T
+
 @konan.internal.ExportForCompiler
-private fun ObjCObject.initFrom(other: ObjCObject?) = this.initFromPtr(other!!.rawPtr)
+private fun ObjCObjectBase.superInitCheck(superInitCallResult: ObjCObject?) {
+    if (superInitCallResult == null)
+        throw RuntimeException("Super initialization failed")
+
+    if (superInitCallResult.rawPtr != this.rawPtr)
+        throw UnsupportedOperationException("Super initializer has replaced object")
+}
 
 fun <T : Any?> Any?.uncheckedCast(): T = @Suppress("UNCHECKED_CAST") (this as T) // TODO: make private
 

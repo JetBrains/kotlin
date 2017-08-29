@@ -421,7 +421,7 @@ val ObjCClassOrProtocol.kotlinName: String get() = when (this) {
 }
 
 private val ObjCClass.baseClassName: String
-    get() = baseClass?.name ?: "ObjCObject"
+    get() = baseClass?.name ?: "ObjCObjectBase"
 
 private fun Parameter.getTypeStringRepresentation() =
         (if (this.nsConsumed) "__attribute__((ns_consumed)) " else "") + type.getStringRepresentation()

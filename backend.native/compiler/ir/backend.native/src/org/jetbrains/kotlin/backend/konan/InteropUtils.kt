@@ -135,7 +135,6 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
             .getContributedDescriptors().filterIsInstance<PropertyDescriptor>().single()
 
     val objCObjectInitFromPtr = packageScope.getContributedFunctions("initFromPtr").single()
-    val objCObjectInitFrom = packageScope.getContributedFunctions("initFrom").single()
 
     val allocObjCObject = packageScope.getContributedFunctions("allocObjCObject").single()
 
@@ -154,6 +153,9 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val interpretObjCPointerOrNull = packageScope.getContributedFunctions("interpretObjCPointerOrNull").single()
     val interpretObjCPointer = packageScope.getContributedFunctions("interpretObjCPointer").single()
+
+    val objCObjectSuperInitCheck = packageScope.getContributedFunctions("superInitCheck").single()
+    val objCObjectInitBy = packageScope.getContributedFunctions("initBy").single()
 
     val objCAction = packageScope.getContributedClassifier("ObjCAction") as ClassDescriptor
 

@@ -388,7 +388,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
             val initCall = builder.genLoweredObjCMethodCall(
                     initMethodInfo,
                     superQualifier = symbolTable.referenceClass(expression.descriptor.constructedClass),
-                    receiver = builder.callAlloc(constructedClass.symbol),
+                    receiver = builder.irGet(constructedClass.thisReceiver!!.symbol),
                     arguments = initMethod.valueParameters.map { expression.getValueArgument(it)!! }
             )
 
@@ -400,7 +400,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
                 // Required for the IR to be valid, will be ignored in codegen:
                 +IrDelegatingConstructorCallImpl(startOffset, endOffset, superConstructor, superConstructor.descriptor)
 
-                +irCall(symbols.interopObjCObjectInitFrom).apply {
+                +irCall(symbols.interopObjCObjectSuperInitCheck).apply {
                     extensionReceiver = irGet(constructedClass.thisReceiver!!.symbol)
                     putValueArgument(0, initCall)
                 }
@@ -727,6 +727,29 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                     }
                     putValueArgument(varargParameter, varargArgument)
                 }
+            }
+
+            interop.objCObjectInitBy -> {
+                val intrinsic = interop.objCObjectInitBy.name
+
+                val argument = expression.getValueArgument(0)!!
+                val constructedClass =
+                        ((argument as? IrCall)?.descriptor as? ClassConstructorDescriptor)?.constructedClass
+
+                if (constructedClass == null) {
+                    context.reportCompilationError("Argument of '$intrinsic' must be a constructor call",
+                            irFile, argument)
+                }
+
+                val extensionReceiver = expression.extensionReceiver!!
+                if (extensionReceiver !is IrGetValue ||
+                        extensionReceiver.descriptor != constructedClass.thisAsReceiverParameter) {
+
+                    context.reportCompilationError("Receiver of '$intrinsic' must be a 'this' of the constructed class",
+                            irFile, extensionReceiver)
+                }
+
+                expression
             }
 
             else -> expression
