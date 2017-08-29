@@ -41,6 +41,11 @@ sourceSets {
             srcDir 'test'
         }
     }
+    java9 {
+        java {
+            srcDir 'jvm/java9'
+        }
+    }
 }
 
 dependencies {
@@ -56,27 +61,31 @@ configurations {
     builtins
 }
 
+createCompileJava9Task(project, "compileJava9", "kotlin.stdlib", [sourceSets.builtins.output/* TODO: sourceSets.annotations.output?*/])
+
 task originalStdlibJar(type: Jar) {
     baseName = 'original-kotlin-stdlib'
     from sourceSets.main.output
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main')
+    manifestAttributes(manifest, project, 'Main', true)
     from("${rootDir}/dist/builtins")
     from sourceSets.builtins.output
     from sourceSets.experimental.output
+    from compileJava9.outputs
 }
 
 task distJar(type: Jar) {
     baseName = 'dist-kotlin-stdlib'
     version = null
-    manifestAttributes(manifest, project, 'Main')
+    manifestAttributes(manifest, project, 'Main', true)
     from("${rootDir}/dist/builtins")
     from sourceSets.annotations.output
     from sourceSets.builtins.output
     from sourceSets.main.output
     from sourceSets.experimental.output
+    from compileJava9.outputs
 }
 
 task builtinsJar(type: Jar) {

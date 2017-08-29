@@ -29,10 +29,18 @@ sourceSets {
             }
         }
     }
+    java9 {
+        java {
+            srcDirs = ['java9']
+        }
+    }
 }
 
+createCompileJava9Task(project, "compileJava9", "kotlin.stdlib.jdk8")
+
 jar {
-    manifestAttributes(manifest, project, 'Main')
+    manifestAttributes(manifest, project, 'Main', true)
+    from compileJava9.outputs
 }
 
 artifacts {

@@ -52,7 +52,7 @@ ext.configureJvm6Project = { Project project ->
     }
 }
 
-ext.manifestAttributes = { Manifest manifest, Project project, String component = null ->
+ext.manifestAttributes = { Manifest manifest, Project project, String component = null, boolean multiRelease = false ->
     project.configure(manifest) {
         attributes \
                 'Implementation-Vendor': 'JetBrains',
@@ -64,6 +64,10 @@ ext.manifestAttributes = { Manifest manifest, Project project, String component 
             attributes \
                 'Kotlin-Runtime-Component': component,
                 'Kotlin-Version': project.kotlinLanguageVersion
+        }
+        if (multiRelease) {
+            attributes \
+                'Multi-Release': 'true'
         }
     }
 }
@@ -197,4 +201,34 @@ ext.createPreprocessorTask = { Project project, def name, def sourceDir, def tar
         main = "org.jetbrains.kotlin.preprocessor.PreprocessorCLI"
         args = [sourceDir, targetDir, profile]
     }
+}
+
+ext.createCompileJava9Task = { Project project, String name, String moduleName, List<? extends FileCollection> extraModuleContent = [] ->
+    project.tasks.findByName("compileJava9Java").enabled = false
+
+    def task = project.tasks.create(name, Exec)
+
+    def sourceSet = project.sourceSets.java9.java
+    task.inputs.dir(sourceSet.srcDirs.first())
+    task.outputs.dir(sourceSet.outputDir)
+
+    task.dependsOn(project.tasks.findByName("compileKotlin"), project.tasks.findByName("compileJava"))
+
+    def moduleContent = project.sourceSets.main.output.join(File.pathSeparator)
+    for (collection in extraModuleContent) {
+        moduleContent += File.pathSeparator + collection.asPath
+    }
+
+    def output = new File(sourceSet.outputDir, "META-INF/versions/9")
+
+    task.doFirst {
+        output.delete()
+        output.mkdirs()
+    }
+
+    task.commandLine = ["${JDK_9}/bin/javac",
+                        *fileTree(sourceSet.srcDirs.first()).files.toArray(),
+                        "-d", output.path,
+                        "-p", project.configurations.compile.asPath,
+                        "--patch-module", "$moduleName=$moduleContent"]
 }
