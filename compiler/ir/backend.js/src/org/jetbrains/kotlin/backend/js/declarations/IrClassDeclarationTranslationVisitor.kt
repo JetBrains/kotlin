@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 
 class IrClassDeclarationTranslationVisitor(
         private val context: IrTranslationContext,
@@ -58,7 +59,7 @@ class IrClassDeclarationTranslationVisitor(
     }
 
     override fun visitFunction(declaration: IrFunction) {
-        if (declaration.body == null) return
+        if (!declaration.descriptor.kind.isReal || declaration.body == null) return
 
         val descriptor = declaration.descriptor
         val jsFunction = context.translateFunction(declaration)
@@ -67,6 +68,14 @@ class IrClassDeclarationTranslationVisitor(
     }
 
     override fun visitProperty(declaration: IrProperty) {
+        if (!declaration.descriptor.kind.isReal) return
+
+        if (declaration.descriptor.isExtensionProperty) {
+            declaration.getter?.let { visitFunction(it) }
+            declaration.setter?.let { visitFunction(it) }
+            return
+        }
+
         val objectLiteral = JsObjectLiteral(true)
 
         declaration.getter?.let { getter ->

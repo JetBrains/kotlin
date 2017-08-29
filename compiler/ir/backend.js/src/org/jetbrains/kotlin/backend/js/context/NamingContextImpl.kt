@@ -163,7 +163,7 @@ class NamingContextImpl(
         if (currentModule == module) {
             return rootScope.declareName("_")
         }
-        if (module.builtIns.builtInsModule == module) {
+        if (module.builtIns.builtInsModule == module || module.name.asString() == "<kotlin>") {
             return rootScope.declareName("Kotlin")
         }
         val nameString = module.name.asString()

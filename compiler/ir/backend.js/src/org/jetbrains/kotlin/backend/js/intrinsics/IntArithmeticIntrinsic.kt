@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral
 import org.jetbrains.kotlin.types.KotlinType
 
 object IntArithmeticIntrinsic : BinaryOperationIntrinsic() {
-    private val supportedOperations = mutableSetOf("plus", "minus")
+    private val supportedOperations = mutableSetOf("plus", "minus", "times", "rem", "div")
 
     override fun isApplicable(name: String, first: KotlinType, second: KotlinType): Boolean =
             KotlinBuiltIns.isIntOrNullableInt(first) &&
@@ -37,6 +37,9 @@ object IntArithmeticIntrinsic : BinaryOperationIntrinsic() {
         val operator = when (call.descriptor.name.identifier) {
             "plus" -> JsBinaryOperator.ADD
             "minus" -> JsBinaryOperator.SUB
+            "times" -> JsBinaryOperator.MUL
+            "rem" -> JsBinaryOperator.MOD
+            "div" -> JsBinaryOperator.DIV
             else -> error("unsupported function: ${call.descriptor}")
         }
 

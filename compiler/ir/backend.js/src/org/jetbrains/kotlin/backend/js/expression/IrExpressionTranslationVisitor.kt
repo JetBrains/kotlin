@@ -81,6 +81,18 @@ class IrExpressionTranslationVisitor(private val context: IrTranslationContext) 
             }
         }
 
+        val allArguments = if (extensionReceiver != null) listOf(extensionReceiver) + arguments else arguments
+
+        val superQualifier = expression.superQualifier
+        if (superQualifier != null) {
+            val superRef = context.translateAsTypeReference(superQualifier)
+            val functionName = context.naming.names[function]
+            return buildJs {
+                superRef.dotPrototype().dotPure(functionName).dotPure("call")
+                        .invoke(dispatchReceiver ?: JsNullLiteral(), *allArguments.toTypedArray())
+            }.withInlineMetadata(context, expression.descriptor)
+        }
+
         val qualifier = if (dispatchReceiver != null) {
             JsNameRef(context.naming.names[function], dispatchReceiver)
         }
@@ -88,12 +100,11 @@ class IrExpressionTranslationVisitor(private val context: IrTranslationContext) 
             context.translateAsValueReference(function.original)
         }
 
-        val allArguments = if (extensionReceiver != null) listOf(extensionReceiver) + arguments else arguments
         return if (function is ConstructorDescriptor && function.isPrimary) {
             JsNew(qualifier, allArguments)
         }
         else {
-            JsInvocation(qualifier, allArguments)
+            JsInvocation(qualifier, allArguments).withInlineMetadata(context, expression.descriptor)
         }
     }
 

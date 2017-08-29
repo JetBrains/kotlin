@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 class ClassModelGenerator(private val naming: NamingContext, private val currentModule: ModuleDescriptor) {
     fun generateClassModel(descriptor: ClassDescriptor): JsClassModel {
         val superName = descriptor.getSuperClassNotAny()?.let { naming.innerNames[it] }
-        val model = JsClassModel(naming.names[descriptor], superName)
+        val model = JsClassModel(naming.innerNames[descriptor], superName)
         if (descriptor.kind != ClassKind.ANNOTATION_CLASS && !AnnotationsUtils.isNativeObject(descriptor)) {
             copyDefaultMembers(descriptor, model)
         }
