@@ -123,7 +123,7 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
 val reflectShadowJar by task<ShadowJar> {
     classifier = "shadow"
     version = null
-    callGroovy("manifestAttributes", manifest, project, "Main")
+    callGroovy("manifestAttributes", manifest, project, "Main", true)
 
     from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
     from(project(":core:descriptors.jvm").the<JavaPluginConvention>().sourceSets.getByName("main").resources) {
@@ -154,18 +154,17 @@ val stripMetadata by tasks.creating {
     }
 }
 
-val mainArchiveName = "${property("archivesBaseName")}-$version.jar"
-val outputJarPath = "$libsDir/$mainArchiveName"
+val proguardOutput = "$libsDir/${property("archivesBaseName")}-proguard.jar"
 
 val proguard by task<ProGuardTask> {
     dependsOn(stripMetadata)
     inputs.files(stripMetadata.outputs.files)
-    outputs.file(outputJarPath)
+    outputs.file(proguardOutput)
 
-    injars(stripMetadata.outputs.files)
-    outjars(outputJarPath)
+    injars(mapOf("filter" to "!META-INF/versions/**"), stripMetadata.outputs.files)
+    outjars(proguardOutput)
 
-    libraryjars(proguardDeps)
+    libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardDeps)
 
     configuration("$core/reflection.jvm/reflection.pro")
 }
@@ -203,20 +202,27 @@ val sourcesJar = sourcesJar(sourceSet = null) {
     from("$core/reflection.jvm/src")
 }
 
-val result = proguard
+val result by task<Jar> {
+    dependsOn(proguard)
+    from(zipTree(file(proguardOutput)))
+    from(zipTree(reflectShadowJar.archivePath)) {
+        include("META-INF/versions/**")
+    }
+    callGroovy("manifestAttributes", manifest, project, "Main", true)
+}
 
 val dexMethodCount by task<DexMethodCount> {
     dependsOn(result)
-    jarFile = File(outputJarPath)
+    jarFile = result.outputs.files.single()
     ownPackages = listOf("kotlin.reflect")
 }
 tasks.getByName("check").dependsOn(dexMethodCount)
 
 artifacts {
     val artifactJar = mapOf(
-            "file" to File(outputJarPath),
-            "builtBy" to result,
-            "name" to property("archivesBaseName")
+        "file" to result.outputs.files.single(),
+        "builtBy" to result,
+        "name" to property("archivesBaseName")
     )
 
     add(mainJar.name, artifactJar)
