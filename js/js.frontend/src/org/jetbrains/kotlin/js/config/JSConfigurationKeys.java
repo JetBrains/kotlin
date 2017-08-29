@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
+import java.io.File;
 import java.util.List;
 
 public class JSConfigurationKeys {
@@ -29,6 +30,9 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> SOURCE_MAP =
             CompilerConfigurationKey.create("generate source map");
+
+    public static final CompilerConfigurationKey<File> OUTPUT_DIR =
+            CompilerConfigurationKey.create("output directory");
 
     public static final CompilerConfigurationKey<String> SOURCE_MAP_PREFIX =
             CompilerConfigurationKey.create("prefix to add to paths in source map");

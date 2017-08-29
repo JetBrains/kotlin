@@ -64,7 +64,7 @@ object JsLibraryUtils {
 
     private fun File.runIfFileExists(relativePath: String, action: (JsLibrary) -> Unit) {
         if (isFile) {
-            action(JsLibrary(readText(), relativePath, correspondingSourceMapFile().contentIfExists()))
+            action(JsLibrary(readText(), relativePath, correspondingSourceMapFile().contentIfExists(), this))
         }
     }
 
@@ -126,7 +126,7 @@ object JsLibraryUtils {
 
                         val stream = zipFile.getInputStream(entry)
                         val content = FileUtil.loadTextAndClose(stream)
-                        librariesWithoutSourceMaps += JsLibrary(content, relativePath, null)
+                        librariesWithoutSourceMaps += JsLibrary(content, relativePath, null, null)
                     }
                     else if (entryName.endsWith(KotlinJavascriptMetadataUtils.JS_MAP_EXT)) {
                         val correspondingJsPath = entryName.removeSuffix(KotlinJavascriptMetadataUtils.JS_MAP_EXT) +
@@ -171,4 +171,4 @@ object JsLibraryUtils {
     }
 }
 
-data class JsLibrary(val content: String, val path: String, val sourceMapContent: String?)
+data class JsLibrary(val content: String, val path: String, val sourceMapContent: String?, val file: File?)

@@ -665,6 +665,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsTest(fileName);
         }
 
+        @TestMetadata("sourceMapRelativeRoot.args")
+        public void testSourceMapRelativeRoot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMapRelativeRoot.args");
+            doJsTest(fileName);
+        }
+
         @TestMetadata("sourceMapRootAuto.args")
         public void testSourceMapRootAuto() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMapRootAuto.args");

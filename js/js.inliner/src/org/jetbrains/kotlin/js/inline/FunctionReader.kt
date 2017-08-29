@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.parser.OffsetToSourceMapping
@@ -77,7 +78,8 @@ class FunctionReader(
             val kotlinVariable: String,
             val specialFunctions: Map<String, SpecialFunction>,
             offsetToSourceMappingProvider: () -> OffsetToSourceMapping,
-            val sourceMap: SourceMap?
+            val sourceMap: SourceMap?,
+            val outputDir: File?
     ) {
         val offsetToSourceMapping by lazy(offsetToSourceMappingProvider)
 
@@ -89,7 +91,7 @@ class FunctionReader(
     private val moduleNameToInfo by lazy {
         val result = HashMultimap.create<String, ModuleInfo>()
 
-        JsLibraryUtils.traverseJsLibraries(config.libraries.map(::File)) { (content, path, sourceMapContent) ->
+        JsLibraryUtils.traverseJsLibraries(config.libraries.map(::File)) { (content, path, sourceMapContent, file) ->
             var current = 0
 
             while (true) {
@@ -131,7 +133,8 @@ class FunctionReader(
                         kotlinVariable = kotlinVariable,
                         specialFunctions = specialFunctions,
                         offsetToSourceMappingProvider = { OffsetToSourceMapping(content) },
-                        sourceMap = sourceMap
+                        sourceMap = sourceMap,
+                        outputDir = file?.parentFile
                 )
 
                 result.put(moduleName, moduleInfo)
@@ -142,6 +145,8 @@ class FunctionReader(
     }
 
     private val moduleNameMap: Map<String, JsExpression>
+    private val shouldRemapPathToRelativeForm = config.shouldGenerateRelativePathsInSourceMap()
+    private val relativePathCalculator = config.configuration[JSConfigurationKeys.OUTPUT_DIR]?.let { RelativePathCalculator(it) }
 
     init {
         moduleNameMap = buildModuleNameMap(fragments)
@@ -242,7 +247,9 @@ class FunctionReader(
 
         val sourceMap = info.sourceMap
         if (sourceMap != null) {
-            val remapper = SourceMapLocationRemapper(sourceMap)
+            val remapper = SourceMapLocationRemapper(sourceMap) {
+                remapPath(removeRedundantPathPrefix(it), info)
+            }
             remapper.remap(function)
             wrapperStatements?.forEach { remapper.remap(it) }
         }
@@ -300,6 +307,25 @@ class FunctionReader(
 
             param.hasDefaultValue = true
         }
+    }
+
+    private fun removeRedundantPathPrefix(path: String): String {
+        var index = 0
+        while (index + 2 <= path.length && path.substring(index, index + 2) == "./") {
+            index += 2
+            while (index < path.length && path[index] == '/') {
+                ++index
+            }
+        }
+
+        return path.substring(index)
+    }
+
+    private fun remapPath(path: String, info: ModuleInfo): String {
+        if (!shouldRemapPathToRelativeForm) return path
+        val outputDir = info.outputDir ?: return path
+        val calculator = relativePathCalculator ?: return path
+        return calculator.calculateRelativePathTo(File(outputDir, path)) ?: path
     }
 }
 

@@ -439,7 +439,7 @@ abstract class BasicBoxTest(
         generatedProgram.accept(AmbiguousAstSourcePropagation())
 
         val output = TextOutputImpl()
-        val pathResolver = SourceFilePathResolver(mutableListOf(File(".")))
+        val pathResolver = SourceFilePathResolver(mutableListOf(File(".")), null)
         val sourceMapBuilder = SourceMap3Builder(outputFile, output, "")
         generatedProgram.accept(JsToStringGenerationVisitor(output, SourceMapBuilderConsumer(sourceMapBuilder, pathResolver, false, false)))
         val code = output.toString()

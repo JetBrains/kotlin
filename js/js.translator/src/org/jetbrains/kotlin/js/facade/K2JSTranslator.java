@@ -128,8 +128,7 @@ public final class K2JSTranslator {
         ModuleDescriptor moduleDescriptor = analysisResult.getModuleDescriptor();
         Diagnostics diagnostics = bindingTrace.getBindingContext().getDiagnostics();
 
-        List<File> sourceRoots = config.getSourceMapRoots().stream().map(File::new).collect(Collectors.toList());
-        SourceFilePathResolver pathResolver = new SourceFilePathResolver(sourceRoots);
+        SourceFilePathResolver pathResolver = SourceFilePathResolver.create(config);
 
         AstGenerationResult translationResult = Translation.generateAst(
                 bindingTrace, units, mainCallParameters, moduleDescriptor, config, pathResolver);
@@ -155,7 +154,6 @@ public final class K2JSTranslator {
 
         ExpandIsCallsKt.expandIsCalls(newFragments);
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-
         JsAstSerializer serializer = new JsAstSerializer(file -> {
             try {
                 return pathResolver.getPathRelativeToSourceRoots(file);

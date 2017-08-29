@@ -65,9 +65,8 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             val sourceMapBuilder = SourceMap3Builder(outputFile, output, config.sourceMapPrefix)
             val sourceMapBuilderConsumer =
                     if (config.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
-                        val sourceRoots = config.sourceMapRoots.map { File(it) }
                         val sourceMapContentEmbedding = config.sourceMapContentEmbedding
-                        val pathResolver = SourceFilePathResolver(sourceRoots)
+                        val pathResolver = SourceFilePathResolver.create(config)
                         SourceMapBuilderConsumer(
                                 sourceMapBuilder,
                                 pathResolver,

@@ -125,7 +125,11 @@ public class JsConfig {
 
     @NotNull
     public List<String> getSourceMapRoots() {
-        return configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, Collections.singletonList("."));
+        return configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, Collections.emptyList());
+    }
+
+    public boolean shouldGenerateRelativePathsInSourceMap() {
+        return getSourceMapPrefix().isEmpty() && getSourceMapRoots().isEmpty();
     }
 
     @NotNull

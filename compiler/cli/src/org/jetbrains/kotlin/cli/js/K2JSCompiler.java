@@ -251,8 +251,20 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             }
         }
 
+        File outputDir = outputFile.getParentFile();
+        if (outputDir == null) {
+            outputDir = outputFile.getAbsoluteFile().getParentFile();
+        }
+        try {
+            config.getConfiguration().put(JSConfigurationKeys.OUTPUT_DIR, outputDir.getCanonicalFile());
+        }
+        catch (IOException e) {
+            messageCollector.report(ERROR, "Could not resolve output directory", null);
+            return ExitCode.COMPILATION_ERROR;
+        }
+
         if (config.getConfiguration().getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
-            checkDuplicateSourceFileNames(messageCollector, sourcesFiles, config.getSourceMapRoots());
+            checkDuplicateSourceFileNames(messageCollector, sourcesFiles, config);
         }
 
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.getMain());
@@ -280,11 +292,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return ExitCode.COMPILATION_ERROR;
         }
 
-        File outputDir = outputFile.getParentFile();
-        if (outputDir == null) {
-            outputDir = outputFile.getAbsoluteFile().getParentFile();
-        }
-
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         OutputUtilsKt.writeAll(outputFiles, outputDir, messageCollector,
@@ -296,12 +303,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static void checkDuplicateSourceFileNames(
             @NotNull MessageCollector log,
             @NotNull List<KtFile> sourceFiles,
-            @NotNull List<String> sourceRoots
+            @NotNull JsConfig config
     ) {
-        if (sourceRoots.isEmpty()) return;
+        if (config.getSourceMapRoots().isEmpty()) return;
 
-        List<File> sourceRootFiles = sourceRoots.stream().map(File::new).collect(Collectors.toList());
-        SourceFilePathResolver pathResolver = new SourceFilePathResolver(sourceRootFiles);
+        SourceFilePathResolver pathResolver = SourceFilePathResolver.create(config);
         Map<String, String> pathMap = new HashMap<>();
         Set<String> duplicatePaths = new HashSet<>();
 
@@ -357,11 +363,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                 configuration.put(JSConfigurationKeys.SOURCE_MAP_PREFIX, arguments.getSourceMapPrefix());
             }
 
-            String sourceMapSourceRoots = arguments.getSourceMapBaseDirs() != null ?
-                                          arguments.getSourceMapBaseDirs() :
-                                          calculateSourceMapSourceRoot(messageCollector, arguments);
-            List<String> sourceMapSourceRootList = StringUtil.split(sourceMapSourceRoots, File.pathSeparator);
-            configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceMapSourceRootList);
+            String sourceMapSourceRoots = arguments.getSourceMapBaseDirs();
+            if (sourceMapSourceRoots == null && StringUtil.isNotEmpty(arguments.getSourceMapPrefix())) {
+                sourceMapSourceRoots = calculateSourceMapSourceRoot(messageCollector, arguments);
+            }
+
+            if (sourceMapSourceRoots != null) {
+                List<String> sourceMapSourceRootList = StringUtil.split(sourceMapSourceRoots, File.pathSeparator);
+                configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceMapSourceRootList);
+            }
         }
         else {
             if (arguments.getSourceMapPrefix() != null) {
