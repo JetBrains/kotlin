@@ -389,7 +389,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
 
             assert(constructedClassDescriptor.getSuperClassNotAny() == expression.descriptor.constructedClass)
 
-            val initMethod = getObjCInitMethod(expression.descriptor)!!
+            val initMethod = expression.descriptor.getObjCInitMethod()!!
             val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
 
             assert(expression.dispatchReceiver == null)
@@ -438,22 +438,13 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
         }
     }
 
-    private fun getObjCInitMethod(descriptor: ConstructorDescriptor): FunctionDescriptor? {
-        return descriptor.annotations.findAnnotation(FqName("kotlinx.cinterop.ObjCConstructor"))?.let {
-            val initSelector = it.getStringValue("initSelector")
-            descriptor.constructedClass.unsubstitutedMemberScope.getContributedDescriptors().asSequence()
-                    .filterIsInstance<FunctionDescriptor>()
-                    .single { it.getExternalObjCMethodInfo()?.selector == initSelector }
-        }
-    }
-
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
 
         val descriptor = expression.descriptor.original
 
         if (descriptor is ConstructorDescriptor) {
-            val initMethod = getObjCInitMethod(descriptor)
+            val initMethod = descriptor.getObjCInitMethod()
 
             if (initMethod != null) {
                 val arguments = descriptor.valueParameters.map { expression.getValueArgument(it)!! }

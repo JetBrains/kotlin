@@ -17,12 +17,11 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMStoreSizeOfType
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.ObjCMethodInfo
+import llvm.LLVMValueRef
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValueOrNull
-import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.isFinalClass
@@ -39,7 +38,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
 
         val objCLLvmDeclarations = context.llvmDeclarations.forClass(descriptor).objCDeclarations!!
 
-        val instanceMethods = descriptor.generateOverridingMethodDescs() + irClass.generateImpMethodDescs()
+        val instanceMethods = generateInstanceMethodDescs(irClass)
 
         val companionObjectDescriptor = descriptor.companionObjectDescriptor
         val classMethods = companionObjectDescriptor?.generateOverridingMethodDescs() ?: emptyList()
@@ -80,6 +79,25 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         objCLLvmDeclarations.bodyOffsetGlobal.setInitializer(Int32(0))
     }
 
+    private fun generateInstanceMethodDescs(
+            irClass: IrClass
+    ): List<ObjCMethodDesc> = mutableListOf<ObjCMethodDesc>().apply {
+        val descriptor = irClass.descriptor
+        addAll(descriptor.generateOverridingMethodDescs())
+        addAll(irClass.generateImpMethodDescs())
+        val allImplementedSelectors = this.map { it.selector }.toSet()
+
+        assert(descriptor.getSuperClassNotAny()!!.isExternalObjCClass())
+        val allInitMethodsInfo = descriptor.getSuperClassNotAny()!!.constructors
+                .mapNotNull { it.getObjCInitMethod()?.getExternalObjCMethodInfo() }
+                .filter { it.selector !in allImplementedSelectors }
+                .distinctBy { it.selector }
+
+        allInitMethodsInfo.mapTo(this) {
+            ObjCMethodDesc(it.selector, it.encoding, context.llvm.missingInitImp)
+        }
+    }
+
     private fun selectClassName(descriptor: ClassDescriptor): String? {
         val exportObjCClassAnnotation =
                 descriptor.annotations.findAnnotation(context.interopBuiltIns.exportObjCClass.fqNameSafe)
@@ -93,37 +111,37 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         }
     }
 
-    private fun createMethodDesc(selector: String, encoding: String, imp: ConstPointer) = Struct(
+    private inner class ObjCMethodDesc(
+            val selector: String, val encoding: String, val impFunction: LLVMValueRef
+    ) : Struct(
             runtime.objCMethodDescription,
             staticData.cStringLiteral(selector),
             staticData.cStringLiteral(encoding),
-            imp
+            constPointer(impFunction).bitcast(int8TypePtr)
     )
 
-    private fun generateMethodDesc(info: ObjCMethodInfo): ConstValue {
-        return createMethodDesc(
-                info.selector,
-                info.encoding,
-                constPointer(context.llvm.externalFunction(info.imp, functionType(voidType))).bitcast(int8TypePtr)
-        )
-    }
+    private fun generateMethodDesc(info: ObjCMethodInfo) = ObjCMethodDesc(
+            info.selector,
+            info.encoding,
+            context.llvm.externalFunction(info.imp, functionType(voidType))
+    )
 
-    private fun ClassDescriptor.generateOverridingMethodDescs(): List<ConstValue> =
+    private fun ClassDescriptor.generateOverridingMethodDescs(): List<ObjCMethodDesc> =
             this.unsubstitutedMemberScope.contributedMethods.filter {
                 it.kind.isReal && it !is ConstructorDescriptor
             }.mapNotNull { it.getObjCMethodInfo() }.map { generateMethodDesc(it) }
 
-    private fun IrClass.generateImpMethodDescs(): List<ConstValue> = this.declarations
+    private fun IrClass.generateImpMethodDescs(): List<ObjCMethodDesc> = this.declarations
             .filterIsInstance<IrSimpleFunction>()
             .mapNotNull {
                 val annotation =
                         it.descriptor.annotations.findAnnotation(context.interopBuiltIns.objCMethodImp.fqNameSafe) ?:
                                 return@mapNotNull null
 
-                createMethodDesc(
+                ObjCMethodDesc(
                         annotation.getStringValue("selector"),
                         annotation.getStringValue("encoding"),
-                        it.descriptor.entryPointAddress
+                        it.descriptor.llvmFunction
                 )
             }
 }

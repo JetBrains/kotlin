@@ -19,6 +19,7 @@
 #if KONAN_OBJC_INTEROP
 
 #import <objc/runtime.h>
+#import <Foundation/NSException.h>
 #import <Foundation/NSString.h>
 
 namespace {
@@ -33,6 +34,11 @@ namespace {
       nsStringClass = result;
     }
     return result;
+  }
+
+  // Note: using @"foo" string literals leads to linkage dependency on frameworks.
+  NSString* cStringToNS(const char* str) {
+    return [getNSStringClass() stringWithCString:str encoding:NSUTF8StringEncoding];
   }
 }
 
@@ -65,6 +71,24 @@ OBJ_GETTER(CreateKStringFromNSString, NSString* str) {
   [str getCharacters:rawResult range:range];
 
   RETURN_OBJ(result->obj());
+}
+
+// Note: this body is used for init methods with signatures differing from this;
+// it is correct on arm64 and x86_64, because the body uses only the first two arguments which are fixed,
+// and returns pointers.
+id MissingInitImp(id self, SEL _cmd) {
+  const char* className = object_getClassName(self);
+  [self release]; // Since init methods receive ownership on the receiver.
+
+  // Lookup dynamically to avoid direct reference to Foundation:
+  Class nsExceptionClass = objc_getClass("NSException");
+  RuntimeAssert(nsExceptionClass != nullptr, "NSException class not found");
+
+  [nsExceptionClass raise:cStringToNS("Initializer is not implemented")
+    format:cStringToNS("%s is not implemented in %s"),
+    sel_getName(_cmd), className];
+
+  return nullptr;
 }
 
 } // extern "C"

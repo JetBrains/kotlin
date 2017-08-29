@@ -328,6 +328,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     val createKotlinObjCClass by lazy { importRtFunction("CreateKotlinObjCClass") }
     val getObjCKotlinTypeInfo by lazy { importRtFunction("GetObjCKotlinTypeInfo") }
+    val missingInitImp by lazy { importRtFunction("MissingInitImp") }
 
     private val personalityFunctionName = when (context.config.targetManager.target) {
         KonanTarget.MINGW -> "__gxx_personality_seh0"

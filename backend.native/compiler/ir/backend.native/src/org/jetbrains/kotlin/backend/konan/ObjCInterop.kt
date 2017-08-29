@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
@@ -161,6 +162,15 @@ class ObjCOverridabilityCondition : ExternalOverridabilityCondition {
         return true
     }
 
+}
+
+fun ConstructorDescriptor.getObjCInitMethod(): FunctionDescriptor? {
+    return this.annotations.findAnnotation(FqName("kotlinx.cinterop.ObjCConstructor"))?.let {
+        val initSelector = it.getStringValue("initSelector")
+        this.constructedClass.unsubstitutedMemberScope.getContributedDescriptors().asSequence()
+                .filterIsInstance<FunctionDescriptor>()
+                .single { it.getExternalObjCMethodInfo()?.selector == initSelector }
+    }
 }
 
 fun inferObjCSelector(descriptor: FunctionDescriptor): String = if (descriptor.valueParameters.isEmpty()) {
