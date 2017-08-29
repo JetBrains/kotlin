@@ -1,0 +1,3 @@
+package = platform.windows
+headers = windows.h
+compilerOpts = -DUNICODE -Wno-incompatible-pointer-types -Wno-deprecated-declarations

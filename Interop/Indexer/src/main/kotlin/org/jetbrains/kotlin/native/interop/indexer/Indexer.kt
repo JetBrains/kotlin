@@ -497,6 +497,49 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         }
     }
 
+    private val TARGET_ATTRIBUTE = "__target__"
+
+    internal fun tokenizeExtent(cursor: CValue<CXCursor>): List<String> {
+      val translationUnit = clang_Cursor_getTranslationUnit(cursor)!!
+      val cursorExtent = clang_getCursorExtent(cursor)
+      memScoped {
+        val tokensVar = alloc<CPointerVar<CXToken>>()
+        val numTokensVar = alloc<IntVar>()
+        clang_tokenize(translationUnit, cursorExtent, tokensVar.ptr, numTokensVar.ptr)
+        val numTokens = numTokensVar.value
+        val tokens = tokensVar.value
+        if (tokens == null) return emptyList<String>()
+        try {
+            return (0 until numTokens).map {
+                clang_getTokenSpelling(translationUnit, tokens[it].readValue()).convertAndDispose()
+            }
+        } finally {
+            clang_disposeTokens(translationUnit, tokens, numTokens)
+        }
+      }
+      TODO()
+    }
+
+    private fun isSuitable(cursor: CValue<CXCursor>): Boolean {
+        if (!isAvailable(cursor)) return false
+
+        // If function is specific for certain target, ignore that, as we may be
+        // unable to generate machine code for bridge from the bitcode.
+        // TODO: this must be implemented with hasAttribute(), but hasAttribute()
+        // works for Mac hosts only so far.
+        var suitable = true
+        visitChildren(cursor) { child, _ ->
+            if (clang_isAttribute(child.kind) != 0) {
+                suitable = !tokenizeExtent(child).any { it == TARGET_ATTRIBUTE }
+            }
+            if (suitable)
+                CXChildVisitResult.CXChildVisit_Continue
+            else
+                CXChildVisitResult.CXChildVisit_Break
+        }
+        return suitable
+    }
+
     fun indexDeclaration(info: CXIdxDeclInfo): Unit {
         val cursor = info.cursor.readValue()
         val entityInfo = info.entityInfo!!.pointed
@@ -523,7 +566,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             }
 
             CXIdxEntity_Function -> {
-                if (isAvailable(cursor)) {
+                if (isSuitable(cursor)) {
                     functionById[getDeclarationId(cursor)] = getFunction(cursor)
                 }
             }
