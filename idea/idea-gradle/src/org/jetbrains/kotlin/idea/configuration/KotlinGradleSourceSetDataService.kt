@@ -31,6 +31,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl
+import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
@@ -130,9 +131,15 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
     private fun resetLibraryKind(modifiableModel: LibraryEx.ModifiableModelEx) {
         try {
             val cls = LibraryImpl::class.java
-            val declaredField = cls.getDeclaredField("myKind")
-            declaredField.isAccessible = true
-            declaredField.set(modifiableModel, null)
+            // Don't use name-based lookup because field names are scrambled in IDEA Ultimate
+            for (field in cls.declaredFields) {
+                if (field.type == PersistentLibraryKind::class.java) {
+                    field.isAccessible = true
+                    field.set(modifiableModel, null)
+                    return
+                }
+            }
+            LOG.info("Could not find field of type PersistentLibraryKind in LibraryImpl.class")
         }
         catch (e: Exception) {
             LOG.info("Failed to reset library kind", e)
