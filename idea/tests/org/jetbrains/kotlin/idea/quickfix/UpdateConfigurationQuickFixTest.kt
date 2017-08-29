@@ -175,7 +175,7 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
             val editor = NewLibraryEditor()
             editor.name = "KotlinJavaRuntime"
 
-            editor.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(tempVFile), OrderRootType.CLASSES)
+            editor.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(tempVFile)!!, OrderRootType.CLASSES)
 
             ConfigLibraryUtil.addLibrary(editor, model)
         }
