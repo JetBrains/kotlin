@@ -215,23 +215,17 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         }.getProperty("default-konan-version") ?: throw RuntimeException("Cannot read the default compiler version")
     }
 
+    /** Looks for task with given name in the given project. Throws [UnknownTaskException] if there's not such task. */
+    private fun Project.getTask(name: String): Task = tasks.getByPath(name)
+
     /**
      * Looks for task with given name in the given project.
      * If such task isn't found, will create it. Returns created/found task.
      */
-    private fun Project.getTask(name: String): Task = getTasksByName(name, false).single()
-
-    private fun Project.getOrCreateTask(name: String): Task {
-        val tasks = getTasksByName(name, false)
-        assert(tasks.size <= 1)
-        return if (tasks.isEmpty()) {
-            this.tasks.create(name, DefaultTask::class.java)
-        } else {
-            tasks.single()
-        }
+    private fun Project.getOrCreateTask(name: String): Task = with(tasks) {
+        findByPath(name) ?: create(name, DefaultTask::class.java)
     }
 
-    // TODO: Create default config? what about test sources?
     override fun apply(project: Project?) {
         if (project == null) { return }
         registry.register(KonanToolingModelBuilder)

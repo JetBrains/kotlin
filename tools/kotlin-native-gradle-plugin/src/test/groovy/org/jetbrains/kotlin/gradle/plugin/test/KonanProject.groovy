@@ -18,6 +18,7 @@ class KonanProject {
 
     File         buildFile
     File         propertiesFile
+    File         settingsFile
 
     Set<File>    srcFiles = []
 
@@ -77,10 +78,16 @@ class KonanProject {
         createSubDir("src", "main", "kotlin")
     }
 
-    /** Generates a build.gradle file in root project directory with the given content. */
+    /** Generates a build.gradle file in the root project directory with the given content. */
     File generateBuildFile(String content) {
         buildFile = createFile(projectPath, "build.gradle", content)
         return buildFile
+    }
+
+    /** Generates a settings.gradle file in the root project directory with the given content. */
+    File generateSettingsFile(String content) {
+        settingsFile = createFile(projectPath, "settings.gradle", content)
+        return settingsFile
     }
 
     /**
@@ -197,6 +204,7 @@ class KonanProject {
             generateFolders()
             generateBuildFile()
             generatePropertiesFile(konanHome)
+            generateSettingsFile("")
         }
         return result
     }

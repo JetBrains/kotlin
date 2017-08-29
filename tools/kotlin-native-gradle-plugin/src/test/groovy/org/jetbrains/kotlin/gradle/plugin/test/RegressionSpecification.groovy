@@ -1,0 +1,38 @@
+package org.jetbrains.kotlin.gradle.plugin.test
+
+import org.gradle.testkit.runner.TaskOutcome
+
+class RegressionSpecification extends BaseKonanSpecification {
+
+    def 'KT-19916'() {
+        when:
+            def project = KonanProject.createEmpty(getProjectDirectory()) { KonanProject prj ->
+                prj.generateSettingsFile("include ':subproject'")
+                def subprojectDir = prj.projectPath.resolve("subproject").toFile()
+                subprojectDir.mkdirs()
+                subprojectDir.toPath().resolve("build.gradle").write("""
+                    dependencies {
+                        libs gradleApi()
+                    }
+                """.stripIndent())
+
+                prj.buildFile.append("""
+                    subprojects {
+                        apply plugin: 'konan'
+                        apply plugin: Foo
+                    }
+                    
+                    class Foo implements Plugin<Project> {
+                        void apply(Project project) {
+                            project.configurations.maybeCreate("libs")
+                        }
+                    }
+                """.stripIndent())
+            }
+
+            def result = project.createRunner().withArguments('tasks').build()
+        then:
+            result.task(':tasks').outcome == TaskOutcome.SUCCESS
+    }
+
+}
