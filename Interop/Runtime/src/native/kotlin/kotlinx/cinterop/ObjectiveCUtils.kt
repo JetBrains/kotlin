@@ -45,3 +45,14 @@ annotation class ObjCAction
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.SOURCE)
 annotation class ObjCOutlet
+
+/**
+ * Makes Kotlin subclass of Objective-C class visible for runtime lookup
+ * after Kotlin `main` function gets invoked.
+ *
+ * Note: runtime lookup can be forced even when the class is referenced statically from
+ * Objective-C source code by adding `__attribute__((objc_runtime_visible))` to its `@interface`.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+annotation class ExportObjCClass(val name: String = "")

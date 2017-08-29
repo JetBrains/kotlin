@@ -43,9 +43,9 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val nullableInteropValueTypes = listOf(ValueType.C_POINTER, ValueType.NATIVE_POINTED)
 
-    private val nativePointed = packageScope.getContributedClassifier(nativePointedName) as ClassDescriptor
+    private val nativePointed = packageScope.getContributedClass(nativePointedName)
 
-    val cPointer = this.packageScope.getContributedClassifier(cPointerName) as ClassDescriptor
+    val cPointer = this.packageScope.getContributedClass(cPointerName)
 
     val cPointerRawValue = cPointer.unsubstitutedMemberScope.getContributedVariables("rawValue").single()
 
@@ -70,7 +70,7 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val typeOf = packageScope.getContributedFunctions("typeOf").single()
 
-    val nativeMemUtils = packageScope.getContributedClassifier("nativeMemUtils") as ClassDescriptor
+    val nativeMemUtils = packageScope.getContributedClass("nativeMemUtils")
 
     private val primitives = listOf(
             builtIns.byte, builtIns.short, builtIns.int, builtIns.long,
@@ -94,8 +94,8 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val workerPackageScope = builtIns.builtInsModule.getPackage(FqName("konan.worker")).memberScope
 
-    val scheduleFunction = (workerPackageScope.getContributedClassifier("Worker") as ClassDescriptor).
-            unsubstitutedMemberScope.getContributedFunctions("schedule").single()
+    val scheduleFunction = workerPackageScope.getContributedClass("Worker")
+            .unsubstitutedMemberScope.getContributedFunctions("schedule").single()
 
     val scheduleImplFunction = workerPackageScope.getContributedFunctions("scheduleImpl").single()
 
@@ -128,8 +128,8 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
         packageScope.getContributedFunctions(name).single()
     }.toMap()
 
-    val objCObject = packageScope.getContributedClassifier("ObjCObject") as ClassDescriptor
-    val objCPointerHolder = packageScope.getContributedClassifier("ObjCPointerHolder") as ClassDescriptor
+    val objCObject = packageScope.getContributedClass("ObjCObject")
+    val objCPointerHolder = packageScope.getContributedClass("ObjCPointerHolder")
 
     val objCPointerHolderValue = objCPointerHolder.unsubstitutedMemberScope
             .getContributedDescriptors().filterIsInstance<PropertyDescriptor>().single()
@@ -157,19 +157,21 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
     val objCObjectSuperInitCheck = packageScope.getContributedFunctions("superInitCheck").single()
     val objCObjectInitBy = packageScope.getContributedFunctions("initBy").single()
 
-    val objCAction = packageScope.getContributedClassifier("ObjCAction") as ClassDescriptor
+    val objCAction = packageScope.getContributedClass("ObjCAction")
 
-    val objCOutlet = packageScope.getContributedClassifier("ObjCOutlet") as ClassDescriptor
+    val objCOutlet = packageScope.getContributedClass("ObjCOutlet")
 
-    val objCMethodImp = packageScope.getContributedClassifier("ObjCMethodImp") as ClassDescriptor
+    val objCMethodImp = packageScope.getContributedClass("ObjCMethodImp")
+
+    val exportObjCClass = packageScope.getContributedClass("ExportObjCClass")
 
 }
 
 private fun MemberScope.getContributedVariables(name: String) =
         this.getContributedVariables(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
 
-private fun MemberScope.getContributedClassifier(name: String) =
-        this.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
+private fun MemberScope.getContributedClass(name: String): ClassDescriptor =
+        this.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BUILTINS) as ClassDescriptor
 
 private fun MemberScope.getContributedFunctions(name: String) =
         this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)

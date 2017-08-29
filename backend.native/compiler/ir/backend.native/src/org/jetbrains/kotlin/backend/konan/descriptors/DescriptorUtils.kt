@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
+import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
@@ -310,9 +311,11 @@ internal val FunctionDescriptor.needsInlining: Boolean
 internal val FunctionDescriptor.needsSerializedIr: Boolean 
     get() = (this.needsInlining && this.isExported())
 
-fun AnnotationDescriptor.getStringValue(name: String): String {
-    val constantValue = this.allValueArguments.entries.single {
+fun AnnotationDescriptor.getStringValueOrNull(name: String): String? {
+    val constantValue = this.allValueArguments.entries.atMostOne {
         it.key.asString() == name
-    }.value
-    return constantValue.value as String
+    }?.value
+    return constantValue?.value as String?
 }
+
+fun AnnotationDescriptor.getStringValue(name: String): String = this.getStringValueOrNull(name)!!

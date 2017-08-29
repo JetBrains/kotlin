@@ -61,9 +61,14 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
 
     lateinit var currentFile: IrFile
 
+    private val topLevelInitializers = mutableListOf<IrExpression>()
+
     override fun lower(irFile: IrFile) {
         currentFile = irFile
         irFile.transformChildrenVoid(this)
+
+        topLevelInitializers.forEach { irFile.addTopLevelInitializer(it) }
+        topLevelInitializers.clear()
     }
 
     private fun IrBuilderWithScope.callAlloc(classSymbol: IrClassSymbol): IrExpression {
@@ -119,6 +124,11 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
                 else -> null
             }
         }.let { irClass.declarations.addAll(it) }
+
+        if (irClass.descriptor.annotations.hasAnnotation(interop.exportObjCClass.fqNameSafe)) {
+            val irBuilder = context.createIrBuilder(currentFile.symbol).at(irClass)
+            topLevelInitializers.add(irBuilder.getObjCClass(irClass.symbol))
+        }
     }
 
     private fun generateActionImp(function: IrSimpleFunction): IrSimpleFunction {

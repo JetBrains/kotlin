@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ObjCMethodInfo
 import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
+import org.jetbrains.kotlin.backend.konan.descriptors.getStringValueOrNull
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -49,11 +50,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         val bodySize =
                 LLVMStoreSizeOfType(llvmTargetData, context.llvmDeclarations.forClass(descriptor).bodyType).toInt()
 
-        val className = if (descriptor.isExported()) {
-            staticData.cStringLiteral(descriptor.fqNameSafe.asString())
-        } else {
-            NullPointer(int8Type) // Generate as anonymous.
-        }
+        val className = selectClassName(descriptor)?.let { staticData.cStringLiteral(it) } ?: NullPointer(int8Type)
 
         val info = Struct(runtime.kotlinObjCClassInfo,
                 className,
@@ -81,6 +78,19 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
 
         objCLLvmDeclarations.classPointerGlobal.setInitializer(NullPointer(int8Type))
         objCLLvmDeclarations.bodyOffsetGlobal.setInitializer(Int32(0))
+    }
+
+    private fun selectClassName(descriptor: ClassDescriptor): String? {
+        val exportObjCClassAnnotation =
+                descriptor.annotations.findAnnotation(context.interopBuiltIns.exportObjCClass.fqNameSafe)
+
+        return if (exportObjCClassAnnotation != null) {
+            exportObjCClassAnnotation.getStringValueOrNull("name") ?: descriptor.name.asString()
+        } else if (descriptor.isExported()) {
+            descriptor.fqNameSafe.asString()
+        } else {
+            null // Generate as anonymous.
+        }
     }
 
     private fun createMethodDesc(selector: String, encoding: String, imp: ConstPointer) = Struct(
