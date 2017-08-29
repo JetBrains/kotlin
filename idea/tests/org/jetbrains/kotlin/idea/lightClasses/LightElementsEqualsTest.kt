@@ -67,7 +67,7 @@ class LightElementsEqualsTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testToLightMethodsConvertedEquality() {
         myFixture.configureByText("a.kt", SAMPLE_SOURCE)
 
-        val theAPsiClass = myFixture.javaFacade.findClass("A")
+        val theAPsiClass = myFixture.javaFacade.findClass("A")!!
 
         val directlyFlattenMethods = theAPsiClass.methods.asSequence().flatMap { psiElementsFlatten(it) }
         val contentOfToLightMethods = (theAPsiClass as KtLightClass).kotlinOrigin!!.declarations.asSequence()
