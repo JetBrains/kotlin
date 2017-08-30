@@ -22,14 +22,12 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainerFactory
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
+import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
@@ -47,7 +45,7 @@ class AddReflectionQuickFix(element: KtElement)
     override fun getFamilyName() = text
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect",
-                                                                                       AddKotlinLibQuickFix.getKotlinStdlibVersion(module))
+                                                                                       getRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType(::AddReflectionQuickFix)
@@ -61,7 +59,7 @@ class AddTestLibQuickFix(element: KtElement)
     override fun getFamilyName() = text
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-test",
-                                                                                       AddKotlinLibQuickFix.getKotlinStdlibVersion(module))
+                                                                                       getRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
 
     companion object : KotlinSingleIntentionActionFactory() {
         val KOTLIN_TEST_UNRESOLVED = setOf(
@@ -121,39 +119,5 @@ abstract class AddKotlinLibQuickFix(element: KtElement,
 
         val configurator = findApplicableConfigurator(module)
         configurator.addLibraryDependency(module, element, getLibraryDescriptor(module), libraryJarDescriptors)
-    }
-
-    companion object {
-        fun getKotlinStdlibVersion(module: Module): String {
-            if (KotlinPluginUtil.isMavenModule(module)) {
-                val mavenVersion = getMavenKotlinStdlibVersion(module)
-                if (mavenVersion != null) {
-                    return mavenVersion
-                }
-            }
-            else if (KotlinPluginUtil.isGradleModule(module) || KotlinPluginUtil.isAndroidGradleModule(module)) {
-                val gradleVersion = KotlinWithGradleConfigurator.getKotlinStdlibVersion(module)
-                if (gradleVersion != null) {
-                    return gradleVersion
-                }
-            }
-
-            val pluginVersion = bundledRuntimeVersion()
-            if ("@snapshot@" == pluginVersion) {
-                return "1.1-SNAPSHOT"
-            }
-            return pluginVersion
-        }
-
-        fun getMavenKotlinStdlibVersion(module: Module): String? {
-            LibrariesContainerFactory.createContainer(module).allLibraries.forEach { library ->
-                val libName = library.name
-                if (libName != null && libName.contains("org.jetbrains.kotlin:kotlin-stdlib")) {
-                    return libName.substringAfterLast(":")
-                }
-            }
-
-            return null
-        }
     }
 }

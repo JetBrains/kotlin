@@ -13,6 +13,9 @@ buildscript {
 
 apply plugin: 'kotlin'
 
+repositories {
+    mavenCentral()
+}
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
 }
