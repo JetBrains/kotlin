@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.*
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
@@ -131,29 +129,7 @@ class LocalVariableResolver(
         modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(ktProperty, descriptor)
         identifierChecker.checkDeclaration(ktProperty, context.trace)
 
-        checkLocalVariableLateinit(context.trace, descriptor, ktProperty)
-    }
-
-    private fun checkLocalVariableLateinit(trace: BindingTrace, descriptor: VariableDescriptor, ktProperty: KtProperty) {
-        val modifierList = ktProperty.modifierList ?: return
-        val modifier = modifierList.getModifier(KtTokens.LATEINIT_KEYWORD) ?: return
-        val returnType = descriptor.type
-
-        if (!descriptor.isVar) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is allowed only on mutable local variables"))
-        }
-
-        if (TypeUtils.isNullableType(returnType)) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on local variables of nullable types"))
-        }
-
-        if (KotlinBuiltIns.isPrimitiveType(returnType)) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on local variables of primitive types"))
-        }
-
-        if (ktProperty.hasDelegateExpressionOrInitializer()) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on variables with initializer or on local delegated properties"))
-        }
+        LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(context.trace, ktProperty, descriptor)
     }
 
     private fun resolveLocalVariableDescriptor(
