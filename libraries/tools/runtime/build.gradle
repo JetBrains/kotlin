@@ -10,17 +10,19 @@ dependencies {
 }
 
 sourceSets {
-    if(!System.properties.'idea.active')
     main {
-        java {
-            srcDir "${rootDir}/core/builtins/src"
-            srcDir "${rootDir}/core/runtime.jvm/src"
-            exclude 'org/jetbrains/annotations/**'
-        }
-        kotlin {
-            exclude 'org/jetbrains/annotations/**'
+        if(!System.properties.'idea.active') {
+            java {
+                srcDir "${rootDir}/core/builtins/src"
+                srcDir "${rootDir}/core/runtime.jvm/src"
+                exclude 'org/jetbrains/annotations/**'
+            }
+            kotlin {
+                exclude 'org/jetbrains/annotations/**'
+            }
         }
     }
+
 }
 
 jar {
