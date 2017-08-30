@@ -56,7 +56,7 @@ Kotlin.isArrayish = function (a) {
 
 Kotlin.arrayToString = function (a) {
     var toString = Kotlin.isCharArray(a) ? String.fromCharCode : Kotlin.toString;
-    return "[" + Array.prototype.map.call(a, toString).join(", ") + "]";
+    return "[" + Array.prototype.map.call(a, function(e) { return toString(e); }).join(", ") + "]";
 };
 
 Kotlin.arrayDeepToString = function (a, visited) {
