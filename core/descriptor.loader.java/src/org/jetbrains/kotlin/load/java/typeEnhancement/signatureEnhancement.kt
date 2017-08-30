@@ -36,11 +36,12 @@ import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
-import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.unwrapEnhancement
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
@@ -76,11 +77,13 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             else -> {
                 val forWarning = annotationTypeQualifierResolver.jsr305State.isWarning()
 
-                annotationTypeQualifierResolver
-                        .resolveTypeQualifierAnnotation(annotationDescriptor)
-                        ?.takeIf { it.fqName == JAVAX_NONNULL_ANNOTATION }
-                        ?.extractNullabilityTypeFromArgument()
-                        ?.copy(isForWarningOnly = forWarning)
+                val typeQualifierAnnotation =
+                        annotationTypeQualifierResolver.resolveTypeQualifierAnnotation(annotationDescriptor)
+                        ?: return null
+
+                // resolveTypeQualifierAnnotation guarantees that `typeQualifierAnnotation` is javax.annotation.NonNull with argument
+                // or javax.annotation.CheckForNull without arguments
+                extractNullability(typeQualifierAnnotation)?.copy(isForWarningOnly = forWarning)
             }
         }
     }
