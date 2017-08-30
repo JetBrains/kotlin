@@ -273,7 +273,8 @@ tasks {
         dependsOn(":plugins:plugins-tests:test",
                   ":plugins:kapt3:test",
                   ":kotlin-source-sections-compiler-plugin:test",
-                  ":plugins:uast-kotlin:test")
+                  ":plugins:uast-kotlin:test",
+                  ":kotlin-annotation-processing")
     }
 
     "scripting-tests" {
