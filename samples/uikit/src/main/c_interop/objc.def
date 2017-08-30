@@ -1,0 +1,4 @@
+headers = Foundation/Foundation.h UIKit/UIKit.h
+headerFilter = Foundation/** UIKit/**
+language = Objective-C
+linkerOpts = -framework Foundation -framework UIKit

@@ -13,4 +13,5 @@ include ':concurrent'
 // of other samples if SDK is not present.
 //include ':androidNativeActivity'
 include ':objc'
+include ':uikit'
 includeBuild '../'
