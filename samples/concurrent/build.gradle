@@ -14,10 +14,15 @@ konanArtifacts {
 }
 
 task compileCpp(type: Exec) {
+    dependsOn 'downloadKonanCompiler'
     workingDir project.getProjectDir()
     commandLine './buildCpp.sh'
 }
 
 compileKonanMessageChannel {
     dependsOn 'compileCpp'
+}
+
+downloadKonanCompiler {
+    downloadDependencies = true
 }

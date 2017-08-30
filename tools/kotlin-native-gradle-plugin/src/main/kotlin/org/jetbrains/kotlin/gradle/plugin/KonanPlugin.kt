@@ -60,12 +60,6 @@ internal val Project.konanDefaultSrcFiles         get() = fileTree("${projectDir
 internal fun Project.konanDefaultDefFile(libName: String)
         = file("${projectDir.canonicalPath}/src/main/c_interop/$libName.def")
 
-internal val Project.konanInteropClasspath
-    get() = project.fileTree("${project.konanHome}/konan/lib/").apply { include("*.jar")  }
-
-internal val Project.konanCompilerClasspath
-    get() = project.fileTree("${project.konanHome}/konan/lib/").apply { include("*.jar")  }
-
 @Suppress("UNCHECKED_CAST")
 internal val Project.konanArtifactsContainer: NamedDomainObjectContainer<KonanCompileConfig>
     get() = extensions.getByName(KonanPlugin.ARTIFACTS_CONTAINER_NAME) as NamedDomainObjectContainer<KonanCompileConfig>

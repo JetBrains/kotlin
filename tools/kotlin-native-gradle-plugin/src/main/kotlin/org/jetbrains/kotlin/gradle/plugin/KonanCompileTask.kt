@@ -29,13 +29,6 @@ import java.io.File
  */
 open class KonanCompileTask: KonanTargetableTask() {
 
-    companion object {
-        const val COMPILER_MAIN = "org.jetbrains.kotlin.cli.bc.K2NativeKt"
-    }
-
-    val COMPILER_JVM_ARGS: List<String>
-        @Internal get() = listOf("-Dkonan.home=${project.konanHome}", "-Djava.library.path=${project.konanHome}/konan/nativelib")
-
     // Output artifact --------------------------------------------------------
 
     internal lateinit var artifactName: String
@@ -146,14 +139,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         if (dumpParameters) dumpProperties(this@KonanCompileTask)
 
         // TODO: Use compiler service.
-        project.javaexec {
-            with(it) {
-                main = COMPILER_MAIN
-                classpath = project.konanCompilerClasspath
-                jvmArgs(COMPILER_JVM_ARGS)
-                args(buildArgs().apply { logger.info("Compiler args: ${this.joinToString(separator = " ")}") })
-            }
-        }
+        KonanCompilerRunner(project).run(buildArgs())
     }
 }
 

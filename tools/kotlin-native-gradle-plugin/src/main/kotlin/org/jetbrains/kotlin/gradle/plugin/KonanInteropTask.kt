@@ -29,18 +29,11 @@ import java.io.File
  */
 open class KonanInteropTask: KonanTargetableTask() {
 
-    internal companion object {
-        const val INTEROP_MAIN = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
-    }
-
     internal fun init(libName: String) {
         dependsOn(project.konanCompilerDownloadTask)
         this.libName = libName
         this.defFile = project.konanDefaultDefFile(libName)
     }
-
-    internal val INTEROP_JVM_ARGS: List<String>
-        @Internal get() = listOf("-Dkonan.home=${project.konanHome}", "-Djava.library.path=${project.konanHome}/konan/nativelib")
 
     // Output directories -----------------------------------------------------
 
@@ -82,21 +75,7 @@ open class KonanInteropTask: KonanTargetableTask() {
     @TaskAction
     fun exec() {
         if (dumpParameters) dumpProperties(this@KonanInteropTask)
-
-        project.javaexec {
-            with(it) {
-                main = INTEROP_MAIN
-                classpath = project.konanInteropClasspath
-                jvmArgs(INTEROP_JVM_ARGS)
-                environment("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
-                // TODO: remove this hack.
-                if (project.host == "mingw") {
-                    environment("PATH", "${project.konanHome}\\dependencies\\msys2-mingw-w64-x86_64-gcc-6.3.0-clang-llvm-3.9.1-windows-x86-64\\bin;${System.getenv("PATH")}")
-                }
-
-                args(buildArgs().apply { logger.info("Interop args: ${this.joinToString(separator = " ")}") })
-            }
-        }
+        KonanInteropRunner(project).run(buildArgs())
     }
 
     protected fun buildArgs() = mutableListOf<String>().apply {
