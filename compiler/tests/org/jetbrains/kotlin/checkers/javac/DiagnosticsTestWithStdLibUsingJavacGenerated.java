@@ -78,6 +78,12 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         doTest(fileName);
     }
 
+    @TestMetadata("hugeUnresolvedKotlinxHtml.kt")
+    public void testHugeUnresolvedKotlinxHtml() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/hugeUnresolvedKotlinxHtml.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ifElseJavaList.kt")
     public void testIfElseJavaList() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/ifElseJavaList.kt");
