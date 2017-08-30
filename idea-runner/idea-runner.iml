@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="idea" scope="PROVIDED" />
     <orderEntry type="module" module-name="idea-maven" />
     <orderEntry type="module" module-name="idea-gradle" />
+    <orderEntry type="module" module-name="idea-jvm" />
   </component>
 </module>

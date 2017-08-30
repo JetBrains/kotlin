@@ -25,8 +25,6 @@
     <orderEntry type="module" module-name="cli-common" />
     <orderEntry type="library" name="idea-full" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="intellilang-plugin" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="junit-plugin" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="testng-plugin" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="copyright-plugin" level="project" />
     <orderEntry type="module" module-name="j2k" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
@@ -37,7 +35,6 @@
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
     <orderEntry type="module" module-name="js.frontend" />
-    <orderEntry type="library" scope="PROVIDED" name="coverage-plugin" level="project" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="android-extensions-compiler" scope="TEST" />
     <orderEntry type="module" module-name="android-extensions-idea" scope="TEST" />
@@ -53,7 +50,6 @@
     <orderEntry type="module" module-name="lint-idea" scope="PROVIDED" />
     <orderEntry type="module" module-name="uast-kotlin" scope="PROVIDED" />
     <orderEntry type="module" module-name="uast-kotlin-idea" scope="PROVIDED" />
-    <orderEntry type="library" name="java-decompiler-plugin" level="project" />
     <orderEntry type="module" module-name="formatter" />
     <orderEntry type="library" scope="TEST" name="native-platform-uberjar" level="project" />
     <orderEntry type="module" module-name="allopen-ide" scope="TEST" />
