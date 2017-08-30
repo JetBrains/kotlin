@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -75,10 +74,10 @@ class CallCompleter(
         // it's completed when the outer (variable as function call) is completed
         if (!isInvokeCallOnVariable(context.call)) {
             val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a resulting call")
+            val contextWithTemporaryTrace = context.replaceBindingTrace(temporaryTrace)
 
-            completeResolvedCallAndArguments(resolvedCall, results, context.replaceBindingTrace(temporaryTrace), tracing)
-
-            completeAllCandidates(context, results)
+            completeResolvedCallAndArguments(resolvedCall, results, contextWithTemporaryTrace, tracing)
+            completeAllCandidates(contextWithTemporaryTrace, results)
 
             temporaryTrace.commit()
         }
@@ -120,10 +119,10 @@ class CallCompleter(
             results.resultingCalls
         }) as Collection<MutableResolvedCall<D>>
 
+        val temporaryBindingTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a candidate that is not a resulting call")
         candidates.filterNot { resolvedCall -> resolvedCall.isCompleted }.forEach {
             resolvedCall ->
 
-            val temporaryBindingTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a candidate that is not a resulting call")
             completeResolvedCallAndArguments(resolvedCall, results, context.replaceBindingTrace(temporaryBindingTrace), TracingStrategy.EMPTY)
         }
     }

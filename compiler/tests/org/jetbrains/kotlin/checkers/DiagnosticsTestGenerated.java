@@ -18123,6 +18123,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("manyInapplicableCandidatesWithLambdas.kt")
+                public void testManyInapplicableCandidatesWithLambdas() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/nestedCalls/manyInapplicableCandidatesWithLambdas.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("twoTypeParameters.kt")
                 public void testTwoTypeParameters() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/nestedCalls/twoTypeParameters.kt");
