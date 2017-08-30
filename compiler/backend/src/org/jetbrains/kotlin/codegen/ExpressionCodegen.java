@@ -435,11 +435,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return CodegenUtilKt.asmType(expression, typeMapper, bindingContext);
     }
 
-    @Nullable
-    private KotlinType expressionJetType(@Nullable KtExpression expression) {
-        return CodegenUtilKt.kotlinType(expression, bindingContext);
-    }
-
     @Override
     public StackValue visitParenthesizedExpression(@NotNull KtParenthesizedExpression expression, StackValue receiver) {
         return genQualified(receiver, expression.getExpression());
