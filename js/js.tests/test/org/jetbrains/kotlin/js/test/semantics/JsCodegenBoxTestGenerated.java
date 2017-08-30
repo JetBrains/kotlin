@@ -16309,6 +16309,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
 
+            @TestMetadata("openSuspendFun.kt")
+            public void testOpenSuspendFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/annotations/openSuspendFun.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
             @TestMetadata("privateAnnotation.kt")
             public void testPrivateAnnotation() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/annotations/privateAnnotation.kt");
@@ -18394,6 +18406,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("memberProperty.kt")
             public void testMemberProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/memberProperty.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("openSuspendFun.kt")
+            public void testOpenSuspendFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/openSuspendFun.kt");
                 try {
                     doTest(fileName);
                 }
