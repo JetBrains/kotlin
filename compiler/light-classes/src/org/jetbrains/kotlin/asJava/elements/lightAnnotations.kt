@@ -67,7 +67,9 @@ class KtLightAnnotationForSourceEntry(
             val delegate: D,
             private val parent: PsiElement,
             valueOrigin: AnnotationValueOrigin
-    ) : PsiAnnotationMemberValue, PsiElement by delegate {
+    ) : PsiAnnotationMemberValue, PsiCompiledElement, PsiElement by delegate {
+        override fun getMirror(): PsiElement = delegate
+
         val originalExpression: PsiElement? by lazyPub(valueOrigin)
 
         fun getConstantValue(): Any? {
@@ -81,9 +83,11 @@ class KtLightAnnotationForSourceEntry(
         override fun getReferences() = originalExpression?.references.orEmpty()
         override fun getLanguage() = KotlinLanguage.INSTANCE
         override fun getNavigationElement() = originalExpression
+        override fun isPhysical(): Boolean = originalExpression?.containingFile == kotlinOrigin.containingFile
         override fun getTextRange() = originalExpression?.textRange ?: TextRange.EMPTY_RANGE
         override fun getParent() = parent
         override fun getText() = originalExpression?.text.orEmpty()
+        override fun getContainingFile(): PsiFile? = if (isPhysical) kotlinOrigin.containingFile else delegate.containingFile
 
         override fun replace(newElement: PsiElement): PsiElement {
             val value = (newElement as? PsiLiteral)?.value as? String ?: return this
