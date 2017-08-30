@@ -80,7 +80,7 @@ include ":kotlin-build-common",
         ":plugins:kapt3",
         ":plugins:plugins-tests",
         ":kotlin-script-runtime",
-        ":kotlin-runtime",
+//        ":kotlin-runtime",
         ":kotlin-test:kotlin-test-common",
         ":kotlin-test:kotlin-test-jvm",
         ":kotlin-test:kotlin-test-junit",
@@ -124,7 +124,7 @@ include ":kotlin-build-common",
 
 rootProject.name = "kotlin"
 
-project(':kotlin-runtime').projectDir = "$rootDir/libraries/tools/runtime" as File
+//project(':kotlin-runtime').projectDir = "$rootDir/libraries/tools/runtime" as File
 project(':kotlin-script-runtime').projectDir = "$rootDir/libraries/tools/script-runtime" as File
 project(':kotlin-test:kotlin-test-common').projectDir = "$rootDir/libraries/kotlin.test/common" as File
 project(':kotlin-test:kotlin-test-jvm').projectDir = "$rootDir/libraries/kotlin.test/jvm" as File

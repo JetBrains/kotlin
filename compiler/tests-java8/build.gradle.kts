@@ -18,7 +18,6 @@ dependencies {
     // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
     testCompile(projectDist(":kotlin-stdlib"))
     testCompile(projectDist(":kotlin-script-runtime"))
-    testCompile(projectDist(":kotlin-runtime"))
     testCompile(projectDist(":kotlin-reflect"))
     testCompile(projectTests(":compiler"))
     testRuntime(projectDist(":kotlin-preloader"))

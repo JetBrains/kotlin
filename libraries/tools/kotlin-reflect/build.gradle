@@ -27,12 +27,6 @@ sourceSets {
     main {
         java {
             srcDir annotationsSrc
-            srcDir "${core}/descriptor.loader.java/src"
-            srcDir "${core}/descriptors/src"
-            srcDir "${core}/descriptors.runtime/src"
-            srcDir "${core}/deserialization/src"
-            srcDir "${core}/util.runtime/src"
-
             srcDir "${core}/reflection.jvm/src"
         }
     }
@@ -40,13 +34,15 @@ sourceSets {
 
 configurations {
     proguardDeps
-    shadows
+    shadows { transitive = false }
     compileOnly.extendsFrom(shadows)
     mainJar
 }
 
 dependencies {
     proguardDeps project(':kotlin-stdlib')
+    shadows project(':core:util.runtime')
+    shadows project(':core')
     shadows 'javax.inject:javax.inject:1'
     shadows project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
 

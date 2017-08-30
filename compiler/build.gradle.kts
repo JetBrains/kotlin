@@ -20,7 +20,6 @@ val testDistProjects = listOf(
         "", // for root project
         ":prepare:mock-runtime-for-test",
         ":kotlin-compiler",
-        ":kotlin-runtime",
         ":kotlin-script-runtime",
         ":kotlin-stdlib",
         ":kotlin-stdlib-jre7",
