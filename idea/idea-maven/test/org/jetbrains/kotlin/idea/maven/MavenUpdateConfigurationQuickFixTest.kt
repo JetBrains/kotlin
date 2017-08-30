@@ -29,7 +29,7 @@ import org.junit.Test
 import java.io.File
 import kotlin.reflect.KMutableProperty0
 
-class MavenLanguageFeatureQuickFixTest : MavenImportingTestCase() {
+class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
     private lateinit var codeInsightTestFixture: CodeInsightTestFixture
 
     fun getTestDataPath() = KotlinTestUtils.getHomeDirectory() + "/idea/idea-maven/testData/languageFeature/" + getTestName(true).substringBefore('_')
@@ -64,6 +64,10 @@ class MavenLanguageFeatureQuickFixTest : MavenImportingTestCase() {
 
     @Test fun testEnableCoroutines() {
         doTest("Enable coroutine support in the current module")
+    }
+
+    @Test fun testAddKotlinReflect() {
+        doTest("Add kotlin-reflect.jar to the classpath")
     }
 
     private fun doTest(intentionName: String) {

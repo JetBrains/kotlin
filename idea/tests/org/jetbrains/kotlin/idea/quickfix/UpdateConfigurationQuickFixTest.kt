@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
@@ -38,7 +39,7 @@ import org.jetbrains.kotlin.idea.test.configureKotlinFacet
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import java.io.File
 
-class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
+class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
     fun testEnableCoroutines() {
         configureRuntime("mockRuntime11")
         resetProjectSettings(LanguageVersion.KOTLIN_1_1)
@@ -148,10 +149,26 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
         assertEquals(bundledRuntimeVersion(), getRuntimeLibraryVersion(myFixture.module))
     }
 
+    fun testAddKotlinReflect() {
+        configureRuntime("mockRuntime11")
+        myFixture.configureByText("foo.kt", """class Foo(val prop: Any) {
+                fun func() {}
+            }
+
+            fun y01() = Foo::prop.gett<caret>er
+            """)
+        myFixture.launchAction(myFixture.findSingleIntention("Add kotlin-reflect.jar to the classpath"))
+        val kotlinRuntime = KotlinJavaModuleConfigurator.instance.getKotlinLibrary(myModule)!!
+        val classes = kotlinRuntime.getFiles(OrderRootType.CLASSES).map { it.name }
+        assertContainsElements(classes, "kotlin-reflect.jar")
+        val sources = kotlinRuntime.getFiles(OrderRootType.SOURCES)
+        assertContainsElements(sources.map { it.name }, "kotlin-reflect-sources.jar")
+    }
+
     private fun configureRuntime(path: String) {
-        val name = if (path == "mockRuntime106") "kotlin-runtime" else "kotlin-stdlib"
-        val tempFile = FileUtil.createTempFile(name, ".jar")
-        FileUtil.copy(File("idea/testData/configuration/$path/$name.jar"), tempFile)
+        val name = if (path == "mockRuntime106") "kotlin-runtime.jar" else "kotlin-stdlib.jar"
+        val tempFile = File(FileUtil.createTempDirectory("kotlin-update-configuration", null), name)
+        FileUtil.copy(File("idea/testData/configuration/$path/$name"), tempFile)
         val tempVFile = LocalFileSystem.getInstance().findFileByIoFile(tempFile)!!
 
         updateModel(myFixture.module) { model ->
