@@ -79,15 +79,58 @@ class DoubleMathTest {
     @Test fun hyperbolic() {
         assertEquals(Double.POSITIVE_INFINITY, sinh(Double.POSITIVE_INFINITY))
         assertEquals(Double.NEGATIVE_INFINITY, sinh(Double.NEGATIVE_INFINITY))
+        assertTrue(sinh(Double.MIN_VALUE) != 0.0)
+        assertTrue(sinh(710.0).isFinite())
+        assertTrue(sinh(-710.0).isFinite())
         assertTrue(sinh(Double.NaN).isNaN())
 
         assertEquals(Double.POSITIVE_INFINITY, cosh(Double.POSITIVE_INFINITY))
         assertEquals(Double.POSITIVE_INFINITY, cosh(Double.NEGATIVE_INFINITY))
+        assertTrue(cosh(710.0).isFinite())
+        assertTrue(cosh(-710.0).isFinite())
         assertTrue(cosh(Double.NaN).isNaN())
 
         assertAlmostEquals(1.0, tanh(Double.POSITIVE_INFINITY))
         assertAlmostEquals(-1.0, tanh(Double.NEGATIVE_INFINITY))
+        assertTrue(tanh(Double.MIN_VALUE) != 0.0)
         assertTrue(tanh(Double.NaN).isNaN())
+    }
+
+    @Test fun inverseHyperbolicSin() {
+        for (exact in listOf(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0, Double.MIN_VALUE, -Double.MIN_VALUE, 0.00001)) {
+            assertEquals(exact, asinh(sinh(exact)))
+        }
+        for (approx in listOf(Double.MIN_VALUE, 0.1, 1.0, 100.0, 710.0)) {
+            assertAlmostEquals(approx, asinh(sinh(approx)))
+            assertAlmostEquals(-approx, asinh(sinh(-approx)))
+        }
+        assertTrue(asinh(Double.NaN).isNaN())
+    }
+
+    @Test fun inverseHyperbolicCos() {
+        for (exact in listOf(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0)) {
+            assertEquals(abs(exact), acosh(cosh(exact)))
+        }
+        for (approx in listOf(Double.MIN_VALUE, 0.00001, 1.0, 100.0, 710.0)) {
+            assertAlmostEquals(approx, acosh(cosh(approx)))
+            assertAlmostEquals(approx, acosh(cosh(-approx)))
+        }
+        for (invalid in listOf(-1.0, 0.0, 0.99999, Double.NaN)) {
+            assertTrue(acosh(invalid).isNaN())
+        }
+    }
+
+    @Test fun inverseHyperbolicTan() {
+        for (exact in listOf(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0, Double.MIN_VALUE, -Double.MIN_VALUE)) {
+            assertEquals(exact, atanh(tanh(exact)))
+        }
+        for (approx in listOf(0.00001)) {
+            assertAlmostEquals(approx, atanh(tanh(approx)))
+        }
+
+        for (invalid in listOf(-1.00001, 1.00001, Double.NaN, Double.MAX_VALUE, -Double.MAX_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)) {
+            assertTrue(atanh(invalid).isNaN())
+        }
     }
 
     @Test fun powers() {
@@ -117,6 +160,8 @@ class DoubleMathTest {
         assertEquals(Double.POSITIVE_INFINITY, exp(Double.POSITIVE_INFINITY))
 
         assertEquals(0.0, expm1(0.0))
+        assertEquals(Double.MIN_VALUE, expm1(Double.MIN_VALUE))
+        assertEquals(0.00010000500016667084, expm1(1e-4))
         assertEquals(-1.0, expm1(Double.NEGATIVE_INFINITY))
         assertEquals(Double.POSITIVE_INFINITY, expm1(Double.POSITIVE_INFINITY))
     }
@@ -151,6 +196,8 @@ class DoubleMathTest {
         assertTrue(ln1p(Double.NaN).isNaN())
         assertTrue(ln1p(-1.1).isNaN())
         assertEquals(0.0, ln1p(0.0))
+        assertEquals(9.999995000003334e-7, ln1p(1e-6))
+        assertEquals(Double.MIN_VALUE, ln1p(Double.MIN_VALUE))
         assertEquals(Double.NEGATIVE_INFINITY, ln1p(-1.0))
     }
 
@@ -323,15 +370,59 @@ class FloatMathTest {
     @Test fun hyperbolic() {
         assertEquals(Float.POSITIVE_INFINITY, sinh(Float.POSITIVE_INFINITY))
         assertEquals(Float.NEGATIVE_INFINITY, sinh(Float.NEGATIVE_INFINITY))
+        assertTrue(sinh(Float.MIN_VALUE) != 0.0F)
+        assertTrue(sinh(89.0F).isFinite())
+        assertTrue(sinh(-89.0F).isFinite())
         assertTrue(sinh(Float.NaN).isNaN())
 
         assertEquals(Float.POSITIVE_INFINITY, cosh(Float.POSITIVE_INFINITY))
         assertEquals(Float.POSITIVE_INFINITY, cosh(Float.NEGATIVE_INFINITY))
+        assertTrue(cosh(89.0F).isFinite())
+        assertTrue(cosh(-89.0F).isFinite())
         assertTrue(cosh(Float.NaN).isNaN())
 
         assertAlmostEquals(1.0F, tanh(Float.POSITIVE_INFINITY))
         assertAlmostEquals(-1.0F, tanh(Float.NEGATIVE_INFINITY))
+        assertTrue(tanh(Float.MIN_VALUE) != 0.0F)
         assertTrue(tanh(Float.NaN).isNaN())
+    }
+
+    @Test fun inverseHyperbolicSin() {
+        for (exact in listOf(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 0.0F, Float.MIN_VALUE, -Float.MIN_VALUE, 0.00001F)) {
+            assertEquals(exact, asinh(sinh(exact)))
+        }
+        for (approx in listOf(Float.MIN_VALUE, 0.1F, 1.0F, 89.0F)) {
+            assertAlmostEquals(approx, asinh(sinh(approx)))
+            assertAlmostEquals(-approx, asinh(sinh(-approx)))
+        }
+        assertTrue(asinh(Float.NaN).isNaN())
+    }
+
+    @Test fun inverseHyperbolicCos() {
+        for (exact in listOf(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 0.0F)) {
+            assertEquals(abs(exact), acosh(cosh(exact)))
+        }
+        for (approx in listOf(Float.MIN_VALUE, 0.1F, 1.0F, 89.0F)) {
+            assertAlmostEquals(approx, acosh(cosh(approx)))
+            assertAlmostEquals(approx, acosh(cosh(-approx)))
+        }
+        for (invalid in listOf(-1.0F, 0.0F, 0.99999F, Float.NaN)) {
+            assertTrue(acosh(invalid).isNaN())
+        }
+    }
+
+    @Test fun inverseHyperbolicTan() {
+        for (exact in listOf(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 0.0F, Float.MIN_VALUE, -Float.MIN_VALUE)) {
+            assertEquals(exact, atanh(tanh(exact)))
+        }
+
+        for (approx in listOf(0.00001F)) {
+            assertAlmostEquals(approx, atanh(tanh(approx)))
+        }
+
+        for (invalid in listOf(-1.00001F, 1.00001F, Float.NaN, Float.MAX_VALUE, -Float.MAX_VALUE, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY)) {
+            assertTrue(atanh(invalid).isNaN())
+        }
     }
 
     @Test fun powers() {

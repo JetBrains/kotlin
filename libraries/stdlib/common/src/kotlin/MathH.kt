@@ -141,6 +141,49 @@ public header fun cosh(a: Double): Double
 public header fun tanh(a: Double): Double
 
 /**
+ * Computes the inverse hyperbolic sine of the value [a].
+ *
+ * The returned value is `x` such that `sinh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `asinh(NaN)` is `NaN`
+ *     - `asinh(+Inf)` is `+Inf`
+ *     - `asinh(-Inf)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+public header fun asinh(a: Double): Double
+
+/**
+ * Computes the inverse hyperbolic cosine of the value [a].
+ *
+ * The returned value is positive `x` such that `cosh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `acosh(NaN)` is `NaN`
+ *     - `acosh(x)` is `NaN` when `x < 1`
+ *     - `acosh(+Inf)` is `+Inf`
+ */
+@SinceKotlin("1.2")
+public header fun acosh(a: Double): Double
+
+/**
+ * Computes the inverse hyperbolic tangent of the value [a].
+ *
+ * The returned value is `x` such that `tanh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `tanh(NaN)` is `NaN`
+ *     - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *     - `tanh(1.0)` is `+Inf`
+ *     - `tanh(-1.0)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+public header fun atanh(a: Double): Double
+
+/**
  * Computes `sqrt(x^2 + y^2)` without intermediate overflow or underflow.
  *
  * Special cases:
@@ -526,6 +569,49 @@ public header fun cosh(a: Float): Float
  */
 @SinceKotlin("1.2")
 public header fun tanh(a: Float): Float
+
+/**
+ * Computes the inverse hyperbolic sine of the value [a].
+ *
+ * The returned value is `x` such that `sinh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `asinh(NaN)` is `NaN`
+ *     - `asinh(+Inf)` is `+Inf`
+ *     - `asinh(-Inf)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+public header fun asinh(a: Float): Float
+
+/**
+ * Computes the inverse hyperbolic cosine of the value [a].
+ *
+ * The returned value is positive `x` such that `cosh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `acosh(NaN)` is `NaN`
+ *     - `acosh(x)` is `NaN` when `x < 1`
+ *     - `acosh(+Inf)` is `+Inf`
+ */
+@SinceKotlin("1.2")
+public header fun acosh(a: Float): Float
+
+/**
+ * Computes the inverse hyperbolic tangent of the value [a].
+ *
+ * The returned value is `x` such that `tanh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `tanh(NaN)` is `NaN`
+ *     - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *     - `tanh(1.0)` is `+Inf`
+ *     - `tanh(-1.0)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+public header fun atanh(a: Float): Float
 
 /**
  * Computes `sqrt(x^2 + y^2)` without intermediate overflow or underflow.

@@ -2024,6 +2024,9 @@ public final class kotlin/io/TextStreamsKt {
 public final class kotlin/math/MathKt {
 	public static final field E D
 	public static final field PI D
+	public static final fun acosh (D)D
+	public static final fun asinh (D)D
+	public static final fun atanh (D)D
 	public static final fun getSign (I)I
 	public static final fun getSign (J)I
 	public static final fun log (DD)D
