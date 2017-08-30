@@ -45,6 +45,7 @@ class IrExpressionTranslationVisitor(private val context: IrTranslationContext) 
             return intrinsic.apply(context, expression, dispatchReceiver, extensionReceiver, arguments)
         }
 
+        val superQualifier = expression.superQualifier
         val isLocallyAvailableProperty =
                 function is PropertyAccessorDescriptor &&
                 DescriptorUtils.isTopLevelDeclaration(function.correspondingProperty) &&
@@ -54,6 +55,14 @@ class IrExpressionTranslationVisitor(private val context: IrTranslationContext) 
             when (function) {
                 is PropertyGetterDescriptor -> {
                     return when {
+                        superQualifier != null -> {
+                            val jsQualifier = context.translateAsTypeReference(superQualifier)
+                            val name = context.naming.names[function.correspondingProperty]
+                            buildJs {
+                                "Kotlin".dotPure("callGetter")
+                                        .invoke(dispatchReceiver!!, jsQualifier.dotPrototype(), name.ident.str())
+                            }
+                        }
                         dispatchReceiver != null -> {
                             JsNameRef(context.naming.names[function.correspondingProperty], dispatchReceiver)
                         }
@@ -64,6 +73,14 @@ class IrExpressionTranslationVisitor(private val context: IrTranslationContext) 
                 }
                 is PropertySetterDescriptor -> {
                     val statement = when {
+                        superQualifier != null -> {
+                            val jsQualifier = context.translateAsTypeReference(superQualifier)
+                            val name = context.naming.names[function.correspondingProperty]
+                            buildJs {
+                                "Kotlin".dotPure("callSetter")
+                                        .invoke(dispatchReceiver!!, jsQualifier.dotPrototype(), name.ident.str(), arguments[0])
+                            }
+                        }
                         dispatchReceiver != null -> {
                             buildJs {
                                 dispatchReceiver.dot(context.naming.names[function.correspondingProperty]).assign(arguments[0])
@@ -83,7 +100,6 @@ class IrExpressionTranslationVisitor(private val context: IrTranslationContext) 
 
         val allArguments = if (extensionReceiver != null) listOf(extensionReceiver) + arguments else arguments
 
-        val superQualifier = expression.superQualifier
         if (superQualifier != null) {
             val superRef = context.translateAsTypeReference(superQualifier)
             val functionName = context.naming.names[function]
@@ -439,6 +455,10 @@ class IrExpressionTranslationVisitor(private val context: IrTranslationContext) 
             is Boolean -> JsBooleanLiteral(value)
             is Char -> JsIntLiteral(value.toInt())
             is Long -> buildJs { "Kotlin".dotPure("Long").newInstance(value.toInt().literal(), (value shr 32).toInt().literal()) }
+            is Byte -> JsIntLiteral(value.toInt())
+            is Short -> JsIntLiteral(value.toInt())
+            is Float -> JsDoubleLiteral(value.toDouble())
+            is Double -> JsDoubleLiteral(value)
             null -> JsNullLiteral()
             else -> null
         }

@@ -26,5 +26,6 @@ class JavaScriptLower(private val irModule: IrModuleFragment) {
         InitializersLowering(irModule).runOnFilePostfix(irFile)
         LocalFunctionsLowering(irModule.irBuiltins).runOnFilePostfix(irFile)
         BridgeLowering().runOnFilePostfix(irFile)
+        OperationWithWideningLowering().runOnFilePostfix(irFile)
     }
 }

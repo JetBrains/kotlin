@@ -31,12 +31,15 @@ class IrTranslationConfig(
 ) {
     private val intrinsicList = listOf(
             IntArithmeticIntrinsic, IntIncDecIntrinsic, IntUnaryArithmeticIntrinsic,
+            LongArithmeticIntrinsic,
+            SpecializedNumberConversionIntrinsic, NumberConversionIntrinsic,
             StringPlusIntrinsic,
             NotIntrinsic,
             CompareToIntrinsic,
             PrimitiveRangeToIntrinsic,
             EqualsIntrinsic, CompareZeroIntrinsic, IrNotIntrinsic, ReferenceEqualsIntrinsic,
-            ThrowIntrinsic
+            ThrowIntrinsic,
+            ArrayAccessIntrinsic, ArraySizeIntrinsic, ArrayOfNullsIntrinsic
     )
     private val intrinsicCache = mutableMapOf<FunctionDescriptor, IntrinsicHolder>()
 

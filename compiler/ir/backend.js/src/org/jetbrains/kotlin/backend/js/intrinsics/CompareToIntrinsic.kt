@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.js.intrinsics
 
 import org.jetbrains.kotlin.backend.js.context.IrTranslationContext
-import org.jetbrains.kotlin.backend.js.util.buildJs
+import org.jetbrains.kotlin.backend.js.util.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -27,6 +27,15 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.DFS
 
 object CompareToIntrinsic : BinaryOperationIntrinsic() {
+    private val primitiveFqNames = setOf(
+            KotlinBuiltIns.FQ_NAMES._byte,
+            KotlinBuiltIns.FQ_NAMES._short,
+            KotlinBuiltIns.FQ_NAMES._int,
+            KotlinBuiltIns.FQ_NAMES._float,
+            KotlinBuiltIns.FQ_NAMES._double,
+            KotlinBuiltIns.FQ_NAMES.string
+    )
+
     override fun isApplicable(name: String, first: KotlinType, second: KotlinType): Boolean =
             name == "compareTo" &&
             (first.constructor.declarationDescriptor as? ClassDescriptor)?.isComparable() == true
@@ -36,6 +45,14 @@ object CompareToIntrinsic : BinaryOperationIntrinsic() {
         return allClasses.any { it.fqNameSafe == KotlinBuiltIns.FQ_NAMES.comparable }
     }
 
-    override fun apply(context: IrTranslationContext, call: IrCall, first: JsExpression, second: JsExpression): JsExpression =
-            buildJs { "Kotlin".dotPure("compareTo").invoke(first, second) }
+    override fun apply(context: IrTranslationContext, call: IrCall, first: JsExpression, second: JsExpression): JsExpression {
+        val firstClass = (call.descriptor.containingDeclaration as ClassDescriptor).fqNameUnsafe
+        val secondClass = (call.descriptor.valueParameters[0].type.constructor.declarationDescriptor as? ClassDescriptor)?.fqNameUnsafe
+
+        if (firstClass in primitiveFqNames && secondClass in primitiveFqNames) {
+            return buildJs { "Kotlin".dotPure("primitiveCompareTo").invoke(first, second) }
+        }
+
+        return buildJs { "Kotlin".dotPure("compareTo").invoke(first, second) }
+    }
 }
