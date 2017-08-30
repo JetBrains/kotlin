@@ -6580,6 +6580,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/lateinit/val.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("withGetter.kt")
+        public void testWithGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/lateinit/withGetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withGetterSetter.kt")
+        public void testWithGetterSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/lateinit/withGetterSetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withInitializer.kt")
+        public void testWithInitializer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/lateinit/withInitializer.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withSetter.kt")
+        public void testWithSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/lateinit/withSetter.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/leakingThis")
