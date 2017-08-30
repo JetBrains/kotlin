@@ -1,5 +1,5 @@
 // LANGUAGE_VERSION: 1.2
-// WITH_REFLECT
+// WITH_RUNTIME
 // IGNORE_BACKEND: JS, NATIVE
 // FILE: lateinit.kt
 private lateinit var s: String
@@ -22,7 +22,7 @@ fun box(): String {
         return "OK"
     }
     catch (e: Throwable) {
-        return "Unexpected exception: ${e::class.qualifiedName}"
+        return "Unexpected exception: ${e::class}"
     }
 
 }
