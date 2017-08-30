@@ -8,7 +8,7 @@
     </extension>
     <module name="compiler-tests" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-    <option name="ALTERNATIVE_JRE_PATH" value="9-ea" />
+    <option name="ALTERNATIVE_JRE_PATH" value="9" />
     <option name="PACKAGE_NAME" value="org.jetbrains.kotlin.codegen" />
     <option name="MAIN_CLASS_NAME" value="org.jetbrains.kotlin.codegen.CodegenJdkCommonTestSuite" />
     <option name="METHOD_NAME" value="" />
