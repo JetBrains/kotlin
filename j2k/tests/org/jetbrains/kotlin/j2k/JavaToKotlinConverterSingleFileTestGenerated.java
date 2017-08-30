@@ -3635,6 +3635,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("Iterator.java")
+        public void testIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/Iterator.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("Overrides.java")
         public void testOverrides() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/Overrides.java");
