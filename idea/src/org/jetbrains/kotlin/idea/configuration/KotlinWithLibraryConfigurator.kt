@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
@@ -39,12 +40,12 @@ import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils
 import org.jetbrains.kotlin.idea.quickfix.askUpdateRuntime
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
+import org.jetbrains.kotlin.idea.versions.findAllUsedLibraries
 import org.jetbrains.kotlin.idea.versions.findKotlinRuntimeLibrary
 import java.io.File
 import java.util.*
 
 abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProjectConfigurator {
-
     protected abstract val libraryName: String
 
     protected abstract val messageForOverrideDialog: String
@@ -367,6 +368,38 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
                 }
             }
         }
+    }
+
+    override fun addLibraryDependency(module: Module, element: PsiElement, library: ExternalLibraryDescriptor, libraryJarDescriptors: List<LibraryJarDescriptor>) {
+        val project = module.project
+        val collector = createConfigureKotlinNotificationCollector(project)
+
+        for (library in findAllUsedLibraries(project).keySet()) {
+            val runtimeJar = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(library) ?: continue
+
+            val model = library.modifiableModel
+            val libFilesDir = VfsUtilCore.virtualToIoFile(runtimeJar).parent
+
+            for (libraryJarDescriptor in libraryJarDescriptors) {
+                if (libraryJarDescriptor.findExistingJar(library) != null) continue
+
+                val libFile = libraryJarDescriptor.getPathInPlugin()
+                if (!libFile.exists()) continue
+
+                val libIoFile = File(libFilesDir, libraryJarDescriptor.jarName)
+                if (libIoFile.exists()) {
+                    model.addRoot(VfsUtil.getUrlForLibraryRoot(libIoFile), libraryJarDescriptor.orderRootType)
+                }
+                else {
+                    val copied = copyFileToDir(libFile, libFilesDir, collector)!!
+                    model.addRoot(VfsUtil.getUrlForLibraryRoot(copied), libraryJarDescriptor.orderRootType)
+                }
+            }
+
+            model.commit()
+        }
+
+        collector.showNotification()
     }
 
     companion object {

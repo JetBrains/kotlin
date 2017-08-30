@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.maven.configuration
 
 import com.intellij.codeInsight.CodeInsightUtilCore
+import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
 import com.intellij.ide.actions.OpenFileAction
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.command.WriteCommandAction
@@ -24,6 +25,8 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ExternalLibraryDescriptor
+import com.intellij.openapi.roots.JavaProjectModelModificationService
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.WritingAccessProvider
 import com.intellij.psi.PsiElement
@@ -47,6 +50,7 @@ import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersi
 import org.jetbrains.kotlin.idea.maven.*
 import org.jetbrains.kotlin.idea.quickfix.ChangeCoroutineSupportFix
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 
 abstract class KotlinMavenConfigurator
         protected constructor(private val testArtifactId: String?,
@@ -228,6 +232,11 @@ abstract class KotlinMavenConfigurator
         else {
             OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
         }
+    }
+
+    override fun addLibraryDependency(module: Module, element: PsiElement, library: ExternalLibraryDescriptor, libraryJarDescriptors: List<LibraryJarDescriptor>) {
+        val scope = OrderEntryFix.suggestScopeByLocation(module, element)
+        JavaProjectModelModificationService.getInstance(module.project).addDependency(module, library, scope)
     }
 
     override fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State) {

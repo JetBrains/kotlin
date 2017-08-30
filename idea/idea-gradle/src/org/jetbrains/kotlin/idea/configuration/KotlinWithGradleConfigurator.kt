@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.codeInsight.CodeInsightUtilCore
+import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
 import com.intellij.ide.actions.OpenFileAction
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersi
 import org.jetbrains.kotlin.idea.quickfix.ChangeCoroutineSupportFix
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -225,6 +227,11 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         if (element != null) {
             OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
         }
+    }
+
+    override fun addLibraryDependency(module: Module, element: PsiElement, library: ExternalLibraryDescriptor, libraryJarDescriptors: List<LibraryJarDescriptor>) {
+        val scope = OrderEntryFix.suggestScopeByLocation(module, element)
+        KotlinWithGradleConfigurator.addKotlinLibraryToModule(module, scope, library)
     }
 
     companion object {
