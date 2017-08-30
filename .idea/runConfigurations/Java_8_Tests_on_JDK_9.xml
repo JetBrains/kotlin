@@ -8,7 +8,7 @@
     </extension>
     <module name="compiler-tests-java8" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-    <option name="ALTERNATIVE_JRE_PATH" value="9-ea" />
+    <option name="ALTERNATIVE_JRE_PATH" value="9" />
     <option name="PACKAGE_NAME" value="org.jetbrains.kotlin" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
