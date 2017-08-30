@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.codegen.pseudoInsns.isPseudo
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -397,12 +396,11 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                 // <...>    -- v is not null here because codegen told us so
                 val previous = insn.previous
                 if (previous.opcode != Opcodes.ASTORE) return
-                val varIndex = previous.cast<VarInsnNode>().`var`
 
                 methodNode.instructions.run {
                     insert(insn, listOfSynthetics {
                         anew(varType)
-                        store(varIndex, varType)
+                        store((previous as VarInsnNode).`var`, varType)
                     })
                 }
             }

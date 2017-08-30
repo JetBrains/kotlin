@@ -366,7 +366,7 @@ object KeywordCompletion {
                     }
                     val modifierTargets = ModifierCheckerCore.possibleTargetMap[keywordTokenType]?.intersect(possibleTargets)
                     if (modifierTargets != null && possibleTargets.isNotEmpty() &&
-                        !modifierTargets.any {
+                        modifierTargets.none {
                             isModifierTargetSupportedAtLanguageLevel(keywordTokenType, it, languageVersionSettings)
                         }) return false
 
