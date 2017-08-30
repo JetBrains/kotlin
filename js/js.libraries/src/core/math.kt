@@ -153,6 +153,52 @@ public inline fun cosh(a: Double): Double = nativeMath.cosh(a)
 public inline fun tanh(a: Double): Double = nativeMath.tanh(a)
 
 /**
+ * Computes the inverse hyperbolic sine of the value [a].
+ *
+ * The returned value is `x` such that `sinh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `asinh(NaN)` is `NaN`
+ *     - `asinh(+Inf)` is `+Inf`
+ *     - `asinh(-Inf)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+@InlineOnly
+public inline fun asinh(a: Double): Double = nativeMath.asinh(a)
+
+/**
+ * Computes the inverse hyperbolic cosine of the value [a].
+ *
+ * The returned value is positive `x` such that `cosh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `acosh(NaN)` is `NaN`
+ *     - `acosh(x)` is `NaN` when `x < 1`
+ *     - `acosh(+Inf)` is `+Inf`
+ */
+@SinceKotlin("1.2")
+@InlineOnly
+public inline fun acosh(a: Double): Double = nativeMath.acosh(a)
+
+/**
+ * Computes the inverse hyperbolic tangent of the value [a].
+ *
+ * The returned value is `x` such that `tanh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `tanh(NaN)` is `NaN`
+ *     - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *     - `tanh(1.0)` is `+Inf`
+ *     - `tanh(-1.0)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+@InlineOnly
+public inline fun atanh(a: Double): Double = nativeMath.atanh(a)
+
+/**
  * Computes `sqrt(x^2 + y^2)` without intermediate overflow or underflow.
  *
  * Special cases:
@@ -591,6 +637,52 @@ public inline fun cosh(a: Float): Float = nativeMath.cosh(a.toDouble()).toFloat(
 @SinceKotlin("1.2")
 @InlineOnly
 public inline fun tanh(a: Float): Float = nativeMath.tanh(a.toDouble()).toFloat()
+
+/**
+ * Computes the inverse hyperbolic sine of the value [a].
+ *
+ * The returned value is `x` such that `sinh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `asinh(NaN)` is `NaN`
+ *     - `asinh(+Inf)` is `+Inf`
+ *     - `asinh(-Inf)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+@InlineOnly
+public inline fun asinh(a: Float): Float = nativeMath.asinh(a.toDouble()).toFloat()
+
+/**
+ * Computes the inverse hyperbolic cosine of the value [a].
+ *
+ * The returned value is positive `x` such that `cosh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `acosh(NaN)` is `NaN`
+ *     - `acosh(x)` is `NaN` when `x < 1`
+ *     - `acosh(+Inf)` is `+Inf`
+ */
+@SinceKotlin("1.2")
+@InlineOnly
+public inline fun acosh(a: Float): Float = nativeMath.acosh(a.toDouble()).toFloat()
+
+/**
+ * Computes the inverse hyperbolic tangent of the value [a].
+ *
+ * The returned value is `x` such that `tanh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `tanh(NaN)` is `NaN`
+ *     - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *     - `tanh(1.0)` is `+Inf`
+ *     - `tanh(-1.0)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+@InlineOnly
+public inline fun atanh(a: Float): Float = nativeMath.atanh(a.toDouble()).toFloat()
 
 /**
  * Computes `sqrt(x^2 + y^2)` without intermediate overflow or underflow.

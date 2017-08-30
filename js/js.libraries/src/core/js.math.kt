@@ -62,6 +62,12 @@ public external object Math {
     internal fun cosh(value: Double): Double
     @PublishedApi
     internal fun tanh(value: Double): Double
+    @PublishedApi
+    internal fun asinh(value: Double): Double
+    @PublishedApi
+    internal fun acosh(value: Double): Double
+    @PublishedApi
+    internal fun atanh(value: Double): Double
 
     @PublishedApi
     internal fun hypot(x: Double, y: Double): Double

@@ -52,24 +52,171 @@ if (typeof Math.trunc === "undefined") {
         return Math.ceil(x);
     };
 }
-if (typeof Math.sinh === "undefined") {
-    Math.sinh = function(x) {
-        var y = Math.exp(x);
-        return (y - 1 / y) / 2;
-    };
-}
-if (typeof Math.cosh === "undefined") {
-    Math.cosh = function(x) {
-        var y = Math.exp(x);
-        return (y + 1 / y) / 2;
-    };
-}
-if (typeof Math.tanh === "undefined") {
-    Math.tanh = function(x){
-        var a = Math.exp(+x), b = Math.exp(-x);
-        return a == Infinity ? 1 : b == Infinity ? -1 : (a - b) / (a + b);
-    };
-}
+
+(function() {
+    var epsilon = 2.220446049250313E-16;
+    var taylor_2_bound = Math.sqrt(epsilon);
+    var taylor_n_bound = Math.sqrt(taylor_2_bound);
+    var upper_taylor_2_bound = 1/taylor_2_bound;
+    var upper_taylor_n_bound = 1/taylor_n_bound;
+
+    if (typeof Math.sinh === "undefined") {
+        Math.sinh = function(x) {
+            if (Math.abs(x) < taylor_n_bound) {
+                var result = x;
+                if (Math.abs(x) > taylor_2_bound) {
+                    result += (x * x * x) / 6;
+                }
+                return result;
+            } else {
+                var y = Math.exp(x);
+                var y1 = 1 / y;
+                if (!isFinite(y)) return Math.exp(x - Math.LN2);
+                if (!isFinite(y1)) return -Math.exp(-x - Math.LN2);
+                return (y - y1) / 2;
+            }
+        };
+    }
+    if (typeof Math.cosh === "undefined") {
+        Math.cosh = function(x) {
+            var y = Math.exp(x);
+            var y1 = 1 / y;
+            if (!isFinite(y) || !isFinite(y1)) return Math.exp(Math.abs(x) - Math.LN2);
+            return (y + y1) / 2;
+        };
+    }
+
+    if (typeof Math.tanh === "undefined") {
+        Math.tanh = function(x){
+            if (Math.abs(x) < taylor_n_bound) {
+                var result = x;
+                if (Math.abs(x) > taylor_2_bound) {
+                    result -= (x * x * x) / 3;
+                }
+                return result;
+            }
+            else {
+                var a = Math.exp(+x), b = Math.exp(-x);
+                return a === Infinity ? 1 : b === Infinity ? -1 : (a - b) / (a + b);
+            }
+        };
+    }
+
+    // Inverse hyperbolic function implementations derived from boost special math functions,
+    // Copyright Eric Ford & Hubert Holin 2001.
+
+    if (typeof Math.asinh === "undefined") {
+        var asinh = function(x) {
+            if (x >= +taylor_n_bound)
+            {
+                if (x > upper_taylor_n_bound)
+                {
+                    if (x > upper_taylor_2_bound)
+                    {
+                        // approximation by laurent series in 1/x at 0+ order from -1 to 0
+                        return Math.log(x) + Math.LN2;
+                    }
+                    else
+                    {
+                        // approximation by laurent series in 1/x at 0+ order from -1 to 1
+                        return Math.log(x * 2 + (1 / (x * 2)));
+                    }
+                }
+                else
+                {
+                    return Math.log(x + Math.sqrt(x * x + 1));
+                }
+            }
+            else if (x <= -taylor_n_bound)
+            {
+                return -asinh(-x);
+            }
+            else
+            {
+                // approximation by taylor series in x at 0 up to order 2
+                var result = x;
+                if (Math.abs(x) >= taylor_2_bound)
+                {
+                    var x3 = x * x * x;
+                    // approximation by taylor series in x at 0 up to order 4
+                    result -= x3 / 6;
+                }
+                return result;
+            }
+        };
+        Math.asinh = asinh;
+    }
+    if (typeof Math.acosh === "undefined") {
+        Math.acosh = function(x) {
+            if (x < 1)
+            {
+                return NaN;
+            }
+            else if (x - 1 >= taylor_n_bound)
+            {
+                if (x > upper_taylor_2_bound)
+                {
+                    // approximation by laurent series in 1/x at 0+ order from -1 to 0
+                    return Math.log(x) + Math.LN2;
+                }
+                else
+                {
+                    return Math.log(x + Math.sqrt(x * x - 1));
+                }
+            }
+            else
+            {
+                var y = Math.sqrt(x - 1);
+                // approximation by taylor series in y at 0 up to order 2
+                var result = y;
+                if (y >= taylor_2_bound)
+                {
+                    var y3 = y * y * y;
+                    // approximation by taylor series in y at 0 up to order 4
+                    result -= y3 / 12;
+                }
+
+                return Math.sqrt(2) * result;
+            }
+        };
+    }
+    if (typeof Math.atanh === "undefined") {
+        Math.atanh = function(x) {
+            if (Math.abs(x) < taylor_n_bound) {
+                var result = x;
+                if (Math.abs(x) > taylor_2_bound) {
+                    result += (x * x * x) / 3;
+                }
+                return result;
+            }
+            return Math.log((1 + x) / (1 - x)) / 2;
+        };
+    }
+    if (typeof Math.log1p === "undefined") {
+        Math.log1p = function(x) {
+            if (Math.abs(x) < taylor_n_bound) {
+                var x2 = x * x;
+                var x3 = x2 * x;
+                var x4 = x3 * x;
+                // approximation by taylor series in x at 0 up to order 4
+                return (-x4 / 4 + x3 / 3 - x2 / 2 + x);
+            }
+            return Math.log(x + 1);
+        };
+    }
+    if (typeof Math.expm1 === "undefined") {
+        Math.expm1 = function(x) {
+            if (Math.abs(x) < taylor_n_bound) {
+                var x2 = x * x;
+                var x3 = x2 * x;
+                var x4 = x3 * x;
+                // approximation by taylor series in x at 0 up to order 4
+                return (x4 / 24 + x3 / 6 + x2 / 2 + x);
+            }
+            return Math.exp(x) - 1;
+        };
+    }
+})();
 if (typeof Math.hypot === "undefined") {
     Math.hypot = function() {
         var y = 0;
@@ -94,16 +241,7 @@ if (typeof Math.log2 === "undefined") {
         return Math.log(x) * Math.LOG2E;
     };
 }
-if (typeof Math.log1p === "undefined") {
-    Math.log1p = function(x) {
-        return Math.log(x + 1);
-    };
-}
-if (typeof Math.expm1 === "undefined") {
-    Math.expm1 = function(x) {
-        return Math.exp(x) - 1;
-    };
-}
+
 // For HtmlUnit and PhantomJs
 if (typeof ArrayBuffer.isView === "undefined") {
     ArrayBuffer.isView = function(a) {

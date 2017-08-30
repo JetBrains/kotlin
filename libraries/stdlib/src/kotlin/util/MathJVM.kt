@@ -32,6 +32,12 @@ public const val E: Double = nativeMath.E
 /** Natural logarithm of 2.0, used to compute [log2] function */
 private val LN2: Double = ln(2.0)
 
+private val epsilon: Double = nativeMath.ulp(1.0)
+private val taylor_2_bound = nativeMath.sqrt(epsilon)
+private val taylor_n_bound = nativeMath.sqrt(taylor_2_bound)
+private val upper_taylor_2_bound = 1 / taylor_2_bound
+private val upper_taylor_n_bound = 1 / taylor_n_bound
+
 // ================ Double Math ========================================
 
 /** Computes the sine of the angle [a] given in radians.
@@ -154,6 +160,109 @@ public inline fun cosh(a: Double): Double = nativeMath.cosh(a)
 @SinceKotlin("1.2")
 @InlineOnly
 public inline fun tanh(a: Double): Double = nativeMath.tanh(a)
+
+
+// Inverse hyperbolic function implementations derived from boost special math functions,
+// Copyright Eric Ford & Hubert Holin 2001.
+
+/**
+ * Computes the inverse hyperbolic sine of the value [a].
+ *
+ * The returned value is `x` such that `sinh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `asinh(NaN)` is `NaN`
+ *     - `asinh(+Inf)` is `+Inf`
+ *     - `asinh(-Inf)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+public fun asinh(a: Double): Double =
+    when {
+        a >= +taylor_n_bound ->
+            if (a > upper_taylor_n_bound) {
+                if (a > upper_taylor_2_bound) {
+                    // approximation by laurent series in 1/x at 0+ order from -1 to 0
+                    nativeMath.log(a) + LN2
+                } else {
+                    // approximation by laurent series in 1/x at 0+ order from -1 to 1
+                    nativeMath.log(a * 2 + (1 / (a * 2)))
+                }
+            } else {
+                nativeMath.log(a + nativeMath.sqrt(a * a + 1))
+            }
+        a <= -taylor_n_bound -> -asinh(-a)
+        else -> {
+            // approximation by taylor series in x at 0 up to order 2
+            var result = a;
+            if (nativeMath.abs(a) >= taylor_2_bound) {
+                // approximation by taylor series in x at 0 up to order 4
+                result -= (a * a * a) / 6
+            }
+            result
+        }
+    }
+
+
+/**
+ * Computes the inverse hyperbolic cosine of the value [a].
+ *
+ * The returned value is positive `x` such that `cosh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `acosh(NaN)` is `NaN`
+ *     - `acosh(x)` is `NaN` when `x < 1`
+ *     - `acosh(+Inf)` is `+Inf`
+ */
+@SinceKotlin("1.2")
+public fun acosh(a: Double): Double =
+    when {
+        a < 1 -> Double.NaN
+
+        a > upper_taylor_2_bound ->
+            // approximation by laurent series in 1/x at 0+ order from -1 to 0
+            nativeMath.log(a) + LN2
+
+        a - 1 >= taylor_n_bound ->
+            nativeMath.log(a + nativeMath.sqrt(a * a - 1))
+
+        else -> {
+            val y = nativeMath.sqrt(a - 1)
+            // approximation by taylor series in y at 0 up to order 2
+            var result = y
+            if (y >= taylor_2_bound) {
+                // approximation by taylor series in y at 0 up to order 4
+                result -= (y * y * y) / 12
+            }
+
+            nativeMath.sqrt(2.0) * result
+        }
+    }
+
+/**
+ * Computes the inverse hyperbolic tangent of the value [a].
+ *
+ * The returned value is `x` such that `tanh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `tanh(NaN)` is `NaN`
+ *     - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *     - `tanh(1.0)` is `+Inf`
+ *     - `tanh(-1.0)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+public fun atanh(x: Double): Double {
+    if (nativeMath.abs(x) < taylor_n_bound) {
+        var result = x
+        if (nativeMath.abs(x) > taylor_2_bound) {
+            result += (x * x * x) / 3
+        }
+        return result
+    }
+    return nativeMath.log((1 + x) / (1 - x)) / 2
+}
 
 /**
  * Computes `sqrt(x^2 + y^2)` without intermediate overflow or underflow.
@@ -639,6 +748,52 @@ public inline fun cosh(a: Float): Float = nativeMath.cosh(a.toDouble()).toFloat(
 @SinceKotlin("1.2")
 @InlineOnly
 public inline fun tanh(a: Float): Float = nativeMath.tanh(a.toDouble()).toFloat()
+
+/**
+ * Computes the inverse hyperbolic sine of the value [a].
+ *
+ * The returned value is `x` such that `sinh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `asinh(NaN)` is `NaN`
+ *     - `asinh(+Inf)` is `+Inf`
+ *     - `asinh(-Inf)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+@InlineOnly
+public inline fun asinh(a: Float): Float = asinh(a.toDouble()).toFloat()
+
+/**
+ * Computes the inverse hyperbolic cosine of the value [a].
+ *
+ * The returned value is positive `x` such that `cosh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `acosh(NaN)` is `NaN`
+ *     - `acosh(x)` is `NaN` when `x < 1`
+ *     - `acosh(+Inf)` is `+Inf`
+ */
+@SinceKotlin("1.2")
+@InlineOnly
+public inline fun acosh(a: Float): Float = acosh(a.toDouble()).toFloat()
+
+/**
+ * Computes the inverse hyperbolic tangent of the value [a].
+ *
+ * The returned value is `x` such that `tanh(x) == a`.
+ *
+ * Special cases:
+ *
+ *     - `tanh(NaN)` is `NaN`
+ *     - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *     - `tanh(1.0)` is `+Inf`
+ *     - `tanh(-1.0)` is `-Inf`
+ */
+@SinceKotlin("1.2")
+@InlineOnly
+public inline fun atanh(a: Float): Float = atanh(a.toDouble()).toFloat()
 
 /**
  * Computes `sqrt(x^2 + y^2)` without intermediate overflow or underflow.
