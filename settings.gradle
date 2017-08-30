@@ -11,7 +11,6 @@ pluginManagement {
 }
 
 // modules
-//include ":buildSrc" // this fixes import into idea, so buildsrc is not longer imported with different gradle version
 include ":kotlin-build-common",
         ":compiler",
         ":compiler:util",
@@ -180,11 +179,3 @@ project(':kotlin-annotation-processing').projectDir = "$rootDir/libraries/tools/
 project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-local-example" as File
 project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
 
-def setBuildFile(ProjectDescriptor project) {
-    if (project.projectDir.listFiles().any { file -> file.name == "build.gradle.kts"}) {
-        project.buildFileName = "build.gradle.kts"
-    }
-    project.children.each { p -> setBuildFile(p) }
-}
-
-setBuildFile(rootProject)
