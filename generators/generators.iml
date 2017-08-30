@@ -43,5 +43,6 @@
     <orderEntry type="module" module-name="uast-kotlin" scope="TEST" />
     <orderEntry type="module" module-name="kapt3" scope="TEST" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
+    <orderEntry type="module" module-name="idea-gradle" />
   </component>
 </module>
