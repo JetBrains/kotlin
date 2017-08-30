@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
+import org.jetbrains.kotlin.native.interop.indexer.Language
 import org.jetbrains.kotlin.native.interop.indexer.NativeLibrary
 import org.jetbrains.kotlin.native.interop.indexer.mapFragmentIsCompilable
 
@@ -118,6 +119,14 @@ class SimpleBridgeGeneratorImpl(
             }
         }.forEach {
             nativeLines.add("    $it")
+        }
+
+        if (libraryForCStubs.language == Language.OBJECTIVE_C) {
+            // Prevent Objective-C exceptions from passing to Kotlin:
+            nativeLines.add(1, "@try {")
+            nativeLines.add("} @catch (id e) { objc_terminate(); }")
+            // 'objc_terminate' will report the exception.
+            // TODO: consider implementing this in bitcode generator.
         }
 
         nativeLines.add("}")

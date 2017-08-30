@@ -801,7 +801,13 @@ class StubGenerator(
                     "-I$javaHome/../include/$it"
                 }
                 KotlinPlatform.NATIVE -> emptyList()
-            }
+            },
+
+            additionalPreambleLines = configuration.library.additionalPreambleLines +
+                    when (configuration.library.language) {
+                        Language.C -> emptyList()
+                        Language.OBJECTIVE_C -> listOf("void objc_terminate();")
+                    }
     )
 
     /**
