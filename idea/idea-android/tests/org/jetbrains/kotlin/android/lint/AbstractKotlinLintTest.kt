@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.android.lint
 
+import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.PathUtil
 import org.jetbrains.android.inspections.klint.AndroidLintInspectionBase
@@ -53,7 +54,7 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
 
         myFixture.enableInspections(*inspectionClassNames.map { className ->
             val inspectionClass = Class.forName(className)
-            inspectionClass.newInstance() as AndroidLintInspectionBase
+            inspectionClass.newInstance() as InspectionProfileEntry
         }.toTypedArray())
 
         val additionalResourcesDir = File(ktFile.parentFile, getTestName(true))
@@ -76,6 +77,6 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
             myFixture.copyFileToProject("${PathUtil.getParentPath(path)}/$dependencyFile", "src/$dependencyTargetPath")
         }
 
-        myFixture.checkHighlighting(true, false, false)
+        myFixture.checkHighlighting(true, false, true)
     }
 }

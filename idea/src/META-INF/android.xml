@@ -12,9 +12,17 @@
 
         <localInspection implementationClass="org.jetbrains.kotlin.android.inspection.IllegalIdentifierInspection"
                          displayName="Illegal Android Identifier"
-                         groupName="Kotlin"
+                         groupName="Kotlin Android"
                          enabledByDefault="true"
                          level="ERROR"/>
+
+        <localInspection implementationClass="org.jetbrains.kotlin.android.inspection.TypeParameterFindViewByIdInspection"
+                         displayName="Cast can be converted to findViewById with type parameter"
+                         groupName="Kotlin Android"
+                         enabledByDefault="true"
+                         cleanupTool="true"
+                         level="WEAK WARNING"
+                         language="kotlin" />
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.android.actions.KotlinNewActivityNotification"/>
 

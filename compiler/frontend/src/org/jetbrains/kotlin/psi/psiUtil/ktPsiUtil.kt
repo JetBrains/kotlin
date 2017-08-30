@@ -533,6 +533,15 @@ fun KtCallExpression.getOrCreateValueArgumentList(): KtValueArgumentList {
                     typeArgumentList ?: calleeExpression) as KtValueArgumentList
 }
 
+fun KtCallExpression.addTypeArgument(typeArgument: KtTypeProjection) {
+    if (typeArgumentList != null) {
+        typeArgumentList?.addArgument(typeArgument)
+    }
+    else {
+        addAfter(KtPsiFactory(this).createTypeArguments("<${typeArgument.text}>"), calleeExpression)
+    }
+}
+
 fun KtDeclaration.hasBody() = when (this) {
     is KtFunction -> hasBody()
     is KtProperty -> hasBody()
