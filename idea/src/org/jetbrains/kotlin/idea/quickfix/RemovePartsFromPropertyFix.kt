@@ -22,7 +22,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.psi.KtFile
@@ -45,9 +44,9 @@ class RemovePartsFromPropertyFix(
     )
 
     override fun getText(): String =
-            KotlinBundle.message("remove.parts.from.property", partsToRemove(removeGetter, removeSetter, removeInitializer))
+            "Remove ${partsToRemove(removeGetter, removeSetter, removeInitializer)} from property"
 
-    override fun getFamilyName(): String = KotlinBundle.message("remove.parts.from.property.family")
+    override fun getFamilyName(): String = "Remove parts from property"
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
@@ -55,7 +54,7 @@ class RemovePartsFromPropertyFix(
         return !type.isError
     }
 
-    public override operator fun invoke(project: Project, editor: Editor?, file: KtFile) {
+    public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val newElement = element?.copy() as? KtProperty ?: return
 
         val getter = newElement.getter
