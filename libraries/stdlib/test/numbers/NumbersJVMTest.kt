@@ -41,18 +41,6 @@ class NumbersJVMTest {
         assertEquals(java.lang.Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY)
     }
 
-    @Test fun doubleToBits() {
-        assertEquals(0x400921fb54442d18L, kotlin.math.PI.toBits())
-        assertEquals(kotlin.math.PI, Double.fromBits(0x400921fb54442d18L))
-
-        for (value in listOf(Double.NEGATIVE_INFINITY, -Double.MAX_VALUE, -1.0, -Double.MIN_VALUE, -0.0, 0.0, Double.POSITIVE_INFINITY, Double.MAX_VALUE, 1.0, Double.MIN_VALUE)) {
-            assertEquals(value, Double.fromBits(value.toBits()))
-            assertEquals(value, Double.fromBits(value.toRawBits()))
-        }
-        assertTrue(Double.NaN.toBits().let(Double.Companion::fromBits).isNaN())
-        assertTrue(Double.NaN.toRawBits().let { Double.fromBits(it) }.isNaN())
-    }
-
     @Test fun floatToBits() {
         val PI_F = kotlin.math.PI.toFloat()
         assertEquals(0x40490fdb, PI_F.toBits())

@@ -48,3 +48,41 @@ Kotlin.imulEmulated = imul;
 function imul(a, b) {
     return ((a & 0xffff0000) * (b & 0xffff) + (a & 0xffff) * (b | 0)) | 0;
 }
+
+(function() {
+    var buf = new ArrayBuffer(8);
+    var bufFloat64 = new Float64Array(buf);
+    var bufFloat32 = new Float32Array(buf);
+    var bufInt32 = new Uint32Array(buf);
+
+    Kotlin.doubleToBits = function(value) {
+        return Kotlin.doubleToRawBits(isNaN(value) ? NaN : value);
+    };
+
+    Kotlin.doubleToRawBits = function(value) {
+        bufFloat64[0] = value;
+        return Kotlin.Long.fromBits(bufInt32[0], bufInt32[1]);
+    };
+
+    Kotlin.doubleFromBits = function(value) {
+        bufInt32[0] = value.low_;
+        bufInt32[1] = value.high_;
+        return bufFloat64[0];
+    };
+
+    Kotlin.floatToBits = function(value) {
+        return Kotlin.floatToRawBits(isNaN(value) ? NaN : value);
+    };
+
+    Kotlin.floatToRawBits = function(value) {
+        bufFloat32[0] = value;
+        return bufInt32[0];
+    };
+
+    Kotlin.floatFromBits = function(value) {
+        bufInt32[0] = value;
+        return bufFloat32[0];
+    };
+})();
+
+

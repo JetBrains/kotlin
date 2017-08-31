@@ -120,4 +120,53 @@ class NumbersTest {
         assertEquals(!isNaN && !isInfinite, value.isFinite())
     }
 
+    @Test fun doubleToBits() {
+        assertEquals(0x400921fb54442d18L, kotlin.math.PI.toBits())
+        assertEquals(0x400921fb54442d18L, kotlin.math.PI.toRawBits())
+        assertEquals(kotlin.math.PI, Double.fromBits(0x400921fb54442d18L))
+
+        for (value in listOf(Double.NEGATIVE_INFINITY, -Double.MAX_VALUE, -1.0, -Double.MIN_VALUE, -0.0, 0.0, Double.POSITIVE_INFINITY, Double.MAX_VALUE, 1.0, Double.MIN_VALUE)) {
+            assertEquals(value, Double.fromBits(value.toBits()))
+            assertEquals(value, Double.fromBits(value.toRawBits()))
+        }
+        assertTrue(Double.NaN.toBits().let(Double.Companion::fromBits).isNaN())
+        assertTrue(Double.NaN.toRawBits().let { Double.fromBits(it) }.isNaN())
+
+        assertEquals(0x7FF00000L shl 32, Double.POSITIVE_INFINITY.toBits())
+        assertEquals(0xFFF00000L shl 32, Double.NEGATIVE_INFINITY.toBits())
+
+        assertEquals(0x7FF80000_00000000L, Double.NaN.toBits())
+        assertEquals(0x7FF80000_00000000L, Double.NaN.toRawBits())
+
+        val bitsNaN = Double.NaN.toBits()
+        for (bitsDenormNaN in listOf(0xFFF80000L shl 32, bitsNaN or 1)) {
+            assertTrue(Double.fromBits(bitsDenormNaN).isNaN(), "expected $bitsDenormNaN represent NaN")
+            assertEquals(bitsNaN, Double.fromBits(bitsDenormNaN).toBits())
+        }
+    }
+
+    @Test fun floatToBits() {
+        val PI_F = kotlin.math.PI.toFloat()
+        assertEquals(0x40490fdb, PI_F.toBits())
+        assertAlmostEquals(PI_F, Float.fromBits(0x40490fdb)) // PI_F is actually Double in JS
+        // -Float.MAX_VALUE, Float.MAX_VALUE, -Float.MIN_VALUE, Float.MIN_VALUE: overflow or underflow
+        for (value in listOf(Float.NEGATIVE_INFINITY, -1.0F, -0.0F, 0.0F, Float.POSITIVE_INFINITY, 1.0F)) {
+            assertEquals(value, Float.fromBits(value.toBits()))
+            assertEquals(value, Float.fromBits(value.toRawBits()))
+        }
+
+        assertTrue(Float.NaN.toBits().let(Float.Companion::fromBits).isNaN())
+        assertTrue(Float.NaN.toRawBits().let { Float.fromBits(it) }.isNaN())
+
+        assertEquals(0x7fc00000, Float.NaN.toBits())
+        assertEquals(0x7fc00000, Float.NaN.toRawBits())
+
+        val bitsNaN = Float.NaN.toBits()
+        for (bitsDenormNaN in listOf(0xFFFC0000.toInt(), bitsNaN or 1)) {
+            assertTrue(Float.fromBits(bitsDenormNaN).isNaN(), "expected $bitsDenormNaN represent NaN")
+            assertEquals(bitsNaN, Float.fromBits(bitsDenormNaN).toBits())
+        }
+    }
+
+
 }

@@ -63,7 +63,7 @@ public inline fun Double.toRawBits(): Long = java.lang.Double.doubleToRawLongBit
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
-public inline fun Double.Companion.fromBits(bits: Long) = java.lang.Double.longBitsToDouble(bits)
+public inline fun Double.Companion.fromBits(bits: Long): Double = java.lang.Double.longBitsToDouble(bits)
 
 /**
  * Returns a bit representation of the specified floating-point value as [Int]
