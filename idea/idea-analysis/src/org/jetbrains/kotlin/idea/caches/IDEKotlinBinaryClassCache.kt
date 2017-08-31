@@ -21,6 +21,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
+import com.intellij.reference.SoftReference
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -60,7 +61,7 @@ object IDEKotlinBinaryClassCache {
 
         if (isKotlinBinaryClass) {
             val headerInfo = createHeaderInfo(kotlinBinaryClass)
-            file.putUserData(KOTLIN_BINARY_DATA_KEY, KotlinBinaryData(isKotlinBinaryClass, file.timeStamp, headerInfo))
+            file.putUserData(KOTLIN_BINARY_DATA_KEY, SoftReference(KotlinBinaryData(isKotlinBinaryClass, file.timeStamp, headerInfo)))
         }
 
         return kotlinBinaryClass
@@ -94,10 +95,10 @@ object IDEKotlinBinaryClassCache {
         ServiceManager.getService(FileAttributeService::class.java)?.register(this, 1)
     }
 
-    private val KOTLIN_BINARY_DATA_KEY = Key.create<KotlinBinaryData>(KOTLIN_IS_COMPILED_FILE_ATTRIBUTE)
+    private val KOTLIN_BINARY_DATA_KEY = Key.create<SoftReference<KotlinBinaryData>>(KOTLIN_IS_COMPILED_FILE_ATTRIBUTE)
 
     private fun getKotlinBinaryFromCache(file: VirtualFile): KotlinBinaryData? {
-        val userData = file.getUserData(KOTLIN_BINARY_DATA_KEY)
+        val userData = file.getUserData(KOTLIN_BINARY_DATA_KEY)?.get()
         if (userData != null && userData.timestamp == file.timeStamp) {
             return userData
         }
@@ -111,7 +112,7 @@ object IDEKotlinBinaryClassCache {
             val isKotlinBinary = isKotlinBinaryAttribute.value
             val kotlinBinaryData = KotlinBinaryData(isKotlinBinary, file.timeStamp, null)
             if (isKotlinBinary) {
-                file.putUserData(KOTLIN_BINARY_DATA_KEY, kotlinBinaryData)
+                file.putUserData(KOTLIN_BINARY_DATA_KEY, SoftReference(kotlinBinaryData))
             }
 
             return kotlinBinaryData
