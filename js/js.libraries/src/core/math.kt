@@ -477,6 +477,62 @@ public fun Double.withSign(sign: Double): Double {
 public inline fun Double.withSign(sign: Int): Double = this.withSign(sign.toDouble())
 
 /**
+ * Returns the ulp (unit in the last place) of this value.
+ *
+ * An ulp is a positive distance between this value and the next nearest [Double] value larger in magnitude.
+ *
+ * Special Cases:
+ *     - `NaN.ulp` is `NaN`
+ *     - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
+ *     - `0.0.ulp` is `Double.MIN_VALUE`
+ */
+@SinceKotlin("1.2")
+public val Double.ulp: Double get() = when {
+    this < 0 -> (-this).ulp
+    this.isNaN() || this == Double.POSITIVE_INFINITY -> this
+    this == Double.MAX_VALUE -> this - this.nextDown()
+    else -> this.nextUp() - this
+}
+
+/**
+ * Returns the [Double] value nearest to this value in direction of positive infinity.
+ */
+@SinceKotlin("1.2")
+public fun Double.nextUp(): Double = when {
+    this.isNaN() || this == Double.POSITIVE_INFINITY -> this
+    this == 0.0 -> Double.MIN_VALUE
+    else -> Double.fromBits(this.toRawBits() + if (this > 0) 1 else -1)
+}
+
+/**
+ * Returns the [Double] value nearest to this value in direction of negative infinity.
+ */
+@SinceKotlin("1.2")
+public fun Double.nextDown(): Double = when {
+    this.isNaN() || this == Double.NEGATIVE_INFINITY -> this
+    this == 0.0 -> -Double.MIN_VALUE
+    else -> Double.fromBits(this.toRawBits() + if (this > 0) -1 else 1)
+}
+
+
+/**
+ * Returns the [Double] value nearest to this value in direction from this value towards the value [to].
+ *
+ * Special cases:
+ *     - `x.nextTowards(y)` is `NaN` if either `x` or `y` are `NaN`
+ *     - `x.nextTowards(x) == x`
+ *
+ */
+@SinceKotlin("1.2")
+public fun Double.nextTowards(to: Double): Double = when {
+    this.isNaN() || to.isNaN() -> Double.NaN
+    to == this -> to
+    to > this -> this.nextUp()
+    else /* to < this */-> this.nextDown()
+}
+
+
+/**
  * Rounds this [Double] value to the nearest integer and converts the result to [Int].
  * Ties are rounded towards positive infinity.
  *

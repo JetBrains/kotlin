@@ -555,14 +555,14 @@ public inline fun Double.withSign(sign: Double): Double = nativeMath.copySign(th
 public inline fun Double.withSign(sign: Int): Double = nativeMath.copySign(this, sign.toDouble())
 
 /**
- * Returns the ulp of this value.
+ * Returns the ulp (unit in the last place) of this value.
  *
  * An ulp is a positive distance between this value and the next nearest [Double] value larger in magnitude.
  *
  * Special Cases:
  *     - `NaN.ulp` is `NaN`
  *     - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
- *     - `0.0.ulp` is `Double.NIN_VALUE`
+ *     - `0.0.ulp` is `Double.MIN_VALUE`
  */
 @SinceKotlin("1.2")
 @InlineOnly
