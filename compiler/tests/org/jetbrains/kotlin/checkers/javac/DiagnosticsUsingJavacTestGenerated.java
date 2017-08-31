@@ -11046,6 +11046,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("typeInferenceFailedOnIteratorCall.kt")
+                public void testTypeInferenceFailedOnIteratorCall() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements/typeInferenceFailedOnIteratorCall.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("wrongArgumentExtensionFunction.kt")
                 public void testWrongArgumentExtensionFunction() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements/wrongArgumentExtensionFunction.kt");
