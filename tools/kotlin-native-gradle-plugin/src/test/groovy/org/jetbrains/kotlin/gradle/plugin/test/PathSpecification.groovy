@@ -35,7 +35,7 @@ class PathSpecification extends BaseKonanSpecification {
         def result = project.createRunner().withArguments('build').buildAndFail()
 
         then:
-        result.task(project.downloadTask).outcome == TaskOutcome.FAILED
+        result.task(project.defaultCompilationTask()).outcome == TaskOutcome.FAILED
     }
 
     def 'Plugin should stop building if the stub generator classpath is empty'() {
@@ -45,7 +45,7 @@ class PathSpecification extends BaseKonanSpecification {
         def result = project.createRunner().withArguments('build').buildAndFail()
 
         then:
-        result.task(project.downloadTask).outcome == TaskOutcome.FAILED
+        result.task(project.defaultStubGenerationTask()).outcome == TaskOutcome.FAILED
     }
 
 }

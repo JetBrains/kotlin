@@ -109,7 +109,7 @@ class KonanProject {
             }
             """.stripIndent()
         )
-        compilationTasks = [":compileKonan${DEFAULT_ARTIFACT_NAME.capitalize()}".toString(), ":compileKonan", ":build"]
+        compilationTasks = [defaultCompilationTask(), ":compileKonan", ":build"]
         return result
     }
 
@@ -181,6 +181,16 @@ class KonanProject {
     /** Sets the given setting of the given konanArtifact using the path of the file as a value. */
     void addCompilationSetting(String artifactName = DEFAULT_ARTIFACT_NAME, String parameter, File value) {
         addSetting("konanArtifacts", artifactName, parameter, value)
+    }
+
+    /** Returns the path of compileKonan... task for the default artifact. */
+    String defaultCompilationTask() {
+        return compilationTask(DEFAULT_ARTIFACT_NAME)
+    }
+
+    /** Returns the path of compileKonan... task for the artifact specified. */
+    String compilationTask(String artifactName) {
+        return ":compileKonan${artifactName.capitalize()}"
     }
 
     /** Creates a project with default build and source files. */
@@ -263,9 +273,8 @@ class KonanInteropProject extends KonanProject {
             }
             """.stripIndent()
         )
-        interopTasks = [":gen${DEFAULT_INTEROP_NAME.capitalize()}InteropStubs".toString(),
-                        ":compile${DEFAULT_INTEROP_NAME.capitalize()}InteropStubs".toString()]
-        compilationTasks = [":compileKonan${DEFAULT_ARTIFACT_NAME.capitalize()}".toString(), ":compileKonan", ":build"]
+        interopTasks = [defaultStubGenerationTask(), defaultStubCompilationTask()]
+        compilationTasks = [defaultCompilationTask(), ":compileKonan", ":build"]
         return result
     }
 
@@ -297,6 +306,22 @@ class KonanInteropProject extends KonanProject {
     /** Sets the given setting of the given konanInterop using the path of the file as a value. */
     void addInteropSetting(String interopName = DEFAULT_INTEROP_NAME, String parameter, File value) {
         addSetting("konanInterop", interopName, parameter, value)
+    }
+
+    String defaultStubGenerationTask() {
+        return stubGenerationTask(DEFAULT_INTEROP_NAME)
+    }
+
+    String defaultStubCompilationTask() {
+        return stubCompilationTask(DEFAULT_INTEROP_NAME)
+    }
+
+    String stubGenerationTask(String interopName) {
+        return ":gen${interopName.capitalize()}InteropStubs"
+    }
+
+    String stubCompilationTask(String interopName) {
+        return ":compile${interopName.capitalize()}InteropStubs"
     }
 
     /** Creates a project with default build, source and def files. */
