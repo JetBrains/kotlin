@@ -11040,6 +11040,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("typeInferenceFailedOnComponentN.kt")
+                public void testTypeInferenceFailedOnComponentN() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements/typeInferenceFailedOnComponentN.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("wrongArgumentExtensionFunction.kt")
                 public void testWrongArgumentExtensionFunction() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements/wrongArgumentExtensionFunction.kt");
