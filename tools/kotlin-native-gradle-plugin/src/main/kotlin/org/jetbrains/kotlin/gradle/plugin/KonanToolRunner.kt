@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 
-// Consider using JavaExecSPec
 internal interface KonanToolRunner {
     val mainClass: String
     val classpath: FileCollection
@@ -17,14 +16,14 @@ internal interface KonanToolRunner {
 internal abstract class KonanBaseRunner(val project: Project): KonanToolRunner {
     abstract val toolName: String
 
-    override val classpath: FileCollection
-        get() = project.fileTree("${project.konanHome}/konan/lib/").apply { include("*.jar")  }
+    override val classpath: FileCollection =
+            project.fileTree("${project.konanHome}/konan/lib/")
+            .apply { include("*.jar")  }
 
-    override val jvmArgs: List<String>
-        get() = listOf("-Dkonan.home=${project.konanHome}", "-Djava.library.path=${project.konanHome}/konan/nativelib")
+    override val jvmArgs = mutableListOf("-Dkonan.home=${project.konanHome}",
+            "-Djava.library.path=${project.konanHome}/konan/nativelib")
 
-    override val environment: Map<String, Any>
-        get() = emptyMap()
+    override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
 
     override fun run(args: List<String>) {
         if (classpath.isEmpty) {
@@ -53,9 +52,9 @@ internal class KonanInteropRunner(project: Project) : KonanBaseRunner(project){
     override val toolName   get() = "Kotlin/Native cinterop tool"
     override val mainClass  get() = INTEROP_MAIN
 
-    override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1").apply {
+    init {
         if (project.host == "mingw") {
-            put("PATH", "${project.konanHome}\\dependencies" +
+            environment.put("PATH", "${project.konanHome}\\dependencies" +
                     "\\msys2-mingw-w64-x86_64-gcc-6.3.0-clang-llvm-3.9.1-windows-x86-64" +
                     "\\bin;${System.getenv("PATH")}")
         }
