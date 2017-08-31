@@ -220,7 +220,7 @@ private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: M
     // clearing the whole BindingTrace.
 
     result.add(LineMarkerInfo(
-            declaration,
+            anchor,
             anchor.textRange,
             if (implements) IMPLEMENTING_MARK else OVERRIDING_MARK,
             Pass.LINE_MARKERS,

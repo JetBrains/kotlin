@@ -32,13 +32,15 @@ import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.idea.search.usagesSearch.propertyDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
 import java.awt.event.MouseEvent
 import java.util.*
 
-object SuperDeclarationMarkerTooltip: Function<KtDeclaration, String> {
-    override fun `fun`(ktDeclaration: KtDeclaration?): String? {
+object SuperDeclarationMarkerTooltip: Function<PsiElement, String> {
+    override fun `fun`(element: PsiElement): String? {
+        val ktDeclaration = element.getParentOfType<KtDeclaration>(false) ?: return null
         val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(ktDeclaration!!)
         if (overriddenDescriptors.isEmpty()) return ""
 
@@ -63,25 +65,21 @@ object SuperDeclarationMarkerTooltip: Function<KtDeclaration, String> {
     }
 }
 
-class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<KtDeclaration>, TestableLineMarkerNavigator {
-    override fun navigate(e: MouseEvent?, element: KtDeclaration?) {
+class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<PsiElement>, TestableLineMarkerNavigator {
+    override fun navigate(e: MouseEvent?, element: PsiElement?) {
         getTargetsPopupDescriptor(element)?.showPopup(e)
     }
 
     override fun getTargetsPopupDescriptor(element: PsiElement?): NavigationPopupDescriptor? {
-        if (element !is KtDeclaration) return null
+        val declaration = element?.getParentOfType<KtDeclaration>(false) ?: return null
 
-        val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(element)
+        val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(declaration)
         if (overriddenDescriptors.isEmpty()) return null
 
         val superDeclarations = ArrayList<NavigatablePsiElement>()
         for (overriddenMember in overriddenDescriptors) {
             val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(element.project, overriddenMember)
-            for (declaration in declarations) {
-                if (declaration is NavigatablePsiElement) {
-                    superDeclarations.add(declaration)
-                }
-            }
+            superDeclarations += declarations.filterIsInstance<NavigatablePsiElement>()
         }
 
         val elementName = elementDescriptor!!.name
