@@ -77,6 +77,9 @@ struct ContainerHeader {
     refCount_ -= CONTAINER_TAG_INCREMENT;
     return refCount_ >> CONTAINER_TAG_SHIFT;
   }
+  inline unsigned tag() const {
+    return refCount_ & CONTAINER_TAG_MASK;
+  }
   inline unsigned objectCount() const {
     return objectCount_ >> CONTAINER_TAG_GC_SHIFT;
   }
@@ -270,10 +273,10 @@ class ArenaContainer {
  private:
   void* place(container_size_t size);
   bool allocContainer(container_size_t minSize);
-  void setMeta(ObjHeader* obj, const TypeInfo* type_info) {
+  void setMeta(ObjHeader* obj, const TypeInfo* typeInfo) {
     obj->container_offset_negative_ =
         reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(currentChunk_->asHeader());
-    obj->set_type_info(type_info);
+    obj->set_type_info(typeInfo);
     RuntimeAssert(obj->container() == currentChunk_->asHeader(), "Placement must match");
   }
   ContainerChunk* currentChunk_;

@@ -30,10 +30,13 @@
 #include "Natives.h"
 
 // If garbage collection algorithm for cyclic garbage to be used.
-// We are using the Bacon's algorithm for GC (http://researcher.watson.ibm.com/researcher/files/us-bacon/Bacon03Pure.pdf).
+// We are using the Bacon's algorithm for GC, see
+// http://researcher.watson.ibm.com/researcher/files/us-bacon/Bacon03Pure.pdf.
 #define USE_GC 1
 // Define to 1 to print all memory operations.
 #define TRACE_MEMORY 0
+// Collect memory manager events statistics.
+#define COLLECT_STATISTIC 0
 
 ContainerHeader ObjHeader::theStaticObjectsContainer = {
   CONTAINER_TAG_PERMANENT | CONTAINER_TAG_INCREMENT
@@ -47,7 +50,7 @@ constexpr container_size_t kContainerAlignment = 1024;
 constexpr container_size_t kObjectAlignment = 8;
 
 #if TRACE_MEMORY
-#define MEMORY_LOG(...) konan::consolePrintf(__VA_ARGS__)
+#define MEMORY_LOG(...) konan::consolePrintf(__VA_ARGS__);
 #else
 #define MEMORY_LOG(...)
 #endif
@@ -84,11 +87,141 @@ struct FrameOverlay {
 int allocCount = 0;
 int aliveMemoryStatesCount = 0;
 
+// Forward declarations.
+void FreeContainer(ContainerHeader* header);
+
+#if COLLECT_STATISTIC
+class MemoryStatistic {
+public:
+  // UpdateRef per-object type counters.
+  uint64_t updateCounters[4][4];
+  // Alloc per container type counters.
+  uint64_t containerAllocs[4][2];
+  // Free per container type counters.
+  uint64_t objectAllocs[4][2];
+  // Histogram of allocation size distribution.
+  KStdUnorderedMap<int, int>* allocationHistogram;
+  // Number of allocation cache hits.
+  int allocCacheHit;
+  // Number of allocation cache misses.
+  int allocCacheMiss;
+
+  // Map of array index to human readable name.
+  static constexpr const char* indexToName[] = { "normal", "stack ", "perm  ", "null  " };
+
+  void init() {
+    memset(containerAllocs, 0, sizeof(containerAllocs));
+    memset(objectAllocs, 0, sizeof(objectAllocs));
+    memset(updateCounters, 0, sizeof(updateCounters));
+    allocationHistogram = konanConstructInstance<KStdUnorderedMap<int, int>>();
+    allocCacheHit = 0;
+    allocCacheMiss = 0;
+  }
+
+  void deinit() {
+    konanDestructInstance(allocationHistogram);
+    allocationHistogram = nullptr;
+  }
+
+  void incUpdateRef(const ObjHeader* objOld, const ObjHeader* objNew) {
+    updateCounters[toIndex(objOld)][toIndex(objNew)]++;
+  }
+
+  void incAlloc(size_t size, const ContainerHeader* header) {
+    containerAllocs[toIndex(header)][0]++;
+    ++(*allocationHistogram)[size];
+#if 0
+    auto queue = memoryState->finalizerQueue;
+    bool hit = false;
+    for (int i = 0; i < queue->size(); i++) {
+      auto container = (*queue)[i];
+      if (containerSize(container) == size) {
+        hit = true;
+        break;
+      }
+    }
+    if (hit)
+      allocCacheHit++;
+    else
+      allocCacheMiss++;
+#endif  // USE_GC
+  }
+
+  void incFree(const ContainerHeader* header) {
+    containerAllocs[toIndex(header)][1]++;
+  }
+
+  void incAlloc(size_t size, const ObjHeader* header) {
+    objectAllocs[toIndex(header)][0]++;
+  }
+
+  void incFree(const ObjHeader* header) {
+    objectAllocs[toIndex(header)][1]++;
+  }
+
+  static int toIndex(const ObjHeader* obj) {
+    if (obj == nullptr) return 3;
+    return toIndex(obj->container());
+  }
+
+  static int toIndex(const ContainerHeader* header) {
+    switch (header->tag()) {
+      case CONTAINER_TAG_NORMAL   : return 0;
+      case CONTAINER_TAG_STACK    : return 1;
+      case CONTAINER_TAG_PERMANENT: return 2;
+    }
+    RuntimeAssert(false, "unknown container type");
+    return -1;
+  }
+
+  void printStatistic() {
+    konan::consolePrintf("\nMemory manager statistic:\n\n");
+    for (int i = 0; i < 2; i++) {
+      konan::consolePrintf("Container %s alloc: %lld, free: %lld\n",
+                           indexToName[i], containerAllocs[i][0],
+                           containerAllocs[i][1]);
+    }
+    for (int i = 0; i < 2; i++) {
+      konan::consolePrintf("Object %s alloc: %lld, free: %lld\n",
+                           indexToName[i], objectAllocs[i][0],
+                           objectAllocs[i][1]);
+    }
+
+    konan::consolePrintf("\n");
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        konan::consolePrintf("UpdateRef[%s -> %s]: %lld\n",
+                             indexToName[i], indexToName[j], updateCounters[i][j]);
+      }
+    }
+    konan::consolePrintf("\n");
+
+    konan::consolePrintf("Allocation histogram:\n");
+    KStdVector<int> keys(allocationHistogram->size());
+    int index = 0;
+    for (auto& it : *allocationHistogram) {
+      keys[index++] = it.first;
+    }
+    std::sort(keys.begin(), keys.end());
+    for (auto& it : keys) {
+      konan::consolePrintf(
+          "%d bytes -> %d times\n", it, (*allocationHistogram)[it]);
+    }
+
+#if USE_GC
+    konan::consolePrintf(
+        "alloc cache: %d hits/%d misses\n", allocCacheHit, allocCacheMiss);
+#endif  // USE_GC
+  }
+};
+
+constexpr const char* MemoryStatistic::indexToName[];
+
+#endif  // COLLECT_STATISTIC
+
 struct MemoryState {
 
 #if TRACE_MEMORY
-  // List of all global objects addresses.
-  KRefPtrList* globalObjects;
   // Set of all containers.
   ContainerHeaderSet* containers;
 #endif
@@ -114,9 +247,96 @@ struct MemoryState {
   // If collection is in progress.
   bool gcInProgress;
 #endif // USE_GC
+
+#if COLLECT_STATISTIC
+  #define CONTAINER_ALLOC_STAT(state, size, container) state->statistic.incAlloc(size, container);
+  #define CONTAINER_FREE_STAT(state, container)
+  #define CONTAINER_DESTROY_STAT(state, container) \
+    state->statistic.incFree(container);
+  #define OBJECT_ALLOC_STAT(state, size, object) \
+    state->statistic.incAlloc(size, object);
+  #define OBJECT_FREE_STAT(state, size, object) \
+    state->statistic.incFree(object);
+#define UPDATE_REF_STAT(state, oldRef, newRef, slot)         \
+    state->statistic.incUpdateRef(oldRef, newRef);
+  #define INIT_STAT(state) \
+    state->statistic.init();
+  #define DEINIT_STAT(state) \
+    state->statistic.deinit();
+  #define PRINT_STAT(state) \
+    state->statistic.printStatistic();
+  MemoryStatistic statistic;
+#else
+  #define CONTAINER_ALLOC_STAT(state, size, container)
+  #define CONTAINER_FREE_STAT(state, container)
+  #define CONTAINER_DESTROY_STAT(state, container)
+  #define OBJECT_ALLOC_STAT(state, size, object)
+  #define OBJECT_FREE_STAT(state, object)
+  #define UPDATE_REF_STAT(state, oldRef, newRef, slot)
+  #define INIT_STAT(state)
+  #define DEINIT_STAT(state)
+  #define PRINT_STAT(state)
+#endif // COLLECT_STATISTIC
 };
 
-void FreeContainer(ContainerHeader* header);
+#if TRACE_MEMORY
+#define INIT_TRACE(state) \
+  memoryState->containers = konanConstructInstance<ContainerHeaderSet>();
+#define DEINIT_TRACE(state) \
+   konanDestructInstance(memoryState->containers); \
+   memoryState->containers = nullptr;
+#else
+#define INIT_TRACE(state)
+#define DEINIT_TRACE(state)
+#endif
+#define CONTAINER_ALLOC_TRACE(state, size, container) \
+  MEMORY_LOG("Container alloc %d at %p\n", size, container)
+#define CONTAINER_FREE_TRACE(state, container)  \
+  MEMORY_LOG("Container free %p\n", container)
+#define CONTAINER_DESTROY_TRACE(state, container) \
+  MEMORY_LOG("Container destroy %p\n", container)
+#define OBJECT_ALLOC_TRACE(state, size, object) \
+  MEMORY_LOG("Object alloc %d at %p\n", size, object)
+#define OBJECT_FREE_TRACE(state, object) \
+  MEMORY_LOG("Object free %p\n", object)
+#define UPDATE_REF_TRACE(state, oldRef, newRef, slot) \
+  MEMORY_LOG("UpdateRef *%p: %p -> %p\n", slot, oldRef, newRef)
+
+// Events macro definitions.
+// Called on worker's memory init.
+#define INIT_EVENT(state) \
+  INIT_STAT(state) \
+  INIT_TRACE(state)
+// Called on worker's memory deinit.
+#define DEINIT_EVENT(state) \
+  DEINIT_STAT(state)
+// Called on container allocation.
+#define CONTAINER_ALLOC_EVENT(state, size, container) \
+  CONTAINER_ALLOC_STAT(state, size, container) \
+  CONTAINER_ALLOC_TRACE(state, size, container)
+// Called on container freeing (memory is still in use).
+#define CONTAINER_FREE_EVENT(state, container) \
+  CONTAINER_FREE_STAT(state, container) \
+  CONTAINER_FREE_TRACE(state, container)
+// Called on container destroy (memory is released to allocator).
+#define CONTAINER_DESTROY_EVENT(state, container) \
+  CONTAINER_DESTROY_STAT(state, container) \
+  CONTAINER_DESTROY_TRACE(state, container)
+// Object was just allocated.
+#define OBJECT_ALLOC_EVENT(state, size, object) \
+  OBJECT_ALLOC_STAT(state, size, object) \
+  OBJECT_ALLOC_TRACE(state, size, object)
+// Object is freed.
+#define OBJECT_FREE_EVENT(state, size, object)  \
+  OBJECT_FREE_STAT(state, size, object) \
+  OBJECT_FREE_TRACE(state, object)
+// Reference in memory is being updated.
+#define UPDATE_REF_EVENT(state, oldRef, newRef, slot) \
+  UPDATE_REF_STAT(state, oldRef, newRef, slot) \
+  UPDATE_REF_TRACE(state, oldRef, newRef, slot)
+// Infomation shall be printed as worker is exiting.
+#define PRINT_EVENT(state) \
+  PRINT_STAT(state)
 
 namespace {
 
@@ -199,7 +419,6 @@ static inline void DeinitInstanceBodyImpl(const TypeInfo* typeInfo, void* body) 
   for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
     ObjHeader** location = reinterpret_cast<ObjHeader**>(
         reinterpret_cast<uintptr_t>(body) + typeInfo->objOffsets_[index]);
-    MEMORY_LOG("Calling UpdateRef from DeinitInstanceBodyImpl\n");
     UpdateRef(location, nullptr);
   }
 }
@@ -223,6 +442,7 @@ inline void processFinalizerQueue(MemoryState* state) {
 #endif
       runDeallocationHooks(container);
     }
+    CONTAINER_DESTROY_EVENT(state, container)
     konanFreeMemory(container);
     atomicAdd(&allocCount, -1);
   }
@@ -239,6 +459,7 @@ inline void scheduleDestroyContainer(
   }
 #else
   atomicAdd(&allocCount, -1);
+  CONTAINER_DESTROY_EVENT(state, header)
   konanFreeMemory(header);
 #endif
 }
@@ -323,7 +544,7 @@ void traverseContainerReferredObjects(ContainerHeader* container, func process) 
 
 void dumpWorker(const char* prefix, ContainerHeader* header, ContainerHeaderSet* seen) {
   MEMORY_LOG("%s: %p (%08x): %d refs\n", prefix, header, header->refCount_,
-             header->refCount_ >> CONTAINER_TAG_SHIFT);
+             header->refCount_ >> CONTAINER_TAG_SHIFT)
   seen->insert(header);
   traverseContainerReferredObjects(header, [prefix, seen](ObjHeader* ref) {
     auto child = ref->container();
@@ -337,7 +558,7 @@ void dumpWorker(const char* prefix, ContainerHeader* header, ContainerHeaderSet*
 void dumpReachable(const char* prefix, const ContainerHeaderSet* roots) {
   ContainerHeaderSet seen;
   for (auto container : *roots) {
-    MEMORY_LOG("%p is root\n", container);
+    MEMORY_LOG("%p is root\n", container)
     dumpWorker(prefix, container, &seen);
   }
 }
@@ -508,11 +729,23 @@ inline ArenaContainer* initedArena(ObjHeader** auxSlot) {
   auto arena = frame->arena;
   if (!arena) {
     arena = konanConstructInstance<ArenaContainer>();
-    MEMORY_LOG("Initializing arena in %p\n", frame);
+    MEMORY_LOG("Initializing arena in %p\n", frame)
     arena->Init();
     frame->arena = arena;
   }
   return arena;
+}
+
+inline size_t containerSize(const ContainerHeader* container) {
+  size_t result = 0;
+  const ObjHeader* obj = reinterpret_cast<const ObjHeader*>(container + 1);
+  for (int object = 0; object < container->objectCount(); object++) {
+    size_t size = objectSize(obj);
+    result += size;
+    obj = reinterpret_cast<ObjHeader*>(
+        reinterpret_cast<uintptr_t>(obj) + size);
+  }
+  return result;
 }
 
 }  // namespace
@@ -524,7 +757,7 @@ ContainerHeader* AllocContainer(size_t size) {
   // is how to get actual size of container.
 #endif
   ContainerHeader* result = konanConstructSizedInstance<ContainerHeader>(size);
-  MEMORY_LOG(">>> alloc %d -> %p\n", static_cast<int>(size), result);
+  CONTAINER_ALLOC_EVENT(state, size, result);
 #if TRACE_MEMORY
   state->containers->insert(result);
 #endif
@@ -535,11 +768,8 @@ ContainerHeader* AllocContainer(size_t size) {
 void FreeContainer(ContainerHeader* header) {
   RuntimeAssert(!isPermanent(header), "this kind of container shalln't be freed");
   auto state = memoryState;
-#if TRACE_MEMORY
-  if (isFreeable(header)) {
-    MEMORY_LOG("<<< free<FreeContainer> %p\n", header);
-  }
-#endif
+
+  CONTAINER_FREE_EVENT(state, header)
 
   // Now let's clean all object's fields in this container.
   traverseContainerObjectFields(header, [](ObjHeader** location) {
@@ -552,13 +782,10 @@ void FreeContainer(ContainerHeader* header) {
   } else {
     header->setColor(CONTAINER_TAG_GC_BLACK);
     if (!header->buffered()) {
-
       runDeallocationHooks(header);
-
 #if TRACE_MEMORY
     memoryState->containers->erase(header);
 #endif
-
       scheduleDestroyContainer(state, header);
     }
   }
@@ -574,7 +801,8 @@ void ObjectContainer::Init(const TypeInfo* type_info) {
     header_->setObjectCount(1);
      // header->refCount_ is zero initialized by AllocContainer().
     SetMeta(GetPlace(), type_info);
-    MEMORY_LOG("object at %p\n", GetPlace());
+    MEMORY_LOG("object at %p\n", GetPlace())
+    OBJECT_ALLOC_EVENT(memoryState, type_info->instanceSize_, GetPlace())
   }
 }
 
@@ -591,7 +819,9 @@ void ArrayContainer::Init(const TypeInfo* type_info, uint32_t elements) {
     // header->refCount_ is zero initialized by AllocContainer().
     GetPlace()->count_ = elements;
     SetMeta(GetPlace()->obj(), type_info);
-    MEMORY_LOG("array at %p\n", GetPlace());
+    MEMORY_LOG("array at %p\n", GetPlace())
+    OBJECT_ALLOC_EVENT(
+        memoryState, -type_info->instanceSize_ * elements, GetPlace()->obj())
   }
 }
 
@@ -602,11 +832,11 @@ void ArenaContainer::Init() {
 }
 
 void ArenaContainer::Deinit() {
-  MEMORY_LOG("Arena::Deinit start: %p\n", this);
+  MEMORY_LOG("Arena::Deinit start: %p\n", this)
   auto chunk = currentChunk_;
   while (chunk != nullptr) {
     // FreeContainer() doesn't release memory when CONTAINER_TAG_STACK is set.
-    MEMORY_LOG("Arena::Deinit free chunk %p\n", chunk);
+    MEMORY_LOG("Arena::Deinit free chunk %p\n", chunk)
     FreeContainer(chunk->asHeader());
     chunk = chunk->next;
   }
@@ -668,6 +898,7 @@ ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
   if (!result) {
     return nullptr;
   }
+  OBJECT_ALLOC_EVENT(memoryState, type_info->instanceSize_, result)
   currentChunk_->asHeader()->incObjectCount();
   setMeta(result, type_info);
   return result;
@@ -680,6 +911,7 @@ ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, uint32_t coun
   if (!result) {
     return nullptr;
   }
+  OBJECT_ALLOC_EVENT(memoryState, -type_info->instanceSize_ * count, result->obj())
   currentChunk_->asHeader()->incObjectCount();
   setMeta(result->obj(), type_info);
   result->count_ = count;
@@ -687,12 +919,12 @@ ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, uint32_t coun
 }
 
 inline void AddRef(const ObjHeader* object) {
-  MEMORY_LOG("AddRef on %p in %p\n", object, object->container());
+  MEMORY_LOG("AddRef on %p in %p\n", object, object->container())
   AddRef(object->container());
 }
 
 inline void ReleaseRef(const ObjHeader* object) {
-  MEMORY_LOG("ReleaseRef on %p in %p\n", object, object->container());
+  MEMORY_LOG("ReleaseRef on %p in %p\n", object, object->container())
   Release(object->container());
 }
 
@@ -710,11 +942,7 @@ MemoryState* InitMemory() {
   RuntimeAssert(sizeof(FrameOverlay) % sizeof(ObjHeader**) == 0, "Frame overlay should contain only pointers")
   RuntimeAssert(memoryState == nullptr, "memory state must be clear");
   memoryState = konanConstructInstance<MemoryState>();
-  // TODO: initialize heap here.
-#if TRACE_MEMORY
-  memoryState->globalObjects = konanConstructInstance<KRefPtrList>();
-  memoryState->containers = konanConstructInstance<ContainerHeaderSet>();
-#endif
+  INIT_EVENT(memoryState)
 #if USE_GC
   memoryState->finalizerQueue = konanConstructInstance<ContainerHeaderDeque>();
   memoryState->toFree = konanConstructInstance<ContainerHeaderList>();
@@ -728,16 +956,6 @@ MemoryState* InitMemory() {
 }
 
 void DeinitMemory(MemoryState* memoryState) {
-#if TRACE_MEMORY
-  // Free all global objects, to ensure no memory leaks happens.
-  for (auto location: *memoryState->globalObjects) {
-    MEMORY_LOG("Release global in *%p: %p\n", location, *location);
-    UpdateRef(location, nullptr);
-  }
-  konanDestructInstance(memoryState->globalObjects);
-  memoryState->globalObjects = nullptr;
-#endif
-
 #if USE_GC
   GarbageCollect();
   RuntimeAssert(memoryState->toFree->size() == 0, "Some memory have not been released after GC");
@@ -757,12 +975,13 @@ void DeinitMemory(MemoryState* memoryState) {
                allocCount);
     dumpReachable("", memoryState->containers);
   }
-  konanDestructInstance(memoryState->containers);
-  memoryState->containers = nullptr;
 #else
   if (lastMemoryState)
     RuntimeAssert(allocCount == 0, "Memory leaks found");
 #endif
+
+  PRINT_EVENT(memoryState)
+  DEINIT_EVENT(memoryState)
 
   konanFreeMemory(memoryState);
   ::memoryState = nullptr;
@@ -773,7 +992,7 @@ OBJ_GETTER(AllocInstance, const TypeInfo* type_info) {
   if (isArenaSlot(OBJ_RESULT)) {
     auto arena = initedArena(asArenaSlot(OBJ_RESULT));
     auto result = arena->PlaceObject(type_info);
-    MEMORY_LOG("instance %p in arena: %p\n", result, arena);
+    MEMORY_LOG("instance %p in arena: %p\n", result, arena)
     return result;
   }
   RETURN_OBJ(ObjectContainer(type_info).GetPlace());
@@ -784,7 +1003,7 @@ OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, uint32_t elements) {
   if (isArenaSlot(OBJ_RESULT)) {
     auto arena = initedArena(asArenaSlot(OBJ_RESULT));
     auto result = arena->PlaceArray(type_info, elements)->obj();
-    MEMORY_LOG("array[%d] %p in arena: %p\n", elements, result, arena);
+    MEMORY_LOG("array[%d] %p in arena: %p\n", elements, result, arena)
     return result;
   }
   RETURN_OBJ(ArrayContainer(type_info, elements).GetPlace()->obj());
@@ -800,20 +1019,14 @@ OBJ_GETTER(InitInstance,
   }
 
   ObjHeader* object = AllocInstance(type_info, OBJ_RESULT);
-  MEMORY_LOG("Calling UpdateRef from InitInstance\n");
+  MEMORY_LOG("Calling UpdateRef from InitInstance\n")
   UpdateRef(location, object);
 #if KONAN_NO_EXCEPTIONS
   ctor(object);
-#if TRACE_MEMORY
-  memoryState->globalObjects->push_back(location);
-#endif
   return object;
 #else
   try {
     ctor(object);
-#if TRACE_MEMORY
-    memoryState->globalObjects->push_back(location);
-#endif
     return object;
   } catch (...) {
     UpdateRef(OBJ_RESULT, nullptr);
@@ -824,7 +1037,7 @@ OBJ_GETTER(InitInstance,
 }
 
 void SetRef(ObjHeader** location, const ObjHeader* object) {
-  MEMORY_LOG("SetRef *%p: %p\n", location, object);
+  MEMORY_LOG("SetRef *%p: %p\n", location, object)
   *const_cast<const ObjHeader**>(location) = object;
   AddRef(object);
 }
@@ -849,15 +1062,14 @@ void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
     auto arena = initedArena(asArenaSlot(returnSlot));
     returnSlot = arena->getSlot();
   }
-  MEMORY_LOG("Calling UpdateRef from UpdateReturnRef\n");
   UpdateRef(returnSlot, object);
 }
 
 void UpdateRef(ObjHeader** location, const ObjHeader* object) {
   RuntimeAssert(!isArenaSlot(location), "must not be a slot");
   ObjHeader* old = *location;
+  UPDATE_REF_EVENT(memoryState, old, object, location)
   if (old != object) {
-    MEMORY_LOG("UpdateRef *%p: %p -> %p\n", location, old, object);
     if (object != nullptr) {
       AddRef(object);
     }
@@ -869,23 +1081,23 @@ void UpdateRef(ObjHeader** location, const ObjHeader* object) {
 }
 
 void EnterFrame(ObjHeader** start, int count) {
-  MEMORY_LOG("EnterFrame %p .. %p\n", start, start + count);
+  MEMORY_LOG("EnterFrame %p .. %p\n", start, start + count)
 }
 
 void LeaveFrame(ObjHeader** start, int count) {
-  MEMORY_LOG("LeaveFrame %p .. %p\n", start, start + count);
+  MEMORY_LOG("LeaveFrame %p .. %p\n", start, start + count)
   ReleaseRefs(start + kFrameOverlaySlots, count - kFrameOverlaySlots);
   if (*start != nullptr) {
     auto arena = initedArena(start);
-    MEMORY_LOG("LeaveFrame: free arena %p\n", arena);
+    MEMORY_LOG("LeaveFrame: free arena %p\n", arena)
     arena->Deinit();
     konanFreeMemory(arena);
-    MEMORY_LOG("LeaveFrame: free arena done %p\n", arena);
+    MEMORY_LOG("LeaveFrame: free arena done %p\n", arena)
   }
 }
 
 void ReleaseRefs(ObjHeader** start, int count) {
-  MEMORY_LOG("ReleaseRefs %p .. %p\n", start, start + count);
+  MEMORY_LOG("ReleaseRefs %p .. %p\n", start, start + count)
   ObjHeader** current = start;
   auto state = memoryState;
   while (count-- > 0) {
@@ -905,7 +1117,7 @@ void GarbageCollect() {
   MemoryState* state = memoryState;
   RuntimeAssert(!state->gcInProgress, "Recursive GC is disallowed");
 
-  MEMORY_LOG("Garbage collect\n");
+  MEMORY_LOG("Garbage collect\n")
 
   state->gcInProgress = true;
 
