@@ -78,7 +78,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val MAIN_KAPT_CONFIGURATION_NAME = "kapt"
 
         val KAPT_GROUP_NAME = "org.jetbrains.kotlin"
-        val KAPT_ARTIFACT_NAME = "kotlin-annotation-processing"
+        val KAPT_ARTIFACT_NAME = "kotlin-annotation-processing-gradle"
 
         fun getKaptConfigurationName(sourceSetName: String): String {
             return if (sourceSetName != "main")

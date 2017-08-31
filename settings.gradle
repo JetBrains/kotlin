@@ -68,16 +68,15 @@ include ":kotlin-build-common",
         ":plugins:android-extensions-idea",
         ":plugins:android-extensions-jps",
         ":kotlin-allopen-compiler-plugin",
-        ":plugins:allopen-ide",
+        ":allopen-ide-plugin",
         ":kotlin-noarg-compiler-plugin",
-        ":plugins:noarg-ide",
+        ":noarg-ide-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin",
-        ":plugins:sam-with-receiver-ide",
+        ":sam-with-receiver-ide-plugin",
         ":kotlin-source-sections-compiler-plugin",
         ":plugins:uast-kotlin",
         ":plugins:uast-kotlin-idea",
         ":plugins:annotation-based-compiler-plugins-ide-support",
-        ":plugins:kapt3",
         ":plugins:plugins-tests",
         ":kotlin-script-runtime",
         ":kotlin-runtime",
@@ -119,6 +118,7 @@ include ":kotlin-build-common",
         ":examples:annotation-processor-example",
         ":kotlin-script-util",
         ":kotlin-annotation-processing",
+        ":kotlin-annotation-processing-gradle",
         ":examples:kotlin-jsr223-local-example",
         ":examples:kotlin-jsr223-daemon-local-eval-example"
 
@@ -158,11 +158,11 @@ project(':plugins:android-extensions-idea').projectDir = "$rootDir/plugins/andro
 project(':plugins:android-extensions-jps').projectDir = "$rootDir/plugins/android-extensions/android-extensions-jps" as File
 project(':android-lint').projectDir = "$rootDir/prepare/android-lint" as File
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen/allopen-cli" as File
-project(':plugins:allopen-ide').projectDir = "$rootDir/plugins/allopen/allopen-ide" as File
+project(':allopen-ide-plugin').projectDir = "$rootDir/plugins/allopen/allopen-ide" as File
 project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg/noarg-cli" as File
-project(':plugins:noarg-ide').projectDir = "$rootDir/plugins/noarg/noarg-ide" as File
+project(':noarg-ide-plugin').projectDir = "$rootDir/plugins/noarg/noarg-ide" as File
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-cli" as File
-project(':plugins:sam-with-receiver-ide').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-ide" as File
+project(':sam-with-receiver-ide-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-ide" as File
 project(':kotlin-source-sections-compiler-plugin').projectDir = "$rootDir/plugins/source-sections/source-sections-compiler" as File
 project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
 project(':tools:kotlin-stdlib-js-merger').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-js-merger" as File
@@ -176,7 +176,8 @@ project(':kotlin-sam-with-receiver').projectDir = "$rootDir/libraries/tools/kotl
 project(':kotlin-gradle-subplugin-example').projectDir = "$rootDir/libraries/examples/kotlin-gradle-subplugin-example" as File
 project(':examples:annotation-processor-example').projectDir = "$rootDir/libraries/examples/annotation-processor-example" as File
 project(':kotlin-script-util').projectDir = "$rootDir/libraries/tools/kotlin-script-util" as File
-project(':kotlin-annotation-processing').projectDir = "$rootDir/libraries/tools/kotlin-annotation-processing" as File
+project(':kotlin-annotation-processing-gradle').projectDir = "$rootDir/libraries/tools/kotlin-annotation-processing" as File
+project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt3" as File
 project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-local-example" as File
 project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
 

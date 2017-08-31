@@ -269,14 +269,14 @@ tasks {
         dependsOn("dist")
         dependsOn(":plugins:android-extensions-idea:test",
                   ":idea:idea-android:test",
-                  ":plugins:kapt3:test",
+                  ":kotlin-annotation-processing:test",
                   ":compiler:android-tests:test")
     }
 
     "plugins-tests" {
         dependsOn("dist")
         dependsOn(":plugins:plugins-tests:test",
-                  ":plugins:kapt3:test",
+                  ":kotlin-annotation-processing:test",
                   ":kotlin-source-sections-compiler-plugin:test",
                   ":plugins:uast-kotlin:test",
                   ":kotlin-annotation-processing")

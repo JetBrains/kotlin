@@ -25,7 +25,7 @@ dependencies {
     compile(projectTests(":jps-plugin"))
     compile(projectTests(":plugins:plugins-tests"))
     compile(projectTests(":plugins:android-extensions-idea"))
-    compile(projectTests(":plugins:kapt3"))
+    compile(projectTests(":kotlin-annotation-processing"))
     compile(projectTests(":plugins:uast-kotlin"))
     compile(projectTests(":js:js.tests"))
     compile(protobufFull())
@@ -33,7 +33,6 @@ dependencies {
     testCompile(project(":compiler.tests-common"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":compiler:incremental-compilation-impl"))
-    testCompile(project(":plugins:kapt3"))
     testCompile(commonDep("junit:junit"))
     testCompile(ideaSdkDeps("openapi", "idea"))
     testCompile(preloadedDeps("uast-tests"))

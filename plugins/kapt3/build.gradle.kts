@@ -1,4 +1,6 @@
 
+description = "Annotation Processor for Kotlin"
+
 apply { plugin("kotlin") }
 
 dependencies {
@@ -23,3 +25,8 @@ projectTest {
     workingDir = rootDir
 }
 
+runtimeJar()
+sourcesJar()
+javadocJar()
+
+dist()

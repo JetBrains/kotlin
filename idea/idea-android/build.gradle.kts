@@ -25,9 +25,9 @@ dependencies {
     testCompile(commonDep("junit:junit"))
 
     testRuntime(project(":plugins:android-extensions-idea"))
-    testRuntime(project(":plugins:sam-with-receiver-ide"))
-    testRuntime(project(":plugins:noarg-ide"))
-    testRuntime(project(":plugins:allopen-ide"))
+    testRuntime(project(":sam-with-receiver-ide-plugin"))
+    testRuntime(project(":noarg-ide-plugin"))
+    testRuntime(project(":allopen-ide-plugin"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("idea-junit", "resources_en", plugin = "junit"))
     testRuntime(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
