@@ -83,6 +83,12 @@ function imul(a, b) {
         bufInt32[0] = value;
         return bufFloat32[0];
     };
+
+    // returns zero value for number with positive sign bit and non-zero value for number with negative sign bit.
+    Kotlin.doubleSignBit = function(value) {
+        bufFloat64[0] = value;
+        return bufInt32[1] & 0x80000000;
+    }
 })();
 
 
