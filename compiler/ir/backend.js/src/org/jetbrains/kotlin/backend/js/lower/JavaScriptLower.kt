@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalFunctionsLowering
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -23,11 +24,15 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 class JavaScriptLower(private val irModule: IrModuleFragment) {
     fun lower(irFile: IrFile) {
+        InitializersLowering(irModule).runOnFilePostfix(irFile)
+
+        LocalFunctionsLowering(irModule.irBuiltins).runOnFilePostfix(irFile)
+        LocalDeclarationsLowering(irModule.irBuiltins.builtIns).runOnFilePostfix(irFile)
+
         val innerClassDescriptorProvider = InnerClassDescriptorProvider()
         InnerClassLowering(innerClassDescriptorProvider).runOnFilePostfix(irFile)
         InnerClassConstructorCallsLowering(innerClassDescriptorProvider).runOnFilePostfix(irFile)
-        InitializersLowering(irModule).runOnFilePostfix(irFile)
-        LocalFunctionsLowering(irModule.irBuiltins).runOnFilePostfix(irFile)
+
         BridgeLowering().runOnFilePostfix(irFile)
         OperationWithWideningLowering().runOnFilePostfix(irFile)
     }

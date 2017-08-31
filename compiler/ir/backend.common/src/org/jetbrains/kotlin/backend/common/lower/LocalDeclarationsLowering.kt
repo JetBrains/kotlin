@@ -16,29 +16,37 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContainerLoweringPass {
+class LocalDeclarationsLowering(val builtIns: KotlinBuiltIns) : DeclarationContainerLoweringPass {
 
     private object DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE :
             IrDeclarationOriginImpl("FIELD_FOR_CAPTURED_VALUE") {}
@@ -194,7 +202,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             override fun visitClass(declaration: IrClass): IrStatement {
                 if (declaration.descriptor in localClasses) {
                     // Replace local class definition with an empty composite.
-                    return IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.builtIns.unitType)
+                    return IrCompositeImpl(declaration.startOffset, declaration.endOffset, builtIns.unitType)
                 } else {
                     return super.visitClass(declaration)
                 }
@@ -203,7 +211,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 if (declaration.descriptor in localFunctions) {
                     // Replace local function definition with an empty composite.
-                    return IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.builtIns.unitType)
+                    return IrCompositeImpl(declaration.startOffset, declaration.endOffset, builtIns.unitType)
                 } else {
                     return super.visitFunction(declaration)
                 }
