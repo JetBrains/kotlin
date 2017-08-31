@@ -262,7 +262,7 @@ class StubGenerator(
             }
         }
 
-        block("class ${decl.kotlinName.asSimpleName()}(override val rawPtr: NativePtr) : CStructVar()") {
+        block("class ${decl.kotlinName.asSimpleName()}(rawPtr: NativePtr) : CStructVar(rawPtr)") {
             out("")
             out("companion object : Type(${def.size}, ${def.align})") // FIXME: align
             out("")
@@ -340,7 +340,7 @@ class StubGenerator(
      * Produces to [out] the definition of Kotlin class representing the reference to given forward (incomplete) struct.
      */
     private fun generateForwardStruct(s: StructDecl) {
-        out("class ${s.kotlinName.asSimpleName()}(override val rawPtr: NativePtr) : COpaque")
+        out("class ${s.kotlinName.asSimpleName()}(rawPtr: NativePtr) : COpaque(rawPtr)")
     }
 
     private fun EnumConstant.isMoreCanonicalThan(other: EnumConstant): Boolean = with(other.name.toLowerCase()) {
@@ -390,7 +390,7 @@ class StubGenerator(
                         "${e.kotlinName.asSimpleName()}.values().find { it.value == value }!!")
             }
             out("")
-            block("class Var(override val rawPtr: NativePtr) : CEnumVar()") {
+            block("class Var(rawPtr: NativePtr) : CEnumVar(rawPtr)") {
                 out("companion object : Type(${baseTypeMirror.pointedTypeName}.size.toInt())")
                 out("var value: ${e.kotlinName.asSimpleName()}")
                 out("    get() = byValue(this.reinterpret<${baseTypeMirror.pointedTypeName}>().value)")

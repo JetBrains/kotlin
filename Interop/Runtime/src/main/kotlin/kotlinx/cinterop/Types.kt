@@ -24,8 +24,9 @@ package kotlinx.cinterop
  *
  * TODO: the behavior of [equals], [hashCode] and [toString] differs on Native and JVM backends.
  */
-interface NativePointed {
-    val rawPtr: NativePtr
+abstract class NativePointed(rawPtr: NativePtr) {
+    var rawPtr = rawPtr
+        internal set
 }
 
 // `null` value of `NativePointed?` is mapped to `nativeNullPtr`.
@@ -47,7 +48,7 @@ inline fun <reified T : NativePointed> NativePointed.reinterpret(): T = interpre
 /**
  * C data or code.
  */
-interface CPointed : NativePointed
+abstract class CPointed(rawPtr: NativePtr) : NativePointed(rawPtr)
 
 /**
  * Represents a reference to (possibly empty) sequence of C values.
@@ -187,7 +188,7 @@ fun <T : CPointed> Long.toCPointer(): CPointer<T>? = interpretCPointer(nativeNul
 /**
  * The [CPointed] without any specified interpretation.
  */
-interface COpaque : CPointed // TODO: should it correspond to COpaquePointer?
+abstract class COpaque(rawPtr: NativePtr) : CPointed(rawPtr) // TODO: should it correspond to COpaquePointer?
 
 /**
  * The pointer with an opaque type.
@@ -205,7 +206,7 @@ typealias COpaquePointerVar = CPointerVarOf<COpaquePointer>
  * The non-abstract subclasses should represent the (complete) C data type and thus specify size and alignment.
  * Each such subclass must have a companion object which is a [Type].
  */
-interface CVariable : CPointed {
+abstract class CVariable(rawPtr: NativePtr) : CPointed(rawPtr) {
 
     /**
      * The (complete) C data type.
@@ -240,14 +241,14 @@ inline fun <reified T : CVariable> CStructVar.arrayMemberAt(offset: Long): CArra
 /**
  * The C struct-typed variable located in memory.
  */
-abstract class CStructVar : CVariable {
+abstract class CStructVar(rawPtr: NativePtr) : CVariable(rawPtr) {
     open class Type(size: Long, align: Int) : CVariable.Type(size, align)
 }
 
 /**
  * The C primitive-typed variable located in memory.
  */
-sealed class CPrimitiveVar : CVariable {
+sealed class CPrimitiveVar(rawPtr: NativePtr) : CVariable(rawPtr) {
     // aligning by size is obviously enough
     open class Type(size: Int) : CVariable.Type(size.toLong(), align = size)
 }
@@ -255,43 +256,43 @@ sealed class CPrimitiveVar : CVariable {
 interface CEnum {
     val value: Number
 }
-abstract class CEnumVar : CPrimitiveVar()
+abstract class CEnumVar(rawPtr: NativePtr) : CPrimitiveVar(rawPtr)
 
 // generics below are used for typedef support
 // these classes are not supposed to be used directly, instead the typealiases are provided.
 
 @Suppress("FINAL_UPPER_BOUND")
-class BooleanVarOf<T : Boolean>(override val rawPtr: NativePtr) : CPrimitiveVar() {
+class BooleanVarOf<T : Boolean>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(1)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class ByteVarOf<T : Byte>(override val rawPtr: NativePtr) : CPrimitiveVar() {
+class ByteVarOf<T : Byte>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(1)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class ShortVarOf<T : Short>(override val rawPtr: NativePtr) : CPrimitiveVar() {
+class ShortVarOf<T : Short>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(2)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class IntVarOf<T : Int>(override val rawPtr: NativePtr) : CPrimitiveVar() {
+class IntVarOf<T : Int>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(4)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class LongVarOf<T : Long>(override val rawPtr: NativePtr) : CPrimitiveVar() {
+class LongVarOf<T : Long>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(8)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class FloatVarOf<T : Float>(override val rawPtr: NativePtr) : CPrimitiveVar() {
+class FloatVarOf<T : Float>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(4)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class DoubleVarOf<T : Double>(override val rawPtr: NativePtr) : CPrimitiveVar() {
+class DoubleVarOf<T : Double>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(8)
 }
 
@@ -350,7 +351,7 @@ var <T : Double> DoubleVarOf<T>.value: T
     set(value) = nativeMemUtils.putDouble(this, value)
 
 
-class CPointerVarOf<T : CPointer<*>>(override val rawPtr: NativePtr) : CVariable {
+class CPointerVarOf<T : CPointer<*>>(rawPtr: NativePtr) : CVariable(rawPtr) {
     companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 
@@ -423,7 +424,7 @@ typealias CArrayPointerVar<T> = CPointerVar<T>
 /**
  * The C function.
  */
-class CFunction<T : Function<*>>(override val rawPtr: NativePtr) : CPointed
+class CFunction<T : Function<*>>(rawPtr: NativePtr) : CPointed(rawPtr)
 
 /**
  * Returns a pointer to C function which calls given Kotlin *static* function.

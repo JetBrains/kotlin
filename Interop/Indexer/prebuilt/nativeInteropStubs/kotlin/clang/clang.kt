@@ -3051,7 +3051,7 @@ val CINDEX_VERSION_MINOR: Int = 35
 val CINDEX_VERSION: Int = 35
 
 @CNaturalStruct("data", "private_flags")
-class CXString(override val rawPtr: NativePtr) : CStructVar() {
+class CXString(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(16, 8)
     
@@ -3066,7 +3066,7 @@ class CXString(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("Strings", "Count")
-class CXStringSet(override val rawPtr: NativePtr) : CStructVar() {
+class CXStringSet(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(16, 8)
     
@@ -3080,14 +3080,14 @@ class CXStringSet(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
-class CXVirtualFileOverlayImpl(override val rawPtr: NativePtr) : COpaque
+class CXVirtualFileOverlayImpl(rawPtr: NativePtr) : COpaque(rawPtr)
 
-class CXModuleMapDescriptorImpl(override val rawPtr: NativePtr) : COpaque
+class CXModuleMapDescriptorImpl(rawPtr: NativePtr) : COpaque(rawPtr)
 
-class CXTranslationUnitImpl(override val rawPtr: NativePtr) : COpaque
+class CXTranslationUnitImpl(rawPtr: NativePtr) : COpaque(rawPtr)
 
 @CNaturalStruct("Filename", "Contents", "Length")
-class CXUnsavedFile(override val rawPtr: NativePtr) : CStructVar() {
+class CXUnsavedFile(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(24, 8)
     
@@ -3106,7 +3106,7 @@ class CXUnsavedFile(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("Major", "Minor", "Subminor")
-class CXVersion(override val rawPtr: NativePtr) : CStructVar() {
+class CXVersion(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(12, 4)
     
@@ -3125,7 +3125,7 @@ class CXVersion(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("data")
-class CXFileUniqueID(override val rawPtr: NativePtr) : CStructVar() {
+class CXFileUniqueID(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(24, 8)
     
@@ -3136,7 +3136,7 @@ class CXFileUniqueID(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("ptr_data", "int_data")
-class CXSourceLocation(override val rawPtr: NativePtr) : CStructVar() {
+class CXSourceLocation(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(24, 8)
     
@@ -3151,7 +3151,7 @@ class CXSourceLocation(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("ptr_data", "begin_int_data", "end_int_data")
-class CXSourceRange(override val rawPtr: NativePtr) : CStructVar() {
+class CXSourceRange(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(24, 8)
     
@@ -3170,7 +3170,7 @@ class CXSourceRange(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("count", "ranges")
-class CXSourceRangeList(override val rawPtr: NativePtr) : CStructVar() {
+class CXSourceRangeList(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(16, 8)
     
@@ -3185,7 +3185,7 @@ class CXSourceRangeList(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("kind", "amount")
-class CXTUResourceUsageEntry(override val rawPtr: NativePtr) : CStructVar() {
+class CXTUResourceUsageEntry(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(16, 8)
     
@@ -3200,7 +3200,7 @@ class CXTUResourceUsageEntry(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("data", "numEntries", "entries")
-class CXTUResourceUsage(override val rawPtr: NativePtr) : CStructVar() {
+class CXTUResourceUsage(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(24, 8)
     
@@ -3219,7 +3219,7 @@ class CXTUResourceUsage(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("kind", "xdata", "data")
-class CXCursor(override val rawPtr: NativePtr) : CStructVar() {
+class CXCursor(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(32, 8)
     
@@ -3238,7 +3238,7 @@ class CXCursor(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("Platform", "Introduced", "Deprecated", "Obsoleted", "Unavailable", "Message")
-class CXPlatformAvailability(override val rawPtr: NativePtr) : CStructVar() {
+class CXPlatformAvailability(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(72, 8)
     
@@ -3263,10 +3263,10 @@ class CXPlatformAvailability(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
-class CXCursorSetImpl(override val rawPtr: NativePtr) : COpaque
+class CXCursorSetImpl(rawPtr: NativePtr) : COpaque(rawPtr)
 
 @CNaturalStruct("kind", "data")
-class CXType(override val rawPtr: NativePtr) : CStructVar() {
+class CXType(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(24, 8)
     
@@ -3281,7 +3281,7 @@ class CXType(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("int_data", "ptr_data")
-class CXToken(override val rawPtr: NativePtr) : CStructVar() {
+class CXToken(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(24, 8)
     
@@ -3296,7 +3296,7 @@ class CXToken(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("CursorKind", "CompletionString")
-class CXCompletionResult(override val rawPtr: NativePtr) : CStructVar() {
+class CXCompletionResult(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(16, 8)
     
@@ -3311,7 +3311,7 @@ class CXCompletionResult(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("Results", "NumResults")
-class CXCodeCompleteResults(override val rawPtr: NativePtr) : CStructVar() {
+class CXCodeCompleteResults(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(16, 8)
     
@@ -3326,7 +3326,7 @@ class CXCodeCompleteResults(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("context", "visit")
-class CXCursorAndRangeVisitor(override val rawPtr: NativePtr) : CStructVar() {
+class CXCursorAndRangeVisitor(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(16, 8)
     
@@ -3341,7 +3341,7 @@ class CXCursorAndRangeVisitor(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("ptr_data", "int_data")
-class CXIdxLoc(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxLoc(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(24, 8)
     
@@ -3356,7 +3356,7 @@ class CXIdxLoc(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("hashLoc", "filename", "file", "isImport", "isAngled", "isModuleImport")
-class CXIdxIncludedFileInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxIncludedFileInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(56, 8)
     
@@ -3386,7 +3386,7 @@ class CXIdxIncludedFileInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("file", "module", "loc", "isImplicit")
-class CXIdxImportedASTFileInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxImportedASTFileInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(48, 8)
     
@@ -3408,7 +3408,7 @@ class CXIdxImportedASTFileInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("kind", "cursor", "loc")
-class CXIdxAttrInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxAttrInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(64, 8)
     
@@ -3425,7 +3425,7 @@ class CXIdxAttrInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("kind", "templateKind", "lang", "name", "USR", "cursor", "attributes", "numAttributes")
-class CXIdxEntityInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxEntityInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(80, 8)
     
@@ -3463,7 +3463,7 @@ class CXIdxEntityInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("cursor")
-class CXIdxContainerInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxContainerInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(32, 8)
     
@@ -3473,7 +3473,7 @@ class CXIdxContainerInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("attrInfo", "objcClass", "classCursor", "classLoc")
-class CXIdxIBOutletCollectionAttrInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxIBOutletCollectionAttrInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(72, 8)
     
@@ -3494,7 +3494,7 @@ class CXIdxIBOutletCollectionAttrInfo(override val rawPtr: NativePtr) : CStructV
 }
 
 @CNaturalStruct("entityInfo", "cursor", "loc", "semanticContainer", "lexicalContainer", "isRedeclaration", "isDefinition", "isContainer", "declAsContainer", "isImplicit", "attributes", "numAttributes", "flags")
-class CXIdxDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(128, 8)
     
@@ -3551,7 +3551,7 @@ class CXIdxDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("declInfo", "kind")
-class CXIdxObjCContainerDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxObjCContainerDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(16, 8)
     
@@ -3566,7 +3566,7 @@ class CXIdxObjCContainerDeclInfo(override val rawPtr: NativePtr) : CStructVar() 
 }
 
 @CNaturalStruct("base", "cursor", "loc")
-class CXIdxBaseClassInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxBaseClassInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(64, 8)
     
@@ -3583,7 +3583,7 @@ class CXIdxBaseClassInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("protocol", "cursor", "loc")
-class CXIdxObjCProtocolRefInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxObjCProtocolRefInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(64, 8)
     
@@ -3600,7 +3600,7 @@ class CXIdxObjCProtocolRefInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("protocols", "numProtocols")
-class CXIdxObjCProtocolRefListInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxObjCProtocolRefListInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(16, 8)
     
@@ -3615,7 +3615,7 @@ class CXIdxObjCProtocolRefListInfo(override val rawPtr: NativePtr) : CStructVar(
 }
 
 @CNaturalStruct("containerInfo", "superInfo", "protocols")
-class CXIdxObjCInterfaceDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxObjCInterfaceDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(24, 8)
     
@@ -3634,7 +3634,7 @@ class CXIdxObjCInterfaceDeclInfo(override val rawPtr: NativePtr) : CStructVar() 
 }
 
 @CNaturalStruct("containerInfo", "objcClass", "classCursor", "classLoc", "protocols")
-class CXIdxObjCCategoryDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxObjCCategoryDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(80, 8)
     
@@ -3659,7 +3659,7 @@ class CXIdxObjCCategoryDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("declInfo", "getter", "setter")
-class CXIdxObjCPropertyDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxObjCPropertyDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(24, 8)
     
@@ -3678,7 +3678,7 @@ class CXIdxObjCPropertyDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("declInfo", "bases", "numBases")
-class CXIdxCXXClassDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxCXXClassDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(24, 8)
     
@@ -3697,7 +3697,7 @@ class CXIdxCXXClassDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("kind", "cursor", "loc", "referencedEntity", "parentEntity", "container")
-class CXIdxEntityRefInfo(override val rawPtr: NativePtr) : CStructVar() {
+class CXIdxEntityRefInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(88, 8)
     
@@ -3726,7 +3726,7 @@ class CXIdxEntityRefInfo(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("abortQuery", "diagnostic", "enteredMainFile", "ppIncludedFile", "importedASTFile", "startedTranslationUnit", "indexDeclaration", "indexEntityReference")
-class IndexerCallbacks(override val rawPtr: NativePtr) : CStructVar() {
+class IndexerCallbacks(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(64, 8)
     
@@ -3765,7 +3765,7 @@ class IndexerCallbacks(override val rawPtr: NativePtr) : CStructVar() {
 }
 
 @CNaturalStruct("typeOpaquePtr")
-class CXTypeAttributes(override val rawPtr: NativePtr) : CStructVar() {
+class CXTypeAttributes(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
     companion object : Type(8, 8)
     
@@ -3787,7 +3787,7 @@ enum class CXErrorCode(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXErrorCode.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXErrorCode
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -3806,7 +3806,7 @@ enum class CXAvailabilityKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXAvailabilityKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXAvailabilityKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -3834,7 +3834,7 @@ enum class CXDiagnosticSeverity(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXDiagnosticSeverity.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXDiagnosticSeverity
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -3853,7 +3853,7 @@ enum class CXLoadDiag_Error(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXLoadDiag_Error.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXLoadDiag_Error
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -3902,7 +3902,7 @@ enum class CXSaveError(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXSaveError.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXSaveError
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -3941,7 +3941,7 @@ enum class CXTUResourceUsageKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXTUResourceUsageKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXTUResourceUsageKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4177,7 +4177,7 @@ enum class CXCursorKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXCursorKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXCursorKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4197,7 +4197,7 @@ enum class CXLinkageKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXLinkageKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXLinkageKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4216,7 +4216,7 @@ enum class CXVisibilityKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXVisibilityKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXVisibilityKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4235,7 +4235,7 @@ enum class CXLanguageKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXLanguageKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXLanguageKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4304,7 +4304,7 @@ enum class CXTypeKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXTypeKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXTypeKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4336,7 +4336,7 @@ enum class CXCallingConv(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXCallingConv.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXCallingConv
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4361,7 +4361,7 @@ enum class CXTemplateArgumentKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXTemplateArgumentKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXTemplateArgumentKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4396,7 +4396,7 @@ enum class CX_CXXAccessSpecifier(override val value: Int) : CEnum {
         fun byValue(value: Int) = CX_CXXAccessSpecifier.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CX_CXXAccessSpecifier
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4419,7 +4419,7 @@ enum class CX_StorageClass(override val value: Int) : CEnum {
         fun byValue(value: Int) = CX_StorageClass.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CX_StorageClass
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4437,7 +4437,7 @@ enum class CXChildVisitResult(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXChildVisitResult.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXChildVisitResult
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4493,7 +4493,7 @@ enum class CXTokenKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXTokenKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXTokenKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4529,7 +4529,7 @@ enum class CXCompletionChunkKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXCompletionChunkKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXCompletionChunkKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4586,7 +4586,7 @@ enum class CXEvalResultKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXEvalResultKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXEvalResultKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4603,7 +4603,7 @@ enum class CXVisitorResult(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXVisitorResult.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXVisitorResult
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4621,7 +4621,7 @@ enum class CXResult(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXResult.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXResult
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4663,7 +4663,7 @@ enum class CXIdxEntityKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXIdxEntityKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXIdxEntityKind
             get() = byValue(this.reinterpret<IntVar>().value)
@@ -4733,7 +4733,7 @@ enum class CXNullabilityKind(override val value: Int) : CEnum {
         fun byValue(value: Int) = CXNullabilityKind.values().find { it.value == value }!!
     }
     
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         companion object : Type(IntVar.size.toInt())
         var value: CXNullabilityKind
             get() = byValue(this.reinterpret<IntVar>().value)

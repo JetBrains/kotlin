@@ -404,12 +404,12 @@ private fun loadCallbacksLibrary() {
 /**
  * Reference to `ffi_type` struct instance.
  */
-internal class ffi_type(override val rawPtr: NativePtr) : COpaque
+internal class ffi_type(rawPtr: NativePtr) : COpaque(rawPtr)
 
 /**
  * Reference to `ffi_cif` struct instance.
  */
-internal class ffi_cif(override val rawPtr: NativePtr) : COpaque
+internal class ffi_cif(rawPtr: NativePtr) : COpaque(rawPtr)
 
 private external fun ffiTypeVoid(): Long
 private external fun ffiTypeUInt8(): Long

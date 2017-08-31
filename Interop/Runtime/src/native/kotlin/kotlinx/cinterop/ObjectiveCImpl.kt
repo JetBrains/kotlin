@@ -71,11 +71,11 @@ inline val ObjCObject?.rawPtr: NativePtr get() = if (this != null) {
     nativeNullPtr
 }
 
-class ObjCObjectVar<T : ObjCObject?>(override val rawPtr: NativePtr) : CVariable {
+class ObjCObjectVar<T : ObjCObject?>(rawPtr: NativePtr) : CVariable(rawPtr) {
     companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 
-class ObjCStringVarOf<T : String?>(override val rawPtr: NativePtr) : CVariable {
+class ObjCStringVarOf<T : String?>(rawPtr: NativePtr) : CVariable(rawPtr) {
     companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 

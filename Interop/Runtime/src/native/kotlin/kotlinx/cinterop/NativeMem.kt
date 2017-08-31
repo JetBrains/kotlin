@@ -80,7 +80,7 @@ object nativeMemUtils {
         }
     }
 
-    private class NativeAllocated(override val rawPtr: NativePtr) : NativePointed
+    private class NativeAllocated(rawPtr: NativePtr) : NativePointed(rawPtr)
 
     fun alloc(size: Long, align: Int): NativePointed {
         val ptr = malloc(size, align)

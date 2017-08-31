@@ -91,7 +91,7 @@ object nativeMemUtils {
 
     fun zeroMemory(dest: NativePointed, length: Int): Unit = unsafe.setMemory(dest.address, length.toLong(), 0)
 
-    internal class NativeAllocated(override val rawPtr: NativePtr) : NativePointed
+    internal class NativeAllocated(rawPtr: NativePtr) : NativePointed(rawPtr)
 
     fun alloc(size: Long, align: Int): NativePointed {
         val address = unsafe.allocateMemory(
