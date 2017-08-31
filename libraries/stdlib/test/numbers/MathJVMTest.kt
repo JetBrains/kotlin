@@ -32,38 +32,4 @@ class MathJVMTest {
         assertEquals(PI, PI.IEEErem(Double.NEGATIVE_INFINITY))
     }
 
-    @Test fun nextAndPrev() {
-        for (value in listOf(0.0, -0.0, Double.MIN_VALUE, -1.0, 2.0.pow(10))) {
-            val next = value.nextUp()
-            if (next > 0) {
-                assertEquals(next, value + value.ulp)
-            } else {
-                assertEquals(value, next - next.ulp)
-            }
-
-            val prev = value.nextDown()
-            if (prev > 0) {
-                assertEquals(value, prev + prev.ulp)
-            }
-            else {
-                assertEquals(prev, value - value.ulp)
-            }
-
-            val toZero = value.nextTowards(0.0)
-            if (toZero != 0.0) {
-                assertEquals(value, toZero + toZero.ulp.withSign(toZero))
-            }
-
-            assertEquals(Double.POSITIVE_INFINITY, Double.MAX_VALUE.nextUp())
-            assertEquals(Double.MAX_VALUE, Double.POSITIVE_INFINITY.nextDown())
-
-            assertEquals(Double.NEGATIVE_INFINITY, (-Double.MAX_VALUE).nextDown())
-            assertEquals((-Double.MAX_VALUE), Double.NEGATIVE_INFINITY.nextUp())
-
-            assertTrue(Double.NaN.ulp.isNaN())
-            assertTrue(Double.NaN.nextDown().isNaN())
-            assertTrue(Double.NaN.nextUp().isNaN())
-            assertTrue(Double.NaN.nextTowards(0.0).isNaN())
-        }
-    }
 }

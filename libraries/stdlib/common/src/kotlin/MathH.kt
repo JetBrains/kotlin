@@ -429,6 +429,41 @@ public header fun Double.withSign(sign: Double): Double
 public header fun Double.withSign(sign: Int): Double
 
 /**
+ * Returns the ulp (unit in the last place) of this value.
+ *
+ * An ulp is a positive distance between this value and the next nearest [Double] value larger in magnitude.
+ *
+ * Special Cases:
+ *     - `NaN.ulp` is `NaN`
+ *     - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
+ *     - `0.0.ulp` is `Double.MIN_VALUE`
+ */
+@SinceKotlin("1.2")
+public header val Double.ulp: Double
+
+/**
+ * Returns the [Double] value nearest to this value in direction of positive infinity.
+ */
+@SinceKotlin("1.2")
+public header fun Double.nextUp(): Double
+/**
+ * Returns the [Double] value nearest to this value in direction of negative infinity.
+ */
+@SinceKotlin("1.2")
+public header fun Double.nextDown(): Double
+
+/**
+ * Returns the [Double] value nearest to this value in direction from this value towards the value [to].
+ *
+ * Special cases:
+ *     - `x.nextTowards(y)` is `NaN` if either `x` or `y` are `NaN`
+ *     - `x.nextTowards(x) == x`
+ *
+ */
+@SinceKotlin("1.2")
+public header fun Double.nextTowards(to: Double): Double
+
+/**
  * Rounds this [Double] value to the nearest integer and converts the result to [Int].
  * Ties are rounded towards positive infinity.
  *

@@ -88,7 +88,7 @@ function imul(a, b) {
     Kotlin.doubleSignBit = function(value) {
         bufFloat64[0] = value;
         return bufInt32[1] & 0x80000000;
-    }
+    };
 })();
 
 
