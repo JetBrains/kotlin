@@ -34,21 +34,27 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import java.awt.BorderLayout
+import java.util.regex.PatternSyntaxException
 import javax.swing.JPanel
 
 abstract class NamingConventionInspection(private val entityName: String,
                                           defaultNamePattern: String) : AbstractKotlinInspection() {
-    protected var nameRegex: Regex = defaultNamePattern.toRegex()
+    protected var nameRegex: Regex? = defaultNamePattern.toRegex()
     var namePattern: String = defaultNamePattern
         set(value) {
             field = value
-            nameRegex = value.toRegex()
+            nameRegex = try {
+                value.toRegex()
+            }
+            catch(e: PatternSyntaxException) {
+                null
+            }
         }
 
     protected fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder) {
         val name = element.name
         val nameIdentifier = element.nameIdentifier
-        if (name != null && nameIdentifier != null && !nameRegex.matches(name)) {
+        if (name != null && nameIdentifier != null && nameRegex?.matches(name) == false) {
             holder.registerProblem(element.nameIdentifier!!,
                                    "$entityName name <code>#ref</code> doesn't match regex '$namePattern' #loc",
                                    RenameIdentifierFix())
@@ -140,7 +146,7 @@ class PackageNameInspection : NamingConventionInspection("Package", "[a-z][A-Za-
         return object : KtVisitorVoid() {
             override fun visitPackageDirective(directive: KtPackageDirective) {
                 val qualifiedName = directive.qualifiedName
-                if (qualifiedName.isNotEmpty() && !nameRegex.matches(qualifiedName)) {
+                if (qualifiedName.isNotEmpty() && nameRegex?.matches(qualifiedName) == false) {
                     holder.registerProblem(directive.packageNameExpression!!,
                                            "Package name <code>#ref</code> doesn't match regex '$namePattern' #loc",
                                            RenamePackageFix())
