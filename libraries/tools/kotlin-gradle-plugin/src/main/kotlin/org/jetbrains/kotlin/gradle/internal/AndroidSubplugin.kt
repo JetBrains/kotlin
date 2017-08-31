@@ -74,7 +74,8 @@ class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
 }
 
 class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
-    override fun isApplicable(project: Project, task: KotlinCompile): Boolean {
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
+        if (task !is KotlinCompile) return false
         try {
             project.extensions.getByName("android") as? BaseExtension ?: return false
         } catch (e: UnknownDomainObjectException) {
@@ -89,7 +90,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     override fun apply(
             project: Project,
             kotlinCompile: KotlinCompile,
-            javaCompile: AbstractCompile, 
+            javaCompile: AbstractCompile,
             variantData: Any?,
             androidProjectHandler: Any?,
             javaSourceSet: SourceSet?

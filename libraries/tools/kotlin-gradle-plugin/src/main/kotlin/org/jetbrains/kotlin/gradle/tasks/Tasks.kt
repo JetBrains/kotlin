@@ -91,6 +91,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     abstract protected fun createCompilerArgs(): T
 
+    internal val pluginOptions = CompilerPluginOptions()
+
     protected val additionalClasspath = arrayListOf<File>()
     protected val compileClasspath: Iterable<File>
         get() = (classpath + additionalClasspath)
@@ -216,6 +218,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         if (project.logger.isDebugEnabled) {
             args.verbose = true
         }
+
+        setupPlugins(args)
+    }
+
+    open fun setupPlugins(compilerArgs: T) {
+        compilerArgs.pluginClasspaths = pluginOptions.classpath.toTypedArray()
+        compilerArgs.pluginOptions = pluginOptions.arguments.toTypedArray()
     }
 }
 
@@ -239,7 +248,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     @get:Input
     internal val javaPackagePrefixInputString get() = javaPackagePrefix ?: ""
 
-    internal val pluginOptions = CompilerPluginOptions()
     internal var artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null
     internal var artifactFile: File? = null
 
@@ -253,14 +261,16 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     override fun createCompilerArgs(): K2JVMCompilerArguments =
             K2JVMCompilerArguments()
 
+    override fun setupPlugins(compilerArgs: K2JVMCompilerArguments) {
+        compilerArgs.pluginClasspaths = pluginOptions.classpath.toTypedArray()
+
+        val kaptPluginOptions = getKaptPluginOptions()
+        compilerArgs.pluginOptions = (pluginOptions.arguments + kaptPluginOptions.arguments).toTypedArray()
+    }
+
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
         super.setupCompilerArgs(args, defaultsOnly)
         args.apply { fillDefaultValues() }
-
-        args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
-
-        val kaptPluginOptions = getKaptPluginOptions()
-        args.pluginOptions = (pluginOptions.arguments + kaptPluginOptions.arguments).toTypedArray()
 
         args.addCompilerBuiltIns = true
 
