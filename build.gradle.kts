@@ -75,6 +75,7 @@ extra["distKotlinHomeDir"] = distKotlinHomeDir
 extra["distLibDir"] = project.file(distLibDir)
 extra["libsDir"] = project.file(distLibDir)
 extra["ideaPluginDir"] = project.file(ideaPluginDir)
+extra["isSonatypeRelease"] = false
 
 Properties().apply {
     load(File(rootDir, "resources", "kotlinManifest.properties").reader())
@@ -141,7 +142,11 @@ apply {
     from("libraries/commonConfiguration.gradle")
     from("libraries/gradlePluginsConfiguration.gradle")
     from("libraries/configureGradleTools.gradle")
-//    from("libraries/prepareSonatypeStaging.gradle")
+
+    if (extra["isSonatypeRelease"] as? Boolean == true) {
+        logger.info("Applying configuration for sonatype release")
+        from("libraries/prepareSonatypeStaging.gradle")
+    }
 }
 
 val importedAntTasksPrefix = "imported-ant-update-"
