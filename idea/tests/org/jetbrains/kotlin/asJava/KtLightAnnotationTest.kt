@@ -240,13 +240,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
             class MyAnnotated {}
         """.trimIndent())
 
-        val annotations = listOf(myFixture.findClass("MyAnnotated")).let {
-            assertEquals(1, it.size)
-            it.first().annotations.apply {
-                assertEquals(1, it.size)
-            }
-        }
-
+        val annotations = myFixture.findClass("MyAnnotated").expectAnnotations(1)
         annotations[0].let { annotation ->
             val annotationAttributeVal = annotation.findAttributeValue("value") as PsiElement
             assertTextAndRange("@Outer(Inner())", annotationAttributeVal)
@@ -377,7 +371,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     private fun PsiModifierListOwner.expectAnnotations(number: Int): Array<PsiAnnotation> =
-            this.annotations.apply {
+            this.modifierList!!.annotations.apply {
                 TestCase.assertEquals("expected one annotation, found ${this.joinToString(", ") { it.qualifiedName ?: "unknown" }}",
                                       number, size)
             }
