@@ -61,6 +61,8 @@ fun IrTranslationContext.addDeclaration(statement: JsStatement) {
 fun IrTranslationContext.addDeclaration(builder: JsBuilder.() -> JsStatement) = addDeclaration(buildJs(builder))
 
 fun IrTranslationContext.translateClass(declaration: IrClass) {
+    if (declaration.descriptor.isExternal) return
+
     nestedDeclaration(declaration.descriptor) {
         withAliases(listOf(declaration.descriptor.thisAsReceiverParameter to JsThisRef())) {
             val constructor = declaration.declarations.filterIsInstance<IrConstructor>().singleOrNull { it.descriptor.isPrimary }

@@ -39,6 +39,7 @@ class IrTranslationConfig(
             PrimitiveRangeToIntrinsic,
             EqualsIntrinsic, CompareZeroIntrinsic, IrNotIntrinsic, ReferenceEqualsIntrinsic,
             ThrowIntrinsic,
+            FunctionInvokeIntrinsic,
             ArrayAccessIntrinsic, ArraySizeIntrinsic, ArrayOfNullsIntrinsic
     )
     private val intrinsicCache = mutableMapOf<FunctionDescriptor, IntrinsicHolder>()

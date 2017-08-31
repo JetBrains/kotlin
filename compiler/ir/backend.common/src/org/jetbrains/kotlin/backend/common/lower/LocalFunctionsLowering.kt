@@ -88,8 +88,6 @@ class LocalFunctionsLowering(val builtIns: IrBuiltIns): DeclarationContainerLowe
 
         private fun collectRewrittenDeclarations(): ArrayList<IrDeclaration> =
                 ArrayList<IrDeclaration>(localFunctions.size + 1).apply {
-                    add(memberFunction)
-
                     localFunctions.values.mapTo(this) {
                         val original = it.declaration
                         IrFunctionImpl(

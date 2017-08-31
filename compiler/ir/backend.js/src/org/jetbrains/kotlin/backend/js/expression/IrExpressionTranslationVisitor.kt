@@ -127,9 +127,15 @@ class IrExpressionTranslationVisitor(private val context: IrTranslationContext) 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Unit): JsExpression? {
         val constructor = expression.descriptor
         val arguments = translateArguments(expression)
-        val classRef = context.naming.innerNames[constructor.constructedClass]
         val thisRef = context.translateAsValueReference(context.currentClass!!.thisAsReceiverParameter)
-        context.addStatement(buildJs { statement(classRef.dot("call").invoke(thisRef, *arguments.toTypedArray())) })
+        if (constructor.isPrimary) {
+            val classRef = context.translateAsTypeReference(constructor.constructedClass)
+            context.addStatement(buildJs { statement(classRef.dot("call").invoke(thisRef, *arguments.toTypedArray())) })
+        }
+        else {
+            val constructorRef = context.translateAsValueReference(constructor)
+            context.addStatement(buildJs { statement(constructorRef.invoke(*(arguments + thisRef).toTypedArray())) })
+        }
         return null
     }
 
@@ -385,7 +391,7 @@ class IrExpressionTranslationVisitor(private val context: IrTranslationContext) 
     }
 
     override fun visitReturn(expression: IrReturn, data: Unit): JsExpression? {
-        val jsResult = if (!KotlinBuiltIns.isUnit(expression.value.type)) expression.value.accept(this, Unit) else null
+        val jsResult = expression.value.accept(this, Unit)
         context.addStatement(JsReturn(jsResult))
         return null
     }

@@ -69,7 +69,7 @@ class IrClassDeclarationTranslationVisitor(
     }
 
     override fun visitProperty(declaration: IrProperty) {
-        if (!declaration.descriptor.kind.isReal) return
+        if (!declaration.descriptor.kind.isReal || declaration.descriptor.isExternal) return
 
         if (declaration.descriptor.isExtensionProperty) {
             declaration.getter?.let { visitFunction(it) }

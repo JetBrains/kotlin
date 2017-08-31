@@ -37,6 +37,8 @@ class IrDeclarationTranslationVisitor(private val context: IrTranslationContext)
     }
 
     override fun visitProperty(declaration: IrProperty) {
+        if (declaration.descriptor.isExternal) return
+
         declaration.backingField?.let { backingField ->
             val fieldName = context.naming.backingFieldNames[backingField.descriptor.original]
             context.addDeclaration { fieldName.newVar() }
