@@ -1387,12 +1387,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
     private fun evaluateStringConst(value: IrConst<String>) =
-        if (this.produceImmutableBinaryBlob) {
-            context.llvm.staticData.createImmutableBinaryBlob(value)
-        } else {
             context.llvm.staticData.kotlinStringLiteral(
                     context.builtIns.stringType, value).llvm
-        }
 
     private fun evaluateConst(value: IrConst<*>): LLVMValueRef {
         context.log{"evaluateConst                  : ${ir2string(value)}"}
@@ -1619,6 +1615,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     callDirect(constructorDescriptor, args, Lifetime.IRRELEVANT)
                     return receiver
                 }
+
+                context.builtIns.immutableBinaryBlobOf -> {
+                    val arg = expression.getValueArgument(0) as IrConst<String>
+                    return context.llvm.staticData.createImmutableBinaryBlob(arg)
+                }
             }
         }
 
@@ -1793,29 +1794,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun CallableDescriptor.returnsUnit() = returnType == context.builtIns.unitType && !isSuspend
 
-
-    private var produceImmutableBinaryBlob: Boolean = false
-
     /**
      * Evaluates all arguments of [expression] that are explicitly represented in the IR.
      * Returns results in the same order as LLVM function expects, assuming that all explicit arguments
      * exactly correspond to a tail of LLVM parameters.
      */
     private fun evaluateExplicitArgs(expression: IrMemberAccessExpression): List<LLVMValueRef> {
-        // TODO: remove this hack by properly implementing blobs in the frontend.
-        if (expression.descriptor.original == context.builtIns.immutableBinaryBlobOf) {
-            // As calls to immutableBinaryBlobOf() cannot be composed, it's OK to
-            // have simple flag for that purpose.
-            assert(!produceImmutableBinaryBlob)
-            produceImmutableBinaryBlob = true
-        }
-
         val evaluatedArgs = expression.getArguments().map { (param, argExpr) ->
             param to evaluateExpression(argExpr)
         }.toMap()
-
-        if (produceImmutableBinaryBlob)
-            produceImmutableBinaryBlob = false
 
         val allValueParameters = expression.descriptor.allParameters
 
@@ -2020,11 +2007,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 } else {
                     LLVMBuildSExt(functionGenerationContext.builder, intPtrValue, resultType, "")!!
                 }
-            }
-
-            context.builtIns.immutableBinaryBlobOf -> {
-                // LLVM value is already computed when evaluating argument, just use it.
-                args.single()
             }
 
             interop.objCObjectInitFromPtr -> {
