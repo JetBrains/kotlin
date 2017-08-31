@@ -268,7 +268,7 @@ class CandidateResolver(
 
     private fun checkOuterClassMemberIsAccessible(context: CallCandidateResolutionContext<*>): Boolean {
 
-        fun KtElement.insideScript() = (containingFile as? KtFile)?.isScript ?: false
+        fun KtElement.insideScript() = (containingFile as? KtFile)?.isScript() ?: false
 
         // context.scope doesn't contains outer class implicit receiver if we inside nested class
         // Outer scope for some class in script file is scopeForInitializerResolution see: DeclarationScopeProviderImpl.getResolutionScopeForDeclaration

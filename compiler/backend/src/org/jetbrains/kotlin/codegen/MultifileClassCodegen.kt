@@ -320,7 +320,7 @@ class MultifileClassCodegenImpl(
 
     private fun writeKotlinMultifileFacadeAnnotationIfNeeded() {
         if (!state.classBuilderMode.generateMetadata) return
-        if (files.any { it.isScript }) return
+        if (files.any { it.isScript() }) return
 
         val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
 

@@ -609,7 +609,7 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
 
 fun ExtractionData.isVisibilityApplicable(): Boolean {
     val parent = targetSibling.parent
-    return parent is KtClassBody || (parent is KtFile && !parent.isScript)
+    return parent is KtClassBody || (parent is KtFile && !parent.isScript())
 }
 
 fun ExtractionData.getDefaultVisibility(): String {

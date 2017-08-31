@@ -89,7 +89,7 @@ abstract class AbstractCompletionBenchmarkAction : AnAction() {
 
             fun KtFile.isUsableForBenchmark(): Boolean {
                 val moduleInfo = this.getNullableModuleInfo() ?: return false
-                if (this.isCompiled || !this.isWritable || this.isScript) return false
+                if (this.isCompiled || !this.isWritable || this.isScript()) return false
                 return moduleInfo.moduleOrigin == ModuleOrigin.MODULE
             }
 

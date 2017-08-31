@@ -14,290 +14,189 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.extapi.psi.PsiFileBase;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.FileASTNode;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.psi.*;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.FileContentUtilCore;
-import com.intellij.util.IncorrectOperationException;
-import kotlin.collections.ArraysKt;
-import kotlin.collections.CollectionsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
-import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import com.intellij.extapi.psi.PsiFileBase
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.psi.*
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.FileContentUtilCore
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
+import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
+        PsiFileBase(viewProvider, KotlinLanguage.INSTANCE),
+        KtDeclarationContainer,
+        KtAnnotated,
+        KtElement,
+        PsiClassOwner,
+        PsiNamedElement,
+        PsiModifiableCodeBlock {
 
-public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnnotated, KtElement, PsiClassOwner, PsiNamedElement, PsiModifiableCodeBlock {
+    private var isScript: Boolean? = null
 
-    private final boolean isCompiled;
-    private Boolean isScript = null;
+    val importList: KtImportList?
+        get() = findChildByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList::class.java)
 
-    public KtFile(FileViewProvider viewProvider, boolean compiled) {
-        super(viewProvider, KotlinLanguage.INSTANCE);
-        this.isCompiled = compiled;
-    }
+    val fileAnnotationList: KtFileAnnotationList?
+        get() = findChildByTypeOrClass(KtStubElementTypes.FILE_ANNOTATION_LIST, KtFileAnnotationList::class.java)
 
-    @Override
-    public FileASTNode getNode() {
-        return super.getNode();
-    }
-
-    public boolean isCompiled() {
-        return isCompiled;
-    }
-
-    @Override
-    @NotNull
-    public FileType getFileType() {
-        return KotlinFileType.INSTANCE;
-    }
-
-    @Override
-    public String toString() {
-        return "KtFile: " + getName();
-    }
-
-    @NotNull
-    @Override
-    public List<KtDeclaration> getDeclarations() {
-        KotlinFileStub stub = getStub();
-        if (stub != null) {
-            return Arrays.asList(stub.getChildrenByType(KtStubElementTypes.DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY));
-        }
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration.class);
-    }
-
-    @Nullable
-    public KtImportList getImportList() {
-        return findChildByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList.class);
-    }
-
-    @Nullable
-    public KtFileAnnotationList getFileAnnotationList() {
-        return findChildByTypeOrClass(KtStubElementTypes.FILE_ANNOTATION_LIST, KtFileAnnotationList.class);
-    }
-
-    @Nullable
-    public <T extends KtElementImplStub<? extends StubElement<?>>> T findChildByTypeOrClass(
-            @NotNull KtPlaceHolderStubElementType<T> elementType,
-            @NotNull Class<T> elementClass
-    ) {
-        KotlinFileStub stub = getStub();
-        if (stub != null) {
-            StubElement<T> importListStub = stub.findChildStubByType(elementType);
-            return importListStub != null ? importListStub.getPsi() : null;
-        }
-        return findChildByClass(elementClass);
-    }
-
-    @NotNull
-    public List<KtImportDirective> getImportDirectives() {
-        KtImportList importList = getImportList();
-        return importList != null ? importList.getImports() : Collections.emptyList();
-    }
-
-    @Nullable
-    public KtImportDirective findImportByAlias(@NotNull String name) {
-        for (KtImportDirective directive : getImportDirectives()) {
-            if (name.equals(directive.getAliasName())) {
-                return directive;
-            }
-        }
-        return null;
-    }
+    open val importDirectives: List<KtImportDirective>
+        get() = importList?.imports ?: emptyList()
 
     // scripts have no package directive, all other files must have package directives
-    @Nullable
-    public KtPackageDirective getPackageDirective() {
-        KotlinFileStub stub = getStub();
-        if (stub != null) {
-            StubElement<KtPackageDirective> packageDirectiveStub = stub.findChildStubByType(KtStubElementTypes.PACKAGE_DIRECTIVE);
-            return packageDirectiveStub != null ? packageDirectiveStub.getPsi() : null;
-        }
-        return getPackageDirectiveByTree();
-    }
-
-    @Nullable
-    private KtPackageDirective getPackageDirectiveByTree() {
-        ASTNode ast = getNode().findChildByType(KtNodeTypes.PACKAGE_DIRECTIVE);
-        return ast != null ? (KtPackageDirective) ast.getPsi() : null;
-    }
-
-    @Deprecated // getPackageFqName should be used instead
-    @Override
-    @NotNull
-    public String getPackageName() {
-        return getPackageFqName().asString();
-    }
-
-    @NotNull
-    public FqName getPackageFqName() {
-        KotlinFileStub stub = getStub();
-        if (stub != null) {
-            return stub.getPackageFqName();
-        }
-        return getPackageFqNameByTree();
-    }
-
-    @NotNull
-    public FqName getPackageFqNameByTree() {
-        KtPackageDirective packageDirective = getPackageDirectiveByTree();
-        if (packageDirective == null) {
-            return FqName.ROOT;
-        }
-        return packageDirective.getFqName();
-    }
-
-    @Override
-    @Nullable
-    public KotlinFileStub getStub() {
-        return (KotlinFileStub) super.getStub();
-    }
-
-    @NotNull
-    @Override
-    public PsiClass[] getClasses() {
-        KtFileClassProvider fileClassProvider = ServiceManager.getService(getProject(), KtFileClassProvider.class);
-        // TODO We don't currently support finding light classes for scripts
-        if (fileClassProvider != null && !isScript()) {
-            return fileClassProvider.getFileClasses(this);
-        }
-        return PsiClass.EMPTY_ARRAY;
-    }
-
-    @Override
-    public void setPackageName(String packageName) { }
-
-    @Override
-    public void clearCaches() {
-        super.clearCaches();
-        isScript = null;
-    }
-
-    @Nullable
-    public KtScript getScript() {
-        if (isScript != null && !isScript) return null;
-
-        KtScript result = PsiTreeUtil.getChildOfType(this, KtScript.class);
-        if (isScript == null) {
-            isScript = result != null;
+    val packageDirective: KtPackageDirective?
+        get() {
+            val stub = stub
+            if (stub != null) {
+                val packageDirectiveStub = stub.findChildStubByType(KtStubElementTypes.PACKAGE_DIRECTIVE)
+                return packageDirectiveStub?.psi
+            }
+            return packageDirectiveByTree
         }
 
-        return result;
-    }
-
-    public boolean isScript() {
-        KotlinFileStub stub = getStub();
-        if (stub != null) {
-            return stub.isScript();
+    private val packageDirectiveByTree: KtPackageDirective?
+        get() {
+            val ast = node.findChildByType(KtNodeTypes.PACKAGE_DIRECTIVE)
+            return if (ast != null) ast.psi as KtPackageDirective else null
         }
-        return isScriptByTree();
-    }
 
-    public boolean isScriptByTree() {
-        return getScript() != null;
-    }
+    val packageFqName: FqName
+        get() = stub?.getPackageFqName() ?: packageFqNameByTree
 
-    @NotNull
-    @Override
-    public String getName() {
-        return super.getName(); // TODO
-    }
+    val packageFqNameByTree: FqName
+        get() = packageDirectiveByTree?.fqName ?: FqName.ROOT
 
-    @Override
-    public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof KtVisitor) {
-            accept((KtVisitor) visitor, null);
+    val script: KtScript?
+        get() {
+            isScript?.let { if (!it) return null }
+
+            val result = getChildOfType<KtScript>()
+            if (isScript == null) {
+                isScript = result != null
+            }
+
+            return result
         }
-        else {
-            visitor.visitFile(this);
-        }
-    }
 
-    @NotNull
-    @Override
-    public KtFile getContainingKtFile() {
-        return this;
-    }
-
-    @Override
-    public <D> void acceptChildren(@NotNull KtVisitor<Void, D> visitor, D data) {
-        KtPsiUtil.visitChildren(this, visitor, data);
-    }
-
-    @Override
-    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitKtFile(this, data);
-    }
-
-    @NotNull
-    @Override
-    public List<KtAnnotation> getAnnotations() {
-        KtFileAnnotationList fileAnnotationList = getFileAnnotationList();
-        if (fileAnnotationList == null) return Collections.emptyList();
-
-        return fileAnnotationList.getAnnotations();
-    }
-
-    @NotNull
-    @Override
-    public List<KtAnnotationEntry> getAnnotationEntries() {
-        KtFileAnnotationList fileAnnotationList = getFileAnnotationList();
-        if (fileAnnotationList == null) return Collections.emptyList();
-
-        return fileAnnotationList.getAnnotationEntries();
-    }
+    val isScriptByTree: Boolean
+        get() = script != null
 
     /**
      * @return annotations that do not belong to any declaration due to incomplete code or syntax errors
      */
-    @NotNull
-    public List<KtAnnotationEntry> getDanglingAnnotations() {
-        KotlinFileStub stub = getStub();
-        KtModifierList[] danglingModifierLists = stub == null
-                                                 ? findChildrenByClass(KtModifierList.class)
-                                                 : stub.getChildrenByType(
-                                                         KtStubElementTypes.MODIFIER_LIST,
-                                                         KtStubElementTypes.MODIFIER_LIST.getArrayFactory()
-                                                 );
-        return ArraysKt.flatMap(danglingModifierLists, KtModifierList::getAnnotationEntries);
-    }
-
-    @Override
-    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
-        PsiElement result = super.setName(name);
-        boolean willBeScript = name.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT);
-        if (isScript() != willBeScript) {
-            FileContentUtilCore.reparseFiles(CollectionsKt.listOfNotNull(getVirtualFile()));
+    val danglingAnnotations: List<KtAnnotationEntry>
+        get() {
+            val stub = stub
+            val danglingModifierLists = stub?.getChildrenByType(
+                    KtStubElementTypes.MODIFIER_LIST,
+                    KtStubElementTypes.MODIFIER_LIST.arrayFactory
+            ) ?: findChildrenByClass(KtModifierList::class.java)
+            return danglingModifierLists.flatMap { obj: KtModifierList -> obj.annotationEntries }
         }
-        return result;
+
+    override fun getFileType(): FileType = KotlinFileType.INSTANCE
+
+    override fun toString(): String = "KtFile: " + name
+
+    override fun getDeclarations(): List<KtDeclaration> {
+        val stub = stub
+        return stub?.getChildrenByType(KtStubElementTypes.DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
+               ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
     }
 
-    @NotNull
-    @Override
-    public KtElement getPsiOrParent() {
-        return this;
+    fun <T : KtElementImplStub<out StubElement<*>>> findChildByTypeOrClass(
+            elementType: KtPlaceHolderStubElementType<T>,
+            elementClass: Class<T>
+    ): T? {
+        val stub = stub
+        if (stub != null) {
+            val importListStub = stub.findChildStubByType(elementType)
+            return importListStub?.psi
+        }
+        return findChildByClass(elementClass)
     }
 
-    @Override
-    public boolean shouldChangeModificationCount(PsiElement place) {
+    fun findImportByAlias(name: String): KtImportDirective? =
+            importDirectives.firstOrNull { name == it.aliasName }
+
+    @Deprecated("") // getPackageFqName should be used instead
+    override fun getPackageName(): String {
+        return packageFqName.asString()
+    }
+
+    override fun getStub(): KotlinFileStub? {
+        return super.getStub() as KotlinFileStub?
+    }
+
+    override fun getClasses(): Array<PsiClass> {
+        val fileClassProvider = ServiceManager.getService(project, KtFileClassProvider::class.java)
+        // TODO We don't currently support finding light classes for scripts
+        return if (fileClassProvider != null && !isScript()) {
+            fileClassProvider.getFileClasses(this)
+        }
+        else PsiClass.EMPTY_ARRAY
+    }
+
+    override fun setPackageName(packageName: String) {}
+
+    override fun clearCaches() {
+        super.clearCaches()
+        isScript = null
+    }
+
+    fun isScript(): Boolean = stub?.isScript() ?: isScriptByTree
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is KtVisitor<*, *>) {
+            @Suppress("UNCHECKED_CAST")
+            accept(visitor as KtVisitor<Any, Any?>, null)
+        }
+        else {
+            visitor.visitFile(this)
+        }
+    }
+
+    override fun getContainingKtFile(): KtFile = this
+
+    override fun <D> acceptChildren(visitor: KtVisitor<Void, D>, data: D) {
+        KtPsiUtil.visitChildren(this, visitor, data)
+    }
+
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
+        return visitor.visitKtFile(this, data)
+    }
+
+    override fun getAnnotations(): List<KtAnnotation> =
+            fileAnnotationList?.annotations ?: emptyList()
+
+    override fun getAnnotationEntries(): List<KtAnnotationEntry> =
+            fileAnnotationList?.annotationEntries ?: emptyList()
+
+    @Throws(IncorrectOperationException::class)
+    override fun setName(name: String): PsiElement {
+        val result = super.setName(name)
+        val willBeScript = name.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
+        if (isScript() != willBeScript) {
+            FileContentUtilCore.reparseFiles(listOfNotNull(virtualFile))
+        }
+        return result
+    }
+
+    override fun getPsiOrParent(): KtElement = this
+
+    override fun shouldChangeModificationCount(place: PsiElement): Boolean {
         // Modification count for Kotlin files is tracked entirely by KotlinCodeBlockModificationListener
-        return false;
+        return false
     }
 }

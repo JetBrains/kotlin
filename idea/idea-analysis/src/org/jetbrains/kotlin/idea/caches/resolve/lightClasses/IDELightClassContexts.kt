@@ -204,7 +204,7 @@ object IDELightClassContexts {
 
     fun forceResolvePackageDeclarations(files: Collection<KtFile>, session: ResolveSession) {
         for (file in files) {
-            if (file.isScript) continue
+            if (file.isScript()) continue
 
             val packageFqName = file.packageFqName
 

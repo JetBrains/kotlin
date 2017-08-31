@@ -27,12 +27,12 @@ object KotlinHighlightingUtil {
     fun shouldHighlight(psiElement: PsiElement): Boolean {
         val ktFile = psiElement.containingFile as? KtFile ?: return false
         return ktFile is KtCodeFragment && ktFile.context != null ||
-               ktFile.isScript ||
+               ktFile.isScript() ||
                ProjectRootsUtil.isInProjectOrLibraryContent(ktFile) && ktFile.getModuleInfo() !is NotUnderContentRootModuleInfo
     }
 
     fun shouldHighlightErrors(psiElement: PsiElement): Boolean {
         val ktFile = psiElement.containingFile as? KtFile ?: return false
-        return (ktFile is KtCodeFragment && ktFile.context != null) || ktFile.isScript || ProjectRootsUtil.isInProjectSource(ktFile)
+        return (ktFile is KtCodeFragment && ktFile.context != null) || ktFile.isScript() || ProjectRootsUtil.isInProjectSource(ktFile)
     }
 }
