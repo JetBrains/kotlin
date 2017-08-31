@@ -30,12 +30,13 @@ object SpecializedNumberConversionIntrinsic : FunctionIntrinsic {
     private val numberClasses = setOf(
             KotlinBuiltIns.FQ_NAMES._byte,
             KotlinBuiltIns.FQ_NAMES._short,
+            KotlinBuiltIns.FQ_NAMES._char,
             KotlinBuiltIns.FQ_NAMES._int,
             KotlinBuiltIns.FQ_NAMES._long,
             KotlinBuiltIns.FQ_NAMES._float,
             KotlinBuiltIns.FQ_NAMES._double
     )
-    private val conversionFunctions = setOf("toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble")
+    private val conversionFunctions = setOf("toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble", "toChar")
 
     override fun isApplicable(descriptor: FunctionDescriptor): Boolean {
         val owner = (descriptor.containingDeclaration as? ClassDescriptor) ?: return false
@@ -65,6 +66,18 @@ object SpecializedNumberConversionIntrinsic : FunctionIntrinsic {
                 "Long" -> buildJs { intToLong(value) }
                 "Short" -> buildJs { toShort(value) }
                 "Byte" -> buildJs { toByte(value) }
+                "Char" -> buildJs { toChar(value) }
+                else -> noConversion()
+            }
+
+            "Char" -> when (toClass) {
+                "Int",
+                "Char",
+                "Float",
+                "Double" -> value
+                "Long" -> buildJs { intToLong(value) }
+                "Short" -> buildJs { toShort(value) }
+                "Byte" -> buildJs { toByte(value) }
                 else -> noConversion()
             }
 
@@ -75,6 +88,7 @@ object SpecializedNumberConversionIntrinsic : FunctionIntrinsic {
                 "Double" -> buildJs { longToNumber(value) }
                 "Short" -> buildJs { toShort(longToInt(value)) }
                 "Byte" -> buildJs { toByte(longToInt(value)) }
+                "Char" -> buildJs { toChar(longToInt(value)) }
                 else -> noConversion()
             }
 
@@ -86,6 +100,7 @@ object SpecializedNumberConversionIntrinsic : FunctionIntrinsic {
                 "Long" -> buildJs { numberToLong(value) }
                 "Short" -> buildJs { toShort(value) }
                 "Byte" -> buildJs { toByte(value) }
+                "Char" -> buildJs { toChar(numberToInt(value)) }
                 else -> noConversion()
             }
 

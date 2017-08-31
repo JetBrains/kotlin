@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.js.intrinsics.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.JsScope
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.resolve.BindingTrace
 
@@ -51,4 +52,7 @@ class IrTranslationConfig(
     }
 
     inner class IntrinsicHolder(val intrinsic: FunctionIntrinsic?)
+
+    val isTypedArraysEnabled: Boolean
+        get() = jsConfig.configuration[JSConfigurationKeys.TYPED_ARRAYS_ENABLED] == true
 }

@@ -26,16 +26,27 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrExpressionTranslationVisitor(private val context: IrTranslationContext) : IrElementVisitor<JsExpression?, Unit> {
+    companion object {
+        private val JS_FQ_NAME = FqNameUnsafe("kotlin.js.js")
+    }
+
     override fun visitElement(element: IrElement, data: Unit): JsExpression? = null
 
     override fun visitCall(expression: IrCall, data: Unit): JsExpression? {
         val function = expression.descriptor
+
+        if (function.fqNameUnsafe == JS_FQ_NAME) {
+            return context.translateJsFunction(expression)
+        }
+
         val dispatchReceiver = expression.dispatchReceiver?.accept(this, Unit)
         val extensionReceiver = expression.extensionReceiver?.accept(this, Unit)
         val arguments = translateArguments(expression)
@@ -98,7 +109,18 @@ class IrExpressionTranslationVisitor(private val context: IrTranslationContext) 
             }
         }
 
-        val allArguments = if (extensionReceiver != null) listOf(extensionReceiver) + arguments else arguments
+
+        val reifiedArguments = function.original.typeParameters
+                .filter { it.isReified }
+                .flatMap {
+                    val arg = expression.getTypeArgument(it.original)!!
+                    listOf(
+                            context.translateIsType(arg),
+                            context.translateAsTypeReference(arg.constructor.declarationDescriptor as ClassDescriptor)
+                    )
+                }
+
+        val allArguments = reifiedArguments + listOfNotNull(extensionReceiver) + arguments
 
         if (superQualifier != null) {
             val superRef = context.translateAsTypeReference(superQualifier)

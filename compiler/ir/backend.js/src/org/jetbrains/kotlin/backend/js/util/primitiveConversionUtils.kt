@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral
 
 fun JsBuilder.toByte(value: JsExpression) = "Kotlin".dotPure("toByte").invoke(value).pure()
 
+fun JsBuilder.toChar(value: JsExpression) = "Kotlin".dotPure("toChar").invoke(value).pure()
+
 fun JsBuilder.toShort(value: JsExpression) = "Kotlin".dotPure("toShort").invoke(value).pure()
 
 fun JsBuilder.intToLong(value: JsExpression) = "Kotlin".dotPure("Long").dotPure("fromInt").invoke(value).pure()

@@ -72,7 +72,7 @@ fun IrTranslationContext.translateAsTypeReference(descriptor: ClassDescriptor): 
     }
     if (!shouldTranslateAsFQN(descriptor)) {
         if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
-            if (module != descriptor.module) {
+            if (module.descriptor != descriptor.module) {
                 return getPrototypeIfNecessary(descriptor, getLazyReferenceToObject(descriptor))
             }
         }
