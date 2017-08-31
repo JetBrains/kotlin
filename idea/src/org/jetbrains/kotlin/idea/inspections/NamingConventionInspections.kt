@@ -141,7 +141,7 @@ class ConstPropertyNameInspection : PropertyNameInspectionBase(PropertyKind.CONS
 
 class LocalVariableNameInspection : PropertyNameInspectionBase(PropertyKind.LOCAL, "Local variable", "[a-z][A-Za-z\\d]*")
 
-class PackageNameInspection : NamingConventionInspection("Package", "[a-z][A-Za-z\\d\\.]*") {
+class PackageNameInspection : NamingConventionInspection("Package", "[a-z][A-Za-z\\d]*(\\.[a-z][A-Za-z\\d]*)*") {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitPackageDirective(directive: KtPackageDirective) {
