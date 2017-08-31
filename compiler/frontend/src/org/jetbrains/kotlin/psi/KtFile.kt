@@ -27,6 +27,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -43,7 +44,11 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
         PsiNamedElement,
         PsiModifiableCodeBlock {
 
+    @Volatile
     private var isScript: Boolean? = null
+
+    @Volatile
+    private var hasTopLeveCallables: Boolean? = null
 
     val importList: KtImportList?
         get() = findChildByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList::class.java)
@@ -153,9 +158,24 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     override fun clearCaches() {
         super.clearCaches()
         isScript = null
+        hasTopLeveCallables = null
     }
 
     fun isScript(): Boolean = stub?.isScript() ?: isScriptByTree
+
+    fun hasTopLevelCallables(): Boolean {
+        hasTopLeveCallables?.let { return it }
+
+        val result = declarations.any {
+            (it is KtProperty ||
+             it is KtNamedFunction ||
+             it is KtScript ||
+             it is KtTypeAlias) && !it.hasModifier(KtTokens.HEADER_KEYWORD)
+        }
+
+        hasTopLeveCallables = result
+        return result
+    }
 
     override fun accept(visitor: PsiElementVisitor) {
         if (visitor is KtVisitor<*, *>) {

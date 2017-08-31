@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
-import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -39,7 +42,6 @@ import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope.Companion.sourceAndClassFiles
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -330,13 +332,13 @@ class KtFileClassProviderImpl(val lightClassGenerationSupport: LightClassGenerat
         val fileClassFqName = file.javaFileFacadeFqName
 
         val facadeClasses = when {
-            file.analysisContext != null && PackagePartClassUtils.fileHasTopLevelCallables(file) ->
+            file.analysisContext != null && file.hasTopLevelCallables() ->
                 listOf(KtLightClassForFacade.createForSyntheticFile(PsiManager.getInstance(file.project), fileClassFqName, file))
 
             jvmClassInfo.withJvmMultifileClass ->
                 lightClassGenerationSupport.getFacadeClasses(fileClassFqName, moduleInfo.contentScope())
 
-            PackagePartClassUtils.fileHasTopLevelCallables(file) ->
+            file.hasTopLevelCallables() ->
                 (lightClassGenerationSupport as IDELightClassGenerationSupport).createLightClassForFileFacade(
                         fileClassFqName, listOf(file), moduleInfo)
 
