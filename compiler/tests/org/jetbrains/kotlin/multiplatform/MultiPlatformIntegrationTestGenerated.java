@@ -206,6 +206,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/regressions"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("incompatibleClassScopesWithImplTypeAlias")
+        public void testIncompatibleClassScopesWithImplTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt17001")
         public void testKt17001() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/regressions/kt17001/");

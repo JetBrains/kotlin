@@ -143,7 +143,9 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
         val singleIncompatibility = compatibility.keys.firstOrNull()
         if (singleIncompatibility is Incompatible.ClassScopes) {
-            assert(descriptor is ClassDescriptor) { "Incompatible.ClassScopes is only possible for a class: $descriptor" }
+            assert(descriptor is ClassDescriptor || descriptor is TypeAliasDescriptor) {
+                "Incompatible.ClassScopes is only possible for a class or a typealias: $descriptor"
+            }
 
             // Do not report "header members are not implemented" for those header members, for which there's a clear
             // (albeit maybe incompatible) single implementation suspect, declared in the impl class.
@@ -162,8 +164,11 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             val nonTrivialUnimplemented = singleIncompatibility.unimplemented.filterNot(::hasSingleImplSuspect)
 
             if (nonTrivialUnimplemented.isNotEmpty()) {
+                val classDescriptor =
+                        (descriptor as? TypeAliasDescriptor)?.expandedType?.constructor?.declarationDescriptor as? ClassDescriptor
+                        ?: (descriptor as ClassDescriptor)
                 diagnosticHolder.report(Errors.HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED.on(
-                        reportOn, descriptor as ClassDescriptor, nonTrivialUnimplemented
+                        reportOn, classDescriptor, nonTrivialUnimplemented
                 ))
             }
         }
