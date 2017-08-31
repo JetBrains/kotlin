@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.backend.js.declarations
 
 import org.jetbrains.kotlin.backend.js.context.IrTranslationContext
+import org.jetbrains.kotlin.backend.js.context.getSuggestedName
 import org.jetbrains.kotlin.backend.js.util.JsBuilder
 import org.jetbrains.kotlin.backend.js.util.buildJs
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -77,9 +79,36 @@ fun IrTranslationContext.translateClass(declaration: IrClass) {
             }
 
             exporter.export(declaration.descriptor)
+
+            if (declaration.descriptor.kind == ClassKind.OBJECT) {
+                addObjectInstanceFunction(declaration, jsFunction.body.statements)
+            }
         }
     }
 
     val model = ClassModelGenerator(naming, module.descriptor).generateClassModel(declaration.descriptor)
     fragment.classes[model.name] = model
+}
+
+private fun IrTranslationContext.addObjectInstanceFunction(declaration: IrClass, constructorBody: MutableList<JsStatement>) {
+    val instanceFieldName = JsScope.declareTemporaryName(getSuggestedName(declaration.descriptor) + "_instance")
+    addDeclaration { instanceFieldName.newVar(JsNullLiteral()) }
+
+    val function = JsFunction(scope, JsBlock(), "")
+    addDeclaration(JsExpressionStatement(function))
+
+    val constructorName = naming.innerNames[declaration.descriptor]
+    with (function.body) {
+        statements += buildJs {
+            JsIf(
+                    instanceFieldName.refPure().strictEq(JsNullLiteral()),
+                    statement(constructorName.refPure().newInstance())
+            )
+        }
+        statements += JsReturn(instanceFieldName.makeRef())
+    }
+
+    function.name = naming.objectInnerNames[declaration.descriptor]
+
+    constructorBody.add(0, buildJs { statement(instanceFieldName.ref().assign(JsThisRef())) })
 }

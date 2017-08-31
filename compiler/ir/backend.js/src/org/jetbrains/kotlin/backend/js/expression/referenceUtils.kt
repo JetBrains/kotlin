@@ -54,12 +54,12 @@ fun IrTranslationContext.translateAsValueReference(descriptor: DeclarationDescri
     }
 
     if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
-        if (module != descriptor.module) {
+        if (module.descriptor != descriptor.module) {
             return getLazyReferenceToObject(descriptor as ClassDescriptor)
         }
         else {
-            val functionRef = (naming.qualifiedReferences[descriptor as ClassDescriptor])
-            return JsInvocation(functionRef)
+            val functionRef = (naming.objectInnerNames[descriptor as ClassDescriptor])
+            return JsInvocation(functionRef.makeRef())
         }
     }
 

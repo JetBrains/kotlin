@@ -275,38 +275,4 @@ class NamingContextImpl(
 
         return names
     }
-
-    private fun getSuggestedName(descriptor: DeclarationDescriptor): String {
-        val (suggestedName, container) = when (descriptor) {
-            is PropertyGetterDescriptor -> {
-                Pair("get_${descriptor.correspondingProperty.name}", descriptor.correspondingProperty.containingDeclaration)
-            }
-            is PropertySetterDescriptor -> {
-                Pair("set_${descriptor.correspondingProperty.name}", descriptor.correspondingProperty.containingDeclaration)
-            }
-            is ConstructorDescriptor -> {
-                return getSuggestedName(descriptor.containingDeclaration) + "_init"
-            }
-            else -> {
-                val name = if (descriptor.name.isSpecial) {
-                    when (descriptor) {
-                        is ClassDescriptor -> if (DescriptorUtils.isAnonymousObject(descriptor)) "ObjectLiteral" else "Anonymous"
-                        is FunctionDescriptor -> "lambda"
-                        else -> "anonymous"
-                    }
-                }
-                else {
-                    NameSuggestion.sanitizeName(descriptor.name.asString())
-                }
-                Pair(name, descriptor.containingDeclaration)
-            }
-        }
-
-        return if (container != null && descriptor !is PackageFragmentDescriptor && !DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            getSuggestedName(container) + "$" + NameSuggestion.sanitizeName(suggestedName)
-        }
-        else {
-            NameSuggestion.sanitizeName(suggestedName)
-        }
-    }
 }

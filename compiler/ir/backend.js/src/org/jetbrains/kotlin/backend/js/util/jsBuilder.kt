@@ -71,6 +71,8 @@ class JsBuilder(private var currentSource: Any? = null) {
 
     fun not(arg: JsExpression) = attachSource(JsPrefixOperation(JsUnaryOperator.NOT, arg))
 
+    fun JsExpression.strictEq(that: JsExpression) = attachSource(JsBinaryOperation(JsBinaryOperator.REF_EQ, this, that))
+
     fun JsExpression.invoke(vararg arguments: JsExpression) = attachSource(JsInvocation(this, *arguments))
 
     fun JsExpression.newInstance(vararg arguments: JsExpression) = attachSource(JsNew(this, arguments.toList()))

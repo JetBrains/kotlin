@@ -464,6 +464,9 @@ class IrExpressionTranslationVisitor(private val context: IrTranslationContext) 
         }
     }
 
+    override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): JsExpression? =
+            context.translateAsValueReference(expression.descriptor)
+
     private fun withTemporaryVar(type: KotlinType, action: (TemporaryVar) -> Unit): JsExpression? {
         val tmpVarName = if (!KotlinBuiltIns.isUnit(type)) {
             JsScope.declareTemporary().also { context.addStatement(JsVars(JsVars.JsVar(it))) }
