@@ -23,7 +23,7 @@
             enabledByDefault="true"
             language="Groovy"
             hasStaticDescription="true"
-            level="WARNING"/>
+            level="WARNING"/>1
 
         <localInspection
             implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection"
