@@ -16,32 +16,33 @@
 
 package kotlinx.cinterop
 
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.full.companionObjectInstance
-import kotlin.reflect.full.primaryConstructor
 
 typealias NativePtr = Long
 val nativeNullPtr: NativePtr = 0L
 
 // TODO: the functions below should eventually be intrinsified
 
-inline fun <reified T : CVariable> typeOf() = T::class.companionObjectInstance as CVariable.Type
+private val typeOfCache = ConcurrentHashMap<Class<*>, CVariable.Type>()
+
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+inline fun <reified T : CVariable> typeOf() =
+        typeOfCache.computeIfAbsent(T::class.java) { T::class.companionObjectInstance as CVariable.Type }
 
 /**
  * Returns interpretation of entity with given pointer, or `null` if it is null.
  *
  * @param T must not be abstract
  */
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 inline fun <reified T : NativePointed> interpretNullablePointed(ptr: NativePtr): T? {
     if (ptr == nativeNullPtr) {
         return null
     } else {
-        val kClass = T::class
-        val primaryConstructor = kClass.primaryConstructor
-        if (primaryConstructor == null) {
-            throw IllegalArgumentException("${kClass.simpleName} doesn't have a constructor")
-        }
-        @Suppress("UNCHECKED_CAST")
-        return (primaryConstructor as (NativePtr) -> T)(ptr)
+        val result = nativeMemUtils.allocateInstance<T>()
+        result.rawPtr = ptr
+        return result
     }
 }
 

@@ -91,6 +91,11 @@ object nativeMemUtils {
 
     fun zeroMemory(dest: NativePointed, length: Int): Unit = unsafe.setMemory(dest.address, length.toLong(), 0)
 
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    inline fun<reified T> allocateInstance(): T {
+        return unsafe.allocateInstance(T::class.java) as T
+    }
+
     internal class NativeAllocated(rawPtr: NativePtr) : NativePointed(rawPtr)
 
     fun alloc(size: Long, align: Int): NativePointed {
