@@ -29,7 +29,6 @@
           <element id="module-output" name="preloader" />
           <element id="module-output" name="deserialization" />
           <element id="module-output" name="backend-common" />
-          <element id="library" level="project" name="builtins" />
           <element id="module-output" name="js.ast" />
           <element id="directory" name="kotlin">
             <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/native/kotlin" />
@@ -65,11 +64,9 @@
           <element id="module-output" name="idea-gradle" />
           <element id="module-output" name="idea-jvm" />
         </element>
-        <element id="library" level="project" name="javax.inject" />
         <element id="directory" name="jps">
           <element id="artifact" artifact-name="KotlinJpsPlugin" />
         </element>
-        <element id="library" level="project" name="markdown" />
         <element id="archive" name="android-extensions-ide.jar">
           <element id="module-output" name="android-extensions-idea" />
         </element>
@@ -105,12 +102,6 @@
         </element>
         <element id="archive" name="kotlin-gradle-tooling.jar">
           <element id="module-output" name="kotlin-gradle-tooling" />
-        </element>
-        <element id="library" level="project" name="kotlinx-coroutines-core" />
-        <element id="library" level="project" name="javaslang" />
-        <element id="library" level="project" name="kotlinx-coroutines-jdk8" />
-        <element id="archive" name="kapt-idea.jar">
-          <element id="module-output" name="kapt3-idea" />
         </element>
       </element>
       <element id="directory" name="kotlinc">
