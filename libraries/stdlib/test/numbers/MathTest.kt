@@ -301,7 +301,7 @@ class DoubleMathTest {
             for (b in allValues) {
                 val r = a.withSign(b)
                 assertEquals(a.absoluteValue, r.absoluteValue)
-                assertEquals(b.sign, r.sign)
+                assertEquals(b.sign, r.sign, "expected $a with sign bit of $b to have sign ${b.sign}")
             }
 
             val rp0 = a.withSign(0.0)
@@ -315,6 +315,9 @@ class DoubleMathTest {
             val ri = a.withSign(-1)
             assertEquals(-1.0, ri.sign)
             assertEquals(a.absoluteValue, ri.absoluteValue)
+
+            val rn = a.withSign(Double.NaN)
+            assertEquals(a.absoluteValue, rn.absoluteValue)
         }
     }
 

@@ -463,11 +463,11 @@ public inline val Double.sign: Double get() = nativeMath.sign(this)
  * If [sign] is `NaN` the sign of the result is undefined.
  */
 @SinceKotlin("1.2")
-public fun Double.withSign(sign: Double): Double =
-        this.absoluteValue * when(sign) {
-            0.0 -> sign(1 / sign)
-            else -> sign(sign)
-        }
+public fun Double.withSign(sign: Double): Double {
+    val thisSignBit = js("Kotlin").doubleSignBit(this).unsafeCast<Int>()
+    val newSignBit = js("Kotlin").doubleSignBit(sign).unsafeCast<Int>()
+    return if (thisSignBit == newSignBit) this else -this
+}
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
