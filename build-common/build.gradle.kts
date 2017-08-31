@@ -9,6 +9,7 @@ dependencies {
     compile(project(":compiler:cli-common"))
     compile(project(":compiler:frontend.java"))
     compile(project(":js:js.serializer"))
+    compile(project(":js:js.frontend"))
     compile(ideaSdkDeps("util"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler.tests-common"))

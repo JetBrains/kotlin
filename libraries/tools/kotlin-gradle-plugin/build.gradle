@@ -36,7 +36,7 @@ dependencies {
     compile project(':compiler:compiler-runner')
     compile project(":compiler:incremental-compilation-impl")
     compile project(":compiler:daemon")
-    compile project(':kotlin-annotation-processing-gradle')
+    compile project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
 
     compileOnly 'com.android.tools.build:gradle:2.0.0'
     compileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
