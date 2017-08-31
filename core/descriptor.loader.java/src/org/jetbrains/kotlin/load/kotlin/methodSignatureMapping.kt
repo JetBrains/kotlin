@@ -52,7 +52,9 @@ fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true)
 
 // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation
 // Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt')
-fun forceSingleValueParameterBoxing(f: FunctionDescriptor): Boolean {
+fun forceSingleValueParameterBoxing(f: CallableDescriptor): Boolean {
+    if (f !is FunctionDescriptor) return false
+
     if (f.valueParameters.size != 1 || f.isFromJavaOrBuiltins() || f.name.asString() != "remove") return false
     if ((f.original.valueParameters.single().type.mapToJvmType() as? JvmType.Primitive)?.jvmPrimitiveType != JvmPrimitiveType.INT) return false
 
