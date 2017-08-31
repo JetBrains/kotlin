@@ -23,9 +23,9 @@ interface ObjCClass : ObjCObject
 typealias ObjCObjectMeta = ObjCClass
 
 abstract class ObjCObjectBase protected constructor() : ObjCObject {
-    final override fun equals(other: Any?): Boolean = TODO()
-    final override fun hashCode(): Int = TODO()
-    final override fun toString(): String = TODO()
+    final override fun equals(other: Any?): Boolean = this.uncheckedCast<ObjCPointerHolder>().equals(other)
+    final override fun hashCode(): Int = ObjCHashCode(this.rawPtr)
+    final override fun toString(): String = ObjCToString(this.rawPtr)
 }
 
 abstract class ObjCObjectBaseMeta protected constructor() : ObjCObjectBase(), ObjCObjectMeta {}
@@ -42,9 +42,11 @@ class ObjCPointerHolder(inline val rawPtr: NativePtr) {
         objc_retain(rawPtr)
     }
 
-    final override fun equals(other: Any?): Boolean = TODO()
-    final override fun hashCode(): Int = TODO()
-    final override fun toString(): String = TODO()
+    final override fun equals(other: Any?): Boolean =
+            (other is ObjCPointerHolder) && ObjCEquals(this.rawPtr, other.rawPtr)
+
+    final override fun hashCode(): Int = ObjCHashCode(this.rawPtr)
+    final override fun toString(): String = ObjCToString(this.rawPtr)
 }
 
 @konan.internal.Intrinsic
@@ -146,11 +148,21 @@ private external fun <T : ObjCObject> getObjCClass(): NativePtr
 
 // Konan runtme:
 
-@SymbolName("CreateNSStringFromKString")
+@SymbolName("Kotlin_Interop_CreateNSStringFromKString")
 external fun CreateNSStringFromKString(str: String?): NativePtr
 
-@SymbolName("CreateKStringFromNSString")
+@SymbolName("Kotlin_Interop_CreateKStringFromNSString")
 external fun CreateKStringFromNSString(ptr: NativePtr): String?
+
+@SymbolName("Kotlin_Interop_ObjCToString")
+private external fun ObjCToString(ptr: NativePtr): String
+
+@SymbolName("Kotlin_Interop_ObjCHashCode")
+private external fun ObjCHashCode(ptr: NativePtr): Int
+
+@SymbolName("Kotlin_Interop_ObjCEquals")
+private external fun ObjCEquals(ptr: NativePtr, otherPtr: NativePtr): Boolean
+
 
 // Objective-C runtime:
 

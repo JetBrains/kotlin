@@ -2101,7 +2101,8 @@ if (isMac()) {
 
     task interop_objc_smoke(type: RunInteropKonanTest) {
         disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
-        goldValue = "Hello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\nDeallocated\nDeallocated\n"
+        goldValue = "Hello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
+                "true\ntrue\nDeallocated\nDeallocated\n"
 
         source = "interop/objc/smoke.kt"
         interop = 'objcSmoke'

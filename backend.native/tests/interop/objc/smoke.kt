@@ -23,6 +23,21 @@ fun run() {
     replacePairElements(pair, 1, 2)
     pair.swap()
     println("${pair.first}, ${pair.second}")
+
+    // equals and hashCode (virtually):
+    val map = mapOf(foo to pair, pair to foo)
+
+    // equals (directly):
+    if (!foo.equals(pair)) {
+        // toString (directly):
+        println(map[pair].toString() + map[foo].toString() == foo.description() + pair.description())
+    }
+
+    // hashCode (directly):
+    if (foo.hashCode() == foo.hash().toInt()) {
+        // toString (virtually):
+        println(map.keys.map { it.toString() }.min() == foo.description())
+    }
 }
 
 fun MutablePairProtocol.swap() {

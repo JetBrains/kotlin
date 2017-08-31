@@ -44,7 +44,7 @@ namespace {
 
 extern "C" {
 
-NSString* CreateNSStringFromKString(const ArrayHeader* str) {
+NSString* Kotlin_Interop_CreateNSStringFromKString(const ArrayHeader* str) {
   if (str == nullptr) {
     return nullptr;
   }
@@ -58,7 +58,7 @@ NSString* CreateNSStringFromKString(const ArrayHeader* str) {
   return result;
 }
 
-OBJ_GETTER(CreateKStringFromNSString, NSString* str) {
+OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
   if (str == nullptr) {
     RETURN_OBJ(nullptr);
   }
@@ -71,6 +71,18 @@ OBJ_GETTER(CreateKStringFromNSString, NSString* str) {
   [str getCharacters:rawResult range:range];
 
   RETURN_OBJ(result->obj());
+}
+
+OBJ_GETTER(Kotlin_Interop_ObjCToString, id <NSObject> ptr) {
+  RETURN_RESULT_OF(Kotlin_Interop_CreateKStringFromNSString, ptr.description);
+}
+
+KInt Kotlin_Interop_ObjCHashCode(id <NSObject> ptr) {
+  return (KInt) ptr.hash;
+}
+
+KBoolean Kotlin_Interop_ObjCEquals(id <NSObject> ptr, id otherPtr) {
+  return [ptr isEqual:otherPtr];
 }
 
 // Note: this body is used for init methods with signatures differing from this;
@@ -97,14 +109,29 @@ id MissingInitImp(id self, SEL _cmd) {
 
 extern "C" {
 
-void* CreateNSStringFromKString(const ArrayHeader* str) {
+void* Kotlin_Interop_CreateNSStringFromKString(const ArrayHeader* str) {
   RuntimeAssert(false, "Objective-C interop is disabled");
   return nullptr;
 }
 
-OBJ_GETTER(CreateKStringFromNSString, void* str) {
+OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, void* str) {
   RuntimeAssert(false, "Objective-C interop is disabled");
   RETURN_OBJ(nullptr);
+}
+
+OBJ_GETTER(Kotlin_Interop_ObjCToString, KNativePtr ptr) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+  RETURN_OBJ(nullptr);
+}
+
+KInt Kotlin_Interop_ObjCHashCode(KNativePtr ptr) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+  return 0;
+}
+
+KBoolean Kotlin_Interop_ObjCEquals(KNativePtr ptr, KNativePtr otherPtr) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+  return 0;
 }
 
 } // extern "C"
