@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.js.context.IrTranslationContext
 import org.jetbrains.kotlin.backend.js.util.buildJs
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -89,5 +90,9 @@ class IrClassDeclarationTranslationVisitor(
             val propertyName = context.naming.names[declaration.descriptor]
             context.addDeclaration { statement(classInnerName.ref().dotPrototype().defineProperty(propertyName.ident, objectLiteral)) }
         }
+    }
+
+    override fun visitClass(declaration: IrClass) {
+        context.translateClass(declaration)
     }
 }

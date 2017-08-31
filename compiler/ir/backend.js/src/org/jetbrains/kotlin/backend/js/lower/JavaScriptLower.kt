@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 class JavaScriptLower(private val irModule: IrModuleFragment) {
     fun lower(irFile: IrFile) {
+        val innerClassDescriptorProvider = InnerClassDescriptorProvider()
+        InnerClassLowering(innerClassDescriptorProvider).runOnFilePostfix(irFile)
+        InnerClassConstructorCallsLowering(innerClassDescriptorProvider).runOnFilePostfix(irFile)
         InitializersLowering(irModule).runOnFilePostfix(irFile)
         LocalFunctionsLowering(irModule.irBuiltins).runOnFilePostfix(irFile)
         BridgeLowering().runOnFilePostfix(irFile)

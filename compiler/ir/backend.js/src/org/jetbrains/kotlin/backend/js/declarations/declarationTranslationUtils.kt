@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.backend.js.context.IrTranslationContext
 import org.jetbrains.kotlin.backend.js.util.JsBuilder
 import org.jetbrains.kotlin.backend.js.util.buildJs
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -55,3 +57,29 @@ fun IrTranslationContext.addDeclaration(statement: JsStatement) {
 }
 
 fun IrTranslationContext.addDeclaration(builder: JsBuilder.() -> JsStatement) = addDeclaration(buildJs(builder))
+
+fun IrTranslationContext.translateClass(declaration: IrClass) {
+    nestedDeclaration(declaration.descriptor) {
+        withAliases(listOf(declaration.descriptor.thisAsReceiverParameter to JsThisRef())) {
+            val constructor = declaration.declarations.filterIsInstance<IrConstructor>().singleOrNull { it.descriptor.isPrimary }
+            val jsFunction = if (constructor != null) {
+                translateFunction(constructor)
+            }
+            else {
+                JsFunction(scope, JsBlock(), "")
+            }
+            jsFunction.name = naming.innerNames[declaration.descriptor]
+            addDeclaration(JsExpressionStatement(jsFunction))
+
+            val classVisitor = IrClassDeclarationTranslationVisitor(this, declaration.descriptor)
+            for (innerDeclaration in declaration.declarations) {
+                innerDeclaration.acceptVoid(classVisitor)
+            }
+
+            exporter.export(declaration.descriptor)
+        }
+    }
+
+    val model = ClassModelGenerator(naming, module.descriptor).generateClassModel(declaration.descriptor)
+    fragment.classes[model.name] = model
+}

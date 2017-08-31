@@ -64,29 +64,7 @@ class IrDeclarationTranslationVisitor(private val context: IrTranslationContext)
     }
 
     override fun visitClass(declaration: IrClass) {
-        context.nestedDeclaration(declaration.descriptor) {
-            context.withAliases(listOf(declaration.descriptor.thisAsReceiverParameter to JsThisRef())) {
-                val constructor = declaration.declarations.filterIsInstance<IrConstructor>().singleOrNull { it.descriptor.isPrimary }
-                val jsFunction = if (constructor != null) {
-                    context.translateFunction(constructor)
-                }
-                else {
-                    JsFunction(context.scope, JsBlock(), "")
-                }
-                jsFunction.name = context.naming.innerNames[declaration.descriptor]
-                context.addDeclaration(JsExpressionStatement(jsFunction))
-
-                val classVisitor = IrClassDeclarationTranslationVisitor(context, declaration.descriptor)
-                for (innerDeclaration in declaration.declarations) {
-                    innerDeclaration.acceptVoid(classVisitor)
-                }
-
-                context.exporter.export(declaration.descriptor)
-            }
-        }
-
-        val model = ClassModelGenerator(context.naming, context.module.descriptor).generateClassModel(declaration.descriptor)
-        context.fragment.classes[model.name] = model
+        context.translateClass(declaration)
     }
 
     private fun translateFunction(declaration: IrFunction) {
