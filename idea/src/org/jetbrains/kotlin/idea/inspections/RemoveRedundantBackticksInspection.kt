@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
@@ -44,7 +45,7 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
     private fun isRedundantBackticks(element: PsiElement): Boolean {
         return (element.text.startsWith("`") &&
                 element.text.endsWith("`") &&
-                !element.text.contains(" ") &&
+                KotlinNameSuggester.isIdentifier(element.text) &&
                 !isKeyword(element.text.removePrefix("`").removeSuffix("`")))
     }
 
