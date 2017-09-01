@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
-    val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)!!
+    val currentAbiVersion: Int = configuration.get(KonanConfigKeys.ABI_VERSION)!!
 
     internal val targetManager = TargetManager(
         configuration.get(KonanConfigKeys.TARGET))
