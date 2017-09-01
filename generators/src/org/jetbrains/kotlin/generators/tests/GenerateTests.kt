@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDiagnosticsWithModifiedMockJdkTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.checkers.*
+import org.jetbrains.kotlin.checkers.javac.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
@@ -159,14 +160,13 @@ import org.jetbrains.kotlin.js.test.AbstractDceTest
 import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.jvm.compiler.*
+import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJava8UsingJavacTest
+import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.kdoc.AbstractKDocLexerTest
-import org.jetbrains.kotlin.checkers.javac.*
-import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJava8UsingJavacTest
-import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
@@ -851,11 +851,6 @@ fun main(args: Array<String>) {
             model("multiFileInspections", extension = "test", singleClass = true)
         }
 
-        testClass<AbstractGradleConfigureProjectByChangingFileTest> {
-            model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
-            model("configuration/gsk", pattern = """(\w+)_before\.gradle.kts$""", testMethod = "doTestGradle")
-        }
-
         testClass<AbstractFormatterTest> {
             model("formatter", pattern = """^([^\.]+)\.after\.kt.*$""")
             model("formatter", pattern = """^([^\.]+)\.after\.inv\.kt.*$""",
@@ -1114,6 +1109,13 @@ fun main(args: Array<String>) {
 
         testClass<AbstractKotlinMavenInspectionTest> {
             model("maven-inspections", pattern = "^([\\w\\-]+).xml$", singleClass = true)
+        }
+    }
+
+    testGroup("idea/idea-gradle/tests", "idea/testData") {
+        testClass<AbstractGradleConfigureProjectByChangingFileTest> {
+            model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
+            model("configuration/gsk", pattern = """(\w+)_before\.gradle.kts$""", testMethod = "doTestGradle")
         }
     }
 
