@@ -36,9 +36,9 @@ public final class Test : java/lang/Object {
           INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
           IFEQ (L2)
           DUP
-          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
           ALOAD (1)
           SWAP
+          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
           CHECKCAST
           DUP_X1
           INVOKEINTERFACE (java/util/Collection, size, ()I)
@@ -49,9 +49,9 @@ public final class Test : java/lang/Object {
           INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
           IFEQ (L4)
           DUP
-          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
           ALOAD (1)
           SWAP
+          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
           CHECKCAST
           DUP_X1
           INVOKEINTERFACE (java/util/Collection, size, ()I)
@@ -62,9 +62,9 @@ public final class Test : java/lang/Object {
           INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
           IFEQ (L6)
           DUP
-          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
           ALOAD (1)
           SWAP
+          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
           CHECKCAST
           INVOKEVIRTUAL (android/os/Parcel, writeString, (Ljava/lang/String;)V)
           GOTO (L5)

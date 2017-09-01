@@ -62,11 +62,11 @@ internal class ArrayParcelSerializer(override val asmType: Type, private val ele
         v.dupX2() // -> length, arr, index, length
         v.pop() // -> length, arr, index
         v.dup2() // -> length, arr, index, arr, index
-        v.aload(elementSerializer.asmType) // -> length, arr, index, obj
+        v.load(1, PARCEL_TYPE) // -> length, arr, index, arr, index, parcel
+        v.dupX2() // -> length, arr, index, parcel, arr, index, parcel
+        v.pop() // -> length, arr, index, parcel, arr, index
+        v.aload(elementSerializer.asmType) // -> length, arr, index, parcel, obj
         v.castIfNeeded(elementSerializer.asmType)
-
-        v.load(1, PARCEL_TYPE) // -> length, arr, index, obj, parcel
-        v.swap() // -> length, arr, index, parcel, obj
         elementSerializer.writeValue(v) // -> length, arr, index
 
         v.aconst(1) // -> length, arr, index, (1)
@@ -255,10 +255,11 @@ abstract internal class AbstractCollectionParcelSerializer(
         v.ifeq(labelReturn) // -> iterator
 
         v.dup() // -> iterator, iterator
-        v.invokeinterface("java/util/Iterator", "next", "()Ljava/lang/Object;") // -> iterator, obj
 
-        v.load(1, PARCEL_TYPE) // -> iterator, obj, parcel
-        v.swap() // -> iterator, parcel, obj
+        v.load(1, PARCEL_TYPE) // iterator, iterator, parcel
+        v.swap() // iterator, parcel, iterator
+        v.invokeinterface("java/util/Iterator", "next", "()Ljava/lang/Object;") // -> iterator, parcel, obj
+
         doWriteValue(v) // -> iterator
 
         v.goTo(labelIteratorLoop)
