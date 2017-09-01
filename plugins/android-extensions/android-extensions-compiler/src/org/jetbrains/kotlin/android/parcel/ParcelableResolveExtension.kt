@@ -93,6 +93,7 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
                 && clazz.isParcelize
                 && isExperimental()
                 && result.none { it.isDescribeContents() }
+                && fromSupertypes.none { it.isDescribeContents() }
         ) {
             result += createMethod(clazz, DESCRIBE_CONTENTS, clazz.builtIns.intType)
         } else if (name.asString() == WRITE_TO_PARCEL.methodName
@@ -107,7 +108,9 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
     }
 
     private fun SimpleFunctionDescriptor.isDescribeContents(): Boolean {
-        return typeParameters.isEmpty()
+        return this.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+               && modality != Modality.ABSTRACT
+               && typeParameters.isEmpty()
                && valueParameters.isEmpty()
                && returnType?.let { type -> KotlinBuiltIns.isInt(type) } == true
     }
