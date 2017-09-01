@@ -2,6 +2,9 @@
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJSFrameworkSupportProvider"/>
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPCommonFrameworkSupportProvider"/>
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPJavaFrameworkSupportProvider"/>
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPJSFrameworkSupportProvider"/>
         <pluginDescriptions implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradlePluginDescription"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectResolverExtension" order="first"/>
     </extensions>
