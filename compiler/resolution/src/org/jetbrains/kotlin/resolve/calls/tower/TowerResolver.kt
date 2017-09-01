@@ -102,11 +102,6 @@ class TowerResolver {
             name: Name
     ): Collection<C> = Task(this, processor, resultCollector, useOrder, name).run()
 
-    private data class ScopeLevelsAndSkippedForLookups(
-            val levelsToProcess: Collection<ScopeTowerLevel>,
-            val levelsToSkip: Collection<ScopeTowerLevel>
-    )
-
     private inner class Task<out C : Candidate>(
             private val implicitScopeTower: ImplicitScopeTower,
             private val processor: ScopeTowerProcessor<C>,
