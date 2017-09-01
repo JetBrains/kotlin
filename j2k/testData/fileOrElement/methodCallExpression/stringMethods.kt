@@ -5,16 +5,12 @@ import java.util.*
 
 internal class A {
 
-    val FIELD_CONSTANT = "field_constant"
-
     @Throws(Exception::class)
-    fun constructors() {
+    fun constructors(s: String) {
         String()
 
-        val LOCAL_CONSTANT = "local_constant"
-        val s1 = FIELD_CONSTANT
-        val s2 = LOCAL_CONSTANT
-        val s3 = java.lang.String("original") as String
+        "original"
+        java.lang.String(s) as String
 
         String(charArrayOf('a', 'b', 'c'))
         String(charArrayOf('b', 'd'), 1, 1)

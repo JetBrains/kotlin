@@ -3,15 +3,11 @@ import java.util.*;
 
 class A {
 
-    final String FIELD_CONSTANT = "field_constant";
-
-    void constructors() throws Exception {
+    void constructors(String s) throws Exception {
         new String();
 
-        final String LOCAL_CONSTANT = "local_constant";
-        String s1 = new String(FIELD_CONSTANT);
-        String s2 = new String(LOCAL_CONSTANT);
-        String s3 = new String("original");
+        new String("original");
+        new String(s);
 
         new String(new char[] {'a', 'b', 'c'});
         new String(new char[] {'b', 'd'}, 1, 1);
