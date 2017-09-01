@@ -59,13 +59,13 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
     ) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
 
-        if (descriptor !is MemberDescriptor) return
+        if (descriptor !is MemberDescriptor || DescriptorUtils.isEnumEntry(descriptor)) return
 
-        val checkImpl = !languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckImpl)
         if (descriptor.isHeader) {
-            checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, descriptor.module, checkImpl)
+            checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, descriptor.module)
         }
         else {
+            val checkImpl = !languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckImpl)
             checkImplementationHasHeaderDeclaration(declaration, descriptor, diagnosticHolder, checkImpl)
         }
     }
@@ -74,13 +74,12 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             reportOn: KtDeclaration,
             descriptor: MemberDescriptor,
             diagnosticHolder: DiagnosticSink,
-            platformModule: ModuleDescriptor,
-            checkImpl: Boolean
+            platformModule: ModuleDescriptor
     ) {
         // Only look for implementations of top level members; class members will be handled as a part of that header class
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
 
-        val compatibility = findImplForHeader(descriptor, platformModule, checkImpl) ?: return
+        val compatibility = findImplForHeader(descriptor, platformModule) ?: return
 
         val shouldReportError =
                 compatibility.isEmpty() ||
@@ -97,11 +96,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         }
     }
 
-    private fun findImplForHeader(
-            header: MemberDescriptor,
-            platformModule: ModuleDescriptor,
-            checkImpl: Boolean
-    ): Map<Compatibility, List<MemberDescriptor>>? {
+    private fun findImplForHeader(header: MemberDescriptor, platformModule: ModuleDescriptor): Map<Compatibility, List<MemberDescriptor>>? {
         return when (header) {
             is CallableMemberDescriptor -> {
                 header.findNamesakesFromModule(platformModule).filter { impl ->
@@ -109,7 +104,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
                     // TODO: support non-source definitions (e.g. from Java)
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
                 }.groupBy { impl ->
-                    areCompatibleCallables(header, impl, checkImpl)
+                    areCompatibleCallables(header, impl)
                 }
             }
             is ClassDescriptor -> {
@@ -117,7 +112,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
                     header != impl && !impl.isHeader &&
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
                 }.groupBy { impl ->
-                    areCompatibleClassifiers(header, impl, checkImpl)
+                    areCompatibleClassifiers(header, impl)
                 }
             }
             else -> null
@@ -132,11 +127,13 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         // TODO: use common module here
         val compatibility = findHeaderForImpl(descriptor, descriptor.module) ?: return
 
-        if (!descriptor.isImpl || !reportOn.hasModifier(KtTokens.IMPL_KEYWORD)) {
-            if (checkImpl && (Compatible in compatibility || Incompatible.NoImpl in compatibility)) {
+        val hasImplModifier = descriptor.isImpl && reportOn.hasModifier(KtTokens.IMPL_KEYWORD)
+        if (!hasImplModifier) {
+            if (Compatible !in compatibility) return
+
+            if (checkImpl) {
                 diagnosticHolder.report(Errors.IMPL_MISSING.on(reportOn))
             }
-            return
         }
 
         // 'firstOrNull' is needed because in diagnostic tests, common sources appear twice, so the same class is duplicated
@@ -214,7 +211,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
                                 Substitutor(headerClass.declaredTypeParameters, container.declaredTypeParameters)
                             }
                             else null
-                    areCompatibleCallables(declaration, impl, checkImpl = true, parentSubstitutor = substitutor)
+                    areCompatibleCallables(declaration, impl, parentSubstitutor = substitutor)
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> {
@@ -222,7 +219,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
                     impl != declaration &&
                     declaration is ClassDescriptor && declaration.isHeader
                 }.groupBy { header ->
-                    areCompatibleClassifiers(header as ClassDescriptor, impl, checkImpl = true)
+                    areCompatibleClassifiers(header as ClassDescriptor, impl)
                 }
             }
             else -> null
@@ -230,10 +227,10 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
     }
 
     fun MemberDescriptor.findCompatibleImplForHeader(platformModule: ModuleDescriptor): List<MemberDescriptor> =
-            findImplForHeader(this, platformModule, false)?.get(Compatible).orEmpty()
+            findImplForHeader(this, platformModule)?.get(Compatible).orEmpty()
 
     fun MemberDescriptor.findAnyImplForHeader(platformModule: ModuleDescriptor): List<MemberDescriptor> {
-        val implsGroupedByCompatibility = findImplForHeader(this, platformModule, false)
+        val implsGroupedByCompatibility = findImplForHeader(this, platformModule)
         return implsGroupedByCompatibility?.get(Compatible)
                ?: implsGroupedByCompatibility?.values?.flatten()
                ?: emptyList()
@@ -341,8 +338,6 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             object TypeParameterVariance : Incompatible("declaration-site variances of type parameters are different")
             object TypeParameterReified : Incompatible("some type parameter is reified in one declaration and non-reified in the other")
 
-            object NoImpl : Incompatible("the implementation is not marked with the 'impl' modifier (-Xno-check-impl)")
-
             object Unknown : Incompatible(null)
         }
 
@@ -353,7 +348,6 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
     private fun areCompatibleCallables(
             a: CallableMemberDescriptor,
             b: CallableMemberDescriptor,
-            checkImpl: Boolean,
             platformModule: ModuleDescriptor = b.module,
             parentSubstitutor: Substitutor? = null
     ): Compatibility {
@@ -403,8 +397,6 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             a is PropertyDescriptor && b is PropertyDescriptor -> areCompatibleProperties(a, b).let { if (it != Compatible) return it }
             else -> throw AssertionError("Unsupported declarations: $a, $b")
         }
-
-        if (checkImpl && !b.isImpl && b.kind == CallableMemberDescriptor.Kind.DECLARATION) return Incompatible.NoImpl
 
         return Compatible
     }
@@ -489,17 +481,13 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         return Compatible
     }
 
-    private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor, checkImpl: Boolean): Compatibility {
+    private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor): Compatibility {
         // Can't check FQ names here because nested header class may be implemented via impl typealias's expansion with the other FQ name
         assert(a.name == other.name) { "This function should be invoked only for declarations with the same name: $a, $other" }
 
-        var implTypealias = false
         val b = when (other) {
             is ClassDescriptor -> other
-            is TypeAliasDescriptor -> {
-                implTypealias = true
-                other.classDescriptor ?: return Compatible // do not report extra error on erroneous typealias
-            }
+            is TypeAliasDescriptor -> other.classDescriptor ?: return Compatible // do not report extra error on erroneous typealias
             else -> throw AssertionError("Incorrect impl classifier for $a: $other")
         }
 
@@ -527,9 +515,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             bSupertypes.none { bSupertype -> areCompatibleTypes(aSupertype, bSupertype, platformModule) }
         }) return Incompatible.Supertypes
 
-        areCompatibleClassScopes(a, b, checkImpl && !implTypealias, platformModule, substitutor).let { if (it != Compatible) return it }
-
-        if (checkImpl && !b.isImpl && !implTypealias) return Incompatible.NoImpl
+        areCompatibleClassScopes(a, b, platformModule, substitutor).let { if (it != Compatible) return it }
 
         return Compatible
     }
@@ -538,7 +524,6 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
     private fun areCompatibleClassScopes(
             a: ClassDescriptor,
             b: ClassDescriptor,
-            checkImpl: Boolean,
             platformModule: ModuleDescriptor,
             substitutor: Substitutor
     ): Compatibility {
@@ -557,9 +542,9 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             val mapping = bMembers.keysToMap { bMember ->
                 when (aMember) {
                     is CallableMemberDescriptor ->
-                            areCompatibleCallables(aMember, bMember as CallableMemberDescriptor, checkImpl, platformModule, substitutor)
+                            areCompatibleCallables(aMember, bMember as CallableMemberDescriptor, platformModule, substitutor)
                     is ClassDescriptor ->
-                            areCompatibleClassifiers(aMember, bMember as ClassDescriptor, checkImpl)
+                            areCompatibleClassifiers(aMember, bMember as ClassDescriptor)
                     else -> throw UnsupportedOperationException("Unsupported declaration: $aMember ($bMembers)")
                 }
             }

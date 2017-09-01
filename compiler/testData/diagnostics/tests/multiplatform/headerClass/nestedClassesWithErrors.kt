@@ -19,6 +19,10 @@ header class D {
     class N
 }
 
+header class E {
+    class N
+}
+
 // MODULE: m1-jvm(m1-common)
 // FILE: jvm.kt
 
@@ -36,3 +40,7 @@ impl class C {
 }
 
 impl class <!HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED!>D<!>
+
+impl class E {
+    class <!IMPL_MISSING!>N<!>
+}

@@ -68,7 +68,7 @@ class PlatformHeaderAnnotator : Annotator {
 
         val trace = BindingTraceContext()
         for (module in implementingModules) {
-            HeaderImplDeclarationChecker.checkHeaderDeclarationHasImplementation(declaration, descriptor, trace, module, checkImpl = false)
+            HeaderImplDeclarationChecker.checkHeaderDeclarationHasImplementation(declaration, descriptor, trace, module)
         }
 
         val suppressionCache = KotlinCacheService.getInstance(declaration.project).getSuppressionCache()
