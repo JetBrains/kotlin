@@ -354,6 +354,21 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/inline")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inline extends AbstractBlackBoxAgainstJavaCodegenTest {
+        public void testAllFilesPresentInInline() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("kt19910.kt")
+        public void testKt19910() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/inline/kt19910.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/innerClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

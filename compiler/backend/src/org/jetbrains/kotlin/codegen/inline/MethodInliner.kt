@@ -82,8 +82,12 @@ class MethodInliner(
 
         //substitute returns with "goto end" instruction to keep non local returns in lambdas
         val end = Label()
+        val isTransformingAnonymousObject = nodeRemapper is RegeneratedLambdaFieldRemapper
         transformedNode = doInline(transformedNode)
-        removeClosureAssertions(transformedNode)
+        if (!isTransformingAnonymousObject) {
+            //don't remove assertion in transformed anonymous object
+            removeClosureAssertions(transformedNode)
+        }
         transformedNode.instructions.resetLabels()
 
         val resultNode = MethodNode(
@@ -93,7 +97,7 @@ class MethodInliner(
         val visitor = RemapVisitor(
                 resultNode, remapper, nodeRemapper,
                 /*copy annotation and attributes*/
-                nodeRemapper is RegeneratedLambdaFieldRemapper
+                isTransformingAnonymousObject
         )
         try {
             transformedNode.accept(visitor)
