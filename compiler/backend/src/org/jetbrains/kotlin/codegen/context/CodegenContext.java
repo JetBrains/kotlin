@@ -580,8 +580,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             superCallTarget = (ClassDescriptor) enclosed;
         }
 
-        boolean isSuperCallTarget = superCallTarget != null;
-        if (descriptorContext == null && withinInliningContext && isSuperCallTarget) {
+        if (descriptorContext == null && withinInliningContext && superCallTarget != null) {
             //generate super calls within inline function through synthetic accessors
             descriptorContext = ExpressionCodegen.getParentContextSubclassOf((ClassDescriptor) enclosed, this);
         }
@@ -607,9 +606,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
             int getterAccessFlag = getter == null ? propertyAccessFlag
                                                   : propertyAccessFlag | getVisibilityAccessFlag(getter);
-            boolean getterAccessorRequired =
-                    canGenerateAccessorInContext(getter == null ? propertyDescriptor : getter, descriptorContext) &&
-                    isAccessorRequired(getterAccessFlag, unwrappedDescriptor, descriptorContext, withinInliningContext, isSuperCallTarget);
+            boolean getterAccessorRequired = isAccessorRequired(getterAccessFlag, unwrappedDescriptor, descriptorContext,
+                                                                withinInliningContext, superCallTarget != null);
 
             PropertySetterDescriptor setter = propertyDescriptor.getSetter();
 
@@ -617,9 +615,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (setter != null && setter.getVisibility().normalize() != Visibilities.INVISIBLE_FAKE) {
                 setterAccessFlag = propertyAccessFlag | getVisibilityAccessFlag(setter);
             }
-            boolean setterAccessorRequired =
-                    canGenerateAccessorInContext(setter == null ? propertyDescriptor : setter, descriptorContext) &&
-                    isAccessorRequired(setterAccessFlag, unwrappedDescriptor, descriptorContext, withinInliningContext, isSuperCallTarget);
+            boolean setterAccessorRequired = isAccessorRequired(setterAccessFlag, unwrappedDescriptor, descriptorContext,
+                                                                withinInliningContext, superCallTarget != null);
 
             if (!getterAccessorRequired && !setterAccessorRequired) {
                 return descriptor;
@@ -628,18 +625,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
         else {
             int flag = getVisibilityAccessFlag(unwrappedDescriptor);
-            if (!isAccessorRequired(flag, unwrappedDescriptor, descriptorContext, withinInliningContext, isSuperCallTarget)) {
+            if (!isAccessorRequired(flag, unwrappedDescriptor, descriptorContext, withinInliningContext, superCallTarget != null)) {
                 return descriptor;
             }
             return (D) descriptorContext.getAccessor(descriptor, superCallTarget);
         }
-    }
-
-    private static boolean canGenerateAccessorInContext(
-            @NotNull CallableMemberDescriptor callableDescriptor,
-            @NotNull CodegenContext hostContext
-    ) {
-        return Visibilities.isVisibleWithAnyReceiver(callableDescriptor, hostContext.contextDescriptor);
     }
 
     private static boolean isAccessorRequired(
