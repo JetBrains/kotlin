@@ -50,4 +50,5 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testKt19747() = doTest("kt19747")
     fun testKt19747_2() = doTest("kt19747_2")
     fun test20002() = doTest("kt20002")
+    fun test20021() = doTest("kt20021")
 }

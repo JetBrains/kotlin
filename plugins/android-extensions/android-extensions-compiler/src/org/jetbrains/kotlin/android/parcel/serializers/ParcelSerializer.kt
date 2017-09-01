@@ -167,12 +167,6 @@ interface ParcelSerializer {
                         Method("writeException"),
                         Method("readException")))
 
-                // Write at least a nullability byte.
-                // We don't want parcel to be empty in case if all constructor parameters are objects
-                type.isNamedObject() -> NullAwareParcelSerializerWrapper(ObjectParcelSerializer(asmType, type, typeMapper))
-
-                type.isEnum() -> wrapToNullAwareIfNeeded(type, EnumParcelSerializer(asmType))
-
                 asmType.isFileDescriptor() -> wrapToNullAwareIfNeeded(type, NullCompliantObjectParcelSerializer(asmType,
                         Method("writeRawFileDescriptor"),
                         Method("readRawFileDescriptor")))
@@ -196,6 +190,12 @@ interface ParcelSerializer {
                         GenericParcelableParcelSerializer(asmType, context.containerClassType)
                     }
                 }
+
+                // Write at least a nullability byte.
+                // We don't want parcel to be empty in case if all constructor parameters are objects
+                type.isNamedObject() -> NullAwareParcelSerializerWrapper(ObjectParcelSerializer(asmType, type, typeMapper))
+
+                type.isEnum() -> wrapToNullAwareIfNeeded(type, EnumParcelSerializer(asmType))
 
                 type.isSerializable() -> NullCompliantObjectParcelSerializer(asmType,
                         Method("writeSerializable", "(Ljava/io/Serializable;)V"),
