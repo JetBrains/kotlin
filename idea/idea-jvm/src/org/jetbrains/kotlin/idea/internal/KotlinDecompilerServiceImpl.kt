@@ -36,28 +36,33 @@ import java.util.jar.Manifest
 class KotlinDecompilerServiceImpl : KotlinDecompilerService {
     override fun decompile(file: KtFile): String? {
 
-        val bytecodeMap = when {
-            file.canBeDecompiledToJava() -> bytecodeMapForExistingClassfile(file.virtualFile)
-            !file.isCompiled -> bytecodeMapForSourceFile(file)
-            else -> return null
-        }
-        val resultSaver = KotlinResultSaver()
-        val options = hashMapOf<String, Any>(
-                IFernflowerPreferences.REMOVE_BRIDGE to "0"
-        )
+        try {
+            val bytecodeMap = when {
+                file.canBeDecompiledToJava() -> bytecodeMapForExistingClassfile(file.virtualFile)
+                !file.isCompiled -> bytecodeMapForSourceFile(file)
+                else -> return null
+            }
+            val resultSaver = KotlinResultSaver()
+            val options = hashMapOf<String, Any>(
+                    IFernflowerPreferences.REMOVE_BRIDGE to "0"
+            )
 
-        val bytecodeProvider = IBytecodeProvider {
-            externalPath, _ ->
-            val path = File(FileUtil.toSystemIndependentName(externalPath))
-            bytecodeMap[path]?.invoke()
-        }
+            val bytecodeProvider = IBytecodeProvider {
+                externalPath, _ ->
+                val path = File(FileUtil.toSystemIndependentName(externalPath))
+                bytecodeMap[path]?.invoke()
+            }
 
-        val decompiler = BaseDecompiler(bytecodeProvider, resultSaver, options, IdeaLogger())
-        for (path in bytecodeMap.keys) {
-            decompiler.addSpace(path, true)
+            val decompiler = BaseDecompiler(bytecodeProvider, resultSaver, options, IdeaLogger())
+            for (path in bytecodeMap.keys) {
+                decompiler.addSpace(path, true)
+            }
+            decompiler.decompileContext()
+            return resultSaver.resultText
         }
-        decompiler.decompileContext()
-        return resultSaver.resultText
+        catch (ex: IdeaLogger.InternalException) {
+            throw DecompileFailedException(ex.message ?: "Unknown error", ex)
+        }
     }
 
     private fun bytecodeMapForExistingClassfile(file: VirtualFile): Map<File, () -> ByteArray> {
