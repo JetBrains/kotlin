@@ -1936,6 +1936,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("innerClassConstructorWithTwoReceivers.kt")
+            public void testInnerClassConstructorWithTwoReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/innerClassConstructorWithTwoReceivers.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("innerConstructorFromClass.kt")
             public void testInnerConstructorFromClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/innerConstructorFromClass.kt");

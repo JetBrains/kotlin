@@ -2580,6 +2580,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("innerClassConstructorOnOuterClassInstance.kt")
+                public void testInnerClassConstructorOnOuterClassInstance() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/innerClassConstructorOnOuterClassInstance.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("intersectionTypeOverloadWithWrongParameter.kt")
                 public void testIntersectionTypeOverloadWithWrongParameter() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/intersectionTypeOverloadWithWrongParameter.kt");

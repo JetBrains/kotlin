@@ -2278,6 +2278,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
 
+            @TestMetadata("innerClassConstructorWithTwoReceivers.kt")
+            public void testInnerClassConstructorWithTwoReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/innerClassConstructorWithTwoReceivers.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("innerConstructorFromClass.kt")
             public void testInnerConstructorFromClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/innerConstructorFromClass.kt");
