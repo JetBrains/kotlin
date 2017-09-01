@@ -311,7 +311,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
     override fun visitSetVariable(expression: IrSetVariable): IrSetVariable =
             IrSetVariableImpl(
                     expression.startOffset, expression.endOffset,
-                    mapVariableReference(expression.descriptor),
+                    mapValueReference(expression.descriptor),
                     expression.value.transform(),
                     mapStatementOrigin(expression.origin)
             )

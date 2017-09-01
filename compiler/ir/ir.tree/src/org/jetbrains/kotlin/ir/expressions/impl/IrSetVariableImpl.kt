@@ -16,24 +16,24 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class IrSetVariableImpl(
         startOffset: Int, endOffset: Int,
-        override val symbol: IrVariableSymbol,
+        override val symbol: IrValueSymbol,
         override val origin: IrStatementOrigin?
 ) : IrExpressionBase(startOffset, endOffset, symbol.descriptor.builtIns.unitType), IrSetVariable {
     constructor(
             startOffset: Int, endOffset: Int,
-            symbol: IrVariableSymbol,
+            symbol: IrValueSymbol,
             value: IrExpression,
             origin: IrStatementOrigin?
     ) : this(startOffset, endOffset, symbol, origin) {
@@ -43,12 +43,12 @@ class IrSetVariableImpl(
     @Deprecated("Creates unbound symbol")
     constructor(
             startOffset: Int, endOffset: Int,
-            descriptor: VariableDescriptor,
+            descriptor: ValueDescriptor,
             value: IrExpression,
             origin: IrStatementOrigin?
-    ) : this(startOffset, endOffset, IrVariableSymbolImpl(descriptor), value, origin)
+    ) : this(startOffset, endOffset, createValueSymbol(descriptor), value, origin)
 
-    override val descriptor: VariableDescriptor get() = symbol.descriptor
+    override val descriptor: ValueDescriptor get() = symbol.descriptor
 
     override lateinit var value: IrExpression
 

@@ -116,7 +116,7 @@ fun IrBuilderWithScope.irIfThenReturnFalse(condition: IrExpression) =
 fun IrBuilderWithScope.irGet(variable: IrValueSymbol) =
         IrGetValueImpl(startOffset, endOffset, variable)
 
-fun IrBuilderWithScope.irSetVar(variable: IrVariableSymbol, value: IrExpression) =
+fun IrBuilderWithScope.irSetVar(variable: IrValueSymbol, value: IrExpression) =
         IrSetVariableImpl(startOffset, endOffset, variable, value, IrStatementOrigin.EQ)
 
 fun IrBuilderWithScope.irEqeqeq(arg1: IrExpression, arg2: IrExpression) =

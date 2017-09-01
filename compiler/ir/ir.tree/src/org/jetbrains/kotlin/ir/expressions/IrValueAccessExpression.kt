@@ -32,8 +32,8 @@ interface IrGetValue : IrValueAccessExpression, IrExpressionWithCopy {
 }
 
 interface IrSetVariable : IrValueAccessExpression {
-    override val descriptor: VariableDescriptor
-    override val symbol: IrVariableSymbol
+    override val descriptor: ValueDescriptor
+    override val symbol: IrValueSymbol
     var value: IrExpression
 }
 

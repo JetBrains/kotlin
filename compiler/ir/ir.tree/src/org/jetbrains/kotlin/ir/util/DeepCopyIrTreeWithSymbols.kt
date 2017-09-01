@@ -281,7 +281,7 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
     override fun visitSetVariable(expression: IrSetVariable): IrSetVariable =
             IrSetVariableImpl(
                     expression.startOffset, expression.endOffset,
-                    symbolRemapper.getReferencedVariable(expression.symbol),
+                    symbolRemapper.getReferencedValue(expression.symbol),
                     expression.value.transform(),
                     mapStatementOrigin(expression.origin)
             )

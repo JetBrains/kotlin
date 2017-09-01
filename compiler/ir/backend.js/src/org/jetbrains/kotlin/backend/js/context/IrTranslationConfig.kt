@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.js.context
 
+import org.jetbrains.kotlin.backend.js.builtins.JsBuiltIns
 import org.jetbrains.kotlin.backend.js.intrinsics.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -40,7 +41,7 @@ class IrTranslationConfig(
             NotIntrinsic,
             CompareToIntrinsic,
             PrimitiveRangeToIntrinsic,
-            EqualsIntrinsic, CompareZeroIntrinsic, IrNotIntrinsic, ReferenceEqualsIntrinsic,
+            EqualsIntrinsic, CompareZeroIntrinsic, IrNotIntrinsic, ReferenceEqualsIntrinsic, IsUndefinedIntrinsic,
             ThrowIntrinsic,
             FunctionInvokeIntrinsic,
             ArrayAccessIntrinsic, ArraySizeIntrinsic, ArrayOfNullsIntrinsic
@@ -57,4 +58,6 @@ class IrTranslationConfig(
 
     val isTypedArraysEnabled: Boolean
         get() = jsConfig.configuration[JSConfigurationKeys.TYPED_ARRAYS_ENABLED] == true
+
+    val jsBuiltIns = JsBuiltIns(module)
 }

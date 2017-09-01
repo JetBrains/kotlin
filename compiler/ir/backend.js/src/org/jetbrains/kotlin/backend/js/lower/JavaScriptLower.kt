@@ -19,11 +19,15 @@ package org.jetbrains.kotlin.backend.js.lower
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalFunctionsLowering
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
+import org.jetbrains.kotlin.backend.js.context.IrTranslationConfig
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
-class JavaScriptLower(private val irModule: IrModuleFragment) {
+class JavaScriptLower(private val config: IrTranslationConfig) {
     fun lower(irFile: IrFile) {
+        val irModule = config.module
+
+        DefaultArgumentLowering(config.jsBuiltIns, irModule.irBuiltins).runOnFilePostfix(irFile)
+
         LocalDeclarationsLowering(irModule.irBuiltins.builtIns).runOnFilePostfix(irFile)
         LocalFunctionsLowering(irModule.irBuiltins).runOnFilePostfix(irFile)
 

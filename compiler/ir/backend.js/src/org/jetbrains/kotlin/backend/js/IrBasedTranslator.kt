@@ -48,7 +48,7 @@ class IrBasedTranslator(private val config: JsConfig, private val bindingTrace: 
     }
 
     private fun translateFile(context: IrTranslationContext, file: IrFile) {
-        JavaScriptLower(context.module).lower(file)
+        JavaScriptLower(context.config).lower(file)
 
         val visitor = IrDeclarationTranslationVisitor(context)
         for (declaration in file.declarations) {
