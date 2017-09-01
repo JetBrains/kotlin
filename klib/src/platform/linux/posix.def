@@ -1,0 +1,30 @@
+package = platform.posix
+headers = alloca.h ar.h assert.h byteswap.h complex.h dirent.h dlfcn.h elf.h endian.h err.h errno.h fcntl.h \
+    features.h fenv.h fnmatch.h fts.h ftw.h getopt.h grp.h inttypes.h lastlog.h libgen.h limits.h \
+    link.h locale.h malloc.h math.h memory.h mntent.h netdb.h paths.h poll.h \
+    pthread.h pwd.h regex.h resolv.h sched.h search.h semaphore.h setjmp.h sgtty.h signal.h \
+    stdatomic.h stdint.h stdio.h stdlib.h string.h strings.h syslog.h termio.h termios.h thread_db.h \
+    time.h uchar.h ucontext.h unistd.h utime.h utmp.h wchar.h wctype.h xlocale.h zconf.h zlib.h \
+     net/ethernet.h net/if.h net/if_arp.h net/if_packet.h net/route.h \
+    netinet/ether.h netinet/icmp6.h netinet/if_ether.h netinet/in.h netinet/in_systm.h \
+    netinet/ip.h netinet/ip6.h netinet/ip_icmp.h netinet/tcp.h netinet/udp.h \
+    netpacket/packet.h \
+    sys/epoll.h sys/inotify.h sys/ioctl.h sys/ipc.h sys/klog.h sys/mman.h sys/poll.h sys/ptrace.h \
+    sys/queue.h sys/select.h sys/shm.h sys/stat.h sys/sysinfo.h \
+    sys/time.h sys/times.h sys/wait.h
+
+compilerOpts = -D_GNU_SOURCE
+linkerOpts = -ldl -lz
+
+---
+// cinterop -target linux -def klib/src/platform/linux/posix.def -o platform.posix.klib
+
+// Wrapper to access errno variable.
+static int posix_errno() {
+	return errno;
+}
+
+// Wrapper to access h_errno variable.
+static int posix_h_errno() {
+	return h_errno;
+}
