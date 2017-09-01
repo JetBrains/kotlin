@@ -408,6 +408,11 @@ task array_to_any(type: RunKonanTest) {
     source = "codegen/basics/array_to_any.kt"
 }
 
+task runtime_basic_exit(type: RunKonanTest) {
+    source = "runtime/basic/exit.kt"
+    expectedExitStatus = 42
+}
+
 task hello0(type: RunKonanTest) {
     goldValue = "Hello, world!\n"
     source = "runtime/basic/hello0.kt"

@@ -66,4 +66,8 @@ void Kotlin_interop_free(void* ptr) {
   konan::free(ptr);
 }
 
+void Kotlin_system_exitProcess(KInt status) {
+  exit(status);
+}
+
 }  // extern "C"
