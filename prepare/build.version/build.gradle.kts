@@ -25,3 +25,10 @@ val prepare = task("prepare") {
 artifacts.add(buildVersion.name, file(buildVersionFilePath)) {
     builtBy(prepare)
 }
+
+val distKotlinHomeDir: String by rootProject.extra
+
+val dist by task<Copy> {
+    into(File(distKotlinHomeDir))
+    from(buildVersionFilePath)
+}

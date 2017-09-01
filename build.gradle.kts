@@ -219,6 +219,7 @@ allprojects {
 task<Copy>("dist") {
     into(distDir)
     from(files("compiler/cli/bin")) { into("kotlinc/bin") }
+    from(files("license")) { into("kotlinc/license") }
 }
 
 val compilerCopyTask = task<Copy>("idea-plugin-copy-compiler") {
