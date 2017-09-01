@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -853,7 +853,8 @@ class TypeResolver(
         if (userType.qualifier != null) { // we must resolve all type references in arguments of qualifier type
             for (typeArgument in userType.qualifier!!.typeArguments) {
                 typeArgument.typeReference?.let {
-                    forceResolveTypeContents(resolveType(scope, it, trace, true))
+                    // in qualified expression, type argument can have bounds only in incorrect code
+                    forceResolveTypeContents(resolveType(scope, it, trace, false))
                 }
             }
         }

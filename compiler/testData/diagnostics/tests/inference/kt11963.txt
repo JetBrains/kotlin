@@ -1,0 +1,3 @@
+package
+
+public val </*0*/ T> abc: [ERROR : No type, no body]
