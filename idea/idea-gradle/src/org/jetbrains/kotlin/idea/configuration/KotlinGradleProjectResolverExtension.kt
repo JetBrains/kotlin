@@ -58,8 +58,21 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
     override fun populateModuleDependencies(gradleModule: IdeaModule,
                                             ideModule: DataNode<ModuleData>,
                                             ideProject: DataNode<ProjectData>) {
-        val gradleModel = resolverCtx.getExtraProject(gradleModule, KotlinGradleModel::class.java) ?: return
+        val gradleModel = resolverCtx.getExtraProject(gradleModule, KotlinGradleModel::class.java)
+                          ?: return super.populateModuleDependencies(gradleModule, ideModule, ideProject)
 
+        importTransitiveCommonDependencies(gradleModel, ideProject, gradleModule, ideModule)
+
+        ideModule.isResolved = true
+        ideModule.hasKotlinPlugin = gradleModel.hasKotlinPlugin
+        ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet
+        ideModule.coroutines = gradleModel.coroutines
+        ideModule.platformPluginId = gradleModel.platformPluginId
+
+        super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+    }
+
+    private fun importTransitiveCommonDependencies(gradleModel: KotlinGradleModel, ideProject: DataNode<ProjectData>, gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
         gradleModel.transitiveCommonDependencies.forEach { implementsModuleId ->
             val targetModule = findModule(ideProject, implementsModuleId) ?: return
             if (resolverCtx.isResolveModulePerSourceSet) {
@@ -69,14 +82,6 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                 addDependency(ideModule, targetModule)
             }
         }
-
-        ideModule.isResolved = true
-        ideModule.hasKotlinPlugin = gradleModel.hasKotlinPlugin
-        ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet
-        ideModule.coroutines = gradleModel.coroutines
-        ideModule.platformPluginId = gradleModel.platformPluginId
-
-        super.populateModuleDependencies(gradleModule, ideModule, ideProject)
     }
 
     private fun addDependency(ideModule: DataNode<out ModuleData>, targetModule: DataNode<out ModuleData>) {
