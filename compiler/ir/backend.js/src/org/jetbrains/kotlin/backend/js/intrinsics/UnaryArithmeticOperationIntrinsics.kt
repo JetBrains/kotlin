@@ -23,47 +23,48 @@ import org.jetbrains.kotlin.backend.js.util.toByte
 import org.jetbrains.kotlin.backend.js.util.toShort
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.types.KotlinType
 
-abstract class AbstractIntIncDecIntrinsic : UnaryOperationIntrinsic() {
-    private val matchingNames = setOf("inc", "dec")
+abstract class UnaryArithmeticOperationIntrinsic : UnaryOperationIntrinsic() {
+    private val supportedOperations = mutableSetOf("unaryMinus")
 
-    override fun isApplicable(name: String, operand: KotlinType): Boolean =
-            name in matchingNames &&
-            isApplicableToType(operand)
+    override fun isApplicable(name: String, operand: KotlinType): Boolean = isSupportedType(operand) && name in supportedOperations
 
-    abstract fun isApplicableToType(type: KotlinType): Boolean
+    abstract fun isSupportedType(type: KotlinType): Boolean
 
     override fun apply(context: IrTranslationContext, call: IrCall, operand: JsExpression): JsExpression {
-        val operation = when (call.descriptor.name.identifier) {
-            "inc" -> JsBinaryOperator.ADD
-            "dec" -> JsBinaryOperator.SUB
-            else -> error("Unsupported function: ${call.descriptor}")
+        val operator = when (call.descriptor.name.identifier) {
+            "unaryMinus" -> JsUnaryOperator.NEG
+            else -> error("unsupported function: ${call.descriptor}")
         }
-        return wrap(JsBinaryOperation(operation, operand, JsIntLiteral(1)))
+
+        return wrap(JsPrefixOperation(operator, operand))
     }
 
     abstract fun wrap(value: JsExpression): JsExpression
 }
 
-object IntIncDecIntrinsic : AbstractIntIncDecIntrinsic() {
-    override fun isApplicableToType(type: KotlinType): Boolean = KotlinBuiltIns.isInt(type)
+object IntUnaryArithmeticIntrinsic : UnaryArithmeticOperationIntrinsic() {
+    override fun isSupportedType(type: KotlinType): Boolean = KotlinBuiltIns.isInt(type)
 
     override fun wrap(value: JsExpression): JsExpression = buildJs { numberToInt(value) }
 }
 
-object ByteIncDecIntrinsic : AbstractIntIncDecIntrinsic() {
-    override fun isApplicableToType(type: KotlinType): Boolean = KotlinBuiltIns.isByte(type)
+object FloatUnaryArithmeticIntrinsic : UnaryArithmeticOperationIntrinsic() {
+    override fun isSupportedType(type: KotlinType): Boolean = KotlinBuiltIns.isFloat(type) || KotlinBuiltIns.isDouble(type)
+
+    override fun wrap(value: JsExpression): JsExpression = value
+}
+
+object ByteUnaryArithmeticIntrinsic : UnaryArithmeticOperationIntrinsic() {
+    override fun isSupportedType(type: KotlinType): Boolean = KotlinBuiltIns.isByte(type)
 
     override fun wrap(value: JsExpression): JsExpression = buildJs { toByte(value) }
 }
 
-object ShortIncDecIntrinsic : AbstractIntIncDecIntrinsic() {
-    override fun isApplicableToType(type: KotlinType): Boolean = KotlinBuiltIns.isShort(type)
+object ShortUnaryArithmeticIntrinsic : UnaryArithmeticOperationIntrinsic() {
+    override fun isSupportedType(type: KotlinType): Boolean = KotlinBuiltIns.isShort(type)
 
     override fun wrap(value: JsExpression): JsExpression = buildJs { toShort(value) }
 }

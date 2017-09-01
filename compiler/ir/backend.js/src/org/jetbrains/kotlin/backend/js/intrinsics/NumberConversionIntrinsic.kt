@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 object NumberConversionIntrinsic : FunctionIntrinsic {
-    private val conversionFunctions = setOf("toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble")
+    private val conversionFunctions = setOf("toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble", "toChar")
 
     override fun isApplicable(descriptor: FunctionDescriptor): Boolean {
         val owner = (descriptor.containingDeclaration as? ClassDescriptor) ?: return false

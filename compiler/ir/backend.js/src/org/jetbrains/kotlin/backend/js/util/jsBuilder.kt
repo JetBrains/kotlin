@@ -69,6 +69,8 @@ class JsBuilder(private var currentSource: Any? = null) {
 
     fun JsExpression.or(that: JsExpression) = attachSource(JsBinaryOperation(JsBinaryOperator.OR, this, that))
 
+    fun JsExpression.bitOr(that: JsExpression) = attachSource(JsBinaryOperation(JsBinaryOperator.BIT_OR, this, that))
+
     fun not(arg: JsExpression) = attachSource(JsPrefixOperation(JsUnaryOperator.NOT, arg))
 
     fun JsExpression.strictEq(that: JsExpression) = attachSource(JsBinaryOperation(JsBinaryOperator.REF_EQ, this, that))

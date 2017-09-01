@@ -23,24 +23,3 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.types.KotlinType
 
-object LongArithmeticIntrinsic : BinaryOperationIntrinsic() {
-    private val supportedOperations = mutableSetOf("plus", "minus", "times", "rem", "div")
-
-    override fun isApplicable(name: String, first: KotlinType, second: KotlinType): Boolean =
-            KotlinBuiltIns.isLong(first) &&
-            KotlinBuiltIns.isLong(second) &&
-            name in supportedOperations
-
-    override fun apply(context: IrTranslationContext, call: IrCall, first: JsExpression, second: JsExpression): JsExpression {
-        val functionName = when (call.descriptor.name.identifier) {
-            "plus" -> "add"
-            "minus" -> "subtract"
-            "times" -> "multiply"
-            "rem" -> "modulo"
-            "div" -> "div"
-            else -> error("unsupported function: ${call.descriptor}")
-        }
-
-        return buildJs { first.dotPure(functionName).invoke(second).pure() }
-    }
-}

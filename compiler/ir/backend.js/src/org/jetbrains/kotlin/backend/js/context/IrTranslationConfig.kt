@@ -31,8 +31,10 @@ class IrTranslationConfig(
         val scope: JsScope
 ) {
     private val intrinsicList = listOf(
-            IntArithmeticIntrinsic, IntIncDecIntrinsic, IntUnaryArithmeticIntrinsic,
-            LongArithmeticIntrinsic,
+            IntArithmeticIntrinsic, FloatArithmeticIntrinsic, LongArithmeticIntrinsic,
+            IntIncDecIntrinsic, ByteIncDecIntrinsic, ShortIncDecIntrinsic,
+            IntUnaryArithmeticIntrinsic, ByteUnaryArithmeticIntrinsic, ShortUnaryArithmeticIntrinsic, FloatUnaryArithmeticIntrinsic,
+            IntBinaryBitwiseIntrinsic, LongBinaryBitwiseIntrinsic, IntShiftOperationIntrinsic, LongShiftOperationIntrinsic,
             SpecializedNumberConversionIntrinsic, NumberConversionIntrinsic,
             StringPlusIntrinsic,
             NotIntrinsic,

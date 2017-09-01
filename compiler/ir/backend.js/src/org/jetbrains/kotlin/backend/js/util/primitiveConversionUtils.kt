@@ -33,4 +33,4 @@ fun JsBuilder.longToInt(value: JsExpression) = value.dotPure("toInt").invoke().p
 
 fun JsBuilder.longToNumber(value: JsExpression) = value.dotPure("toNumber").invoke().pure()
 
-fun JsBuilder.numberToInt(value: JsExpression) = value.or(JsIntLiteral(0))
+fun JsBuilder.numberToInt(value: JsExpression) = value.bitOr(JsIntLiteral(0))
