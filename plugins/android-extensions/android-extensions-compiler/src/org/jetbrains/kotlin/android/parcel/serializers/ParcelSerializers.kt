@@ -462,7 +462,7 @@ internal class EfficientParcelableParcelSerializer(override val asmType: Type, p
     }
 }
 
-internal class GenericParcelableParcelSerializer(override val asmType: Type) : ParcelSerializer {
+internal class GenericParcelableParcelSerializer(override val asmType: Type, val containerClassType: Type) : ParcelSerializer {
     override fun writeValue(v: InstructionAdapter) {
         // -> parcel, parcelable
         v.aconst(0) // -> parcel, parcelable, flags
@@ -471,7 +471,7 @@ internal class GenericParcelableParcelSerializer(override val asmType: Type) : P
 
     override fun readValue(v: InstructionAdapter) {
         // -> parcel
-        v.aconst(asmType) // -> parcel, type
+        v.aconst(containerClassType) // -> parcel, type
         v.invokevirtual("java/lang/Class", "getClassLoader", "()Ljava/lang/ClassLoader;", false) // -> parcel, classloader
         v.invokevirtual(PARCEL_TYPE.internalName, "readParcelable", "(Ljava/lang/ClassLoader;)Landroid/os/Parcelable;", false)
         v.castIfNeeded(asmType)

@@ -183,11 +183,16 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
                 /* isJvm8TargetWithDefaults */ false)
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty()) {
-            checkParcelableClassProperty(parameter, diagnosticHolder, typeMapper)
+            checkParcelableClassProperty(parameter, descriptor, diagnosticHolder, typeMapper)
         }
     }
 
-    private fun checkParcelableClassProperty(parameter: KtParameter, diagnosticHolder: DiagnosticSink, typeMapper: KotlinTypeMapper) {
+    private fun checkParcelableClassProperty(
+            parameter: KtParameter,
+            containerClass: ClassDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            typeMapper: KotlinTypeMapper
+    ) {
         if (!parameter.hasValOrVar()) {
             val reportElement = parameter.nameIdentifier ?: parameter
             diagnosticHolder.reportFromPlugin(
@@ -201,7 +206,8 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             val asmType = typeMapper.mapType(type)
 
             try {
-                ParcelSerializer.get(type, asmType, typeMapper, strict = true)
+                val context = ParcelSerializer.ParcelSerializerContext(typeMapper, typeMapper.mapType(containerClass.defaultType))
+                ParcelSerializer.get(type, asmType, context, strict = true)
             }
             catch (e: IllegalArgumentException) {
                 // get() throws IllegalArgumentException on unknown types

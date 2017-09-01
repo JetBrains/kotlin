@@ -44,6 +44,8 @@ interface ParcelSerializer {
     fun writeValue(v: InstructionAdapter)
     fun readValue(v: InstructionAdapter)
 
+    class ParcelSerializerContext(val typeMapper: KotlinTypeMapper, val containerClassType: Type)
+
     companion object {
         private fun KotlinTypeMapper.mapTypeSafe(type: KotlinType): Type {
             return if (type.isError) Type.getObjectType("java/lang/Object") else mapType(type)
@@ -52,17 +54,19 @@ interface ParcelSerializer {
         fun get(
                 type: KotlinType,
                 asmType: Type,
-                typeMapper: KotlinTypeMapper,
+                context: ParcelSerializerContext,
                 forceBoxed: Boolean = false,
                 strict: Boolean = false
         ): ParcelSerializer {
+            val typeMapper = context.typeMapper
+
             val className = asmType.className
             fun strict() = strict && !type.annotations.hasAnnotation(RAWVALUE_ANNOTATION_FQNAME)
 
             return when {
                 asmType.sort == Type.ARRAY -> {
                     val elementType = type.builtIns.getArrayElementType(type)
-                    val elementSerializer = get(elementType, typeMapper.mapTypeSafe(elementType), typeMapper, strict = strict())
+                    val elementSerializer = get(elementType, typeMapper.mapTypeSafe(elementType), context, strict = strict())
 
                     wrapToNullAwareIfNeeded(type, ArrayParcelSerializer(asmType, elementSerializer))
                 }
@@ -90,7 +94,7 @@ interface ParcelSerializer {
                 -> {
                     val elementType = type.arguments.single().type
                     val elementSerializer = get(
-                            elementType, typeMapper.mapTypeSafe(elementType), typeMapper, forceBoxed = true, strict = strict())
+                            elementType, typeMapper.mapTypeSafe(elementType), context, forceBoxed = true, strict = strict())
                     wrapToNullAwareIfNeeded(type, ListSetParcelSerializer(asmType, elementSerializer))
                 }
 
@@ -104,9 +108,9 @@ interface ParcelSerializer {
                 -> {
                     val (keyType, valueType) = type.arguments.apply { assert(this.size == 2) }
                     val keySerializer = get(
-                            keyType.type, typeMapper.mapTypeSafe(keyType.type), typeMapper, forceBoxed = true, strict = strict())
+                            keyType.type, typeMapper.mapTypeSafe(keyType.type), context, forceBoxed = true, strict = strict())
                     val valueSerializer = get(
-                            valueType.type, typeMapper.mapTypeSafe(valueType.type), typeMapper, forceBoxed = true, strict = strict())
+                            valueType.type, typeMapper.mapTypeSafe(valueType.type), context, forceBoxed = true, strict = strict())
                     wrapToNullAwareIfNeeded(type, MapParcelSerializer(asmType, keySerializer, valueSerializer))
                 }
 
@@ -153,7 +157,7 @@ interface ParcelSerializer {
                 asmType.isSparseArray() -> {
                     val elementType = type.arguments.single().type
                     val elementSerializer = get(
-                            elementType, typeMapper.mapTypeSafe(elementType), typeMapper, forceBoxed = true, strict = strict())
+                            elementType, typeMapper.mapTypeSafe(elementType), context, forceBoxed = true, strict = strict())
                     wrapToNullAwareIfNeeded(type, SparseArrayParcelSerializer(asmType, elementSerializer))
                 }
 
@@ -186,10 +190,10 @@ interface ParcelSerializer {
                         }
 
                         creatorAsmType?.let { EfficientParcelableParcelSerializer(asmType, creatorAsmType) }
-                                ?: GenericParcelableParcelSerializer(asmType)
+                                ?: GenericParcelableParcelSerializer(asmType, context.containerClassType)
                     }
                     else {
-                        GenericParcelableParcelSerializer(asmType)
+                        GenericParcelableParcelSerializer(asmType, context.containerClassType)
                     }
                 }
 

@@ -84,6 +84,12 @@ public class ParcelBytecodeListingTestGenerated extends AbstractParcelBytecodeLi
         doTest(fileName);
     }
 
+    @TestMetadata("parcelable.kt")
+    public void testParcelable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/parcelable.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("serializable.kt")
     public void testSerializable() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/serializable.kt");
