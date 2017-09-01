@@ -10,6 +10,8 @@ dependencies {
     compile(project(":idea"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:ide-common"))
+    compile(project(":idea:idea-gradle"))
+
     compile(ideaSdkDeps("openapi", "idea"))
     compile(ideaPluginDeps("gradle-tooling-api", plugin = "gradle"))
     compile(ideaPluginDeps("android", "android-common", "sdklib", "sdk-common", "layoutlib-api", plugin = "android"))
@@ -20,6 +22,7 @@ dependencies {
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(projectTests(":idea"))
+    testCompile(projectTests(":idea:idea-gradle"))
     testCompile(ideaPluginDeps("properties", plugin = "properties"))
     testCompile(ideaSdkDeps("gson"))
     testCompile(commonDep("junit:junit"))

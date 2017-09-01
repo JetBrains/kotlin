@@ -37,7 +37,7 @@ val compilerBaseName = name
 
 val outputJar = File(buildDir, "libs", "$compilerBaseName.jar")
 
-val jreHome = System.getProperty("java.home")
+
 
 val compilerModules: Array<String> by rootProject.extra
 
@@ -55,10 +55,6 @@ val packagesToRelocate =
 
 val ideaCoreSdkJars: Array<String> by rootProject.extra
 val coreSdkJarsSimple = ideaCoreSdkJars.filterNot { it == "jdom" || it == "log4j" }.toTypedArray()
-
-fun firstFromJavaHomeThatExists(vararg paths: String): File =
-        paths.mapNotNull { File(jreHome, it).takeIf { it.exists() } }.firstOrNull()
-                ?: throw GradleException("Cannot find under '$jreHome' neither of: ${paths.joinToString()}")
 
 compilerModules.forEach { evaluationDependsOn(it) }
 
@@ -87,7 +83,7 @@ dependencies {
 
     proguardLibraryJars(files(firstFromJavaHomeThatExists("lib/rt.jar", "../Classes/classes.jar"),
             firstFromJavaHomeThatExists("lib/jsse.jar", "../Classes/jsse.jar"),
-            firstFromJavaHomeThatExists("../lib/tools.jar", "../Classes/tools.jar")))
+            toolsJar()))
     proguardLibraryJars(projectDist(":kotlin-stdlib"))
     proguardLibraryJars(projectDist(":kotlin-script-runtime"))
     proguardLibraryJars(projectDist(":kotlin-reflect"))

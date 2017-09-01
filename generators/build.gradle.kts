@@ -21,6 +21,8 @@ dependencies {
     compile(projectTests(":compiler:container"))
     compile(projectTests(":compiler:incremental-compilation-impl"))
     compile(projectTests(":idea"))
+    compile(projectTests(":idea:idea-gradle"))
+    compile(projectTests(":idea:idea-maven"))
     compile(projectTests(":j2k"))
     compile(projectTests(":idea:idea-android"))
     compile(projectTests(":jps-plugin"))

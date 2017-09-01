@@ -37,7 +37,10 @@ val projectsToShadow = listOf(
         ":idea:idea-android",
         ":idea:idea-android-output-parser",
         ":idea:idea-core",
+        ":idea:idea-jvm",
         ":idea:idea-jps-common",
+        ":idea:idea-gradle",
+        ":idea:idea-maven",
         //":idea-ultimate",
         ":compiler:ir.psi2ir",
         ":compiler:ir.tree",
@@ -79,6 +82,7 @@ val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
 }
 
 ideaPlugin {
+    shouldRunAfter(":dist")
     from(jar)
     from(sideJars)
 }
