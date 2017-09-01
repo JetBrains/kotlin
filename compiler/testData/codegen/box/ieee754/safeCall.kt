@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JS
+// IGNORE_BACKEND: NATIVE
+
 fun box(): String {
     val plusZero: Double? = 0.0
     val minusZero: Double = -0.0
