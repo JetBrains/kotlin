@@ -183,7 +183,7 @@ interface ParcelSerializer {
                             else -> null
                         }
 
-                        creatorAsmType?.let { EfficientParcelableParcelSerializer(asmType, creatorAsmType) }
+                        creatorAsmType?.let { wrapToNullAwareIfNeeded(type, EfficientParcelableParcelSerializer(asmType, creatorAsmType)) }
                                 ?: GenericParcelableParcelSerializer(asmType, context.containerClassType)
                     }
                     else {
