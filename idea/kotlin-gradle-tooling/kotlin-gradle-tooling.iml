@@ -19,7 +19,7 @@
     </content>
     <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="gradle-and-groovy-plugin" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
   </component>
 </module>

@@ -12,8 +12,8 @@
     <orderEntry type="module" module-name="idea-maven" />
     <orderEntry type="module" module-name="cli-common" />
     <orderEntry type="library" name="idea-full" level="project" />
-    <orderEntry type="library" name="maven" level="project" />
-    <orderEntry type="library" name="gradle-and-groovy-plugin" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="maven" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="idea-jps-common" />
