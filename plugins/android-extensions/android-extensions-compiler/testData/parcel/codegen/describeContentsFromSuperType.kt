@@ -1,4 +1,5 @@
 // CURIOUS_ABOUT describeContents
+// WITH_RUNTIME
 
 import kotlinx.android.parcel.*
 import android.os.Parcelable

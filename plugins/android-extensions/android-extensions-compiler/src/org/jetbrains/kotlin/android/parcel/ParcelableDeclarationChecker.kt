@@ -202,7 +202,7 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
         val descriptor = typeMapper.bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter] ?: return
         val type = descriptor.type
 
-        if (!type.isError) {
+        if (!type.isError && !containerClass.hasCustomParceler()) {
             val asmType = typeMapper.mapType(type)
 
             try {
@@ -215,5 +215,10 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
                 diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_TYPE_NOT_SUPPORTED.on(reportElement), DefaultErrorMessagesAndroid)
             }
         }
+    }
+
+    private fun ClassDescriptor.hasCustomParceler(): Boolean {
+        val companionObjectSuperTypes = companionObjectDescriptor?.let { TypeUtils.getAllSupertypes(it.defaultType) } ?: return false
+        return companionObjectSuperTypes.any { it.isParceler }
     }
 }

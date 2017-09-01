@@ -27,5 +27,6 @@
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="android-extensions-runtime" />
     <orderEntry type="module" module-name="idea-gradle" />
+    <orderEntry type="module" module-name="kapt3-idea" scope="TEST" />
   </component>
 </module>
