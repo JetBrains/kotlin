@@ -18,16 +18,11 @@ val packedJars by configurations.creating
 
 dependencies {
     compileOnly(project(":kotlin-annotation-processing"))
-    compileOnly("org.jetbrains.kotlin:gradle-api:1.6")
-    compileOnly("com.android.tools.build:gradle:1.1.0")
+    compile("org.jetbrains.kotlin:gradle-api:1.6")
+    compile("com.android.tools.build:gradle:1.1.0")
     compile(projectDist(":kotlin-stdlib"))
     testCompile(commonDep("junit:junit"))
     packedJars(project(":kotlin-annotation-processing")) { isTransitive = false }
-}
-
-sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
 }
 
 projectTest {

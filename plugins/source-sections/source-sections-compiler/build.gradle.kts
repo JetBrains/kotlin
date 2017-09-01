@@ -24,7 +24,9 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest()
+projectTest {
+    workingDir = rootDir
+}
 
 runtimeJar()
 sourcesJar()

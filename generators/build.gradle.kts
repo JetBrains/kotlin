@@ -19,6 +19,7 @@ dependencies {
     compile(projectTests(":compiler"))
     compile(projectTests(":compiler:tests-java8"))
     compile(projectTests(":compiler:container"))
+    compile(projectTests(":compiler:incremental-compilation-impl"))
     compile(projectTests(":idea"))
     compile(projectTests(":j2k"))
     compile(projectTests(":idea:idea-android"))

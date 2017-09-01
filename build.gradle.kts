@@ -279,7 +279,7 @@ tasks {
                   ":kotlin-annotation-processing:test",
                   ":kotlin-source-sections-compiler-plugin:test",
                   ":plugins:uast-kotlin:test",
-                  ":kotlin-annotation-processing")
+                  ":kotlin-annotation-processing-gradle:test")
     }
 
     "scripting-tests" {
