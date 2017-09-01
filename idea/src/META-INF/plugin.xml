@@ -2603,7 +2603,8 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveRedundantBackticksInspection"
                      displayName="Remove redundant backticks"
-                     groupName="Kotlin"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"/>
