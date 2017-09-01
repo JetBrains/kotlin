@@ -494,6 +494,32 @@ internal class NullAwareParcelSerializerWrapper(val delegate: ParcelSerializer) 
     }
 }
 
+internal class PrimitiveArrayParcelSerializer(
+        override val asmType: Type
+) : ParcelSerializer {
+    private val methodNameBase = when (asmType.elementType) {
+        Type.INT_TYPE -> "Int"
+        Type.BOOLEAN_TYPE -> "Boolean"
+        Type.BYTE_TYPE -> "Byte"
+        Type.CHAR_TYPE -> "Char"
+        Type.DOUBLE_TYPE -> "Double"
+        Type.FLOAT_TYPE -> "Float"
+        Type.LONG_TYPE -> "Long"
+        else -> error("Unsupported type ${asmType.elementType.descriptor}")
+    }
+
+    private val writeMethod = Method("write${methodNameBase}Array", "(${asmType.descriptor})V")
+    private val createArrayMethod = Method("create${methodNameBase}Array", "()${asmType.descriptor}")
+
+    override fun writeValue(v: InstructionAdapter) {
+        v.invokevirtual(PARCEL_TYPE.internalName, writeMethod.name, writeMethod.signature, false)
+    }
+
+    override fun readValue(v: InstructionAdapter) {
+        v.invokevirtual(PARCEL_TYPE.internalName, createArrayMethod.name, createArrayMethod.signature, false)
+    }
+}
+
 /** write...() and get...() methods in Android should support passing `null` values. */
 internal class NullCompliantObjectParcelSerializer(
         override val asmType: Type,

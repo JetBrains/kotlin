@@ -64,6 +64,14 @@ interface ParcelSerializer {
             fun strict() = strict && !type.annotations.hasAnnotation(RAWVALUE_ANNOTATION_FQNAME)
 
             return when {
+                asmType.descriptor == "[I"
+                    || asmType.descriptor == "[Z"
+                    || asmType.descriptor == "[B"
+                    || asmType.descriptor == "[C"
+                    || asmType.descriptor == "[D"
+                    || asmType.descriptor == "[F"
+                    || asmType.descriptor == "[L" -> PrimitiveArrayParcelSerializer(asmType)
+
                 asmType.sort == Type.ARRAY -> {
                     val elementType = type.builtIns.getArrayElementType(type)
                     val elementSerializer = get(elementType, typeMapper.mapTypeSafe(elementType), context, strict = strict())
