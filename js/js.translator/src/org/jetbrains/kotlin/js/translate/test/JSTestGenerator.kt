@@ -62,9 +62,16 @@ class JSTestGenerator(val context: TranslationContext) {
 
         val suiteFunction = JsFunction(context.scope(), JsBlock(), "suite function")
 
-        classDescriptor.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS, MemberScope.ALL_NAME_FILTER).forEach {
-            if (it is FunctionDescriptor && it.isTest) {
-                generateCodeForTestMethod(it, classDescriptor, suiteFunction)
+        val descriptors = classDescriptor.unsubstitutedMemberScope
+                .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS, MemberScope.ALL_NAME_FILTER)
+                .filterIsInstance<FunctionDescriptor>()
+
+        val beforeFunctions = descriptors.filter { it.isBefore }
+        val afterFunctions = descriptors.filter { it.isAfter }
+
+        descriptors.forEach {
+            if (it.isTest) {
+                generateCodeForTestMethod(it, beforeFunctions, afterFunctions, classDescriptor, suiteFunction)
             }
         }
 
@@ -75,19 +82,39 @@ class JSTestGenerator(val context: TranslationContext) {
         }
     }
 
-    private fun generateCodeForTestMethod(functionDescriptor: FunctionDescriptor, classDescriptor: ClassDescriptor, parentFun: JsFunction) {
-        val functionToTest = generateTestFunction(functionDescriptor, classDescriptor, parentFun.scope)
+    private fun generateCodeForTestMethod(functionDescriptor: FunctionDescriptor,
+                                          beforeDescriptors: List<FunctionDescriptor>,
+                                          afterDescriptors: List<FunctionDescriptor>,
+                                          classDescriptor: ClassDescriptor,
+                                          parentFun: JsFunction) {
+        val functionToTest = generateTestFunction(functionDescriptor, beforeDescriptors, afterDescriptors, classDescriptor, parentFun.scope)
 
         val testName = JsStringLiteral(functionDescriptor.name.toString())
         parentFun.body.statements += JsInvocation(testRef, testName, JsBooleanLiteral(functionDescriptor.isIgnored), functionToTest).makeStmt()
     }
 
-    private fun generateTestFunction(functionDescriptor: FunctionDescriptor, classDescriptor: ClassDescriptor, scope: JsScope): JsFunction {
-        val expression = ReferenceTranslator.translateAsValueReference(classDescriptor, context)
+    private fun generateTestFunction(functionDescriptor: FunctionDescriptor,
+                                     beforeDescriptors: List<FunctionDescriptor>,
+                                     afterDescriptors: List<FunctionDescriptor>,
+                                     classDescriptor: ClassDescriptor,
+                                     scope: JsScope): JsFunction {
+        val functionToTest = JsFunction(scope, JsBlock(), "test function")
+        val innerContext = context.contextWithScope(functionToTest)
+
+        val expression = ReferenceTranslator.translateAsTypeReference(classDescriptor, innerContext)
         val testClass = JsNew(expression)
-        val functionToTestCall = CallTranslator.buildCall(context, functionDescriptor, emptyList<JsExpression>(), testClass)
-        val functionToTest = JsFunction(scope, "test function")
-        functionToTest.body = JsBlock(functionToTestCall.makeStmt())
+        val classVal = innerContext.defineTemporary(testClass)
+
+        fun FunctionDescriptor.buildCall() = CallTranslator.buildCall(context, this, emptyList(), classVal).makeStmt()
+
+        functionToTest.body.statements += beforeDescriptors.map { it.buildCall() }
+
+        functionToTest.body.statements += if (afterDescriptors.isEmpty()) {
+            functionDescriptor.buildCall()
+        }
+        else {
+            JsTry(JsBlock(functionDescriptor.buildCall()), listOf(), JsBlock(afterDescriptors.map { it.buildCall() }))
+        }
 
         return functionToTest
     }
@@ -107,6 +134,12 @@ class JSTestGenerator(val context: TranslationContext) {
 
     private val DeclarationDescriptor.isIgnored
         get() = annotationFinder("Ignore", "kotlin.test")
+
+    private val FunctionDescriptor.isBefore
+        get() = annotationFinder("Before", "kotlin.test")
+
+    private val FunctionDescriptor.isAfter
+        get() = annotationFinder("After", "kotlin.test")
 
     private fun DeclarationDescriptor.annotationFinder(shortName: String, vararg packages: String) = packages.any { packageName ->
         annotations.hasAnnotation(FqName("$packageName.$shortName"))

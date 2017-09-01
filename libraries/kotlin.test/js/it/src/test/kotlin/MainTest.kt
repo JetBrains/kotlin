@@ -1,13 +1,24 @@
 import kotlin.test.*
 
+
+var value = 5
+
 class SimpleTest {
 
+    @Before fun beforeFun() {
+        value *= 2
+    }
+
+    @After fun afterFun() {
+        value /= 2
+    }
+
     @Test fun testFoo() {
-        assertEquals(20, foo())
+        assertNotEquals(value, foo())
     }
 
     @Test fun testBar() {
-        assertEquals(10, foo())
+        assertEquals(value, foo())
     }
 
     @Ignore @Test fun testFooWrong() {
