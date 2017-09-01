@@ -418,13 +418,16 @@ internal class ObjectParcelSerializer(
 
 internal class EnumParcelSerializer(override val asmType: Type) : ParcelSerializer {
     override fun writeValue(v: InstructionAdapter) {
-        v.invokevirtual(asmType.internalName, "name", "()Ljava/lang/String;", false)
+        v.invokevirtual("java/lang/Enum", "name", "()Ljava/lang/String;", false)
         v.invokevirtual(PARCEL_TYPE.internalName, "writeString", "(Ljava/lang/String;)V", false)
     }
 
     override fun readValue(v: InstructionAdapter) {
         v.invokevirtual(PARCEL_TYPE.internalName, "readString", "()Ljava/lang/String;", false)
-        v.invokestatic(asmType.internalName, "valueOf", "(Ljava/lang/String;)${asmType.descriptor}", false)
+        v.aconst(asmType)
+        v.swap()
+        v.invokestatic("java/lang/Enum", "valueOf", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;", false)
+        v.castIfNeeded(asmType)
     }
 }
 
