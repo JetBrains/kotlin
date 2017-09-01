@@ -16,10 +16,11 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.tree.IElementType
+import com.intellij.psi.impl.source.tree.SharedImplUtil
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -29,9 +30,9 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
         return object : KtVisitorVoid() {
             override fun visitKtElement(element: KtElement) {
                 super.visitKtElement(element)
-                element.findChildrenByType(KtTokens.IDENTIFIER).forEach {
+                SharedImplUtil.getChildrenOfType(element.node, KtTokens.IDENTIFIER).forEach {
                     if (isRedundantBackticks(it)) {
-                        registerProblem(holder, it)
+                        registerProblem(holder, it.psi)
                     }
                 }
             }
@@ -42,11 +43,11 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
         return (KtTokens.KEYWORDS.types + KtTokens.SOFT_KEYWORDS.types).any { it.toString() == text }
     }
 
-    private fun isRedundantBackticks(element: PsiElement): Boolean {
-        return (element.text.startsWith("`") &&
-                element.text.endsWith("`") &&
-                KotlinNameSuggester.isIdentifier(element.text) &&
-                !isKeyword(element.text.removePrefix("`").removeSuffix("`")))
+    private fun isRedundantBackticks(node: ASTNode): Boolean {
+        return (node.text.startsWith("`") &&
+                node.text.endsWith("`") &&
+                KotlinNameSuggester.isIdentifier(node.text) &&
+                !isKeyword(node.text.removePrefix("`").removeSuffix("`")))
     }
 
     private fun registerProblem(holder: ProblemsHolder, element: PsiElement) {
@@ -54,22 +55,6 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
                                "Remove redundant backticks",
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                RemoveRedundantBackticksQuickFix())
-    }
-
-    private fun KtElement.findChildrenByType(elementType: IElementType): List<PsiElement> {
-        val EMPTY = emptyList<PsiElement>()
-        var result = arrayListOf<PsiElement>()
-        var child = node.firstChildNode
-        while (child != null) {
-            if (elementType == child.elementType) {
-                if (result == EMPTY) {
-                    result = arrayListOf<PsiElement>()
-                }
-                result.add(child.psi)
-            }
-            child = child.treeNext
-        }
-        return result
     }
 }
 
