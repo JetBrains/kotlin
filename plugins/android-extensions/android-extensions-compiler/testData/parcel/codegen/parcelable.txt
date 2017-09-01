@@ -60,7 +60,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           ALOAD (0)
           GETFIELD (parcelable, Landroid/os/Parcelable;)
-          LDC (0)
+          ILOAD (2)
           INVOKEVIRTUAL (android/os/Parcel, writeParcelable, (Landroid/os/Parcelable;I)V)
           RETURN
         LABEL (L1)
