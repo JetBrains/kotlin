@@ -292,7 +292,7 @@ internal class LinkStage(val context: Context) {
     private val entryPointSelector: List<String>
         get() = if (nomain) emptyList() else platform.entrySelector
 
-    private fun link(objectFiles: List<ObjectFile>, libraryProvidedLinkerFlags: List<String>): ExecutableFile {
+    private fun link(objectFiles: List<ObjectFile>, libraryProvidedLinkerFlags: List<String>): ExecutableFile? {
         val executable = context.config.outputFile
 
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize, debug) +
@@ -302,13 +302,16 @@ internal class LinkStage(val context: Context) {
                 platform.linkCommandSuffix() +
                 libraryProvidedLinkerFlags
 
-        runTool(*linkCommand.toTypedArray())
+        try {
+            runTool(*linkCommand.toTypedArray())
+        } catch (e: KonanExternalToolFailure) {
+            return null
+        }
         if (platform is MacOSBasedPlatform && context.shouldContainDebugInfo()) {
             if (context.phase?.verbose ?: false)
                 runTool(*platform.dsymutilDryRunVerboseCommand(executable).toTypedArray())
             runTool(*platform.dsymutilCommand(executable).toTypedArray())
         }
-
         return executable
     }
 
@@ -349,7 +352,7 @@ internal class LinkStage(val context: Context) {
 
     private fun runTool(vararg command: String) {
         val code = executeCommand(*command)
-        if (code != 0) error("The ${command[0]} command returned non-zero exit code: $code.")
+        if (code != 0) throw KonanExternalToolFailure("The ${command[0]} command returned non-zero exit code: $code.")
     }
 
     fun linkStage() {

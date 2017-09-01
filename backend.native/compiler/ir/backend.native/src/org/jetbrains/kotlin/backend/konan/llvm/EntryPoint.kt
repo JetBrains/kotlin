@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
+import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
@@ -49,6 +50,9 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
             it.typeParameters.isEmpty() &&
             it.isExported()
         }
+    if (main == null) {
+        context.reportCompilationError("Could not find '$entryName' in '$packageName' package.")
+    }
     return main
 }
 
