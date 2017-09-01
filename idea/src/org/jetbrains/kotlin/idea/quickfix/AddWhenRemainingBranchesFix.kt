@@ -24,14 +24,12 @@ import org.jetbrains.kotlin.cfg.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
-import org.jetbrains.kotlin.idea.intentions.ImportAllMembersIntention
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-class AddWhenRemainingBranchesFix(expression: KtWhenExpression) : KotlinQuickFixAction<KtWhenExpression>(expression) {
+open class AddWhenRemainingBranchesFix(expression: KtWhenExpression) : KotlinQuickFixAction<KtWhenExpression>(expression) {
 
     override fun getFamilyName() = "Add remaining branches"
 
@@ -65,28 +63,6 @@ class AddWhenRemainingBranchesFix(expression: KtWhenExpression) : KotlinQuickFix
             val entry = psiFactory.createWhenEntry("$branchConditionText -> TODO()")
             element.addBefore(entry, whenCloseBrace)
         }
-
-        importMember(element)
-    }
-
-    private fun importMember(element: KtWhenExpression) {
-        if (!isEnumSubject(element)) return
-        element.entries
-                .map { it.conditions.toList() }
-                .flatten()
-                .firstNotNullResult {
-                    (it as? KtWhenConditionWithExpression)?.expression as? KtDotQualifiedExpression
-                }
-                ?.also {
-                    ImportAllMembersIntention.importMember(it)
-                }
-    }
-
-    private fun isEnumSubject(element: KtWhenExpression): Boolean {
-        val subject = element.subjectExpression?.referenceExpression() ?: return false
-        val descriptor = subject.analyze().getType(subject)?.constructor?.declarationDescriptor ?: return false
-        val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtClass ?: return false
-        return declaration.isEnum()
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

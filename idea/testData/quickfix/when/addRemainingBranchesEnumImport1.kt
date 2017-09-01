@@ -1,4 +1,4 @@
-// "Add remaining branches" "true"
+// "Add remaining branches with import" "true"
 // WITH_RUNTIME
 enum class Foo {
     A, B, C

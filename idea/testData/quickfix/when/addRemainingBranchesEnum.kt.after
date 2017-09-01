@@ -1,11 +1,9 @@
-import Color.*
-
 // "Add remaining branches" "true"
 // ERROR: Unresolved reference: TODO
 // ERROR: Unresolved reference: TODO
 enum class Color { R, G, B }
 fun test(c: Color) = when(c) {
-    B -> 0xff
-    R -> TODO()
-    G -> TODO()
+    Color.B -> 0xff
+    Color.R -> TODO()
+    Color.G -> TODO()
 }

@@ -1,5 +1,3 @@
-import FooEnum.*
-
 // "Add remaining branches" "true"
 // WITH_RUNTIME
 
@@ -8,11 +6,11 @@ enum class FooEnum {
 }
 
 fun test(foo: FooEnum?) = <caret>when (foo) {
-    A -> "A"
-    B -> TODO()
-    C -> TODO()
-    `true` -> TODO()
-    `false` -> TODO()
-    `null` -> TODO()
+    FooEnum.A -> "A"
+    FooEnum.B -> TODO()
+    FooEnum.C -> TODO()
+    FooEnum.`true` -> TODO()
+    FooEnum.`false` -> TODO()
+    FooEnum.`null` -> TODO()
     null -> TODO()
 }
