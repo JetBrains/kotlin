@@ -32,7 +32,7 @@ dependencies {
     compile(projectTests(":plugins:uast-kotlin"))
     compile(projectTests(":js:js.tests"))
     compile(protobufFull())
-    compileOnly(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
+    compile(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
     testCompile(project(":compiler.tests-common"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":compiler:incremental-compilation-impl"))
@@ -60,5 +60,13 @@ sourceSets {
 }
 
 projectTest {
+    workingDir = rootDir
+}
+
+val generateTests by task<JavaExec> {
+    classpath = the<JavaPluginConvention>().sourceSets["test"].runtimeClasspath
+
+    main = "org.jetbrains.kotlin.generators.tests.GenerateTestsKt"
+
     workingDir = rootDir
 }

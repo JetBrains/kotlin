@@ -47,7 +47,7 @@ dependencies {
     shadows project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
 
     compile project(':kotlin-stdlib')
-    compile project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
+    compileOnly project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
 }
 
 task copyAnnotations(type: Sync) {

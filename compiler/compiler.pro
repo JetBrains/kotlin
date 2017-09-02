@@ -165,6 +165,7 @@ messages/**)
 -keep class gnu.trove.TIntHashSet { *; }
 -keep class gnu.trove.TIntIterator { *; }
 -keep class org.iq80.snappy.SlowMemory { *; }
+-keep class javaslang.match.PatternsProcessor { *; }
 
 -keepclassmembers enum * {
     public static **[] values();
