@@ -243,6 +243,19 @@ tasks {
         }
     }
 
+    "core-libs-tests" {
+        dependsOn(":kotlin-test:kotlin-test-common:test",
+                  ":kotlin-test:kotlin-test-jvm:test",
+                  ":kotlin-test:kotlin-test-junit:test",
+//                  ":kotlin-test:kotlin-test-js:test",
+                  ":kotlin-stdlib:test",
+                  ":kotlin-stdlib-jre7:test",
+                  ":kotlin-stdlib-jre8:test",
+//                  ":kotlin-stdlib-js:test",
+//                  ":tools:binary-compatibility-validator:test",
+                  ":kotlin-reflect:test")
+    }
+
     "compiler-tests" {
         dependsOn("dist")
         dependsOn(":compiler:test",
@@ -260,13 +273,22 @@ tasks {
         dependsOn(":jps-plugin:test")
     }
 
-    "idea-plugin-tests" {
+    "idea-plugin-main-tests" {
         dependsOn("dist")
-        dependsOn(":idea:test",
-                  ":idea:idea-gradle:test",
+        dependsOn(":idea:test")
+    }
+
+    "idea-plugin-additional-tests" {
+        dependsOn("dist")
+        dependsOn(":idea:idea-gradle:test",
                   ":idea:idea-maven:test",
                   ":j2k:test",
                   ":eval4j:test")
+    }
+    "idea-plugin-tests" {
+        dependsOn("dist")
+        dependsOn("idea-plugin-main-tests",
+                  "idea-plugin-additional-tests")
     }
 
     "android-tests" {
