@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.types.checker
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
 import java.util.*
-import kotlin.collections.HashSet
+import kotlin.collections.LinkedHashSet
 
 fun intersectWrappedTypes(types: Collection<KotlinType>) = intersectTypes(types.map { it.unwrap() })
 
@@ -90,7 +90,7 @@ object TypeIntersector {
          * UNKNOWN means, that we do not know, i.e. more precisely, all singleClassifier types marked nullable if any,
          * and other types is captured types or type parameters without not-null upper bound. Example: `String? & T` such types we should leave as is.
          */
-        val correctNullability = inputTypes.mapTo(HashSet()) {
+        val correctNullability = inputTypes.mapTo(LinkedHashSet()) {
             if (resultNullability == ResultNullability.NOT_NULL) it.makeNullableAsSpecified(false) else it
         }
 
