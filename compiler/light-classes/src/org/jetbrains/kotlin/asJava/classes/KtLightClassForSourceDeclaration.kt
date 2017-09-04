@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
-import org.jetbrains.kotlin.asJava.builder.LightClassData
-import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
-import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForClassOrObject
+import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
@@ -334,7 +331,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
 
         fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
-            if (classOrObject.containingKtFile.isScript() || classOrObject.hasModifier(KtTokens.HEADER_KEYWORD)) {
+            if (classOrObject.hasModifier(KtTokens.HEADER_KEYWORD)) {
                 return null
             }
 
@@ -366,10 +363,11 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         }
 
         fun getLightClassDataHolder(classOrObject: KtClassOrObject): LightClassDataHolder.ForClass {
-            return getLightClassCachedValue(classOrObject).value
+            return classOrObject.containingKtFile.script?.let { KtLightClassForScript.getLightClassCachedValue(it).value } ?:
+                   getLightClassCachedValue(classOrObject).value
         }
 
-        fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<LightClassDataHolder.ForClass> {
+        private fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<LightClassDataHolder.ForClass> {
             var value =
                     getOutermostClassOrObject(classOrObject).getUserData(JAVA_API_STUB) // stub computed for outer class can be used for inner/nested
                     ?: classOrObject.getUserData(JAVA_API_STUB)

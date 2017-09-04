@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNamesUtilKt;
-import org.jetbrains.kotlin.psi.KtClass;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtEnumEntry;
-import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker;
 
 import java.util.Collection;
@@ -90,7 +87,6 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         FqName qualifiedName = new FqName(qualifiedNameString);
 
         findClassesAndObjects(qualifiedName, scope, answer);
-
         answer.addAll(lightClassGenerationSupport.getFacadeClasses(qualifiedName, scope));
         answer.addAll(lightClassGenerationSupport.getKotlinInternalClasses(qualifiedName, scope));
 

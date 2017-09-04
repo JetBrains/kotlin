@@ -53,6 +53,10 @@ interface LightClassDataHolder {
     interface ForFacade : LightClassDataHolder {
         fun findDataForFacade(classFqName: FqName): LightClassData = findData { it.findDelegate(classFqName) }
     }
+
+    interface ForScript : ForClass {
+        fun findDataForScript(scriptFqName: FqName): LightClassData = findData { it.findDelegate(scriptFqName) }
+    }
 }
 
 interface LightClassData {
@@ -85,7 +89,7 @@ object InvalidLightClassDataHolder : LightClassDataHolder.ForClass {
 class LightClassDataHolderImpl(
         override val javaFileStub: PsiJavaFileStub,
         override val extraDiagnostics: Diagnostics
-) : LightClassDataHolder.ForClass, LightClassDataHolder.ForFacade {
+) : LightClassDataHolder.ForClass, LightClassDataHolder.ForFacade, LightClassDataHolder.ForScript {
     override fun findData(findDelegate: (PsiJavaFileStub) -> PsiClass) = findDelegate(javaFileStub).let(::LightClassDataImpl)
 }
 

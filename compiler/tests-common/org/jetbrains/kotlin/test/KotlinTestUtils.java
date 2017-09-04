@@ -563,7 +563,7 @@ public class KotlinTestUtils {
             else {
                 //noinspection ConstantConditions
                 for (File childFile : file.listFiles()) {
-                    if (childFile.getName().endsWith(".kt")) {
+                    if (childFile.getName().endsWith(".kt") || childFile.getName().endsWith(".kts")) {
                         ktFiles.add(loadJetFile(environment.getProject(), childFile));
                     }
                 }

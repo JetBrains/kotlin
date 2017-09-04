@@ -197,6 +197,8 @@ import java.util.*
 import java.util.regex.Pattern
 
 @Language("RegExp") private val KT_OR_KTS = """^(.+)\.(kt|kts)$"""
+@Language("RegExp") private val KT_OR_KTS_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.(kt|kts)$"""
+
 @Language("RegExp") private val KT_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.kt$"""
 
 fun main(args: Array<String>) {
@@ -467,7 +469,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCompilerLightClassTest> {
-            model("asJava/lightClasses", excludeDirs = listOf("local", "ideRegression"))
+            model("asJava/lightClasses", excludeDirs = listOf("local", "ideRegression"), pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractTypeBindingTest> {
@@ -1129,11 +1131,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIdeLightClassTest> {
-            model("asJava/lightClasses", excludeDirs = listOf("delegation"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("asJava/lightClasses", excludeDirs = listOf("delegation"), pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractIdeCompiledLightClassTest> {
-            model("asJava/lightClasses", excludeDirs = listOf("local", "compilationErrors", "ideRegression"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("asJava/lightClasses", excludeDirs = listOf("local", "compilationErrors", "ideRegression"), pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
         }
     }
 

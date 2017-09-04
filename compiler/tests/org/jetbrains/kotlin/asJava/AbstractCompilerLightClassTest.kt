@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,63 +14,50 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava;
+package org.jetbrains.kotlin.asJava
 
-import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder;
-import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import com.intellij.psi.PsiClass
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Void, Void>() {
+    override fun getConfigurationKind(): ConfigurationKind = ConfigurationKind.ALL
 
-public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTestWithJava<Void, Void> {
-    @NotNull
-    @Override
-    protected ConfigurationKind getConfigurationKind() {
-        return ConfigurationKind.ALL;
+    override fun isKotlinSourceRootNeeded(): Boolean = true
+
+    override fun doMultiFileTest(file: File, modules: MutableMap<String, ModuleAndDependencies>, files: MutableList<Void>) {
+        val environment = createEnvironment(file)
+        val expectedFile = KotlinTestUtils.replaceExtension(file, "java")
+        LightClassTestCommon.testLightClass(
+                expectedFile,
+                file,
+                { fqname -> findLightClass(environment, fqname) },
+                LightClassTestCommon::removeEmptyDefaultImpls
+        )
     }
 
-    @Override
-    protected boolean isKotlinSourceRootNeeded() {
-        return true;
-    }
+    override fun createTestModule(name: String): Void? = null
 
-    @NotNull
-    public static JavaElementFinder createFinder(@NotNull KotlinCoreEnvironment environment) throws IOException {
-        // We need to resolve all the files in order too fill in the trace that sits inside LightClassGenerationSupport
-        KotlinTestUtils.resolveAllKotlinFiles(environment);
+    override fun createTestFile(module: Void?, fileName: String, text: String, directives: Map<String, String>): Void? = null
 
-        return JavaElementFinder.getInstance(environment.getProject());
-    }
+    companion object {
+        fun findLightClass(environment: KotlinCoreEnvironment, fqname: String): PsiClass? {
+            KotlinTestUtils.resolveAllKotlinFiles(environment)
 
-    @Override
-    protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<Void> files) throws IOException {
-        KotlinCoreEnvironment environment = createEnvironment(file);
-        File expectedFile = KotlinTestUtils.replaceExtension(file, "java");
-        LightClassTestCommon.INSTANCE.testLightClass(expectedFile, file, s -> {
-            try {
-                return createFinder(environment).findClass(s, GlobalSearchScope.allScope(environment.getProject()));
-            }
-            catch (IOException e) {
-                throw ExceptionUtilsKt.rethrow(e);
-            }
-        }, LightClassTestCommon.INSTANCE::removeEmptyDefaultImpls);
-    }
+            val lightCLassForScript = LightClassGenerationSupport
+                    .getInstance(environment.project)
+                    .getScriptClasses(FqName(fqname), GlobalSearchScope.allScope(environment.project))
+                    .firstOrNull()
 
-    @Override
-    protected Void createTestModule(@NotNull String name) {
-        return null;
-    }
-
-    @Override
-    protected Void createTestFile(Void module, String fileName, String text, Map<String, String> directives) {
-        return null;
+            return lightCLassForScript ?: JavaElementFinder
+                    .getInstance(environment.project)
+                    .findClass(fqname, GlobalSearchScope.allScope(environment.project))
+        }
     }
 }

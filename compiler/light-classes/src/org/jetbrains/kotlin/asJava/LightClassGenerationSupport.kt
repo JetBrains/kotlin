@@ -22,12 +22,10 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 
 typealias LightClassBuilder = (LightClassConstructionContext) -> LightClassBuilderResult
@@ -37,6 +35,8 @@ abstract class LightClassGenerationSupport {
     abstract fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass
 
     abstract fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder.ForFacade
+
+    abstract fun createDataHolderForScript(script: KtScript, builder: LightClassBuilder): LightClassDataHolder.ForScript
 
     abstract fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
 
@@ -61,6 +61,8 @@ abstract class LightClassGenerationSupport {
 
     abstract fun getLightClass(classOrObject: KtClassOrObject): KtLightClass?
 
+    abstract fun getLightClassForScript(script: KtScript): KtLightClassForScript?
+
     abstract fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor?
 
     abstract fun analyze(element: KtElement): BindingContext
@@ -68,6 +70,8 @@ abstract class LightClassGenerationSupport {
     abstract fun analyzeFully(element: KtElement): BindingContext
 
     abstract fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
+
+    abstract fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 
     abstract fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 

@@ -33,7 +33,7 @@ object LightClassTestCommon {
             expectedFile: File,
             testDataFile: File,
             findLightClass: (String) -> PsiClass?,
-            normalizeText: (String) -> String = { it }
+            normalizeText: (String) -> String
     ) {
         val text = FileUtil.loadFile(testDataFile, true)
         val matcher = SUBJECT_FQ_NAME_PATTERN.matcher(text)
@@ -57,8 +57,8 @@ object LightClassTestCommon {
 
         val buffer = StringBuilder()
         (delegate as ClsElementImpl).appendMirrorText(0, buffer)
-        val actual = normalizeText(buffer.toString())
-        return actual
+
+        return normalizeText(buffer.toString())
     }
 
     // Actual text for light class is generated with ClsElementImpl.appendMirrorText() that can find empty DefaultImpl inner class in stubs
