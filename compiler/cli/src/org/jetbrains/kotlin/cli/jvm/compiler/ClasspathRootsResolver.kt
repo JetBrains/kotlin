@@ -45,7 +45,7 @@ import java.util.jar.Attributes
 import java.util.jar.Manifest
 import kotlin.LazyThreadSafetyMode.NONE
 
-internal class ClasspathRootsResolver(
+class ClasspathRootsResolver(
         private val psiManager: PsiManager,
         private val messageCollector: MessageCollector?,
         private val additionalModules: List<String>,
