@@ -407,7 +407,7 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsName getNameForBackingField(@NotNull PropertyDescriptor property) {
+    public JsName getNameForBackingField(@NotNull VariableDescriptorWithAccessors property) {
         return staticContext.getNameForBackingField(property);
     }
 

@@ -170,7 +170,6 @@ class DeclarationBodyVisitor(
         }
     }
 
-    override fun getBackingFieldReference(descriptor: PropertyDescriptor): JsExpression {
-        return Namer.getDelegateNameRef(descriptor.name.asString())
-    }
+    override fun getBackingFieldReference(descriptor: PropertyDescriptor): JsExpression =
+            JsNameRef(context.getNameForBackingField(descriptor), JsThisRef())
 }

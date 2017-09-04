@@ -43,12 +43,12 @@ public final class InitializerUtils {
         return assignment.makeStmt();
     }
 
-    @Nullable
+    @NotNull
     public static JsStatement generateInitializerForDelegate(
+            @NotNull TranslationContext context,
             @NotNull PropertyDescriptor descriptor,
             @NotNull JsExpression value
     ) {
-        String name = descriptor.getName().asString();
-        return JsAstUtils.defineSimpleProperty(Namer.getDelegateName(name), value, descriptor.getSource());
+        return JsAstUtils.defineSimpleProperty(context.getNameForBackingField(descriptor), value, descriptor.getSource());
     }
 }

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.context.Namer.getDelegateNameRef
 import org.jetbrains.kotlin.js.translate.context.Namer.getReceiverParameterName
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
@@ -225,7 +224,7 @@ private class PropertyTranslator(
     private fun generateDefaultGetter(): JsPropertyInitializer {
         val getterDescriptor = descriptor.getter ?: throw IllegalStateException("Getter descriptor should not be null")
         val defaultFunction = createFunction(getterDescriptor).apply {
-            val delegateRef = getDelegateNameRef(descriptor.name.asString())
+            val delegateRef = JsNameRef(context().getNameForBackingField(descriptor), JsThisRef())
             DefaultPropertyTranslator(descriptor, context(), delegateRef).generateDefaultGetterFunction(getterDescriptor, this)
         }
         return generateDefaultAccessor(getterDescriptor, defaultFunction)
@@ -234,7 +233,7 @@ private class PropertyTranslator(
     private fun generateDefaultSetter(): JsPropertyInitializer {
         val setterDescriptor = descriptor.setter ?: throw IllegalStateException("Setter descriptor should not be null")
         val defaultFunction = createFunction(setterDescriptor).apply {
-            val delegateRef = getDelegateNameRef(descriptor.name.asString())
+            val delegateRef = JsNameRef(context().getNameForBackingField(descriptor), JsThisRef())
             DefaultPropertyTranslator(descriptor, context(), delegateRef).generateDefaultSetterFunction(setterDescriptor, this)
         }
         return generateDefaultAccessor(setterDescriptor, defaultFunction)

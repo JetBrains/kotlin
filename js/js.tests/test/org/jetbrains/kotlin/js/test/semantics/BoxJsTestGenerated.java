@@ -1106,6 +1106,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("clashingNameInSubclass.kt")
+        public void testClashingNameInSubclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/clashingNameInSubclass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("delegateByExtensionProperty.kt")
         public void testDelegateByExtensionProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/delegateByExtensionProperty.kt");

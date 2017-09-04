@@ -160,16 +160,6 @@ public final class Namer {
     }
 
     @NotNull
-    public static String getDelegateName(@NotNull String propertyName) {
-        return propertyName + DELEGATE;
-    }
-
-    @NotNull
-    public static JsNameRef getDelegateNameRef(String propertyName) {
-        return new JsNameRef(getDelegateName(propertyName), new JsThisRef());
-    }
-
-    @NotNull
     public static JsNameRef getFunctionCallRef(@NotNull JsExpression functionExpression) {
         return pureFqn(CALL_FUNCTION, functionExpression);
     }

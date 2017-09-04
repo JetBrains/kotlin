@@ -444,7 +444,7 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsStatement defineSimpleProperty(@NotNull String name, @NotNull JsExpression value, @Nullable SourceElement source) {
+    public static JsStatement defineSimpleProperty(@NotNull JsName name, @NotNull JsExpression value, @Nullable SourceElement source) {
         JsExpression assignment = assignment(new JsNameRef(name, new JsThisRef()), value);
         if (source != null) {
             assignment.setSource(KotlinSourceElementKt.getPsi(source));

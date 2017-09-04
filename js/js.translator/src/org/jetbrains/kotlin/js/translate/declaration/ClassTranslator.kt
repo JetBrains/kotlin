@@ -412,7 +412,7 @@ class ClassTranslator private constructor(
             function.parameters.add(i, JsParameter(name))
             if (fieldName != null && constructor == primaryConstructor) {
                 val source = (constructor.descriptor as? DeclarationDescriptorWithSource)?.source
-                additionalStatements += JsAstUtils.defineSimpleProperty(fieldName.ident, name.makeRef(), source)
+                additionalStatements += JsAstUtils.defineSimpleProperty(fieldName, name.makeRef(), source)
             }
         }
 
