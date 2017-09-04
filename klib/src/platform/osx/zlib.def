@@ -1,0 +1,3 @@
+package = platform.zlib
+headers = zconf.h zlib.h
+linkerOpts = -lz

@@ -12,17 +12,18 @@ headers = alloca.h ar.h assert.h complex.h dirent.h dlfcn.h err.h errno.h fcntl.
     sys/queue.h sys/select.h sys/shm.h sys/stat.h \
     sys/syslimits.h sys/time.h sys/times.h sys/wait.h
 
+compilerOpts = -D_XOPEN_SOURCE
 linkerOpts = -ldl
 
 ---
-// cinterop -target android_arm32 -def klib/src/platform/android/posix.def -o platform.posix.klib
+// cinterop -def klib/src/platform/osx/posix.def -o platform.posix.klib
 
 // Wrapper to access errno variable.
 static int posix_errno() {
-        return errno;
+    return errno;
 }
 
 // Wrapper to access h_errno variable.
 static int posix_h_errno() {
-        return h_errno;
+    return h_errno;
 }

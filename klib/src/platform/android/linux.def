@@ -1,0 +1,22 @@
+package = platform.linux
+headers = byteswap.h elf.h endian.h features.h lastlog.h link.h \
+    malloc.h mntent.h nsswitch.h pathconf.h termio.h thread_db.h time64.h \
+    uchar.h util.h \
+    sys/epoll.h sys/inotify.h sys/klog.h sys/sendfile.h \
+    sys/sysconf.h sys/sysinfo.h sys/utime.h \
+    net/if_ether.h net/if_packet.h netinet/ether.h netinet/in6.h netpacket/packet.h
+
+linkerOpts = -ldl
+
+---
+// cinterop -target android_arm32 -def klib/src/platform/android/posix.def -o platform.posix.klib
+
+// Wrapper to access errno variable.
+static int posix_errno() {
+        return errno;
+}
+
+// Wrapper to access h_errno variable.
+static int posix_h_errno() {
+        return h_errno;
+}

@@ -1,5 +1,5 @@
 package = platform.android
-headers = android/api-level.h android/asset_manager.h android/asset_manager_jni.h android/bitmap.h \
+headers = jni.h android/api-level.h android/asset_manager.h android/asset_manager_jni.h android/bitmap.h \
      android/configuration.h android/dlext.h android/input.h android/keycodes.h android/log.h \
      android/looper.h android/native_activity.h android/native_window.h android/native_window_jni.h \
      android/obb.h android/rect.h android/sensor.h android/storage_manager.h android/tts.h \
