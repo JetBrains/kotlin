@@ -214,6 +214,11 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
 
     @TaskAction
     void executeTest() {
+        if (!enabled) {
+            println "Test is disabled: $name"
+            return
+        }
+
         createOutputDirectory()
         def program = buildExePath()
         def suffix = targetManager.programSuffix

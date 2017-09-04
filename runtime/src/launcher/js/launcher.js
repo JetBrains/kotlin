@@ -42,6 +42,9 @@ if (isBrowser()) {
         },
         flush: function () {
             this.print(this.stdout);
+        },
+        exit: function(status) {
+            throw Error("Kotlin process called exit (" + status + ")");
         }
     };
 } else {
@@ -49,6 +52,7 @@ if (isBrowser()) {
         write: write,
         print: print,
         flush: function() {},
+        exit: quit
     };
 }
 
@@ -131,6 +135,9 @@ var konan_dependencies = {
         },
         Konan_abort: function(pointer) {
             throw new Error("Konan_abort(" + utf8decode(toString(pointer)) + ")");
+        },
+        Konan_exit: function(status) {
+            runtime.exit(status);
         },
         Konan_js_arg_size: function(index) {
             if (index >= global_arguments.length) return -1;

@@ -31,6 +31,11 @@
 
 #include "Porting.h"
 
+#ifdef KONAN_WASM
+extern "C" void Konan_abort(const char*);
+extern "C" void Konan_exit(int32_t status);
+#endif
+
 namespace konan {
 
 // Console operations.
@@ -89,6 +94,16 @@ void consolePrintf(const char* format, ...) {
 void abort() {
   ::abort();
 }
+
+#ifdef KONAN_WASM
+void exit(int32_t status) {
+  Konan_exit(status);
+}
+#else
+void exit(int32_t status) {
+  ::exit(status);
+}
+#endif
 
 // String/byte operations.
 // memcpy/memmove are not here intentionally, as frequently implemented/optimized
@@ -235,7 +250,6 @@ long getpagesize() {
 
 extern "C" {
 #ifdef KONAN_WASM
-    extern void Konan_abort(const char*);
 
     // TODO: get rid of these.
     void _ZNKSt3__220__vector_base_commonILb1EE20__throw_length_errorEv(void) {
