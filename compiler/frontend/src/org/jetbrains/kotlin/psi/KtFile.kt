@@ -156,7 +156,8 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     override fun setPackageName(packageName: String) {}
 
     override fun clearCaches() {
-        super.clearCaches()
+        @Suppress("RemoveExplicitSuperQualifier")
+        super<PsiFileBase>.clearCaches()
         isScript = null
         hasTopLeveCallables = null
     }
