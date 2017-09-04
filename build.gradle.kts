@@ -69,12 +69,14 @@ val distDir = "$rootDir/dist"
 val distKotlinHomeDir = "$distDir/kotlinc"
 val distLibDir = "$distKotlinHomeDir/lib"
 val ideaPluginDir = "$distDir/artifacts/Kotlin"
+val ideaUltimatePluginDir = "$distDir/artifacts/KotlinUltimate"
 
 extra["distDir"] = distDir
 extra["distKotlinHomeDir"] = distKotlinHomeDir
 extra["distLibDir"] = project.file(distLibDir)
 extra["libsDir"] = project.file(distLibDir)
 extra["ideaPluginDir"] = project.file(ideaPluginDir)
+extra["ideaUltimatePluginDir"] = project.file(ideaUltimatePluginDir)
 extra["isSonatypeRelease"] = false
 
 Properties().apply {
@@ -247,36 +249,44 @@ tasks {
         dependsOn(":kotlin-test:kotlin-test-common:test",
                   ":kotlin-test:kotlin-test-jvm:test",
                   ":kotlin-test:kotlin-test-junit:test",
-//                  ":kotlin-test:kotlin-test-js:test",
                   ":kotlin-stdlib:test",
                   ":kotlin-stdlib-jre7:test",
                   ":kotlin-stdlib-jre8:test",
-//                  ":kotlin-stdlib-js:test",
-//                  ":tools:binary-compatibility-validator:test",
+                  ":tools:binary-compatibility-validator:test",
                   ":kotlin-reflect:test")
     }
+    "core-libs-check" { dependsOn("core-libs-tests") }
 
     "compiler-tests" {
-        dependsOn("dist")
+        afterEvaluate {
+            dependsOn("dist")
+        }
         dependsOn(":compiler:test",
                   ":compiler:container:test",
                   ":compiler:tests-java8:test")
     }
+    "compiler-check" { dependsOn("compiler-tests") }
 
     "js-tests" {
         dependsOn("dist")
-        dependsOn(":js:js.tests:test")
+        dependsOn(
+                ":kotlin-test:kotlin-test-js:test",
+                ":kotlin-stdlib-js:test",
+                ":js:js.tests:test")
     }
+    "js-check" { dependsOn("js-tests") }
 
     "jps-tests" {
         dependsOn("dist")
         dependsOn(":jps-plugin:test")
     }
+    "check" { dependsOn("test") }
 
     "idea-plugin-main-tests" {
         dependsOn("dist")
         dependsOn(":idea:test")
     }
+    "idea-plugin-main-check" { dependsOn("idea-plugin-main-tests") }
 
     "idea-plugin-additional-tests" {
         dependsOn("dist")
@@ -285,11 +295,14 @@ tasks {
                   ":j2k:test",
                   ":eval4j:test")
     }
+    "idea-plugin-additional-check" { dependsOn("idea-plugin-additional-tests") }
+
     "idea-plugin-tests" {
         dependsOn("dist")
         dependsOn("idea-plugin-main-tests",
                   "idea-plugin-additional-tests")
     }
+    "idea-plugin-check" { dependsOn("idea-plugin-tests") }
 
     "android-tests" {
         dependsOn("dist")
@@ -298,6 +311,7 @@ tasks {
                   ":kotlin-annotation-processing:test",
                   ":compiler:android-tests:test")
     }
+    "android-check" { dependsOn("android-tests") }
 
     "plugins-tests" {
         dependsOn("dist")
@@ -307,6 +321,7 @@ tasks {
                   ":plugins:uast-kotlin:test",
                   ":kotlin-annotation-processing-gradle:test")
     }
+    "plugins-check" { dependsOn("plugins-tests") }
 
     "scripting-tests" {
         dependsOn("dist")
@@ -314,18 +329,21 @@ tasks {
                   ":examples:kotlin-jsr223-local-example:test",
                   ":examples:kotlin-jsr223-daemon-local-eval-example:test")
     }
+    "scripting-check" { dependsOn("scripting-tests") }
 
     "other-tests" {
         dependsOn("dist")
         dependsOn(":kotlin-build-common:test",
                   ":generators:test")
     }
+    "other-check" { dependsOn("other-tests") }
 
     "test" {
         doLast {
-            throw GradleException("Don't use directly, use aggregate tasks *-tests instead")
+            throw GradleException("Don't use directly, use aggregate tasks *-check instead")
         }
     }
+    "check" { dependsOn("test") }
 }
 
 fun jdkPath(version: String): String {

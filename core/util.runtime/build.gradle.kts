@@ -8,7 +8,7 @@ jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compileOnly(projectDist(":kotlin-stdlib"))
 }
 
 sourceSets {

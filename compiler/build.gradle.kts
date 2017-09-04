@@ -30,6 +30,7 @@ val testDistProjects = listOf(
         ":kotlin-test:kotlin-test-junit",
         ":kotlin-test:kotlin-test-js",
         ":kotlin-daemon-client",
+        ":kotlin-preloader",
         ":android-extensions-compiler",
         ":kotlin-ant")
 

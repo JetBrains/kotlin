@@ -19,9 +19,12 @@ def jsSrcDir = "${jsLibrariesDir}/src"
 def jsTestSrcDir = "${jsLibrariesDir}/test"
 def jsSrcJsDir = "${jsSrcDir}/js"
 def jsOutputFile = "${buildDir}/classes/kotlin.js"
-def jsTestOutputFile = "${buildDir}/classes/test/kotlin-stdlib-js_test.js"
+
 def kotlinTestJsOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/main/kotlin-test.js"
-def kotlinTestJsTestOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/test/kotlin-test-js_test.js"
+
+// TODO: take from sourcesets' outputs
+def jsTestOutputFile = "${buildDir}/classes/kotlin/test/kotlin-stdlib-js_test.js"
+def kotlinTestJsTestOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/kotlin/test/kotlin-test-js_test.js"
 
 
 sourceSets {

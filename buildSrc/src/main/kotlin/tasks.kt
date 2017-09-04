@@ -2,6 +2,7 @@
 
 import org.gradle.api.*
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.kotlin.dsl.*
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
@@ -33,6 +34,8 @@ fun Project.projectTest(body: Test.() -> Unit = {}): Test = (tasks.findByName("t
     systemProperty("idea.is.unit.test", "true")
     environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
     environment("KOTLIN_HOME", rootProject.extra["distKotlinHomeDir"])
+    environment("PROJECT_CLASSES_DIRS", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.asPath)
+    environment("PROJECT_BUILD_DIR", buildDir)
     systemProperty("jps.kotlin.home", rootProject.extra["distKotlinHomeDir"])
     ignoreFailures = System.getenv("kotlin_build_ignore_test_failures")?.let { it == "yes" } ?: false
     body()

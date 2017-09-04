@@ -23,6 +23,13 @@ dependencies {
     testCompileOnly(ideaSdkDeps("openapi", "idea", "gson"))
     testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
 
+    testRuntime(project(":idea:idea-jvm"))
+    testRuntime(project(":idea:idea-android"))
+    testRuntime(project(":plugins:android-extensions-idea"))
+    testRuntime(project(":plugins:lint"))
+    testRuntime(project(":sam-with-receiver-ide-plugin"))
+    testRuntime(project(":allopen-ide-plugin"))
+    testRuntime(project(":noarg-ide-plugin"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("resources_en", plugin = "junit"))
     testRuntime(ideaPluginDeps("jcommander", "resources_en", plugin = "testng"))

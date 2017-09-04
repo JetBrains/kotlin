@@ -75,6 +75,7 @@ dependencies {
     fatJarContents(ideaSdkDeps("jna-platform"))
     fatJarContents(commonDep("javax.inject"))
     fatJarContents(commonDep("org.jline", "jline"))
+    fatJarContents(commonDep("org.fusesource.jansi", "jansi"))
     fatJarContents(protobufFull())
     fatJarContents(commonDep("com.github.spullara.cli-parser", "cli-parser"))
     fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))

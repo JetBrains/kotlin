@@ -18,6 +18,7 @@ dependencies {
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler.tests-common"))
+    testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":plugins:android-extensions-idea"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))

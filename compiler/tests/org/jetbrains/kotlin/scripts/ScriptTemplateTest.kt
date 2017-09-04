@@ -97,7 +97,7 @@ class ScriptTemplateTest {
         Assert.assertNull(compileScript("fib_ext_ann.kts", ScriptWithIntParamAndDummyResolver::class, null, includeKotlinRuntime = false))
 
         val messageCollector = TestMessageCollector()
-        val aClass = compileScript("fib_ext_ann.kts", ScriptWithIntParam::class, null, includeKotlinRuntime = false, messageCollector = messageCollector)
+        val aClass = compileScript("fib_ext_ann.kts", ScriptWithIntParam::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         val out = captureOut {
             aClass!!.getConstructor(Integer.TYPE).newInstance(4)
@@ -117,7 +117,7 @@ class ScriptTemplateTest {
         }
 
         val messageCollector = TestMessageCollector()
-        val aClass = compileScript("fib_ext_ann2.kts", ScriptWithIntParam::class, null, includeKotlinRuntime = false, messageCollector = messageCollector)
+        val aClass = compileScript("fib_ext_ann2.kts", ScriptWithIntParam::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         val out = captureOut {
             aClass!!.getConstructor(Integer.TYPE).newInstance(4)
