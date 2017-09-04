@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -237,7 +238,7 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
                 DescriptorFactory.createPrimaryConstructorForObject(creatorClass, creatorClass.source))
 
         val classBuilderForCreator = codegen.state.factory.newVisitor(
-                JvmDeclarationOrigin.NO_ORIGIN,
+                JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, null, creatorClass),
                 Type.getObjectType(creatorAsmType.internalName),
                 codegen.myClass.containingKtFile)
 
@@ -316,7 +317,8 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
     }
 
     private fun FunctionDescriptor.write(codegen: ImplementationBodyCodegen, code: ExpressionCodegen.() -> Unit) {
-        codegen.functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, this, object : CodegenBased(codegen.state) {
+        val declarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, null, this)
+        codegen.functionCodegen.generateMethod(declarationOrigin, this, object : CodegenBased(codegen.state) {
             override fun doGenerateBody(e: ExpressionCodegen, signature: JvmMethodSignature) = with(e) {
                 e.code()
             }
