@@ -46,14 +46,11 @@ class KotlinUFile(override val psi: KtFile, override val languagePlugin: UastLan
     override val imports by lz { psi.importDirectives.map { KotlinUImportStatement(it, this) } }
 
     override val classes by lz {
-        fun PsiClass.toUClass() = languagePlugin.convert<UClass>(this, this@KotlinUFile)
+        val facadeOrScriptClass = if (psi.isScript()) psi.script?.toLightClass() else psi.findFacadeClass()
+        val classes = psi.declarations.mapNotNull { (it as? KtClassOrObject)?.toLightClass()?.toUClass() }
 
-        val classes = psi.findFacadeClass()?.let { mutableListOf(it.toUClass()) } ?: mutableListOf()
-
-        for (declaration in psi.declarations) {
-            (declaration as? KtClassOrObject)?.toLightClass()?.let { classes += it.toUClass() }
-        }
-
-        return@lz classes
+        (facadeOrScriptClass?.let { listOf(it.toUClass()) } ?: emptyList()) + classes
     }
+
+    private fun PsiClass.toUClass() = languagePlugin.convert<UClass>(this, this@KotlinUFile)
 }

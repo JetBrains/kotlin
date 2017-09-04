@@ -18,17 +18,17 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.AbstractJavaUClass
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 
-class KotlinUClass private constructor(
+open class KotlinUClass private constructor(
         psi: KtLightClass,
         override val uastParent: UElement?
 ) : AbstractJavaUClass(), PsiClass by psi {
@@ -37,9 +37,7 @@ class KotlinUClass private constructor(
 
     override val psi = unwrap<UClass, PsiClass>(psi)
 
-    override fun getOriginalElement(): PsiElement? {
-        return super.getOriginalElement()
-    }
+    override fun getOriginalElement(): PsiElement? = super.getOriginalElement()
 
     override fun getNameIdentifier() = UastLightIdentifier(psi, ktClass)
 
@@ -67,34 +65,12 @@ class KotlinUClass private constructor(
 
     override fun getMethods(): Array<UMethod> {
         val primaryConstructor = ktClass?.primaryConstructor?.toLightMethods()?.firstOrNull()
-        val initBlocks = ktClass?.getAnonymousInitializers() ?: emptyList()
 
         fun createUMethod(psiMethod: PsiMethod): UMethod {
-            return if (psiMethod is KtLightMethod && psiMethod.isConstructor && initBlocks.isNotEmpty()
-                    && (primaryConstructor == null || psiMethod == primaryConstructor)) {
-                object : KotlinUMethod(psiMethod, this@KotlinUClass) {
-                    override val uastBody by lz {
-                        val initializers = ktClass?.getAnonymousInitializers() ?: return@lz UastEmptyExpression
-                        val containingMethod = this
-
-                        object : UBlockExpression {
-                            override val psi: PsiElement?
-                                 get() = null
-
-                            override val uastParent: UElement?
-                                get() = containingMethod
-
-                            override val annotations: List<UAnnotation>
-                                get() = emptyList()
-
-                            override val expressions by lz {
-                                initializers.map {
-                                    getLanguagePlugin().convertOpt<UExpression>(it.body, this) ?: UastEmptyExpression
-                                }
-                            }
-                        }
-                    }
-                }
+            return if (psiMethod is KtLightMethod &&
+                       psiMethod.isConstructor &&
+                       (primaryConstructor == null || psiMethod == primaryConstructor)) {
+                KotlinPrimaryConstructorUMethod(ktClass, psiMethod, this)
             } else {
                 getLanguagePlugin().convert(psiMethod, this)
             }
@@ -112,11 +88,22 @@ class KotlinUClass private constructor(
     private fun PsiClass.isEnumEntryLightClass() = (this as? KtLightClass)?.kotlinOrigin is KtEnumEntry
 
     companion object {
-        fun create(psi: KtLightClass, containingElement: UElement?): UClass {
-            return if (psi is PsiAnonymousClass)
-                KotlinUAnonymousClass(psi, containingElement)
-            else
-                KotlinUClass(psi, containingElement)
+        fun create(psi: KtLightClass, containingElement: UElement?): UClass = when (psi) {
+            is PsiAnonymousClass -> KotlinUAnonymousClass(psi, containingElement)
+            is KtLightClassForScript -> KotlinScriptUClass(psi, containingElement)
+            else -> KotlinUClass(psi, containingElement)
+        }
+    }
+
+    class KotlinPrimaryConstructorUMethod(
+            private val ktClass: KtClassOrObject?,
+            override val psi: KtLightMethod,
+            override val uastParent: UElement?
+    ): KotlinUMethod(psi, uastParent) {
+        override val uastBody: UExpression? by lz {
+            ktClass?.getAnonymousInitializers()
+                    ?.takeIf { it.isNotEmpty() }
+                    ?.let { KotlinUBlockExpression.create(it, this) }
         }
     }
 }
@@ -128,9 +115,7 @@ class KotlinUAnonymousClass(
 
     override val psi: PsiAnonymousClass = unwrap<UAnonymousClass, PsiAnonymousClass>(psi)
 
-    override fun getOriginalElement(): PsiElement? {
-        return super<AbstractJavaUClass>.getOriginalElement()
-    }
+    override fun getOriginalElement(): PsiElement? = super<AbstractJavaUClass>.getOriginalElement()
 
     override fun getSuperClass(): UClass? = super<AbstractJavaUClass>.getSuperClass()
     override fun getFields(): Array<UField> = super<AbstractJavaUClass>.getFields()
@@ -143,4 +128,44 @@ class KotlinUAnonymousClass(
             val ktClassOrObject = (psi.originalElement as? KtLightClass)?.kotlinOrigin as? KtObjectDeclaration ?: return null 
             return UIdentifier(ktClassOrObject.getObjectKeyword(), this)
         }
+}
+
+class KotlinScriptUClass(
+        psi: KtLightClassForScript,
+        override val uastParent: UElement?
+) : AbstractJavaUClass(), PsiClass by psi {
+
+    override val psi = unwrap<UClass, KtLightClassForScript>(psi)
+
+    override fun getSuperClass(): UClass? = super.getSuperClass()
+
+    override fun getFields(): Array<UField> = super.getFields()
+
+    override fun getInitializers(): Array<UClassInitializer> = super.getInitializers()
+
+    override fun getInnerClasses(): Array<UClass> = super.getInnerClasses()
+
+    override fun getMethods(): Array<UMethod> = psi.methods.map(this::createUMethod).toTypedArray()
+
+    private fun createUMethod(method: PsiMethod): UMethod {
+        return if (method.isConstructor) {
+            KotlinScriptConstructorUMethod(psi.script, method as KtLightMethod, this)
+        }
+        else {
+            getLanguagePlugin().convert(method, this)
+        }
+    }
+
+    override fun getOriginalElement(): PsiElement? = psi.originalElement
+
+    class KotlinScriptConstructorUMethod(
+            script: KtScript,
+            override val psi: KtLightMethod,
+            override val uastParent: UElement?
+    ) : KotlinUMethod(psi, uastParent) {
+        override val uastBody: UExpression? by lz {
+            val initializers = script.declarations.filterIsInstance<KtScriptInitializer>()
+            KotlinUBlockExpression.create(initializers, this)
+        }
+    }
 }
