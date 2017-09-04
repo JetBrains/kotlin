@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.framework.FrameworkTypeEx
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.idea.KotlinIcons
@@ -42,6 +43,10 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
                             rootModel: ModifiableRootModel,
                             modifiableModelsProvider: ModifiableModelsProvider,
                             buildScriptData: BuildScriptDataBuilder) {
+        addSupport(buildScriptData, rootModel.sdk)
+    }
+
+    fun addSupport(buildScriptData: BuildScriptDataBuilder, sdk: Sdk?) {
         var kotlinVersion = bundledRuntimeVersion()
         val additionalRepository = getRepositoryForVersion(kotlinVersion)
         if (isSnapshot(bundledRuntimeVersion())) {
@@ -57,17 +62,17 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
         }
 
         buildScriptData
-                .addPluginDefinition(KotlinWithGradleConfigurator.getGroovyApplyPluginDirective(getPluginId()))
+            .addPluginDefinition(KotlinWithGradleConfigurator.getGroovyApplyPluginDirective(getPluginId()))
 
-                .addBuildscriptRepositoriesDefinition("mavenCentral()")
-                .addRepositoriesDefinition("mavenCentral()")
+            .addBuildscriptRepositoriesDefinition("mavenCentral()")
+            .addRepositoriesDefinition("mavenCentral()")
 
-                .addBuildscriptPropertyDefinition("ext.kotlin_version = '$kotlinVersion'")
-                .addDependencyNotation(getRuntimeLibrary(rootModel))
-                .addBuildscriptDependencyNotation(KotlinWithGradleConfigurator.CLASSPATH)
+            .addBuildscriptPropertyDefinition("ext.kotlin_version = '$kotlinVersion'")
+            .addDependencyNotation(getRuntimeLibrary(sdk))
+            .addBuildscriptDependencyNotation(KotlinWithGradleConfigurator.CLASSPATH)
     }
 
-    protected abstract fun getRuntimeLibrary(rootModel: ModifiableRootModel): String
+    protected abstract fun getRuntimeLibrary(sdk: Sdk?): String
 
     protected abstract fun getPluginId(): String
 }
@@ -78,8 +83,8 @@ open class GradleKotlinJavaFrameworkSupportProvider(frameworkTypeId: String = "K
 
     override fun getPluginId() = KotlinGradleModuleConfigurator.KOTLIN
 
-    override fun getRuntimeLibrary(rootModel: ModifiableRootModel) =
-            KotlinWithGradleConfigurator.getGroovyDependencySnippet(getStdlibArtifactId(rootModel.sdk, bundledRuntimeVersion()))
+    override fun getRuntimeLibrary(sdk: Sdk?) =
+            KotlinWithGradleConfigurator.getGroovyDependencySnippet(getStdlibArtifactId(sdk, bundledRuntimeVersion()))
 
     override fun addSupport(module: Module, rootModel: ModifiableRootModel, modifiableModelsProvider: ModifiableModelsProvider, buildScriptData: BuildScriptDataBuilder) {
         super.addSupport(module, rootModel, modifiableModelsProvider, buildScriptData)
@@ -97,7 +102,7 @@ open class GradleKotlinJSFrameworkSupportProvider(frameworkTypeId: String = "KOT
 
     override fun getPluginId() = KotlinJsGradleModuleConfigurator.KOTLIN_JS
 
-    override fun getRuntimeLibrary(rootModel: ModifiableRootModel) =
+    override fun getRuntimeLibrary(sdk: Sdk?) =
             KotlinWithGradleConfigurator.getGroovyDependencySnippet(MAVEN_JS_STDLIB_ID)
 }
 
@@ -105,7 +110,7 @@ open class GradleKotlinMPPCommonFrameworkSupportProvider :
         GradleKotlinFrameworkSupportProvider("KOTLIN_MPP_COMMON", "Kotlin (Multiplatform - Common)", KotlinIcons.SMALL_LOGO) {
     override fun getPluginId() = "kotlin-platform-common"
 
-    override fun getRuntimeLibrary(rootModel: ModifiableRootModel) =
+    override fun getRuntimeLibrary(sdk: Sdk?) =
             KotlinWithGradleConfigurator.getGroovyDependencySnippet(MAVEN_COMMON_STDLIB_ID)
 }
 

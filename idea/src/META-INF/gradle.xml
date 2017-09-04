@@ -55,5 +55,7 @@
 
         <scriptTemplatesProvider
             implementation="org.jetbrains.kotlin.idea.core.script.LegacyGradleScriptKotlinTemplateProvider"/>
+
+        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMultiplatformModuleBuilder"/>
     </extensions>
 </idea-plugin>

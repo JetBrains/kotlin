@@ -50,5 +50,7 @@
                         interface="org.jetbrains.kotlin.script.ScriptHelper"/>
         <extensionPoint name="completionInformationProvider"
                         interface="org.jetbrains.kotlin.idea.completion.CompletionInformationProvider" />
+        <extensionPoint name="moduleBuilder"
+                        interface="com.intellij.ide.util.projectWizard.ModuleBuilder"/>
     </extensionPoints>
 </idea-plugin>
