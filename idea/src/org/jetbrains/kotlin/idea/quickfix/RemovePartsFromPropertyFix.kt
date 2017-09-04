@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 
-class RemovePartsFromPropertyFix(
+open class RemovePartsFromPropertyFix(
         element: KtProperty,
         private val removeInitializer: Boolean,
         private val removeGetter: Boolean,
