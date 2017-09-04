@@ -15,6 +15,32 @@ buildscript {
 
 apply plugin: 'com.jfrog.bintray'
 
+
+// Hack kotlin-compiler pom-file to resolve the dependency correctly.
+task generatePom(type: DefaultTask) {
+    def originalPom = project.files(gradle.startParameter.projectProperties.pom).first()
+    inputs.file(originalPom)
+
+    def (_, artifactIdString, versionString) = gradle.startParameter.projectProperties.module.tokenize(':')
+    def versionPath =  "${versionString.tokenize('-')[0]}-SNAPSHOT"
+
+    def newPom = file("${temporaryDir.canonicalPath}/$artifactIdString-${versionString}.pom")
+    outputs.file(newPom)
+
+    doLast {
+        def xml = new XmlParser().parse(originalPom)
+        def parent = xml.children().find() { it.name().localPart == 'parent' }
+        if (parent != null) {
+            def groupId = parent.groupId
+            def version = parent.version
+            xml.append(groupId)
+            xml.append(version)
+            xml.remove(parent)
+        }
+        new XmlNodePrinter(new PrintWriter(new FileWriter(newPom))).print(xml)
+    }
+}
+
 bintray {
     user = gradle.startParameter.projectProperties.user
     key  = gradle.startParameter.projectProperties.key
@@ -23,7 +49,7 @@ bintray {
         name = 'kotlin-compiler-builds'
         userOrg = 'jetbrains'
         publish = true
-        override = project.hasProperty("override")
+        override = gradle.startParameter.projectProperties.override
     }
 
     filesSpec {
@@ -34,7 +60,7 @@ bintray {
         from project.files(gradle.startParameter.projectProperties.jar)
         from project.files(gradle.startParameter.projectProperties.src)
         from project.files(gradle.startParameter.projectProperties.doc)
-        from project.files(gradle.startParameter.projectProperties.pom)
+        from generatePom.outputs.files
         into "$groupPath/$artifactPath/$versionPath"
     }
 

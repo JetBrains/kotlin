@@ -75,46 +75,24 @@ dependencies {
     kotlin_stdlib_jdk8_doc "$kotlinStdLibJdk8Module:javadoc@jar"
 }
 
-// Hack kotlin-compiler pom-file to resolve the dependency correctly.
-task generatePom(type: DefaultTask) {
-    def originalPom = configurations.kotlin_compiler_pom.singleFile
-    inputs.file(originalPom)
-
-    def (_, artifactIdString, versionString) = kotlinCompilerModule.tokenize(':')
-    def newPom = file("${temporaryDir.canonicalPath}/$artifactIdString-${versionString}.pom")
-    outputs.file(newPom)
-
-    doLast {
-        def xml = new XmlParser().parse(originalPom)
-        def parent = xml.children().find() { it.name().localPart == 'parent' } // <parent> </parent> section, not the parent node.
-        if (parent != null) {
-            def groupId = parent.groupId
-            def version = parent.version
-            xml.append(groupId)
-            xml.append(version)
-            xml.remove(parent)
-        }
-        new XmlNodePrinter(new PrintWriter(new FileWriter(newPom))).print(xml)
-    }
-}
-
 def modules = ['compiler'     : kotlinCompilerModule,
                'gradle_plugin': kotlinGradleModule,
                'stdlib_jdk8'  : kotlinStdLibJdk8Module]
 def uploads = ['compiler', 'gradle_plugin', 'stdlib_jdk8']
 uploads.each { target ->
     task("${target}Upload", type:GradleBuild) {
-        tasks = ['dump', 'bintrayUpload']
+        tasks = ['bintrayUpload']
         buildFile project.file("upload.gradle")
         dir project.projectDir
         startParameter.projectProperties = [
-                'user'   :  "${project.hasProperty('bintrayUser') ? project['bintrayUser'] : System.getenv('BINTRAY_USER')}",
-                'key'    : "${ project.hasProperty('bintrayKey') ? project.property('bintrayKey') : System.getenv('BINTRAY_KEY')}",
-                'module' : modules["${target}"],
-                'jar'    : project.configurations.getByName("kotlin_${target}_jar").files.collect {it.path},
-                'src'    : project.configurations.getByName("kotlin_${target}_src").files.collect {it.path},
-                'doc'    : project.configurations.getByName("kotlin_${target}_doc").files.collect {it.path},
-                'pom'    : project.configurations.getByName("kotlin_${target}_pom").files.collect {it.path},
+                'user'    :  "${project.hasProperty('bintrayUser') ? project['bintrayUser'] : System.getenv('BINTRAY_USER')}",
+                'key'     : "${ project.hasProperty('bintrayKey') ? project.property('bintrayKey') : System.getenv('BINTRAY_KEY')}",
+                'module'  : modules["${target}"],
+                'jar'     : project.configurations.getByName("kotlin_${target}_jar").files.collect {it.path},
+                'src'     : project.configurations.getByName("kotlin_${target}_src").files.collect {it.path},
+                'doc'     : project.configurations.getByName("kotlin_${target}_doc").files.collect {it.path},
+                'pom'     : project.configurations.getByName("kotlin_${target}_pom").files.collect {it.path},
+                'override': project.hasProperty("override") && project["override"]
 
         ]
     }
