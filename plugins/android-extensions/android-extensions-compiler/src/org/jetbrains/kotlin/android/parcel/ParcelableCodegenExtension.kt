@@ -250,9 +250,12 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         codegen.v.visitInnerClass(creatorAsmType.internalName, containerAsmType.internalName, "Creator", ACC_PUBLIC or ACC_STATIC)
         codegenForCreator.v.visitInnerClass(creatorAsmType.internalName, containerAsmType.internalName, "Creator", ACC_PUBLIC or ACC_STATIC)
 
-        classBuilderForCreator.defineClass(null, V1_6, ACC_PUBLIC or ACC_STATIC,
+        classBuilderForCreator.defineClass(null, V1_6, ACC_PUBLIC or ACC_FINAL or ACC_SUPER,
                               creatorAsmType.internalName, null, "java/lang/Object",
                               arrayOf("android/os/Parcelable\$Creator"))
+
+        codegen.v.visitInnerClass(creatorAsmType.internalName, containerAsmType.internalName, "Creator", ACC_PUBLIC or ACC_STATIC)
+        codegenForCreator.v.visitInnerClass(creatorAsmType.internalName, containerAsmType.internalName, "Creator", ACC_PUBLIC or ACC_STATIC)
 
         writeSyntheticClassMetadata(classBuilderForCreator, codegen.state)
 

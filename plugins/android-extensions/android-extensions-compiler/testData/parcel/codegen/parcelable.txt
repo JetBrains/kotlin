@@ -1,10 +1,4 @@
-public final class test/Foo$Companion : java/lang/Object {
-    private void <init>()
-
-    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker p0)
-}
-
-public static class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Creator {
+public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
     public final java.lang.Object createFromParcel(android.os.Parcel p0) {
@@ -29,16 +23,9 @@ public static class test/Foo$Creator : java/lang/Object, android/os/Parcelable$C
 public final class test/Foo : java/lang/Object, android/os/Parcelable {
     public final static test.Foo$Creator CREATOR
 
-    public final static test.Foo$Companion Companion
-
     private final android.os.Parcelable parcelable
 
     static void <clinit>() {
-          NEW
-          DUP
-          ACONST_NULL
-          INVOKESPECIAL (test/Foo$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
-          PUTSTATIC (Companion, Ltest/Foo$Companion;)
           NEW
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)

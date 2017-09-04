@@ -1,4 +1,4 @@
-public static class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
+public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
     public final java.lang.Object createFromParcel(android.os.Parcel p0) {
