@@ -89,7 +89,7 @@ class KotlinGradleModelBuilder : ModelBuilderService {
         toProcess.add(startingProject)
         val processed = HashSet<String>()
         val result = HashSet<String>()
-        result.add(startingProject.path)
+        result.add(startingProject.pathOrName())
 
         while (toProcess.isNotEmpty()) {
             val project = toProcess.pollFirst()
@@ -97,7 +97,7 @@ class KotlinGradleModelBuilder : ModelBuilderService {
 
             if (!project.plugins.hasPlugin(kotlinPlatformCommonPluginId)) continue
 
-            result.add(project.path)
+            result.add(project.pathOrName())
 
             val compileConfiguration = project.configurations.findByName("compile") ?: continue
             val dependencies = compileConfiguration
@@ -114,6 +114,9 @@ class KotlinGradleModelBuilder : ModelBuilderService {
 
         return result
     }
+
+    // see GradleProjectResolverUtil.getModuleId() in IDEA codebase
+    private fun Project.pathOrName() = if (path == ":") name else path
 
     @Suppress("UNCHECKED_CAST")
     private fun Task.getCompilerArguments(methodName: String): List<String> {

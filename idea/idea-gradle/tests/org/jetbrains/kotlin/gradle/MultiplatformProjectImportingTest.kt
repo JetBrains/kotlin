@@ -67,6 +67,49 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
     }
 
     @Test
+    fun testPlatformToCommonDependencyRoot() {
+        createProjectSubFile("settings.gradle", "rootProject.name = 'foo'\ninclude ':jvm', ':js'")
+
+        val kotlinVersion = "1.1.0"
+
+        createProjectSubFile("build.gradle", """
+             buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                }
+            }
+
+            apply plugin: 'kotlin-platform-common'
+
+            project('jvm') {
+                apply plugin: 'kotlin-platform-jvm'
+
+                dependencies {
+                    implement project(':')
+                }
+            }
+
+            project('js') {
+                apply plugin: 'kotlin-platform-js'
+
+                dependencies {
+                    implement project(':')
+                }
+            }
+        """)
+
+        importProject()
+        assertModuleModuleDepScope("jvm_main", "foo_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm_test", "foo_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("js_main", "foo_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("js_test", "foo_test", DependencyScope.COMPILE)
+    }
+
+    @Test
     fun testMultiProject() {
         createProjectSubFile("settings.gradle", "include ':common-lib', ':jvm-lib', ':js-lib', ':common-app', ':jvm-app', ':js-app'")
 
