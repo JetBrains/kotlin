@@ -6191,6 +6191,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("objectFunWithVararg.kt")
+        public void testObjectFunWithVararg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/objectFunWithVararg.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("overrideNativeOverloadedFunction.kt")
         public void testOverrideNativeOverloadedFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/overrideNativeOverloadedFunction.kt");

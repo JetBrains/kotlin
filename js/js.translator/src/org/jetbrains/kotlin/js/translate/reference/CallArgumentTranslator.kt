@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.getReferenceToJsClass
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
@@ -148,6 +149,11 @@ class CallArgumentTranslator private constructor(
 
             if (receiver != null) {
                 cachedReceiver = context().getOrDeclareTemporaryConstVariable(receiver)
+                result.add(0, cachedReceiver.reference())
+            }
+            else if (DescriptorUtils.isObject(resolvedCall.resultingDescriptor.containingDeclaration)) {
+                cachedReceiver = context().getOrDeclareTemporaryConstVariable(
+                        ReferenceTranslator.translateAsValueReference(resolvedCall.resultingDescriptor.containingDeclaration, context()))
                 result.add(0, cachedReceiver.reference())
             }
             else {
