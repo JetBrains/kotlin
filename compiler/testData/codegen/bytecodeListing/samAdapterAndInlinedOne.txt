@@ -14,7 +14,7 @@ final class test/SamAdapterAndInlinedOneKt$sam$java_lang_Runnable$0 {
 
 @kotlin.Metadata
 public final class test/SamAdapterAndInlinedOneKt {
-    private final static method makeRunnable(p0: kotlin.jvm.functions.Function0): java.lang.Runnable
+    public synthetic final static @org.jetbrains.annotations.NotNull method makeRunnable(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Runnable
     public final static @org.jetbrains.annotations.NotNull method makeRunnable2(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Runnable
     public final static @org.jetbrains.annotations.NotNull method noInline(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Runnable
     public final static @org.jetbrains.annotations.NotNull method noInline2(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Runnable

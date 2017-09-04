@@ -1,7 +1,7 @@
 @kotlin.Metadata
 public final class Foo {
     public method <init>(): void
-    private final method getExtProp(p0: java.lang.Object): java.lang.String
+    public synthetic final @org.jetbrains.annotations.NotNull method getExtProp(p0: java.lang.Object): java.lang.String
     private final method getProp(): java.lang.String
     private final @kotlin.internal.InlineOnly method getProp2(): java.lang.String
     public synthetic deprecated static @kotlin.internal.InlineOnly method prop$annotations(): void
@@ -11,7 +11,7 @@ public final class Foo {
 
 @kotlin.Metadata
 public final class InlineOnlyPropertyKt {
-    private final static method getExtProp(p0: java.lang.Object): java.lang.String
+    public synthetic final static @org.jetbrains.annotations.NotNull method getExtProp(p0: java.lang.Object): java.lang.String
     private final static method getProp(): java.lang.String
     private final static @kotlin.internal.InlineOnly method getProp2(): java.lang.String
     public synthetic deprecated static @kotlin.internal.InlineOnly method prop$annotations(): void

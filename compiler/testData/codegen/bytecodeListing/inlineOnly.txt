@@ -2,13 +2,13 @@
 public final class Foo {
     public method <init>(): void
     public final method bar(): void
-    private final method baz(): void
+    public synthetic final method baz(): void
     private final @kotlin.internal.InlineOnly method foo(): void
 }
 
 @kotlin.Metadata
 public final class InlineOnlyKt {
     public final static method bar(): void
-    private final static method baz(): void
+    public synthetic final static method baz(): void
     private final static @kotlin.internal.InlineOnly method foo(): void
 }
