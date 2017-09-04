@@ -31,113 +31,98 @@ import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.script.getScriptDefinition
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.sure
 
-fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.getModuleInfo { reason ->
-    LOG.error("Could not find correct module information.\nReason: $reason")
-    NotUnderContentRootModuleInfo
-} ?: NotUnderContentRootModuleInfo
+private typealias VirtualFileProcessor<T> = (Project, VirtualFile, Boolean) -> T
 
-fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.getModuleInfo { reason ->
-    LOG.warn("Could not find correct module information.\nReason: $reason")
-    null
-}
+private sealed class ModuleInfoProcessor<out T>(
+        val onResult: (IdeaModuleInfo?) -> T,
+        val onFailure: (String) -> T,
+        val virtualFileProcessor: VirtualFileProcessor<T>
+) {
+    object NotNullTakeFirst : ModuleInfoProcessor<IdeaModuleInfo>(
+            onResult = { it ?: NotUnderContentRootModuleInfo },
+            onFailure = { reason ->
+                LOG.error("Could not find correct module information.\nReason: $reason")
+                NotUnderContentRootModuleInfo
+            },
+            virtualFileProcessor = processor@ { project, virtualFile, isLibrarySource ->
+                processVirtualFile(project, virtualFile, isLibrarySource, { return@processor it ?: NotUnderContentRootModuleInfo })
+            }
+    )
 
-private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
-    (containingFile?.moduleInfo as? IdeaModuleInfo)?.let { return it }
+    object NullableTakeFirst: ModuleInfoProcessor<IdeaModuleInfo?>(
+            onResult = { it },
+            onFailure = { reason ->
+                LOG.warn("Could not find correct module information.\nReason: $reason")
+                null
+            },
+            virtualFileProcessor = processor@ { project, virtualFile, isLibrarySource ->
+                processVirtualFile(project, virtualFile, isLibrarySource, { return@processor it })
+            }
+    )
 
-    if (this is KtLightElement<*, *>) return this.getModuleInfoForLightElement(onFailure)
-
-    val containingJetFile = (this as? KtElement)?.containingFile as? KtFile
-    val context = containingJetFile?.analysisContext
-    if (context != null) return context.getModuleInfo()
-
-    val doNotAnalyze = containingJetFile?.doNotAnalyze
-    if (doNotAnalyze != null) {
-        return onFailure(
-                "Should not analyze element: $text in file ${containingJetFile.name}\n$doNotAnalyze"
-        )
-    }
-
-    val explicitModuleInfo = containingJetFile?.moduleInfo ?: (containingJetFile?.originalFile as? KtFile)?.moduleInfo
-    if (explicitModuleInfo is IdeaModuleInfo) return explicitModuleInfo
-
-    if (containingJetFile is KtCodeFragment) {
-        return containingJetFile.getContext()?.getModuleInfo()
-               ?: onFailure("Analyzing code fragment of type ${containingJetFile::class.java} with no context element\nText:\n${containingJetFile.getText()}")
-    }
-
-    val containingFile = containingFile ?: return onFailure("Analyzing element of type ${this::class.java} with no containing file\nText:\n$text")
-
-    val virtualFile = containingFile.originalFile.virtualFile
-            ?: return onFailure("Analyzing element of type ${this::class.java} in non-physical file $containingFile of type ${containingFile::class.java}\nText:\n$text")
-
-    return getModuleInfoByVirtualFile(
-            project,
-            virtualFile,
-            treatAsLibrarySource = (containingFile as? KtFile)?.isCompiled ?: false
+    object CollectToList: ModuleInfoProcessor<List<IdeaModuleInfo>>(
+            onResult = { it?.let(::listOf).orEmpty() },
+            onFailure = { reason ->
+                LOG.warn("Could not find correct module information.\nReason: $reason")
+                emptyList()
+            },
+            virtualFileProcessor = { project, virtualFile, isLibrarySource ->
+                val result = mutableListOf<IdeaModuleInfo>()
+                processVirtualFile(project, virtualFile, isLibrarySource, { result.addIfNotNull(it) })
+                result
+            }
     )
 }
 
-fun getModuleInfoByVirtualFile(
-        project: Project, virtualFile: VirtualFile
-): IdeaModuleInfo? = getModuleInfoByVirtualFile(project, virtualFile, treatAsLibrarySource = false)
+fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.processInfos(ModuleInfoProcessor.NotNullTakeFirst)
 
-private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile, treatAsLibrarySource: Boolean): IdeaModuleInfo? {
-    val projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
+fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.processInfos(ModuleInfoProcessor.NullableTakeFirst)
 
-    val module = projectFileIndex.getModuleForFile(virtualFile)
-    if (module != null) {
-        if (module.isDisposed) return null
+fun PsiElement.getModuleInfos(): List<IdeaModuleInfo> = this.processInfos(ModuleInfoProcessor.CollectToList)
 
-        fun warnIfDecompiled() {
-            if (treatAsLibrarySource) {
-                LOG.warn("Decompiled file for ${virtualFile.canonicalPath} is in content of $module")
-            }
-        }
+private fun <T> PsiElement.processInfos(
+        p: ModuleInfoProcessor<T>
+): T {
+    (containingFile?.moduleInfo as? IdeaModuleInfo)?.let { return p.onResult(it) }
 
-        val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
-        if (moduleFileIndex.isInTestSourceContent(virtualFile)) {
-            warnIfDecompiled()
-            return module.testSourceInfo()
-        }
-        else if (moduleFileIndex.isInSourceContentWithoutInjected(virtualFile)) {
-            warnIfDecompiled()
-            return module.productionSourceInfo()
-        }
+    if (this is KtLightElement<*, *>) return this.processLightElement(p)
+
+    val containingKtFile = (this as? KtElement)?.containingFile as? KtFile
+    containingKtFile?.analysisContext?.let { return it.processInfos(p) }
+
+    containingKtFile?.doNotAnalyze?.let {
+        return p.onFailure(
+                "Should not analyze element: $text in file ${containingKtFile.name}\n$it"
+        )
     }
 
-    projectFileIndex.getOrderEntriesForFile(virtualFile)
-            .process(project, virtualFile, treatAsLibrarySource) { correspondingModuleInfo ->
-                return correspondingModuleInfo
-            }
+    val explicitModuleInfo = containingKtFile?.moduleInfo ?: (containingKtFile?.originalFile as? KtFile)?.moduleInfo
+    if (explicitModuleInfo is IdeaModuleInfo) return p.onResult(explicitModuleInfo)
 
-    val scriptDefinition = getScriptDefinition(virtualFile, project)
-    if (scriptDefinition != null) {
-        return ScriptModuleInfo(project, virtualFile, scriptDefinition)
+    if (containingKtFile is KtCodeFragment) {
+        return containingKtFile.getContext()?.processInfos(p)
+               ?: p.onFailure("Analyzing code fragment of type ${containingKtFile::class.java} with no context element\nText:\n${containingKtFile.getText()}")
     }
 
-    val isBinary = virtualFile.isKotlinBinary()
-    val scriptConfigurationManager = ScriptDependenciesManager.getInstance(project)
-    if (isBinary && virtualFile in scriptConfigurationManager.getAllScriptsClasspathScope()) {
-        return if (treatAsLibrarySource) {
-            ScriptDependenciesSourceModuleInfo(project)
-        }
-        else {
-            ScriptDependenciesModuleInfo(project, null)
-        }
-    }
-    if (!isBinary && virtualFile in scriptConfigurationManager.getAllLibrarySourcesScope()) {
-        return ScriptDependenciesSourceModuleInfo(project)
-    }
+    val containingFile = containingFile ?: return p.onFailure("Analyzing element of type ${this::class.java} with no containing file\nText:\n$text")
 
-    return null
+    val virtualFile = containingFile.originalFile.virtualFile
+            ?: return p.onFailure("Analyzing element of type ${this::class.java} in non-physical file $containingFile of type ${containingFile::class.java}\nText:\n$text")
+
+    return p.virtualFileProcessor(
+            project,
+            virtualFile,
+            (containingFile as? KtFile)?.isCompiled ?: false
+    )
 }
 
-private fun KtLightElement<*, *>.getModuleInfoForLightElement(onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
+private fun <T> KtLightElement<*, *>.processLightElement(p: ModuleInfoProcessor<T>): T {
     val decompiledClass = this.getParentOfType<KtLightClassForDecompiledDeclaration>(strict = false)
     if (decompiledClass != null) {
-        return getModuleInfoByVirtualFile(
+        return p.virtualFileProcessor(
                 project,
                 containingFile.virtualFile.sure { "Decompiled class should be build from physical file" },
                 false
@@ -146,9 +131,60 @@ private fun KtLightElement<*, *>.getModuleInfoForLightElement(onFailure: (String
     val element = kotlinOrigin ?: when (this) {
         is FakeLightClassForFileOfPackage -> this.getContainingFile()!!
         is KtLightClassForFacade -> this.files.first()
-        else -> return onFailure("Light element without origin is referenced by resolve:\n$this\n${this.clsDelegate.text}")
+        else -> return p.onFailure("Light element without origin is referenced by resolve:\n$this\n${this.clsDelegate.text}")
     }
-    return element.getModuleInfo()
+    return element.processInfos(p)
+}
+
+
+fun getModuleInfoByVirtualFile(
+        project: Project, virtualFile: VirtualFile
+): IdeaModuleInfo? = processVirtualFile(
+        project, virtualFile,
+        treatAsLibrarySource = false,
+        onOccurrence = { return@getModuleInfoByVirtualFile it }
+)
+
+private inline fun <T> processVirtualFile(
+        project: Project, virtualFile: VirtualFile,
+        treatAsLibrarySource: Boolean, onOccurrence: (IdeaModuleInfo?) -> T
+): T {
+    val projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
+
+    val module = projectFileIndex.getModuleForFile(virtualFile)
+    if (module != null && !module.isDisposed) {
+        val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
+        if (moduleFileIndex.isInTestSourceContent(virtualFile)) {
+            onOccurrence(module.testSourceInfo())
+        }
+        else if (moduleFileIndex.isInSourceContentWithoutInjected(virtualFile)) {
+            onOccurrence(module.productionSourceInfo())
+        }
+    }
+
+    projectFileIndex.getOrderEntriesForFile(virtualFile)
+            .process(project, virtualFile, treatAsLibrarySource, onOccurrence)
+
+    val scriptDefinition = getScriptDefinition(virtualFile, project)
+    if (scriptDefinition != null) {
+        onOccurrence(ScriptModuleInfo(project, virtualFile, scriptDefinition))
+    }
+
+    val isBinary = virtualFile.isKotlinBinary()
+    val scriptConfigurationManager = ScriptDependenciesManager.getInstance(project)
+    if (isBinary && virtualFile in scriptConfigurationManager.getAllScriptsClasspathScope()) {
+        if (treatAsLibrarySource) {
+            onOccurrence(ScriptDependenciesSourceModuleInfo(project))
+        }
+        else {
+            onOccurrence(ScriptDependenciesModuleInfo(project, null))
+        }
+    }
+    if (!isBinary && virtualFile in scriptConfigurationManager.getAllLibrarySourcesScope()) {
+        onOccurrence(ScriptDependenciesSourceModuleInfo(project))
+    }
+
+    return onOccurrence(null)
 }
 
 fun getBinaryLibrariesModuleInfos(project: Project, virtualFile: VirtualFile) = collectModuleInfosByType<BinaryModuleInfo>(project, virtualFile)
@@ -168,11 +204,11 @@ private inline fun <reified T : IdeaModuleInfo> collectModuleInfosByType(project
     return result.filterNotNull()
 }
 
-private inline fun List<OrderEntry>.process(
+private inline fun <T> List<OrderEntry>.process(
         project: Project,
         virtualFile: VirtualFile,
         treatAsLibrarySource: Boolean = false,
-        body: (IdeaModuleInfo) -> Unit
+        onOccurrence: (IdeaModuleInfo) -> T
 ) {
     entries@ for (orderEntry in this) {
         if (!orderEntry.isValid) continue
@@ -181,15 +217,15 @@ private inline fun List<OrderEntry>.process(
             is LibraryOrderEntry -> {
                 val library = orderEntry.library ?: continue@entries
                 if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile) && !treatAsLibrarySource) {
-                    body(LibraryInfo(project, library))
+                    onOccurrence(LibraryInfo(project, library))
                 }
                 else if (ProjectRootsUtil.isLibraryFile(project, virtualFile) || treatAsLibrarySource) {
-                    body(LibrarySourceInfo(project, library))
+                    onOccurrence(LibrarySourceInfo(project, library))
                 }
             }
             is JdkOrderEntry -> {
                 val sdk = orderEntry.jdk ?: continue@entries
-                body(SdkInfo(project, sdk))
+                onOccurrence(SdkInfo(project, sdk))
             }
         }
     }
