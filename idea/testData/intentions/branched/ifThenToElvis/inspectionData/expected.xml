@@ -103,4 +103,12 @@
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
     <description>Replace 'if' expression with elvis expression</description>
   </problem>
+  <problem>
+    <file>kt19666.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/kt19666.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
 </problems>
