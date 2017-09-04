@@ -122,6 +122,7 @@ public class SpecialFiles {
         // KT-8120
         excludedFiles.add("closureOfInnerLocalClass.kt");
         excludedFiles.add("closureWithSelfInstantiation.kt");
+        excludedFiles.add("quotedClassName.kt");
     }
 
     private SpecialFiles() {

@@ -3,9 +3,11 @@
 buildscript {
     repositories {
         jcenter()
+        google()
+
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta4'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -15,11 +17,12 @@ apply plugin: 'com.android.application'
 
 repositories {
     jcenter()
+    google()
 }
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "26.0.1"
 
     defaultConfig {
         applicationId "org.jetbrains.kotlin.android.tests"
@@ -64,7 +67,7 @@ android {
 
     dexOptions {
         dexInProcess false
-        javaMaxHeapSize "300m"
+        javaMaxHeapSize "600m"
         //default is 4 and Total Memory = maxProcessCount * javaMaxHeapSize
         maxProcessCount 1
         additionalParameters "--debug"
