@@ -23,11 +23,11 @@ import java.io.File
 /**
  * Finds all "macro constants" and registers them as [NativeIndex.constants] in given index.
  */
-internal fun findMacroConstants(library: NativeLibrary, nativeIndex: NativeIndexImpl) {
-    val names = collectMacroConstantsNames(library)
+internal fun findMacroConstants(nativeIndex: NativeIndexImpl) {
+    val names = collectMacroConstantsNames(nativeIndex)
     // TODO: apply user-defined filters.
 
-    val constants = expandMacroConstants(library, names, typeConverter = { nativeIndex.convertType(it) })
+    val constants = expandMacroConstants(nativeIndex.library, names, typeConverter = { nativeIndex.convertType(it) })
 
     nativeIndex.macroConstants.addAll(constants)
 }
@@ -209,17 +209,17 @@ enum class VisitorState {
     EXPECT_END, INVALID
 }
 
-private fun collectMacroConstantsNames(library: NativeLibrary): List<String> {
+private fun collectMacroConstantsNames(nativeIndex: NativeIndexImpl): List<String> {
     val result = mutableSetOf<String>()
     val index = clang_createIndex(excludeDeclarationsFromPCH = 0, displayDiagnostics = 0)!!
     try {
         // Include macros into AST:
         val options = CXTranslationUnit_DetailedPreprocessingRecord
 
-        val translationUnit = library.parse(index, options)
+        val translationUnit = nativeIndex.library.parse(index, options)
         try {
             translationUnit.ensureNoCompileErrors()
-            val headers = getFilteredHeaders(library, index, translationUnit)
+            val headers = getFilteredHeaders(nativeIndex, index, translationUnit)
 
             visitChildren(translationUnit) { cursor, _ ->
                 val file = memScoped {
@@ -229,7 +229,8 @@ private fun collectMacroConstantsNames(library: NativeLibrary): List<String> {
                 }
 
                 if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition &&
-                        library.includesDeclaration(cursor) &&
+                        nativeIndex.library.includesDeclaration(cursor) &&
+                        file != null && // Builtin macros mostly seem to be useless.
                         file in headers &&
                         canMacroBeConstant(cursor))
                 {

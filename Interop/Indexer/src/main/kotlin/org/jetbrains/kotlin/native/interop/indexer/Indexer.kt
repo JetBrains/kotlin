@@ -21,7 +21,7 @@ import clang.CXIdxEntityKind.*
 import clang.CXTypeKind.*
 import kotlinx.cinterop.*
 
-private class StructDeclImpl(spelling: String) : StructDecl(spelling) {
+private class StructDeclImpl(spelling: String, override val location: Location) : StructDecl(spelling) {
     override var def: StructDefImpl? = null
 }
 
@@ -37,27 +37,41 @@ private class StructDefImpl(
     override val bitFields = mutableListOf<BitField>()
 }
 
-private class EnumDefImpl(spelling: String, type: Type) : EnumDef(spelling, type) {
+private class EnumDefImpl(spelling: String, type: Type, override val location: Location) : EnumDef(spelling, type) {
     override val constants = mutableListOf<EnumConstant>()
 }
 
-private interface ObjCClassOrProtocolImpl {
+private interface ObjCContainerImpl {
     val protocols: MutableList<ObjCProtocol>
     val methods: MutableList<ObjCMethod>
     val properties: MutableList<ObjCProperty>
 }
 
-private class ObjCProtocolImpl(name: String) : ObjCProtocol(name), ObjCClassOrProtocolImpl {
+private class ObjCProtocolImpl(
+        name: String,
+        override val location: Location
+) : ObjCProtocol(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
     override val properties = mutableListOf<ObjCProperty>()
 }
 
-private class ObjCClassImpl(name: String) : ObjCClass(name), ObjCClassOrProtocolImpl {
+private class ObjCClassImpl(
+        name: String,
+        override val location: Location
+) : ObjCClass(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
     override val properties = mutableListOf<ObjCProperty>()
     override var baseClass: ObjCClass? = null
+}
+
+private class ObjCCategoryImpl(
+        name: String, clazz: ObjCClass
+) : ObjCCategory(name, clazz), ObjCContainerImpl {
+    override val protocols = mutableListOf<ObjCProtocol>()
+    override val methods = mutableListOf<ObjCMethod>()
+    override val properties = mutableListOf<ObjCProperty>()
 }
 
 internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
@@ -67,37 +81,85 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         object VaList : DeclarationID()
         object VaListTag : DeclarationID()
         object BuiltinVaList : DeclarationID()
+        object Protocol : DeclarationID()
     }
 
-    private val structById = mutableMapOf<DeclarationID, StructDeclImpl>()
+    private inner class TypeDeclarationRegistry<D : TypeDeclaration> {
+        private val all = mutableMapOf<DeclarationID, D>()
 
-    override val structs: List<StructDecl>
-        get() = structById.values.toList()
+        val included = mutableListOf<D>()
 
-    private val enumById = mutableMapOf<DeclarationID, EnumDefImpl>()
+        inline fun getOrPut(cursor: CValue<CXCursor>, create: () -> D) = getOrPut(cursor, create, configure = {})
 
-    override val enums: List<EnumDef>
-        get() = enumById.values.toList()
+        inline fun getOrPut(cursor: CValue<CXCursor>, create: () -> D, configure: (D) -> Unit): D {
+            val key = getDeclarationId(cursor)
+            return all.getOrElse(key) {
 
-    private val objCClassesByName = mutableMapOf<String, ObjCClassImpl>()
+                val value = create()
+                all[key] = value
 
-    override val objCClasses: List<ObjCClass> get() = objCClassesByName.values.toList()
+                val headerId = getHeaderId(getContainingFile(cursor))
+                if (!library.headerInclusionPolicy.excludeAll(headerId)) {
+                    // This declaration is used, and thus should be included:
+                    included.add(value)
+                }
 
-    private val objCProtocolsByName = mutableMapOf<String, ObjCProtocolImpl>()
+                configure(value)
+                value
+            }
+        }
 
-    override val objCProtocols: List<ObjCProtocol> get() = objCProtocolsByName.values.toList()
+    }
 
-    private val typedefById = mutableMapOf<DeclarationID, TypedefDef>()
+    private val headerPathToId = mutableMapOf<String, HeaderId>()
 
-    override val typedefs: List<TypedefDef>
-        get() = typedefById.values.toList()
+    internal fun getHeaderId(file: CXFile?): HeaderId {
+        if (file == null) {
+            return HeaderId("builtins")
+        }
+
+        val filePath = clang_getFileName(file).convertAndDispose()
+        return headerPathToId.getOrPut(filePath) {
+            val headerIdValue = headerContentsHash(filePath)
+            HeaderId(headerIdValue)
+        }
+    }
+
+    private fun getContainingFile(cursor: CValue<CXCursor>): CXFile? {
+        return clang_getCursorLocation(cursor).getContainingFile()
+    }
+
+    private fun getLocation(cursor: CValue<CXCursor>): Location {
+        val headerId = getHeaderId(getContainingFile(cursor))
+        return Location(headerId)
+    }
+
+    override val structs: List<StructDecl> get() = structRegistry.included
+    private val structRegistry = TypeDeclarationRegistry<StructDeclImpl>()
+
+    override val enums: List<EnumDef> get() = enumRegistry.included
+    private val enumRegistry = TypeDeclarationRegistry<EnumDefImpl>()
+
+    override val objCClasses: List<ObjCClass> get() = objCClassRegistry.included
+    private val objCClassRegistry = TypeDeclarationRegistry<ObjCClassImpl>()
+
+    override val objCProtocols: List<ObjCProtocol> get() = objCProtocolRegistry.included
+    private val objCProtocolRegistry = TypeDeclarationRegistry<ObjCProtocolImpl>()
+
+    override val objCCategories: Collection<ObjCCategory> get() = objCCategoryById.values
+    private val objCCategoryById = mutableMapOf<DeclarationID, ObjCCategoryImpl>()
+
+    override val typedefs get() = typedefRegistry.included
+    private val typedefRegistry = TypeDeclarationRegistry<TypedefDef>()
 
     private val functionById = mutableMapOf<DeclarationID, FunctionDecl>()
 
-    override val functions: List<FunctionDecl>
-        get() = functionById.values.toList()
+    override val functions: Collection<FunctionDecl>
+        get() = functionById.values
 
     override val macroConstants = mutableListOf<ConstantDef>()
+
+    override lateinit var includedHeaders: List<HeaderId>
 
     private fun getDeclarationId(cursor: CValue<CXCursor>): DeclarationID {
         val usr = clang_getCursorUSR(cursor).convertAndDispose()
@@ -108,32 +170,29 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                 CXCursorKind.CXCursor_StructDecl to "__va_list_tag" -> DeclarationID.VaListTag
                 CXCursorKind.CXCursor_StructDecl to "__va_list" -> DeclarationID.VaList
                 CXCursorKind.CXCursor_TypedefDecl to "__builtin_va_list" -> DeclarationID.BuiltinVaList
-                else -> error(spelling)
+                CXCursorKind.CXCursor_ObjCInterfaceDecl to "Protocol" -> DeclarationID.Protocol
+                else -> error(kind to spelling)
             }
         }
 
         return DeclarationID.USR(usr)
     }
 
-    private fun getStructDeclAt(cursor: CValue<CXCursor>): StructDeclImpl {
-        val declId = getDeclarationId(cursor)
-
-        val structDecl = structById.getOrPut(declId) {
-            val cursorType = clang_getCursorType(cursor)
-            val typeSpelling = clang_getTypeSpelling(cursorType).convertAndDispose()
-
-            StructDeclImpl(typeSpelling)
+    private fun getStructDeclAt(
+            cursor: CValue<CXCursor>
+    ): StructDeclImpl = structRegistry.getOrPut(cursor, { createStructDecl(cursor) }) { decl ->
+        val definitionCursor = clang_getCursorDefinition(cursor)
+        if (clang_Cursor_isNull(definitionCursor) == 0) {
+            assert(clang_isCursorDefinition(definitionCursor) != 0)
+            createStructDef(decl, cursor)
         }
+    }
 
-        if (structDecl.def == null) {
-            val definitionCursor = clang_getCursorDefinition(cursor)
-            if (clang_Cursor_isNull(definitionCursor) == 0) {
-                assert(clang_isCursorDefinition(definitionCursor) != 0)
-                createStructDef(structDecl, cursor)
-            }
-        }
+    private fun createStructDecl(cursor: CValue<CXCursor>): StructDeclImpl {
+        val cursorType = clang_getCursorType(cursor)
+        val typeSpelling = clang_getTypeSpelling(cursorType).convertAndDispose()
 
-        return structDecl
+        return StructDeclImpl(typeSpelling, getLocation(cursor))
     }
 
     private fun createStructDef(structDecl: StructDeclImpl, cursor: CValue<CXCursor>) {
@@ -185,15 +244,13 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             TODO("support enum forward declarations")
         }
 
-        val declId = getDeclarationId(cursor)
-
-        return enumById.getOrPut(declId) {
+        return enumRegistry.getOrPut(cursor) {
             val cursorType = clang_getCursorType(cursor)
             val typeSpelling = clang_getTypeSpelling(cursorType).convertAndDispose()
 
             val baseType = convertType(clang_getEnumDeclIntegerType(cursor))
 
-            val enumDef = EnumDefImpl(typeSpelling, baseType)
+            val enumDef = EnumDefImpl(typeSpelling, baseType, getLocation(cursor))
 
             visitChildren(cursor) { childCursor, _ ->
                 if (clang_getCursorKind(childCursor) == CXCursorKind.CXCursor_EnumConstantDecl) {
@@ -233,13 +290,9 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
 
-        objCClassesByName[name]?.let { return it }
-
-        val result = ObjCClassImpl(name)
-        objCClassesByName[name] = result
-
-        addChildrenToClassOrProtocol(cursor, result)
-        return result
+        return objCClassRegistry.getOrPut(cursor, { ObjCClassImpl(name, getLocation(cursor)) }) {
+            addChildrenToObjCContainer(cursor, it)
+        }
 
     }
 
@@ -253,16 +306,30 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
 
-        objCProtocolsByName[name]?.let { return it }
-
-        val result = ObjCProtocolImpl(name)
-        objCProtocolsByName[name] = result
-
-        addChildrenToClassOrProtocol(cursor, result)
-        return result
+        return objCProtocolRegistry.getOrPut(cursor, { ObjCProtocolImpl(name, getLocation(cursor)) }) {
+            addChildrenToObjCContainer(cursor, it)
+        }
     }
 
-    private fun addChildrenToClassOrProtocol(cursor: CValue<CXCursor>, result: ObjCClassOrProtocolImpl) {
+    private fun getObjCCategoryAt(cursor: CValue<CXCursor>): ObjCCategoryImpl? {
+        assert(cursor.kind == CXCursorKind.CXCursor_ObjCCategoryDecl) { cursor.kind }
+
+        val classCursor = getObjCCategoryClassCursor(cursor)
+        if (!isAvailable(classCursor)) return null
+
+        val name = clang_getCursorDisplayName(cursor).convertAndDispose()
+        val declarationId = getDeclarationId(cursor)
+
+        return objCCategoryById.getOrPut(declarationId) {
+            val clazz = getObjCClassAt(classCursor)
+            val category = ObjCCategoryImpl(name, clazz)
+            addChildrenToObjCContainer(cursor, category)
+            category
+        }
+
+    }
+
+    private fun addChildrenToObjCContainer(cursor: CValue<CXCursor>, result: ObjCContainerImpl) {
         visitChildren(cursor) { child, _ ->
             when (child.kind) {
                 CXCursorKind.CXCursor_ObjCSuperClassRef -> {
@@ -332,10 +399,9 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             return underlying
         }
 
-        val declId = getDeclarationId(declCursor)
-        val typedefDef = typedefById.getOrPut(declId) {
+        val typedefDef = typedefRegistry.getOrPut(declCursor) {
 
-            TypedefDef(underlying, name)
+            TypedefDef(underlying, name, getLocation(declCursor))
         }
 
         return Typedef(typedefDef)
@@ -570,7 +636,9 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
             CXIdxEntity_Function -> {
                 if (isSuitableFunction(cursor)) {
-                    functionById[getDeclarationId(cursor)] = getFunction(cursor)
+                    functionById.getOrPut(getDeclarationId(cursor)) {
+                        getFunction(cursor)
+                    }
                 }
             }
 
@@ -579,21 +647,23 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             }
 
             CXIdxEntity_ObjCClass -> {
-                if (isAvailable(cursor)) {
-                    getObjCClassAt(clang_getCursorReferenced(cursor))
+                if (isAvailable(cursor) &&
+                        cursor.kind != CXCursorKind.CXCursor_ObjCClassRef /* not a forward declaration */) {
+
+                    getObjCClassAt(cursor)
                 }
             }
 
             CXIdxEntity_ObjCCategory -> {
-                val classCursor = getObjCCategoryClassCursor(cursor)
-                if (isAvailable(classCursor)) {
-                    val objCClass = getObjCClassAt(classCursor)
-                    addChildrenToClassOrProtocol(cursor, objCClass)
+                if (isAvailable(cursor)) {
+                    getObjCCategoryAt(cursor)
                 }
             }
 
             CXIdxEntity_ObjCProtocol -> {
-                if (isAvailable(cursor)) {
+                if (isAvailable(cursor) &&
+                        cursor.kind != CXCursorKind.CXCursor_ObjCProtocolRef /* not a forward declaration */) {
+
                     getObjCProtocolAt(cursor)
                 }
             }
@@ -609,23 +679,16 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
                     if (getter != null) {
                         val property = ObjCProperty(entityName!!, getter, setter)
-                        val classOrProtocol: ObjCClassOrProtocolImpl? = when (container.kind) {
-                            CXCursorKind.CXCursor_ObjCCategoryDecl -> {
-                                val classCursor = getObjCCategoryClassCursor(container)
-                                if (isAvailable(classCursor)) {
-                                    getObjCClassAt(classCursor)
-                                } else {
-                                    null
-                                }
-                            }
+                        val objCContainer: ObjCContainerImpl? = when (container.kind) {
+                            CXCursorKind.CXCursor_ObjCCategoryDecl -> getObjCCategoryAt(container)
                             CXCursorKind.CXCursor_ObjCInterfaceDecl -> getObjCClassAt(container)
                             CXCursorKind.CXCursor_ObjCProtocolDecl -> getObjCProtocolAt(container)!!
                             else -> error(container.kind)
                         }
 
-                        if (classOrProtocol != null) {
-                            classOrProtocol.properties.removeAll { property.replaces(it) }
-                            classOrProtocol.properties.add(property)
+                        if (objCContainer != null) {
+                            objCContainer.properties.removeAll { property.replaces(it) }
+                            objCContainer.properties.add(property)
                         }
                     }
                 }
@@ -727,19 +790,23 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
 fun buildNativeIndexImpl(library: NativeLibrary): NativeIndex {
     val result = NativeIndexImpl(library)
-    indexDeclarations(library, result)
-    findMacroConstants(library, result)
+    indexDeclarations(result)
+    findMacroConstants(result)
     return result
 }
 
-private fun indexDeclarations(library: NativeLibrary, nativeIndex: NativeIndexImpl) {
+private fun indexDeclarations(nativeIndex: NativeIndexImpl) {
     val index = clang_createIndex(0, 0)!!
     try {
-        val translationUnit = library.parse(index, options = CXTranslationUnit_DetailedPreprocessingRecord)
+        val translationUnit = nativeIndex.library.parse(index, options = CXTranslationUnit_DetailedPreprocessingRecord)
         try {
             translationUnit.ensureNoCompileErrors()
 
-            val headers = getFilteredHeaders(library, index, translationUnit)
+            val headers = getFilteredHeaders(nativeIndex, index, translationUnit)
+
+            nativeIndex.includedHeaders = headers.map {
+                nativeIndex.getHeaderId(it)
+            }
 
             indexTranslationUnit(index, translationUnit, 0, object : Indexer {
                 override fun indexDeclaration(info: CXIdxDeclInfo) {

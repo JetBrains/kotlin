@@ -1,3 +1,4 @@
+language = Objective-C
 package = platform.osx
 headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityInternal.h \
     AvailabilityMacros.h Block.h ConditionalMacros.h MacTypes.h NSSystemDirectories.h \

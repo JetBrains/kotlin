@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.library.impl
 
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
+import org.jetbrains.kotlin.backend.konan.createInteropLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.*
@@ -34,7 +35,7 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int, val t
 
     private val reader = MetadataReaderImpl(inPlace)
 
-    val manifestProperties: Properties by lazy {
+    override val manifestProperties: Properties by lazy {
         inPlace.manifestFile.loadProperties()
     }
 
@@ -69,7 +70,7 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int, val t
         reader.loadSerializedPackageFragment(fqName)
 
     override fun moduleDescriptor(specifics: LanguageVersionSettings) 
-        = deserializeModule(specifics, {packageMetadata(it)}, moduleHeaderData)
+        = deserializeModule(specifics, {packageMetadata(it)}, moduleHeaderData, createInteropLibrary(this))
 
 }
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.InteropLibrary
 import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.library.LinkData
@@ -75,15 +76,19 @@ object NullFlexibleTypeDeserializer : FlexibleTypeDeserializer {
 }
 
 fun createKonanPackageFragmentProvider(
-        fragmentNames: List<String>, 
+        fragmentNames: List<String>,
         packageLoader: (String)->KonanLinkData.PackageFragment,
-        storageManager: StorageManager, module: ModuleDescriptor, 
-        configuration: DeserializationConfiguration): PackageFragmentProvider {
+        storageManager: StorageManager, module: ModuleDescriptor,
+        configuration: DeserializationConfiguration,
+        interopLibrary: InteropLibrary?): PackageFragmentProvider {
 
     val packageFragments = fragmentNames.map{ 
         KonanPackageFragment(it, packageLoader, storageManager, module) 
     }
-    val provider = PackageFragmentProviderImpl(packageFragments)
+    val syntheticInteropPackageFragments =
+            interopLibrary?.createSyntheticPackages(module, packageFragments) ?: emptyList()
+
+    val provider = PackageFragmentProviderImpl(packageFragments + syntheticInteropPackageFragments)
 
     val notFoundClasses = NotFoundClasses(storageManager, module)
 
@@ -115,7 +120,8 @@ public fun parseModuleHeader(libraryData: ByteArray): Library =
         KonanSerializerProtocol.extensionRegistry)
 
 internal fun deserializeModule(languageVersionSettings: LanguageVersionSettings,
-    packageLoader:(String)->ByteArray, library: ByteArray): ModuleDescriptorImpl {
+                               packageLoader:(String)->ByteArray, library: ByteArray,
+                               interopLibrary: InteropLibrary?): ModuleDescriptorImpl {
 
     val libraryProto = parseModuleHeader(library)
     val moduleName = libraryProto.moduleName
@@ -131,7 +137,7 @@ internal fun deserializeModule(languageVersionSettings: LanguageVersionSettings,
         libraryProto.packageFragmentNameList,
         {it -> parsePackageFragment(packageLoader(it))},
         storageManager, 
-        moduleDescriptor, deserializationConfiguration)
+        moduleDescriptor, deserializationConfiguration, interopLibrary)
 
     moduleDescriptor.initialize(provider)
 

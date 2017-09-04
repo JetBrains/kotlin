@@ -39,7 +39,8 @@ object TopDownAnalyzerFacadeForKonan {
         builtIns.builtInsModule = module
 
         if (!module.isStdlib()) {
-            context.setDependencies(listOf(module) + config.moduleDescriptors)
+            context.setDependencies(listOf(module) + config.moduleDescriptors +
+                    config.getOrCreateForwardDeclarationsModule(builtIns, projectContext.storageManager))
         } else {
             assert (config.moduleDescriptors.isEmpty())
             context.setDependencies(module)

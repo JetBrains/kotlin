@@ -156,7 +156,11 @@ private val File.zipUri: URI
 fun File.zipFileSystem(mutable: Boolean = false): FileSystem {
     val zipUri = this.zipUri
     val attributes = hashMapOf("create" to mutable.toString())
-    return FileSystems.newFileSystem(zipUri, attributes, null)
+    return try {
+        FileSystems.newFileSystem(zipUri, attributes, null)
+    } catch (e: FileSystemAlreadyExistsException) {
+        FileSystems.getFileSystem(zipUri)
+    }
 }
 
 fun File.mutableZipFileSystem() = this.zipFileSystem(mutable = true)

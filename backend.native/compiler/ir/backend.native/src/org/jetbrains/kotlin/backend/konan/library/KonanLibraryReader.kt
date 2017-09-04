@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan.library
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.konan.properties.Properties
 
 interface KonanLibraryReader {
     val libraryName: String
@@ -25,6 +26,7 @@ interface KonanLibraryReader {
     val includedPaths: List<String>
     val linkerOpts: List<String>
     val escapeAnalysis: ByteArray?
+    val manifestProperties: Properties
     fun moduleDescriptor(specifics: LanguageVersionSettings): ModuleDescriptor
 }
 

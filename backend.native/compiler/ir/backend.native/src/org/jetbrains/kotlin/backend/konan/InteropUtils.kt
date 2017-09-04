@@ -16,7 +16,12 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.descriptors.ClassifierAliasingPackageFragmentDescriptor
+import org.jetbrains.kotlin.backend.konan.descriptors.ExportedForwardDeclarationsPackageFragmentDescriptor
+import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -24,6 +29,23 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
+
+interface InteropLibrary {
+    fun createSyntheticPackages(
+            module: ModuleDescriptor,
+            kotlinPackageFragments: List<PackageFragmentDescriptor>
+    ): List<PackageFragmentDescriptor>
+}
+
+fun createInteropLibrary(reader: KonanLibraryReader): InteropLibrary? {
+    val pkg = reader.manifestProperties.getProperty("pkg") ?: return null
+    val exportForwardDeclarations = reader.manifestProperties
+            .getProperty("exportForwardDeclarations").split(' ')
+            .map { it.trim() }.filter { it.isNotEmpty() }
+            .map { FqName(it) }
+
+    return InteropLibraryImpl(FqName(pkg), exportForwardDeclarations)
+}
 
 private val cPointerName = "CPointer"
 private val nativePointedName = "NativePointed"
@@ -35,6 +57,13 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
         val cPointer = packageName.child(Name.identifier(cPointerName)).toUnsafe()
         val nativePointed = packageName.child(Name.identifier(nativePointedName)).toUnsafe()
+
+        val cNames = FqName("cnames")
+        val cNamesStructs = cNames.child(Name.identifier("structs"))
+
+        val objCNames = FqName("objcnames")
+        val objCNamesClasses = objCNames.child(Name.identifier("classes"))
+        val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
     }
 
     private val packageScope = builtIns.builtInsModule.getPackage(FqNames.packageName).memberScope
@@ -175,3 +204,31 @@ private fun MemberScope.getContributedClass(name: String): ClassDescriptor =
 
 private fun MemberScope.getContributedFunctions(name: String) =
         this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
+
+private class InteropLibraryImpl(
+        private val packageFqName: FqName,
+        private val exportForwardDeclarations: List<FqName>
+) : InteropLibrary {
+    override fun createSyntheticPackages(
+            module: ModuleDescriptor,
+            kotlinPackageFragments: List<PackageFragmentDescriptor>
+    ): List<PackageFragmentDescriptor> {
+        val interopPackageFragments = kotlinPackageFragments.filter { it.fqName == packageFqName }
+
+        val fqNames = InteropBuiltIns.FqNames
+
+        val result = mutableListOf<PackageFragmentDescriptor>()
+
+        // Allow references to forwarding declarations to be resolved into classifiers declared in this library:
+        listOf(fqNames.cNamesStructs, fqNames.objCNamesClasses, fqNames.objCNamesProtocols).mapTo(result) { fqName ->
+            ClassifierAliasingPackageFragmentDescriptor(interopPackageFragments, module, fqName)
+        }
+        // TODO: use separate namespaces for structs, enums, Objective-C protocols etc.
+
+        result.add(ExportedForwardDeclarationsPackageFragmentDescriptor(
+                module, packageFqName, exportForwardDeclarations
+        ))
+
+        return result
+    }
+}

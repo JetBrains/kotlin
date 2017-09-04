@@ -1,3 +1,4 @@
+language = Objective-C
 package = platform.objc
 headers = objc/List.h objc/NSObjCRuntime.h objc/NSObject.h objc/Object.h objc/Protocol.h \
     objc/hashtable.h objc/hashtable2.h objc/message.h objc/objc-api.h \

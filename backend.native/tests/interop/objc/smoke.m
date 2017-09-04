@@ -24,11 +24,6 @@
     return self;
 }
 
--(void)hello {
-    CPrinter* printer = [[CPrinter alloc] init];
-    [self helloWithPrinter:printer];
-}
-
 -(void)helloWithPrinter:(id <Printer>)printer {
     NSString* message = [NSString stringWithFormat:@"Hello, %@!", self.name];
     [printer print:message.UTF8String];
@@ -38,6 +33,14 @@
     printf("Deallocated\n");
 }
 
+@end;
+
+@implementation Foo (FooExtensions)
+
+-(void)hello {
+    CPrinter* printer = [[CPrinter alloc] init];
+    [self helloWithPrinter:printer];
+}
 @end;
 
 void replacePairElements(id <MutablePair> pair, int first, int second) {

@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
+import org.jetbrains.kotlin.native.interop.gen.HeadersInclusionPolicyImpl
+import org.jetbrains.kotlin.native.interop.gen.ImportsImpl
 import org.jetbrains.kotlin.native.interop.indexer.*
 import java.io.File
 import java.io.StringReader
@@ -133,10 +135,6 @@ private fun <T> Collection<T>.atMostOne(): T? {
         else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
-
-private fun String.matchesToGlob(glob: String): Boolean =
-        java.nio.file.FileSystems.getDefault()
-                .getPathMatcher("glob:$glob").matches(java.nio.file.Paths.get(this))
 
 private fun Properties.getHostSpecific(
         name: String) = getProperty("$name.$host")
@@ -360,6 +358,15 @@ private fun argsToCompiler(staticLibraries: List<String>, libraryPaths: List<Str
         .map { it -> listOf("-includeBinary", it) } .flatten()
 }
 
+private fun parseImports(args: Map<String, List<String>>): ImportsImpl {
+    val headerIdToPackage = (args["-import"] ?: emptyList()).map { arg ->
+        val (pkg, joinedIds) = arg.split(':')
+        val ids = joinedIds.split(',')
+        ids.map { HeaderId(it) to pkg }
+    }.reversed().flatten().toMap()
+
+    return ImportsImpl(headerIdToPackage)
+}
 
 private fun processLib(konanHome: String,
                        substitutions: Map<String, String>,
@@ -444,14 +451,8 @@ private fun processLib(konanHome: String,
     val libName = args["-cstubsname"]?.atMostOne() ?: fqParts.joinToString("") + "stubs"
 
     val headerFilterGlobs = config.getSpaceSeparated("headerFilter")
-
-    val headerFilter = { name: String ->
-        if (headerFilterGlobs.isEmpty()) {
-            true
-        } else {
-            headerFilterGlobs.any { name.matchesToGlob(it) }
-        }
-    }
+    val imports = parseImports(args)
+    val headerInclusionPolicy = HeadersInclusionPolicyImpl(headerFilterGlobs, imports)
 
     val library = NativeLibrary(
             includes = headerFiles,
@@ -460,7 +461,7 @@ private fun processLib(konanHome: String,
             language = language,
             excludeSystemLibs = excludeSystemLibs,
             excludeDepdendentModules = excludeDependentModules,
-            headerFilter = headerFilter
+            headerInclusionPolicy = headerInclusionPolicy
     )
 
     val configuration = InteropConfiguration(
@@ -473,7 +474,7 @@ private fun processLib(konanHome: String,
 
     val nativeIndex = buildNativeIndex(library)
 
-    val gen = StubGenerator(nativeIndex, configuration, libName, generateShims, verbose, flavor)
+    val gen = StubGenerator(nativeIndex, configuration, libName, generateShims, verbose, flavor, imports)
 
     outKtFile.parentFile.mkdirs()
 
@@ -485,6 +486,12 @@ private fun processLib(konanHome: String,
             gen.generateFiles(ktFile = ktFile, cFile = cFile, entryPoint = entryPoint)
         }
     }
+
+    // TODO: if a library has partially included headers, then it shouldn't be used as a dependency.
+    manifestAddendProperties["includedHeaders"] = nativeIndex.includedHeaders.joinToString(" ") { it.value }
+    manifestAddendProperties["pkg"] = outKtPkg
+
+    gen.addManifestProperties(manifestAddendProperties)
 
     manifestAddend?.parentFile?.mkdirs()
     manifestAddend?.let { manifestAddendProperties.storeProperties(it) }

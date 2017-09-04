@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.native.interop.gen.jvm
 import org.jetbrains.kotlin.native.interop.gen.*
 import org.jetbrains.kotlin.native.interop.indexer.*
 import java.lang.IllegalStateException
+import java.util.*
 
 enum class KotlinPlatform {
     JVM,
@@ -31,7 +32,9 @@ class StubGenerator(
         val libName: String,
         val dumpShims: Boolean,
         val verbose: Boolean = false,
-        val platform: KotlinPlatform = KotlinPlatform.JVM) {
+        val platform: KotlinPlatform = KotlinPlatform.JVM,
+        val imports: Imports
+) {
 
     private var theCounter = 0
     fun nextUniqueId() = theCounter++
@@ -60,10 +63,8 @@ class StubGenerator(
      * The names that should not be used for struct classes to prevent name clashes
      */
     val forbiddenStructNames = run {
-        val functionNames = nativeIndex.functions.map { it.name }
-        val fieldNames = nativeIndex.structs.mapNotNull { it.def }.flatMap { it.fields }.map { it.name }
         val typedefNames = nativeIndex.typedefs.map { it.name }
-        (functionNames + fieldNames + typedefNames).toSet()
+        typedefNames.toSet()
     }
 
     val StructDecl.isAnonymous: Boolean
@@ -89,6 +90,8 @@ class StubGenerator(
                 spelling
             }
 
+            // TODO: don't mangle struct names because it wouldn't work if the struct
+            // is imported into another interop library.
             return if (strippedCName !in forbiddenStructNames) strippedCName else (strippedCName + "Struct")
         }
 
@@ -129,11 +132,26 @@ class StubGenerator(
         }
 
     val declarationMapper = object : DeclarationMapper {
-        override fun getKotlinNameForPointed(structDecl: StructDecl): String = structDecl.kotlinName
+        override fun getKotlinClassForPointed(structDecl: StructDecl): Classifier {
+            val baseName = structDecl.kotlinName
+            val pkg = when (platform) {
+                KotlinPlatform.JVM -> pkgName
+                KotlinPlatform.NATIVE -> if (structDecl.def == null) {
+                    cnamesStructsPackageName // to be imported as forward declaration.
+                } else {
+                    getPackageFor(structDecl)
+                }
+            }
+            return Classifier.topLevel(pkg, baseName)
+        }
 
         override fun isMappedToStrict(enumDef: EnumDef): Boolean = enumDef.isStrictEnum
 
         override fun getKotlinNameForValue(enumDef: EnumDef): String = enumDef.kotlinName
+
+        override fun getPackageFor(declaration: TypeDeclaration): String {
+            return imports.getPackage(declaration.location) ?: pkgName
+        }
     }
 
     fun mirror(type: Type): TypeMirror = mirror(declarationMapper, type)
@@ -141,6 +159,63 @@ class StubGenerator(
     val functionsToBind = nativeIndex.functions.filter { it.name !in excludedFunctions }
 
     private val macroConstantsByName = nativeIndex.macroConstants.associateBy { it.name }
+
+    val kotlinFile = KotlinFile(pkgName, namesToBeDeclared = computeNamesToBeDeclared())
+
+    private fun computeNamesToBeDeclared(): MutableList<String> {
+        return mutableListOf<String>().apply {
+            nativeIndex.typedefs.forEach {
+                getTypeDeclaringNames(Typedef(it), this)
+            }
+
+            nativeIndex.objCProtocols.forEach {
+                add(it.kotlinClassName(isMeta = false))
+                add(it.kotlinClassName(isMeta = true))
+            }
+
+            nativeIndex.objCClasses.forEach {
+                add(it.kotlinClassName(isMeta = false))
+                add(it.kotlinClassName(isMeta = true))
+            }
+
+            nativeIndex.structs.forEach {
+                getTypeDeclaringNames(RecordType(it), this)
+            }
+
+            nativeIndex.enums.forEach {
+                if (!it.isAnonymous) {
+                    getTypeDeclaringNames(EnumType(it), this)
+                }
+            }
+        }
+    }
+
+    /**
+     * Finds all names to be declared for the given type declaration,
+     * and adds them to [result].
+     *
+     * TODO: refactor to compute these names directly from declarations.
+     */
+    private fun getTypeDeclaringNames(type: Type, result: MutableList<String>) {
+        if (type.unwrapTypedefs() == VoidType) {
+            return
+        }
+
+        val mirror = mirror(type)
+        val varClassifier = mirror.pointedType.classifier
+        if (varClassifier.pkg == pkgName) {
+            result.add(varClassifier.topLevelName)
+        }
+        when (mirror) {
+            is TypeMirror.ByValue -> {
+                val valueClassifier = mirror.valueType.classifier
+                if (valueClassifier.pkg == pkgName && valueClassifier.topLevelName != varClassifier.topLevelName) {
+                    result.add(valueClassifier.topLevelName)
+                }
+            }
+            is TypeMirror.ByRef -> {}
+        }
+    }
 
     /**
      * The output currently used by the generator.
@@ -262,7 +337,9 @@ class StubGenerator(
             }
         }
 
-        block("class ${decl.kotlinName.asSimpleName()}(rawPtr: NativePtr) : CStructVar(rawPtr)") {
+        val kotlinName = kotlinFile.declare(declarationMapper.getKotlinClassForPointed(decl))
+
+        block("class $kotlinName(rawPtr: NativePtr) : CStructVar(rawPtr)") {
             out("")
             out("companion object : Type(${def.size}, ${def.align})") // FIXME: align
             out("")
@@ -276,7 +353,7 @@ class StubGenerator(
                     val fieldRefType = mirror(field.type)
                     val unwrappedFieldType = field.type.unwrapTypedefs()
                     if (unwrappedFieldType is ArrayType) {
-                        val type = (fieldRefType as TypeMirror.ByValue).valueTypeName
+                        val type = (fieldRefType as TypeMirror.ByValue).valueType.render(kotlinFile)
 
                         if (platform == KotlinPlatform.JVM) {
                             val length = getArrayLength(unwrappedFieldType)
@@ -288,13 +365,13 @@ class StubGenerator(
                         out("val ${field.name.asSimpleName()}: $type")
                         out("    get() = arrayMemberAt($offset)")
                     } else {
+                        val pointedTypeName = fieldRefType.pointedType.render(kotlinFile)
                         if (fieldRefType is TypeMirror.ByValue) {
-                            val pointedTypeName = fieldRefType.pointedTypeName
-                            out("var ${field.name.asSimpleName()}: ${fieldRefType.argType}")
+                            out("var ${field.name.asSimpleName()}: ${fieldRefType.argType.render(kotlinFile)}")
                             out("    get() = memberAt<$pointedTypeName>($offset).value")
                             out("    set(value) { memberAt<$pointedTypeName>($offset).value = value }")
                         } else {
-                            out("val ${field.name.asSimpleName()}: ${fieldRefType.pointedTypeName}")
+                            out("val ${field.name.asSimpleName()}: $pointedTypeName")
                             out("    get() = memberAt($offset)")
                         }
                     }
@@ -308,7 +385,7 @@ class StubGenerator(
                 for (field in def.bitFields) {
                     val typeMirror = mirror(field.type)
                     val typeInfo = typeMirror.info
-                    val kotlinType = typeMirror.argType
+                    val kotlinType = typeMirror.argType.render(kotlinFile)
                     val rawType = typeInfo.bridgedType
 
                     out("var ${field.name.asSimpleName()}: $kotlinType")
@@ -318,7 +395,7 @@ class StubGenerator(
                     val readBitsExpr =
                             "readBits(this.rawPtr, ${field.offset}, ${field.size}, $signed).${rawType.convertor!!}()"
 
-                    out("    get() = ${typeInfo.argFromBridged(readBitsExpr)}")
+                    out("    get() = ${typeInfo.argFromBridged(readBitsExpr, kotlinFile)}")
 
                     val rawValue = typeInfo.argToBridged("value")
                     val setExpr = "writeBits(this.rawPtr, ${field.offset}, ${field.size}, $rawValue.toLong())"
@@ -339,8 +416,9 @@ class StubGenerator(
     /**
      * Produces to [out] the definition of Kotlin class representing the reference to given forward (incomplete) struct.
      */
-    private fun generateForwardStruct(s: StructDecl) {
-        out("class ${s.kotlinName.asSimpleName()}(rawPtr: NativePtr) : COpaque(rawPtr)")
+    private fun generateForwardStruct(s: StructDecl) = when (platform) {
+        KotlinPlatform.JVM -> out("class ${s.kotlinName.asSimpleName()}(rawPtr: NativePtr) : COpaque(rawPtr)")
+        KotlinPlatform.NATIVE -> {}
     }
 
     private fun EnumConstant.isMoreCanonicalThan(other: EnumConstant): Boolean = with(other.name.toLowerCase()) {
@@ -359,7 +437,7 @@ class StubGenerator(
         }
 
         val baseTypeMirror = mirror(e.baseType)
-        val baseKotlinType = baseTypeMirror.argType
+        val baseKotlinType = baseTypeMirror.argType.render(kotlinFile)
 
         val canonicalsByValue = e.constants
                 .groupingBy { it.value }
@@ -373,7 +451,9 @@ class StubGenerator(
 
         val (canonicalConstants, aliasConstants) = e.constants.partition { canonicalsByValue[it.value] == it }
 
-        block("enum class ${e.kotlinName.asSimpleName()}(override val value: $baseKotlinType) : CEnum") {
+        val clazz = (mirror(EnumType(e)) as TypeMirror.ByValue).valueType.classifier
+
+        block("enum class ${kotlinFile.declare(clazz)}(override val value: $baseKotlinType) : CEnum") {
             canonicalConstants.forEach {
                 out("${it.name.asSimpleName()}(${it.value}),")
             }
@@ -391,10 +471,11 @@ class StubGenerator(
             }
             out("")
             block("class Var(rawPtr: NativePtr) : CEnumVar(rawPtr)") {
-                out("companion object : Type(${baseTypeMirror.pointedTypeName}.size.toInt())")
+                val basePointedTypeName = baseTypeMirror.pointedType.render(kotlinFile)
+                out("companion object : Type($basePointedTypeName.size.toInt())")
                 out("var value: ${e.kotlinName.asSimpleName()}")
-                out("    get() = byValue(this.reinterpret<${baseTypeMirror.pointedTypeName}>().value)")
-                out("    set(value) { this.reinterpret<${baseTypeMirror.pointedTypeName}>().value = value.value }")
+                out("    get() = byValue(this.reinterpret<$basePointedTypeName>().value)")
+                out("    set(value) { this.reinterpret<$basePointedTypeName>().value = value.value }")
             }
         }
     }
@@ -415,7 +496,7 @@ class StubGenerator(
 
         val typeName: String
 
-        val baseKotlinType = mirror(e.baseType).argType
+        val baseKotlinType = mirror(e.baseType).argType.render(kotlinFile)
         if (e.isAnonymous) {
             if (constants.isNotEmpty()) {
                 out("// ${e.spelling}:")
@@ -429,15 +510,17 @@ class StubGenerator(
             }
 
             // Generate as typedef:
-            val varTypeName = typeMirror.info.constructPointedType(typeMirror.valueTypeName)
-            out("typealias ${typeMirror.pointedTypeName} = $varTypeName")
-            out("typealias ${typeMirror.valueTypeName} = $baseKotlinType")
+            val varTypeName = typeMirror.info.constructPointedType(typeMirror.valueType).render(kotlinFile)
+            val varTypeClassifier = typeMirror.pointedType.classifier
+            val valueTypeClassifier = typeMirror.valueType.classifier
+            out("typealias ${kotlinFile.declare(varTypeClassifier)} = $varTypeName")
+            out("typealias ${kotlinFile.declare(valueTypeClassifier)} = $baseKotlinType")
 
             if (constants.isNotEmpty()) {
                 out("")
             }
 
-            typeName = typeMirror.valueTypeName
+            typeName = typeMirror.valueType.render(kotlinFile)
         }
 
         for (constant in constants) {
@@ -450,15 +533,19 @@ class StubGenerator(
         val mirror = mirror(Typedef(def))
         val baseMirror = mirror(def.aliased)
 
+        val varType = mirror.pointedType
         when (baseMirror) {
             is TypeMirror.ByValue -> {
-                val valueTypeName = (mirror as TypeMirror.ByValue).valueTypeName
-                val varTypeAliasee = mirror.info.constructPointedType(valueTypeName)
-                out("typealias ${mirror.pointedTypeName} = $varTypeAliasee")
-                out("typealias $valueTypeName = ${baseMirror.valueTypeName}")
+                val valueType = (mirror as TypeMirror.ByValue).valueType
+                val varTypeAliasee = mirror.info.constructPointedType(valueType).render(kotlinFile)
+                val valueTypeAliasee = baseMirror.valueType.render(kotlinFile)
+
+                out("typealias ${kotlinFile.declare(varType.classifier)} = $varTypeAliasee")
+                out("typealias ${kotlinFile.declare(valueType.classifier)} = $valueTypeAliasee")
             }
             is TypeMirror.ByRef -> {
-                out("typealias ${mirror.pointedTypeName} = ${baseMirror.pointedTypeName}")
+                val varTypeAliasee = baseMirror.pointedType.render(kotlinFile)
+                out("typealias ${kotlinFile.declare(varType.classifier)} = $varTypeAliasee")
             }
         }
     }
@@ -499,7 +586,7 @@ class StubGenerator(
 
         init {
             // TODO: support dumpShims
-            val kotlinParameters = mutableListOf<Pair<String, String>>()
+            val kotlinParameters = mutableListOf<Pair<String, KotlinType>>()
             val bodyGenerator = KotlinCodeBuilder()
             val bridgeArguments = mutableListOf<TypedKotlinValue>()
 
@@ -517,15 +604,17 @@ class StubGenerator(
                 val representAsValuesRef = representCFunctionParameterAsValuesRef(parameter.type)
 
                 val bridgeArgument = if (representCFunctionParameterAsString(parameter.type)) {
-                    kotlinParameters.add(parameterName to "String?")
+                    kotlinParameters.add(parameterName to KotlinTypes.string.makeNullable())
                     bodyGenerator.pushBlock("$parameterName?.cstr.usePointer { $tmpVarName ->")
                     tmpVarName
                 } else if (representCFunctionParameterAsWString(parameter.type)) {
-                    kotlinParameters.add(parameterName to "String?")
+                    kotlinParameters.add(parameterName to KotlinTypes.string.makeNullable())
                     bodyGenerator.pushBlock("$parameterName?.wcstr.usePointer { $tmpVarName ->")
                     tmpVarName
                 } else if (representAsValuesRef != null) {
-                    kotlinParameters.add(parameterName to "CValuesRef<${mirror(representAsValuesRef).pointedTypeName}>?")
+                    val pointedType = mirror(representAsValuesRef).pointedType
+                    val parameterType = KotlinTypes.cValuesRef.typeWith(pointedType).makeNullable()
+                    kotlinParameters.add(parameterName to parameterType)
                     bodyGenerator.pushBlock("$parameterName.usePointer { $tmpVarName ->")
                     tmpVarName
                 } else {
@@ -550,13 +639,13 @@ class StubGenerator(
             } else {
                 val returnTypeKind = getFfiTypeKind(func.returnType)
 
-                kotlinParameters.add("vararg variadicArguments" to "Any?")
+                kotlinParameters.add("vararg variadicArguments" to KotlinTypes.any.makeNullable())
                 bodyGenerator.pushBlock("memScoped {")
 
                 val resultVar = "kniResult"
 
                 val resultPtr = if (!func.returnsVoid()) {
-                    val returnType = mirror(func.returnType).pointedTypeName
+                    val returnType = mirror(func.returnType).pointedType.render(kotlinFile)
                     bodyGenerator.out("val $resultVar = allocFfiReturnValueBuffer<$returnType>(typeOf<$returnType>())")
                     "$resultVar.rawPtr"
                 } else {
@@ -581,12 +670,14 @@ class StubGenerator(
             }
 
             val returnType = if (func.returnsVoid()) {
-                "Unit"
+                KotlinTypes.unit
             } else {
                 mirror(func.returnType).argType
-            }
+            }.render(kotlinFile)
 
-            val joinedKotlinParameters = kotlinParameters.joinToString { (name, type) -> "$name: $type" }
+            val joinedKotlinParameters = kotlinParameters.joinToString { (name, type) ->
+                "$name: ${type.render(kotlinFile)}"
+            }
             this.header = "fun ${func.name}($joinedKotlinParameters): $returnType"
 
             this.bodyLines = bodyGenerator.build()
@@ -626,10 +717,10 @@ class StubGenerator(
         }
 
         val narrowedValue: Number = when (unwrappedType.kotlinType) {
-            "kotlin.Byte" -> value.toByte()
-            "kotlin.Short" -> value.toShort()
-            "kotlin.Int" -> value.toInt()
-            "kotlin.Long" -> value
+            KotlinTypes.byte -> value.toByte()
+            KotlinTypes.short -> value.toShort()
+            KotlinTypes.int -> value.toInt()
+            KotlinTypes.long -> value
             else -> return null
         }
 
@@ -663,7 +754,7 @@ class StubGenerator(
             }
         }
 
-        val kotlinType = mirror(constant.type).argType
+        val kotlinType = mirror(constant.type).argType.render(kotlinFile)
 
         // TODO: improve value rendering.
 
@@ -680,12 +771,20 @@ class StubGenerator(
 
         stubs.addAll(generateStubsForFunctions(functionsToBind))
 
-        nativeIndex.objCProtocols.mapTo(stubs) {
-            ObjCProtocolStub(this, it)
+        nativeIndex.objCProtocols.forEach {
+            if (!it.shouldBeImportedAsForwardDeclaration()) {
+                stubs.add(ObjCProtocolStub(this, it))
+            }
         }
 
-        nativeIndex.objCClasses.mapTo(stubs) {
-            ObjCClassStub(this, it)
+        nativeIndex.objCClasses.forEach {
+            if (!it.shouldBeImportedAsForwardDeclaration()) {
+                stubs.add(ObjCClassStub(this, it))
+            }
+        }
+
+        nativeIndex.objCCategories.mapTo(stubs) {
+            ObjCCategoryStub(this, it)
         }
 
         nativeIndex.macroConstants.forEach {
@@ -751,6 +850,7 @@ class StubGenerator(
                 add("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
                 add("UNUSED_PARAMETER") // For constructors.
                 add("MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED") // Workaround for multiple-inherited properties.
+                add("EXTENSION_SHADOWED_BY_MEMBER") // For Objective-C categories represented as extensions.
             }
         }
 
@@ -763,6 +863,11 @@ class StubGenerator(
             out("import konan.SymbolName")
         }
         out("import kotlinx.cinterop.*")
+
+        kotlinFile.buildImports().forEach {
+            out(it)
+        }
+
         out("")
 
         val context = object : StubGenerationContext {
@@ -847,10 +952,20 @@ class StubGenerator(
         }
     }
 
+    fun addManifestProperties(properties: Properties) {
+        properties["exportForwardDeclarations"] = nativeIndex.structs
+                .filter { it.def == null }
+                .joinToString(" ") {
+                    "$cnamesStructsPackageName.${it.kotlinName}"
+                }
+
+        // TODO: consider exporting Objective-C class and protocol forward refs.
+    }
+
     val simpleBridgeGenerator: SimpleBridgeGenerator =
-            SimpleBridgeGeneratorImpl(platform, pkgName, jvmFileClassName, libraryForCStubs)
+            SimpleBridgeGeneratorImpl(platform, pkgName, jvmFileClassName, libraryForCStubs, kotlinFile)
 
     val mappingBridgeGenerator: MappingBridgeGenerator =
-            MappingBridgeGeneratorImpl(declarationMapper, simpleBridgeGenerator)
+            MappingBridgeGeneratorImpl(declarationMapper, simpleBridgeGenerator, kotlinFile)
 
 }

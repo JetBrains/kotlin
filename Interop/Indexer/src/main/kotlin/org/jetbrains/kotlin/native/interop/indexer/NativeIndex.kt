@@ -21,13 +21,33 @@ enum class Language(val sourceFileExtension: String) {
     OBJECTIVE_C("m")
 }
 
+interface HeaderInclusionPolicy {
+    /**
+     * Whether unused declarations from given header should be excluded.
+     *
+     * @param headerName header path relative to the appropriate include path element (e.g. `time.h` or `curl/curl.h`),
+     * or `null` for builtin declarations.
+     */
+    fun excludeUnused(headerName: String?): Boolean
+
+    /**
+     * Whether all declarations from this header should be excluded.
+     *
+     * Note: the declarations from such headers can be actually present in the internal representation,
+     * but not included into the root collections.
+     */
+    fun excludeAll(headerId: HeaderId): Boolean
+
+    // TODO: these methods should probably be combined into the only one, but it would require some refactoring.
+}
+
 data class NativeLibrary(val includes: List<String>,
                          val additionalPreambleLines: List<String>,
                          val compilerArgs: List<String>,
                          val language: Language,
                          val excludeSystemLibs: Boolean, // TODO: drop?
                          val excludeDepdendentModules: Boolean,
-                         val headerFilter: (String) -> Boolean)
+                         val headerInclusionPolicy: HeaderInclusionPolicy)
 
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).
@@ -38,13 +58,28 @@ fun buildNativeIndex(library: NativeLibrary): NativeIndex = buildNativeIndexImpl
  * This class describes the IR of definitions from C header file(s).
  */
 abstract class NativeIndex {
-    abstract val structs: List<StructDecl>
-    abstract val enums: List<EnumDef>
-    abstract val objCClasses: List<ObjCClass>
-    abstract val objCProtocols: List<ObjCProtocol>
-    abstract val typedefs: List<TypedefDef>
-    abstract val functions: List<FunctionDecl>
-    abstract val macroConstants: List<ConstantDef>
+    abstract val structs: Collection<StructDecl>
+    abstract val enums: Collection<EnumDef>
+    abstract val objCClasses: Collection<ObjCClass>
+    abstract val objCProtocols: Collection<ObjCProtocol>
+    abstract val objCCategories: Collection<ObjCCategory>
+    abstract val typedefs: Collection<TypedefDef>
+    abstract val functions: Collection<FunctionDecl>
+    abstract val macroConstants: Collection<ConstantDef>
+    abstract val includedHeaders: Collection<HeaderId>
+}
+
+/**
+ * The (contents-based) header id.
+ * Its [value] remains valid across different runs of the indexer and the process,
+ * and thus can be used to 'serialize' the id.
+ */
+data class HeaderId(val value: String)
+
+data class Location(val headerId: HeaderId)
+
+interface TypeDeclaration {
+    val location: Location
 }
 
 /**
@@ -60,7 +95,7 @@ class BitField(val name: String, val type: Type, val offset: Long, val size: Int
 /**
  * C struct declaration.
  */
-abstract class StructDecl(val spelling: String) {
+abstract class StructDecl(val spelling: String) : TypeDeclaration {
 
     abstract val def: StructDef?
 }
@@ -88,16 +123,18 @@ class EnumConstant(val name: String, val value: Long, val isExplicitlyDefined: B
 /**
  * C enum definition.
  */
-abstract class EnumDef(val spelling: String, val baseType: Type) {
+abstract class EnumDef(val spelling: String, val baseType: Type) : TypeDeclaration {
 
     abstract val constants: List<EnumConstant>
 }
 
-sealed class ObjCClassOrProtocol(val name: String) {
+sealed class ObjCContainer {
     abstract val protocols: List<ObjCProtocol>
     abstract val methods: List<ObjCMethod>
     abstract val properties: List<ObjCProperty>
 }
+
+sealed class ObjCClassOrProtocol(val name: String) : ObjCContainer(), TypeDeclaration
 
 data class ObjCMethod(
         val selector: String, val encoding: String, val parameters: List<Parameter>, private val returnType: Type,
@@ -126,10 +163,12 @@ abstract class ObjCClass(name: String) : ObjCClassOrProtocol(name) {
 }
 abstract class ObjCProtocol(name: String) : ObjCClassOrProtocol(name)
 
+abstract class ObjCCategory(val name: String, val clazz: ObjCClass) : ObjCContainer()
+
 /**
  * C function parameter.
  */
-class Parameter(val name: String?, val type: Type, val nsConsumed: Boolean)
+data class Parameter(val name: String?, val type: Type, val nsConsumed: Boolean)
 
 /**
  * C function declaration.
@@ -144,7 +183,7 @@ class FunctionDecl(val name: String, val parameters: List<Parameter>, val return
  * typedef $aliased $name;
  * ```
  */
-class TypedefDef(val aliased: Type, val name: String)
+class TypedefDef(val aliased: Type, val name: String, override val location: Location) : TypeDeclaration
 
 abstract class ConstantDef(val name: String, val type: Type)
 class IntegerConstantDef(name: String, type: Type, val value: Long) : ConstantDef(name, type)

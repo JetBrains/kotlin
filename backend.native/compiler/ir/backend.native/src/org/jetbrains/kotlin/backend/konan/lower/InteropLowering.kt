@@ -473,7 +473,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
 
             if (!useKotlinDispatch) {
                 val arguments = descriptor.valueParameters.map { expression.getValueArgument(it)!! }
-                assert(expression.extensionReceiver == null)
+                assert(expression.dispatchReceiver == null || expression.extensionReceiver == null)
 
                 if (expression.superQualifier?.isObjCMetaClass() == true) {
                     context.reportCompilationError(
@@ -493,7 +493,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
                 return builder.genLoweredObjCMethodCall(
                         methodInfo,
                         superQualifier = expression.superQualifierSymbol,
-                        receiver = expression.dispatchReceiver!!,
+                        receiver = expression.dispatchReceiver ?: expression.extensionReceiver!!,
                         arguments = arguments
                 )
             }

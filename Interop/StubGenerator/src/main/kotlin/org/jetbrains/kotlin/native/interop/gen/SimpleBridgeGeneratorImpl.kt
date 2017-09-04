@@ -25,7 +25,8 @@ class SimpleBridgeGeneratorImpl(
         private val platform: KotlinPlatform,
         private val pkgName: String,
         private val jvmFileClassName: String,
-        private val libraryForCStubs: NativeLibrary
+        private val libraryForCStubs: NativeLibrary,
+        private val kotlinScope: KotlinScope
 ) : SimpleBridgeGenerator {
 
     private var nextUniqueId = 0
@@ -69,7 +70,7 @@ class SimpleBridgeGeneratorImpl(
 
         val kotlinFunctionName = "kniBridge${nextUniqueId++}"
         val kotlinParameters = kotlinValues.withIndex().joinToString {
-            "p${it.index}: ${it.value.type.kotlinType}"
+            "p${it.index}: ${it.value.type.kotlinType.render(kotlinScope)}"
         }
 
         val callExpr = "$kotlinFunctionName(${kotlinValues.joinToString { it.value }})"
@@ -130,7 +131,8 @@ class SimpleBridgeGeneratorImpl(
         }
 
         nativeLines.add("}")
-        kotlinLines.add("private external fun $kotlinFunctionName($kotlinParameters): ${returnType.kotlinType}")
+        val kotlinReturnType = returnType.kotlinType.render(kotlinScope)
+        kotlinLines.add("private external fun $kotlinFunctionName($kotlinParameters): $kotlinReturnType")
 
         val nativeBridge = NativeBridge(kotlinLines, nativeLines)
         nativeBridges.add(nativeBacked to nativeBridge)
@@ -154,7 +156,7 @@ class SimpleBridgeGeneratorImpl(
         val kotlinParameters = nativeValues.withIndex().map {
             "p${it.index}" to it.value.type.kotlinType
         }
-        val joinedKotlinParameters = kotlinParameters.joinToString { "${it.first}: ${it.second}" }
+        val joinedKotlinParameters = kotlinParameters.joinToString { "${it.first}: ${it.second.render(kotlinScope)}" }
 
         val cFunctionParameters = nativeValues.withIndex().map {
             "p${it.index}" to it.value.type.nativeType
@@ -167,7 +169,8 @@ class SimpleBridgeGeneratorImpl(
         val cFunctionHeader = "$cReturnType $symbolName($joinedCParameters)"
 
         nativeLines.add("$cFunctionHeader;")
-        kotlinLines.add("private fun $kotlinFunctionName($joinedKotlinParameters): ${returnType.kotlinType} {")
+        val kotlinReturnType = returnType.kotlinType.render(kotlinScope)
+        kotlinLines.add("private fun $kotlinFunctionName($joinedKotlinParameters): $kotlinReturnType {")
 
         buildKotlinCodeLines {
             var kotlinExpr = block(kotlinParameters.map { (name, _) -> name })

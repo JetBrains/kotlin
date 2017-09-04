@@ -7,8 +7,11 @@
 
 @interface Foo : NSObject
 @property NSString* name;
--(void)hello;
 -(void)helloWithPrinter:(id <Printer>)printer;
+@end;
+
+@interface Foo (FooExtensions)
+-(void)hello;
 @end;
 
 @protocol MutablePair

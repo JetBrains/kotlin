@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.native.interop.indexer.VoidType
  */
 class MappingBridgeGeneratorImpl(
         val declarationMapper: DeclarationMapper,
-        val simpleBridgeGenerator: SimpleBridgeGenerator
+        val simpleBridgeGenerator: SimpleBridgeGenerator,
+        val kotlinScope: KotlinScope
 ) : MappingBridgeGenerator {
 
     override fun kotlinToNative(
@@ -56,7 +57,7 @@ class MappingBridgeGeneratorImpl(
             is RecordType -> {
                 val mirror = mirror(declarationMapper, returnType)
                 val tmpVarName = kniRetVal
-                builder.out("val $tmpVarName = nativeHeap.alloc<${mirror.pointedTypeName}>()")
+                builder.out("val $tmpVarName = nativeHeap.alloc<${mirror.pointedType.render(kotlinScope)}>()")
                 builder.pushBlock("try {", free = "finally { nativeHeap.free($tmpVarName) }")
                 bridgeArguments.add(BridgeTypedKotlinValue(BridgedType.NATIVE_PTR, "$tmpVarName.rawPtr"))
                 BridgedType.VOID
@@ -106,7 +107,7 @@ class MappingBridgeGeneratorImpl(
             }
             else -> {
                 val mirror = mirror(declarationMapper, returnType)
-                mirror.info.argFromBridged(callExpr)
+                mirror.info.argFromBridged(callExpr, kotlinScope)
             }
         }
 
@@ -158,11 +159,12 @@ class MappingBridgeGeneratorImpl(
             nativeValues.forEachIndexed { index, (type, _) ->
                 val mirror = mirror(declarationMapper, type)
                 if (type.unwrapTypedefs() is RecordType) {
+                    val pointedTypeName = mirror.pointedType.render(kotlinScope)
                     kotlinValues.add(
-                            "interpretPointed<${mirror.pointedTypeName}>(${bridgeKotlinValues[index]}).readValue()"
+                            "interpretPointed<$pointedTypeName>(${bridgeKotlinValues[index]}).readValue()"
                     )
                 } else {
-                    kotlinValues.add(mirror.info.argFromBridged(bridgeKotlinValues[index]))
+                    kotlinValues.add(mirror.info.argFromBridged(bridgeKotlinValues[index], kotlinScope))
                 }
             }
 

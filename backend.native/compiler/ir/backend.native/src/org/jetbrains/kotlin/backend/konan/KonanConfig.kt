@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.konan.descriptors.createForwardDeclarationsModule
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
 import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -34,6 +36,8 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.target.TargetManager.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
@@ -116,10 +120,25 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         return allMetadata
     }
 
+    private var forwardDeclarationsModule: ModuleDescriptorImpl? = null
+
+    internal fun getOrCreateForwardDeclarationsModule(
+            builtIns: KotlinBuiltIns, storageManager: StorageManager? = null
+    ): ModuleDescriptorImpl {
+        forwardDeclarationsModule?.let { return it }
+        val result = createForwardDeclarationsModule(
+                builtIns,
+                storageManager ?: LockBasedStorageManager()
+        )
+
+        forwardDeclarationsModule = result
+        return result
+    }
+
     internal val moduleDescriptors: List<ModuleDescriptorImpl> by lazy {
         for (module in loadedDescriptors) {
             // Yes, just to all of them.
-            module.setDependencies(loadedDescriptors)
+            module.setDependencies(loadedDescriptors + getOrCreateForwardDeclarationsModule(module.builtIns))
         }
 
         loadedDescriptors

@@ -21,6 +21,8 @@ import kotlinx.cinterop.*
 import java.io.Closeable
 import java.io.File
 import java.nio.file.Paths
+import java.security.DigestInputStream
+import java.security.MessageDigest
 
 internal val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
 
@@ -437,8 +439,16 @@ internal class ModulesMap(
     }
 }
 
-internal fun getFilteredHeaders(library: NativeLibrary, index: CXIndex, translationUnit: CXTranslationUnit): Set<CXFile> {
-    val result = mutableSetOf<CXFile>()
+fun HeaderInclusionPolicy.includeAll(headerName: String?, headerId: HeaderId): Boolean =
+        !this.excludeUnused(headerName) && !this.excludeAll(headerId)
+
+internal fun getFilteredHeaders(
+        nativeIndex: NativeIndexImpl,
+        index: CXIndex,
+        translationUnit: CXTranslationUnit
+): Set<CXFile?> {
+    val library = nativeIndex.library
+    val result = mutableSetOf<CXFile?>()
     val topLevelFiles = mutableListOf<CXFile>()
     var mainFile: CXFile? = null
 
@@ -465,11 +475,7 @@ internal fun getFilteredHeaders(library: NativeLibrary, index: CXIndex, translat
                 name
             } else {
                 // If it is included with `#include "$name"`, then `name` can also be the path relative to the includer.
-                val includerFile = memScoped {
-                    val fileVar = alloc<CXFileVar>()
-                    clang_getFileLocation(includeLocation, fileVar.ptr, null, null, null)
-                    fileVar.value!!
-                }
+                val includerFile = includeLocation.getContainingFile()!!
                 val includerName = headerToName[includerFile] ?: ""
                 val includerPath = clang_getFileName(includerFile).convertAndDispose()
 
@@ -483,7 +489,7 @@ internal fun getFilteredHeaders(library: NativeLibrary, index: CXIndex, translat
             }
 
             headerToName[file] = headerName
-            if (library.headerFilter(headerName)) {
+            if (library.headerInclusionPolicy.includeAll(headerName, nativeIndex.getHeaderId(file))) {
                 result.add(file)
             }
         }
@@ -493,14 +499,18 @@ internal fun getFilteredHeaders(library: NativeLibrary, index: CXIndex, translat
         ModulesMap(library, translationUnit).use { modulesMap ->
             val topLevelModules = topLevelFiles.map { modulesMap.getModule(it) }.toSet()
             result.removeAll {
-                val module = modulesMap.getModule(it)
+                val module = modulesMap.getModule(it!!)
                 module !in topLevelModules
             }
             // Note: if some of the top-level headers don't belong to modules,
             // then all non-modular headers are included.
         }
+    } else {
+        if (library.headerInclusionPolicy.includeAll(headerName = null, headerId = nativeIndex.getHeaderId(null))) {
+            // Builtins.
+            result.add(null)
+        }
     }
-
 
     result.add(mainFile!!)
 
@@ -512,3 +522,24 @@ fun ObjCMethod.replaces(other: ObjCMethod): Boolean =
 
 fun ObjCProperty.replaces(other: ObjCProperty): Boolean =
         this.getter.replaces(other.getter)
+
+fun File.sha256(): String {
+    val digest = MessageDigest.getInstance("SHA-256")
+    DigestInputStream(this.inputStream(), digest).use { dis ->
+        val buffer = ByteArray(8192)
+        // Read all bytes:
+        while (dis.read(buffer, 0, buffer.size) != -1) {}
+    }
+    // Convert to hex:
+    return digest.digest().joinToString("") {
+        Integer.toHexString((it.toInt() and 0xff) + 0x100).substring(1)
+    }
+}
+
+fun headerContentsHash(filePath: String) = File(filePath).sha256()
+
+internal fun CValue<CXSourceLocation>.getContainingFile(): CXFile? = memScoped {
+    val fileVar = alloc<CXFileVar>()
+    clang_getFileLocation(this@getContainingFile, fileVar.ptr, null, null, null)
+    fileVar.value
+}
