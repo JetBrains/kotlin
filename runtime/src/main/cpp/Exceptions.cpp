@@ -18,6 +18,8 @@
 #include <string.h>
 #include <stdint.h>
 
+#include <exception>
+
 #if KONAN_NO_EXCEPTIONS
 #define OMIT_BACKTRACE 1
 #endif
@@ -38,6 +40,7 @@
 #include "Natives.h"
 #include "KString.h"
 #include "Types.h"
+#include "Utils.h"
 
 namespace {
 
@@ -175,6 +178,50 @@ void ThrowException(KRef exception) {
 #endif
 }
 
+#if KONAN_OBJC_INTEROP
+
+void ReportUnhandledException(KRef e);
+
+static void (*oldTerminateHandler)() = nullptr;
+
+static void KonanTerminateHandler() {
+  auto currentException = std::current_exception();
+  if (!currentException) {
+    // No current exception.
+    oldTerminateHandler();
+  } else {
+    try {
+      std::rethrow_exception(currentException);
+    } catch (ObjHolder& e) {
+      ReportUnhandledException(e.obj());
+      konan::abort();
+    } catch (...) {
+      // Not a Kotlin exception.
+      oldTerminateHandler();
+    }
+  }
+}
+
+static SimpleMutex konanTerminateHandlerInitializationMutex;
+
+void SetKonanTerminateHandler() {
+  if (oldTerminateHandler != nullptr) return; // Already initialized.
+
+  LockGuard<SimpleMutex> lockGuard(konanTerminateHandlerInitializationMutex);
+
+  if (oldTerminateHandler != nullptr) return; // Already initialized.
+
+  oldTerminateHandler = std::get_terminate(); // If termination happens between `set_terminate` and assignment.
+  oldTerminateHandler = std::set_terminate(&KonanTerminateHandler);
+}
+
+#else // KONAN_OBJC_INTEROP
+
+void SetKonanTerminateHandler() {
+  // Nothing to do.
+}
+
+#endif // KONAN_OBJC_INTEROP
 
 #ifdef __cplusplus
 } // extern "C"

@@ -17,6 +17,7 @@
 #include <stdio.h>
 
 #include "Alloc.h"
+#include "Exceptions.h"
 #include "Memory.h"
 #include "Porting.h"
 #include "Runtime.h"
@@ -60,6 +61,7 @@ void AppendToInitializersTail(InitNode *next) {
 
 // TODO: properly use RuntimeState.
 RuntimeState* InitRuntime() {
+  SetKonanTerminateHandler();
   RuntimeState* result = konanConstructInstance<RuntimeState>();
   result->memoryState = InitMemory();
   // Keep global variables in state as well.

@@ -29,6 +29,8 @@ OBJ_GETTER0(GetCurrentStackTrace);
 // Throws arbitrary exception.
 void ThrowException(KRef exception);
 
+void SetKonanTerminateHandler();
+
 // The functions below are implemented in Kotlin (at package konan.internal).
 
 // Throws null pointer exception. Context is evaluated from caller's address.

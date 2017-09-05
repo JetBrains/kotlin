@@ -67,6 +67,12 @@ fun PrintThrowable(throwable: Throwable) {
 }
 
 @ExportForCppRuntime
+fun ReportUnhandledException(e: Throwable) {
+    print("Uncaught Kotlin exception: ")
+    e.printStackTrace()
+}
+
+@ExportForCppRuntime
 internal fun TheEmptyString() = ""
 
 fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T
