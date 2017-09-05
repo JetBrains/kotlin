@@ -1,0 +1,3 @@
+package
+
+public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
