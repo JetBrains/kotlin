@@ -1,3 +1,6 @@
+## v0.3.2 (Sep 2017) ##
+  * Bug fixes
+
 ## v0.3.1 (Aug 2017) ##
   * Improvements in C interop tools (function pointers, bitfields, bugfixes)
   * Improvements to Gradle plugin and dependency downloader
@@ -31,4 +34,4 @@
   * Improve compilation and linking performance
 
 ## v0.1 (Mar 2017) ##
-Initial technical preview of Kotlin/Native.
+Initial technical preview of Kotlin/Native
