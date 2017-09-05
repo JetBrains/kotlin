@@ -194,7 +194,8 @@ void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue) {
 }
 }
 
-extern "C" void Konan_main(ANativeActivity* activity, void* savedState, size_t savedStateSize) {
+extern "C" void RUNTIME_USED Konan_main(
+    ANativeActivity* activity, void* savedState, size_t savedStateSize) {
   nativeActivityState = {activity, savedState, savedStateSize};
 
   activity->callbacks->onDestroy = onDestroy;
