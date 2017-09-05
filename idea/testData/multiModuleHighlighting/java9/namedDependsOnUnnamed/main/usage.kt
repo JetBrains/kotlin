@@ -1,6 +1,6 @@
-import dependency.<error>J</error>
+import dependency.J
 
 fun usage(): String {
-    val j: <error>J</error> = <error>J</error>()
-    return j.<error>toString</error>()
+    val j: J = J()
+    return j.toString()
 }
