@@ -13777,6 +13777,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt20106.kt")
+            public void testKt20106() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/kt20106.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nullableInPrimitiveRange.kt")
             public void testNullableInPrimitiveRange() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/nullableInPrimitiveRange.kt");
