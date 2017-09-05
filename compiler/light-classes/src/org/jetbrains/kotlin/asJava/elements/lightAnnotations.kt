@@ -49,6 +49,12 @@ abstract class KtLightAbstractAnnotation(parent: PsiElement, computeDelegate: ()
 
     override fun getParameterList() = clsDelegate.parameterList
 
+    override fun canNavigate(): Boolean = super<KtLightElementBase>.canNavigate()
+
+    override fun canNavigateToSource(): Boolean = super<KtLightElementBase>.canNavigateToSource()
+
+    override fun navigate(requestFocus: Boolean) = super<KtLightElementBase>.navigate(requestFocus)
+
     open fun fqNameMatches(fqName: String): Boolean = qualifiedName == fqName
 }
 
@@ -258,6 +264,12 @@ class KtLightNonExistentAnnotation(parent: KtLightElement<*, *>) : KtLightElemen
     override fun findDeclaredAttributeValue(attributeName: String?) = null
     override fun getMetaData() = null
     override fun getParameterList() = KtLightEmptyAnnotationParameterList(this)
+
+    override fun canNavigate(): Boolean = super<KtLightElementBase>.canNavigate()
+
+    override fun canNavigateToSource(): Boolean = super<KtLightElementBase>.canNavigateToSource()
+
+    override fun navigate(requestFocus: Boolean) = super<KtLightElementBase>.navigate(requestFocus)
 }
 
 class KtLightEmptyAnnotationParameterList(parent: PsiElement) : KtLightElementBase(parent), PsiAnnotationParameterList {
