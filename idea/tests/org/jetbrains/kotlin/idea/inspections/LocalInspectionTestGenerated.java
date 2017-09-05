@@ -1305,6 +1305,51 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/redundantGetter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantGetter extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInRedundantGetter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantGetter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantGetter/annotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("default.kt")
+        public void testDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantGetter/default.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fieldExpression.kt")
+        public void testFieldExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantGetter/fieldExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notFieldExpression.kt")
+        public void testNotFieldExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantGetter/notFieldExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notOnlyReturnFieldBody.kt")
+        public void testNotOnlyReturnFieldBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantGetter/notOnlyReturnFieldBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("onlyReturnFieldBody.kt")
+        public void testOnlyReturnFieldBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantGetter/onlyReturnFieldBody.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/redundantLambdaArrow")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1391,6 +1436,81 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("useGenericsSuper.kt")
         public void testUseGenericsSuper() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/useGenericsSuper.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/inspectionsLocal/redundantSetter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantSetter extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInRedundantSetter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantSetter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/annotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("blankBody.kt")
+        public void testBlankBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/blankBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("default.kt")
+        public void testDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/default.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lowerVisibility1.kt")
+        public void testLowerVisibility1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/lowerVisibility1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lowerVisibility2.kt")
+        public void testLowerVisibility2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/lowerVisibility2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lowerVisibility3.kt")
+        public void testLowerVisibility3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/lowerVisibility3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notOnlyReturnField.kt")
+        public void testNotOnlyReturnField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/notOnlyReturnField.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("onlyReturnFieldBody.kt")
+        public void testOnlyReturnFieldBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/onlyReturnFieldBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sameVisibility1.kt")
+        public void testSameVisibility1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/sameVisibility1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sameVisibility2.kt")
+        public void testSameVisibility2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/sameVisibility2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sameVisibility3.kt")
+        public void testSameVisibility3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSetter/sameVisibility3.kt");
             doTest(fileName);
         }
     }
