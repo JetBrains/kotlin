@@ -87,7 +87,6 @@ class GenerationState @JvmOverloads constructor(
         }
     }
 
-    val fileClassesProvider: CodegenFileClassesProvider = CodegenFileClassesProvider()
     val inlineCache: InlineCache = InlineCache()
 
     val incrementalCacheForThisTarget: IncrementalCache?
@@ -138,7 +137,7 @@ class GenerationState @JvmOverloads constructor(
                                                             filter = if (wantsDiagnostics) BindingTraceFilter.ACCEPT_ALL else BindingTraceFilter.NO_DIAGNOSTICS)
     val bindingContext: BindingContext = bindingTrace.bindingContext
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
-            this.bindingContext, classBuilderMode, fileClassesProvider, IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
+            this.bindingContext, classBuilderMode, IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
             this.moduleName, isJvm8Target, isJvm8TargetWithDefaults
     )
     val intrinsics: IntrinsicMethods = IntrinsicMethods(target)
@@ -184,8 +183,7 @@ class GenerationState @JvmOverloads constructor(
                 .wrapWith(
                     { OptimizationClassBuilderFactory(it, configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)) },
                     { BuilderFactoryForDuplicateSignatureDiagnostics(
-                            it, this.bindingContext, diagnostics,
-                            fileClassesProvider, this.moduleName,
+                            it, this.bindingContext, diagnostics, this.moduleName,
                             shouldGenerate = { !shouldOnlyCollectSignatures(it) }
                     ).apply { duplicateSignatureFactory = this } },
                     { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },

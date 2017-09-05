@@ -37,8 +37,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.kotlin.fileClasses.FileClasses;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor;
 import org.jetbrains.kotlin.load.kotlin.TypeMappingConfiguration;
@@ -85,7 +84,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private final BindingContext bindingContext;
     private final GenerationState.GenerateClassFilter filter;
     private final JvmRuntimeTypes runtimeTypes;
-    private final JvmFileClassesProvider fileClassesProvider;
     private final TypeMappingConfiguration<Type> typeMappingConfiguration;
     private final SwitchCodegenProvider switchCodegenProvider;
 
@@ -94,7 +92,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         this.bindingContext = state.getBindingContext();
         this.filter = state.getGenerateDeclaredClassFilter();
         this.runtimeTypes = state.getJvmRuntimeTypes();
-        this.fileClassesProvider = state.getFileClassesProvider();
         this.typeMappingConfiguration = state.getTypeMapper().getTypeMappingConfiguration();
         this.switchCodegenProvider = new SwitchCodegenProvider(state);
     }
@@ -462,7 +459,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             }
         }
 
-        return Type.getObjectType(FileClasses.getFileClassInternalName(fileClassesProvider, property.getContainingKtFile()));
+        return Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(property.getContainingKtFile()));
     }
 
     @Override
@@ -548,7 +545,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         else if (containingDeclaration instanceof PackageFragmentDescriptor) {
             KtFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
             assert containingFile != null : "File not found for " + descriptor;
-            return FileClasses.getFileClassInternalName(fileClassesProvider, containingFile) + '$' + name;
+            return JvmFileClassUtil.getFileClassInternalName(containingFile) + '$' + name;
         }
 
         return null;
@@ -728,7 +725,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             }
         }
 
-        return FileClasses.getFacadeClassInternalName(fileClassesProvider, file);
+        return JvmFileClassUtil.getFacadeClassInternalName(file);
     }
 
     private static <T> T peekFromStack(@NotNull Stack<T> stack) {

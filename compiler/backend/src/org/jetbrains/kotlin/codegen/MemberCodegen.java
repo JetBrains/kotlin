@@ -37,8 +37,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.kotlin.fileClasses.FileClasses;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
@@ -98,7 +97,6 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     public final KotlinTypeMapper typeMapper;
     public final BindingContext bindingContext;
 
-    private final JvmFileClassesProvider fileClassesProvider;
     private final MemberCodegen<?> parentCodegen;
     private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
     private final Collection<ClassDescriptor> innerClasses = new LinkedHashSet<>();
@@ -118,7 +116,6 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         this.state = state;
         this.typeMapper = state.getTypeMapper();
         this.bindingContext = state.getBindingContext();
-        this.fileClassesProvider = state.getFileClassesProvider();
         this.element = element;
         this.context = context;
         this.v = builder;
@@ -433,7 +430,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 return implementationOwnerType;
             }
             else {
-                return FileClasses.getFileClassType(fileClassesProvider, element.getContainingKtFile());
+                return Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(element.getContainingKtFile()));
             }
         }
 
@@ -461,7 +458,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     @NotNull
     public NameGenerator getInlineNameGenerator() {
         if (inlineNameGenerator == null) {
-            String prefix = getInlineName(context, typeMapper, fileClassesProvider);
+            String prefix = getInlineName(context, typeMapper);
             inlineNameGenerator = new NameGenerator(prefix);
         }
         return inlineNameGenerator;

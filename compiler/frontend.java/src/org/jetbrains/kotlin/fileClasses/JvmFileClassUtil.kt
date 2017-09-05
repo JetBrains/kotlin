@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
 object JvmFileClassUtil {
@@ -39,6 +40,14 @@ object JvmFileClassUtil {
         val implClassName = descriptor.getImplClassNameForDeserialized() ?: error("No implClassName for $descriptor")
         return (descriptor.containingDeclaration as PackageFragmentDescriptor).fqName.child(implClassName)
     }
+
+    @JvmStatic
+    fun getFileClassInternalName(file: KtFile): String =
+            getFileClassInfoNoResolve(file).fileClassFqName.internalNameWithoutInnerClasses
+
+    @JvmStatic
+    fun getFacadeClassInternalName(file: KtFile): String =
+            getFileClassInfoNoResolve(file).facadeClassFqName.internalNameWithoutInnerClasses
 
     private fun manglePartName(facadeName: String, fileName: String): String =
             "$facadeName$MULTIFILE_PART_NAME_DELIMITER${PackagePartClassUtils.getFilePartShortName(fileName)}"
@@ -100,3 +109,6 @@ fun KtDeclaration.isInsideJvmMultifileClassFile() = JvmFileClassUtil.findAnnotat
         containingKtFile,
         JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT
 ) != null
+
+val FqName.internalNameWithoutInnerClasses: String
+    get() = JvmClassName.byFqNameWithoutInnerClasses(this).internalName

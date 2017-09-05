@@ -38,10 +38,8 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
-import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -94,7 +92,6 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 public class KotlinTypeMapper {
     private final BindingContext bindingContext;
     private final ClassBuilderMode classBuilderMode;
-    private final JvmFileClassesProvider fileClassesProvider;
     private final IncompatibleClassTracker incompatibleClassTracker;
     private final String moduleName;
     private final boolean isJvm8Target;
@@ -137,7 +134,6 @@ public class KotlinTypeMapper {
     public KotlinTypeMapper(
             @NotNull BindingContext bindingContext,
             @NotNull ClassBuilderMode classBuilderMode,
-            @NotNull JvmFileClassesProvider fileClassesProvider,
             @NotNull IncompatibleClassTracker incompatibleClassTracker,
             @NotNull String moduleName,
             boolean isJvm8Target,
@@ -145,7 +141,6 @@ public class KotlinTypeMapper {
     ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
-        this.fileClassesProvider = fileClassesProvider;
         this.incompatibleClassTracker = incompatibleClassTracker;
         this.moduleName = moduleName;
         this.isJvm8Target = isJvm8Target;
@@ -208,10 +203,10 @@ public class KotlinTypeMapper {
                 Visibilities.isPrivate(visibility) ||
                 isAccessor/*Cause of KT-9603*/
             ) {
-                return FileClasses.getFileClassInternalName(fileClassesProvider, file);
+                return JvmFileClassUtil.getFileClassInternalName(file);
             }
             else {
-                return FileClasses.getFacadeClassInternalName(fileClassesProvider, file);
+                return JvmFileClassUtil.getFacadeClassInternalName(file);
             }
         }
 

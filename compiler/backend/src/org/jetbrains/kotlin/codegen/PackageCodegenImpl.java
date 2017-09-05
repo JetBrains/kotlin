@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
@@ -88,11 +89,8 @@ public class PackageCodegenImpl implements PackageCodegen {
     }
 
     private void generateFile(@NotNull KtFile file) {
-        JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
-
-        if (fileClassInfo.getWithJvmMultifileClass()) {
-            return;
-        }
+        JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file);
+        if (fileClassInfo.getWithJvmMultifileClass()) return;
 
         Type fileClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.getFileClassFqName());
         PackageContext packagePartContext = state.getRootContext().intoPackagePart(packageFragment, fileClassType, file);

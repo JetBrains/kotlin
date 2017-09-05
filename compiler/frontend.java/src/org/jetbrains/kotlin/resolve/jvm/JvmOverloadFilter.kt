@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
-import org.jetbrains.kotlin.fileClasses.getFileClassFqName
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -36,7 +35,7 @@ object JvmOverloadFilter : OverloadFilter {
         for (overload in overloads) {
             val file = DescriptorToSourceUtils.getContainingFile(overload) ?: continue
             result.add(overload)
-            sourceClassesFQNs.add(NoResolveFileClassesProvider.getFileClassFqName(file))
+            sourceClassesFQNs.add(JvmFileClassUtil.getFileClassInfoNoResolve(file).fileClassFqName)
         }
 
         for (overload in overloads) {

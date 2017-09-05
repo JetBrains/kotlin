@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -176,7 +175,6 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
         val typeMapper = KotlinTypeMapper(
                 bindingContext,
                 ClassBuilderMode.full(false),
-                NoResolveFileClassesProvider,
                 IncompatibleClassTracker.DoNothing,
                 descriptor.module.name.asString(),
                 /* isJvm8Target */ false,
