@@ -2580,6 +2580,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("intersectionTypeOverloadWithWrongParameter.kt")
+                public void testIntersectionTypeOverloadWithWrongParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/intersectionTypeOverloadWithWrongParameter.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt10036.kt")
                 public void testKt10036() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/kt10036.kt");
