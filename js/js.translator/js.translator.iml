@@ -15,5 +15,6 @@
     <orderEntry type="module" module-name="js.parser" />
     <orderEntry type="module" module-name="js.serializer" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="library" name="json-org" level="project" />
   </component>
 </module>

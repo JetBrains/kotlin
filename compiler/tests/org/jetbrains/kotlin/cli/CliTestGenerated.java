@@ -545,6 +545,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsTest(fileName);
         }
 
+        @TestMetadata("sourceMapCharEscape.args")
+        public void testSourceMapCharEscape() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMapCharEscape.args");
+            doJsTest(fileName);
+        }
+
         @TestMetadata("sourceMapDuplicateRelativePaths.args")
         public void testSourceMapDuplicateRelativePaths() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMapDuplicateRelativePaths.args");
