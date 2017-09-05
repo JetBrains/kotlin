@@ -47,6 +47,16 @@
             <option name="KOTLIN_STATEMENT" value="true"/>
         </context>
     </template>
+    <template description="Prints current class and function name to System.out"
+              name="soutf"
+              toReformat="false" toShortenFQNames="true"
+              value="println(&quot;$CLASS$.$METHOD$&quot;)">
+        <variable name="CLASS" expression="groovyScript(&quot;_1 ?: '&lt;top&gt;'&quot;, kotlinClassName())" defaultValue="" alwaysStopAt="false" />
+        <variable name="METHOD" expression="kotlinFunctionName()" defaultValue="" alwaysStopAt="false" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true"/>
+        </context>
+    </template>
     <template resource-bundle="org.jetbrains.kotlin.idea.KotlinBundle" key="livetemplate.description.iter"
               name="iter" toReformat="true" toShortenFQNames="true"
               value="for ($VAR$ in $ITERABLE$) {&#10;$END$&#10;}">
