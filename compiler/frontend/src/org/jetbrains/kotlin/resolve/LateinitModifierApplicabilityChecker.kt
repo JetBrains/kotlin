@@ -45,8 +45,11 @@ object LateinitModifierApplicabilityChecker {
             trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is allowed only on mutable $variables"))
         }
 
-        if (TypeUtils.isNullableType(type)) {
+        if (type.isMarkedNullable) {
             trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of nullable types"))
+        }
+        else if (TypeUtils.isNullableType(type)) {
+            trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of a type with nullable upper bound"))
         }
 
         if (KotlinBuiltIns.isPrimitiveType(type)) {
