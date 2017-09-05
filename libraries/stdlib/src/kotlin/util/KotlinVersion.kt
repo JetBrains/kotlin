@@ -21,7 +21,7 @@ public class KotlinVersion(val major: Int, val minor: Int, val patch: Int) : Com
         require(major in 0..MAX_COMPONENT_VALUE && minor in 0..MAX_COMPONENT_VALUE && patch in 0..MAX_COMPONENT_VALUE) {
             "Version components are out of range: $major.$minor.$patch"
         }
-        return major shl 16 + minor shl 8 + patch
+        return major.shl(16) + minor.shl(8) + patch
     }
 
     /**
