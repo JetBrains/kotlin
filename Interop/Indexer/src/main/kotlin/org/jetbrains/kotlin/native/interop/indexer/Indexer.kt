@@ -297,6 +297,9 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         val name = getCursorSpelling(declCursor)
 
         val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor))
+
+        if (underlying == UnsupportedType) return underlying
+
         if (clang_getCursorLexicalParent(declCursor).kind != CXCursorKind.CXCursor_TranslationUnit) {
             // Objective-C type parameters are represented as non-top-level typedefs.
             // Erase for now:
