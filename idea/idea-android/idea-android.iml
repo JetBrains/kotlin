@@ -21,7 +21,6 @@
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="library" name="uast-java" level="project" />
-    <orderEntry type="library" name="junit-plugin" level="project" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
     <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="library" scope="PROVIDED" name="dx-android" level="project" />
