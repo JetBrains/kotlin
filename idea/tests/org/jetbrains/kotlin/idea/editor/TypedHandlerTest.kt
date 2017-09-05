@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.idea.editor
 
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
+import com.intellij.testFramework.LightPlatformTestCase
+import org.jetbrains.kotlin.idea.KotlinFileType
 
 class TypedHandlerTest : LightCodeInsightTestCase() {
     val dollar = '$'
@@ -633,6 +636,41 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         )
     }
 
+    fun testSmartEnterWithTabsOnConstructorParameters() {
+        doCharTypeTest(
+                '\n',
+                """
+                |class A(
+                |		a: Int,<caret>
+                |)
+                """,
+                """
+                |class A(
+                |		a: Int,
+                |		<caret>
+                |)
+                """,
+                enableSmartEnterWithTabs()
+        )
+    }
+
+    fun testSmartEnterWithTabsInMethodParameters() {
+        doCharTypeTest(
+                '\n',
+                """
+                |fun method(
+                |         arg1: String,<caret>
+                |) {}
+                """,
+                """
+                |fun method(
+                |         arg1: String,
+                |         <caret>
+                |) {}
+                """,
+                enableSmartEnterWithTabs()
+        )
+    }
 
     fun testMoveThroughGT() {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
@@ -645,10 +683,29 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         doCharTypeTest('\'', "val c = <caret>", "val c = ''")
     }
 
-    private fun doCharTypeTest(ch: Char, beforeText: String, afterText: String) {
-        LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", beforeText.trimMargin())
-        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), ch)
-        checkResultByText(afterText.trimMargin())
+    private fun enableSmartEnterWithTabs(): () -> Unit = {
+        val project = LightPlatformTestCase.getProject()
+        val indentOptions = CodeStyleSettingsManager.getInstance(project).currentSettings.getIndentOptions(KotlinFileType.INSTANCE)
+        indentOptions.USE_TAB_CHARACTER = true
+        indentOptions.SMART_TABS = true
+    }
+
+    private fun doCharTypeTest(ch: Char, beforeText: String, afterText: String, settingsModifier: (() -> Unit)? = null) {
+        try {
+            if (settingsModifier != null) {
+                settingsModifier()
+            }
+
+            LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", beforeText.trimMargin())
+            EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), ch)
+            checkResultByText(afterText.trimMargin())
+        }
+        finally {
+            if (settingsModifier != null) {
+                val project = LightPlatformTestCase.getProject()
+                CodeStyleSettingsManager.getSettings(project).clearCodeStyleSettings()
+            }
+        }
     }
 
     private fun doLtGtTestNoAutoClose(initText: String) {
