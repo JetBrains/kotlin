@@ -233,11 +233,10 @@ fun AbstractInsnNode.isAreEqualIntrinsic() =
             desc == "(Ljava/lang/Object;Ljava/lang/Object;)Z"
         }
 
+private val shouldUseEqualsForWrappers = setOf(Type.DOUBLE_TYPE, Type.FLOAT_TYPE, AsmTypes.JAVA_CLASS_TYPE)
+
 fun canValuesBeUnboxedForAreEqual(values: List<BasicValue>): Boolean =
-        !values.any {
-            val unboxedType = getUnboxedType(it.type)
-            unboxedType == Type.DOUBLE_TYPE || unboxedType == Type.FLOAT_TYPE
-        }
+        values.none { getUnboxedType(it.type) in shouldUseEqualsForWrappers }
 
 fun AbstractInsnNode.isJavaLangComparableCompareToForSameTypedBoxedValues(values: List<BasicValue>) =
         isJavaLangComparableCompareTo() && areSameTypedBoxedValues(values)
