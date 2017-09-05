@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.android.tests;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
@@ -145,14 +148,16 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
 
         public List<KtFile> files = new ArrayList<>();
         private KotlinCoreEnvironment environment;
+        private Disposable disposable;
 
         private FilesWriter(boolean isFullJdkAndRuntime, boolean inheritMultifileParts) {
             this.isFullJdkAndRuntime = isFullJdkAndRuntime;
             this.inheritMultifileParts = inheritMultifileParts;
-            this.environment = createEnvironment(isFullJdkAndRuntime);
+            this.disposable = new TestDisposable();
+            this.environment = createEnvironment(isFullJdkAndRuntime, disposable);
         }
 
-        private KotlinCoreEnvironment createEnvironment(boolean isFullJdkAndRuntime) {
+        private KotlinCoreEnvironment createEnvironment(boolean isFullJdkAndRuntime, @NotNull Disposable disposable) {
             ConfigurationKind configurationKind = isFullJdkAndRuntime ? ConfigurationKind.ALL : ConfigurationKind.NO_KOTLIN_REFLECT;
             TestJdkKind testJdkKind = isFullJdkAndRuntime ? TestJdkKind.FULL_JDK : TestJdkKind.MOCK_JDK;
             CompilerConfiguration configuration =
@@ -161,7 +166,7 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
             if (inheritMultifileParts) {
                 configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, true);
             }
-            return KotlinCoreEnvironment.createForTests(myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+            return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         }
 
         public boolean shouldWriteFilesOnDisk() {
@@ -177,7 +182,11 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
         public void writeFilesOnDisk() {
             writeFiles(files);
             files = new ArrayList<>();
-            environment = createEnvironment(isFullJdkAndRuntime);
+            if (disposable != null) {
+                Disposer.dispose(disposable);
+                disposable = new TestDisposable();
+            }
+            environment = createEnvironment(isFullJdkAndRuntime, disposable);
         }
 
         public void addFile(String name, String content) {
@@ -202,11 +211,18 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
                                 ? " (JVM.INHERIT_MULTIFILE_PARTS)"
                                 : isFullJdkAndRuntime ? " (full jdk and runtime)" : "") + " into " + outputDir.getName() + "...");
             OutputFileCollection outputFiles;
+            GenerationState state = null;
             try {
-                outputFiles = GenerationUtils.compileFiles(filesToCompile, environment).getFactory();
+                state = GenerationUtils.compileFiles(filesToCompile, environment);
+                outputFiles = state.getFactory();
             }
             catch (Throwable e) {
                 throw new RuntimeException(e);
+            }
+            finally {
+                if (state != null) {
+                    state.destroy();
+                }
             }
 
             if (!outputDir.exists()) {
