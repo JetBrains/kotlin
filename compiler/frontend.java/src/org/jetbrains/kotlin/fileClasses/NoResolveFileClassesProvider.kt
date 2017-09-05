@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.fileClasses
 
 import org.jetbrains.kotlin.psi.KtFile
 
-
 object NoResolveFileClassesProvider : JvmFileClassesProvider {
     override fun getFileClassInfo(file: KtFile): JvmFileClassInfo =
-            JvmFileClassUtil.getFileClassInfo(file, JvmFileClassUtil.parseJvmNameOnFileNoResolve(file))
+            JvmFileClassUtil.getFileClassInfoNoResolve(file)
 }

@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
+import org.jetbrains.kotlin.load.java.descriptors.UtilKt;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.kotlin.load.kotlin.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider.IncrementalMultifileClassPackageFragment;
@@ -330,7 +331,7 @@ public class KotlinTypeMapper {
             return new ContainingClassesInfo(FAKE_CLASS_ID_FOR_BUILTINS, FAKE_CLASS_ID_FOR_BUILTINS);
         }
 
-        Name implClassName = JvmFileClassUtil.getImplClassName(descriptor);
+        Name implClassName = UtilKt.getImplClassNameForDeserialized(descriptor);
         assert implClassName != null : "No implClassName for " + descriptor;
         String implSimpleName = implClassName.asString();
 

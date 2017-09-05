@@ -16,19 +16,17 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.fileClasses.getFileClassFqName
+import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import java.util.*
-
 
 object JvmOverloadFilter : OverloadFilter {
     override fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot> {
@@ -50,8 +48,7 @@ object JvmOverloadFilter : OverloadFilter {
                 throw AssertionError("Package member expected; got $overload with containing declaration $containingDeclaration")
             }
 
-            val implClassName = JvmFileClassUtil.getImplClassName(overload) ?:
-                                throw AssertionError("No implClassName: $overload")
+            val implClassName = overload.getImplClassNameForDeserialized() ?: throw AssertionError("No implClassName: $overload")
             val implClassFQN = containingDeclaration.fqName.child(implClassName)
             if (!sourceClassesFQNs.contains(implClassFQN)) {
                 result.add(overload)
