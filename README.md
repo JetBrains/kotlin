@@ -1,3 +1,5 @@
+[![official project](http://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+
 # Kotlin/Native  #
 
 _Kotlin/Native_ is a LLVM backend for the Kotlin compiler, runtime
