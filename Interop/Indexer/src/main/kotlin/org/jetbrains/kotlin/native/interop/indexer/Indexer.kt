@@ -518,7 +518,6 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                 clang_disposeTokens(translationUnit, tokens, numTokens)
             }
         }
-        TODO()
     }
 
     private fun isSuitableFunction(cursor: CValue<CXCursor>): Boolean {

@@ -244,7 +244,8 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
             val libGcc = getTargetSpecific("libGcc", target)
             val binDir = "$targetSysRoot/${libGcc ?: "bin"}"
             return archSelector + commonArgs + listOf(
-                    "-B$binDir", "--gcc-toolchain=$targetToolchain")
+                    "-B$binDir", "--gcc-toolchain=$targetToolchain",
+                    "-fuse-ld=$targetToolchain/bin/ld")
         }
         "mingw" -> {
             return archSelector + commonArgs + listOf("-B$targetSysRoot/bin")
