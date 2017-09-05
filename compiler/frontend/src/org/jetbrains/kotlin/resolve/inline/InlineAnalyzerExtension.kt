@@ -67,7 +67,7 @@ class InlineAnalyzerExtension(
             }
 
             override fun visitClass(klass: KtClass) {
-                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(klass, klass, descriptor))
+                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(klass, "Local classes"))
             }
 
             override fun visitNamedFunction(function: KtNamedFunction) {
@@ -75,7 +75,7 @@ class InlineAnalyzerExtension(
                     super.visitNamedFunction(function)
                 }
                 else {
-                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(function, function, descriptor))
+                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(function, "Local functions"))
                 }
             }
         }
@@ -95,7 +95,7 @@ class InlineAnalyzerExtension(
                 val inheritDefaultValues = !parameter.declaresDefaultValue()
                 if (checkInlinableParameter(parameter, ktParameter, functionDescriptor, null) || inheritDefaultValues) {
                     if (inheritDefaultValues || !languageVersionSettings.supportsFeature(LanguageFeature.InlineDefaultFunctionalParameters)) {
-                        trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(ktParameter, ktParameter, functionDescriptor))
+                        trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(ktParameter, "Functional parameters with inherited default values"))
                     }
                     else {
                         checkDefaultValue(trace, parameter, ktParameter)

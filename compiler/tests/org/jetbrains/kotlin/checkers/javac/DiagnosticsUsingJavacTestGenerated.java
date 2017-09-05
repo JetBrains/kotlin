@@ -11353,6 +11353,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("messagesForUnsupportedInInline.kt")
+            public void testMessagesForUnsupportedInInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/messagesForUnsupportedInInline.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nonVirtualMembersWithInline.kt")
             public void testNonVirtualMembersWithInline() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/nonVirtualMembersWithInline.kt");
