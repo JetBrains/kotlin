@@ -40,10 +40,21 @@ fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File
 fun Project.ideaSdkDeps(vararg artifactBaseNames: String, subdir: String = "lib"): ConfigurableFileCollection =
         preloadedDeps(*artifactBaseNames, baseDir = File(rootDir, "ideaSDK"), subdir = subdir)
 
+fun Project.ideaUltimateSdkDeps(vararg artifactBaseNames: String, subdir: String = "lib"): ConfigurableFileCollection {
+    val ultimateSdkDir = File(rootDir, "ultimate", "ideaSDK")
+    return if (ultimateSdkDir.isDirectory) preloadedDeps(*artifactBaseNames, baseDir = ultimateSdkDir, subdir = subdir)
+           else files()
+}
+
 fun Project.ideaSdkCoreDeps(vararg artifactBaseNames: String): ConfigurableFileCollection = ideaSdkDeps(*artifactBaseNames, subdir = "core")
 
+fun Project.ideaUltimateSdkCoreDeps(vararg artifactBaseNames: String): ConfigurableFileCollection = ideaUltimateSdkDeps(*artifactBaseNames, subdir = "core")
+
 fun Project.ideaPluginDeps(vararg artifactBaseNames: String, plugin: String, subdir: String = "lib"): ConfigurableFileCollection =
-        preloadedDeps(*artifactBaseNames, baseDir = File(rootDir, "ideaSDK"), subdir = "plugins/$plugin/$subdir")
+        ideaSdkDeps(*artifactBaseNames, subdir = "plugins/$plugin/$subdir")
+
+fun Project.ideaUltimatePluginDeps(vararg artifactBaseNames: String, plugin: String, subdir: String = "lib"): ConfigurableFileCollection =
+        ideaUltimateSdkDeps(*artifactBaseNames, subdir = "plugins/$plugin/$subdir")
 
 fun Project.kotlinDep(artifactBaseName: String, version: String? = null): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:${version ?: bootstrapKotlinVersion}"
 

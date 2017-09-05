@@ -124,7 +124,8 @@ include ":kotlin-build-common",
         ":kotlin-annotation-processing",
         ":kotlin-annotation-processing-gradle",
         ":examples:kotlin-jsr223-local-example",
-        ":examples:kotlin-jsr223-daemon-local-eval-example"
+        ":examples:kotlin-jsr223-daemon-local-eval-example",
+        ":ultimate"
 
 rootProject.name = "kotlin"
 

@@ -38,7 +38,6 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "copyright"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "properties"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "java-i18n"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "coverage"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "java-decompiler"))
 }
 
