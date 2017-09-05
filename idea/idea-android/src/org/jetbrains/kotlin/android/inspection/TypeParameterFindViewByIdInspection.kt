@@ -57,6 +57,8 @@ class TypeParameterFindViewByIdInspection : AbstractKotlinInspection(), CleanupL
     }
 
     class ConvertCastToFindViewByIdWithTypeParameter : LocalQuickFix {
+        override fun getName(): String = familyName
+
         override fun getFamilyName(): String = "Convert cast to findViewById with type parameter"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
