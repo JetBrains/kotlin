@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.psi.psiUtil.addTypeArgument
 
 class TypeParameterFindViewByIdInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
+        return KtVisitorVoid()
+/*
         val compileSdk = AndroidFacet.getInstance(session.file)?.androidModuleInfo?.buildSdkVersion?.apiLevel
         if (compileSdk == null || compileSdk < 26) {
             return KtVisitorVoid()
@@ -52,7 +54,7 @@ class TypeParameterFindViewByIdInspection : AbstractKotlinInspection(), CleanupL
                         "Can be converted to findViewById<$typeText>(...)",
                         ConvertCastToFindViewByIdWithTypeParameter())
             }
-        }
+        } */
     }
 
     class ConvertCastToFindViewByIdWithTypeParameter : LocalQuickFix {
