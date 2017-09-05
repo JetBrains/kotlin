@@ -40,10 +40,7 @@ import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
 import org.jetbrains.kotlin.js.translate.declaration.ClassModelGenerator;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.SignatureUtilsKt;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -805,6 +802,7 @@ public final class StaticContext {
     }
 
     public void addInlineCall(@NotNull CallableDescriptor descriptor) {
+        descriptor = (CallableDescriptor) JsDescriptorUtils.findRealInlineDeclaration(descriptor);
         String tag = Namer.getFunctionTag(descriptor, config);
         JsExpression moduleExpression = exportModuleForInline(DescriptorUtils.getContainingModule(descriptor));
         if (moduleExpression == null) {

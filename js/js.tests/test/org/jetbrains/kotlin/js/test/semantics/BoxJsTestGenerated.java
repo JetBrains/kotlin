@@ -4754,6 +4754,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("fakeFunctionInAnotherModule.kt")
+        public void testFakeFunctionInAnotherModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/fakeFunctionInAnotherModule.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("importObjectInstance.kt")
         public void testImportObjectInstance() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/importObjectInstance.kt");
