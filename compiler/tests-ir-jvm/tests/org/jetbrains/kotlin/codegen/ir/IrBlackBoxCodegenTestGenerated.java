@@ -10401,6 +10401,21 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/jvmPackageName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmPackageName extends AbstractIrBlackBoxCodegenTest {
+        public void testAllFilesPresentInJvmPackageName() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmPackageName/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/jvmStatic")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
