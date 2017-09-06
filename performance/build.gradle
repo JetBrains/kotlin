@@ -61,22 +61,28 @@ dependencies {
 }
 
 task jvmRun(type: JavaExec) {
-    def output = new FileOutputStream("${buildDir.absolutePath}/jvmReport.txt")
+    def output = new ByteArrayOutputStream()
     classpath sourceSets.main.runtimeClasspath
     main = "MainKt"
     args "$ringWarmup", "$iterations"
     standardOutput = output
     doLast {
-        output.close()
+        dumpReport('jvmReport', output)
+    }
+}
+
+private void dumpReport(String name, ByteArrayOutputStream output) {
+    new File("${buildDir.absolutePath}/${name}.txt").withOutputStream {
+        it.write(output.toByteArray())
     }
 }
 
 task konanRun(type: Exec) {
-    def output = new FileOutputStream("${buildDir.absolutePath}/konanReport.txt")
+    def output = new ByteArrayOutputStream()
     commandLine project.file("build/konan/bin/Ring.kexe").absolutePath, "$ringWarmup", "$iterations"
     standardOutput = output
     doLast {
-        output.close()
+        dumpReport('konanReport', output)
     }
 }
 
