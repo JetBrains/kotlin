@@ -23,7 +23,7 @@ enum class Jsr305State(
 ) {
     IGNORE("ignore"),
     WARN("warn", shouldReportWarning = true),
-    ENABLE("enable", shouldReportError = true),
+    STRICT("strict", shouldReportError = true),
     ;
 
     companion object {

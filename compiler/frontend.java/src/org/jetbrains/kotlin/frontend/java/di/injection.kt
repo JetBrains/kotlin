@@ -101,7 +101,7 @@ fun createContainerForLazyResolveWithJava(
 
     useInstance(languageVersionSettings)
 
-    useInstance(languageVersionSettings.getFlag(AnalysisFlag.jsr305GlobalState))
+    useInstance(languageVersionSettings.getFlag(AnalysisFlag.jsr305))
 
     if (useBuiltInsProvider) {
         useInstance((moduleContext.module.builtIns as JvmBuiltIns).settings)

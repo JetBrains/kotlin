@@ -43,9 +43,9 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
             val settings = KotlinFacetSettingsProvider.getInstance(project).getSettings(module) ?: continue
             val compilerArguments = settings.compilerArguments as? K2JVMCompilerArguments ?: continue
 
-            val jsr305state = Jsr305State.findByDescription(compilerArguments.jsr305GlobalState)
+            val jsr305state = Jsr305State.findByDescription(compilerArguments.jsr305)
             if (jsr305state != null && jsr305state != Jsr305State.IGNORE) {
-                map.put(AnalysisFlag.jsr305GlobalState, jsr305state)
+                map.put(AnalysisFlag.jsr305, jsr305state)
                 break
             }
         }
