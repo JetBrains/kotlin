@@ -66,30 +66,6 @@ public class ForeignAnnotationsTestGenerated extends AbstractForeignAnnotationsT
         doTest(fileName);
     }
 
-    @TestMetadata("jsr305NonNullNever.kt")
-    public void testJsr305NonNullNever() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NonNullNever.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("jsr305NullabilityNicknames.kt")
-    public void testJsr305NullabilityNicknames() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityNicknames.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("jsr305Simple.kt")
-    public void testJsr305Simple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305Simple.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("jsr305Strange.kt")
-    public void testJsr305Strange() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305Strange.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("lombokSimple.kt")
     public void testLombokSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/lombokSimple.kt");
@@ -102,282 +78,315 @@ public class ForeignAnnotationsTestGenerated extends AbstractForeignAnnotationsT
         doTest(fileName);
     }
 
-    @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305Ignore")
+    @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Jsr305Ignore extends AbstractForeignAnnotationsTest {
-        public void testAllFilesPresentInJsr305Ignore() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305Ignore"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+    public static class Jsr305 extends AbstractForeignAnnotationsTest {
+        public void testAllFilesPresentInJsr305() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("parametersAreNonnullByDefault.kt")
-        public void testParametersAreNonnullByDefault() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305Ignore/parametersAreNonnullByDefault.kt");
-            doTest(fileName);
-        }
-    }
-
-    @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Jsr305NullabilityWarnings extends AbstractForeignAnnotationsTest {
-        public void testAllFilesPresentInJsr305NullabilityWarnings() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("jsr305NullabilityGenerics.kt")
-        public void testJsr305NullabilityGenerics() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/jsr305NullabilityGenerics.kt");
+        @TestMetadata("nonNullNever.kt")
+        public void testNonNullNever() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nonNullNever.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("jsr305NullabilityNicknames.kt")
-        public void testJsr305NullabilityNicknames() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/jsr305NullabilityNicknames.kt");
+        @TestMetadata("nullabilityNicknames.kt")
+        public void testNullabilityNicknames() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityNicknames.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("jsr305Simple.kt")
-        public void testJsr305Simple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/jsr305Simple.kt");
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/simple.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("jsr305Strange.kt")
-        public void testJsr305Strange() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/jsr305Strange.kt");
+        @TestMetadata("strange.kt")
+        public void testStrange() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/strange.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes")
+        @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/ignore")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class FromPlatformTypes extends AbstractForeignAnnotationsTest {
-            public void testAllFilesPresentInFromPlatformTypes() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        public static class Ignore extends AbstractForeignAnnotationsTest {
+            public void testAllFilesPresentInIgnore() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/ignore"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("arithmetic.kt")
-            public void testArithmetic() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/arithmetic.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("array.kt")
-            public void testArray() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/array.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("assignToVar.kt")
-            public void testAssignToVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/assignToVar.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("conditions.kt")
-            public void testConditions() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/conditions.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("dataFlowInfo.kt")
-            public void testDataFlowInfo() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/dataFlowInfo.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("defaultParameters.kt")
-            public void testDefaultParameters() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/defaultParameters.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("delegatedProperties.kt")
-            public void testDelegatedProperties() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/delegatedProperties.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("delegation.kt")
-            public void testDelegation() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/delegation.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("derefenceExtension.kt")
-            public void testDerefenceExtension() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/derefenceExtension.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("derefenceMember.kt")
-            public void testDerefenceMember() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/derefenceMember.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("expectedType.kt")
-            public void testExpectedType() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/expectedType.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("for.kt")
-            public void testFor() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/for.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("functionArguments.kt")
-            public void testFunctionArguments() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/functionArguments.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("invoke.kt")
-            public void testInvoke() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/invoke.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt6829.kt")
-            public void testKt6829() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/kt6829.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("multiDeclaration.kt")
-            public void testMultiDeclaration() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/multiDeclaration.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("passToJava.kt")
-            public void testPassToJava() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/passToJava.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("primitiveArray.kt")
-            public void testPrimitiveArray() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/primitiveArray.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("throw.kt")
-            public void testThrow() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/throw.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("uselessElvisRightIsNull.kt")
-            public void testUselessElvisRightIsNull() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/fromPlatformTypes/uselessElvisRightIsNull.kt");
+            @TestMetadata("parametersAreNonnullByDefault.kt")
+            public void testParametersAreNonnullByDefault() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/ignore/parametersAreNonnullByDefault.kt");
                 doTest(fileName);
             }
         }
 
-        @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/typeQualifierDefault")
+        @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class NullabilityWarnings extends AbstractForeignAnnotationsTest {
+            public void testAllFilesPresentInNullabilityWarnings() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("nullabilityGenerics.kt")
+            public void testNullabilityGenerics() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/nullabilityGenerics.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullabilityNicknames.kt")
+            public void testNullabilityNicknames() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/nullabilityNicknames.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("strange.kt")
+            public void testStrange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/strange.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FromPlatformTypes extends AbstractForeignAnnotationsTest {
+                public void testAllFilesPresentInFromPlatformTypes() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("arithmetic.kt")
+                public void testArithmetic() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/arithmetic.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("array.kt")
+                public void testArray() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/array.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("assignToVar.kt")
+                public void testAssignToVar() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/assignToVar.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("conditions.kt")
+                public void testConditions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/conditions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("dataFlowInfo.kt")
+                public void testDataFlowInfo() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/dataFlowInfo.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("defaultParameters.kt")
+                public void testDefaultParameters() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/defaultParameters.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("delegatedProperties.kt")
+                public void testDelegatedProperties() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/delegatedProperties.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("delegation.kt")
+                public void testDelegation() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/delegation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("derefenceExtension.kt")
+                public void testDerefenceExtension() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/derefenceExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("derefenceMember.kt")
+                public void testDerefenceMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/derefenceMember.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("expectedType.kt")
+                public void testExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/expectedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("for.kt")
+                public void testFor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/for.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionArguments.kt")
+                public void testFunctionArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/functionArguments.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("invoke.kt")
+                public void testInvoke() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/invoke.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt6829.kt")
+                public void testKt6829() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/kt6829.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("multiDeclaration.kt")
+                public void testMultiDeclaration() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/multiDeclaration.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("passToJava.kt")
+                public void testPassToJava() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/passToJava.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("primitiveArray.kt")
+                public void testPrimitiveArray() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/primitiveArray.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("throw.kt")
+                public void testThrow() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/throw.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("uselessElvisRightIsNull.kt")
+                public void testUselessElvisRightIsNull() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes/uselessElvisRightIsNull.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class TypeQualifierDefault extends AbstractForeignAnnotationsTest {
+                public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("fieldsAreNullable.kt")
+                public void testFieldsAreNullable() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault/fieldsAreNullable.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nullabilityFromOverridden.kt")
+                public void testNullabilityFromOverridden() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault/nullabilityFromOverridden.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("overridingDefaultQualifier.kt")
+                public void testOverridingDefaultQualifier() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault/overridingDefaultQualifier.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("parametersAreNonnullByDefault.kt")
+                public void testParametersAreNonnullByDefault() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault/parametersAreNonnullByDefault.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("parametersAreNonnullByDefaultPackage.kt")
+                public void testParametersAreNonnullByDefaultPackage() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault/parametersAreNonnullByDefaultPackage.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("springNullable.kt")
+                public void testSpringNullable() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault/springNullable.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("springNullablePackage.kt")
+                public void testSpringNullablePackage() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault/springNullablePackage.kt");
+                    doTest(fileName);
+                }
+            }
+        }
+
+        @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TypeQualifierDefault extends AbstractForeignAnnotationsTest {
             public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("fieldsAreNullable.kt")
             public void testFieldsAreNullable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/typeQualifierDefault/fieldsAreNullable.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault/fieldsAreNullable.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("nullabilityFromOverridden.kt")
             public void testNullabilityFromOverridden() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/typeQualifierDefault/nullabilityFromOverridden.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault/nullabilityFromOverridden.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("overridingDefaultQualifier.kt")
             public void testOverridingDefaultQualifier() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/typeQualifierDefault/overridingDefaultQualifier.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault/overridingDefaultQualifier.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("parametersAreNonnullByDefault.kt")
             public void testParametersAreNonnullByDefault() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/typeQualifierDefault/parametersAreNonnullByDefault.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault/parametersAreNonnullByDefault.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("parametersAreNonnullByDefaultPackage.kt")
             public void testParametersAreNonnullByDefaultPackage() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/typeQualifierDefault/parametersAreNonnullByDefaultPackage.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault/parametersAreNonnullByDefaultPackage.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("springNullable.kt")
             public void testSpringNullable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/typeQualifierDefault/springNullable.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault/springNullable.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("springNullablePackage.kt")
             public void testSpringNullablePackage() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/typeQualifierDefault/springNullablePackage.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault/springNullablePackage.kt");
                 doTest(fileName);
             }
-        }
-    }
-
-    @TestMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeQualifierDefault extends AbstractForeignAnnotationsTest {
-        public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("fieldsAreNullable.kt")
-        public void testFieldsAreNullable() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/fieldsAreNullable.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nullabilityFromOverridden.kt")
-        public void testNullabilityFromOverridden() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/nullabilityFromOverridden.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("overridingDefaultQualifier.kt")
-        public void testOverridingDefaultQualifier() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/overridingDefaultQualifier.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("parametersAreNonnullByDefault.kt")
-        public void testParametersAreNonnullByDefault() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/parametersAreNonnullByDefault.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("parametersAreNonnullByDefaultPackage.kt")
-        public void testParametersAreNonnullByDefaultPackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/parametersAreNonnullByDefaultPackage.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("springNullable.kt")
-        public void testSpringNullable() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/springNullable.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("springNullablePackage.kt")
-        public void testSpringNullablePackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/springNullablePackage.kt");
-            doTest(fileName);
         }
     }
 }

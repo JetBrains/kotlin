@@ -48,10 +48,19 @@ public class ForeignJava8AnnotationsTestGenerated extends AbstractForeignJava8An
         doTest(fileName);
     }
 
-    @TestMetadata("springNullableWithTypeUse.kt")
-    public void testSpringNullableWithTypeUse() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/springNullableWithTypeUse.kt");
-        doTest(fileName);
+    @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Jsr305 extends AbstractForeignJava8AnnotationsTest {
+        public void testAllFilesPresentInJsr305() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("springNullableWithTypeUse.kt")
+        public void testSpringNullableWithTypeUse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/springNullableWithTypeUse.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement")
