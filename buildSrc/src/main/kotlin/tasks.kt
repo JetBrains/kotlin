@@ -29,8 +29,8 @@ fun Project.projectTest(body: Test.() -> Unit = {}): Test = (tasks.findByName("t
             }
         }
     }
-    jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1200m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
-    maxHeapSize = "1200m"
+    jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1100m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
+    maxHeapSize = "1100m"
     systemProperty("idea.is.unit.test", "true")
     environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
     environment("KOTLIN_HOME", rootProject.extra["distKotlinHomeDir"])

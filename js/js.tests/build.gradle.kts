@@ -3,16 +3,20 @@ apply { plugin("kotlin") }
 
 dependencies {
     testCompile(project(":compiler.tests-common"))
-    testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:cli"))
+    testCompileOnly(project(":compiler:frontend"))
+    testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:util"))
     testCompile(project(":js:js.translator"))
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.dce"))
     testCompile(ideaSdkDeps("openapi", "idea"))
+    testRuntime(commonDep("junit:junit"))
+    testRuntime(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testRuntime(projectDist(":kotlin-test:kotlin-test-junit"))
     testRuntime(projectDist(":kotlin-stdlib"))
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":compiler:backend-common"))
-    testRuntime(ideaSdkDeps("*.jar"))
+//    testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
 }
 
