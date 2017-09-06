@@ -33,7 +33,7 @@ object JvmFileClassUtil {
     val JVM_MULTIFILE_CLASS: FqName = FqName("kotlin.jvm.JvmMultifileClass")
     val JVM_MULTIFILE_CLASS_SHORT = JVM_MULTIFILE_CLASS.shortName().asString()
 
-    private val JVM_PACKAGE_NAME: FqName = FqName("kotlin.jvm.JvmPackageName")
+    val JVM_PACKAGE_NAME: FqName = FqName("kotlin.jvm.JvmPackageName")
     private val JVM_PACKAGE_NAME_SHORT = JVM_PACKAGE_NAME.shortName().asString()
 
     private const val MULTIFILE_PART_NAME_DELIMITER = "__"
