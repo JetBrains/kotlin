@@ -60,6 +60,8 @@ enum class LanguageFeature(
     LateinitTopLevelProperties(KOTLIN_1_2),
     LateinitLocalVariables(KOTLIN_1_2),
 
+    RestrictionOfValReassignmentViaBackingField(KOTLIN_1_3),
+
     // Experimental features
 
     Coroutines(KOTLIN_1_1, ApiVersion.KOTLIN_1_1, "https://kotlinlang.org/docs/diagnostics/experimental-coroutines", State.ENABLED_WITH_WARNING),

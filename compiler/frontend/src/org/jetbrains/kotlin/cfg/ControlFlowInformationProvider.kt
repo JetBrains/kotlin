@@ -458,7 +458,7 @@ class ControlFlowInformationProvider private constructor(
                     }
                     else {
                         if (KtPsiUtil.isBackingFieldReference(variableDescriptor)) {
-                            report(Errors.VAL_REASSIGNMENT_VIA_BACKING_FIELD.on(expression, variableDescriptor), ctxt)
+                            reportValReassigned(expression, variableDescriptor, ctxt)
                         }
                         else {
                             report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor), ctxt)
@@ -474,6 +474,15 @@ class ControlFlowInformationProvider private constructor(
             }
         }
         return false
+    }
+
+    private fun reportValReassigned(expression: KtExpression, variableDescriptor: VariableDescriptor, ctxt: VariableInitContext) {
+        val diagnosticFactory = if (languageVersionSettings.supportsFeature(LanguageFeature.RestrictionOfValReassignmentViaBackingField))
+            Errors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR
+        else
+            Errors.VAL_REASSIGNMENT_VIA_BACKING_FIELD
+
+        report(diagnosticFactory.on(expression, variableDescriptor), ctxt)
     }
 
     private fun checkAssignmentBeforeDeclaration(ctxt: VariableInitContext, expression: KtExpression) =

@@ -1777,6 +1777,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("FieldReassignmentError.kt")
+            public void testFieldReassignmentError() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldReassignmentError.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("FieldShadow.kt")
             public void testFieldShadow() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/FieldShadow.kt");
