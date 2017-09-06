@@ -253,12 +253,13 @@ public class KotlinTypeMapper {
 
         @NotNull
         private static ContainingClassesInfo forPackageMember(
-                @NotNull FqName packageFqName,
-                @NotNull String facadeClassName,
-                @NotNull String implClassName
+                @NotNull JvmClassName facadeName,
+                @NotNull JvmClassName partName
         ) {
-            return new ContainingClassesInfo(ClassId.topLevel(packageFqName.child(Name.identifier(facadeClassName))),
-                                             ClassId.topLevel(packageFqName.child(Name.identifier(implClassName))));
+            return new ContainingClassesInfo(
+                    ClassId.topLevel(facadeName.getFqNameForTopLevelClassMaybeWithDollars()),
+                    ClassId.topLevel(partName.getFqNameForTopLevelClassMaybeWithDollars())
+            );
         }
 
         @NotNull
@@ -326,27 +327,24 @@ public class KotlinTypeMapper {
             return new ContainingClassesInfo(FAKE_CLASS_ID_FOR_BUILTINS, FAKE_CLASS_ID_FOR_BUILTINS);
         }
 
-        Name implClassName = UtilKt.getImplClassNameForDeserialized(descriptor);
+        JvmClassName implClassName = UtilKt.getImplClassNameForDeserialized(descriptor);
         assert implClassName != null : "No implClassName for " + descriptor;
-        String implSimpleName = implClassName.asString();
 
-        String facadeSimpleName;
+        JvmClassName facadeName;
 
         if (containingDeclaration instanceof LazyJavaPackageFragment) {
-            facadeSimpleName = ((LazyJavaPackageFragment) containingDeclaration).getFacadeSimpleNameForPartSimpleName(implSimpleName);
-            if (facadeSimpleName == null) return null;
+            facadeName = ((LazyJavaPackageFragment) containingDeclaration).getFacadeNameForPartName(implClassName);
+            if (facadeName == null) return null;
         }
         else if (containingDeclaration instanceof IncrementalMultifileClassPackageFragment) {
-            facadeSimpleName = ((IncrementalMultifileClassPackageFragment) containingDeclaration).getMultifileClassName().asString();
+            facadeName = ((IncrementalMultifileClassPackageFragment) containingDeclaration).getFacadeName();
         }
         else {
             throw new AssertionError("Unexpected package fragment for " + descriptor + ": " +
                                      containingDeclaration + " (" + containingDeclaration.getClass().getSimpleName() + ")");
         }
 
-        return ContainingClassesInfo.forPackageMember(
-                ((PackageFragmentDescriptor) containingDeclaration).getFqName(), facadeSimpleName, implSimpleName
-        );
+        return ContainingClassesInfo.forPackageMember(facadeName, implClassName);
     }
 
     @NotNull

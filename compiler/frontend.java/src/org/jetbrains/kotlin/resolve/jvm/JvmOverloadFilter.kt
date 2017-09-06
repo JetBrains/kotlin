@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverloadFilter
@@ -42,14 +40,8 @@ object JvmOverloadFilter : OverloadFilter {
             if (overload is ConstructorDescriptor) continue
             if (overload !is DeserializedCallableMemberDescriptor) continue
 
-            val containingDeclaration = overload.containingDeclaration
-            if (containingDeclaration !is PackageFragmentDescriptor) {
-                throw AssertionError("Package member expected; got $overload with containing declaration $containingDeclaration")
-            }
-
-            val implClassName = overload.getImplClassNameForDeserialized() ?: throw AssertionError("No implClassName: $overload")
-            val implClassFQN = containingDeclaration.fqName.child(implClassName)
-            if (!sourceClassesFQNs.contains(implClassFQN)) {
+            val implClassFQN = JvmFileClassUtil.getPartFqNameForDeserialized(overload)
+            if (implClassFQN !in sourceClassesFQNs) {
                 result.add(overload)
             }
         }

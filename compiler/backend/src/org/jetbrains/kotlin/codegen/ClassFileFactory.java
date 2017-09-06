@@ -197,9 +197,9 @@ public class ClassFileFactory implements OutputFileCollection {
 
     private PackagePartRegistry buildNewPackagePartRegistry(@NotNull FqName packageFqName) {
         String packageFqNameAsString = packageFqName.asString();
-        return (partShortName, facadeShortName) -> {
+        return (partInternalName, facadeInternalName) -> {
             PackageParts packageParts = partsGroupedByPackage.computeIfAbsent(packageFqNameAsString, PackageParts::new);
-            packageParts.addPart(partShortName, facadeShortName);
+            packageParts.addPart(partInternalName, facadeInternalName);
         };
     }
 

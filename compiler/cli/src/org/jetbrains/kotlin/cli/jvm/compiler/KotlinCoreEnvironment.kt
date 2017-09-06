@@ -234,6 +234,7 @@ class KotlinCoreEnvironment private constructor(
 
         (ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl).initialize(
                 rootsIndex,
+                packagePartProviders,
                 SingleJavaFileRootsIndex(singleJavaFileRoots),
                 configuration.getBoolean(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING)
         )
