@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class ResolutionFacadeImpl(
         private val projectFacade: ProjectResolutionFacade,
@@ -84,7 +85,7 @@ internal class ResolutionFacadeImpl(
     }
 
     override fun <T : Any> tryGetFrontendService(element: PsiElement, serviceClass: Class<T>): T? {
-        return projectFacade.resolverForModuleInfo(element.getModuleInfo()).componentProvider.tryGetService(serviceClass)
+        return element.getModuleInfos().firstNotNullResult { projectFacade.tryGetResolverForModuleInfo(it)?.componentProvider?.tryGetService(serviceClass) }
     }
 
     fun <T : Any> getFrontendService(ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
