@@ -123,12 +123,18 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     null
                 }
                 else {
-                    Spacing.createDependentLFSpacing(
-                            0, 0,
-                            TextRange(parentPsi.textRange.startOffset, left.node.psi.textRange.startOffset),
+                    val minLineFeeds = if (right.node.elementType == FUN || right.node.elementType == PROPERTY)
+                        1
+                    else
+                        0
+
+                    builderUtil.createLineFeedDependentSpacing(
+                            1, 1, minLineFeeds,
                             settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_DECLARATIONS,
+                            TextRange(parentPsi.textRange.startOffset, left.node.psi.textRange.startOffset),
                             DependentSpacingRule(DependentSpacingRule.Trigger.HAS_LINE_FEEDS)
-                                .registerData(DependentSpacingRule.Anchor.MIN_LINE_FEEDS, commonCodeStyleSettings.BLANK_LINES_AFTER_CLASS_HEADER + 1))
+                                .registerData(DependentSpacingRule.Anchor.MIN_LINE_FEEDS, commonCodeStyleSettings.BLANK_LINES_AFTER_CLASS_HEADER + 1)
+                    )
                 }
             }
 
