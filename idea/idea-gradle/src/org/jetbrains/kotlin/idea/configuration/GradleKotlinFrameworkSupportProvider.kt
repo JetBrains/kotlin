@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.framework.FrameworkTypeEx
+import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
+import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableModelsProvider
@@ -27,6 +29,8 @@ import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
 import javax.swing.Icon
+import javax.swing.JComponent
+import javax.swing.JLabel
 
 abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
                                                     val displayName: String,
@@ -37,6 +41,17 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
         override fun getPresentableName(): String = displayName
 
         override fun createProvider(): FrameworkSupportInModuleProvider = this@GradleKotlinFrameworkSupportProvider
+    }
+
+    override fun createConfigurable(model: FrameworkSupportModel): FrameworkSupportInModuleConfigurable {
+        val configurable = super.createConfigurable(model)
+        return object : FrameworkSupportInModuleConfigurable() {
+            override fun addSupport(module: Module, rootModel: ModifiableRootModel, modifiableModelsProvider: ModifiableModelsProvider) {
+                configurable.addSupport(module, rootModel, modifiableModelsProvider)
+            }
+
+            override fun createComponent(): JComponent = JLabel(getDescription())
+        }
     }
 
     override fun addSupport(module: Module,
@@ -75,6 +90,8 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
     protected abstract fun getRuntimeLibrary(sdk: Sdk?): String
 
     protected abstract fun getPluginId(): String
+
+    protected abstract fun getDescription(): String
 }
 
 open class GradleKotlinJavaFrameworkSupportProvider(frameworkTypeId: String = "KOTLIN",
@@ -94,6 +111,8 @@ open class GradleKotlinJavaFrameworkSupportProvider(frameworkTypeId: String = "K
             buildScriptData.addOther("compileTestKotlin {\n    kotlinOptions.jvmTarget = \"1.8\"\n}\n")
         }
     }
+
+    override fun getDescription() = "A Kotlin library or application targeting the JVM"
 }
 
 open class GradleKotlinJSFrameworkSupportProvider(frameworkTypeId: String = "KOTLIN_JS",
@@ -104,6 +123,8 @@ open class GradleKotlinJSFrameworkSupportProvider(frameworkTypeId: String = "KOT
 
     override fun getRuntimeLibrary(sdk: Sdk?) =
             KotlinWithGradleConfigurator.getGroovyDependencySnippet(MAVEN_JS_STDLIB_ID)
+
+    override fun getDescription() = "A Kotlin library or application targeting JavaScript"
 }
 
 open class GradleKotlinMPPCommonFrameworkSupportProvider :
@@ -112,16 +133,20 @@ open class GradleKotlinMPPCommonFrameworkSupportProvider :
 
     override fun getRuntimeLibrary(sdk: Sdk?) =
             KotlinWithGradleConfigurator.getGroovyDependencySnippet(MAVEN_COMMON_STDLIB_ID)
+
+    override fun getDescription() = "Shared code for a Kotlin multiplatform project (targeting JVM and JS)"
 }
 
 class GradleKotlinMPPJavaFrameworkSupportProvider
     : GradleKotlinJavaFrameworkSupportProvider("KOTLIN_MPP_JVM", "Kotlin (Multiplatform - JVM)") {
 
     override fun getPluginId() = "kotlin-platform-jvm"
+    override fun getDescription() = "JVM-specific code for a Kotlin multiplatform project"
 }
 
 class GradleKotlinMPPJSFrameworkSupportProvider
     : GradleKotlinJSFrameworkSupportProvider("KOTLIN_MPP_JS", "Kotlin (Multiplatform - JS)") {
 
     override fun getPluginId() = "kotlin-platform-js"
+    override fun getDescription() = "JavaScript-specific code for a Kotlin multiplatform project"
 }
