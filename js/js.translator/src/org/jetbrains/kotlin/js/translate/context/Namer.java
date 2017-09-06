@@ -176,7 +176,9 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getCapturedVarAccessor(@NotNull JsExpression ref) {
-        return pureFqn(CAPTURED_VAR_FIELD, ref);
+        JsNameRef result = new JsNameRef(CAPTURED_VAR_FIELD, ref);
+        MetadataProperties.setSideEffects(result, SideEffectKind.DEPENDS_ON_STATE);
+        return result;
     }
 
     @NotNull

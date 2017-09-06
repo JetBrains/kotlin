@@ -4310,6 +4310,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("capturedVarAsArgument.kt")
+        public void testCapturedVarAsArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineEvaluationOrder/capturedVarAsArgument.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("conditional.kt")
         public void testConditional() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineEvaluationOrder/conditional.kt");
