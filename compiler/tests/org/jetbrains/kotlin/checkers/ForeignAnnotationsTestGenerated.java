@@ -66,6 +66,12 @@ public class ForeignAnnotationsTestGenerated extends AbstractForeignAnnotationsT
         doTest(fileName);
     }
 
+    @TestMetadata("jsr305NonNullNever.kt")
+    public void testJsr305NonNullNever() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NonNullNever.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("jsr305NullabilityNicknames.kt")
     public void testJsr305NullabilityNicknames() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityNicknames.kt");

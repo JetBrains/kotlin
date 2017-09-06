@@ -62,7 +62,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
         return when (enumEntryDescriptor.name.asString()) {
             "ALWAYS" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
-            "MAYBE" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
+            "MAYBE", "NEVER" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
             else -> null
         }
     }
