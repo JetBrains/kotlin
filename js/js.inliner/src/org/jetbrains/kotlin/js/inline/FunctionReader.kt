@@ -191,8 +191,17 @@ class FunctionReader(
 
     private fun readFunctionFromSource(descriptor: CallableDescriptor, info: ModuleInfo): FunctionWithWrapper? {
         val source = info.fileContent
-        val tag = Namer.getFunctionTag(descriptor, config)
-        val index = source.indexOf(tag)
+        var tag = Namer.getFunctionTag(descriptor, config)
+        val tagForModule = tag
+        var index = source.indexOf(tag)
+
+        // Hack for compatibility with old versions of stdlib
+        // TODO: remove in 1.2
+        if (index < 0 && tag == "kotlin.untypedCharArrayF") {
+            tag = "kotlin.charArrayF"
+            index = source.indexOf(tag)
+        }
+
         if (index < 0) return null
 
         // + 1 for closing quote
@@ -218,7 +227,7 @@ class FunctionReader(
         else {
             FunctionWithWrapper(functionExpr, null)
         }
-        val moduleReference = moduleNameMap[tag]?.deepCopy() ?: currentModuleName.makeRef()
+        val moduleReference = moduleNameMap[tagForModule]?.deepCopy() ?: currentModuleName.makeRef()
         val wrapperStatements = wrapper?.statements?.filter { it !is JsReturn }
 
         val sourceMap = info.sourceMap
