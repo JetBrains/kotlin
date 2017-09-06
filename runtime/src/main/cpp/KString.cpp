@@ -1092,4 +1092,16 @@ OBJ_GETTER(Kotlin_String_subSequence, KString thiz, KInt startIndex, KInt endInd
   RETURN_OBJ(result->obj());
 }
 
+const KChar* Kotlin_String_utf16pointer(KString message) {
+    RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
+    const KChar* utf16 = CharArrayAddressOfElementAt(message, 0);
+    return utf16;
+}
+
+KInt Kotlin_String_utf16length(KString message) {
+    RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
+    return message->count_ * sizeof(KChar);
+}
+
+
 } // extern "C"

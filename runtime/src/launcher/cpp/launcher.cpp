@@ -38,6 +38,12 @@ OBJ_GETTER(setupArgs, int argc, const char** argv) {
 //--- main --------------------------------------------------------------------//
 extern "C" KInt Konan_start(const ObjHeader*);
 
+extern "C" KInt Konan_run_start(int argc, const char** argv) {
+    ObjHolder args;
+    setupArgs(argc, argv, args.slot());
+    return Konan_start(args.obj());
+}
+
 extern "C" RUNTIME_USED int Konan_main(int argc, const char** argv) {
   RuntimeState* state = InitRuntime();
 
@@ -45,12 +51,7 @@ extern "C" RUNTIME_USED int Konan_main(int argc, const char** argv) {
     return 2;
   }
 
-  KInt exitStatus;
-  {
-    ObjHolder args;
-    setupArgs(argc, argv, args.slot());
-    exitStatus = Konan_start(args.obj());
-  }
+  KInt exitStatus = Konan_run_start(argc, argv);
 
   DeinitRuntime(state);
 
@@ -63,14 +64,19 @@ extern "C" RUNTIME_USED int Konan_main(int argc, const char** argv) {
 extern "C" int Konan_js_arg_size(int index);
 extern "C" int Konan_js_fetch_arg(int index, char* ptr);
 
-extern "C" int Konan_js_main(int argc) {
+extern "C" int Konan_js_main(int argc, int memoryInit) {
     char** argv = (char**)konan::calloc(1, argc);
     for (int i = 0; i< argc; ++i) {
         argv[i] = (char*)konan::calloc(1, Konan_js_arg_size(i));
         Konan_js_fetch_arg(i, argv[i]);
     }
-    return Konan_main(argc, (const char**)argv);
+    if (memoryInit) {
+        return Konan_main(argc, (const char**)argv);
+    } else {
+        return Konan_run_start(argc, (const char**)argv);
+    }
 }
+
 #endif 
 
 #endif

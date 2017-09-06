@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-var module;
 var instance;
 var heap;
 var memory;
 var global_arguments;
 var globalBase = 0; // TODO: Is there any way to obtain global_base from JavaScript?
+
+var konanStackTop;
 
 function isBrowser() {
     if (typeof window === 'undefined') {
@@ -29,6 +30,7 @@ function isBrowser() {
     };
 }
 
+var runtime;
 if (isBrowser()) {
     runtime = {
         print: console.log,
@@ -81,6 +83,14 @@ function toString(pointer) {
     var string = '';
     for (var i = pointer; heap[i] != 0; i++) {
         string += String.fromCharCode(heap[i]);
+    }
+    return string;
+}
+
+function toUTF16String(pointer, size) {
+    var string = '';
+    for (var i = pointer; i < pointer + size; i+=2) {
+        string += String.fromCharCode(heap[i] + heap[i+1]*256);
     }
     return string;
 }
@@ -166,48 +176,80 @@ var konan_dependencies = {
     }
 };
 
-function invokeModule(buffer, args) {
+function linkJavaScriptLibraries() {
+    konan.libraries.forEach ( function (library) {
+        for (var property in library) {
+            konan_dependencies.env[property] = library[property];
+        };
+    });
+};
+
+function invokeModule(inst, args) {
     if (args.length < 1) print_usage();
     global_arguments = args;
 
-    module = new WebAssembly.Module(new Uint8Array(buffer));
-    module.env = {};
-    module.env.memoryBase = 0;
-    module.env.tablebase = 0;
+    instance = inst;
 
-    instance = new WebAssembly.Instance(module, konan_dependencies);
     memory = konan_dependencies.env.memory
     heap = new Uint8Array(konan_dependencies.env.memory.buffer);
     konanStackTop = stackTop();
 
     var exit_status = 0;
+
     try {
         runGlobalInitializers(instance.exports);
-        exit_status = instance.exports.Konan_js_main(args.length);
+        if (isBrowser()) {
+            instance.memoryState = instance.exports.InitRuntime();
+        }
+        exit_status = instance.exports.Konan_js_main(args.length, isBrowser() ? 0 : 1);
+        // TODO: so when should we deinit runtime?
     } catch (e) {
-        runtime.print("Exception executing Konan_js_main: " + e);
+        runtime.print("Exception executing entry point: " + e);
         runtime.print(e.stack);
         exit_status = 1;
     }
     runtime.flush();
+
     return exit_status;
 }
 
-// Invoke from the browser.
-function loadAndInvoke(filename) {
-    function listener () {
-        invokeModule(this.response, [filename]);
-    }
-
-    var request = new XMLHttpRequest();
-    request.addEventListener("load", listener);
-    request.open("GET", filename);
-    request.responseType = "arraybuffer";
-    request.send();
+function setupModule(module) {
+    module.env = {};
+    module.env.memoryBase = 0;
+    module.env.tablebase = 0;
+    linkJavaScriptLibraries();
 }
 
-// Invoke from d8.
-if (!isBrowser()) {
-    quit(invokeModule(readbuffer(arguments[0]), arguments));
+// Instantiate module in Browser in a sequence of promises.
+function instantiateAndRun(arraybuffer, args) {
+    WebAssembly.compile(arraybuffer)
+    .then(function(module) {
+        setupModule(module);
+        return WebAssembly.instantiate(module, konan_dependencies);
+    }).then(function(instance) {
+        return invokeModule(instance, args);
+    });
+}
+
+// Instantiate module in d8 synchronously.
+function instantiateAndRunSync(arraybuffer, args) {
+    var module = WebAssembly.Module(arraybuffer)
+    setupModule(module);
+    var instance = WebAssembly.Instance(module, konan_dependencies);
+    return invokeModule(instance, args)
+}
+
+if (isBrowser()) {
+    var filename = document.currentScript.getAttribute("wasm");
+    fetch(filename).then( function(response) {
+        return response.arrayBuffer();
+    }).then(function(arraybuffer) { 
+        instantiateAndRun(arraybuffer, [filename]); 
+    });
+} else {
+    // Invoke from d8.
+    var arrayBuffer = readbuffer(arguments[0]);
+    var exitStatus = instantiateAndRunSync(arrayBuffer, arguments);
+    quit(exitStatus);
 }
 

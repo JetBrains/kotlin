@@ -260,7 +260,7 @@ targetList.each { target ->
         }
         if (target == 'wasm32') {
             from(project(':runtime').file('src/launcher/js')) {
-                into('konan/nativelib')
+                into('klib/stdlib/targets/wasm32/included')
             }
         }
     }

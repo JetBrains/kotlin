@@ -282,7 +282,7 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
             def targetToolchain = TargetPropertiesKt.hostTargetString(properties, "targetToolchain", target)
             def absoluteTargetToolchain = "$dependenciesDir/$targetToolchain"
             def d8 = "$absoluteTargetToolchain/bin/d8"
-            def launcherJs = "${dist.absolutePath}/konan/nativelib/launcher.js"
+            def launcherJs = "${exe}.js"
             return [d8, '--expose-wasm', launcherJs, '--', exe]
         } else {
             return [exe]

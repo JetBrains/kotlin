@@ -346,7 +346,12 @@ internal class LinkStage(val context: Context) {
 
     private fun JavaScriptLinker(jsFiles: List<String>, executable: String): String {
         val linkedJavaScript = File("$executable.js")
-        linkedJavaScript.writeBytes(ByteArray(0));
+
+        val jsLibsExceptLauncher = jsFiles.filter { it != "launcher.js" }.map { it.removeSuffix(".js") }
+
+        val linkerStub = "var konan = { libraries: [] };\n"
+
+        linkedJavaScript.writeBytes(linkerStub.toByteArray());
 
         jsFiles.forEach {
             linkedJavaScript.appendBytes(File(it).readBytes())
