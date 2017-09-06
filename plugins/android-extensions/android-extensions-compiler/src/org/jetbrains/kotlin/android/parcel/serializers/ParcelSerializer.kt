@@ -72,6 +72,12 @@ interface ParcelSerializer {
                     || asmType.descriptor == "[F"
                     || asmType.descriptor == "[L" -> PrimitiveArrayParcelSerializer(asmType)
 
+                asmType.descriptor == "[Landroid/os/IBinder;" -> NullCompliantObjectParcelSerializer(asmType,
+                        Method("writeBinderArray"), Method("createBinderArray"))
+
+                asmType.descriptor == "[Ljava/lang/String;" -> NullCompliantObjectParcelSerializer(asmType,
+                        Method("writeStringArray"), Method("createStringArray"))
+
                 asmType.sort == Type.ARRAY -> {
                     val elementType = type.builtIns.getArrayElementType(type)
                     val elementSerializer = get(elementType, typeMapper.mapTypeSafe(elementType), context, strict = strict())
@@ -101,8 +107,20 @@ interface ParcelSerializer {
                     || className == TreeSet::class.java.canonicalName
                 -> {
                     val elementType = type.arguments.single().type
-                    val elementSerializer = get(
-                            elementType, typeMapper.mapTypeSafe(elementType), context, forceBoxed = true, strict = strict())
+                    val elementAsmType = typeMapper.mapTypeSafe(elementType)
+
+                    if (className == List::class.java.canonicalName) {
+                        // Don't care if the element type is nullable cause both writeStrongBinder() and writeString() support null values
+                        if (elementAsmType.descriptor == "Landroid/os/IBinder;") {
+                            return NullCompliantObjectParcelSerializer(asmType,
+                                    Method("writeBinderList"), Method("createBinderArrayList", "()Ljava/util/ArrayList;"))
+                        } else if (elementAsmType.descriptor == "Ljava/lang/String;") {
+                            return NullCompliantObjectParcelSerializer(asmType,
+                                    Method("writeStringList"), Method("createStringArrayList", "()Ljava/util/ArrayList;"))
+                        }
+                    }
+
+                    val elementSerializer = get(elementType, elementAsmType, context, forceBoxed = true, strict = strict())
                     wrapToNullAwareIfNeeded(type, ListSetParcelSerializer(asmType, elementSerializer))
                 }
 
