@@ -154,7 +154,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         val targetClass = codegen.myClass as? KtClass ?: return
 
         val container = codegen.descriptor
-        if (container.kind != ClassKind.CLASS || container.isInner || DescriptorUtils.isLocal(container)) return
+        if (container.kind != ClassKind.CLASS && container.kind != ClassKind.OBJECT) return
 
         val containerOptions = ContainerOptionsProxy.create(container)
         if (containerOptions.getCacheOrDefault(targetClass) == NO_CACHE) return
