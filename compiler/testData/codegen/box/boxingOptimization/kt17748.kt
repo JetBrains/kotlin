@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 fun box(): String {
     42.doSwitchInt()
