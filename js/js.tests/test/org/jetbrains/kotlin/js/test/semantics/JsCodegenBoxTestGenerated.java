@@ -15046,6 +15046,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("privateSetterViaSubclass.kt")
+            public void testPrivateSetterViaSubclass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/privateSetterViaSubclass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simpleVar.kt")
             public void testSimpleVar() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/simpleVar.kt");

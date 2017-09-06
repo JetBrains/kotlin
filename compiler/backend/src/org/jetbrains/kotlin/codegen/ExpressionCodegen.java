@@ -1952,7 +1952,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         CallableMethod callableSetter = null;
 
         CodegenContext backingFieldContext = getBackingFieldContext(fieldAccessorKind, containingDeclaration);
-        boolean isPrivateProperty = (AsmUtil.getVisibilityForBackingField(propertyDescriptor, isDelegatedProperty) & ACC_PRIVATE) != 0;
+        boolean isPrivateProperty =
+                fieldAccessorKind != FieldAccessorKind.NORMAL &&
+                (AsmUtil.getVisibilityForBackingField(propertyDescriptor, isDelegatedProperty) & ACC_PRIVATE) != 0;
         DeclarationDescriptor ownerDescriptor;
         boolean skipPropertyAccessors;
 
