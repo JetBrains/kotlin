@@ -161,19 +161,19 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var javacArguments: Array<String>? by FreezableVar(null)
 
     @Argument(
-            value = "-Xjsr305-annotations",
-            valueDescription = "{ignore|enable|warn}",
+            value = "-Xjsr305",
+            valueDescription = "{ignore|strict|warn}",
             description = "Specify global behavior for JSR-305 nullability annotations: ignore, treat as other supported nullability annotations, or report a warning"
     )
-    var jsr305GlobalState: String? by FreezableVar(Jsr305State.DEFAULT.description)
+    var jsr305: String? by FreezableVar(Jsr305State.DEFAULT.description)
 
     // Paths to output directories for friend modules.
     var friendPaths: Array<String>? by FreezableVar(null)
 
     override fun configureAnalysisFlags(): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags()
-        Jsr305State.findByDescription(jsr305GlobalState)?.let {
-            result.put(AnalysisFlag.jsr305GlobalState, it)
+        Jsr305State.findByDescription(jsr305)?.let {
+            result.put(AnalysisFlag.jsr305, it)
         }
         return result
     }
