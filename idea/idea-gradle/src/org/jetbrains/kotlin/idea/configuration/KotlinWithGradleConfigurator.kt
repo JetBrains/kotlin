@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersi
 import org.jetbrains.kotlin.idea.quickfix.ChangeCoroutineSupportFix
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
 import org.jetbrains.kotlin.psi.KtFile
@@ -64,7 +65,12 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             return ConfigureKotlinStatus.CONFIGURED
         }
 
-        val buildFiles = listOf(module.getBuildScriptPsiFile(), module.project.getTopLevelBuildScriptPsiFile()).filterNotNull()
+        val buildFiles = runReadAction {
+            listOf(
+                    module.getBuildScriptPsiFile(),
+                    module.project.getTopLevelBuildScriptPsiFile()
+            ).filterNotNull()
+        }
 
         if (buildFiles.isEmpty()) {
             return ConfigureKotlinStatus.NON_APPLICABLE
