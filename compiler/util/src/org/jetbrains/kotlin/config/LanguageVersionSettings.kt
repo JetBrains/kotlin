@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.config
 
-import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_1
-import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_2
+import org.jetbrains.kotlin.config.LanguageVersion.*
 import org.jetbrains.kotlin.utils.DescriptionAware
 import java.util.*
 
@@ -91,7 +90,8 @@ enum class LanguageFeature(
 enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
     KOTLIN_1_0(1, 0),
     KOTLIN_1_1(1, 1),
-    KOTLIN_1_2(1, 2);
+    KOTLIN_1_2(1, 2),
+    KOTLIN_1_3(1, 3);
 
     val isStable: Boolean
         get() = this <= LATEST_STABLE

@@ -68,6 +68,7 @@ fun getDefaultLanguageLevel(
                              .minWith(VersionComparatorUtil.COMPARATOR)
                      ?: return LanguageVersion.LATEST_STABLE
     return when {
+        libVersion.startsWith("1.3") -> LanguageVersion.KOTLIN_1_3
         libVersion.startsWith("1.2") -> LanguageVersion.KOTLIN_1_2
         libVersion.startsWith("1.1") -> LanguageVersion.KOTLIN_1_1
         libVersion.startsWith("1.0") -> LanguageVersion.KOTLIN_1_0
