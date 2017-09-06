@@ -9,22 +9,21 @@ import org.gradle.kotlin.dsl.extra
 fun Project.projectTest(body: Test.() -> Unit = {}): Test = (tasks.findByName("test") as Test).apply {
     doFirst {
         val patterns = filter.includePatterns + ((filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet())
-        if (!patterns.isEmpty()) {
-            patterns.forEach { pattern ->
-                val maybeMethodName = pattern.substringAfterLast('.')
-                val className = if (maybeMethodName.isNotEmpty() && maybeMethodName[0].isLowerCase())
-                    pattern.substringBeforeLast('.')
-                else
-                    pattern
+        if (patterns.isEmpty() || patterns.any { '*' in it }) return@doFirst
+        patterns.forEach { pattern ->
+            val maybeMethodName = pattern.substringAfterLast('.')
+            val className = if (maybeMethodName.isNotEmpty() && maybeMethodName[0].isLowerCase())
+                pattern.substringBeforeLast('.')
+            else
+                pattern
 
-                val matchPattern = className.replace('.', '/') + ".class"
+            val matchPattern = className.replace('.', '/') + ".class"
 
-                include {
-                    if (it.isDirectory) {
-                        matchPattern.startsWith(it.path)
-                    } else {
-                        it.path.endsWith(matchPattern)
-                    }
+            include {
+                if (it.isDirectory) {
+                    matchPattern.startsWith(it.path)
+                } else {
+                    it.path.endsWith(matchPattern)
                 }
             }
         }
