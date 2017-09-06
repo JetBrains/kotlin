@@ -7,3 +7,5 @@ fun f(
 ) {
 
 }
+
+// DEPENDENCIES: classpath:lib-classes; imports:custom.library.*
