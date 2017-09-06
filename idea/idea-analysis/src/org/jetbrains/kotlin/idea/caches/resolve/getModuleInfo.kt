@@ -191,17 +191,12 @@ fun getBinaryLibrariesModuleInfos(project: Project, virtualFile: VirtualFile) = 
 fun getLibrarySourcesModuleInfos(project: Project, virtualFile: VirtualFile) = collectModuleInfosByType<LibrarySourceInfo>(project, virtualFile)
 
 private inline fun <reified T : IdeaModuleInfo> collectModuleInfosByType(project: Project, virtualFile: VirtualFile): Collection<T> {
-    val orderEntries = ProjectFileIndex.SERVICE.getInstance(project).getOrderEntriesForFile(virtualFile)
-
-    val result = linkedSetOf<T?>()
-    orderEntries.process(project, virtualFile, treatAsLibrarySource = false) {
-        result.add(it as? T)
+    val result = linkedSetOf<T>()
+    processVirtualFile(project, virtualFile, treatAsLibrarySource = false) {
+        result.addIfNotNull(it as? T)
     }
-    // NOTE: non idea model infos can be obtained this way, like script related infos
-    // only one though, luckily it covers existing cases
-    result.add(getModuleInfoByVirtualFile(project, virtualFile) as? T)
 
-    return result.filterNotNull()
+    return result
 }
 
 private inline fun <T> List<OrderEntry>.process(
