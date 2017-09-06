@@ -16,6 +16,6 @@
 
 package kotlin.test
 
-impl annotation class Test
+impl typealias Test = org.junit.Test
 
-impl annotation class Ignore
+impl typealias Ignore = org.junit.Ignore

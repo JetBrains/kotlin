@@ -16,6 +16,12 @@
 
 package kotlin.test
 
-impl annotation class Test
+/**
+ * Marks a function as a test.
+ */
+header annotation class Test
 
-impl annotation class Ignore
+/**
+ * Marks a test or a suite as ignored/pending.
+ */
+header annotation class Ignore
