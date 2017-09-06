@@ -306,7 +306,7 @@ tasks {
 
     "android-tests" {
         dependsOn("dist")
-        dependsOn(":plugins:android-extensions-idea:test",
+        dependsOn(":plugins:android-extensions-ide:test",
                   ":idea:idea-android:test",
                   ":kotlin-annotation-processing:test",
                   ":compiler:android-tests:test")

@@ -23,7 +23,7 @@ val runIde by task<JavaExec> {
 
     workingDir = File(rootDir, "ideaSDK", "bin")
 
-    val pluginPath = File(rootDir, "dist", "artifacts", "Kotlin")
+    val ideaPluginDir: File by rootProject.extra
 
     jvmArgs(
             "-Xmx1250m",
@@ -37,7 +37,7 @@ val runIde by task<JavaExec> {
             "-Dapple.laf.useScreenMenuBar=true",
             "-Dapple.awt.graphics.UseQuartz=true",
             "-Dsun.io.useCanonCaches=false",
-            "-Dplugin.path=${pluginPath.absolutePath}",
+            "-Dplugin.path=${ideaPluginDir.absolutePath}",
             "-Dkotlin.internal.mode.enabled=true",
             "-Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar"
     )

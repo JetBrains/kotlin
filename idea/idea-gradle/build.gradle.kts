@@ -24,7 +24,7 @@ dependencies {
 
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
-    testRuntime(project(":plugins:android-extensions-idea"))
+    testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":plugins:lint"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))

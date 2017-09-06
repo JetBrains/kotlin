@@ -67,7 +67,7 @@ dependencies {
 
     // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
     testCompile(project(":android-extensions-compiler"))
-    testCompile(project(":plugins:android-extensions-idea")) { isTransitive = false }
+    testCompile(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testCompile(project(":allopen-ide-plugin")) { isTransitive = false }
     testCompile(project(":kotlin-allopen-compiler-plugin"))
     testCompile(project(":noarg-ide-plugin")) { isTransitive = false }

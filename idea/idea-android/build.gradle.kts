@@ -28,7 +28,7 @@ dependencies {
     testCompile(ideaSdkDeps("gson"))
     testCompile(commonDep("junit:junit"))
 
-    testRuntime(project(":plugins:android-extensions-idea"))
+    testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))

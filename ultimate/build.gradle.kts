@@ -68,7 +68,7 @@ dependencies {
     testCompile(preloadedDeps("kotlinx-coroutines-core"))
 
     testRuntime(projectDist(":kotlin-compiler"))
-    testRuntime(project(":plugins:android-extensions-idea")) { isTransitive = false }
+    testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testRuntime(project(":android-extensions-compiler")) { isTransitive = false }
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
     testRuntime(project(":idea:idea-android")) { isTransitive = false }

@@ -3534,7 +3534,7 @@
             "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
-    ":plugins:android-extensions-idea": {
+    ":plugins:android-extensions-ide": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
             "java": "org.gradle.api.plugins.JavaPluginConvention"
