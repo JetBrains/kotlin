@@ -10,6 +10,7 @@ fun f() = "OK"
 var v: Int = 1
 
 // FILE: B.kt
+// LANGUAGE_VERSION: 1.2
 
 fun box(): String {
     v = 2

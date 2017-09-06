@@ -77,12 +77,14 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
                         packageParts.addPart(internalNameOf(packageFqName, partShortName), facadeInternalName)
                     }
 
-                    for ((index, partShortName) in proto.classWithJvmPackageNameShortNameList.withIndex()) {
-                        val packageId = proto.classWithJvmPackageNamePackageIdList.getOrNull(index)
-                                        ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
-                                        ?: continue
-                        val jvmPackageName = table.jvmPackageNameList.getOrNull(packageId) ?: continue
-                        packageParts.addPart(internalNameOf(jvmPackageName, partShortName), null)
+                    if (configuration.isJvmPackageNameSupported) {
+                        for ((index, partShortName) in proto.classWithJvmPackageNameShortNameList.withIndex()) {
+                            val packageId = proto.classWithJvmPackageNamePackageIdList.getOrNull(index)
+                                            ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
+                                            ?: continue
+                            val jvmPackageName = table.jvmPackageNameList.getOrNull(packageId) ?: continue
+                            packageParts.addPart(internalNameOf(jvmPackageName, partShortName), null)
+                        }
                     }
                 }
 

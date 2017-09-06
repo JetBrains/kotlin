@@ -86,4 +86,9 @@ class JvmPackageTableTest : KtUsefulTestCase() {
         doTest("/jvmPackageTable/jvmPackageNameManyParts",
                compileWith = LanguageVersion.KOTLIN_1_2, loadWith = LanguageVersion.KOTLIN_1_2)
     }
+
+    fun testJvmPackageNameLanguageVersion11() {
+        doTest("/jvmPackageTable/jvmPackageNameLanguageVersion11",
+               compileWith = LanguageVersion.KOTLIN_1_2, loadWith = LanguageVersion.KOTLIN_1_1)
+    }
 }

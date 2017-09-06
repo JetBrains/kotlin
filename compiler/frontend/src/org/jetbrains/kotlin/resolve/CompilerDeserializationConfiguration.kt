@@ -25,4 +25,6 @@ class CompilerDeserializationConfiguration(languageVersionSettings: LanguageVers
     override val typeAliasesAllowed = languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)
 
     override val skipMetadataVersionCheck = languageVersionSettings.getFlag(AnalysisFlag.skipMetadataVersionCheck)
+
+    override val isJvmPackageNameSupported = languageVersionSettings.supportsFeature(LanguageFeature.JvmPackageName)
 }

@@ -13,6 +13,7 @@ var v: Int = 1
 inline fun i(block: () -> Unit) = block()
 
 // FILE: B.kt
+// LANGUAGE_VERSION: 1.2
 
 import foo.*
 
