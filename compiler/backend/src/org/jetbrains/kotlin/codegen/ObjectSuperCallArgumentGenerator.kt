@@ -14,62 +14,46 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-import java.util.List;
+import org.jetbrains.kotlin.codegen.AsmUtil.pushDefaultValueOnStack
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.pushDefaultValueOnStack;
+internal class ObjectSuperCallArgumentGenerator(
+        private val parameters: List<JvmMethodParameterSignature>,
+        private val iv: InstructionAdapter,
+        private var offset: Int,
+        superConstructorCall: ResolvedCall<ConstructorDescriptor>
+) : ArgumentGenerator() {
 
-class ObjectSuperCallArgumentGenerator extends ArgumentGenerator {
-    private final List<JvmMethodParameterSignature> parameters;
-    private final InstructionAdapter iv;
-    private int offset;
-
-    public ObjectSuperCallArgumentGenerator(
-            @NotNull List<JvmMethodParameterSignature> superParameters,
-            @NotNull InstructionAdapter iv,
-            int firstValueParamOffset,
-            @NotNull ResolvedCall<ConstructorDescriptor> superConstructorCall
-    ) {
-        this.parameters = superParameters;
-        this.iv = iv;
-        this.offset = firstValueParamOffset;
+    public override fun generateExpression(i: Int, argument: ExpressionValueArgument) {
+        generateSuperCallArgument(i)
     }
 
-    @Override
-    public void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
-        generateSuperCallArgument(i);
+    public override fun generateDefault(i: Int, argument: DefaultValueArgument) {
+        val type = parameters[i].asmType
+        pushDefaultValueOnStack(type, iv)
     }
 
-    @Override
-    public void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-        Type type = parameters.get(i).getAsmType();
-        pushDefaultValueOnStack(type, iv);
+    public override fun generateVararg(i: Int, argument: VarargValueArgument) {
+        generateSuperCallArgument(i)
     }
 
-    @Override
-    public void generateVararg(int i, @NotNull VarargValueArgument argument) {
-        generateSuperCallArgument(i);
+    private fun generateSuperCallArgument(i: Int) {
+        val type = parameters[i].asmType
+        iv.load(offset, type)
+        offset += type.size
     }
 
-    private void generateSuperCallArgument(int i) {
-        Type type = parameters.get(i).getAsmType();
-        iv.load(offset, type);
-        offset += type.getSize();
-    }
-
-    @Override
-    protected void reorderArgumentsIfNeeded(@NotNull List<ArgumentAndDeclIndex> args) {
+    override fun reorderArgumentsIfNeeded(args: List<ArgumentAndDeclIndex>) {
 
     }
 }
