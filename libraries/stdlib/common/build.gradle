@@ -57,3 +57,5 @@ task distCommon(type: Copy) {
 }
 
 dist.dependsOn distCommon
+
+classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })
