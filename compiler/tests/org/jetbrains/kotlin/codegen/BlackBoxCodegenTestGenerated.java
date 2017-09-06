@@ -206,6 +206,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("argumentOrderInObjectSuperCall.kt")
+        public void testArgumentOrderInObjectSuperCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/argumentOrder/argumentOrderInObjectSuperCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("argumentOrderInSuperCall.kt")
+        public void testArgumentOrderInSuperCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/argumentOrder/argumentOrderInSuperCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("arguments.kt")
         public void testArguments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/argumentOrder/arguments.kt");
@@ -18670,6 +18682,30 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("kt17464_linkedMapOf.kt")
             public void testKt17464_linkedMapOf() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/superConstructor/kt17464_linkedMapOf.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt18356.kt")
+            public void testKt18356() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/superConstructor/kt18356.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt18356_2.kt")
+            public void testKt18356_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/superConstructor/kt18356_2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("objectExtendsInner.kt")
+            public void testObjectExtendsInner() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/superConstructor/objectExtendsInner.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("objectExtendsLocalInner.kt")
+            public void testObjectExtendsLocalInner() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/superConstructor/objectExtendsLocalInner.kt");
                 doTest(fileName);
             }
         }

@@ -1072,7 +1072,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 List<ResolvedValueArgument> valueArguments = new ArrayList<>(params);
                 List<ValueParameterDescriptor> valueParameters = new ArrayList<>(params);
                 List<Type> mappedTypes = new ArrayList<>(params);
-                for (ValueParameterDescriptor parameter : superValueParameters) {
+                for (ValueParameterDescriptor parameter : superCall.getValueArguments().keySet()) {
                     ResolvedValueArgument argument = superCall.getValueArguments().get(parameter);
                     if (!(argument instanceof DefaultValueArgument)) {
                         valueArguments.add(argument);

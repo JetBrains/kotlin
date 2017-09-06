@@ -77,6 +77,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
@@ -1420,8 +1421,7 @@ public class KotlinTypeMapper {
             boolean hasOuter
     ) {
         ConstructorDescriptor superDescriptor = SamCodegenUtil.resolveSamAdapter(superCall.getResultingDescriptor());
-        List<ResolvedValueArgument> valueArguments = superCall.getValueArgumentsByIndex();
-        assert valueArguments != null : "Failed to arrange value arguments by index: " + superDescriptor;
+        Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = superCall.getValueArguments();
 
         List<JvmMethodParameterSignature> parameters = mapSignatureSkipGeneric(superDescriptor.getOriginal()).getValueParameters();
 
@@ -1444,10 +1444,11 @@ public class KotlinTypeMapper {
 
         if (isAnonymousObject(descriptor.getContainingDeclaration())) {
             // For anonymous objects, also add all real non-default value arguments passed to the super constructor
-            for (int i = 0; i < args; i++) {
-                ResolvedValueArgument valueArgument = valueArguments.get(i);
-                JvmMethodParameterSignature parameter = parameters.get(params - args + i);
+            for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> argumentAndValue : valueArguments.entrySet()) {
+
+                ResolvedValueArgument valueArgument = argumentAndValue.getValue();
                 if (!(valueArgument instanceof DefaultValueArgument)) {
+                    JvmMethodParameterSignature parameter = parameters.get(params - args + argumentAndValue.getKey().getIndex());
                     writeParameter(sw, JvmMethodParameterKind.SUPER_CALL_PARAM, parameter.getAsmType());
                 }
             }
