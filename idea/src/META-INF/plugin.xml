@@ -1952,7 +1952,7 @@
                      displayName="Use destructuring declaration"
                      groupPath="Kotlin"
                      groupName="Style issues"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      cleanupTool="false"
                      level="INFO"
                      language="kotlin"
