@@ -41,5 +41,10 @@ val runIde by task<JavaExec> {
             "-Dkotlin.internal.mode.enabled=true",
             "-Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar"
     )
+
+    if (project.hasProperty("noPCE")) {
+        jvmArgs("-Didea.ProcessCanceledException=disabled")
+    }
+
     args()
 }

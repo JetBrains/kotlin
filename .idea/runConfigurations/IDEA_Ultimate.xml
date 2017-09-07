@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="gsk [runIde]" type="GradleRunConfiguration" factoryName="Gradle" singleton="true">
+  <configuration default="false" name="IDEA Ultimate" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -10,11 +10,12 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="runIde" />
+          <option value="runUltimate" />
         </list>
       </option>
       <option name="vmOptions" value="" />
     </ExternalSystemSettings>
+    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <method />
   </configuration>
 </component>
