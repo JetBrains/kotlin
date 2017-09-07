@@ -145,8 +145,8 @@ fun JsFunction.withCapturedParameters(
 
         if (capturedDescriptor is TypeParameterDescriptor && capturedDescriptor.isReified) {
             // Preserve the usual order
-            additionalArgs = listOf(invokingContext.getNameForDescriptor(capturedDescriptor).makeRef()) + additionalArgs
-            additionalParams = listOf(JsParameter(context.getNameForDescriptor(capturedDescriptor))) + additionalParams
+            additionalArgs = listOf(invokingContext.getCapturedTypeName(capturedDescriptor).makeRef()) + additionalArgs
+            additionalParams = listOf(JsParameter(context.getCapturedTypeName(capturedDescriptor))) + additionalParams
         }
 
         if (capturedDescriptor is CallableDescriptor && isLocalInlineDeclaration(capturedDescriptor)) {

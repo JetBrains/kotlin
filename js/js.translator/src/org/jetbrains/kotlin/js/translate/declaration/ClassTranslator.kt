@@ -389,9 +389,14 @@ class ClassTranslator private constructor(
             for (callSite in constructorCallSites) {
                 val closureQualifier = callSite.context.getArgumentForClosureConstructor(classDescriptor.thisAsReceiverParameter)
                 capturedVars.forEach { nonConstructorUsageTracker!!.used(it) }
-                val closureArgs = capturedVars.map {
+                val closureArgs = capturedVars.flatMap {
+                    val result = mutableListOf<JsExpression>()
                     val name = nonConstructorUsageTracker!!.getNameForCapturedDescriptor(it)!!
-                    JsAstUtils.pureFqn(name, closureQualifier)
+                    result += JsAstUtils.pureFqn(name, closureQualifier)
+                    if (it is TypeParameterDescriptor) {
+                        result += JsAstUtils.pureFqn(nonConstructorUsageTracker.capturedTypes[it]!!, closureQualifier)
+                    }
+                    result
                 }
                 callSite.invocationArgs.addAll(0, closureArgs)
             }
@@ -405,17 +410,29 @@ class ClassTranslator private constructor(
 
         val function = constructor.function
         val additionalStatements = mutableListOf<JsStatement>()
-        for ((i, capturedVar) in capturedVars.withIndex()) {
+        val additionalParameters = mutableListOf<JsParameter>()
+        for (capturedVar in capturedVars) {
             val fieldName = nonConstructorUsageTracker?.capturedDescriptorToJsName?.get(capturedVar)
             val name = usageTracker.capturedDescriptorToJsName[capturedVar] ?: fieldName!!
 
-            function.parameters.add(i, JsParameter(name))
+            additionalParameters += JsParameter(name)
+            val source = (constructor.descriptor as? DeclarationDescriptorWithSource)?.source
             if (fieldName != null && constructor == primaryConstructor) {
-                val source = (constructor.descriptor as? DeclarationDescriptorWithSource)?.source
                 additionalStatements += JsAstUtils.defineSimpleProperty(fieldName, name.makeRef(), source)
+            }
+
+            if (capturedVar is TypeParameterDescriptor) {
+                val typeFieldName = nonConstructorUsageTracker?.capturedTypes?.get(capturedVar)
+                val typeName = usageTracker.capturedTypes[capturedVar] ?: typeFieldName!!
+                additionalParameters += JsParameter(typeName)
+
+                if (typeFieldName != null && constructor == primaryConstructor) {
+                    additionalStatements += JsAstUtils.defineSimpleProperty(typeFieldName, typeName.makeRef(), source)
+                }
             }
         }
 
+        function.parameters.addAll(0, additionalParameters)
         function.body.statements.addAll(0, additionalStatements)
     }
 

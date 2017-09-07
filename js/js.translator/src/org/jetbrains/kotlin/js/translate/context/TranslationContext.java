@@ -590,29 +590,52 @@ public class TranslationContext {
     }
 
     @Nullable
-    private JsExpression captureIfNeedAndGetCapturedName(DeclarationDescriptor descriptor) {
+    private JsExpression captureIfNeedAndGetCapturedName(@NotNull DeclarationDescriptor descriptor) {
         if (usageTracker != null) {
             usageTracker.used(descriptor);
 
             JsName name = getNameForCapturedDescriptor(usageTracker, descriptor);
-            if (name != null) {
-                JsExpression result;
-                if (shouldCaptureViaThis()) {
-                    result = new JsThisRef();
-                    int depth = getOuterLocalClassDepth();
-                    for (int i = 0; i < depth; ++i) {
-                        result = new JsNameRef(Namer.OUTER_FIELD_NAME, result);
-                    }
-                    result = new JsNameRef(name, result);
-                }
-                else {
-                    result = name.makeRef();
-                }
-                return result;
-            }
+            if (name != null) return getCapturedReference(name);
         }
 
         return null;
+    }
+
+    @Nullable
+    public JsExpression captureTypeIfNeedAndGetCapturedName(@NotNull TypeParameterDescriptor descriptor) {
+        if (usageTracker == null) return null;
+
+        usageTracker.used(descriptor);
+
+        JsName name = usageTracker.getCapturedTypes().get(descriptor);
+        return name != null ? getCapturedReference(name) : null;
+    }
+
+    @NotNull
+    public JsName getCapturedTypeName(@NotNull TypeParameterDescriptor descriptor) {
+        JsName result = usageTracker != null ? usageTracker.getCapturedTypes().get(descriptor) : null;
+        if (result == null) {
+            result = getNameForDescriptor(descriptor);
+        }
+
+        return result;
+    }
+
+    @NotNull
+    private JsExpression getCapturedReference(@NotNull JsName name) {
+        JsExpression result;
+        if (shouldCaptureViaThis()) {
+            result = new JsThisRef();
+            int depth = getOuterLocalClassDepth();
+            for (int i = 0; i < depth; ++i) {
+                result = new JsNameRef(Namer.OUTER_FIELD_NAME, result);
+            }
+            result = new JsNameRef(name, result);
+        }
+        else {
+            result = name.makeRef();
+        }
+        return result;
     }
 
     private int getOuterLocalClassDepth() {
@@ -706,6 +729,19 @@ public class TranslationContext {
             return new JsThisRef();
         }
         return getNameForDescriptor(descriptor).makeRef();
+    }
+
+    @NotNull
+    public JsExpression getTypeArgumentForClosureConstructor(@NotNull TypeParameterDescriptor descriptor) {
+        JsExpression captured = null;
+        if (usageTracker != null) {
+            JsName name = usageTracker.getCapturedTypes().get(descriptor);
+            if (name != null) {
+                captured = name.makeRef();
+            }
+        }
+
+        return captured != null ? captured : getNameForDescriptor(descriptor).makeRef();
     }
 
     @Nullable

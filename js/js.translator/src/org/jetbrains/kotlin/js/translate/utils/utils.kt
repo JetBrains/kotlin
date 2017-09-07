@@ -134,7 +134,8 @@ fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpr
 
             context.usageTracker()?.used(classifierDescriptor)
 
-            context.getNameForDescriptor(classifierDescriptor).makeRef()
+            context.captureTypeIfNeedAndGetCapturedName(classifierDescriptor) ?:
+                    context.getNameForDescriptor(classifierDescriptor).makeRef()
         }
         else -> {
             throw IllegalStateException("Can't get reference for $type")
