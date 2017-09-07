@@ -21,6 +21,7 @@ import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.ModuleOrderEntry
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.OrderEnumerationHandler
 import com.intellij.openapi.roots.OrderRootType
@@ -30,6 +31,7 @@ import com.intellij.task.ModuleBuildTask
 import com.intellij.task.ProjectTask
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.plugins.gradle.execution.build.GradleProjectTaskRunner
 import org.jetbrains.plugins.gradle.model.ExternalSourceDirectorySet
 import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataCache
@@ -84,6 +86,16 @@ class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
                 addOutputModuleRoots(sourceSet.sources[ExternalSystemSourceType.SOURCE], result)
             }
         }
+
+        val implModule = rootModel.module.findJvmImplementationModule()
+        implModule
+            ?.rootManager
+            ?.orderEntries()
+            ?.satisfying { orderEntry -> (orderEntry as? ModuleOrderEntry)?.module != rootModel.module }
+            ?.compileOnly()
+            ?.classesRoots
+            ?.mapTo(result) { it.url }
+
         return false
     }
 
