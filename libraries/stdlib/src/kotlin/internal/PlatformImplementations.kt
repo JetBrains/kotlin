@@ -62,3 +62,15 @@ private fun getJavaVersion(): Int {
         default
     }
 }
+
+/**
+ * Constant check of api version used during compilation
+ *
+ * This function is evaluated at compile time to a constant value,
+ * so there should be no references to it in other modules.
+ *
+ * The function usages are validated to have literal argument values.
+ */
+@PublishedApi
+internal fun apiVersionIsAtLeast(major: Int, minor: Int, patch: Int) =
+        KotlinVersion.CURRENT.isAtLeast(major, minor, patch)
