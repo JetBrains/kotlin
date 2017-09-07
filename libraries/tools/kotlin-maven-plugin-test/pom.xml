@@ -127,6 +127,8 @@
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-common:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-js:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jre7:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jre8:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-reflect:${project.version}</artifact>

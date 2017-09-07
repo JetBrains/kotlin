@@ -1,4 +1,4 @@
-description = 'Kotlin Standard Library JRE 7 extension'
+description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'
 
@@ -48,7 +48,7 @@ compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
-            "-Xdump-declarations-to", "${buildDir}/stdlib-jre7-declarations.json",
+            "-Xdump-declarations-to", "${buildDir}/stdlib-jdk7-declarations.json",
             "-module-name", project.name
     ]
 }
@@ -63,7 +63,7 @@ test {
     executable = "$JDK_17/bin/java"
 }
 
-task testJre6Tests(type: Test) {
+task testJdk6Tests(type: Test) {
     dependsOn project(':kotlin-stdlib').tasks.testClasses
     group = "verification"
 
@@ -73,4 +73,4 @@ task testJre6Tests(type: Test) {
     classpath = project.files('../build/classes/test') + sourceSets.test.compileClasspath
 }
 
-check.dependsOn testJre6Tests
+check.dependsOn testJdk6Tests

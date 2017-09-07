@@ -12,6 +12,8 @@ include ':kotlin-stdlib'
 include ':kotlin-stdlib-js'
 include ':kotlin-stdlib-jre7'
 include ':kotlin-stdlib-jre8'
+include ':kotlin-stdlib-jdk7'
+include ':kotlin-stdlib-jdk8'
 include ':kotlin-stdlib:samples'
 include ':tools:binary-compatibility-validator'
 include ':tools:kotlin-stdlib-js-merger'
@@ -65,6 +67,8 @@ project(':kotlin-stdlib').projectDir = "$rootDir/stdlib" as File
 project(':kotlin-stdlib-js').projectDir = "$rootDir/stdlib/js" as File
 project(':kotlin-stdlib-jre7').projectDir = "$rootDir/stdlib/jre7" as File
 project(':kotlin-stdlib-jre8').projectDir = "$rootDir/stdlib/jre8" as File
+project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/stdlib/jdk7" as File
+project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/stdlib/jdk8" as File
 project(':kotlin-stdlib:samples').projectDir = "$rootDir/stdlib/samples" as File
 project(':kotlin-reflect').projectDir = "$rootDir/tools/kotlin-reflect" as File
 

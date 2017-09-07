@@ -32,6 +32,8 @@
       <excludeFolder url="file://$MODULE_DIR$/libraries/kotlin.test/jvm/build" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/stdlib/build" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/stdlib/common/build" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/stdlib/jdk7/build" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/stdlib/jdk8/build" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/stdlib/jre7/build" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/stdlib/jre8/build" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/stdlib/js/build" />

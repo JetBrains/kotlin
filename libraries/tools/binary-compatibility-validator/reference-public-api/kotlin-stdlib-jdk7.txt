@@ -1,4 +1,4 @@
-public final class kotlin/AutoCloseableKt {
+public final class kotlin/jdk7/AutoCloseableKt {
 	public static final fun closeFinally (Ljava/lang/AutoCloseable;Ljava/lang/Throwable;)V
 }
 

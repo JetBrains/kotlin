@@ -13,6 +13,8 @@ dependencies {
     testArtifacts project(':kotlin-stdlib')
     testArtifacts project(':kotlin-stdlib-jre7')
     testArtifacts project(':kotlin-stdlib-jre8')
+    testArtifacts project(':kotlin-stdlib-jdk7')
+    testArtifacts project(':kotlin-stdlib-jdk8')
     testArtifacts project(':kotlin-reflect')
     // legacy
     testArtifacts project(':kotlin-runtime')

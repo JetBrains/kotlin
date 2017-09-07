@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:JvmName("AutoCloseableKt")
+@file:kotlin.jvm.JvmPackageName("kotlin.jdk7")
 package kotlin
 
 /**
@@ -27,8 +29,7 @@ package kotlin
  * @param block a function to process this [AutoCloseable] resource.
  * @return the result of [block] function invoked on this resource.
  */
-@SinceKotlin("1.1")
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
     var exception: Throwable? = null
@@ -48,7 +49,7 @@ public inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
  *
  * The suppressed exception is added to the list of suppressed exceptions of [cause] exception.
  */
-@SinceKotlin("1.1")
+@SinceKotlin("1.2")
 @PublishedApi
 internal fun AutoCloseable?.closeFinally(cause: Throwable?) = when {
     this == null -> {}

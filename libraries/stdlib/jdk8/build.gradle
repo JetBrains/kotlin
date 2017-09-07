@@ -1,4 +1,4 @@
-description = 'Kotlin Standard Library JRE 8 extension'
+description = 'Kotlin Standard Library JDK 8 extension'
 
 apply plugin: 'kotlin'
 
@@ -7,7 +7,7 @@ configurePublishing(project)
 
 dependencies {
     compile project(':kotlin-stdlib')
-    compile project(':kotlin-stdlib-jre7')
+    compile project(':kotlin-stdlib-jdk7')
     testCompile project(':kotlin-test:kotlin-test-junit')
 }
 
@@ -22,7 +22,7 @@ sourceSets {
             srcDir 'test'
             if(!System.properties.'idea.active') {
                 srcDir '../test'
-                srcDir '../jre7/test'
+                srcDir '../jdk7/test'
             }
         }
     }
@@ -50,7 +50,7 @@ compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
-            "-Xdump-declarations-to", "${buildDir}/stdlib-jre8-declarations.json",
+            "-Xdump-declarations-to", "${buildDir}/stdlib-jdk8-declarations.json",
             "-module-name", project.name
     ]
 }
@@ -65,8 +65,7 @@ test {
     executable = "$JDK_18/bin/java"
 }
 
-
-task testJre6Tests(type: Test) {
+task testJdk6Tests(type: Test) {
     dependsOn project(':kotlin-stdlib').tasks.testClasses
     group = "verification"
 
@@ -76,4 +75,4 @@ task testJre6Tests(type: Test) {
     classpath = project.files('../build/classes/test') + sourceSets.test.compileClasspath
 }
 
-check.dependsOn testJre6Tests
+check.dependsOn testJdk6Tests
