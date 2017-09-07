@@ -1,8 +1,8 @@
-// !LANGUAGE: -InnerClassInEnumEntryClass
+// !LANGUAGE: +InnerClassInEnumEntryClass
 
 enum class Enum {
     ENTRY_WITH_CLASS {
-        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class TestInner
+        inner class TestInner
 
         class TestNested
 

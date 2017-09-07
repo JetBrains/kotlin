@@ -11866,6 +11866,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("innerClassInEnumEntryClass_lv12.kt")
+            public void testInnerClassInEnumEntryClass_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/innerClassInEnumEntryClass_lv12.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("InnerClassNameClash.kt")
             public void testInnerClassNameClash() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/InnerClassNameClash.kt");

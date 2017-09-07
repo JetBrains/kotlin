@@ -112,22 +112,35 @@ object ModifierCheckerCore {
             OPEN_KEYWORD  to EnumSet.of(INTERFACE)
     )
 
-    val possibleParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
-            INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, ENUM_CLASS),
-            OVERRIDE_KEYWORD  to EnumSet.of(CLASS_ONLY,  LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
-                                            INTERFACE, ENUM_CLASS, ENUM_ENTRY),
-            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, ENUM_CLASS, COMPANION_OBJECT),
-            INTERNAL_KEYWORD  to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
-                                            ENUM_CLASS, ENUM_ENTRY, FILE),
-            PRIVATE_KEYWORD   to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
-                                            INTERFACE, ENUM_CLASS, ENUM_ENTRY, FILE),
-            COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE),
-            FINAL_KEYWORD     to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
-                                            ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, FILE),
-            VARARG_KEYWORD    to EnumSet.of(CONSTRUCTOR, FUNCTION, CLASS)
+    private val possibleParentTargetPredicateMap = mapOf<KtModifierKeywordToken, TargetAllowedPredicate>(
+            INNER_KEYWORD to or(always(CLASS_ONLY, LOCAL_CLASS, ENUM_CLASS),
+                                ifSupported(LanguageFeature.InnerClassInEnumEntryClass, ENUM_ENTRY)),
+            OVERRIDE_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, INTERFACE, ENUM_CLASS, ENUM_ENTRY),
+            PROTECTED_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, ENUM_CLASS, COMPANION_OBJECT),
+            INTERNAL_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, ENUM_CLASS, ENUM_ENTRY, FILE),
+            PRIVATE_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, INTERFACE, ENUM_CLASS, ENUM_ENTRY, FILE),
+            COMPANION_KEYWORD to always(CLASS_ONLY, ENUM_CLASS, INTERFACE),
+            FINAL_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, FILE),
+            VARARG_KEYWORD to always(CONSTRUCTOR, FUNCTION, CLASS)
     )
 
-    val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
+    private val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
+
+    fun isPossibleParentTarget(
+            modifier: KtModifierKeywordToken,
+            parentTarget: KotlinTarget,
+            languageVersionSettings: LanguageVersionSettings
+    ): Boolean {
+        deprecatedParentTargetMap[modifier]?.let {
+            if (parentTarget in it) return false
+        }
+
+        possibleParentTargetPredicateMap[modifier]?.let {
+            return it.isAllowed(parentTarget, languageVersionSettings)
+        }
+
+        return true
+    }
 
     // First modifier in pair should be also first in declaration
     private val mutualCompatibility = buildCompatibilityMap()
@@ -305,7 +318,7 @@ object ModifierCheckerCore {
 
 
     // Should return false if error is reported, true otherwise
-    private fun checkParent(trace: BindingTrace, node: ASTNode, parentDescriptor: DeclarationDescriptor?): Boolean {
+    private fun checkParent(trace: BindingTrace, node: ASTNode, parentDescriptor: DeclarationDescriptor?, languageVersionSettings: LanguageVersionSettings): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
         val actualParents: List<KotlinTarget> = when (parentDescriptor) {
             is ClassDescriptor -> KotlinTarget.classActualTargets(parentDescriptor)
@@ -319,9 +332,8 @@ object ModifierCheckerCore {
             trace.report(Errors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION.on(node.psi, modifier, actualParents.firstOrNull()?.description ?: "this scope"))
             return true
         }
-        val possibleParents = possibleParentTargetMap[modifier] ?: return true
-        if (possibleParents == KotlinTarget.ALL_TARGET_SET) return true
-        if (actualParents.any { it in possibleParents }) return true
+        val possibleParentPredicate = possibleParentTargetPredicateMap[modifier] ?: return true
+        if (actualParents.any { possibleParentPredicate.isAllowed(it, languageVersionSettings) }) return true
         trace.report(Errors.WRONG_MODIFIER_CONTAINING_DECLARATION.on(node.psi, modifier, actualParents.firstOrNull()?.description ?: "this scope"))
         return false
     }
@@ -349,7 +361,7 @@ object ModifierCheckerCore {
             if (second !in incorrectNodes) {
                 when {
                     !checkTarget(trace, second, actualTargets) -> incorrectNodes += second
-                    !checkParent(trace, second, parentDescriptor) -> incorrectNodes += second
+                    !checkParent(trace, second, parentDescriptor, languageVersionSettings) -> incorrectNodes += second
                     !checkLanguageLevelSupport(trace, second, languageVersionSettings, actualTargets) -> incorrectNodes += second
                 }
             }
@@ -374,4 +386,30 @@ object ModifierCheckerCore {
         val list = listOwner.modifierList ?: return
         checkModifierList(list, trace, descriptor?.containingDeclaration, actualTargets, languageVersionSettings)
     }
+}
+
+
+private interface TargetAllowedPredicate {
+    fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings): Boolean
+}
+
+
+private fun always(target: KotlinTarget, vararg targets: KotlinTarget) = object : TargetAllowedPredicate {
+    private val targetSet = EnumSet.of(target, *targets)
+
+    override fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings) =
+            target in targetSet
+}
+
+private fun ifSupported(languageFeature: LanguageFeature, target: KotlinTarget, vararg targets: KotlinTarget) = object : TargetAllowedPredicate {
+    private val targetSet = EnumSet.of(target, *targets)
+
+    override fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings) =
+            languageVersionSettings.supportsFeature(languageFeature) && target in targetSet
+}
+
+private fun or(p1: TargetAllowedPredicate, p2: TargetAllowedPredicate) = object : TargetAllowedPredicate {
+    override fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings) =
+            p1.isAllowed(target, languageVersionSettings) ||
+            p2.isAllowed(target, languageVersionSettings)
 }
