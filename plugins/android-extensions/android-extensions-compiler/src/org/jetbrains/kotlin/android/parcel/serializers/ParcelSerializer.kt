@@ -22,10 +22,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -199,9 +202,16 @@ interface ParcelSerializer {
 
                 type.isParcelable() -> {
                     val clazz = type.constructor.declarationDescriptor as? ClassDescriptor
-                    if (clazz != null && clazz.modality == Modality.FINAL) {
-                        val creatorVar = clazz.staticScope.getContributedVariables(
+                    if (clazz != null && clazz.modality == Modality.FINAL && clazz.source is PsiSourceElement) {
+
+                        fun MemberScope.findCreatorField() = getContributedVariables(
                                 Name.identifier("CREATOR"), NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS).firstOrNull()
+
+                        val creatorVar = when (clazz) {
+                            is JavaClassDescriptor -> clazz.staticScope.findCreatorField()
+                            else -> clazz.companionObjectDescriptor?.unsubstitutedMemberScope?.findCreatorField()
+                                    ?.takeIf { it.annotations.hasAnnotation(FqName(JvmField::class.java.name)) }
+                        }
 
                         val creatorAsmType = when {
                             creatorVar != null -> typeMapper.mapTypeSafe(creatorVar.type)
