@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -312,7 +312,7 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
             val T_OBJECT_LITERAL = targetList(OBJECT_LITERAL, CLASS, EXPRESSION)
 
             val T_TYPE_REFERENCE = targetList(TYPE) {
-                onlyWithUseSiteTarget(VALUE_PARAMETER)
+                onlyWithUseSiteTarget(RECEIVER)
             }
 
             val T_TYPE_PARAMETER = targetList(TYPE_PARAMETER)

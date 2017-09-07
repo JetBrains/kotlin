@@ -1682,6 +1682,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/SparamAnnotations.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("wrongParamAnnotationsOnTypes.kt")
+                public void testWrongParamAnnotationsOnTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/wrongParamAnnotationsOnTypes.kt");
+                    doTest(fileName);
+                }
             }
         }
 
