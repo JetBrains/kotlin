@@ -32,8 +32,6 @@
         <os family="windows"/>
     </condition>
 
-    <property name="uast.version" value="1.0.12"/>
-
     <property name="kotlinx.coroutines.version" value="0.14.1"/>
 
     <property name="generators" value="${basedir}/generators"/>
@@ -245,10 +243,6 @@
 
         <!-- Javaslang -->
         <get-maven-library prefix="io/javaslang" lib="javaslang" version="2.0.6"/>
-
-        <!-- Uast -->
-        <property name="uast.server" value="http://dl.bintray.com/kotlin/uast"/>
-        <get-maven-library prefix="org/jetbrains/uast" lib="uast-tests" version="${uast.version}" target.jar.name.base="uast-tests" server="${uast.server}"/>
 
         <get-maven-library-with-dependencies
             group="org.robolectric"
