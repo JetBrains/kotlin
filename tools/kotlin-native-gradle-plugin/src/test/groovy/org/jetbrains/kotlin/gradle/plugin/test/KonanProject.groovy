@@ -273,7 +273,7 @@ class KonanInteropProject extends KonanProject {
             }
             """.stripIndent()
         )
-        interopTasks = [defaultStubGenerationTask(), defaultStubCompilationTask()]
+        interopTasks = [defaultStubGenerationTask()]
         compilationTasks = [defaultCompilationTask(), ":compileKonan", ":build"]
         return result
     }
@@ -312,16 +312,8 @@ class KonanInteropProject extends KonanProject {
         return stubGenerationTask(DEFAULT_INTEROP_NAME)
     }
 
-    String defaultStubCompilationTask() {
-        return stubCompilationTask(DEFAULT_INTEROP_NAME)
-    }
-
     String stubGenerationTask(String interopName) {
-        return ":gen${interopName.capitalize()}InteropStubs"
-    }
-
-    String stubCompilationTask(String interopName) {
-        return ":compile${interopName.capitalize()}InteropStubs"
+        return ":process${interopName.capitalize()}Interop"
     }
 
     /** Creates a project with default build, source and def files. */

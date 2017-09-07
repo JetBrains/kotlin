@@ -44,7 +44,7 @@ class TaskSpecification extends BaseKonanSpecification {
                     interop { }
                 }
             """.stripIndent())
-            it.interopTasks = [":interop:genInteropInteropStubs", ":interop:compileInteropInteropStubs"]
+            it.interopTasks = [":interop:processInteropInterop"]
             it.generateDefFile("interop.def")
         }
         def result = rootProject.createRunner().withArguments("build").build()
@@ -73,40 +73,22 @@ class TaskSpecification extends BaseKonanSpecification {
         result.task(":printArgs") != null
         result.task(":printArgs").outcome == TaskOutcome.SUCCESS
         def expectedKlibPath = project.konanBuildDir.toPath()
-                .resolve("interopCompiledStubs${File.separator}stdioInteropStubs${File.separator}stdioInteropStubs.klib")
-                .toFile().canonicalPath
-        def expectedBcPath = project.konanBuildDir.toPath()
-                .resolve("nativelibs${File.separator}genStdioInteropStubs${File.separator}stdiostubs.bc")
+                .resolve("c_interop${File.separator}stdio.klib")
                 .toFile().canonicalPath
         def ls = System.lineSeparator()
-        result.output.contains("[-lpthread]$ls[$expectedKlibPath]$ls[$expectedBcPath]".stripIndent().trim())
+        result.output.contains("[-lpthread]$ls[$expectedKlibPath]".stripIndent().trim())
     }
 
     def 'Compiler should print time measurements if measureTime flag is set'() {
         when:
         def project = KonanInteropProject.createEmpty(projectDirectory)
         project.generateSrcFile("main.kt")
-        project.addInteropSetting("measureTime", "true")
         project.addCompilationSetting("measureTime", "true")
-        def result = project.createRunner().withArguments('build').build()
-
-        then:
-        result.output.findAll(~/FRONTEND:\s+\d+\s+msec/).size() == 2
-        result.output.findAll(~/BACKEND:\s+\d+\s+msec/).size() == 2
-        result.output.findAll(~/LINK_STAGE:\s+\d+\s+msec/).size() == 1
-    }
-
-    def 'Interop should provide access to stub compilation config'() {
-        when:
-        def project = KonanInteropProject.createEmpty(projectDirectory)
-        project.generateSrcFile("main.kt")
-        project.addInteropSetting("compileStubsConfig.measureTime", "true")
         def result = project.createRunner().withArguments('build').build()
 
         then:
         result.output.findAll(~/FRONTEND:\s+\d+\s+msec/).size() == 1
         result.output.findAll(~/BACKEND:\s+\d+\s+msec/).size() == 1
-        result.output.findAll(~/LINK_STAGE:\s+\d+\s+msec/).size() == 0
+        result.output.findAll(~/LINK_STAGE:\s+\d+\s+msec/).size() == 1
     }
-
 }

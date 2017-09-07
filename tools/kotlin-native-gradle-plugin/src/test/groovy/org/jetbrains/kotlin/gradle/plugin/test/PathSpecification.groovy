@@ -18,14 +18,8 @@ class PathSpecification extends BaseKonanSpecification {
         new File("$konan/bin").listFiles().findAll {
             File it -> it.file && it.name.matches('^main\\.[^.]+')
         }.size() > 0
-        def klib = new File("$konan/interopCompiledStubs/stdioInteropStubs/stdioInteropStubs.klib")
+        def klib = new File("$konan/c_interop/stdio.klib")
         klib.exists() && klib.file
-        def stdioKt = new File("$konan/interopStubs/genStdioInteropStubs/stdio/stdio.kt")
-        stdioKt.exists() && stdioKt.file
-        def manifest = new File("$konan/interopStubs/genStdioInteropStubs/manifest.properties")
-        manifest.exists() && manifest.file
-        def nativeLib = new File("$konan/nativelibs/genStdioInteropStubs/stdiostubs.bc")
-        nativeLib.exists() && nativeLib.file
     }
 
     def 'Plugin should stop building if the compiler classpath is empty'() {

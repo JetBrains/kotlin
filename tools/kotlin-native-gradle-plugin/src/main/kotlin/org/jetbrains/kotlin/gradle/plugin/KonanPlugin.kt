@@ -52,9 +52,7 @@ internal val Project.konanHome: String
 
 internal val Project.konanBuildRoot               get() = "${buildDir.canonicalPath}/konan"
 internal val Project.konanCompilerOutputDir       get() = "${konanBuildRoot}/bin"
-internal val Project.konanInteropStubsOutputDir   get() = "${konanBuildRoot}/interopStubs"
-internal val Project.konanInteropCompiledStubsDir get() = "${konanBuildRoot}/interopCompiledStubs"
-internal val Project.konanInteropLibsOutputDir    get() = "${konanBuildRoot}/nativelibs"
+internal val Project.konanInteropOutputDir        get() = "${konanBuildRoot}/c_interop"
 
 internal val Project.konanDefaultSrcFiles         get() = fileTree("${projectDir.canonicalPath}/src/main/kotlin")
 internal fun Project.konanDefaultDefFile(libName: String)
@@ -171,8 +169,8 @@ internal fun dumpProperties(task: Task) {
         is KonanInteropTask -> {
             println()
             println("Stub generation task: ${task.name}")
-            println("stubsDir           : ${task.stubsDir}")
-            println("libsDir            : ${task.libsDir}")
+            println("outputDir          : ${task.outputDir}")
+            println("kLib               : ${task.kLib}")
             println("defFile            : ${task.defFile}")
             println("target             : ${task.target}")
             println("pkg                : ${task.pkg}")

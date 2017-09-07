@@ -266,7 +266,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
             """.stripIndent())
         }
         def results = buildTwice(project) { KonanInteropProject it ->
-            it.addInteropSetting("stdio", "generateStubsTask.dependsOn", "konanArtifacts['lib'].compilationTask")
+            it.addInteropSetting("stdio", "interopProcessingTask.dependsOn", "konanArtifacts['lib'].compilationTask")
             it.addInteropSetting("stdio", "link", "files(konanArtifacts['lib'].compilationTask.artifactPath)")
         }
 

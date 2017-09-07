@@ -1,9 +1,10 @@
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 
-internal interface KonanToolRunner {
+internal interface KonanToolRunner: Named {
     val mainClass: String
     val classpath: FileCollection
     val jvmArgs: List<String>
@@ -13,8 +14,10 @@ internal interface KonanToolRunner {
     fun run(vararg args: String) = run(args.toList())
 }
 
-internal abstract class KonanBaseRunner(val project: Project): KonanToolRunner {
-    abstract val toolName: String
+internal abstract class KonanCliRunner(val toolName: String, val fullName: String, val project: Project): KonanToolRunner {
+    override val mainClass = "org.jetbrains.kotlin.cli.utilities.MainKt"
+
+    override fun getName() = fullName
 
     override val classpath: FileCollection =
             project.fileTree("${project.konanHome}/konan/lib/")
@@ -26,8 +29,9 @@ internal abstract class KonanBaseRunner(val project: Project): KonanToolRunner {
     override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
 
     override fun run(args: List<String>) {
+        project.logger.info("Run tool: $toolName with args: ${args.joinToString(separator = " ")}")
         if (classpath.isEmpty) {
-            throw IllegalStateException("Classpath if the tool is empty: $toolName\n" +
+            throw IllegalStateException("Classpath of the tool is empty: $toolName\n" +
                     "Probably the 'konan.home' project property contains an incorrect path.\n" +
                     "Please change it to the compiler root directory and rerun the build.")
         }
@@ -36,22 +40,15 @@ internal abstract class KonanBaseRunner(val project: Project): KonanToolRunner {
             it.main = mainClass
             it.classpath = classpath
             it.jvmArgs(jvmArgs)
-            it.args(args.apply {
-                project.logger.info("Run tool: $toolName with args: ${this.joinToString(separator = " ")}")
-            })
+            it.args(listOf(toolName) + args)
             it.environment(environment)
         }
     }
 }
 
-internal class KonanInteropRunner(project: Project) : KonanBaseRunner(project){
-    internal companion object {
-        const val INTEROP_MAIN = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
-    }
-
-    override val toolName   get() = "Kotlin/Native cinterop tool"
-    override val mainClass  get() = INTEROP_MAIN
-
+internal class KonanInteropRunner(project: Project)
+    : KonanCliRunner("cinterop", "Kotlin/Native cinterop tool", project)
+{
     init {
         if (project.host == "mingw") {
             environment.put("PATH", "${project.konanHome}\\dependencies" +
@@ -61,11 +58,5 @@ internal class KonanInteropRunner(project: Project) : KonanBaseRunner(project){
     }
 }
 
-internal class KonanCompilerRunner(project: Project) : KonanBaseRunner(project) {
-    internal companion object {
-        const val COMPILER_MAIN = "org.jetbrains.kotlin.cli.bc.K2NativeKt"
-    }
-
-    override val toolName   get() =  "Kotlin/Native compiler"
-    override val mainClass  get() = COMPILER_MAIN
-}
+internal class KonanCompilerRunner(project: Project) : KonanCliRunner("konanc", "Kotlin/Native compiler", project)
+internal class KonnaKlibRunner(project: Project) : KonanCliRunner("klib", "Klib management tool", project)

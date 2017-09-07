@@ -29,6 +29,6 @@ task downloadTensorflow(type: Exec) {
     commandLine './downloadTensorflow.sh'
 }
 
-genTensorflowInteropStubs {
+processTensorflowInterop {
     dependsOn 'downloadTensorflow'
 }

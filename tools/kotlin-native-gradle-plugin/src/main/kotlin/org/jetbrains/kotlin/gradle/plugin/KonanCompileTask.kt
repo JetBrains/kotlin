@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Named
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
@@ -75,7 +74,7 @@ open class KonanCompileTask: KonanTargetableTask() {
     val linkerOpts: List<String>
         @Input get() = mutableListOf<String>().apply {
             addAll(_linkerOpts)
-            interops.flatMapTo(this) { it.generateStubsTask.linkerOpts }
+            interops.flatMapTo(this) { it.interopProcessingTask.linkerOpts }
         }
 
     @Input var enableDebug        = project.properties.containsKey("enableDebug") && project.properties["enableDebug"].toString().toBoolean()
@@ -134,7 +133,7 @@ open class KonanCompileTask: KonanTargetableTask() {
 
     @TaskAction
     fun compile() {
-        project.file(outputDir).mkdirs()
+        outputDir.mkdirs()
 
         if (dumpParameters) dumpProperties(this@KonanCompileTask)
 
@@ -163,15 +162,10 @@ open class KonanCompileConfig(
     // DSL methods. Interop. --------------------------------------------------
 
     fun useInterop(interop: KonanInteropConfig) = with(compilationTask) {
-        val generateStubsTask = interop.generateStubsTask
-        val compileStubsTask = interop.compileStubsTask
+        val generateStubsTask = interop.interopProcessingTask
 
-        dependsOn(compileStubsTask)
         dependsOn(generateStubsTask)
-        library(project.files(compileStubsTask.artifact))
-        nativeLibrary(project.fileTree(generateStubsTask.libsDir).apply {
-            include("**/*.bc")
-        })
+        library(project.files(generateStubsTask.kLib))
 
         interops.add(interop)
     }
