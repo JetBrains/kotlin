@@ -263,7 +263,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                         if (KotlinBuiltIns.isCharOrNullableChar(property.type) && !shouldBoxReturnValue(property.descriptor.getter)) {
                             +JsAstUtils.assignment(
                                     localProps[i],
-                                    Translation.unboxIfNeeded(localProps[i], true)
+                                    Translation.unboxIfNeeded(context, localProps[i], true)
                             ).makeStmt()
                         }
 
