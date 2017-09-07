@@ -77,11 +77,18 @@ class JavaTypeQualifiersByElementType(
 ) {
     operator fun get(
             applicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType
-    ): JavaTypeQualifiers? =
-        (
+    ): JavaTypeQualifiers? {
+        val nullabilityQualifierWithMigrationStatus =
                 nullabilityQualifiers[applicabilityType]
                 ?: nullabilityQualifiers[AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE]
-        )?.let { JavaTypeQualifiers(it.qualifier, null, isNotNullTypeParameter = false, isNullabilityQualifierForWarning = it.isForWarningOnly) }
+                ?: return null
+
+        return JavaTypeQualifiers(
+                nullabilityQualifierWithMigrationStatus.qualifier, null,
+                isNotNullTypeParameter = false,
+                isNullabilityQualifierForWarning = nullabilityQualifierWithMigrationStatus.isForWarningOnly
+        )
+    }
 }
 
 class LazyJavaResolverContext internal constructor(
