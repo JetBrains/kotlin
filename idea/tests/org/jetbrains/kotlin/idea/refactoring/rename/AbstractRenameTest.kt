@@ -374,7 +374,7 @@ abstract class AbstractRenameTest : KotlinLightCodeInsightFixtureTestCase() {
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         FileDocumentManager.getInstance().saveAllDocuments()
-        PlatformTestUtil.assertDirectoriesEqual(beforeVFile, afterVFile)
+        PlatformTestUtil.assertDirectoriesEqual(afterVFile, beforeVFile)
     }
 }
 
