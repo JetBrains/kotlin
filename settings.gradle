@@ -126,7 +126,13 @@ include ":kotlin-build-common",
         ":kotlin-annotation-processing-gradle",
         ":examples:kotlin-jsr223-local-example",
         ":examples:kotlin-jsr223-daemon-local-eval-example",
-        ":ultimate"
+        ":ultimate",
+
+        // plugin markers:
+        ':kotlin-gradle-plugin:plugin-marker',
+        ':kotlin-allopen:plugin-marker',
+        ':kotlin-noarg:plugin-marker'
+
 
 rootProject.name = "kotlin"
 
@@ -187,4 +193,9 @@ project(':kotlin-annotation-processing-gradle').projectDir = "$rootDir/libraries
 project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt3" as File
 project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-local-example" as File
 project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
+
+// plugin markers:
+project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")
+project(':kotlin-allopen:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-allopen/plugin-marker")
+project(':kotlin-noarg:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-noarg/plugin-marker")
 
