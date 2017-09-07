@@ -8,11 +8,28 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
 import java.io.File
+
+fun Project.classesDirsArtifact(): FileCollection {
+    val classesDirsCfg = configurations.getOrCreate("classes-dirs")
+
+    val classesDirs =  the<JavaPluginConvention>().sourceSets["main"].output.classesDirs
+
+    val classesTask = tasks["classes"]
+
+    afterEvaluate {
+        classesDirs.files.forEach {
+            addArtifact(classesDirsCfg, classesTask, it)
+        }
+    }
+
+    return classesDirs
+}
 
 fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testCompile"])

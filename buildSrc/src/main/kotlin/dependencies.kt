@@ -5,6 +5,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
@@ -62,6 +63,7 @@ fun DependencyHandler.projectDist(name: String): Dependency = project(name, conf
 fun DependencyHandler.projectTests(name: String): Dependency = project(name, configuration = "tests-jar").apply { isTransitive = false }
 fun DependencyHandler.projectRuntimeJar(name: String): Dependency = project(name, configuration = "runtimeJar")
 fun DependencyHandler.projectArchives(name: String): Dependency = project(name, configuration = "archives")
+fun DependencyHandler.projectClasses(name: String): Dependency = project(name, configuration = "classes-dirs")
 
 val protobufLiteProject = ":custom-dependencies:protobuf-lite"
 fun DependencyHandler.protobufLite(): ProjectDependency =

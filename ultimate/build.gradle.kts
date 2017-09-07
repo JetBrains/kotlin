@@ -18,15 +18,9 @@ apply { plugin("kotlin") }
 
 val ideaCommunityPlugin by configurations.creating
 
-val ideaProjectClasses =  project(":idea").the<JavaPluginConvention>().sourceSets["main"].output.classesDirs
 val ideaProjectResources =  project(":idea").the<JavaPluginConvention>().sourceSets["main"].output.resourcesDir
 
 dependencies {
-    val compile by configurations
-    val compileOnly by configurations
-    val testCompile by configurations
-    val testCompileOnly by configurations
-    val testRuntime by configurations
     compile(projectDist(":kotlin-reflect"))
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":core")) { isTransitive = false }
@@ -34,7 +28,7 @@ dependencies {
     compile(project(":compiler:light-classes")) { isTransitive = false }
     compile(project(":compiler:frontend")) { isTransitive = false }
     compile(project(":compiler:frontend.java")) { isTransitive = false }
-    compile(ideaProjectClasses)
+    compile(projectClasses(":idea"))
     compile(project(":idea:idea-core")) { isTransitive = false }
     compile(project(":idea:ide-common")) { isTransitive = false }
     compile(project(":idea:idea-gradle")) { isTransitive = false }

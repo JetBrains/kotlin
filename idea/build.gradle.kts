@@ -105,3 +105,5 @@ projectTest {
 }
 
 testsJar {}
+
+classesDirsArtifact()
