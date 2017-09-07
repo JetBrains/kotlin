@@ -242,8 +242,6 @@ For this project the task graph will be the following:
              enableAssertions()    // Enable assertions in binaries generated.
              enableDebug()         // Enable debugging for binaries generated.
 
-             manifest 'path/to/manifest.file' // A manifest addend file.
-
              // Arguments to be passed to a linker.
              linkerOpts 'Some linker opts'
 

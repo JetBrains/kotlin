@@ -175,36 +175,6 @@ class IncrementalSpecification extends BaseKonanSpecification {
         onlyRecompilationHappened(*results)
     }
 
-    def 'manifest parameter change for a compilation task should cause only recompilation'() {
-        when:
-        def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
-            it.generateSrcFile('main.kt')
-        }
-        def results = buildTwice(project) { KonanInteropProject it ->
-            def manifest = it.generateSrcFile('manifest', "#some manifest file")
-            it.addCompilationSetting("main", "manifest", manifest)
-        }
-
-        then:
-        onlyRecompilationHappened(*results)
-    }
-
-    def 'manifest file change should cause only recompilation'() {
-        when:
-        def manifest
-        def project = KonanInteropProject.createEmpty(projectDirectory) { KonanInteropProject it ->
-            it.generateSrcFile('main.kt')
-            manifest = it.generateSrcFile('manifest', "#some manifest file\n")
-            it.addCompilationSetting("main", "manifest", manifest)
-        }
-        def results = buildTwice(project) { KonanInteropProject it ->
-            manifest.append("#something else\n")
-        }
-
-        then:
-        onlyRecompilationHappened(*results)
-    }
-
     @Unroll("#parameter change for an interop task should cause recompilation and interop reprocessing")
     def 'Parameter change for an interop task should cause recompilation and interop reprocessing'() {
         when:

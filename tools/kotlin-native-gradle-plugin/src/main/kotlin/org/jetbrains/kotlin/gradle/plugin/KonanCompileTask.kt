@@ -95,9 +95,6 @@ open class KonanCompileTask: KonanTargetableTask() {
     @Optional @Input var apiVersion      : String? = null
         internal set
 
-    @Optional @InputFile var manifest    : File? = null
-        internal set
-
     @Input var dumpParameters: Boolean = false
     // TODO: Is there a better way to rerun tasks when the compiler version changes?
     @Input val konanVersion = project.konanVersion
@@ -116,8 +113,6 @@ open class KonanCompileTask: KonanTargetableTask() {
         addArgIfNotNull("-target", target)
         addArgIfNotNull("-language-version", languageVersion)
         addArgIfNotNull("-api-version", apiVersion)
-        // TODO: Should we get manifests of the interops used?
-        addArgIfNotNull("-manifest", manifest?.canonicalPath)
 
         addKey("-g", enableDebug)
         addKey("-nostdlib", noStdLib)
@@ -227,10 +222,6 @@ open class KonanCompileConfig(
     fun linkerOpts(args: List<String>) = linkerOpts(*args.toTypedArray())
     fun linkerOpts(vararg args: String) = with(compilationTask) {
         _linkerOpts.addAll(args)
-    }
-
-    fun manifest(arg: Any) = with(compilationTask) {
-        manifest = project.file(arg)
     }
 
     fun target(tgt: String) = with(compilationTask) {
