@@ -232,6 +232,13 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
     fun MemberDescriptor.findCompatibleImplForHeader(platformModule: ModuleDescriptor): List<MemberDescriptor> =
             findImplForHeader(this, platformModule, false)?.get(Compatible).orEmpty()
 
+    fun MemberDescriptor.findAnyImplForHeader(platformModule: ModuleDescriptor): List<MemberDescriptor> {
+        val implsGroupedByCompatibility = findImplForHeader(this, platformModule, false)
+        return implsGroupedByCompatibility?.get(Compatible)
+               ?: implsGroupedByCompatibility?.values?.flatten()
+               ?: emptyList()
+    }
+
     fun MemberDescriptor.findCompatibleHeaderForImpl(commonModule: ModuleDescriptor): List<MemberDescriptor> =
             findHeaderForImpl(this, commonModule)?.get(Compatible).orEmpty()
 

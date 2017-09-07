@@ -20,6 +20,7 @@ import com.intellij.ide.highlighter.ArchiveFileType
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.FileIndex
 import com.intellij.openapi.roots.ModuleRootManager
@@ -140,3 +141,6 @@ object ProjectRootsUtil {
 
 val Module.rootManager: ModuleRootManager
     get() = ModuleRootManager.getInstance(this)
+
+val PsiElement.module: Module?
+    get() = ModuleUtilCore.findModuleForPsiElement(this)

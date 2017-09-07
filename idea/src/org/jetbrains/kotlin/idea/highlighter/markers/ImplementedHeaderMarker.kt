@@ -34,9 +34,14 @@ import java.awt.event.MouseEvent
 fun ModuleDescriptor.hasImplementationsOf(descriptor: MemberDescriptor) =
         implementationsOf(descriptor).isNotEmpty()
 
-private fun ModuleDescriptor.implementationsOf(descriptor: MemberDescriptor): List<DeclarationDescriptor> =
+fun ModuleDescriptor.implementationsOf(descriptor: MemberDescriptor, checkCompatible: Boolean = true): List<DeclarationDescriptor> =
         with(HeaderImplDeclarationChecker) {
-            descriptor.findCompatibleImplForHeader(this@implementationsOf)
+            if (checkCompatible) {
+                descriptor.findCompatibleImplForHeader(this@implementationsOf)
+            }
+            else {
+                descriptor.findAnyImplForHeader(this@implementationsOf)
+            }
         }
 
 fun getPlatformImplementationTooltip(declaration: KtDeclaration): String? {
