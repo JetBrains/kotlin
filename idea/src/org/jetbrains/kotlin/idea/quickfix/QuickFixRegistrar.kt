@@ -243,12 +243,12 @@ class QuickFixRegistrar : QuickFixContributor {
 
         ELSE_MISPLACED_IN_WHEN.registerFactory(MoveWhenElseBranchFix)
         NO_ELSE_IN_WHEN.registerFactory(AddWhenElseBranchFix)
-        NO_ELSE_IN_WHEN.registerFactory(AddWhenRemainingBranchesFix)
+        NO_ELSE_IN_WHEN.registerFactory(AddWhenRemainingBranchesFix, AddWhenRemainingBranchesFixWithImport)
         REDUNDANT_ELSE_IN_WHEN.registerFactory(RemoveWhenElseBranchFix)
         NON_EXHAUSTIVE_WHEN.registerFactory(AddWhenElseBranchFix)
-        NON_EXHAUSTIVE_WHEN.registerFactory(AddWhenRemainingBranchesFix)
+        NON_EXHAUSTIVE_WHEN.registerFactory(AddWhenRemainingBranchesFix, AddWhenRemainingBranchesFixWithImport)
         NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS.registerFactory(AddWhenElseBranchFix)
-        NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS.registerFactory(AddWhenRemainingBranchesFix)
+        NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS.registerFactory(AddWhenRemainingBranchesFix, AddWhenRemainingBranchesFixWithImport)
         BREAK_OR_CONTINUE_IN_WHEN.registerFactory(AddLoopLabelFix)
 
         NO_TYPE_ARGUMENTS_ON_RHS.registerFactory(AddStarProjectionsFix.IsExpressionFactory)

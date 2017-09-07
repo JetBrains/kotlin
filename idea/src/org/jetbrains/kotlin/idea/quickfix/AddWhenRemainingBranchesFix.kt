@@ -24,13 +24,12 @@ import org.jetbrains.kotlin.cfg.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-class AddWhenRemainingBranchesFix(expression: KtWhenExpression) : KotlinQuickFixAction<KtWhenExpression>(expression) {
+open class AddWhenRemainingBranchesFix(expression: KtWhenExpression) : KotlinQuickFixAction<KtWhenExpression>(expression) {
 
     override fun getFamilyName() = "Add remaining branches"
 
