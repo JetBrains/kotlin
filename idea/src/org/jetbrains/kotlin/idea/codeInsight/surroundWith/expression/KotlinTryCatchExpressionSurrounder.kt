@@ -20,6 +20,6 @@ class KotlinTryCatchExpressionSurrounder : KotlinTryExpressionSurrounderBase() {
 
     override fun getTemplateDescription() = "try { expr } catch {}"
 
-    override fun getPattern() = "try { \n$0 } catch (e: Exception) {\n}"
+    override fun getPattern() = "try { $0 } catch (e: Exception) {}"
 }
 
