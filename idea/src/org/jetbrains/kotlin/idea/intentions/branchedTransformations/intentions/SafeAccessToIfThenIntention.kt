@@ -20,11 +20,15 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
 class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedExpression>(KtSafeQualifiedExpression::class.java, "Replace safe access expression with 'if' expression"), LowPriorityAction {
@@ -43,12 +47,28 @@ class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedE
         val dotQualified = psiFactory.createExpressionByPattern("$0.$1", receiver, selector)
 
         val elseClause = if (element.isUsedAsStatement(element.analyze())) null else psiFactory.createExpression("null")
-        val ifExpression = element.convertToIfNotNullExpression(receiver, dotQualified, elseClause)
+        var ifExpression = element.convertToIfNotNullExpression(receiver, dotQualified, elseClause)
+
+        var isEqualExpression = false
+        val binaryExpression = (ifExpression.parent as? KtParenthesizedExpression)?.parent as? KtBinaryExpression
+        if (binaryExpression != null) {
+            val eq = (binaryExpression.operationToken as? KtSingleValueToken)?.takeIf { it == KtTokens.EQ }?.value
+            val right = binaryExpression.right?.text
+            if (eq != null && right != null) {
+                val replaced = binaryExpression.replaced(psiFactory.createExpression("${ifExpression.text} $eq $right"))
+                ifExpression = replaced.findDescendantOfType()!!
+                isEqualExpression = true
+            }
+        }
 
         if (!receiverIsStable) {
-            val valueToExtract = (ifExpression.then as KtDotQualifiedExpression).receiverExpression
-            ifExpression.introduceValueForCondition(valueToExtract, editor)
+            val valueToExtract = if (isEqualExpression)
+                ((ifExpression.then as? KtBinaryExpression)?.left as? KtDotQualifiedExpression)?.receiverExpression
+            else
+                (ifExpression.then as? KtDotQualifiedExpression)?.receiverExpression
+
+            if (valueToExtract != null) ifExpression.introduceValueForCondition(valueToExtract, editor)
         }
+
     }
 }
-

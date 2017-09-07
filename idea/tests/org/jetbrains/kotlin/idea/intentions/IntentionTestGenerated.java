@@ -2368,6 +2368,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("equalExpression.kt")
+            public void testEqualExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/equalExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("equalExpression2.kt")
+            public void testEqualExpression2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/equalExpression2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("equalExpression3.kt")
+            public void testEqualExpression3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/equalExpression3.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localValAsReceiver.kt")
             public void testLocalValAsReceiver() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/localValAsReceiver.kt");
