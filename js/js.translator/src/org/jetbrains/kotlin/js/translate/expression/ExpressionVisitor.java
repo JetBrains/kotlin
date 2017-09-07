@@ -543,6 +543,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (closure != null) {
             for (DeclarationDescriptor capturedValue : closure) {
                 closureArgs.add(context.getArgumentForClosureConstructor(capturedValue));
+                if (capturedValue instanceof TypeParameterDescriptor) {
+                    closureArgs.add(context.getTypeArgumentForClosureConstructor((TypeParameterDescriptor) capturedValue));
+                }
             }
         }
 

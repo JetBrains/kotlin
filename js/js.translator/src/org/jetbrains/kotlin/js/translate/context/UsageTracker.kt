@@ -34,6 +34,7 @@ class UsageTracker(
 ) {
 
     private val captured = linkedMapOf<DeclarationDescriptor, JsName>()
+    private val capturedTypesImpl = mutableMapOf<TypeParameterDescriptor, JsName>()
 
     // For readonly access from external places.
     val capturedDescriptorToJsName: Map<DeclarationDescriptor, JsName>
@@ -41,6 +42,9 @@ class UsageTracker(
 
     val capturedDescriptors: Set<DeclarationDescriptor>
         get() = captured.keys
+
+    val capturedTypes: Map<TypeParameterDescriptor, JsName>
+        get() = capturedTypesImpl
 
     fun used(descriptor: DeclarationDescriptor) {
         if (isCaptured(descriptor)) return
@@ -77,6 +81,11 @@ class UsageTracker(
         parent?.captureIfNeed(descriptor)
 
         captured[descriptor] = descriptor.getJsNameForCapturedDescriptor()
+
+        if (descriptor is TypeParameterDescriptor && descriptor.containingDeclaration.original != containingDescriptor.original) {
+            val name = "typeClosure\$" + NameSuggestion.sanitizeName(descriptor.name.asString())
+            capturedTypesImpl[descriptor] = JsScope.declareTemporaryName(name)
+        }
     }
 
     private fun isInLocalDeclaration(): Boolean {

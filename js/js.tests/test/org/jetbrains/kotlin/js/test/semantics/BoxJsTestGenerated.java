@@ -7268,6 +7268,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("capture.kt")
+        public void testCapture() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reified/capture.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extensionFun.kt")
         public void testExtensionFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reified/extensionFun.kt");
