@@ -4784,6 +4784,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineMemberFunWithLambda.kt")
+        public void testInlineMemberFunWithLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/inlineMemberFunWithLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineableAliasForExternalDeclaration.kt")
         public void testInlineableAliasForExternalDeclaration() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/inlineableAliasForExternalDeclaration.kt");
