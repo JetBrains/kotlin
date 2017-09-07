@@ -1406,6 +1406,10 @@ fun main(args: Array<String>) {
         testClass<AbstractParcelCheckerTest> {
             model("android/parcel/checker", excludeParentDirs = true)
         }
+
+        testClass<AbstractParcelQuickFixTest> {
+            model("android/parcel/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
+        }
     }
 
     testGroup("idea/idea-android/tests", "idea/testData") {
