@@ -127,6 +127,7 @@ include ":kotlin-build-common",
         ":examples:kotlin-jsr223-local-example",
         ":examples:kotlin-jsr223-daemon-local-eval-example",
         ":ultimate",
+        ":ultimate:ultimate-runner",
 
         // plugin markers:
         ':kotlin-gradle-plugin:plugin-marker',
