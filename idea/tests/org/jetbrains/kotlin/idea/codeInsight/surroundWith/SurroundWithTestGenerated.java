@@ -338,6 +338,12 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/ifElseExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("paranthesized.kt")
+        public void testParanthesized() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElseExpression/paranthesized.kt");
+            doTestWithIfElseExpressionSurrounder(fileName);
+        }
+
         @TestMetadata("singleExpression.kt")
         public void testSingleExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElseExpression/singleExpression.kt");

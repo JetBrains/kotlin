@@ -21,6 +21,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement.KotlinIfSurrounderBase
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 
 class KotlinIfElseExpressionSurrounder(private val withBraces: Boolean) : KotlinControlFlowExpressionSurrounderBase() {
     override fun getPattern(): String {
@@ -32,7 +33,11 @@ class KotlinIfElseExpressionSurrounder(private val withBraces: Boolean) : Kotlin
     }
 
     override fun getRange(editor: Editor, replaced: KtExpression): TextRange? {
-        return KotlinIfSurrounderBase.getRange(editor, replaced as KtIfExpression?)
+        val expression = when(replaced) {
+            is KtParenthesizedExpression -> replaced.expression as? KtIfExpression
+            else -> replaced as? KtIfExpression
+        }
+        return KotlinIfSurrounderBase.getRange(editor, expression)
     }
 
 }
