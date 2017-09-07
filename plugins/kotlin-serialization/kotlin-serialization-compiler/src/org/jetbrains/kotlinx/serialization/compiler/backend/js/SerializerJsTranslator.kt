@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.js.translate.declaration.DefaultPropertyTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.shouldBoxReturnValue
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -260,10 +259,10 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                             ).makeStmt()
                         }
                         // char unboxing crutch
-                        if (KotlinBuiltIns.isCharOrNullableChar(property.type) && !shouldBoxReturnValue(property.descriptor.getter)) {
+                        if (KotlinBuiltIns.isCharOrNullableChar(property.type)) {
                             +JsAstUtils.assignment(
                                     localProps[i],
-                                    Translation.unboxIfNeeded(context, localProps[i], true)
+                                    TranslationUtils.coerce(context, localProps[i], TranslationUtils.getReturnTypeForCoercion(property.descriptor.getter!!))
                             ).makeStmt()
                         }
 

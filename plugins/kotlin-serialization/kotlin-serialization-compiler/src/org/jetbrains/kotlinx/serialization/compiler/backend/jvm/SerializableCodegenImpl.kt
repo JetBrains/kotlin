@@ -150,9 +150,9 @@ class SerializableCodegenImpl(
         val serializedProps = properties.serializableProperties.map { it.descriptor }
 
         (descToProps - serializedProps)
-                .forEach { _, prop -> classCodegen.initializeProperty(exprCodegen, prop) }
+                .forEach { (_, prop) -> classCodegen.initializeProperty(exprCodegen, prop) }
         (paramsToProps - serializedProps)
-                .forEach { t, u -> exprCodegen.genInitParam(t, u) }
+                .forEach { (t, u) -> exprCodegen.genInitParam(t, u) }
 
         // init blocks
         // todo: proper order with other initializers

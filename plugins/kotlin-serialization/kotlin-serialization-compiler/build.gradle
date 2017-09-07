@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlin_root = "$rootDir/../../../"
+        kotlin_root = file("$rootDir/../../..")
         distDir = file("$kotlin_root/dist")
         bootstrapCompilerFile = file("$distDir/kotlin-compiler-for-maven.jar")
         kotlin_version = "1.1.3"
@@ -57,7 +57,9 @@ jar {
 apply plugin: 'org.jetbrains.intellij'
 
 intellij {
-    localPath "$kotlin_root/ideaSDK"
+    if (findProperty("noIdeaSDK") == null) {
+        localPath "$kotlin_root/ideaSDK"
+    }
     pluginName 'Kotlin-serialization'
     downloadSources false
 }

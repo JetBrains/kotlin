@@ -1,0 +1,68 @@
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+}
+
+group = 'org.jetbrains.kotlinx'
+version = '0.1'
+
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.fork = false
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url 'http://repository.jetbrains.com/utils' }
+}
+
+dependencies {
+    compileOnly project(':kotlin-gradle-plugin-api')
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlin_version"
+
+    compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
+}
+
+def originalSrc = "$kotlin_root/plugins/kotlin-serialization/kotlin-serialization-compiler/src"
+def targetSrc = file("$buildDir/kotlin-serialization-target-src")
+
+task preprocessSources(type: Copy) {
+    from originalSrc
+    into targetSrc
+    filter { it.replaceAll('(?<!\\.)com\\.intellij', 'org.jetbrains.kotlin.com.intellij') }
+}
+
+sourceSets.main.java.srcDirs += targetSrc
+
+compileKotlin.dependsOn preprocessSources
+
+jar {
+    from(targetSrc) { include("META-INF/**") }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    configurations = ['archives']
+    pkg {
+        repo = 'kotlinx'
+        name = 'kotlinx.serialization'
+        userOrg = 'kotlin'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/JetBrains/kotlin/tree/rr/kotlinx.serialization/libraries'
+        websiteUrl = 'https://github.com/Kotlin/kotlinx.serialization'
+        issueTrackerUrl = 'https://github.com/Kotlin/kotlinx.serialization/issues'
+
+        githubRepo = 'JetBrains/kotlin'
+        version {
+            name = project.version
+        }
+    }
+}

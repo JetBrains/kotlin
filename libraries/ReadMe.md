@@ -46,20 +46,7 @@ If your maven build is failing with Out-Of-Memory errors, set JVM options for ma
 
 ## Kotlin serialization Gradle Plugin
 
-To build it, first **build all the above** and then, `cd` to `tools/kotlin-serialization`
-and run `mvn install`
-
-So, all build sequence will look like:
-
-```bash
-# Assuming you are in the kotlin/libraries folder
-./gradlew build install
-mvn install
-cd tools/gradle-tools
-./gradlew clean install
-cd ../kotlin-serialization
-mvn install
-```
+First, build all the above. Then run `./gradlew :kotlin-serialization:install` to install it to your local maven repository.
 
 When it is installed in local maven repository, you can add it as a dependency in buildscript classpath and apply it:
 
@@ -73,7 +60,7 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-SNAPSHOT"
-        classpath "org.jetbrains.kotlinx:kotlinx-serialization:1.1-SNAPSHOT"
+        classpath "org.jetbrains.kotlinx:kotlin-serialization:0.1"
     }
 }
 
@@ -81,3 +68,5 @@ apply plugin: 'kotlin'
 apply plugin: 'kotlin-serialization'
 
 ```
+
+You can also obtain it from bintray: https://bintray.com/kotlin/kotlinx/kotlinx.serialization

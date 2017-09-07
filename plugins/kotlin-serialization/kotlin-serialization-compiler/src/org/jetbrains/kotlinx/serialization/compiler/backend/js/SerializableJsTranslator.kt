@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.anonymousInitializers
@@ -83,7 +84,7 @@ class SerializableJsTranslator(val declaration: KtPureClassOrObject,
 
             //transient initializers and init blocks
             val serialDescs = properties.serializableProperties.map { it.descriptor }
-            (initMap - serialDescs).forEach { desc, expr ->
+            (initMap - serialDescs).forEach { (desc, expr)  ->
                 val e = requireNotNull(expr) {"transient without an initializer"}
                 val initExpr = Translation.translateAsExpression(e, context)
                 +TranslationUtils.assignmentToBackingField(context, desc, initExpr).makeStmt()
