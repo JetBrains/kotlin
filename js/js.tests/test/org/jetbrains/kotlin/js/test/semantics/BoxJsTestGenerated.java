@@ -1166,6 +1166,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("peculiarName.kt")
+        public void testPeculiarName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/peculiarName.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyMetadata.kt")
         public void testPropertyMetadata() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/propertyMetadata.kt");
@@ -2533,6 +2539,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             @TestMetadata("overloadedFun.kt")
             public void testOverloadedFun() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/identifierClash/overloadedFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateDeclarations.kt")
+            public void testPrivateDeclarations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/identifierClash/privateDeclarations.kt");
                 doTest(fileName);
             }
 
