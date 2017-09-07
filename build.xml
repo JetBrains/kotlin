@@ -675,6 +675,28 @@
         </jar>
     </target>
 
+    <target name="android-extensions-runtime">
+        <cleandir dir="${output}/classes/android-extensions/android-extensions-runtime"/>
+        <javac2 destdir="${output}/classes/android-extensions/android-extensions-runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+            <withKotlin modulename="kotlin-android-extensions-runtime">
+                <compilerarg value="-version"/>
+            </withKotlin>
+            <skip pattern="kotlin/Metadata"/>
+            <src>
+                <pathelement path="plugins/android-extensions/android-extensions-runtime/src"/>
+            </src>
+            <classpath>
+                <pathelement path="${idea.sdk}/plugins/android/lib/layoutlib.jar"/>
+            </classpath>
+        </javac2>
+
+        <jar destfile="${kotlin-home}/lib/android-extensions-runtime.jar">
+            <fileset dir="${output}/classes/android-extensions/android-extensions-runtime"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+        </jar>
+    </target>
+
+
     <target name="allopen-compiler-plugin">
         <cleandir dir="${output}/classes/allopen-compiler-plugin"/>
         <javac2 destdir="${output}/classes/allopen-compiler-plugin" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
@@ -961,7 +983,7 @@
             depends="gradle-runtime,mock-runtime-for-test"/>
 
     <target name="other-artifacts"
-            depends="android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing,daemon-client,compiler-client-embeddable,kotlin-build-common-test" />
+            depends="android-extensions-compiler,android-extensions-runtime,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing,daemon-client,compiler-client-embeddable,kotlin-build-common-test" />
 
     <target name="dist"
             depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler-fork,compiler-sources,ant-tools,runtime,other-artifacts"
