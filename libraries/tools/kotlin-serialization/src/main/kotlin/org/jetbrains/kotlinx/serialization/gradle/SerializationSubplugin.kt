@@ -38,7 +38,7 @@ class SerializationGradleSubplugin : Plugin<Project> {
 class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
         val SERIALIZATION_GROUP_NAME = "org.jetbrains.kotlinx"
-        val SERIALIZATION_ARTIFACT_NAME = "kotlinx-serialization"
+        val SERIALIZATION_ARTIFACT_NAME = "kotlin-serialization"
     }
 
     override fun isApplicable(project: Project, task: AbstractCompile) = SerializationGradleSubplugin.isEnabled(project)
